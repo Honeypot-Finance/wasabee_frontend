@@ -1,18 +1,39 @@
-import { ethers } from 'ethers'
 import { Network, networks } from './chain'
 import BigNumber from 'bignumber.js'
-import { WalletClient, createWalletClient, http, parseEther } from 'viem'
+import { WalletClient } from 'viem';
+import { RouterV2Contract } from './contract/routerv2-contract'
+import { FactoryContract } from './contract/factory-contract'
+import { makeAutoObservable } from 'mobx'
+import { Token } from './contract/token';
 
 export class Wallet {
   account: string = ''
   accountShort = ''
-  networks: Network[] = networks
+  networks: Network [] = []
   balance: BigNumber = new BigNumber(0)
   walletClient!: WalletClient
-  currentChainId!: number
+  currentChainId: number = -1
+
+  get networksMap() {
+    return this.networks.reduce((acc, network) => {
+      acc[network.chainId] = network
+      return acc
+    }, {} as Record<number, Network>)
+  }
 
   get currentChain() {
-    return this.networks.find((network) => network.chainId === this.currentChainId)
+    return this.networksMap[this.currentChainId]
+  }
+
+  get contracts () {
+    return {
+      routerV2: new RouterV2Contract({
+        address: this.currentChain.contracts.routerV2
+      }),
+      factory: new FactoryContract({
+        address: this.currentChain.contracts.factory
+      })
+    }
   }
 
 
@@ -22,24 +43,22 @@ export class Wallet {
 
 
   constructor(args: Partial<Wallet>) {
+    this.networks = networks
+    makeAutoObservable(this)
   }
 
   initWallet ({account, chainId }: {
-    account: string,
-    chainId: string,
+    account: `0x${string}`,
+    chainId: number,
   }) {
-    this.walletClient = createWalletClient({ 
-      batch: {
-        multicall: {
-          batchSize: 20, 
-        },
-      },
-      // @ts-ignore
-      account, 
-      // @ts-ignore
-      chain: chainsMap[chainId],
-      transport: http()
-    })
+    this.currentChainId = chainId
+    this.account = account
+    console.log('this.currentChainId', this.currentChainId)
+    this.currentChain.faucetTokens = this.currentChain.faucetTokens.map((token) => new Token(token));
+  }
+
+  setWalletClient(walletClient: WalletClient) {
+    this.walletClient = walletClient
   }
 }
 

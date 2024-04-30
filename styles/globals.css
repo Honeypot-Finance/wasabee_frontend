@@ -37,3 +37,15 @@ body {
     text-wrap: balance;
   }
 }
+
+.border-bottom {
+  @apply after:content-[''] after:h-[1px] after:bg-[rgba(255,255,255,0.1)] after:absolute after:bottom-[0] after:left-[0] after:w-full after:z-[1000];
+}
+
+.next-tab button[data-selected="true"]{
+  @apply border-[color:var(--e-18-a-20,rgba(225,138,32,0.40))] [background:var(--e-18-a-20,rgba(225,138,32,0.40))]
+}
+
+.next-tab button[data-selected="true"]>span{
+  @apply bg-transparent
+}

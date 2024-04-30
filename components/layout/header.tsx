@@ -43,7 +43,9 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
     //     </div>
     //     <Nav></Nav>
     // </div>
-    <Navbar onMenuOpenChange={setIsMenuOpen} className={clsx("h-[63px] bg-transparent", props.className)} style={{
+    <Navbar onMenuOpenChange={setIsMenuOpen} classNames={{
+      wrapper: "max-w-[1200px]"
+    }} className={clsx("h-[63px] bg-default", props.className)} style={{
       backdropFilter: "none"
     }}>
       <NavbarContent>
@@ -51,9 +53,9 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden  text-[white]"
         />
-        <NavbarBrand>
-          <Logo />
-          <p className="font-bold text-inherit">ACME</p>
+        <NavbarBrand >
+          <Link href="/"><Logo /></Link>
+          <p className='ml-[4px] w-[171px] h-8 text-[#FFCD4D] [font-family:"Bebas_Neue"] text-[28.927px] font-normal leading-[normal]'><Link href="/">Honeypot Finance</Link></p>
         </NavbarBrand>
       </NavbarContent>
 

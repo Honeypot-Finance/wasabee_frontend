@@ -18,6 +18,10 @@ import { IoClose } from "react-icons/io5";
 import { Token } from "@/services/contract/token";
 import { observer } from "mobx-react-lite";
 import { liquidity } from "@/services/liquidity";
+import { useEffect, useMemo, useState } from "react";
+import { isEthAddress } from "@/lib/address";
+import { useOnce } from "@/lib/hooks";
+import { useAccount } from "wagmi";
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
   value?: Token | null;
@@ -26,6 +30,36 @@ type TokenSelectorProps = {
 export const TokenSelector = observer(
   ({ onSelect, value }: TokenSelectorProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isConnected } = useAccount()
+    const [search, setSearch] = useState('');
+    const tokens = useMemo(() => {
+      if (!search) {
+        return liquidity.tokens
+      }
+      const isEthAddr = isEthAddress(search)
+      if (isEthAddr) {
+        const filterToken =  liquidity.tokens?.find((token) => {
+          return token.address.toLowerCase() === search.toLocaleLowerCase()
+        })
+        if (filterToken) {
+          return [filterToken]
+        }
+        const token = new Token({
+          address: search
+        })
+        token.getBalance()
+        liquidity.tokensMap[search] = token
+        return [token]
+      } else {
+        return liquidity.tokens?.filter((token) => {
+          return token.name?.toLowerCase().includes(search) || token.symbol?.toLowerCase().includes(search)
+        })
+      }
+ 
+    }, [search, liquidity.tokens])
+    useOnce(() => {
+      liquidity.tokens.forEach(t => t.getBalance())
+    }, [liquidity.tokens, isConnected])
     return (
       <Popover
         isOpen={isOpen}
@@ -57,6 +91,9 @@ export const TokenSelector = observer(
               <Input
                 placeholder="Search token by symbol or address"
                 // className=" bg-transparent"
+                onChange={(e) => {
+                   setSearch(e.target.value)
+                }}
                 classNames={{
                   inputWrapper: "bg-transparent",
                 }}
@@ -69,7 +106,7 @@ export const TokenSelector = observer(
               <div>
                 <div></div>
                 <div className="max-h-[300px] overflow-auto">
-                  {liquidity.tokens?.map((token) => {
+                  {tokens.map((token) => {
                     return (
                       <div
                         key={token.address}

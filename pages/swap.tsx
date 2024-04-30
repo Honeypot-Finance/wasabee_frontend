@@ -5,11 +5,13 @@ import { ExchangeSvg } from "@/components/svg/exchange";
 import { TokenSelector } from "@/components/TokenSelector";
 import { Button } from "@/components/button";
 import { Card, CardBody } from "@nextui-org/react";
-import { trpcClient } from "@/lib/trpc";
+import { trpc, trpcClient } from "@/lib/trpc";
 import { useEffect } from "react";
 import { liquidity } from "@/services/liquidity";
 import { swap } from "@/services/swap";
 import { observer } from "mobx-react-lite";
+import { wallet } from "@/services/wallet";
+import { useAccount } from "wagmi";
 
 const SwapItemLabel = ({ label, value }: { label: string; value: string }) => {
   return (
@@ -46,9 +48,12 @@ const SwapCard = observer(() => {
                 Max
               </div>
             </div>
-            <TokenSelector value={swap.fromToken} onSelect={(token) => {
-              swap.setFromToken(token)
-            }}></TokenSelector>
+            <TokenSelector
+              value={swap.fromToken}
+              onSelect={(token) => {
+                swap.setFromToken(token);
+              }}
+            ></TokenSelector>
           </div>
         </div>
         <div className="flex w-full items-center gap-[5px]">
@@ -59,21 +64,32 @@ const SwapCard = observer(() => {
         <div className="flex justify-between  items-center w-full">
           <SwapItemLabel label="To" value="0.0"></SwapItemLabel>
           <div>
-            <TokenSelector value={swap.toToken} onSelect={(token) => {
-              swap.setToToken(token)
-            }}></TokenSelector>
+            <TokenSelector
+              value={swap.toToken}
+              onSelect={(token) => {
+                swap.setToToken(token);
+              }}
+            ></TokenSelector>
           </div>
         </div>
         <Button>Swap</Button>
       </div>
     </div>
   );
-})
+});
 
-const Swap: NextLayoutPage = ({ pairs}) => {
+const Swap: NextLayoutPage = () => {
+  const { chainId } = useAccount()
+  const { data: pairsMap } = trpc.pair.getPairs.useQuery({
+    chainId: chainId as number,
+  }, {
+    enabled: !!chainId,
+  });
   useEffect(() => {
-     liquidity.initPool(pairs)
-  }, [])
+    if (pairsMap) {
+      liquidity.initPool(Object.values(pairsMap));
+    }
+  }, [pairsMap]);
   return (
     <div className="flex justify-center gap-[44px] flex-wrap">
       <Image
@@ -87,15 +103,15 @@ const Swap: NextLayoutPage = ({ pairs}) => {
   );
 };
 
-export const getStaticProps = async (context: any) => {
-  // prefetch `post.byId`
-  const pairsMap = await trpcClient.pair.getPairs.query();
-  return {
-    props: {
-      pairs: Object.values(pairsMap),
-    },
-    revalidate: 5,
-  };
-};
+// export const getStaticProps = async (context: any) => {
+//   // prefetch `post.byId`
+//   const pairsMap = await trpcClient.pair.getPairs.query();
+//   return {
+//     props: {
+//       pairs: Object.values(pairsMap),
+//     },
+//     revalidate: 5,
+//   };
+// };
 
 export default Swap;

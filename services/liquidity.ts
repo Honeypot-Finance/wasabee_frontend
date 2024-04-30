@@ -37,11 +37,15 @@ class Liquidity {
 
 
   get routerV2Contract() {
-    return wallet.currentChain?.contracts.routerV2
+    return wallet.contracts.routerV2
   }
 
   get factoryContract() {
-    return wallet.currentChain?.contracts.factory
+    return wallet.contracts.factory
+  }
+
+  get myPairs() {
+    return this.pairs.filter((pair) => pair.token0LpBalance.gt(0) || pair.token1LpBalance.gt(0))
   }
 
   constructor() {
@@ -74,8 +78,8 @@ class Liquidity {
       .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
       .toFixed()
     await Promise.all([
-      this.fromToken.approve(token0AmountWithDec, this.routerV2Contract?.address as string),
-      this.toToken.approve(token1AmountWithDec, this.routerV2Contract?.address as string),
+      this.fromToken.approve(token0AmountWithDec, this.routerV2Contract.address as string),
+      this.toToken.approve(token1AmountWithDec, this.routerV2Contract.address as string),
     ])
     const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20 // 20 mins time
     const args: any [] = [
@@ -89,7 +93,7 @@ class Liquidity {
       deadline,
     ]
     // @ts-ignore
-    await this.routerV2Contract?.contract?.write.addLiquidity(args)
+    await this.routerV2Contract.contract.write.addLiquidity(args)
     await Promise.all([this.fromToken.getBalance(), this.toToken.getBalance()])
   }
 
@@ -119,56 +123,22 @@ class Liquidity {
       this.tokensMap[token0.address] = token0
       this.tokensMap[token1.address] = token1
       this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract
+      pairContract.init()
       return pairContract
     })
   }
-  // async getPools() {
-  //   try {
-  //     this.liquidityLoading = true
-  //     const pairsTokensMap = {}
-  //     const poolsLength = await this.factoryContract.allPairsLength()
-  //     const poolAddresses = await Promise.all(
-  //       Array.from({ length: poolsLength }).map((i, index) => {
-  //         return this.factoryContract.allPairs(index)
-  //       })
-  //     )
-  //     this.pairs = (await Promise.all(poolAddresses.map(async (poolAddress) => {
-  //       const pairContract = new PairContract({
-  //         address: poolAddress,
-  //       })
-  //       return pairContract
-  //     })))
-  //     // .filter((pair) => pair.token.balance.gt(0))
-  //     this.pairsByToken = (
-  //       await Promise.all(
-  //         this.pairs.map(async (pair) => {
-  //           await pair.init()
-  //           return pair
-  //         })
-  //       )
-  //     ).reduce((acc, cur) => {
-  //       pairsTokensMap[cur.token0.address] = cur.token0
-  //       pairsTokensMap[cur.token1.address] = cur.token1
-  //       return acc
-  //     }, {})
-  //     this.pairsTokens = Object.values(pairsTokensMap)
-  //     console.log('this.pairsTokens', this.pairsTokens)
-  //     swap.fromToken = this.pairs[0]?.token0 || new Token({})
-  //     swap.toToken = this.pairs[0]?.token1 || new Token({})
-  //   } catch (error) {
-  //     console.error(error,'this.liquidityLoading')
-  //   }
-  //   this.liquidityLoading = false
-  // }
 
   async getPairByTokens(token0Address: string, token1Address: string) {
-     if (this.pairsByToken[`${token0Address}-${token1Address}`] || this.pairsByToken[`${token1Address}-${token0Address}`]) {
-        const pairContract =  this.pairsByToken[`${token0Address}-${token1Address}`]
-        return pairContract
+    const memoryPair = this.pairsByToken[`${token0Address}-${token1Address}`] || this.pairsByToken[`${token1Address}-${token0Address}`]
+     if (memoryPair) {
+        memoryPair.init()
+        return memoryPair
      }
-    const pair = await trpcClient.pair.getPairByTokens.query({token0Address, token1Address})
+    const pair = await trpcClient.pair.getPairByTokens.query({chainId: wallet.currentChainId,token0Address, token1Address})
     if (pair) {
        const pairContract =  new PairContract({...pair})
+       pairContract.init()
+       this.pairsByToken[`${token0Address}-${token1Address}`] = pairContract
        return pairContract
     }
   }

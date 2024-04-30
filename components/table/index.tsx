@@ -1,0 +1,99 @@
+import { PaginationState } from "@/services/utils";
+import { Pagination, PaginationProps, Spinner } from "@nextui-org/react";
+import { observer, useLocalObservable } from "mobx-react-lite";
+import { use, useEffect } from "react";
+
+export type Column<T> = {
+  title: string;
+  dataKey: keyof T;
+  render?: (value: any) => JSX.Element;
+};
+
+export type TableProps<T extends Record<string, any>> = {
+  columns: Column<T>[];
+  datasource: T[];
+  paginationProps?: PaginationProps;
+  pagination?: PaginationState;
+  isLoading?: boolean;
+  rowKey: string;
+};
+
+export const NoData = () => {
+  return (
+    <div className="flex justify-center items-center h-[200px] text-[rgba(255,255,255,0.55)] text-sm font-bold leading-4">
+      No Data
+    </div>
+  );
+};
+
+function TableBase<T extends Record<string, any>>({
+  columns,
+  datasource,
+  paginationProps,
+  pagination,
+  isLoading,
+  rowKey
+}: TableProps<T>) {
+  const state = useLocalObservable(() => ({
+    pagination: pagination || new PaginationState({
+      total: datasource.length,
+    }),
+    datasource,
+    setDatasource(datasource: T[]) {
+      this.datasource = datasource;
+      if (!pagination) {
+        this.pagination.setTotal(datasource.length);
+      }
+    },
+    get tableData() {
+      return pagination? this.datasource : this.datasource.slice(
+        state.pagination.offset,
+        state.pagination.end
+      );
+    },
+  }));
+  useEffect(() => {
+    state.setDatasource(datasource || []);
+  }, [datasource]);
+  
+  return (
+    <>
+      <div className="flex flex-col">
+        <div className="flex text-[rgba(255,255,255,0.55)] text-sm font-bold leading-4">
+          {columns.map((column) => (
+            <div className="flex-1 p-[16px]" key={column.dataKey as string}>{column.title}</div>
+          ))}
+        </div>
+        
+        {
+          isLoading ? <Spinner /> :
+          <div>
+            {state.tableData?.length ? state.tableData.map((data, index) => (
+          <div key={data[rowKey] || index} className="flex relative border-bottom">
+            {columns.map((column) => (
+              <div className="flex-1 p-[16px]" key={column.dataKey as string}>
+                {column.render
+                  ? column.render(data[column.dataKey])
+                  : data[column.dataKey]}
+              </div>
+            ))}
+          </div>
+        )) : <NoData></NoData>}
+          </div>
+        }
+      </div>
+      {state.pagination.total > state.pagination.limit &&  <Pagination
+        className="flex justify-center mt-[12px]"
+        total={state.pagination.totalPage}
+        page={state.pagination.page}
+        initialPage={state.pagination.page}
+        onChange={(page) => {
+          state.pagination.onPageChange(page);
+        }}
+        {...paginationProps}
+      />}
+    </>      
+  );
+}
+
+export const Table = observer(TableBase);

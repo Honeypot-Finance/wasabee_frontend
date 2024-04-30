@@ -1,5 +1,5 @@
 import { createPublicClient, getContract, http, fallback } from "viem";
-import { polygonMumbai,Chain } from 'viem/chains';
+import {Chain } from 'viem/chains';
 
 export const createPublicClientByChain = (chain: Chain) => createPublicClient({
     chain: chain,

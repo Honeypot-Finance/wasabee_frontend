@@ -11,12 +11,11 @@ export class RouterV2Contract implements BaseContract {
   name: string = ''
   abi: any[] = routerV2ABI
   get contract () {
-    return wallet.currentChain?.publicClient ? getContract({
-      // @ts-ignore
-      address: this.address,
+    return  getContract({
+      address: this.address as `0x${string}`,
       abi: this.abi,
       client: wallet.walletClient
-    }) : null
+    })
   }
   constructor(args: Partial<RouterV2Contract>) {
     Object.assign(this, args)

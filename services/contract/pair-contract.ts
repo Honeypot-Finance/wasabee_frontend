@@ -28,6 +28,7 @@ export class PairContract implements BaseContract {
   midPrice0: BigNumber = new BigNumber(1);
   midPrice1: BigNumber = new BigNumber(1);
   isInit = false;
+  isLoading = false
 
   get token0LpBalance() {
     return !new BigNumber(this.totalSupply || 0).eq(0)
@@ -45,13 +46,13 @@ export class PairContract implements BaseContract {
       : new BigNumber(0);
   }
   get liquidityDisplay() {
-    return `${this.token0LpBalance.toFixed(2)} ${
-      this.token0.symbol
-    } - ${this.token1LpBalance.toFixed(2)} ${this.token1.symbol}`;
+    return `${this.token0LpBalance.toFixed(3)} ${
+      this.token0.displayName
+    } - ${this.token1LpBalance.toFixed(3)} ${this.token1.displayName}`;
   }
 
   get poolName() {
-    return this.token0.symbol + "-" + this.token1.symbol;
+    return this.token0.displayName + "-" + this.token1.displayName;
   }
 
   get contract() {
@@ -69,7 +70,7 @@ export class PairContract implements BaseContract {
   }
 
   get routerV2Contract() {
-    return wallet.currentChain?.contracts?.routerV2;
+    return wallet.contracts.routerV2
   }
 
   constructor(args: Partial<PairContract>) {
@@ -118,8 +119,20 @@ export class PairContract implements BaseContract {
     this.totalSupply = new BigNumber(totalSupply?.toString() || 0);
   }
 
-  async init() {
-    await this.getReserves()
+  async init(force = false) {
+    if (this.isLoading) {
+      return
+    }
+    this.isLoading = true
+    if (force || !this.isInit) {
+      try {
+        await this.getReserves()
+      } catch (error) {
+        throw error
+      }finally {
+        this.isLoading = false
+      }
+    }
   }
   async removeLiquidity(percent: number) {
     const liquidity = this.token.balance

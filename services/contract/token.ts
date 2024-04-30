@@ -5,6 +5,7 @@ import faucetABI from '~/static/abis/faucet.json'
 import { wallet } from '../wallet'
 import { makeAutoObservable } from 'mobx'
 import { getContract } from 'viem';
+import { ContractWrite } from '../utils'
 
 export class Token implements BaseContract {
   address: string = ''
@@ -19,20 +20,19 @@ export class Token implements BaseContract {
     return this.symbol || this.name
   }
   get faucetContract () {
-    return wallet.currentChain?.publicClient ? getContract({
-      // @ts-ignore
-      address: this.address,
+    return  getContract({
+      address: this.address as `0x${string}`,
       abi: faucetABI,
       client: { public: wallet.currentChain.publicClient, wallet: wallet.walletClient }
-    }) : null
+    })
   }
   get contract () {
-    return wallet.currentChain?.publicClient ? getContract({
+    return getContract({
       // @ts-ignore
       address: this.address,
       abi: this.abi,
       client: { public: wallet.currentChain.publicClient, wallet: wallet.walletClient }
-    }) : null
+    })
   }
 
   constructor({ balance, ...args }: Partial<Token>) {
@@ -43,6 +43,12 @@ export class Token implements BaseContract {
     makeAutoObservable(this)
   }
 
+  faucet = new ContractWrite(async () => {
+    return this.faucetContract?.write.faucet([], {
+      account: wallet.account
+    })
+  })
+
   async approve(amount: string, spender: string) {
     const allowance = await this.contract?.read.allowance([wallet.account, spender])
     if (new BigNumber((allowance as any).toString()).gte(new BigNumber(amount))) {
@@ -52,10 +58,6 @@ export class Token implements BaseContract {
     await this.contract?.write.approve(args)
   }
 
-  async faucet() {
-    await this.faucetContract?.write.faucet([])
-    await this.getBalance()
-  }
 
   async getBalance() {
     const balance = await this.contract?.read.balanceOf([wallet.account])

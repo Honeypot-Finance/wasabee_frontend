@@ -5,49 +5,61 @@ import z from "zod";
 import { pairByTokensLoader, tokenLoader } from "@/lib/dataloader/pair";
 import { getContract } from "viem";
 import { createPublicClientByChain } from "@/lib/client";
-import { polygonMumbai } from "wagmi/chains";
 import { kv } from "@vercel/kv";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import PQueue from "p-queue";
-import { polygonMumbaiChain } from "@/lib/chain";
+import { getCacheKey } from "@/lib/cache";
+import { networksMap } from "@/services/chain";
 
 const queue = new PQueue({ concurrency: 10 });
-
-const client = createPublicClientByChain(polygonMumbaiChain);
-
-const factoryContract = getContract({
-  // @ts-ignore
-  address: "0x333bB9e7Aa8E02017E92cBAe2A8D500be7c0B95F",
-  abi: factoryABI,
-  client,
-});
 
 export const pairRouter = router({
   getPairByIndex: publicProcedure
     .input(
       z.object({
-        index: z.number(),
+        chainId: z.number(),
+        startIndex: z.number(),
+        enIndex: z.number(),
       })
     )
     .query(async ({ input }) => {
-      const { index } = input;
+      // const { index } = input;
     }),
   getPairByTokens: publicProcedure
     .input(
       z.object({
+        chainId: z.number(),
         token0Address: z.string(),
         token1Address: z.string(),
       })
     )
     .query(async ({ input }) => {
-      const { token0Address, token1Address } = input;
-      return pairByTokensLoader.load(`${token0Address}-${token1Address}`);
+      const { token0Address, token1Address,chainId } = input;
+      return pairByTokensLoader.load(`${chainId}_${token0Address}-${token1Address}`);
     }),
-  getPairs: publicProcedure.query(async () => {
-    const length = (
+  getPairs: publicProcedure.input(z.object({
+    chainId: z.number(),
+  })).query(async ({input}) => {
+    const {chainId} = input
+    const currentNetwork = networksMap[chainId];
+    const factoryContract = getContract({
+      address: currentNetwork.contracts.factory as `0x${string}`,
+      abi: factoryABI,
+      // 1a. Insert a single client
+      client: {
+        public: createPublicClientByChain(currentNetwork.chain),
+      },
+    });
+    const length = Number((
       (await factoryContract.read.allPairsLength()) as BigInt
-    ).toString();
-    const allPairs = (await kv.get<Record<string, any>>("allPairs")) || {};
+    ).toString())
+    if (!length) {
+       return []
+    }
+    console.log('total pairs', length)
+    // await kv.del(getCacheKey(chainId, 'allPairs'));
+    const allPairs = (await kv.get<Record<string, any>>(getCacheKey(chainId, 'allPairs'))) || {};
+    // console.log(getCacheKey(chainId, 'allPairs'), allPairs) 
     Array.from({ length: Number(length) }).forEach(async (_, index) => {
       await queue.add(async () => {
         const pair = allPairs?.[index];
@@ -57,15 +69,17 @@ export const pairRouter = router({
             const pairContract = getContract({
               address: pairAddress as `0x${string}`,
               abi: IUniswapV2Pair.abi,
-              client,
+              client: {
+                public: createPublicClientByChain(currentNetwork.chain),
+              },
             });
             const [token0, token1] = await Promise.all([
               pairContract.read.token0(),
               pairContract.read.token1(),
             ]);
             const tokens = await Promise.all([
-              tokenLoader.load(token0 as `0x${string}`),
-              tokenLoader.load(token1 as `0x${string}`),
+              tokenLoader.load(`${chainId}_${token0}`),
+              tokenLoader.load(`${chainId}_${token1}`),
             ]);
             const pair = {
               address: pairAddress,
@@ -81,7 +95,7 @@ export const pairRouter = router({
       });
     });
     await queue.onIdle();
-    await kv.set("allPairs", allPairs);
+    await kv.set(getCacheKey(chainId, 'allPairs'), allPairs);
     return allPairs;
   }),
 });
