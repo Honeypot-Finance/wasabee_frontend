@@ -1,90 +1,37 @@
-import Image from "next/image";
 import { NextLayoutPage } from "@/types/nextjs";
 import { SwapSvg } from "@/components/svg/swap";
-import { ExchangeSvg } from "@/components/svg/exchange";
-import { TokenSelector } from "@/components/TokenSelector";
-import { Button } from "@/components/button";
-import { Card, CardBody } from "@nextui-org/react";
-import { trpc, trpcClient } from "@/lib/trpc";
+import { Tab, Tabs } from "@nextui-org/react";
+import { trpc } from "@/lib/trpc";
 import { useEffect } from "react";
 import { liquidity } from "@/services/liquidity";
-import { swap } from "@/services/swap";
-import { observer } from "mobx-react-lite";
-import { wallet } from "@/services/wallet";
 import { useAccount } from "wagmi";
+import { SwapCard } from "@/components/SwapCard";
+import { LPCard } from "@/components/LPCard";
+import { Slippage } from "@/components/SwapCard/Slippage";
+import { observer, useLocalObservable } from "mobx-react-lite";
 
-const SwapItemLabel = ({ label, value }: { label: string; value: string }) => {
-  return (
-    <div>
-      <div className="text-sub text-sm font-normal leading-3 tracking-[0.14px]">
-        {label}
-      </div>
-      <div className="mt-[8px] text-white text-right  text-[21px] font-bold leading-6">
-        {value}
-      </div>
-    </div>
+const Swap: NextLayoutPage = observer(() => {
+  const { chainId } = useAccount();
+  const state = useLocalObservable(() => ({
+    activeTab: "swap",
+    get isSwap(){
+      return state.activeTab === 'swap'
+    },
+    get isLp () {
+      return state.activeTab === 'lp'
+    },
+    setActiveTab(tab: string) {
+      this.activeTab = tab;
+    },
+  }));
+  const { data: pairsMap } = trpc.pair.getPairs.useQuery(
+    {
+      chainId: chainId as number,
+    },
+    {
+      enabled: !!chainId,
+    }
   );
-};
-
-const SwapCard = observer(() => {
-  return (
-    <div className="flex-0 w-[570px] h-[365px] max-w-full ">
-      <div>
-        <div>
-          <div className="flex w-[113px] h-[43px] justify-center items-center gap-[5.748px] [background:var(--Button-Gradient,linear-gradient(180deg,rgba(232,211,124,0.13)_33.67%,#FCD729_132.5%),#F7931A)] px-[14.369px] py-[7.184px] rounded-[21.553px] border-[0.718px] border-solid border-[rgba(247,147,26,0.37)]">
-            <SwapSvg></SwapSvg>
-            Swap
-          </div>
-        </div>
-        <div></div>
-      </div>
-      <div className="mt-[24px] flex flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
-        <div className="flex justify-between items-center w-full">
-          <SwapItemLabel label="From" value="0.0"></SwapItemLabel>
-          <div>
-            <div className="flex items-center">
-              <div className="text-sub text-[]">Balance:2.39</div>
-              <div className=" text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline">
-                Max
-              </div>
-            </div>
-            <TokenSelector
-              value={swap.fromToken}
-              onSelect={(token) => {
-                swap.setFromToken(token);
-              }}
-            ></TokenSelector>
-          </div>
-        </div>
-        <div className="flex w-full items-center gap-[5px]">
-          <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
-          <ExchangeSvg></ExchangeSvg>
-          <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
-        </div>
-        <div className="flex justify-between  items-center w-full">
-          <SwapItemLabel label="To" value="0.0"></SwapItemLabel>
-          <div>
-            <TokenSelector
-              value={swap.toToken}
-              onSelect={(token) => {
-                swap.setToToken(token);
-              }}
-            ></TokenSelector>
-          </div>
-        </div>
-        <Button>Swap</Button>
-      </div>
-    </div>
-  );
-});
-
-const Swap: NextLayoutPage = () => {
-  const { chainId } = useAccount()
-  const { data: pairsMap } = trpc.pair.getPairs.useQuery({
-    chainId: chainId as number,
-  }, {
-    enabled: !!chainId,
-  });
   useEffect(() => {
     if (pairsMap) {
       liquidity.initPool(Object.values(pairsMap));
@@ -92,16 +39,55 @@ const Swap: NextLayoutPage = () => {
   }, [pairsMap]);
   return (
     <div className="flex justify-center gap-[44px] flex-wrap">
-      <Image
+      {/* <Image
         src="/images/swap_statics.png"
         width={654}
         height={365}
         alt=""
-      ></Image>
-      <SwapCard></SwapCard>
+      ></Image> */}
+      <div className=" relative">
+        <Tabs
+          onSelectionChange={(tab) => {
+            state.setActiveTab(tab as string);
+          }}
+          selectedKey={state.activeTab}
+          disableAnimation
+          classNames={{
+            tab: "p-0 h-auto  rounded-[21.553px] data-[selected:true]:border-[0.718px] data-[selected=true]:[background:var(--Button-Gradient,linear-gradient(180deg,rgba(232,211,124,0.13)_33.67%,#FCD729_132.5%),#F7931A)]",
+            tabList: "gap-0 p-0 bg-transparent",
+            panel: "p-0 pt-[24px]  w-[569px]",
+          }}
+        >
+          <Tab
+            key={"swap"}
+            title={
+              <div className="flex w-[113px] h-[43px] justify-center items-center gap-[5.748px]  px-[14.369px] py-[7.184px]  border-solid border-[rgba(247,147,26,0.37)]">
+                {state.isSwap && <SwapSvg></SwapSvg>}
+                Swap
+              </div>
+            }
+          >
+            <SwapCard></SwapCard>
+          </Tab>
+          <Tab
+            key={"lp"}
+            title={
+              <div className="flex w-[113px] h-[43px] justify-center items-center gap-[5.748px] px-[14.369px] py-[7.184px]   border-solid border-[rgba(247,147,26,0.37)]">
+                {state.isLp && <SwapSvg></SwapSvg>}
+                LP Token
+              </div>
+            }
+          >
+            <LPCard></LPCard>
+          </Tab>
+        </Tabs>
+        {state.isSwap && <div className=" absolute right-0 top-0">
+          <Slippage onSelect={() => {}}></Slippage>
+        </div>}
+      </div>
     </div>
   );
-};
+});
 
 // export const getStaticProps = async (context: any) => {
 //   // prefetch `post.byId`

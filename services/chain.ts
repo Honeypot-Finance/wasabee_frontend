@@ -10,6 +10,9 @@ export class Network {
   contracts!: {
     routerV2: string;
     factory: string;
+    ftoFactory: string;
+    ftoFacade: string;
+    ftoToken: string;
   };
   faucetTokens: Token [] = [];
   chain!: Chain;
@@ -22,12 +25,15 @@ export class Network {
     Object.assign(this, args);
   }
 }
-
 export const polygonTestNetwork = new Network({
   chain: polygonMumbaiChain,
   contracts: {
     routerV2: "0x2ef225538c9FcE4641e038Fd6FA64cA5519cF971",
     factory: "0x333bB9e7Aa8E02017E92cBAe2A8D500be7c0B95F",
+    ftoFactory: "0x5AD84056574066c774C5e58BC4a0652b6c171253",
+    ftoFacade: "0xe67a15AeBD845C779BF6672442567b1C66de34C2",
+    ftoToken: "0x878fd3Ccf564Cc2e38EEdDd798F88D8f8a51a1dD",
+
   },
   faucetTokens: [
     {
@@ -62,6 +68,9 @@ export const berachainTestNetwork = new Network({
   contracts: {
     routerV2: "0x51e4fF69060CD62dE1a9374799a0BddeB55cb1E4",
     factory: "0x5C4cDd0160c0CB4C606365dD98783064335A9ce0",
+    ftoFactory: "",
+    ftoFacade: "",
+    ftoToken: "",
   },
   faucetTokens: [
     {
@@ -96,6 +105,9 @@ export const sepoliaNetwork = new Network({
   contracts: {
     routerV2: "0x8f56eafeab1a0b6DDF403fe81d29f8dA36f8c6fd",
     factory: "0x228434D50B329f7EE075b0151a21a36CAd3C8809",
+    ftoFactory: "0xe92630ECcb40a265D32C124865fd82DCdfBC8c7B",
+    ftoFacade: "0x61fac63452732aF081f532e0B25A8C1323D2A75a",
+    ftoToken: "0x5c221868bCD2Fb371a0cD0ACedfD63c0C29938A2",
   },
   faucetTokens: [],
 });

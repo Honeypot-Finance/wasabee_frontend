@@ -7,24 +7,8 @@ import { config } from "@/config/wagmi";
 import { networksMap } from "@/services/chain";
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
-  const { address, chainId} = useAccount();
-  const { data: walletClient } = useConnectorClient({
-    config
-  }) 
+  const { chainId} = useAccount();
   const currentChain = chainId ? networksMap[chainId] : null
-  useEffect(() => {
-    if (address && chainId && currentChain) {
-      wallet.initWallet({
-        chainId,
-        account: address,
-      });
-    }
-  }, [address, chainId]);
-  useEffect(() => {
-    if (walletClient) {
-      wallet.setWalletClient(walletClient as any)
-    }
-  }, [walletClient])
   return (
     <div className="flex flex-col min-h-screen overflow-auto">
       <Header></Header>

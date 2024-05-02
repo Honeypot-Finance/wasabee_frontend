@@ -111,7 +111,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
           
         </Tabs>
         <div className="flex top-0 absolute right-0 p-[0.25rem]">
-           <Input className="369px"></Input>
+           <Input className="w-[369px]"></Input>
            <Button className="ml-[20px]">Create</Button>
         </div>
       </div>

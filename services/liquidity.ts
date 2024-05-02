@@ -56,6 +56,14 @@ class Liquidity {
     this.currentRemovePair = new PairContract(pair)
   }
 
+  setFromToken(token: Token) {
+    this.fromToken = token
+  }
+
+  setToToken(token: Token) {
+    this.toToken = token
+  }
+
 
 
   switchTokens() {

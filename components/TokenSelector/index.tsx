@@ -132,34 +132,6 @@ export const TokenSelector = observer(
           )}
         </PopoverContent>
       </Popover>
-      // <Dropdown>
-      //   <DropdownTrigger>
-      //     <button
-      //       type="button"
-      //       className="inline-flex w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]"
-      //     >
-      //       <span></span>
-      //       <DropdownSvg></DropdownSvg>
-      //     </button>
-      //   </DropdownTrigger>
-      //   <DropdownMenu  className="flex w-[352px] flex-col items-center gap-4 border border-[color:var(--card-stroke,#F7931A)] [background:var(--card-color,#271A0C)] rounded-xl border-solid">
-      //     <DropdownItem showDivider closeOnSelect={false} >
-      //       <div className="bg-transparent">
-
-      //       </div>
-      //     </DropdownItem>
-      //     <DropdownSection title="Most popular">
-      //       <DropdownItem   closeOnSelect={true} key="new" description="Create a new file">
-      //         New file
-      //       </DropdownItem>
-      //     </DropdownSection>
-      //     <DropdownSection title="Tokens">
-      //       <DropdownItem  closeOnSelect={true} key="new1" description="Create a new file">
-      //         New file
-      //       </DropdownItem>
-      //     </DropdownSection>
-      //   </DropdownMenu>
-      // </Dropdown>
     );
   }
 );

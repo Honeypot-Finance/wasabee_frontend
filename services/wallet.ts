@@ -36,12 +36,6 @@ export class Wallet {
     }
   }
 
-
-  // get routerV2Contract () {
-  //   return new RouterV2Contract
-  // }
-
-
   constructor(args: Partial<Wallet>) {
     this.networks = networks
     makeAutoObservable(this)
