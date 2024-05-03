@@ -33,6 +33,10 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
       path: "/pools",
       title: "Pools",
     },
+    {
+      path: "/launch",
+      title: "Lauch",
+    },
   ];
 
   return (
@@ -43,19 +47,28 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
     //     </div>
     //     <Nav></Nav>
     // </div>
-    <Navbar onMenuOpenChange={setIsMenuOpen} classNames={{
-      wrapper: "max-w-[1200px]"
-    }} className={clsx("h-[63px] bg-default", props.className)} style={{
-      backdropFilter: "none"
-    }}>
+    <Navbar
+      onMenuOpenChange={setIsMenuOpen}
+      classNames={{
+        wrapper: "max-w-[1200px]",
+      }}
+      className={clsx("h-[63px]", props.className)}
+      style={{
+        backdropFilter: "none",
+      }}
+    >
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden  text-[white]"
         />
-        <NavbarBrand >
-          <Link href="/"><Logo /></Link>
-          <p className='ml-[4px] w-[171px] h-8 text-[#FFCD4D] [font-family:"Bebas_Neue"] text-[28.927px] font-normal leading-[normal]'><Link href="/">Honeypot Finance</Link></p>
+        <NavbarBrand>
+          <Link href="/">
+            <Logo />
+          </Link>
+          <p className='ml-[4px] w-[171px] h-8 text-[#FFCD4D] [font-family:"Bebas_Neue"] text-[28.927px] font-normal leading-[normal]'>
+            <Link href="/">Honeypot Finance</Link>
+          </p>
         </NavbarBrand>
       </NavbarContent>
 
@@ -67,8 +80,10 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
               className={clsx(
                 "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
                 router.pathname === m.path
-                  ? " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
-                  : "hover:opacity-60"
+                  ? router.pathname === "/launch"
+                    ? "font-bold"
+                    : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
+                  : "hover:opacity-100 opacity-60"
               )}
             >
               {m.title}
@@ -80,7 +95,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
         {/* <NavbarItem className="hidden lg:flex">
           <Link href="#">Login</Link>
         </NavbarItem> */}
-     <WalletConnect></WalletConnect>
+        <WalletConnect></WalletConnect>
       </NavbarContent>
       <NavbarMenu>
         {menuList.map((m, index) => (

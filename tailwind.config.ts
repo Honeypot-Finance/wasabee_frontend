@@ -6,10 +6,16 @@ const config: Config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/.pnpm/@nextui-org+theme@2.1.18_tailwindcss@3.4.1/node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"
+    "./node_modules/.pnpm/@nextui-org+theme@2.1.18_tailwindcss@3.4.1/node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
+      colors: {
+        "gold-primary": "#e8c24a",
+      },
+      fontSize: {
+        ss: ['0.8125rem', '1.125rem'],
+      },
       fontFamily: {
         display: "Oswald, ui-serif", // Adds a new `font-display` class
       },
@@ -27,21 +33,22 @@ const config: Config = {
   },
   darkMode: "class",
   plugins: [
-     nextui({
-    // defaultTheme: "dark",
-    themes: {
-      dark: {
-        colors: {
-          primary: "#FFCD4D",
-          btn: "var(--Button-Gradient,linear-gradient(180deg,rgba(232,211,124,0.13)_33.67%,#FCD729_132.5%),#F7931A)",
-          gray: {
-            100: "#f7fafc",
-            // ...
-            900: "#1a202c",
+    nextui({
+      // defaultTheme: "dark",
+      themes: {
+        dark: {
+          colors: {
+            primary: "#FFCD4D",
+            btn: "var(--Button-Gradient,linear-gradient(180deg,rgba(232,211,124,0.13)_33.67%,#FCD729_132.5%),#F7931A)",
+            gray: {
+              100: "#f7fafc",
+              // ...
+              900: "#1a202c",
+            },
           },
-        }
-      }
-    }
-  })],
+        },
+      },
+    }),
+  ],
 };
 export default config;
