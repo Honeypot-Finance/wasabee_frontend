@@ -1,4 +1,5 @@
-import { Input, InputProps } from "@nextui-org/react";
+import { InputProps } from "@nextui-org/react";
+import { Input } from '../input/index';
 
 export const SwapAmount = ({
     label,
@@ -15,9 +16,6 @@ export const SwapAmount = ({
         <Input
           type="number"
           placeholder="0.0"
-          classNames={{
-            inputWrapper: "bg-transparent",
-          }}
           className="mt-[8px] text-white text-right text-[21px] font-bold leading-6 placeholder:text-[rgba(255,255,255,0.50)]"
           {...inputProps}
         />

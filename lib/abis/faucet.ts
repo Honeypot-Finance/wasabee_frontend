@@ -1,4 +1,4 @@
-[
+export const  faucetABI = [
   {
     "type": "function",
     "stateMutability": "nonpayable",
@@ -15,4 +15,4 @@
       { "type": "address", "name": "account", "internalType": "address" }
     ]
   }
-]
+] as const

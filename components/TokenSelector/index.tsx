@@ -1,11 +1,5 @@
 import {
   Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownSection,
-  DropdownTrigger,
-  Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -18,10 +12,13 @@ import { IoClose } from "react-icons/io5";
 import { Token } from "@/services/contract/token";
 import { observer } from "mobx-react-lite";
 import { liquidity } from "@/services/liquidity";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { isEthAddress } from "@/lib/address";
 import { useOnce } from "@/lib/hooks";
 import { useAccount } from "wagmi";
+import { Input } from "../input/index";
+import { SpinnerContainer } from "../Spinner";
+import { NoData } from "../table";
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
   value?: Token | null;
@@ -30,36 +27,38 @@ type TokenSelectorProps = {
 export const TokenSelector = observer(
   ({ onSelect, value }: TokenSelectorProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { isConnected } = useAccount()
-    const [search, setSearch] = useState('');
+    const { isConnected } = useAccount();
+    const [search, setSearch] = useState("");
     const tokens = useMemo(() => {
       if (!search) {
-        return liquidity.tokens
+        return liquidity.tokens;
       }
-      const isEthAddr = isEthAddress(search)
+      const isEthAddr = isEthAddress(search);
       if (isEthAddr) {
-        const filterToken =  liquidity.tokens?.find((token) => {
-          return token.address.toLowerCase() === search.toLocaleLowerCase()
-        })
+        const filterToken = liquidity.tokens?.find((token) => {
+          return token.address.toLowerCase() === search.toLocaleLowerCase();
+        });
         if (filterToken) {
-          return [filterToken]
+          return [filterToken];
         }
         const token = new Token({
-          address: search
-        })
-        token.getBalance()
-        liquidity.tokensMap[search] = token
-        return [token]
+          address: search,
+        });
+        token.getBalance();
+        liquidity.tokensMap[search] = token;
+        return [token];
       } else {
         return liquidity.tokens?.filter((token) => {
-          return token.name?.toLowerCase().includes(search) || token.symbol?.toLowerCase().includes(search)
-        })
+          return (
+            token.name?.toLowerCase().includes(search) ||
+            token.symbol?.toLowerCase().includes(search)
+          );
+        });
       }
- 
-    }, [search, liquidity.tokens])
+    }, [search, liquidity.tokens]);
     useOnce(() => {
-      liquidity.tokens.forEach(t => t.getBalance())
-    }, [liquidity.tokens, isConnected])
+      liquidity.tokens.forEach((t) => t.getBalance());
+    }, [liquidity.tokens, isConnected]);
     return (
       <Popover
         isOpen={isOpen}
@@ -92,10 +91,7 @@ export const TokenSelector = observer(
                 placeholder="Search token by symbol or address"
                 // className=" bg-transparent"
                 onChange={(e) => {
-                   setSearch(e.target.value)
-                }}
-                classNames={{
-                  inputWrapper: "bg-transparent",
+                  setSearch(e.target.value);
                 }}
                 isClearable={true}
                 // labelPlacement="outside"
@@ -105,28 +101,30 @@ export const TokenSelector = observer(
               <Divider className="my-4" />
               <div>
                 <div></div>
-                <div className="max-h-[300px] overflow-auto">
-                  {tokens.map((token) => {
-                    return (
-                      <div
-                        key={token.address}
-                        onClick={() => {
-                          onSelect(token);
-                          onClose();
-                        }}
-                        className="py-[8px] px-[8px] rounded-[8px] flex justify-between items-center cursor-pointer hover:[background:rgba(255,255,255,0.04)]"
-                      >
-                        <div>
-                          <div>{token.name}</div>
-                          <div className="text-[rgba(255,255,255,0.50)] [font-kerning:none] [font-feature-settings:'calt'_off] [font-family:Inter] text-xs font-normal leading-[14px]">
-                            {token.symbol}
+                <SpinnerContainer isLoading={!liquidity.isInit}>
+                  <div className="max-h-[300px] overflow-auto">
+                    {tokens.length ? tokens.map((token) => {
+                      return (
+                        <div
+                          key={token.address}
+                          onClick={() => {
+                            onSelect(token);
+                            onClose();
+                          }}
+                          className="py-[8px] px-[8px] rounded-[8px] flex justify-between items-center cursor-pointer hover:[background:rgba(255,255,255,0.04)]"
+                        >
+                          <div>
+                            <div>{token.name}</div>
+                            <div className="text-[rgba(255,255,255,0.50)] [font-kerning:none] [font-feature-settings:'calt'_off] [font-family:Inter] text-xs font-normal leading-[14px]">
+                              {token.symbol}
+                            </div>
                           </div>
+                          <div>{token.balanceFormatted}</div>
                         </div>
-                        <div>{token.balance.toFormat(6)}</div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    }) : <NoData ></NoData>}
+                  </div>
+                </SpinnerContainer>
               </div>
             </div>
           )}

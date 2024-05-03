@@ -4,6 +4,6 @@ import { Contract } from 'ethcall'
 export interface BaseContract {
   address: string
   name: string
-  abi: any[]
+  abi: readonly any[]
 }
 

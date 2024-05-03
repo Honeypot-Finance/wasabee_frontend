@@ -24,7 +24,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
             </div>
             <Button isLoading={token.faucet.loading} className="ml-[13px]" onClick={async () => {
               await token.faucet.call()
-              token.getBalance()
+              await token.getBalance()
             }}>Claim Tokens</Button>
           </div>
         )) : <NoData></NoData>}

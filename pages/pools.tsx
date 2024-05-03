@@ -4,20 +4,25 @@ import { observer, useLocalObservable } from "mobx-react-lite";
 import { Table } from "@/components/table/index";
 import { trpc } from "@/lib/trpc";
 import { useEffect } from "react";
-import { Card, CardBody, Input, Tab, Tabs } from "@nextui-org/react";
-import { wallet } from "@/services/wallet";
+import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 import { useAccount } from "wagmi";
 import { PaginationState } from "@/services/utils";
 import { Button } from "@/components/button";
+import { Input } from "../components/input/index";
+import { LuPlus } from "react-icons/lu";
+import { IoSearchOutline } from "react-icons/io5";
+import { useRouter } from "next/router";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
+  const router = useRouter()
   const { data: pairsMap, isLoading } = trpc.pair.getPairs.useQuery(
     {
       chainId: chainId as number,
     },
     {
       enabled: !!chainId,
+      refetchOnWindowFocus: false,
     }
   );
   const state = useLocalObservable(() => ({
@@ -40,13 +45,11 @@ const PoolsPage: NextLayoutPage = observer(() => {
       }, {} as Record<string, (typeof this.columns)[number]>);
     },
     get pairsByPage() {
-      return liquidity.pairs
-        .slice(state.pagination.offset, state.pagination.end)
-        .map((pair) => {
-          pair.init();
-          return pair;
-        });
-    }
+      return liquidity.pairs.slice(
+        state.pagination.offset,
+        state.pagination.end
+      );
+    },
   }));
   useEffect(() => {
     if (pairsMap) {
@@ -108,11 +111,22 @@ const PoolsPage: NextLayoutPage = observer(() => {
               </CardBody>
             </Card>
           </Tab>
-          
         </Tabs>
-        <div className="flex top-0 absolute right-0 p-[0.25rem]">
-           <Input className="w-[369px]"></Input>
-           <Button className="ml-[20px]">Create</Button>
+        <div className="flex top-0 absolute right-0">
+          <Input
+            startContent={<IoSearchOutline></IoSearchOutline>}
+            placeholder="Search by name, symbol or address"
+            classNames={{
+              innerWrapper: "w-[369px] h-[32px]",
+            }}
+            className=" border [background:var(--card-color,#271A0C)] rounded-2xl border-solid border-[rgba(225,138,32,0.10)]"
+          ></Input>
+          <Button onClick={() => {
+            router.push("/swap#lp");
+          }} className="px-[12px] ml-[20px] w-[170px] h-[41px] outline-0 justify-center items-center gap-2.5 border-[color:var(--e-18-a-20,rgba(225,138,32,0.40))] [background:var(--e-18-a-20,rgba(225,138,32,0.40))] backdrop-blur-[10px] px-5 py-2.5 rounded-[100px] border-2 border-solid">
+            <LuPlus />
+            Create Pool
+          </Button>
         </div>
       </div>
     </div>

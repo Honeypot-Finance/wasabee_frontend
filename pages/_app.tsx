@@ -3,39 +3,27 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Layout } from "@/components/layout";
 import { NextLayoutPage } from "@/types/nextjs";
-import { WagmiProvider, useAccount, useConnectorClient } from "wagmi";
+import { WagmiProvider, useWalletClient } from "wagmi";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import "@rainbow-me/rainbowkit/styles.css";
 import { NextUIProvider } from "@nextui-org/react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { config } from "@/config/wagmi";
 import { trpc, trpcQueryClient } from "../lib/trpc";
-import { enableStaticRendering } from "mobx-react-lite";
-import { networksMap } from "@/services/chain";
 import { useEffect } from "react";
 import { wallet } from "@/services/wallet";
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
-  const { address, chainId } = useAccount();
-  const { data: walletClient } = useConnectorClient({
+  const { data: walletClient } = useWalletClient({
     config,
   });
-  const currentChain = chainId ? networksMap[chainId] : null;
   useEffect(() => {
-    if (address && chainId && currentChain) {
-      wallet.initWallet({
-        chainId,
-        account: address,
-      });
-    }
-  }, [address, chainId]);
-  useEffect(() => {
-    if (walletClient) {
-      wallet.setWalletClient(walletClient as any);
+    if (walletClient?.account) {
+      wallet.initWallet(walletClient);
     }
   }, [walletClient]);
   return children;
