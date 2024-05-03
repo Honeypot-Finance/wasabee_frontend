@@ -6,7 +6,7 @@ import BigNumber from "bignumber.js";
 import { wallet } from "./wallet";
 import { liquidity } from "./liquidity";
 import { exec } from "~/lib/contract";
-import { makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable, reaction, when } from "mobx";
 import { AsyncState } from "./utils";
 
 class Swap {
@@ -19,28 +19,43 @@ class Swap {
   deadline: number = 0;
 
   currentPair = new AsyncState<PairContract | undefined>(async () => {
+    console.log("this.fromToken", this.fromToken, this.toToken);  
     if (this.fromToken && this.toToken) {
-      return liquidity.getPairByTokens(
+      const res = await liquidity.getPairByTokens(
         this.fromToken.address,
         this.toToken.address
       );
+      console.log("currentPair", res);
+      return res
     }
   });
 
-  get fromAmountDecimals() {
-    return this.fromToken
-      ? new BigNumber(this.fromAmount)
-          .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
-          .toFixed()
-      : undefined;
+  //whether the sort of from and to token is consistent with the current pair's token0 and token1
+  get isTokenPairSortMatch() {
+    return (
+      this.fromToken?.address === this.currentPair.value?.token0.address &&
+      this.toToken?.address === this.currentPair.value?.token1.address
+    );
   }
 
-  get toAmountDecimals() {
-    return this.toToken
-      ? new BigNumber(this.toAmount).multipliedBy(
-          new BigNumber(10).pow(this.toToken.decimals)
-        )
-      : undefined;
+  get isDisabled() {
+    return !this.fromToken || !this.toToken || !this.fromAmount || !this.toAmount || !this.currentPair.value;
+  }
+
+  get buttonContent () {
+    if (!this.fromToken || !this.toToken) {
+      return 'Select Tokens'
+    }
+    if (!this.fromAmount || !this.toAmount) {
+      return 'Enter Amount'
+    }
+    if (this.currentPair.loading) {
+      return 'Loading Pair'
+    }
+    if (!this.currentPair.value) {
+      return 'Insufficient Liquidity'
+    }
+    return  'Swap'
   }
 
   get factoryContract() {
@@ -51,55 +66,93 @@ class Swap {
     return wallet.contracts.routerV2;
   }
 
+  // each from token amount can be swapped to how many to token
+  get price () {
+     return this.isTokenPairSortMatch ? this.currentPair.value?.midPrice0 : this.currentPair.value?.midPrice1
+  }
+
   constructor() {
-    reaction(
-      () => this.fromToken,
-      () => {
-        if (this.fromToken && this.toToken) {
-          this.currentPair.call();
-        }
-      }
-    );
-    reaction(
-      () => this.toToken,
-      () => {
-        if (this.fromToken && this.toToken) {
-          this.currentPair.call();
-        }
-      }
-    );
     makeAutoObservable(this);
+    reaction(
+      () => this.fromToken?.address,
+      () => {
+        this.currentPair.setValue(undefined);
+        if (this.fromToken && this.toToken) {
+          this.currentPair.call();
+        }
+      }
+    );
+    reaction(
+      () => this.toToken?.address,
+      () => {
+        this.currentPair.setValue(undefined);
+        if (this.fromToken && this.toToken) {
+          this.currentPair.call();
+        }
+      }
+    );
   }
 
   switchTokens() {
     const fromToken = this.fromToken;
     this.fromToken = this.toToken;
     this.toToken = fromToken;
+    this.fromAmount = ''
+    this.toAmount = ''
   }
 
   setFromToken(token: Token) {
-    this.fromToken = token;
+    if (this.fromToken?.address !== token.address) {
+      this.fromToken = token;
+      this.fromToken.getBalance()
+      this.fromAmount = "";
+    }
+
+  }
+
+  setFromAmount(amount: string) {
+    this.fromAmount = amount;
+    if (this.currentPair.value ) {
+      when(() => !!this.currentPair.value?.reserves, () => {
+         
+         this.toAmount = new BigNumber(this.fromAmount || 0 ).multipliedBy(this.price || 0).toFixed(2)
+      })
+    }
   }
 
   setToToken(token: Token) {
-    this.toToken = token;
+    if (this.toToken?.address !== token.address) {
+      this.toToken = token;
+      this.toToken.getBalance()
+      this.toAmount = "";
+    }
+  }
+
+  setToAmount(amount: string) {
+    this.toAmount = amount;
   }
 
   async swapExactTokensForTokens() {
-    if (!this.fromToken || !this.toToken || !swap.toAmountDecimals) {
+    if (!this.fromToken || !this.toToken || !this.fromAmount || !this.toAmount || !this.currentPair.value) {
       return;
     }
-    await this.fromToken.approve(
-      this.fromAmountDecimals?.toString() as string,
+    const fromAmountDecimals =  new BigNumber(this.fromAmount)
+    .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
+    .toFixed()
+    const toAmountDecimals = new BigNumber(this.toAmount).multipliedBy(
+      new BigNumber(10).pow(this.toToken.decimals)
+    ).toFixed()
+    await this.fromToken.approveIfNoAllowance(
+      fromAmountDecimals,
       this.routerV2Contract?.address as string
     );
     const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
     const path = [this.fromToken.address, this.toToken.address];
     const args: any[] = [
-      swap.fromAmountDecimals?.toString() as string,
-      new BigNumber(swap.toAmountDecimals)
-        .minus(new BigNumber(swap.toAmountDecimals).multipliedBy(this.slippage))
-        .toString(),
+      fromAmountDecimals,
+      new BigNumber(toAmountDecimals)
+        .minus(new BigNumber(toAmountDecimals).multipliedBy(this.slippage))
+        .toFixed(),
       path,
       wallet.account,
       deadline,

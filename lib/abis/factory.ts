@@ -1,4 +1,4 @@
-[
+export const factoryABI = [
   {
     "type": "constructor",
     "inputs": [
@@ -142,4 +142,4 @@
     "stateMutability": "nonpayable",
     "type": "function"
   }
-]
+] as const

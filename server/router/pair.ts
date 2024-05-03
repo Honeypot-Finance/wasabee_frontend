@@ -1,4 +1,4 @@
-import factoryABI from "~/static/abis/factory.json";
+import {factoryABI} from "@/lib/abis/factory";
 
 import { publicProcedure, router } from "../trpc";
 import z from "zod";

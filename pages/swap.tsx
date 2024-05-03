@@ -9,11 +9,13 @@ import { SwapCard } from "@/components/SwapCard";
 import { LPCard } from "@/components/LPCard";
 import { Slippage } from "@/components/SwapCard/Slippage";
 import { observer, useLocalObservable } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { getHash } from "@/lib/url";
 
 const Swap: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
   const state = useLocalObservable(() => ({
-    activeTab: "swap",
+    activeTab: getHash() || "swap",
     get isSwap(){
       return state.activeTab === 'swap'
     },
@@ -30,6 +32,7 @@ const Swap: NextLayoutPage = observer(() => {
     },
     {
       enabled: !!chainId,
+      refetchOnWindowFocus: false,
     }
   );
   useEffect(() => {
@@ -37,6 +40,14 @@ const Swap: NextLayoutPage = observer(() => {
       liquidity.initPool(Object.values(pairsMap));
     }
   }, [pairsMap]);
+  useEffect(() => {
+    window.onhashchange = () => {
+      const hash = getHash();
+      if (hash) {
+        state.setActiveTab(hash);
+      }
+    }
+  }, [])
   return (
     <div className="flex justify-center gap-[44px] flex-wrap">
       {/* <Image
@@ -45,7 +56,7 @@ const Swap: NextLayoutPage = observer(() => {
         height={365}
         alt=""
       ></Image> */}
-      <div className=" relative">
+      <div className=" relative w-[569px] max-w-full">
         <Tabs
           onSelectionChange={(tab) => {
             state.setActiveTab(tab as string);
@@ -55,11 +66,12 @@ const Swap: NextLayoutPage = observer(() => {
           classNames={{
             tab: "p-0 h-auto  rounded-[21.553px] data-[selected:true]:border-[0.718px] data-[selected=true]:[background:var(--Button-Gradient,linear-gradient(180deg,rgba(232,211,124,0.13)_33.67%,#FCD729_132.5%),#F7931A)]",
             tabList: "gap-0 p-0 bg-transparent",
-            panel: "p-0 pt-[24px]  w-[569px]",
+            panel: "p-0 pt-[24px]  ",
           }}
         >
           <Tab
             key={"swap"}
+            href="#swap"
             title={
               <div className="flex w-[113px] h-[43px] justify-center items-center gap-[5.748px]  px-[14.369px] py-[7.184px]  border-solid border-[rgba(247,147,26,0.37)]">
                 {state.isSwap && <SwapSvg></SwapSvg>}
@@ -71,6 +83,7 @@ const Swap: NextLayoutPage = observer(() => {
           </Tab>
           <Tab
             key={"lp"}
+            href="#lp"
             title={
               <div className="flex w-[113px] h-[43px] justify-center items-center gap-[5.748px] px-[14.369px] py-[7.184px]   border-solid border-[rgba(247,147,26,0.37)]">
                 {state.isLp && <SwapSvg></SwapSvg>}

@@ -1,11 +1,13 @@
-import ERC20ABI from '~/static/abis/erc20.json'
+
 import BigNumber from 'bignumber.js'
 import { BaseContract } from '.'
-import faucetABI from '~/static/abis/faucet.json'
 import { wallet } from '../wallet'
 import { makeAutoObservable } from 'mobx'
 import { getContract } from 'viem';
 import { ContractWrite } from '../utils'
+import { amountFormatted } from '@/lib/format'
+import { ERC20ABI } from '@/lib/abis/erc20';
+import { faucetABI } from '@/lib/abis/faucet';
 
 export class Token implements BaseContract {
   address: string = ''
@@ -23,15 +25,14 @@ export class Token implements BaseContract {
     return  getContract({
       address: this.address as `0x${string}`,
       abi: faucetABI,
-      client: { public: wallet.currentChain.publicClient, wallet: wallet.walletClient }
+      client: { public: wallet.publicClient, wallet: wallet.walletClient }
     })
   }
   get contract () {
     return getContract({
-      // @ts-ignore
-      address: this.address,
+      address: this.address  as `0x${string}`,
       abi: this.abi,
-      client: { public: wallet.currentChain.publicClient, wallet: wallet.walletClient }
+      client: { public: wallet.publicClient, wallet: wallet.walletClient }
     })
   }
 
@@ -43,24 +44,24 @@ export class Token implements BaseContract {
     makeAutoObservable(this)
   }
 
-  faucet = new ContractWrite(async () => {
-    return this.faucetContract?.write.faucet([], {
-      account: wallet.account
-    })
-  })
+  get faucet () {
+    return new ContractWrite(this.faucetContract.write?.faucet)
+  } 
+  get approve () {
+    return  new ContractWrite(this.contract.write?.approve)
+  }
 
-  async approve(amount: string, spender: string) {
-    const allowance = await this.contract?.read.allowance([wallet.account, spender])
+  async approveIfNoAllowance(amount: string, spender: string) {
+    const allowance = await this.contract.read.allowance([wallet.account as `0x${string}`, spender as `0x${string}`])
     if (new BigNumber((allowance as any).toString()).gte(new BigNumber(amount))) {
       return
     }
-    const args = [spender, amount]
-    await this.contract?.write.approve(args)
+    await this.approve.call([spender as `0x${string}`, BigInt(amount)])
   }
 
 
   async getBalance() {
-    const balance = await this.contract?.read.balanceOf([wallet.account])
+    const balance = await this.contract.read.balanceOf([wallet.account as `0x${string}`])
     this.balance = balance
       ? new BigNumber(balance.toString()).div(
           new BigNumber(10).pow(this.decimals)
@@ -68,5 +69,12 @@ export class Token implements BaseContract {
       : new BigNumber(0)
       // console.log('balance', this.address, this.balance.toString())
     return this.balance
+  }
+
+  get balanceFormatted() {
+    return amountFormatted(this.balance,  {
+      decimals: 0,
+      fixed: 3
+    })
   }
 }

@@ -1,6 +1,5 @@
 import {
   Button,
-  Input,
   Popover,
   PopoverContent,
   PopoverProps,
@@ -11,18 +10,17 @@ import { DropdownSvg } from "../svg/dropdown";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import { HTMLAttributes } from "react";
 import clsx from "clsx";
-
-const SelectItem = ({ children, className, ...props }: { children: React.ReactNode } & HTMLAttributes<any>) => {
-  return (
-    <div className={clsx("flex h-[30px] px-[8px] flex-col justify-center items-center shrink-0 [background:#523914] rounded-lg", className)} {...props}>{children}</div>
-  );
-};
+import { Input } from '../input/index';
+import { ItemSelect, SelectItem, SelectState } from "../ItemSelect";
 
 export const Slippage = observer(
   ({ onSelect, ...props }: { onSelect: (value: number) => void } & Partial<PopoverProps>) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const state = useLocalObservable(() => ({
       value: 0,
+      selectState: new SelectState({
+        value: 0.01
+      }),
     }));
     return (
       <Popover
@@ -55,18 +53,20 @@ export const Slippage = observer(
               <div className="text-[#D9D7E0]  text-md font-bold leading-[normal]">Setting</div>
               <div className="flex items-center">
                 <div className="text-[color:var(--Neutral-300,#D9D7E0)] text-xs font-normal leading-[normal]">Slippage</div>
-                <div className="flex gap-[5px] ml-[24px]">
-                  <SelectItem>0.01%</SelectItem>
-                  <SelectItem>0.5%</SelectItem>
-                  <SelectItem>
-                    <Input></Input>
+                <ItemSelect selectState={state.selectState}  className=" ml-[24px]">
+                  <SelectItem value={0.01}>0.01%</SelectItem>
+                  <SelectItem value={0.5}>0.5%</SelectItem>
+                  <SelectItem value={1}>
+                    <Input type="number" max={0.5} min={0} classNames={{
+                      input: "w-[50px]",
+                    }} placeholder="0.5%" endContent="%"></Input>
                   </SelectItem>
-                </div>
+                </ItemSelect>
               </div>
               <div className="flex items-center">
                 <div className="text-[color:var(--Neutral-300,#D9D7E0)] text-xs font-normal leading-[normal]">Transaction Deadline</div>
                 <SelectItem className="ml-[12px]">
-                  <Input></Input>
+                  <Input placeholder="30" endContent={"minutes"}></Input>
                 </SelectItem>
               </div>
             </div>
