@@ -54,6 +54,7 @@ export class Token implements BaseContract {
   async approveIfNoAllowance(amount: string, spender: string) {
     const allowance = await this.contract.read.allowance([wallet.account as `0x${string}`, spender as `0x${string}`])
     if (new BigNumber((allowance as any).toString()).gte(new BigNumber(amount))) {
+      console.log('allowance', allowance)
       return
     }
     await this.approve.call([spender as `0x${string}`, BigInt(amount)])

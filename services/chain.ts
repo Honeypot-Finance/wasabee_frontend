@@ -16,9 +16,6 @@ export class Network {
   };
   faucetTokens: Token [] = [];
   chain!: Chain;
-  get publicClient() {
-    return createPublicClientByChain(this.chain);
-  }
   constructor(args: Omit<Partial<Network>, "faucetTokens"> & {
     faucetTokens: Partial<Token>[];
   }) {

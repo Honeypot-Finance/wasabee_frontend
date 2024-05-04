@@ -85,13 +85,14 @@ export class ContractWrite<T extends (...args: any) => any> {
          account: wallet.account,
       });
       const transaction =
-        await wallet.currentChain.publicClient.waitForTransactionReceipt({
+        await wallet.publicClient.waitForTransactionReceipt({
           hash,
+          timeout: 1000 * 10,
         });
-      console.log("transaction", hash, transaction);
       switch (transaction.status) {
         case "success":
           toast.success(this.successMsg || `Transaction ${hash} Success`);
+          break;
         case "reverted":
           toast.success(this.failMsg || `Transaction ${hash} failed`);
           break;

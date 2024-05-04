@@ -29,5 +29,9 @@ export class RouterV2Contract implements BaseContract {
   get removeLiquidity () {
     return new ContractWrite(this.contract.write.removeLiquidity)
   }
+
+  get swapExactTokensForTokens () {
+    return new ContractWrite(this.contract.write.swapExactTokensForTokens)
+  }
 }
 

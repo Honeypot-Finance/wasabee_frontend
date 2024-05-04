@@ -69,8 +69,15 @@ export const SwapCard = observer(() => {
             ></TokenSelector>
           </div>
         </div>
-        {!!swap.price && <div>Price: {swap.price.toFormat(6)}</div>}
-        <Button isDisabled={swap.isDisabled} onClick={() => {
+        
+        {!!swap.price && <div className="flex w-[529px] h-[71px] justify-between items-center border [background:#291C0A] px-5 py-2.5 rounded-2xl border-solid border-[rgba(247,147,26,0.20)]">
+            <div>
+              <div>{swap.price.toFormat(6)}</div>
+              <div>{swap.fromToken?.displayName} per {swap.toToken?.displayName}</div>
+            </div>
+          </div>}
+        <Button isDisabled={swap.isDisabled} isLoading={swap.swapExactTokensForTokens.loading} onClick={async () => {
+          await swap.swapExactTokensForTokens.call()
         }}>{swap.buttonContent}</Button>
       </div>
       </SpinnerContainer>
