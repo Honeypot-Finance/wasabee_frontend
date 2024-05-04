@@ -11,8 +11,7 @@ const LauchPage: NextLayoutPage = observer(() => {
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto">
       <div className="mt-[20px] grid grid-cols-3 gap-6">
-        <div></div>
-        <div className="flex flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative">
+        <div className="col-start-2 flex flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative">
           <div className="flex w-[72px] h-[29px] justify-center items-center gap-[5px] absolute bg-[rgba(131,194,233,0.10)] rounded-[20px] right-2.5 top-[9px]">
             <div className="rounded-full bg-[#83C2E9] w-2 h-2"></div>
             <span className="text-ss text-[#83C2E9]">Live</span>

@@ -33,6 +33,7 @@
     "p-retry": "^5.1.2",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "^7.51.4",
     "react-icons": "^5.0.1",
     "react-toastify": "^10.0.5",
     "superjson": "^2.2.1",
