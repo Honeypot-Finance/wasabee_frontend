@@ -124,14 +124,10 @@ class Liquidity {
       .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
       .toFixed();
     await Promise.all([
-      this.fromToken.approve(
-        token0AmountWithDec,
-        this.routerV2Contract.address as string
-      ),
-      this.toToken.approve(
-        token1AmountWithDec,
-        this.routerV2Contract.address as string
-      ),
+      this.fromToken.approveIfNoAllowance(token0AmountWithDec,
+        this.routerV2Contract.address),
+      this.toToken.approveIfNoAllowance( token1AmountWithDec,
+        this.routerV2Contract.address),
     ]);
     const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
     const args: any[] = [
@@ -205,6 +201,7 @@ class Liquidity {
     if (pair) {
       const pairContract = new PairContract({ ...pair });
       pairContract.init();
+      
       this.pairsByToken[`${token0Address}-${token1Address}`] = pairContract;
       return pairContract;
     }

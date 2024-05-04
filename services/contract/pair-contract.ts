@@ -73,9 +73,13 @@ export class PairContract implements BaseContract {
 
 
   async getReserves() {
-    const reserves = await this.contract?.read.getReserves([]);
-    this.reserves = reserves;
-    if (this.reserves?.reverse0 && this.reserves.reserve1) {
+    const reserves = await this.contract?.read.getReserves();
+    const [reserve0, reserve1] = reserves as any [] || [];
+    if (reserve0 && reserve1) {
+      this.reserves = {
+        reserve0: reserve0,
+        reserve1: reserve1,
+      };
       const [midPrice0, midPrice1] = await Promise.all([
         this.routerV2Contract.contract.read.getAmountOut([
           BigInt(new BigNumber(1)
@@ -102,8 +106,7 @@ export class PairContract implements BaseContract {
           new BigNumber(10).pow(this.token0.decimals)
         );
       }
-   
-      
+      // console.log("midPrice0", this.midPrice0?.toFixed(), "midPrice1", this.midPrice1?.toFixed());
     }
   }
 
@@ -126,6 +129,7 @@ export class PairContract implements BaseContract {
         this.isLoading = false
       }
     }
+    this.isInit = true
   }
   async removeLiquidity(percent: number) {
     const liquidity = this.token.balance

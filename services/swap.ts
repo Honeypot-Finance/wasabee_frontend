@@ -19,13 +19,11 @@ class Swap {
   deadline: number = 0;
 
   currentPair = new AsyncState<PairContract | undefined>(async () => {
-    console.log("this.fromToken", this.fromToken, this.toToken);  
     if (this.fromToken && this.toToken) {
       const res = await liquidity.getPairByTokens(
         this.fromToken.address,
         this.toToken.address
       );
-      console.log("currentPair", res);
       return res
     }
   });
@@ -113,8 +111,7 @@ class Swap {
   setFromAmount(amount: string) {
     this.fromAmount = amount;
     if (this.currentPair.value ) {
-      when(() => !!this.currentPair.value?.reserves, () => {
-         
+      when(() => !!this.price, () => {
          this.toAmount = new BigNumber(this.fromAmount || 0 ).multipliedBy(this.price || 0).toFixed(2)
       })
     }
@@ -132,7 +129,7 @@ class Swap {
     this.toAmount = amount;
   }
 
-  async swapExactTokensForTokens() {
+  swapExactTokensForTokens = new AsyncState(async () => {
     if (!this.fromToken || !this.toToken || !this.fromAmount || !this.toAmount || !this.currentPair.value) {
       return;
     }
@@ -147,24 +144,22 @@ class Swap {
       this.routerV2Contract?.address as string
     );
     const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
-    const path = [this.fromToken.address, this.toToken.address];
-    const args: any[] = [
-      fromAmountDecimals,
-      new BigNumber(toAmountDecimals)
-        .minus(new BigNumber(toAmountDecimals).multipliedBy(this.slippage))
-        .toFixed(),
+    const path = [this.fromToken.address, this.toToken.address] as readonly `0x${string}`[];
+    await this.routerV2Contract.swapExactTokensForTokens.call([
+      BigInt(fromAmountDecimals),
+      BigInt(new BigNumber(toAmountDecimals)
+      .minus(new BigNumber(toAmountDecimals).multipliedBy(this.slippage))
+      .toFixed()),
       path,
-      wallet.account,
-      deadline,
-    ];
-    // @ts-ignore
-    await this.routerV2Contract.contract.write.swapExactTokensForTokens(args);
-    await Promise.all([
-      this.currentPair.value?.init(),
+      wallet.account as `0x${string}`,
+      BigInt(deadline),
+    ]);
+    Promise.all([
+      this.currentPair.value.init(true),
       this.fromToken.getBalance(),
       this.toToken.getBalance(),
     ]);
-  }
+  })
 }
 
 export const swap = new Swap();

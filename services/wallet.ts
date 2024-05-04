@@ -52,6 +52,7 @@ export class Wallet {
       })
     }
     this.publicClient = createPublicClientByChain(this.currentChain.chain)
+    this.walletClient = walletClient
   }
 
 }

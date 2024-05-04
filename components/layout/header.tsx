@@ -49,10 +49,11 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
     // </div>
     <Navbar
       onMenuOpenChange={setIsMenuOpen}
+    
       classNames={{
         wrapper: "max-w-[1200px]",
       }}
-      className={clsx("h-[63px]", props.className)}
+      className={clsx("h-[63px] bg-transparent", props.className)}
       style={{
         backdropFilter: "none",
       }}

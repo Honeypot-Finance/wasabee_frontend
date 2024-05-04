@@ -42,10 +42,6 @@ export const LPCard = observer(() => {
         <div className="flex w-full items-center gap-[5px]">
           <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
           <PlusSvg
-            className=" cursor-pointer"
-            onClick={() => {
-              liquidity.switchTokens();
-            }}
           ></PlusSvg>
           <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
         </div>
