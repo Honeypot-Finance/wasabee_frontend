@@ -1,14 +1,16 @@
 import { createPublicClient, getContract, http, fallback } from "viem";
-import {Chain } from 'viem/chains';
+import { Chain } from "viem/chains";
 
-export const createPublicClientByChain = (chain: Chain) => createPublicClient({
+export const createPublicClientByChain = (chain: Chain) =>
+  createPublicClient({
     chain: chain,
     batch: {
-      multicall: {
-        batchSize: 30,
-      }
+      multicall: true,
     },
-    transport: fallback(chain.rpcUrls.default.http.map(url => http(url)), {
-      retryCount: 3,
-    }),
+    transport: fallback(
+      chain.rpcUrls.default.http.map((url) => http(url)),
+      {
+        retryCount: 3,
+      }
+    ),
   });

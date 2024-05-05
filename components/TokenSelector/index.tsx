@@ -10,15 +10,17 @@ import { DropdownSvg } from "../svg/dropdown";
 import { IoSearchOutline } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 import { Token } from "@/services/contract/token";
-import { observer } from "mobx-react-lite";
+import { observer, useLocalObservable } from "mobx-react-lite";
 import { liquidity } from "@/services/liquidity";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { isEthAddress } from "@/lib/address";
 import { useOnce } from "@/lib/hooks";
 import { useAccount } from "wagmi";
 import { Input } from "../input/index";
 import { SpinnerContainer } from "../Spinner";
 import { NoData } from "../table";
+import debounce from "lodash/debounce";
+
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
   value?: Token | null;
@@ -29,36 +31,53 @@ export const TokenSelector = observer(
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isConnected } = useAccount();
     const [search, setSearch] = useState("");
-    const tokens = useMemo(() => {
-      if (!search) {
-        return liquidity.tokens;
-      }
-      const isEthAddr = isEthAddress(search);
-      if (isEthAddr) {
-        const filterToken = liquidity.tokens?.find((token) => {
-          return token.address.toLowerCase() === search.toLocaleLowerCase();
-        });
-        if (filterToken) {
-          return [filterToken];
+    const state = useLocalObservable(() => ({
+      search: "",
+      setSearch(value: string) {
+        console.log("value", value);
+        state.search = value;
+      },
+      filterLoading: false,
+      filterTokensBySearch: debounce(async function () {
+        if (!state.search) {
+          state.tokens = liquidity.tokens;
+          return 
         }
-        const token = new Token({
-          address: search,
-        });
-        token.getBalance();
-        liquidity.tokensMap[search] = token;
-        return [token];
-      } else {
-        return liquidity.tokens?.filter((token) => {
-          return (
-            token.name?.toLowerCase().includes(search) ||
-            token.symbol?.toLowerCase().includes(search)
-          );
-        });
-      }
-    }, [search, liquidity.tokens]);
+        state.filterLoading = true;
+        const isEthAddr = isEthAddress(state.search);
+        if (isEthAddr) {
+          const filterToken = liquidity.tokens?.find((token) => {
+            return token.address.toLowerCase() === state.search.toLocaleLowerCase();
+          });
+          if (filterToken) {
+            state.tokens = [filterToken];
+            state.filterLoading = false
+            return 
+          }
+          const token = new Token({
+            address: state.search,
+          });
+          await token.init();
+          liquidity.tokensMap[state.search] = token;
+          state.tokens = [token];
+        } else {
+          state.tokens = liquidity.tokens?.filter((token) => {
+            return (
+              token.name?.toLowerCase().includes(search) ||
+              token.symbol?.toLowerCase().includes(search)
+            );
+          });
+        }
+        state.filterLoading = false;
+      }, 200),
+      tokens: [] as Token[],
+    }))
     useOnce(() => {
       liquidity.tokens.forEach((t) => t.getBalance());
     }, [liquidity.tokens, isConnected]);
+    useEffect(() => {
+      state.filterTokensBySearch()
+    }, [state.search])
     return (
       <Popover
         isOpen={isOpen}
@@ -90,8 +109,11 @@ export const TokenSelector = observer(
               <Input
                 placeholder="Search token by symbol or address"
                 // className=" bg-transparent"
+                onClear={() => {
+                  state.setSearch("");
+                }}
                 onChange={(e) => {
-                  setSearch(e.target.value);
+                  state.setSearch(e.target.value);
                 }}
                 isClearable={true}
                 // labelPlacement="outside"
@@ -101,9 +123,9 @@ export const TokenSelector = observer(
               <Divider className="my-4" />
               <div>
                 <div></div>
-                <SpinnerContainer isLoading={!liquidity.isInit}>
+                <SpinnerContainer isLoading={!liquidity.isInit || state.filterLoading}>
                   <div className="max-h-[300px] overflow-auto">
-                    {tokens.length ? tokens.map((token) => {
+                    {state.tokens.length ? state.tokens.map((token) => {
                       return (
                         <div
                           key={token.address}

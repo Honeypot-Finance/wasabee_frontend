@@ -15,6 +15,8 @@ export const LPCard = observer(() => {
           <SwapAmount label="From" inputProps={{
             value: liquidity.fromAmount,
             disabled: !liquidity.fromToken,
+            max: liquidity.fromToken?.balance.toNumber(),
+            min: 0,
             onClear: () => {
                 liquidity.setFromAmount("");
             },
@@ -49,6 +51,8 @@ export const LPCard = observer(() => {
           <SwapAmount label="To" inputProps={{
             value: liquidity.toAmount,
             disabled: !liquidity.toToken,
+            max: liquidity.toToken?.balance.toNumber(),
+            min: 0,
             onClear: () => {
                 liquidity.setToAmount("");
             },
@@ -57,6 +61,14 @@ export const LPCard = observer(() => {
             }
           }}></SwapAmount>
           <div>
+          {!!liquidity.toToken && <div className="flex items-center">
+             <div className="text-sub text-[]">Balance: {liquidity.toToken.balanceFormatted}</div> 
+              <div onClick={() => {
+                liquidity.setToAmount((liquidity.toToken as Token).balance.toFixed());
+              }} className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline">
+                Max
+              </div>
+            </div>}
             <TokenSelector
               value={liquidity.toToken}
               onSelect={(token) => {
@@ -65,9 +77,9 @@ export const LPCard = observer(() => {
             ></TokenSelector>
           </div>
         </div>
-        <Button onClick={() => {
-            
-        }}>Swap</Button>
+        <Button isDisabled={liquidity.isDisabled} isLoading={liquidity.addLiquidity.loading} onClick={() => {
+            liquidity.addLiquidity.call()
+        }}>{liquidity.buttonContent}</Button>
       </div>
       </SpinnerContainer>
   );

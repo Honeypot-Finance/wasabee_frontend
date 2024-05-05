@@ -1,7 +1,7 @@
 import { Token } from "./contract/token";
 import { createPublicClientByChain } from "@/lib/client";
-import { Chain, sepolia, berachainTestnet } from "viem/chains";
-import { polygonMumbaiChain } from "@/lib/chain";
+import { Chain, sepolia } from "viem/chains";
+import { berachainTestnet, polygonMumbaiChain } from "@/lib/chain";
 
 export class Network {
   get chainId() {
@@ -100,11 +100,11 @@ export const berachainTestNetwork = new Network({
 export const sepoliaNetwork = new Network({
   chain: sepolia,
   contracts: {
-    routerV2: "0x8f56eafeab1a0b6DDF403fe81d29f8dA36f8c6fd",
-    factory: "0x228434D50B329f7EE075b0151a21a36CAd3C8809",
-    ftoFactory: "0xe92630ECcb40a265D32C124865fd82DCdfBC8c7B",
-    ftoFacade: "0x61fac63452732aF081f532e0B25A8C1323D2A75a",
-    ftoToken: "0x5c221868bCD2Fb371a0cD0ACedfD63c0C29938A2",
+    routerV2: "0xC3e9D297e622dDBd74bD0784FcFb46Ee9552C7D6",
+    factory: "0x51089092b3c40c15698818592f9487340C2379B5",
+    ftoFactory: "0x16b7e526cE35061de7c26E6D943687460637BB6D",
+    ftoFacade: "0xf7D56579e12e43984f1Ff90Cd9E9fc8c93c1ACF2",
+    ftoToken: "0x5d116b0032188519e62858dFd3b7917ccEcad170",
   },
   faucetTokens: [],
 });

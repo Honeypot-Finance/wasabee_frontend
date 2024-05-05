@@ -1,5 +1,5 @@
-import { Chain, berachainTestnet, polygonMumbai, sepolia } from "viem/chains";
-export const polygonMumbaiChain = {
+import { Chain, berachainTestnet as viemBerachainTestnet, polygonMumbai, sepolia } from "viem/chains";
+export const polygonMumbaiChain: Chain = {
   ...polygonMumbai,
   rpcUrls: {
     default: {
@@ -7,6 +7,18 @@ export const polygonMumbaiChain = {
     },
   },
 };
+
+export const berachainTestnet: Chain = {
+  ...viemBerachainTestnet,
+  contracts: {
+    ...viemBerachainTestnet.contracts,
+     multicall3: {
+      address: "0x360B0e3F6b3A1359Db0d680cDc119E695c1637B4",
+      blockCreated: 1938031
+     }
+  }
+
+}
 
 
 export const chains = [

@@ -26,6 +26,9 @@ export class RouterV2Contract implements BaseContract {
     Object.assign(this, args)
   }
 
+  get addLiquidity () {
+    return new ContractWrite(this.contract.write.addLiquidity)
+  }
   get removeLiquidity () {
     return new ContractWrite(this.contract.write.removeLiquidity)
   }

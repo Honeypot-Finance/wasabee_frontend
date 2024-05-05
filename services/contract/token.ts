@@ -18,6 +18,7 @@ export class Token implements BaseContract {
   logoURI = ''
   abi = ERC20ABI
   faucetLoading = false
+  isInit = false
   get displayName () {
     return this.symbol || this.name
   }
@@ -49,6 +50,22 @@ export class Token implements BaseContract {
   } 
   get approve () {
     return  new ContractWrite(this.contract.write?.approve)
+  }
+
+  async init () {
+    await Promise.all([
+      this.contract.read.name().then((name) => {
+        this.name = name
+      }),
+      this.contract.read.symbol().then((symbol) => {
+        this.symbol = symbol
+      }),
+      this.contract.read.decimals().then((decimals) => {
+        this.decimals = decimals
+        return this.getBalance()
+      }),
+    ])
+    this.isInit = true
   }
 
   async approveIfNoAllowance(amount: string, spender: string) {
