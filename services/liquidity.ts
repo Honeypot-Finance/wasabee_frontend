@@ -61,6 +61,23 @@ class Liquidity {
     );
   }
 
+  get isDisabled() {
+    return !this.fromToken || !this.toToken || !this.fromAmount || !this.toAmount
+  }
+
+  get buttonContent () {
+    if (!this.fromToken || !this.toToken) {
+      return 'Select Tokens'
+    }
+    if (!this.fromAmount || !this.toAmount) {
+      return 'Enter Amount'
+    }
+    if (this.currentPair.loading) {
+      return 'Loading Pair'
+    }
+    return  'Create LP'
+  }
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -113,38 +130,50 @@ class Liquidity {
     this.toToken = fromToken;
   }
 
-  async addLiquidity(token0Amount: string, token1Amount: string) {
-    if (!this.fromToken || !this.toToken || !token0Amount || !token1Amount) {
-      return;
-    }
-    const token0AmountWithDec = new BigNumber(token0Amount)
-      .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
-      .toFixed();
-    const token1AmountWithDec = new BigNumber(token1Amount)
-      .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
-      .toFixed();
-    await Promise.all([
-      this.fromToken.approveIfNoAllowance(token0AmountWithDec,
-        this.routerV2Contract.address),
-      this.toToken.approveIfNoAllowance( token1AmountWithDec,
-        this.routerV2Contract.address),
-    ]);
-    const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
-    const args: any[] = [
-      this.fromToken.address,
-      this.toToken.address,
-      token0AmountWithDec,
-      token1AmountWithDec,
-      0,
-      0,
-      wallet.account,
-      deadline,
-    ];
-    // @ts-ignore
-    await this.routerV2Contract.contract.write.addLiquidity(args);
-    await Promise.all([this.fromToken.getBalance(), this.toToken.getBalance()]);
-  }
+  addLiquidity = new AsyncState(async () => {
+      if (!this.fromToken || !this.toToken || !this.fromAmount || !this.toAmount) {
+        return;
+      }
+      const token0AmountWithDec = new BigNumber(this.fromAmount)
+        .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
+        .toFixed();
+      const token1AmountWithDec = new BigNumber(this.toAmount)
+        .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
+        .toFixed();
+      await Promise.all([
+        this.fromToken.approveIfNoAllowance(token0AmountWithDec,
+          this.routerV2Contract.address),
+        this.toToken.approveIfNoAllowance( token1AmountWithDec,
+          this.routerV2Contract.address),
+      ]);
+      const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
+      console.log('liqidity agrs', [
+        this.fromToken.address as `0x${string}`,
+        this.toToken.address as `0x${string}`,
+        token0AmountWithDec,
+        token1AmountWithDec,
+        0,
+        0,
+        wallet.account as `0x${string}`,
+        deadline,
+      ])
 
+      await this.routerV2Contract.addLiquidity.call([
+        this.fromToken.address as `0x${string}`,
+        this.toToken.address as `0x${string}`,
+        BigInt(token0AmountWithDec),
+        BigInt(token1AmountWithDec),
+        BigInt(0),
+        BigInt(0),
+        wallet.account as `0x${string}`,
+        BigInt(deadline),
+      ]);
+      await Promise.all([this.fromToken.getBalance(), this.toToken.getBalance()]);
+  
+  
+  })
+
+ 
   initPool(
     pairs: {
       address: string;

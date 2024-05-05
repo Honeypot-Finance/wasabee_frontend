@@ -23,13 +23,13 @@ export class ValueState<T> {
   }
 }
 
-export class AsyncState<T> {
+export class AsyncState<T, K extends (...args: any) => any = () => {}> {
   loading = false;
   error: Error | null = null;
   value: T | null = null;
-  private _call: (...args: any) => Promise<T>;
+  private _call: K;
   constructor(
-    func: (...args: any) => Promise<T>,
+    func: K,
     options?: {
       loading?: boolean;
     }
@@ -41,7 +41,7 @@ export class AsyncState<T> {
 
     makeAutoObservable(this);
   }
-  async call(args?: any) {
+  async call(...args: Parameters<K>) {
     this.setLoading(true);
     try {
       const data = await this._call(args);
@@ -87,14 +87,14 @@ export class ContractWrite<T extends (...args: any) => any> {
       const transaction =
         await wallet.publicClient.waitForTransactionReceipt({
           hash,
-          timeout: 1000 * 10,
+          timeout: 1000 * 60 * 5,
         });
       switch (transaction.status) {
         case "success":
           toast.success(this.successMsg || `Transaction ${hash} Success`);
           break;
         case "reverted":
-          toast.success(this.failMsg || `Transaction ${hash} failed`);
+          toast.error(this.failMsg || `Transaction ${hash} failed`);
           break;
         default:
           throw new Error(`Transaction ${hash} Pending`);
