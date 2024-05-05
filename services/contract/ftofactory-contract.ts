@@ -3,12 +3,12 @@ import { wallet } from "../wallet";
 import { getContract } from "viem";
 import { ContractWrite } from "../utils";
 import { makeAutoObservable } from "mobx";
-import { MUBAI_FTO_FACTORY_ABI } from "@/lib/abis/ftoFactory/abis";
+import { ftoFactoryABI } from "@/lib/abis/ftoFactory";
 
 export class FtoFactoryContract implements BaseContract {
   address = "";
   name: string = "";
-  abi = MUBAI_FTO_FACTORY_ABI;
+  abi = ftoFactoryABI;
   constructor(args: Partial<FtoFactoryContract>) {
     Object.assign(this, args);
     makeAutoObservable(this);
@@ -22,6 +22,6 @@ export class FtoFactoryContract implements BaseContract {
   }
 
   get createFTO() {
-    return new ContractWrite(this.contract.write.createFTO);
+    return this.contract.write.createFTO;
   }
 }

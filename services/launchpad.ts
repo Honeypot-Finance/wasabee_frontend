@@ -1,21 +1,23 @@
 import { wallet } from "./wallet";
 import BigNumber from "bignumber.js";
-import { AsyncState } from "./utils";
+import { ContractWrite } from "./utils";
 
 class LaunchPad {
   get ftofactoryContract() {
     return wallet.contracts.ftofactory;
   }
 
-  createFTO = async ({
-    tokenAddress,
+  createFTO =new ContractWrite(async ({
+    provider,
+    raisedToken,
     tokenName,
     tokenSymbol,
     tokenAmount,
     poolHandler,
     rasing_cycle,
   }: {
-    tokenAddress: string;
+    provider:string,
+    raisedToken: string;
     tokenName: string;
     tokenSymbol: string;
     tokenAmount: number;
@@ -23,14 +25,15 @@ class LaunchPad {
     rasing_cycle: string;
   }) => {
     return await this.ftofactoryContract.createFTO.call([
-      tokenAddress,
+      provider,
+      raisedToken,
       tokenName,
       tokenSymbol,
       new BigNumber(tokenAmount),
       poolHandler,
       rasing_cycle,
     ]);
-  };
+  });
 }
 
 const launchpad = new LaunchPad();

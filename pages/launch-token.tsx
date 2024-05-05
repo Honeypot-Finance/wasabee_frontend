@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { Button } from "@/components/button";
@@ -27,9 +27,10 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
     setLoading(true);
     try {
       console.log(data);
-      const res = await launchpad.createFTO(
+      const res = await launchpad.createFTO.call(
         data as {
-          tokenAddress: string;
+          provider: string;
+          raisedToken: string;
           tokenName: string;
           tokenSymbol: string;
           tokenAmount: number;
@@ -41,13 +42,11 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
       setApproved(true);
     } catch (error) {
       console.error(error);
-    }finally{
-      setLoading(false);
     }
   };
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto flex items-center justify-center">
-      {loading ? (
+      {launchpad.createFTO.loading ? (
         <div className="flex h-[566px] w-[583px] justify-center items-center [background:#121212] rounded-[54px]">
           <div className="flex flex-col items-center">
             <div className="relative">
@@ -64,7 +63,7 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
             </div>
           </div>
         </div>
-      ) : approved ? (
+      ) : !launchpad.createFTO.error && approved ? (
         <div className="w-[583px] h-[576px] shrink-0 border border-[color:var(--Button-Gradient,#F7931A)] [background:#121212] rounded-[40px] border-solid flex flex-col items-center pt-[84px]">
           <ApprovedSvg />
           <div className="text-[#43D9A3] mt-[27px] font-bold">
@@ -98,10 +97,19 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
             className="flex flex-col gap-[22px]"
           >
             <div className="flex flex-col gap-4">
-              <label htmlFor="tokenAddress">Token Address</label>
+              <label htmlFor="provider">Token Provider</label>
               <input
                 type="text"
-                {...register("tokenAddress", { required: true })}
+                {...register("provider", { required: true })}
+                value={"0xF0eDeeED6aFC821eA20719225Db603927Ecd20b7"}
+                className="outline-none w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
+              />
+            </div>
+            <div className="flex flex-col gap-4">
+              <label htmlFor="raisedToken">Token Address</label>
+              <input
+                type="text"
+                {...register("raisedToken", { required: true })}
                 value={"0x5c221868bCD2Fb371a0cD0ACedfD63c0C29938A2"}
                 className="outline-none w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
               />
