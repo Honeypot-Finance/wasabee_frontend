@@ -2,13 +2,13 @@ import { BaseContract } from ".";
 import { wallet } from "../wallet";
 import { getContract } from "viem";
 import { makeAutoObservable } from "mobx";
-import { ftoFacadeABI } from "@/lib/abis/ftoFacade";
+import { MUBAI_FTO_PAIR_ABI } from "@/lib/abis/ftoPair";
 
-export class FtoFacadeContract implements BaseContract {
+export class FtoPairContract implements BaseContract {
   address = "";
   name: string = "";
-  abi = ftoFacadeABI;
-  constructor(args: Partial<FtoFacadeContract>) {
+  abi = MUBAI_FTO_PAIR_ABI;
+  constructor(args: Partial<FtoPairContract>) {
     Object.assign(this, args);
     makeAutoObservable(this);
   }
@@ -20,8 +20,8 @@ export class FtoFacadeContract implements BaseContract {
     });
   }
 
-  async allPairsLength() {
-    const data = await this.contract.read.allPairsLength();
+  async endTime() {
+    const data = await this.contract.read.end_time();
     console.log(data);
 
     return data;

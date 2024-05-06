@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/button";
-import { NextLayoutPage } from "@/types/nextjs";
 import { Logo } from "@/components/svg/logo";
+import launchpad from "@/services/launchpad";
+import { NextLayoutPage } from "@/types/nextjs";
 import { TimelineSvg } from "@/components/svg/Timeline";
 import { TokenPriceSvg } from "@/components/svg/TokenPrice";
 import { TotalRaisedSvg } from "@/components/svg/TotalRaised";
@@ -10,6 +11,9 @@ import { observer, useLocalObservable } from "mobx-react-lite";
 const LauchPage: NextLayoutPage = observer(() => {
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto">
+      <div>{launchpad.allPairsLength.loading}</div>
+      <div>{launchpad.allPairsLength.error?.message}</div>
+      <div>{JSON.stringify(launchpad.allPairsLength.value)}</div>
       <div className="flex w-full justify-end">
         <Button>
           <Link href="/launch-token" className="text-black font-bold">

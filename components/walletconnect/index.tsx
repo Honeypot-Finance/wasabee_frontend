@@ -5,8 +5,14 @@ import { ButtonHTMLAttributes } from "react";
 import { WalletSvg } from "../svg/wallet";
 
 const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
-    return <button type="button" className="flex h-[42px] px-[12px] justify-center items-center gap-[4.411px] shrink-0 [background:rgba(247,147,26,0.10)] backdrop-blur-[10px] rounded-[100px] border-[1.654px] border-solid border-[rgba(247,147,26,0.20)]" {...props}></button>
-}
+  return (
+    <button
+      type="button"
+      className="flex h-[42px] px-[12px] justify-center items-center gap-[4.411px] shrink-0 [background:rgba(247,147,26,0.10)] backdrop-blur-[10px] rounded-[100px] border-[1.654px] border-solid border-[rgba(247,147,26,0.20)]"
+      {...props}
+    ></button>
+  );
+};
 export const WalletConnect = () => {
   return (
     <ConnectButton.Custom>
@@ -58,9 +64,12 @@ export const WalletConnect = () => {
                   <Balance className="hidden md:flex">
                     <>
                       <BalanceSvg></BalanceSvg>{" "}
-                      <div className=" text-nowrap"> {account.displayBalance
-                        ? `${account.displayBalance}`
-                        : "-"}</div>
+                      <div className=" text-nowrap">
+                        {" "}
+                        {account.displayBalance
+                          ? `${account.displayBalance}`
+                          : "-"}
+                      </div>
                     </>
                   </Balance>
                   <button
@@ -90,10 +99,7 @@ export const WalletConnect = () => {
                     )}
                     {chain.name}
                   </button>
-                  <ConnectButtonCustom
-                    onClick={openAccountModal}
-                    type="button"
-                  >
+                  <ConnectButtonCustom onClick={openAccountModal} type="button">
                     {account.displayName}
                   </ConnectButtonCustom>
                 </div>

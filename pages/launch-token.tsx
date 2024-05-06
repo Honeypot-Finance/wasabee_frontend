@@ -1,22 +1,21 @@
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
+import { wallet } from "@/services/wallet";
+import launchpad from "@/services/launchpad";
 import { Button } from "@/components/button";
 import { ViewSvg } from "@/components/svg/View";
 import { NextLayoutPage } from "@/types/nextjs";
-import launchpad from "@/services/launchpad";
 import { RocketSvg } from "@/components/svg/Rocket";
 import { PeddingSvg } from "@/components/svg/Pedding";
 import { ApprovedSvg } from "@/components/svg/Approved";
 import { DreampadSvg } from "@/components/svg/Dreampad";
-import { wallet } from "@/services/wallet";
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
 const minimumTimePattern = /^(6[1-9]|[7-9][0-9]|[1-9][0-9]{2,})$/;
 
 const LauchTokenPage: NextLayoutPage = observer(() => {
-  const [loading, setLoading] = useState(false);
   const [approved, setApproved] = useState(false);
   const {
     register,
@@ -25,7 +24,6 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
   } = useForm();
 
   const onSubmit = async (data: any) => {
-    setLoading(true);
     try {
       console.log(data);
       const res = await launchpad.createFTO(
@@ -39,7 +37,7 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
           rasing_cycle: string;
         }
       );
-      console.log('createFTORes', res);
+      console.log("createFTORes", res);
       setApproved(true);
     } catch (error) {
       console.error(error);

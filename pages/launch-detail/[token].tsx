@@ -1,15 +1,21 @@
 import { liquidity } from "@/services/liquidity";
 import { NextLayoutPage } from "@/types/nextjs";
 import { observer, useLocalObservable } from "mobx-react-lite";
-import Link from "next/link";
+import launchpad from "@/services/launchpad";
+import { useRouter } from "next/router";
 import { Logo } from "@/components/svg/logo";
 import { TimelineSvg } from "@/components/svg/Timeline";
 import { TotalRaisedSvg } from "@/components/svg/TotalRaised";
 import { TokenPriceSvg } from "@/components/svg/TokenPrice";
 
 const LauchPage: NextLayoutPage = observer(() => {
+  const router = useRouter();
+  const { token } = router.query; // 从
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto">
+      <div>{launchpad.endTime(token as string).loading}</div>
+      <div>{launchpad.endTime(token as string).error?.message}</div>
+      <div>{JSON.stringify(launchpad.endTime(token as string).value)}</div>
       <div className="mt-[20px] grid grid-cols-3 gap-6">
         <div className="col-start-2 flex flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative">
           <div className="flex w-[72px] h-[29px] justify-center items-center gap-[5px] absolute bg-[rgba(131,194,233,0.10)] rounded-[20px] right-2.5 top-[9px]">

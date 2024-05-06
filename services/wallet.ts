@@ -4,6 +4,7 @@ import { PublicClient, WalletClient } from "viem";
 import { RouterV2Contract } from "./contract/routerv2-contract";
 import { FactoryContract } from "./contract/factory-contract";
 import { FtoFactoryContract } from "./contract/ftofactory-contract";
+import { FtoFacadeContract } from "./contract/ftofacade-contract";
 import { makeAutoObservable } from "mobx";
 import { Token } from "./contract/token";
 import { createPublicClientByChain } from "@/lib/client";
@@ -19,7 +20,8 @@ export class Wallet {
     routerV2: RouterV2Contract;
     factory: FactoryContract;
     ftofactory: FtoFactoryContract;
-  } = {} as any
+    ftofacade: FtoFacadeContract;
+  } = {} as any;
   publicClient!: PublicClient;
   get networksMap() {
     return this.networks.reduce((acc, network) => {
@@ -47,6 +49,7 @@ export class Wallet {
     }
     this.currentChainId = walletClient.chain.id;
     this.account = walletClient.account.address;
+
     console.log("this.currentChainId", this.currentChainId);
     this.currentChain.faucetTokens = this.currentChain.faucetTokens.map(
       (token) => new Token(token)
@@ -60,6 +63,9 @@ export class Wallet {
       }),
       ftofactory: new FtoFactoryContract({
         address: this.currentChain.contracts.ftoFactory,
+      }),
+      ftofacade: new FtoFacadeContract({
+        address: this.currentChain.contracts.ftoFacade,
       }),
     };
     this.publicClient = createPublicClientByChain(this.currentChain.chain);
