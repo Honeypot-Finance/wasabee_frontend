@@ -22,6 +22,6 @@ export class FtoFactoryContract implements BaseContract {
   }
 
   get createFTO() {
-    return this.contract.write.createFTO;
+    return new ContractWrite(this.contract.write.createFTO);
   }
 }

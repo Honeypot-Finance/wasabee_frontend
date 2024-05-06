@@ -10,6 +10,7 @@ import { RocketSvg } from "@/components/svg/Rocket";
 import { PeddingSvg } from "@/components/svg/Pedding";
 import { ApprovedSvg } from "@/components/svg/Approved";
 import { DreampadSvg } from "@/components/svg/Dreampad";
+import { wallet } from "@/services/wallet";
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
 const minimumTimePattern = /^(6[1-9]|[7-9][0-9]|[1-9][0-9]{2,})$/;
@@ -27,7 +28,7 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
     setLoading(true);
     try {
       console.log(data);
-      const res = await launchpad.createFTO.call(
+      const res = await launchpad.createFTO(
         data as {
           provider: string;
           raisedToken: string;
@@ -38,7 +39,7 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
           rasing_cycle: string;
         }
       );
-      console.log(res);
+      console.log('createFTORes', res);
       setApproved(true);
     } catch (error) {
       console.error(error);
@@ -46,7 +47,7 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
   };
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto flex items-center justify-center">
-      {launchpad.createFTO.loading ? (
+      {launchpad.ftofactoryContract?.createFTO.loading ? (
         <div className="flex h-[566px] w-[583px] justify-center items-center [background:#121212] rounded-[54px]">
           <div className="flex flex-col items-center">
             <div className="relative">
@@ -63,7 +64,7 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
             </div>
           </div>
         </div>
-      ) : !launchpad.createFTO.error && approved ? (
+      ) : !launchpad.ftofactoryContract?.createFTO.error && approved ? (
         <div className="w-[583px] h-[576px] shrink-0 border border-[color:var(--Button-Gradient,#F7931A)] [background:#121212] rounded-[40px] border-solid flex flex-col items-center pt-[84px]">
           <ApprovedSvg />
           <div className="text-[#43D9A3] mt-[27px] font-bold">
@@ -101,7 +102,7 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
               <input
                 type="text"
                 {...register("provider", { required: true })}
-                value={"0xF0eDeeED6aFC821eA20719225Db603927Ecd20b7"}
+                value={wallet.account}
                 className="outline-none w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
               />
             </div>
@@ -110,7 +111,7 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
               <input
                 type="text"
                 {...register("raisedToken", { required: true })}
-                value={"0x5c221868bCD2Fb371a0cD0ACedfD63c0C29938A2"}
+                value={wallet.currentChain?.contracts?.ftoToken}
                 className="outline-none w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
               />
             </div>
@@ -160,7 +161,7 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
               <input
                 type="text"
                 {...register("poolHandler", { required: true })}
-                value={"0x8f56eafeab1a0b6DDF403fe81d29f8dA36f8c6fd"}
+                value={wallet.currentChain?.contracts?.routerV2}
                 className="outline-none w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
               />
             </div>

@@ -15,11 +15,11 @@ export class Wallet {
   balance: BigNumber = new BigNumber(0);
   walletClient!: WalletClient;
   currentChainId: number = -1;
-  contracts!: {
+  contracts: {
     routerV2: RouterV2Contract;
     factory: FactoryContract;
     ftofactory: FtoFactoryContract;
-  };
+  } = {} as any
   publicClient!: PublicClient;
   get networksMap() {
     return this.networks.reduce((acc, network) => {

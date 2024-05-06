@@ -100,7 +100,7 @@ export const berachainTestNetwork = new Network({
 export const sepoliaNetwork = new Network({
   chain: sepolia,
   contracts: {
-    routerV2: "0xC3e9D297e622dDBd74bD0784FcFb46Ee9552C7D6",
+    routerV2: "0xBF5BB6e4189877bA03168035a56CBC452f59c0d2",
     factory: "0x51089092b3c40c15698818592f9487340C2379B5",
     ftoFactory: "0x16b7e526cE35061de7c26E6D943687460637BB6D",
     ftoFacade: "0xf7D56579e12e43984f1Ff90Cd9E9fc8c93c1ACF2",

@@ -7,7 +7,7 @@ class LaunchPad {
     return wallet.contracts.ftofactory;
   }
 
-  createFTO =new ContractWrite(async ({
+  createFTO = async ({
     provider,
     raisedToken,
     tokenName,
@@ -24,16 +24,23 @@ class LaunchPad {
     poolHandler: string;
     rasing_cycle: string;
   }) => {
+    console.log('args', provider as `0x${string}`,
+    raisedToken as `0x${string}`,
+    tokenName,
+    tokenSymbol,
+    BigInt(tokenAmount),
+    poolHandler as `0x${string}`,
+    BigInt(rasing_cycle),)
     return await this.ftofactoryContract.createFTO.call([
-      provider,
-      raisedToken,
+      provider as `0x${string}`,
+      raisedToken as `0x${string}`,
       tokenName,
       tokenSymbol,
-      new BigNumber(tokenAmount),
-      poolHandler,
-      rasing_cycle,
+      BigInt(tokenAmount),
+      poolHandler as `0x${string}`,
+      BigInt(rasing_cycle),
     ]);
-  });
+  }
 }
 
 const launchpad = new LaunchPad();

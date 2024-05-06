@@ -400,4 +400,4 @@ export const ftoFactoryABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const
