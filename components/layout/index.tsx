@@ -19,11 +19,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className=" px-[12px] sm:pt-[72px] pt-[24px] flex-1">
           {children}
         </div>
-      ) : (
-        <div className="flex px-[12px] sm:pt-[72px] pt-[24px] flex-1 justify-center">
-          Wrong Network
-        </div>
-      )}
+      ) : null}
       {/* <Footer></Footer> */}
     </div>
   );

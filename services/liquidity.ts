@@ -6,7 +6,7 @@ import { PairContract } from "./contract/pair-contract";
 import BigNumber from "bignumber.js";
 import { exec } from "~/lib/contract";
 import { trpcClient } from "@/lib/trpc";
-import { makeAutoObservable, when } from "mobx";
+import { makeAutoObservable, reaction, when } from "mobx";
 import { AsyncState, ValueState } from "./utils";
 
 class Liquidity {
@@ -28,13 +28,11 @@ class Liquidity {
   currentRemovePair: PairContract | null = null;
 
   currentPair = new AsyncState<PairContract | undefined>(async () => {
-    console.log("this.fromToken", this.fromToken, this.toToken);
     if (this.fromToken && this.toToken) {
       const res = await liquidity.getPairByTokens(
         this.fromToken.address,
         this.toToken.address
       );
-      console.log("currentPair", res);
       return res;
     }
   });
@@ -45,6 +43,14 @@ class Liquidity {
       this.fromToken?.address === this.currentPair.value?.token0.address &&
       this.toToken?.address === this.currentPair.value?.token1.address
     );
+  }
+
+  get price() {
+    if (this.currentPair.value?.price) {
+      return this.isTokenPairSortMatch
+        ? this.currentPair.value.price
+        : new BigNumber(1).div(this.currentPair.value.price);
+    }
   }
 
   get routerV2Contract() {
@@ -62,24 +68,52 @@ class Liquidity {
   }
 
   get isDisabled() {
-    return !this.fromToken || !this.toToken || !this.fromAmount || !this.toAmount
+    return (
+      !this.fromToken || !this.toToken || !this.fromAmount || !this.toAmount
+    );
   }
 
-  get buttonContent () {
+  get buttonContent() {
     if (!this.fromToken || !this.toToken) {
-      return 'Select Tokens'
-    }
-    if (!this.fromAmount || !this.toAmount) {
-      return 'Enter Amount'
+      return "Select Tokens";
     }
     if (this.currentPair.loading) {
-      return 'Loading Pair'
+      return "Loading Pair";
     }
-    return  'Create LP'
+    if (!this.fromAmount || !this.toAmount) {
+      return "Enter Amount";
+    }
+    return "Create LP";
   }
 
   constructor() {
     makeAutoObservable(this);
+    reaction(
+      () => this.fromToken?.address,
+      () => {
+        this.currentPair.setValue(undefined);
+        if (this.fromToken && this.toToken) {
+          this.currentPair.call();
+        }
+      }
+    );
+    reaction(
+      () => this.toToken?.address,
+      () => {
+        this.currentPair.setValue(undefined);
+        if (this.fromToken && this.toToken) {
+          this.currentPair.call();
+        }
+      }
+    );
+    reaction(
+      () => this.price?.multipliedBy(this.fromAmount || 0).toFixed(),
+      () => {
+        if (this.fromAmount && this.price) {
+          this.toAmount = this.price.multipliedBy(this.fromAmount).toFixed();
+        }
+      }
+    );
   }
 
   setCurrentRemovePair(pair: PairContract) {
@@ -89,33 +123,19 @@ class Liquidity {
   setFromToken(token: Token) {
     if (this.fromToken?.address !== token.address) {
       this.fromToken = token;
-      this.fromToken.getBalance();
+      this.fromToken.init();
       this.fromAmount = "";
     }
   }
 
   setFromAmount(amount: string) {
     this.fromAmount = amount;
-    if (this.currentPair.value) {
-      when(
-        () => !!this.currentPair.value?.reserves,
-        () => {
-          this.toAmount = this.isTokenPairSortMatch
-            ? new BigNumber(this.fromAmount || 0)
-                .multipliedBy(this.currentPair.value?.midPrice0 || 0)
-                .toFixed()
-            : new BigNumber(this.fromAmount || 0)
-                .multipliedBy(this.currentPair.value?.midPrice1 || 0)
-                .toFixed();
-        }
-      );
-    }
   }
 
   setToToken(token: Token) {
     if (this.toToken?.address !== token.address) {
       this.toToken = token;
-      this.toToken.getBalance();
+      this.toToken.init();
       this.toAmount = "";
     }
   }
@@ -131,34 +151,42 @@ class Liquidity {
   }
 
   addLiquidity = new AsyncState(async () => {
-      if (!this.fromToken || !this.toToken || !this.fromAmount || !this.toAmount) {
-        return;
-      }
-      const token0AmountWithDec = new BigNumber(this.fromAmount)
-        .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
-        .toFixed();
-      const token1AmountWithDec = new BigNumber(this.toAmount)
-        .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
-        .toFixed();
-      await Promise.all([
-        this.fromToken.approveIfNoAllowance(token0AmountWithDec,
-          this.routerV2Contract.address),
-        this.toToken.approveIfNoAllowance( token1AmountWithDec,
-          this.routerV2Contract.address),
-      ]);
-      const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
-      console.log('liqidity agrs', [
-        this.fromToken.address as `0x${string}`,
-        this.toToken.address as `0x${string}`,
-        token0AmountWithDec,
-        token1AmountWithDec,
-        0,
-        0,
-        wallet.account as `0x${string}`,
-        deadline,
-      ])
+    if (
+      !this.fromToken ||
+      !this.toToken ||
+      !this.fromAmount ||
+      !this.toAmount
+    ) {
+      return;
+    }
+    const token0AmountWithDec = new BigNumber(this.fromAmount)
+      .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
+      .toFixed();
+    const token1AmountWithDec = new BigNumber(this.toAmount)
+      .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
+      .toFixed();
+    const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
+    console.log("liqidity agrs", [
+      this.fromToken.address as `0x${string}`,
+      this.toToken.address as `0x${string}`,
+      token0AmountWithDec,
+      token1AmountWithDec,
+      0,
+      0,
+      wallet.account as `0x${string}`,
+      deadline,
+    ]);
 
-      await this.routerV2Contract.addLiquidity.call([
+    await Promise.all([
+      this.fromToken.approveIfNoAllowance(
+        token0AmountWithDec,
+        this.routerV2Contract.address
+      ),
+      this.toToken.approveIfNoAllowance(
+        token1AmountWithDec,
+        this.routerV2Contract.address
+      ),
+      this.routerV2Contract.addLiquidity.call([
         this.fromToken.address as `0x${string}`,
         this.toToken.address as `0x${string}`,
         BigInt(token0AmountWithDec),
@@ -167,13 +195,11 @@ class Liquidity {
         BigInt(0),
         wallet.account as `0x${string}`,
         BigInt(deadline),
-      ]);
-      await Promise.all([this.fromToken.getBalance(), this.toToken.getBalance()]);
-  
-  
-  })
+      ])
+    ]);
+    Promise.all([this.fromToken.getBalance(), this.toToken.getBalance()]);
+  });
 
- 
   initPool(
     pairs: {
       address: string;
@@ -201,11 +227,11 @@ class Liquidity {
       });
       if (!this.tokensMap[token0.address]) {
         this.tokensMap[token0.address] = token0;
-        token0.getBalance();
+        token0.init();
       }
       if (!this.tokensMap[token1.address]) {
         this.tokensMap[token1.address] = token1;
-        token1.getBalance();
+        token1.init();
       }
       this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract;
       pairContract.init();
@@ -230,7 +256,7 @@ class Liquidity {
     if (pair) {
       const pairContract = new PairContract({ ...pair });
       pairContract.init();
-      
+
       this.pairsByToken[`${token0Address}-${token1Address}`] = pairContract;
       return pairContract;
     }
