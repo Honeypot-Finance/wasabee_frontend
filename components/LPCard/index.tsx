@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer, useLocalObservable } from "mobx-react-lite";
 import { TokenSelector } from "@/components/TokenSelector";
 import { SwapAmount } from "../SwapAmount/index";
 import { liquidity } from "@/services/liquidity";
@@ -10,27 +10,18 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { isEthAddress } from "@/lib/address";
 import { wallet } from "@/services/wallet";
+import { Tab, Tabs } from "@nextui-org/react";
+import { Table } from "../table";
+import { ItemSelect, SelectState } from "../ItemSelect";
+import { SelectItem } from "../ItemSelect/index";
 
-export const LPCard = observer(() => {
-  const router = useRouter();
-  const { inputCurrency, outputCurrency } = router.query as {
-    inputCurrency: string;
-    outputCurrency: string;
-  };
-  useEffect(() => {
-    if (!wallet.isInit) {
-      return;
-    }
-    if (inputCurrency && isEthAddress(inputCurrency)) {
-      liquidity.setFromToken(new Token({ address: inputCurrency }));
-    }
-    if (outputCurrency && isEthAddress(outputCurrency)) {
-      liquidity.setToToken(new Token({ address: outputCurrency }));
-    }
-  }, [inputCurrency, outputCurrency, wallet.isInit]);
+const AddLiquidity = observer(() => {
   return (
-    <SpinnerContainer isLoading={liquidity.currentPair.loading}>
-      <div className=" flex flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
+    <SpinnerContainer
+      className="mt-[24px]"
+      isLoading={liquidity.currentPair.loading}
+    >
+      <div className=" flex flex-col justify-center items-start gap-[23px] ">
         <div className="flex justify-between items-center w-full">
           <SwapAmount
             label="From"
@@ -132,5 +123,135 @@ export const LPCard = observer(() => {
         </Button>
       </div>
     </SpinnerContainer>
+  );
+});
+
+const RemoveLiquidity = observer(() => {
+  const state = useLocalObservable(() => ({
+    selectState: new SelectState({
+      value: 0.25,
+    }),
+  }));
+  return liquidity.currentRemovePair ? (
+    <div className="flex justify-center">
+      <div className="flex flex-col gap-[24px] items-center w-[360px]">
+        <div className="w-full"></div>
+        <ItemSelect
+          selectState={state.selectState}
+          className="gap-[16px] justify-between w-full"
+        >
+          <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
+            25%
+          </SelectItem>
+          <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
+            50%
+          </SelectItem>
+          <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
+            75%
+          </SelectItem>
+          <SelectItem className="rounded-[30px] px-[24px]" value={1}>
+            100%
+          </SelectItem>
+        </ItemSelect>
+        <div className="w-full">
+          <div className="flex justify-between">
+            <div>{liquidity.currentRemovePair?.token0.displayName}</div>
+            <div>{liquidity.currentRemovePair?.token0LpBalance.multipliedBy(state.selectState.value as number).toFixed(3)}</div>
+          </div>
+          <div className="mt-[16px] flex justify-between">
+          <div>{liquidity.currentRemovePair?.token1.displayName}</div>
+            <div>{liquidity.currentRemovePair?.token1LpBalance.multipliedBy((state.selectState.value as number)).toFixed(3)}</div>
+          </div>
+        </div>
+        <div className="flex w-full gap-[16px] justify-between">
+          <Button
+            className="flex-1"
+            onClick={() => {
+              liquidity.setCurrentRemovePair(null);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="flex-1"
+            onClick={() => {
+              liquidity.currentRemovePair?.removeLiquidity.call(
+                state.selectState.value as number
+              );
+            }}
+          >
+            Remove
+          </Button>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <Table
+      rowKey="address"
+      columns={[
+        {
+          title: "Pool Name",
+          dataKey: "poolName",
+        },
+        {
+          title: "Self Liquidity",
+          dataKey: "myLiquidityDisplay",
+        },
+        {
+          title: "Action",
+          key: "action",
+          render: (value, record) => {
+            return (
+              <Button
+                onClick={() => {
+                  liquidity.setCurrentRemovePair(record);
+                }}
+              >
+                Remove
+              </Button>
+            );
+          },
+        },
+      ]}
+      datasource={liquidity.myPairs}
+    ></Table>
+  );
+});
+
+export const LPCard = observer(() => {
+  const router = useRouter();
+  const { inputCurrency, outputCurrency } = router.query as {
+    inputCurrency: string;
+    outputCurrency: string;
+  };
+  useEffect(() => {
+    if (!wallet.isInit) {
+      return;
+    }
+    if (inputCurrency && isEthAddress(inputCurrency)) {
+      liquidity.setFromToken(new Token({ address: inputCurrency }));
+    }
+    if (outputCurrency && isEthAddress(outputCurrency)) {
+      liquidity.setToToken(new Token({ address: outputCurrency }));
+    }
+  }, [inputCurrency, outputCurrency, wallet.isInit]);
+  return (
+    <div className="[background:var(--card-color,#271A0C)]   p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
+      <Tabs
+        variant="light"
+        disableAnimation
+        classNames={{
+          tabList: "gap-16px p-0 bg-transparent",
+          tab: "px-[0.25rem] data-[selected=true]:bg-transparent font-bold text-[1.2rem]",
+        }}
+      >
+        <Tab key="addLiquidity" title="Add Liquidity">
+          <AddLiquidity></AddLiquidity>
+        </Tab>
+        <Tab key="removeLiquidity" title="Remove Liquidity">
+          <RemoveLiquidity></RemoveLiquidity>
+        </Tab>
+      </Tabs>
+    </div>
   );
 });

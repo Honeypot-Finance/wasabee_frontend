@@ -5,6 +5,7 @@ import { wallet } from "../wallet";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import { makeAutoObservable } from "mobx";
 import { getContract } from "viem";
+import { AsyncState } from "../utils";
 
 // const totalSupply = await pairContract.methods.totalSupply().call()
 // const LPTokenBalance = await this.balanceOf(pairAddress)
@@ -150,11 +151,10 @@ export class PairContract implements BaseContract {
     }
     this.isInit = true;
   }
-  async removeLiquidity(percent: number) {
-    const liquidity = this.token.balance
+  removeLiquidity = new AsyncState(async (percent: number) => {
+    const liquidity = this.token.balanceWithoutDecimals
       .multipliedBy(percent)
       .div(100)
-      .multipliedBy(new BigNumber(10).pow(this.token.decimals));
     if (liquidity.gt(0)) {
       await this.token.approveIfNoAllowance(
         liquidity.toFixed(0),
@@ -172,5 +172,5 @@ export class PairContract implements BaseContract {
       ]);
       await this.init();
     }
-  }
+  })
 }

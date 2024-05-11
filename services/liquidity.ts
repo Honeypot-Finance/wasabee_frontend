@@ -116,8 +116,8 @@ class Liquidity {
     );
   }
 
-  setCurrentRemovePair(pair: PairContract) {
-    this.currentRemovePair = new PairContract(pair);
+  setCurrentRemovePair(pair: PairContract | null) {
+    this.currentRemovePair = pair;
   }
 
   setFromToken(token: Token) {

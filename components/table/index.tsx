@@ -5,8 +5,9 @@ import { use, useEffect } from "react";
 
 export type Column<T> = {
   title: string;
-  dataKey: keyof T;
-  render?: (value: any) => JSX.Element;
+  dataKey?: keyof T;
+  key?: string;
+  render?: (value: any, row: T) => JSX.Element;
 };
 
 export type TableProps<T extends Record<string, any>> = {
@@ -70,13 +71,16 @@ function TableBase<T extends Record<string, any>>({
           <div>
             {state.tableData?.length ? state.tableData.map((data, index) => (
           <div key={data[rowKey] || index} className="flex relative border-bottom">
-            {columns.map((column) => (
-              <div className="flex-1 p-[16px]" key={column.dataKey as string}>
-                {column.render
-                  ? column.render(data[column.dataKey])
-                  : data[column.dataKey]}
-              </div>
-            ))}
+            {columns.map((column) => {
+              const value = column.dataKey ? data[column.dataKey] : null
+              return (
+                <div className="flex-1 p-[16px]" key={(column.dataKey || column.key) as string}>
+                  {column.render
+                    ? column.render(value, data)
+                    : value}
+                </div>
+              )
+            })}
           </div>
         )) : <NoData></NoData>}
           </div>
