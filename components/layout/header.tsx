@@ -100,7 +100,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
       <NavbarMenu>
         {menuList.map((m, index) => (
           <NavbarMenuItem key={m.title}>
-            <Link className="w-full" href="#">
+            <Link className="w-full"  href={m.path}>
               {m.title}
             </Link>
           </NavbarMenuItem>

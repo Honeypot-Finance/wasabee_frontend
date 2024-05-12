@@ -1,145 +1,113 @@
 export const factoryABI = [
   {
-    "type": "constructor",
-    "inputs": [
-      { "type": "address", "name": "_feeToSetter", "internalType": "address" }
-    ]
-  },
-  {
-    "type": "function",
-    "stateMutability": "view",
-    "outputs": [{ "type": "bytes32", "name": "", "internalType": "bytes32" }],
-    "name": "INIT_CODE_PAIR_HASH",
-    "inputs": []
-  },
-  {
-    "type": "function",
-    "stateMutability": "view",
-    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
-    "name": "allPairs",
-    "inputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }]
-  },
-  {
-    "type": "function",
-    "stateMutability": "view",
-    "outputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }],
-    "name": "allPairsLength",
-    "inputs": []
-  },
-  {
-    "type": "function",
-    "stateMutability": "nonpayable",
-    "outputs": [
-      { "type": "address", "name": "pair", "internalType": "address" }
+    inputs: [
+      { internalType: "address", name: "_feeToSetter", type: "address" },
     ],
-    "name": "createPair",
-    "inputs": [
-      { "type": "address", "name": "tokenA", "internalType": "address" },
-      { "type": "address", "name": "tokenB", "internalType": "address" }
-    ]
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
-    "type": "function",
-    "stateMutability": "view",
-    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
-    "name": "feeTo",
-    "inputs": []
-  },
-  {
-    "type": "function",
-    "stateMutability": "view",
-    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
-    "name": "feeToSetter",
-    "inputs": []
-  },
-  {
-    "type": "function",
-    "stateMutability": "view",
-    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
-    "name": "getPair",
-    "inputs": [
-      { "type": "address", "name": "", "internalType": "address" },
-      { "type": "address", "name": "", "internalType": "address" }
-    ]
-  },
-  {
-    "type": "function",
-    "stateMutability": "pure",
-    "outputs": [{ "type": "bytes32", "name": "", "internalType": "bytes32" }],
-    "name": "pairCodeHash",
-    "inputs": []
-  },
-  {
-    "type": "function",
-    "stateMutability": "nonpayable",
-    "outputs": [],
-    "name": "setFeeTo",
-    "inputs": [
-      { "type": "address", "name": "_feeTo", "internalType": "address" }
-    ]
-  },
-  {
-    "type": "function",
-    "stateMutability": "nonpayable",
-    "outputs": [],
-    "name": "setFeeToSetter",
-    "inputs": [
-      { "type": "address", "name": "_feeToSetter", "internalType": "address" }
-    ]
-  },
-  {
-    "type": "event",
-    "name": "PairCreated",
-    "inputs": [
-      { "type": "address", "name": "token0", "indexed": true },
-      { "type": "address", "name": "token1", "indexed": true },
-      { "type": "address", "name": "pair", "indexed": false },
-      { "type": "uint256", "name": "", "indexed": false }
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "token0",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "token1",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "pair",
+        type: "address",
+      },
+      { indexed: false, internalType: "uint256", name: "", type: "uint256" },
     ],
-    "anonymous": false
+    name: "PairCreated",
+    type: "event",
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "tokenA",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "symbol",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "poolHandler",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rasing_cycle",
-        "type": "uint256"
-      }
+    inputs: [],
+    name: "INIT_CODE_PAIR_HASH",
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    name: "allPairs",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "allPairsLength",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "tokenA", type: "address" },
+      { internalType: "address", name: "tokenB", type: "address" },
     ],
-    "name": "createFTO",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "pair",
-        "type": "address"
-      }
+    name: "createPair",
+    outputs: [{ internalType: "address", name: "pair", type: "address" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "feeTo",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "feeToSetter",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "", type: "address" },
+      { internalType: "address", name: "", type: "address" },
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+    name: "getPair",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "pairCodeHash",
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "_feeTo", type: "address" }],
+    name: "setFeeTo",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "_feeToSetter", type: "address" },
+    ],
+    name: "setFeeToSetter",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const

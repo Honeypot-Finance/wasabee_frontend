@@ -39,12 +39,7 @@ export const ftoFactoryABI = [
         name: "pair",
         type: "address",
       },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
+      { indexed: false, internalType: "uint256", name: "", type: "uint256" },
     ],
     name: "PairCreated",
     type: "event",
@@ -65,28 +60,14 @@ export const ftoFactoryABI = [
   {
     inputs: [],
     name: "INIT_CODE_PAIR_HASH",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "depositer",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "ftoPair",
-        type: "address",
-      },
+      { internalType: "address", name: "depositer", type: "address" },
+      { internalType: "address", name: "ftoPair", type: "address" },
     ],
     name: "addEvent",
     outputs: [],
@@ -95,11 +76,7 @@ export const ftoFactoryABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "_raisedToken",
-        type: "address",
-      },
+      { internalType: "address", name: "_raisedToken", type: "address" },
     ],
     name: "addRaisedToken",
     outputs: [],
@@ -107,163 +84,65 @@ export const ftoFactoryABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     name: "allPairs",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "allPairsLength",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "allRaisedTokens",
-    outputs: [
-      {
-        internalType: "address[]",
-        name: "",
-        type: "address[]",
-      },
-    ],
+    outputs: [{ internalType: "address[]", name: "", type: "address[]" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "provider",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "raisedToken",
-        type: "address",
-      },
-      {
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "symbol",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "poolHandler",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "raisingCycle",
-        type: "uint256",
-      },
+      { internalType: "address", name: "provider", type: "address" },
+      { internalType: "address", name: "raisedToken", type: "address" },
+      { internalType: "string", name: "name", type: "string" },
+      { internalType: "string", name: "symbol", type: "string" },
+      { internalType: "uint256", name: "_amount", type: "uint256" },
+      { internalType: "address", name: "poolHandler", type: "address" },
+      { internalType: "uint256", name: "raisingCycle", type: "uint256" },
     ],
     name: "createFTO",
-    outputs: [
-      {
-        internalType: "address",
-        name: "pair",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "pair", type: "address" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "depositer",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "depositer", type: "address" }],
     name: "events",
-    outputs: [
-      {
-        internalType: "address[]",
-        name: "pairs",
-        type: "address[]",
-      },
-    ],
+    outputs: [{ internalType: "address[]", name: "pairs", type: "address[]" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "raisedToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "launchedToken",
-        type: "address",
-      },
+      { internalType: "address", name: "raisedToken", type: "address" },
+      { internalType: "address", name: "launchedToken", type: "address" },
     ],
     name: "getFTOPairProvider",
-    outputs: [
-      {
-        internalType: "address",
-        name: "provider",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "provider", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
+      { internalType: "address", name: "", type: "address" },
+      { internalType: "address", name: "", type: "address" },
     ],
     name: "getPair",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
@@ -294,49 +173,23 @@ export const ftoFactoryABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "", type: "address" }],
     name: "isRaisedToken",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "raisedToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "launchedToken",
-        type: "address",
-      },
+      { internalType: "address", name: "raisedToken", type: "address" },
+      { internalType: "address", name: "launchedToken", type: "address" },
     ],
     name: "pause",
     outputs: [],
@@ -344,21 +197,9 @@ export const ftoFactoryABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     name: "raisedTokens",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
@@ -371,16 +212,8 @@ export const ftoFactoryABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "raisedToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "launchedToken",
-        type: "address",
-      },
+      { internalType: "address", name: "raisedToken", type: "address" },
+      { internalType: "address", name: "launchedToken", type: "address" },
     ],
     name: "resume",
     outputs: [],
@@ -388,16 +221,10 @@ export const ftoFactoryABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
     name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
-] as const
+] as const;

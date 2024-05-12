@@ -82,7 +82,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
   return (
     <div className="flex flex-col  items-center">
       <div className="w-[800px] max-w-full relative">
-        <div className="flex top-0 md:absolute right-0">
+        <div className="flex top-0 md:absolute right-0 md:flex-row flex-col md:gap-[16px] gap-[8px]">
           <Input
             value={state.searchValue}
             onChange={(e) => {
@@ -99,7 +99,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
             onClick={() => {
               router.push("/swap#lp");
             }}
-            className="px-[12px] ml-[20px] w-[170px] h-[41px] outline-0 justify-center items-center gap-2.5 border-[color:var(--e-18-a-20,rgba(225,138,32,0.40))] [background:var(--e-18-a-20,rgba(225,138,32,0.40))] backdrop-blur-[10px] px-5 py-2.5 rounded-[100px] border-2 border-solid"
+            className="px-[12px] w-[170px] h-[41px] outline-0 justify-center items-center gap-2.5 border-[color:var(--e-18-a-20,rgba(225,138,32,0.40))] [background:var(--e-18-a-20,rgba(225,138,32,0.40))] backdrop-blur-[10px] py-2.5 rounded-[100px] border-2 border-solid"
           >
             <LuPlus />
             Create Pool
