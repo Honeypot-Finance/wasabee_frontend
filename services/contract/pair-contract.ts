@@ -170,7 +170,7 @@ export class PairContract implements BaseContract {
         wallet.account as `0x${string}`,
         BigInt(deadline),
       ]);
-      await this.init();
+      await this.init(true);
     }
   })
 }

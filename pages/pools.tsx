@@ -12,6 +12,7 @@ import { Input } from "../components/input/index";
 import { LuPlus } from "react-icons/lu";
 import { IoSearchOutline } from "react-icons/io5";
 import { useRouter } from "next/router";
+import { set } from "lodash";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
@@ -37,6 +38,10 @@ const PoolsPage: NextLayoutPage = observer(() => {
       },
     ],
     pagination: new PaginationState({}),
+    searchValue: "",
+    setSearchValue(value: string) {
+      this.searchValue = value;
+    },
 
     get columnsMap() {
       return this.columns.reduce((acc, column) => {
@@ -44,8 +49,24 @@ const PoolsPage: NextLayoutPage = observer(() => {
         return acc;
       }, {} as Record<string, (typeof this.columns)[number]>);
     },
+    get filteredPairs() {
+      return liquidity.pairs.filter((pair) => {
+        return (
+          pair.poolName
+            .toLowerCase()
+            .includes(this.searchValue.toLowerCase()) ||
+          pair.address.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+          pair.token0.address
+            .toLowerCase()
+            .includes(this.searchValue.toLowerCase()) ||
+          pair.token1.address
+            .toLowerCase()
+            .includes(this.searchValue.toLowerCase())
+        );
+      });
+    },
     get pairsByPage() {
-      return liquidity.pairs.slice(
+      return this.filteredPairs.slice(
         state.pagination.offset,
         state.pagination.end
       );
@@ -63,6 +84,10 @@ const PoolsPage: NextLayoutPage = observer(() => {
       <div className="w-[800px] max-w-full relative">
         <div className="flex top-0 md:absolute right-0">
           <Input
+            value={state.searchValue}
+            onChange={(e) => {
+              state.setSearchValue(e.target.value);
+            }}
             startContent={<IoSearchOutline></IoSearchOutline>}
             placeholder="Search by name, symbol or address"
             classNames={{

@@ -174,6 +174,7 @@ const RemoveLiquidity = observer(() => {
           </Button>
           <Button
             className="flex-1"
+            isLoading={liquidity.currentRemovePair?.removeLiquidity.loading}
             onClick={() => {
               liquidity.currentRemovePair?.removeLiquidity.call(
                 state.selectState.value as number
