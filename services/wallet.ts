@@ -23,6 +23,7 @@ export class Wallet {
     ftofacade: FtoFacadeContract;
   } = {} as any;
   publicClient!: PublicClient;
+  isInit = false;
   get networksMap() {
     return this.networks.reduce((acc, network) => {
       acc[network.chainId] = network;
@@ -49,8 +50,6 @@ export class Wallet {
     }
     this.currentChainId = walletClient.chain.id;
     this.account = walletClient.account.address;
-
-    console.log("this.currentChainId", this.currentChainId);
     this.currentChain.faucetTokens = this.currentChain.faucetTokens.map(
       (token) => new Token(token)
     );
@@ -70,6 +69,7 @@ export class Wallet {
     };
     this.publicClient = createPublicClientByChain(this.currentChain.chain);
     this.walletClient = walletClient;
+    this.isInit = true;
   }
 }
 

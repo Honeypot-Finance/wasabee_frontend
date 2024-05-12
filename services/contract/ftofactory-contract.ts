@@ -1,8 +1,8 @@
 import { BaseContract } from ".";
 import { wallet } from "../wallet";
 import { getContract } from "viem";
-import { ContractWrite } from "../utils";
 import { makeAutoObservable } from "mobx";
+import { ContractWrite, AsyncState } from "../utils";
 import { ftoFactoryABI } from "@/lib/abis/ftoFactory";
 
 export class FtoFactoryContract implements BaseContract {
@@ -23,5 +23,13 @@ export class FtoFactoryContract implements BaseContract {
 
   get createFTO() {
     return new ContractWrite(this.contract.write.createFTO);
+  }
+
+  get allPairsLength() {
+    return new AsyncState(this.contract.read.allPairsLength);
+  }
+
+  get allPairs() {
+    return new AsyncState(this.contract.read.allPairs);
   }
 }

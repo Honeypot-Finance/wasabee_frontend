@@ -12,13 +12,16 @@ import { faucetABI } from '@/lib/abis/faucet';
 export class Token implements BaseContract {
   address: string = ''
   name: string = ''
-  balance = new BigNumber(0)
+  balanceWithoutDecimals = new BigNumber(0)
+  totalSupplyWithoutDecimals = new BigNumber(0)
   symbol: string = ''
   decimals: number = 0
   logoURI = ''
   abi = ERC20ABI
   faucetLoading = false
   isInit = false
+  
+  
   get displayName () {
     return this.symbol || this.name
   }
@@ -40,7 +43,7 @@ export class Token implements BaseContract {
   constructor({ balance, ...args }: Partial<Token>) {
     Object.assign(this, args)
     if (balance) {
-      this.balance = new BigNumber(balance)
+      this.balanceWithoutDecimals = new BigNumber(balance)
     }
     makeAutoObservable(this)
   }
@@ -52,26 +55,31 @@ export class Token implements BaseContract {
     return  new ContractWrite(this.contract.write?.approve)
   }
 
-  async init () {
+  async init (options?: {loadName?: boolean, loadSymbol?: boolean, loadDecimals?: boolean, loadBalance?: boolean, loadTotalSupply?: boolean}) {
+    const loadName = options?.loadName ?? true
+    const loadSymbol = options?.loadSymbol ?? true
+    const loadDecimals = options?.loadDecimals ?? true
+    const loadBalance = options?.loadBalance ?? true
+    const loadTotalSupply = options?.loadTotalSupply ?? false
     await Promise.all([
-      this.contract.read.name().then((name) => {
+      (loadName && !this.name ) ? this.contract.read.name().then((name) => {
         this.name = name
-      }),
-      this.contract.read.symbol().then((symbol) => {
+      }): Promise.resolve(),
+      (loadSymbol && !this.symbol) ? this.contract.read.symbol().then((symbol) => {
         this.symbol = symbol
-      }),
-      this.contract.read.decimals().then((decimals) => {
+      }): Promise.resolve(),
+      (loadDecimals && !this.decimals) ? this.contract.read.decimals().then((decimals) => {
         this.decimals = decimals
-        return this.getBalance()
-      }),
+      }): Promise.resolve(),
+      loadBalance ? this.getBalance() : Promise.resolve(),
+      loadTotalSupply ? this.getTotalSupply(): Promise.resolve()
     ])
     this.isInit = true
   }
 
   async approveIfNoAllowance(amount: string, spender: string) {
     const allowance = await this.contract.read.allowance([wallet.account as `0x${string}`, spender as `0x${string}`])
-    if (new BigNumber((allowance as any).toString()).gte(new BigNumber(amount))) {
-      console.log('allowance', allowance)
+    if (new BigNumber(allowance.toString()).gte(new BigNumber(amount))) {
       return
     }
     await this.approve.call([spender as `0x${string}`, BigInt(amount)])
@@ -80,18 +88,23 @@ export class Token implements BaseContract {
 
   async getBalance() {
     const balance = await this.contract.read.balanceOf([wallet.account as `0x${string}`])
-    this.balance = balance
-      ? new BigNumber(balance.toString()).div(
-          new BigNumber(10).pow(this.decimals)
-        )
-      : new BigNumber(0)
-      // console.log('balance', this.address, this.balance.toString())
-    return this.balance
+    this.balanceWithoutDecimals = new BigNumber(balance.toString())
+    return this.balanceWithoutDecimals
+  }
+  async getTotalSupply() {
+    const totalSupply = await this.contract.read.totalSupply()
+    this.totalSupplyWithoutDecimals = new BigNumber(totalSupply.toString())
+    return this.totalSupplyWithoutDecimals
+  }
+
+
+  get balance () {
+    return this.balanceWithoutDecimals.div(new BigNumber(10).pow(this.decimals))
   }
 
   get balanceFormatted() {
-    return amountFormatted(this.balance,  {
-      decimals: 0,
+    return amountFormatted(this.balanceWithoutDecimals,  {
+      decimals: this.decimals,
       fixed: 3
     })
   }

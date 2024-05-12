@@ -1,38 +1,61 @@
-import { observer } from "mobx-react-lite";
-import { TokenSelector } from '@/components/TokenSelector';
-import { SwapAmount } from '../SwapAmount/index';
+import { observer, useLocalObservable } from "mobx-react-lite";
+import { TokenSelector } from "@/components/TokenSelector";
+import { SwapAmount } from "../SwapAmount/index";
 import { liquidity } from "@/services/liquidity";
-import { Button } from '@/components/button';
+import { Button } from "@/components/button";
 import { Token } from "@/services/contract/token";
 import { SpinnerContainer } from "../Spinner";
 import { PlusSvg } from "../svg/plus";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { isEthAddress } from "@/lib/address";
+import { wallet } from "@/services/wallet";
+import { Tab, Tabs } from "@nextui-org/react";
+import { Table } from "../table";
+import { ItemSelect, SelectState } from "../ItemSelect";
+import { SelectItem } from "../ItemSelect/index";
 
-export const LPCard = observer(() => {
+const AddLiquidity = observer(() => {
   return (
-    <SpinnerContainer isLoading={liquidity.currentPair.loading}>
-      <div className=" flex flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
+    <SpinnerContainer
+      className="mt-[24px]"
+      isLoading={liquidity.currentPair.loading}
+    >
+      <div className=" flex flex-col justify-center items-start gap-[23px] ">
         <div className="flex justify-between items-center w-full">
-          <SwapAmount label="From" inputProps={{
-            value: liquidity.fromAmount,
-            disabled: !liquidity.fromToken,
-            max: liquidity.fromToken?.balance.toNumber(),
-            min: 0,
-            onClear: () => {
+          <SwapAmount
+            label="From"
+            inputProps={{
+              value: liquidity.fromAmount,
+              disabled: !liquidity.fromToken,
+              max: liquidity.fromToken?.balance.toNumber(),
+              min: 0,
+              onClear: () => {
                 liquidity.setFromAmount("");
-            },
-            onChange: (e) => {
-              liquidity.setFromAmount(e.target.value);
-            }
-          }}></SwapAmount>
-          <div>
-          {!!liquidity.fromToken && <div className="flex items-center">
-             <div className="text-sub text-[]">Balance: {liquidity.fromToken.balanceFormatted}</div> 
-              <div onClick={() => {
-                liquidity.setFromAmount((liquidity.fromToken as Token).balance.toFixed());
-              }} className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline">
-                Max
+              },
+              onChange: (e) => {
+                liquidity.setFromAmount(e.target.value);
+              },
+            }}
+          ></SwapAmount>
+          <div className="flex flex-col items-end">
+            {!!liquidity.fromToken && (
+              <div className="flex items-center">
+                <div className="text-sub">
+                  Balance: {liquidity.fromToken.balanceFormatted}
+                </div>
+                <div
+                  onClick={() => {
+                    liquidity.setFromAmount(
+                      (liquidity.fromToken as Token).balance.toFixed()
+                    );
+                  }}
+                  className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline"
+                >
+                  Max
+                </div>
               </div>
-            </div>}
+            )}
             <TokenSelector
               value={liquidity.fromToken}
               onSelect={(token) => {
@@ -43,32 +66,44 @@ export const LPCard = observer(() => {
         </div>
         <div className="flex w-full items-center gap-[5px]">
           <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
-          <PlusSvg
-          ></PlusSvg>
+          <PlusSvg></PlusSvg>
           <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
         </div>
         <div className="flex justify-between  items-center w-full">
-          <SwapAmount label="To" inputProps={{
-            value: liquidity.toAmount,
-            disabled: !liquidity.toToken,
-            max: liquidity.toToken?.balance.toNumber(),
-            min: 0,
-            onClear: () => {
+          <SwapAmount
+            label="To"
+            inputProps={{
+              value: liquidity.toAmount,
+              disabled: !liquidity.toToken || !!liquidity.currentPair.value,
+              max: liquidity.toToken?.balance.toNumber(),
+              min: 0,
+              onClear: () => {
                 liquidity.setToAmount("");
-            },
-            onChange: (e) => {
-              liquidity.setToAmount(e.target.value);
-            }
-          }}></SwapAmount>
-          <div>
-          {!!liquidity.toToken && <div className="flex items-center">
-             <div className="text-sub text-[]">Balance: {liquidity.toToken.balanceFormatted}</div> 
-              <div onClick={() => {
-                liquidity.setToAmount((liquidity.toToken as Token).balance.toFixed());
-              }} className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline">
-                Max
+              },
+              isClearable: !liquidity.currentPair.value,
+              onChange: (e) => {
+                liquidity.setToAmount(e.target.value);
+              },
+            }}
+          ></SwapAmount>
+          <div className="flex flex-col items-end">
+            {!!liquidity.toToken && (
+              <div className="flex items-center">
+                <div className="text-sub">
+                  Balance: {liquidity.toToken.balanceFormatted}
+                </div>
+                <div
+                  onClick={() => {
+                    liquidity.setToAmount(
+                      (liquidity.toToken as Token).balance.toFixed()
+                    );
+                  }}
+                  className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline"
+                >
+                  Max
+                </div>
               </div>
-            </div>}
+            )}
             <TokenSelector
               value={liquidity.toToken}
               onSelect={(token) => {
@@ -77,10 +112,146 @@ export const LPCard = observer(() => {
             ></TokenSelector>
           </div>
         </div>
-        <Button isDisabled={liquidity.isDisabled} isLoading={liquidity.addLiquidity.loading} onClick={() => {
-            liquidity.addLiquidity.call()
-        }}>{liquidity.buttonContent}</Button>
+        <Button
+          isDisabled={liquidity.isDisabled}
+          isLoading={liquidity.addLiquidity.loading}
+          onClick={() => {
+            liquidity.addLiquidity.call();
+          }}
+        >
+          {liquidity.buttonContent}
+        </Button>
       </div>
-      </SpinnerContainer>
+    </SpinnerContainer>
+  );
+});
+
+const RemoveLiquidity = observer(() => {
+  const state = useLocalObservable(() => ({
+    selectState: new SelectState({
+      value: 0.25,
+    }),
+  }));
+  return liquidity.currentRemovePair ? (
+    <div className="flex justify-center">
+      <div className="flex flex-col gap-[24px] items-center w-[360px]">
+        <div className="w-full"></div>
+        <ItemSelect
+          selectState={state.selectState}
+          className="gap-[16px] justify-between w-full"
+        >
+          <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
+            25%
+          </SelectItem>
+          <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
+            50%
+          </SelectItem>
+          <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
+            75%
+          </SelectItem>
+          <SelectItem className="rounded-[30px] px-[24px]" value={1}>
+            100%
+          </SelectItem>
+        </ItemSelect>
+        <div className="w-full">
+          <div className="flex justify-between">
+            <div>{liquidity.currentRemovePair?.token0.displayName}</div>
+            <div>{liquidity.currentRemovePair?.token0LpBalance.multipliedBy(state.selectState.value as number).toFixed(3)}</div>
+          </div>
+          <div className="mt-[16px] flex justify-between">
+          <div>{liquidity.currentRemovePair?.token1.displayName}</div>
+            <div>{liquidity.currentRemovePair?.token1LpBalance.multipliedBy((state.selectState.value as number)).toFixed(3)}</div>
+          </div>
+        </div>
+        <div className="flex w-full gap-[16px] justify-between">
+          <Button
+            className="flex-1"
+            onClick={() => {
+              liquidity.setCurrentRemovePair(null);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="flex-1"
+            onClick={() => {
+              liquidity.currentRemovePair?.removeLiquidity.call(
+                state.selectState.value as number
+              );
+            }}
+          >
+            Remove
+          </Button>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <Table
+      rowKey="address"
+      columns={[
+        {
+          title: "Pool Name",
+          dataKey: "poolName",
+        },
+        {
+          title: "Self Liquidity",
+          dataKey: "myLiquidityDisplay",
+        },
+        {
+          title: "Action",
+          key: "action",
+          render: (value, record) => {
+            return (
+              <Button
+                onClick={() => {
+                  liquidity.setCurrentRemovePair(record);
+                }}
+              >
+                Remove
+              </Button>
+            );
+          },
+        },
+      ]}
+      datasource={liquidity.myPairs}
+    ></Table>
+  );
+});
+
+export const LPCard = observer(() => {
+  const router = useRouter();
+  const { inputCurrency, outputCurrency } = router.query as {
+    inputCurrency: string;
+    outputCurrency: string;
+  };
+  useEffect(() => {
+    if (!wallet.isInit) {
+      return;
+    }
+    if (inputCurrency && isEthAddress(inputCurrency)) {
+      liquidity.setFromToken(new Token({ address: inputCurrency }));
+    }
+    if (outputCurrency && isEthAddress(outputCurrency)) {
+      liquidity.setToToken(new Token({ address: outputCurrency }));
+    }
+  }, [inputCurrency, outputCurrency, wallet.isInit]);
+  return (
+    <div className="[background:var(--card-color,#271A0C)]   p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
+      <Tabs
+        variant="light"
+        disableAnimation
+        classNames={{
+          tabList: "gap-16px p-0 bg-transparent",
+          tab: "px-[0.25rem] data-[selected=true]:bg-transparent font-bold text-[1.2rem]",
+        }}
+      >
+        <Tab key="addLiquidity" title="Add Liquidity">
+          <AddLiquidity></AddLiquidity>
+        </Tab>
+        <Tab key="removeLiquidity" title="Remove Liquidity">
+          <RemoveLiquidity></RemoveLiquidity>
+        </Tab>
+      </Tabs>
+    </div>
   );
 });

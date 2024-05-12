@@ -1,6 +1,8 @@
 import { wallet } from "./wallet";
-import { AsyncState } from "./utils";
+import BigNumber from "bignumber.js";
+import { formatEther } from "viem";
 import { FtoPairContract } from "./contract/ftopair-contract";
+import { useReadContract, useBalance, useAccount } from "wagmi";
 
 class LaunchPad {
   get ftofactoryContract() {
@@ -11,18 +13,57 @@ class LaunchPad {
     return wallet.contracts.ftofacade;
   }
 
-  ftoPairContract(address: string) {
+  ftoPairContract(address: `0x${string}`) {
     return new FtoPairContract({ address });
   }
 
-  endTime = (address: string) =>
-    new AsyncState(async () => {
-      return await this.ftoPairContract(address).endTime();
-    });
+  allPairsLength = async () =>
+    await this.ftofactoryContract.allPairsLength.call();
 
-  allPairsLength = new AsyncState(async () => {
-    return await this.ftofacadeContract.allPairsLength();
-  });
+  getPairAddress = async (index: bigint) =>
+    await this.ftofactoryContract.allPairs.call([index]);
+
+  getPairInfo = async (pairAddress: `0x${string}`) => {
+    const ftoPairContract = this.ftoPairContract(pairAddress);
+    const launchedTokenAddress = await ftoPairContract.launchedTokenAddress();
+    const depositedRaisedToken = await ftoPairContract.depositedRaisedToken();
+    const depositedLaunchedToken =
+      await ftoPairContract.depositedLaunchedToken();
+
+    const price = BigNumber(formatEther(depositedRaisedToken))
+      .div(formatEther(depositedLaunchedToken))
+      .toFormat();
+    return {
+      price,
+      launchedTokenAddress,
+      depositedRaisedToken,
+      endTime: await ftoPairContract.endTime(),
+    };
+  };
+
+  // useTokenDetail = async (tokenAddress: string) => {
+  //   const { address } = useAccount();
+  //   const ftoPairContract = new FtoPairContract({ address: tokenAddress });
+  //   const tokenBAddress = await ftoPairContract.tokenBAddress();
+  //   const { data: tokenBName } = useReadContract({
+  //     abi: erc20Abi,
+  //     address: tokenBAddress,
+  //     functionName: "name",
+  //   });
+  //   const tokenBProvider = await ftoPairContract.tokenBProvider();
+  //   const tokenAAddress = await ftoPairContract.tokenAAddress();
+  //   const { refetch: refetchTokenABalance, data: tokenAbalanceData } =
+  //     useBalance({
+  //       token: tokenAAddress,
+  //       address: address,
+  //     });
+
+  //   const { refetch: refetchTokenBBalance, data: tokenBbalanceData } =
+  //     useBalance({
+  //       token: tokenBAddress,
+  //       address: address,
+  //     });
+  // };
 
   createFTO = async ({
     provider,

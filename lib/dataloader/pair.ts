@@ -11,7 +11,10 @@ import { ERC20ABI } from '../abis/erc20';
 // 2. Set up your client with desired chain & transport.
 
 export const tokenLoader = new DataLoader<
-  string,
+  {
+    address: string,
+    chainId: number
+  },
   {
     address: `0x${string}`;
     name: string;
@@ -19,12 +22,12 @@ export const tokenLoader = new DataLoader<
     decimals: string;
   }
 >(async (addresses) => {
-  const chainId = addresses[0].split("_")[0];
+  const chainId = addresses[0].chainId
   const currentNetwork = networksMap[chainId];
   const tokensMap = (await kv.get<Record<string, any>>(getCacheKey(chainId, "tokens"))) || {};
   const res = await Promise.all(
     addresses.map(async (addressChainId) => {
-      const [chainId, address] =  addressChainId.split("_")
+      const {chainId, address} =  addressChainId
       const lowerAddress = address.toLowerCase();
       let token = tokensMap?.[lowerAddress];
       if (!token) {
@@ -50,9 +53,14 @@ export const tokenLoader = new DataLoader<
   return res;
 });
 
-export const pairByTokensLoader = new DataLoader<string, any>(
+export const pairByTokensLoader = new DataLoader<{
+  token0Address: string;
+  token1Address: string;
+  chainId: number;
+}, any>(
   async (tokens) => {
-    const chainId = tokens[0].split("_")[0];
+    const chainId = tokens[0].chainId
+    // kv.del(getCacheKey(chainId, "pairsByTokens"));
     const pairsMap =
       (await kv.get<Record<string, any>>(
         getCacheKey(chainId, "pairsByTokens")
@@ -68,9 +76,9 @@ export const pairByTokensLoader = new DataLoader<string, any>(
     });
     const pairs = await Promise.all(
       tokens.map(async (t) => {
-        let pair = pairsMap?.[t];
+        let pair = pairsMap?.[t.token0Address + "-" + t.token1Address];
         if (!pair) {
-          const [token0Address, token1Address] = t.split("_")[1].split("-");
+          const {token0Address, token1Address} = t
           const pairAddress = await factoryContract.read.getPair([
             token0Address,
             token1Address,
@@ -80,15 +88,21 @@ export const pairByTokensLoader = new DataLoader<string, any>(
           }
           // const pairContract = getContract({ address: pairAddress as `0x${string}`, abi: IUniswapV2Pair.abi, client });
           const [token0, token1] = await tokenLoader.loadMany([
-            token0Address as `0x${string}`,
-            token1Address as `0x${string}`,
+            {
+              address: token0Address,
+              chainId: Number(chainId),
+            },
+            {
+              address: token1Address,
+              chainId: Number(chainId),
+            }
           ]);
           pair = {
             address: pairAddress,
             token0,
             token1,
           };
-          pairsMap[t] = pair;
+          pairsMap[t.token0Address + "-" + t.token1Address] = pair;
         }
         return pair;
       })

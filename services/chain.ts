@@ -12,7 +12,7 @@ export class Network {
     factory: string;
     ftoFactory: string;
     ftoFacade: string;
-    ftoToken: string;
+    ftoTokens: string [];
   };
   faucetTokens: Token [] = [];
   chain!: Chain;
@@ -29,7 +29,7 @@ export const polygonTestNetwork = new Network({
     factory: "0x333bB9e7Aa8E02017E92cBAe2A8D500be7c0B95F",
     ftoFactory: "0x5AD84056574066c774C5e58BC4a0652b6c171253",
     ftoFacade: "0xe67a15AeBD845C779BF6672442567b1C66de34C2",
-    ftoToken: "0x878fd3Ccf564Cc2e38EEdDd798F88D8f8a51a1dD",
+    ftoTokens: ["0x878fd3Ccf564Cc2e38EEdDd798F88D8f8a51a1dD"],
 
   },
   faucetTokens: [
@@ -63,11 +63,11 @@ export const polygonTestNetwork = new Network({
 export const berachainTestNetwork = new Network({
   chain: berachainTestnet,
   contracts: {
-    routerV2: "0x51e4fF69060CD62dE1a9374799a0BddeB55cb1E4",
-    factory: "0x5C4cDd0160c0CB4C606365dD98783064335A9ce0",
-    ftoFactory: "",
-    ftoFacade: "",
-    ftoToken: "",
+    routerV2: "0xB192af2225791c439CB2024290158d3202DbcD95",
+    factory: "0xE0D1F1cE03A7598EE7FdF7E5DB837d9726C0Ea5c",
+    ftoFactory: "0xEd6a0A29A962B4296bCeEC4e1E55F5Ec0474EAC7",
+    ftoFacade: "0x3aCCC3dD26EeC5F6e254060906b7FA24D98E6722",
+    ftoTokens: ["0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46", '0x5806E416dA447b267cEA759358cF22Cc41FAE80F'],
   },
   faucetTokens: [
     {
@@ -104,7 +104,7 @@ export const sepoliaNetwork = new Network({
     factory: "0x51089092b3c40c15698818592f9487340C2379B5",
     ftoFactory: "0x16b7e526cE35061de7c26E6D943687460637BB6D",
     ftoFacade: "0xf7D56579e12e43984f1Ff90Cd9E9fc8c93c1ACF2",
-    ftoToken: "0x5d116b0032188519e62858dFd3b7917ccEcad170",
+    ftoTokens: ["0x5d116b0032188519e62858dFd3b7917ccEcad170"],
   },
   faucetTokens: [],
 });

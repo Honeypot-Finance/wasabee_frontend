@@ -5,6 +5,7 @@ import { wallet } from "../wallet";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import { makeAutoObservable } from "mobx";
 import { getContract } from "viem";
+import { AsyncState } from "../utils";
 
 // const totalSupply = await pairContract.methods.totalSupply().call()
 // const LPTokenBalance = await this.balanceOf(pairAddress)
@@ -15,36 +16,43 @@ export class PairContract implements BaseContract {
   address: string = "";
   name: string = "";
   abi = IUniswapV2Pair.abi;
-  token!: Token;
-  totalSupply: BigNumber = new BigNumber(0);
+  token: Token = new Token({});
 
-  reserves: any = null;
-  token0: Token = new Token({}) // fixed
-  token1: Token = new Token({})  // fixed
-  midPrice0: BigNumber | null = null
-  midPrice1: BigNumber | null = null
+  reserves: {
+    reserve0: BigNumber;
+    reserve1: BigNumber;
+  } | null = null;
+  token0: Token = new Token({}); // fixed
+  token1: Token = new Token({}); // fixed
+  price: BigNumber | null = null;
   isInit = false;
-  isLoading = false
+  isLoading = false;
 
   get token0LpBalance() {
-    return !new BigNumber(this.totalSupply || 0).eq(0)
-      ? new BigNumber(this.reserves?.reserve0.toString() || 0)
-          .multipliedBy(this.token.balance || 0)
-          .div(this.totalSupply || 0)
+    return !new BigNumber(this.token.totalSupplyWithoutDecimals || 0).eq(0)
+      ? new BigNumber(this.reserves?.reserve0 || 0)
+          .multipliedBy(this.token.balanceWithoutDecimals || 0)
+          .div(this.token.totalSupplyWithoutDecimals || 0)
       : new BigNumber(0);
   }
 
   get token1LpBalance() {
-    return !new BigNumber(this.totalSupply || 0).eq(0)
-      ? new BigNumber(this.reserves?.reserve1.toString() || 0)
-          .multipliedBy(this.token.balance || 0)
-          .div(this.totalSupply || 0)
+    return !new BigNumber(this.token.totalSupplyWithoutDecimals || 0).eq(0)
+      ? new BigNumber(this.reserves?.reserve1 || 0)
+          .multipliedBy(this.token.balanceWithoutDecimals || 0)
+          .div(this.token.totalSupplyWithoutDecimals || 0)
       : new BigNumber(0);
   }
-  get liquidityDisplay() {
+  get myLiquidityDisplay() {
     return `${this.token0LpBalance.toFixed(3)} ${
       this.token0.displayName
     } - ${this.token1LpBalance.toFixed(3)} ${this.token1.displayName}`;
+  }
+
+  get liquidityDisplay() {
+    return `${this.reserves?.reserve0.toFixed(3)} ${
+      this.token0.displayName
+    } - ${this.reserves?.reserve1.toFixed(3)} ${this.token1.displayName}`;
   }
 
   get poolName() {
@@ -59,11 +67,11 @@ export class PairContract implements BaseContract {
         public: wallet.publicClient,
         wallet: wallet.walletClient,
       },
-    })
+    });
   }
 
   get routerV2Contract() {
-    return wallet.contracts.routerV2
+    return wallet.contracts.routerV2;
   }
 
   constructor(args: Partial<PairContract>) {
@@ -71,71 +79,82 @@ export class PairContract implements BaseContract {
     makeAutoObservable(this);
   }
 
-
   async getReserves() {
     const reserves = await this.contract?.read.getReserves();
-    const [reserve0, reserve1] = reserves as any [] || [];
+    const [reserve0, reserve1] = (reserves as any[]) || [];
     if (reserve0 && reserve1) {
       this.reserves = {
-        reserve0: reserve0,
-        reserve1: reserve1,
-      };
-      const [midPrice0, midPrice1] = await Promise.all([
-        this.routerV2Contract.contract.read.getAmountOut([
-          BigInt(new BigNumber(1)
-            .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
-            .toFixed()),
-          this.reserves.reserve0,
-          this.reserves.reserve1,
-        ]),
-        this.routerV2Contract.contract.read.getAmountOut([
-          BigInt(new BigNumber(1)
-            .multipliedBy(new BigNumber(10).pow(this.token1.decimals))
-            .toFixed()),
-          this.reserves.reserve1,
-          this.reserves.reserve0,
-        ]),
-      ]);
-      if (midPrice0) {
-        this.midPrice0 = new BigNumber(midPrice0.toString()).div(
-          new BigNumber(10).pow(this.token1.decimals)
-        );
-      }
-      if (midPrice1) {
-        this.midPrice1 = new BigNumber(midPrice1.toString()).div(
+        reserve0: new BigNumber(reserve0.toString()).div(
           new BigNumber(10).pow(this.token0.decimals)
-        );
-      }
-      // console.log("midPrice0", this.midPrice0?.toFixed(), "midPrice1", this.midPrice1?.toFixed());
+        ),
+        reserve1: new BigNumber(reserve1.toString()).div(
+          new BigNumber(10).pow(this.token1.decimals)
+        ),
+      };
     }
   }
 
-  async getTotalSupply() {
-    const totalSupply = await this.contract?.read.totalSupply([]);
-    this.totalSupply = new BigNumber(totalSupply?.toString() || 0);
+  async getPrice() {
+    if (this.reserves) {
+      const price = await this.routerV2Contract.contract.read.getAmountOut([
+        BigInt(
+          new BigNumber(1)
+            .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
+            .toFixed()
+        ),
+        BigInt(
+          this.reserves.reserve0
+            .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
+            .toFixed()
+        ),
+        BigInt(
+          this.reserves.reserve1
+            .multipliedBy(new BigNumber(10).pow(this.token1.decimals))
+            .toFixed()
+        ),
+      ]);
+      this.price = new BigNumber(price.toString()).div(
+        new BigNumber(10).pow(this.token1.decimals)
+      );
+    }
   }
 
   async init(force = false) {
     if (this.isLoading) {
-      return
+      return;
     }
-    this.isLoading = true
+    this.isLoading = true;
     if (force || !this.isInit) {
       try {
-        await this.getReserves()
+        await Promise.all([
+          (async () => {
+            this.token = new Token({
+              address: this.address,
+            });
+            await this.token.init({
+              loadName:false,
+              loadSymbol: false,
+              loadDecimals: false,
+              loadTotalSupply: true,
+            });
+          })(),
+          (async () => {
+            await this.getReserves();
+            await this.getPrice();
+          })(),
+        ]);
       } catch (error) {
-        throw error
-      }finally {
-        this.isLoading = false
+        throw error;
+      } finally {
+        this.isLoading = false;
       }
     }
-    this.isInit = true
+    this.isInit = true;
   }
-  async removeLiquidity(percent: number) {
-    const liquidity = this.token.balance
+  removeLiquidity = new AsyncState(async (percent: number) => {
+    const liquidity = this.token.balanceWithoutDecimals
       .multipliedBy(percent)
       .div(100)
-      .multipliedBy(new BigNumber(10).pow(this.token.decimals));
     if (liquidity.gt(0)) {
       await this.token.approveIfNoAllowance(
         liquidity.toFixed(0),
@@ -148,10 +167,10 @@ export class PairContract implements BaseContract {
         BigInt(liquidity.toFixed(0)),
         BigInt(0),
         BigInt(0),
-        wallet.account  as `0x${string}`,
+        wallet.account as `0x${string}`,
         BigInt(deadline),
       ]);
       await this.init();
     }
-  }
+  })
 }
