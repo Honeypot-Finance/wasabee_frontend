@@ -1,15 +1,14 @@
 import { BaseContract } from ".";
 import { wallet } from "../wallet";
 import { getContract } from "viem";
-import { ContractWrite } from "../utils";
 import { makeAutoObservable } from "mobx";
-import { ftoFactoryABI } from "@/lib/abis/ftoFactory";
+import { MUBAI_FTO_PAIR_ABI } from "@/lib/abis/ftoPair";
 
-export class FtoFactoryContract implements BaseContract {
+export class FtoPairContract implements BaseContract {
   address = "";
   name: string = "";
-  abi = ftoFactoryABI;
-  constructor(args: Partial<FtoFactoryContract>) {
+  abi = MUBAI_FTO_PAIR_ABI;
+  constructor(args: Partial<FtoPairContract>) {
     Object.assign(this, args);
     makeAutoObservable(this);
   }
@@ -21,7 +20,10 @@ export class FtoFactoryContract implements BaseContract {
     });
   }
 
-  get createFTO() {
-    return new ContractWrite(this.contract.write.createFTO);
+  async endTime() {
+    const data = await this.contract.read.end_time();
+    console.log(data);
+
+    return data;
   }
 }

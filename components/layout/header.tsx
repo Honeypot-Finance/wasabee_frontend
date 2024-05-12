@@ -49,7 +49,6 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
     // </div>
     <Navbar
       onMenuOpenChange={setIsMenuOpen}
-    
       classNames={{
         wrapper: "max-w-[1200px]",
       }}

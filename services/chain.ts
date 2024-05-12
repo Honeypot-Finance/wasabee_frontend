@@ -12,7 +12,7 @@ export class Network {
     factory: string;
     ftoFactory: string;
     ftoFacade: string;
-    ftoTokens: string [];
+    ftoTokens: string []
   };
   faucetTokens: Token [] = [];
   chain!: Chain;
@@ -22,43 +22,43 @@ export class Network {
     Object.assign(this, args);
   }
 }
-export const polygonTestNetwork = new Network({
-  chain: polygonMumbaiChain,
-  contracts: {
-    routerV2: "0x2ef225538c9FcE4641e038Fd6FA64cA5519cF971",
-    factory: "0x333bB9e7Aa8E02017E92cBAe2A8D500be7c0B95F",
-    ftoFactory: "0x5AD84056574066c774C5e58BC4a0652b6c171253",
-    ftoFacade: "0xe67a15AeBD845C779BF6672442567b1C66de34C2",
-    ftoTokens: ["0x878fd3Ccf564Cc2e38EEdDd798F88D8f8a51a1dD"],
+// export const polygonTestNetwork = new Network({
+//   chain: polygonMumbaiChain,
+//   contracts: {
+//     routerV2: "0x2ef225538c9FcE4641e038Fd6FA64cA5519cF971",
+//     factory: "0x333bB9e7Aa8E02017E92cBAe2A8D500be7c0B95F",
+//     ftoFactory: "0x5AD84056574066c774C5e58BC4a0652b6c171253",
+//     ftoFacade: "0xe67a15AeBD845C779BF6672442567b1C66de34C2",
+//     ftoTokens: ["0x878fd3Ccf564Cc2e38EEdDd798F88D8f8a51a1dD"],
 
-  },
-  faucetTokens: [
-    {
-      name: "AORI",
-      symbol: "AORI",
-      decimals: 18,
-      address: "0x41ffb8e98174e84faaa7133b2e6ff30537c64d66",
-    },
-    {
-      name: "YEET",
-      symbol: "YEET",
-      decimals: 18,
-      address: "0x2E985184792faDDc8AB9a0E855F289576a1e5dD2",
-    },
-    {
-      name: "HONEY",
-      symbol: "HONEY",
-      decimals: 18,
-      address: "0xEEAeA06afd271F665ba005AAaDdDBF4ADCeB330a",
-    },
-    {
-      name: "HPOT",
-      symbol: "HPOT",
-      decimals: 18,
-      address: "0xa3C79E1Ec388f5FaAaC993DeeaF3Bc4EbD10568B",
-    },
-  ],
-});
+//   },
+//   faucetTokens: [
+//     {
+//       name: "AORI",
+//       symbol: "AORI",
+//       decimals: 18,
+//       address: "0x41ffb8e98174e84faaa7133b2e6ff30537c64d66",
+//     },
+//     {
+//       name: "YEET",
+//       symbol: "YEET",
+//       decimals: 18,
+//       address: "0x2E985184792faDDc8AB9a0E855F289576a1e5dD2",
+//     },
+//     {
+//       name: "HONEY",
+//       symbol: "HONEY",
+//       decimals: 18,
+//       address: "0xEEAeA06afd271F665ba005AAaDdDBF4ADCeB330a",
+//     },
+//     {
+//       name: "HPOT",
+//       symbol: "HPOT",
+//       decimals: 18,
+//       address: "0xa3C79E1Ec388f5FaAaC993DeeaF3Bc4EbD10568B",
+//     },
+//   ],
+// });
 
 export const berachainTestNetwork = new Network({
   chain: berachainTestnet,
@@ -112,7 +112,7 @@ export const sepoliaNetwork = new Network({
 export const networks = [
   berachainTestNetwork,
   sepoliaNetwork,
-  polygonTestNetwork,
+  // polygonTestNetwork,
 
 ];
 export const networksMap = networks.reduce((acc, network) => {

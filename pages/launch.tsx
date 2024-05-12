@@ -1,19 +1,25 @@
-import { liquidity } from "@/services/liquidity";
-import { NextLayoutPage } from "@/types/nextjs";
-import { observer, useLocalObservable } from "mobx-react-lite";
 import Link from "next/link";
+import { Button } from "@/components/button";
 import { Logo } from "@/components/svg/logo";
+import launchpad from "@/services/launchpad";
+import { NextLayoutPage } from "@/types/nextjs";
 import { TimelineSvg } from "@/components/svg/Timeline";
-import { TotalRaisedSvg } from "@/components/svg/TotalRaised";
 import { TokenPriceSvg } from "@/components/svg/TokenPrice";
+import { TotalRaisedSvg } from "@/components/svg/TotalRaised";
+import { observer, useLocalObservable } from "mobx-react-lite";
 
 const LauchPage: NextLayoutPage = observer(() => {
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto">
-      <div className="flex w-full">
-        <Link href="/launch-token" className="ml-auto border-[rgba(225,138,32,0.40)] [background:var(--f-7931-a-2-paints,linear-gradient(180deg,rgba(232,211,124,0.13)_33.67%,#FCD729_132.5%),#F7931A)] p-2.5 rounded-lg border-[6px] border-solid text-black font-bold text-sm">
-          Launch Token
-        </Link>
+      <div>{launchpad.allPairsLength.loading}</div>
+      <div>{launchpad.allPairsLength.error?.message}</div>
+      <div>{JSON.stringify(launchpad.allPairsLength.value)}</div>
+      <div className="flex w-full justify-end">
+        <Button>
+          <Link href="/launch-token" className="text-black font-bold">
+            Launch Token
+          </Link>
+        </Button>
       </div>
       <div className="mt-[20px] grid grid-cols-3 gap-6">
         <div className="flex  flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative">
@@ -50,9 +56,11 @@ const LauchPage: NextLayoutPage = observer(() => {
               </div>
             </div>
           </div>
-          <Link href="/launch-detail" className="text-center mt-4 border bg-[rgba(255,205,77,0.20)] p-2.5 rounded-lg  border-[rgba(255,205,77,0.20)] w-full text-gold-primary">
-            View Token
-          </Link>
+          <Button>
+            <Link href="/launch-detail" className="text-black font-bold">
+              View Token
+            </Link>
+          </Button>
         </div>
       </div>
     </div>
