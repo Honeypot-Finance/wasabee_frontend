@@ -5,11 +5,11 @@ import z from "zod";
 import { pairByTokensLoader, tokenLoader } from "@/lib/dataloader/pair";
 import { getContract } from "viem";
 import { createPublicClientByChain } from "@/lib/client";
-import { kv } from "@vercel/kv";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import PQueue from "p-queue";
 import { getCacheKey } from "@/lib/cache";
 import { networksMap } from "@/services/chain";
+import { kv } from "@/lib/kv";
 
 const queue = new PQueue({ concurrency: 10 });
 

@@ -1,5 +1,5 @@
 import DataLoader from "dataloader";
-import { kv } from "@vercel/kv";
+
 import { getContract } from "viem";
 import { ethers } from "ethers";
 import { createPublicClientByChain } from "../client";
@@ -7,6 +7,7 @@ import { getCacheKey } from "../cache";
 import { networksMap } from "@/services/chain";
 import { factoryABI } from '../abis/factory';
 import { ERC20ABI } from '../abis/erc20';
+import { kv } from "../kv";
 
 // 2. Set up your client with desired chain & transport.
 
