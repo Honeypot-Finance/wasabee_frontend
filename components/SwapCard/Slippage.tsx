@@ -25,7 +25,7 @@ export const Slippage = observer(
             swap.setSlippage(value)
           }
           if (value === 'custom') {
-            swap.setSlippage(state.customSlippage.value)
+            swap.setSlippage(state.customSlippage.value / 100)
           }
         },
         value: 0
