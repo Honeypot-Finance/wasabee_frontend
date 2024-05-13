@@ -1,6 +1,6 @@
 import { HtmlHTMLAttributes, useState } from "react";
 import { Logo } from "../svg/logo";
-import { WalletConnect } from "../walletconnect";
+import { WalletConnect, WalletConnectMobile } from "../walletconnect";
 import clsx from "clsx";
 import {
   Navbar,
@@ -13,6 +13,7 @@ import {
 } from "@nextui-org/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { cn } from "@/lib/tailwindcss";
 
 export const Header = (props: HtmlHTMLAttributes<any>) => {
   const router = useRouter();
@@ -38,15 +39,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
       title: "Lauch",
     },
   ];
-
   return (
-    // <div className={clsx("flex h-[63px] maxW-[1332px] justify-between items-center py-[10px]  sm:px-[53px] px-[8px]", props.className)} >
-    //     <div className="flex items-center gap-[5.6px]">
-    //         <Logo></Logo>
-    //         <div className="text-brand w-[171px] h-8 [font-family:'Bebas_Neue'] text-[28.927px] font-normal leading-[normal]">Honeypot Finance</div>
-    //     </div>
-    //     <Nav></Nav>
-    // </div>
     <Navbar
       onMenuOpenChange={setIsMenuOpen}
       classNames={{
@@ -74,17 +67,17 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         {menuList.map((m) => (
-          <NavbarItem key={m.title} isActive={router.pathname === m.path}>
+          <NavbarItem key={m.title} isActive={router.pathname === m.path}  className={cn(
+            "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
+            router.pathname === m.path
+              ? router.pathname === "/launch"
+                ? "font-bold"
+                : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
+              : "hover:opacity-100 opacity-60"
+          )}>
             <Link
               href={m.path}
-              className={clsx(
-                "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
-                router.pathname === m.path
-                  ? router.pathname === "/launch"
-                    ? "font-bold"
-                    : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
-                  : "hover:opacity-100 opacity-60"
-              )}
+          
             >
               {m.title}
             </Link>
@@ -99,12 +92,15 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
       </NavbarContent>
       <NavbarMenu>
         {menuList.map((m, index) => (
-          <NavbarMenuItem key={m.title}>
-            <Link className="w-full"  href={m.path}>
+          <NavbarMenuItem key={m.title} className={cn("p-[8px]", router.pathname === m.path ? "[background:rgba(225,138,32,0.40)] border-2 border-solid border-[rgba(225,138,32,0.60)]" : "")} isActive={router.pathname === m.path}> 
+            <Link className={cn("w-full inline-block")} href={m.path}>
               {m.title}
             </Link>
           </NavbarMenuItem>
         ))}
+        <NavbarMenuItem className="mt-[24px]">
+          <WalletConnectMobile></WalletConnectMobile>
+        </NavbarMenuItem>
       </NavbarMenu>
     </Navbar>
   );

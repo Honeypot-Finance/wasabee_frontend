@@ -97,7 +97,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
           ></Input>
           <Button
             onClick={() => {
-              router.push("/swap#lp");
+              router.push("/pool");
             }}
             className="px-[12px] w-[170px] h-[41px] outline-0 justify-center items-center gap-2.5 border-[color:var(--e-18-a-20,rgba(225,138,32,0.40))] [background:var(--e-18-a-20,rgba(225,138,32,0.40))] backdrop-blur-[10px] py-2.5 rounded-[100px] border-2 border-solid"
           >

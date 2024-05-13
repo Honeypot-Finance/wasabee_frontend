@@ -81,8 +81,8 @@ export const pairByTokensLoader = new DataLoader<{
         if (!pair) {
           const {token0Address, token1Address} = t
           const pairAddress = await factoryContract.read.getPair([
-            token0Address,
-            token1Address,
+            token0Address as `0x${string}`,
+            token1Address as `0x${string}`,
           ]);
           if (pairAddress === ethers.constants.AddressZero) {
             return null;

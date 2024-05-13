@@ -21,6 +21,7 @@ export class FtoFacadeContract implements BaseContract {
   }
 
   async allPairsLength() {
+    // @ts-ignore
     const data = await this.contract.read.allPairsLength();
     console.log(data);
 

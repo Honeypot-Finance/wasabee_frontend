@@ -3,6 +3,7 @@ import { Balance } from "../balance";
 import { BalanceSvg } from "../svg/balance";
 import { ButtonHTMLAttributes } from "react";
 import { WalletSvg } from "../svg/wallet";
+import { observer } from "mobx-react-lite";
 
 const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   return (
@@ -102,6 +103,102 @@ export const WalletConnect = () => {
                   <ConnectButtonCustom onClick={openAccountModal} type="button">
                     {account.displayName}
                   </ConnectButtonCustom>
+                </div>
+              );
+            })()}
+          </div>
+        );
+      }}
+    </ConnectButton.Custom>
+  );
+};
+
+export const WalletConnectMobile = () => {
+  return (
+    <ConnectButton.Custom>
+      {({
+        account,
+        chain,
+        openAccountModal,
+        openChainModal,
+        openConnectModal,
+        authenticationStatus,
+        mounted,
+      }) => {
+        // Note: If your app doesn't use authentication, you
+        // can remove all 'authenticationStatus' checks
+        const ready = mounted && authenticationStatus !== "loading";
+        const connected =
+          ready &&
+          account &&
+          chain &&
+          (!authenticationStatus || authenticationStatus === "authenticated");
+        return (
+          <div
+            {...(!ready && {
+              "aria-hidden": true,
+              style: {
+                opacity: 0,
+                pointerEvents: "none",
+                userSelect: "none",
+              },
+            })}
+          >
+            {(() => {
+              if (!connected) {
+                return (
+                  <ConnectButtonCustom onClick={openConnectModal}>
+                    <WalletSvg></WalletSvg>Connect Wallet
+                  </ConnectButtonCustom>
+                );
+              }
+              if (chain.unsupported) {
+                return (
+                  <ConnectButtonCustom onClick={openChainModal}>
+                    Wrong network
+                  </ConnectButtonCustom>
+                );
+              }
+              return (
+                <div className="flex gap-[12px] flex-col">
+                  <Balance className="flex">
+                    <>
+                      <BalanceSvg></BalanceSvg>{" "}
+                      <div className=" text-nowrap">
+                        {" "}
+                        {account.displayBalance
+                          ? `${account.displayBalance}`
+                          : "-"}
+                      </div>
+                    </>
+                  </Balance>
+                  <button
+                    onClick={openChainModal}
+                    type="button"
+                    className="text-black text-nowrap flex h-[43px] justify-center items-center gap-[5.748px] [background:#FFCD4D] shadow-[-0.359px_-1.796px_0px_0px_#946D3F_inset] px-[14.369px] py-[7.184px] rounded-[21.553px] border-[0.718px] border-solid border-[rgba(148,109,63,0.37)]"
+                  >
+                    {chain.hasIcon && (
+                      <div
+                        style={{
+                          background: chain.iconBackground,
+                          width: 12,
+                          height: 12,
+                          borderRadius: 999,
+                          overflow: "hidden",
+                          marginRight: 4,
+                        }}
+                      >
+                        {chain.iconUrl && (
+                          <img
+                            alt={chain.name ?? "Chain icon"}
+                            src={chain.iconUrl}
+                            style={{ width: 12, height: 12 }}
+                          />
+                        )}
+                      </div>
+                    )}
+                    {chain.name}
+                  </button>
                 </div>
               );
             })()}

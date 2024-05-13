@@ -147,10 +147,10 @@ class Swap {
     }
     const fromAmountDecimals =  new BigNumber(this.fromAmount)
     .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
-    .toFixed()
+    .toFixed(0)
     const toAmountDecimals = new BigNumber(this.minToAmount).multipliedBy(
       new BigNumber(10).pow(this.toToken.decimals)
-    ).toFixed()
+    ).toFixed(0)
     const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
     const path = [this.fromToken.address, this.toToken.address] as readonly `0x${string}`[];
     await Promise.all([this.fromToken.approveIfNoAllowance(

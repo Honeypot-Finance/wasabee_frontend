@@ -75,7 +75,7 @@ export const pairRouter = router({
           const pair = allPairs?.[index];
           if (!pair) {
             try {
-              const pairAddress = await factoryContract.read.allPairs([index]);
+              const pairAddress = await factoryContract.read.allPairs([BigInt(index)]);
               const pairContract = getContract({
                 address: pairAddress as `0x${string}`,
                 abi: IUniswapV2Pair.abi,
