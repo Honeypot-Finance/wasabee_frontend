@@ -100,17 +100,17 @@ export class PairContract implements BaseContract {
         BigInt(
           new BigNumber(1)
             .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
-            .toFixed()
+            .toFixed(0)
         ),
         BigInt(
           this.reserves.reserve0
             .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
-            .toFixed()
+            .toFixed(0)
         ),
         BigInt(
           this.reserves.reserve1
             .multipliedBy(new BigNumber(10).pow(this.token1.decimals))
-            .toFixed()
+            .toFixed(0)
         ),
       ]);
       this.price = new BigNumber(price.toString()).div(

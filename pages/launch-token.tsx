@@ -95,7 +95,7 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-[22px]"
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 hidden">
               <label htmlFor="provider">Token Provider</label>
               <input
                 type="text"
@@ -105,13 +105,18 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
               />
             </div>
             <div className="flex flex-col gap-4">
-              <label htmlFor="raisedToken">Token Address</label>
-              <input
-                type="text"
+              <label htmlFor="raisedToken">Rasied Token</label>
+              <select
                 {...register("raisedToken", { required: true })}
-                value={wallet.currentChain?.contracts?.ftoTokens[0]}
-                className="outline-none w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
-              />
+                className="outline-none w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+              >
+                {wallet.currentChain?.contracts.ftoTokens.map((address) => (
+                  <option key={address}>{address}</option>
+                ))}
+              </select>
+              {errors.raisedToken && (
+                <span className="text-red-500">Rasied Token is required</span>
+              )}
             </div>
             <div className="flex flex-col gap-4">
               <div>Token Name</div>
@@ -154,7 +159,7 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
                 </span>
               )}
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 hidden">
               <label htmlFor="poolHandler">Pool Handler</label>
               <input
                 type="text"

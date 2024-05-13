@@ -114,7 +114,7 @@ export const SwapCard = observer(() => {
         </div>
 
         {!!swap.price && (
-          <div className="flex w-[529px] h-[71px] justify-between items-center border [background:#291C0A] px-5 py-2.5 rounded-2xl border-solid border-[rgba(247,147,26,0.20)]">
+          <div className="flex w-[529px] max-w-full h-[71px] justify-between items-center border [background:#291C0A] px-5 py-2.5 rounded-2xl border-solid border-[rgba(247,147,26,0.20)]">
             <div>
               <div>{swap.price.toFormat(6)}</div>
               <div>

@@ -108,6 +108,13 @@ class Swap {
     );
   }
 
+  setDeadline(deadline: number) {
+    this.deadline = deadline;
+  }
+  setSlippage(slippage: number) {
+    this.slippage = slippage;
+  }
+
   switchTokens() {
     const fromToken = this.fromToken;
     this.fromToken = this.toToken;

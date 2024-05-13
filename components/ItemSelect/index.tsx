@@ -7,11 +7,16 @@ import { cn } from '../../lib/tailwindcss';
 
 export class SelectState {
   value: string | number | null = null;
+  _onSelectChange: (value: string | number) => void = (value: string | number) => {}
   onSelectChange(value: string | number) {
     this.value = value;
+    this._onSelectChange(value)
   }
-  constructor(args: Partial<SelectState> = {}) {
+  constructor({onSelectChange, ...args}: Partial<SelectState> = {}) {
     Object.assign(this, args);
+    if (onSelectChange) {
+       this._onSelectChange = onSelectChange
+    }
     makeAutoObservable(this);
   }
 }

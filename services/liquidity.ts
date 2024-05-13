@@ -161,10 +161,10 @@ class Liquidity {
     }
     const token0AmountWithDec = new BigNumber(this.fromAmount)
       .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
-      .toFixed();
+      .toFixed(0);
     const token1AmountWithDec = new BigNumber(this.toAmount)
       .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
-      .toFixed();
+      .toFixed(0);
     const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
     console.log("liqidity agrs", [
       this.fromToken.address as `0x${string}`,
