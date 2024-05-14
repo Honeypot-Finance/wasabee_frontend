@@ -3,6 +3,7 @@ import { wallet } from "../wallet";
 import { getContract } from "viem";
 import { makeAutoObservable } from "mobx";
 import { ftoFacadeABI } from "@/lib/abis/ftoFacade";
+import { ContractWrite } from "../utils";
 
 export class FtoFacadeContract implements BaseContract {
   address = "";
@@ -19,6 +20,12 @@ export class FtoFacadeContract implements BaseContract {
       address: this.address as `0x${string}`,
       abi: this.abi,
       client: { public: wallet.publicClient, wallet: wallet.walletClient },
+    });
+  }
+
+  get deposit() {
+    return new ContractWrite(this.contract.write?.deposit, {
+      successMsg: "Deposit successfully",
     });
   }
 

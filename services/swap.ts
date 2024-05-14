@@ -161,8 +161,10 @@ class Swap {
     const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
     const path = [this.fromToken.address, this.toToken.address] as readonly `0x${string}`[];
     await Promise.all([this.fromToken.approveIfNoAllowance(
-      fromAmountDecimals,
-      this.routerV2Contract?.address as string
+      {
+        amount: fromAmountDecimals,
+        spender: this.routerV2Contract.address
+      }
     ),  this.routerV2Contract.swapExactTokensForTokens.call([
       BigInt(fromAmountDecimals),
       BigInt(toAmountDecimals),

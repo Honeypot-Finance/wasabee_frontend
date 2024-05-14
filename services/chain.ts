@@ -78,6 +78,18 @@ export const berachainTestNetwork = new Network({
   },
   faucetTokens: [
     {
+      address: "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
+      name: "USDT",
+      symbol: "USDT",
+      decimals: 18,
+    },
+    {
+      address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
+      name: "Wrapped BERA",
+      symbol: "WBERA",
+      decimals: 18,
+    },
+    {
       name: "AORI",
       symbol: "AORI",
       decimals: 18,
@@ -114,7 +126,12 @@ export const sepoliaNetwork = new Network({
     ftoFacade: "0xf7D56579e12e43984f1Ff90Cd9E9fc8c93c1ACF2",
     ftoTokens: ["0x5d116b0032188519e62858dFd3b7917ccEcad170"],
   },
-  faucetTokens: [],
+  faucetTokens: [{
+    address: "0x5d116b0032188519e62858dFd3b7917ccEcad170",
+    name:"USDT",
+    symbol: "USDT",
+    decimals: 18,
+  }],
 });
 
 export const networks = [

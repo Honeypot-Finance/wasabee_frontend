@@ -9,7 +9,7 @@ import { useEffect } from "react";
 const FaucetPage: NextLayoutPage = observer(() => {
   useEffect(() =>{
     wallet.currentChain?.faucetTokens?.forEach((token) => {
-      token.getBalance()
+      token.init()
     })
   }, [wallet.currentChain?.faucetTokens])
   return (

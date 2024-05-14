@@ -3,6 +3,7 @@ import { wallet } from "./wallet";
 import { formatEther } from "viem";
 import BigNumber from "bignumber.js";
 import { FtoPairContract } from "./contract/ftopair-contract";
+import { AsyncState } from "./utils";
 
 function calculateTimeDifference(timestamp: number): string {
   if (timestamp.toString().length !== 13) {
@@ -28,6 +29,7 @@ function calculateTimeDifference(timestamp: number): string {
 }
 
 class LaunchPad {
+
   get ftofactoryContract() {
     return wallet.contracts.ftofactory;
   }
@@ -36,37 +38,40 @@ class LaunchPad {
     return wallet.contracts.ftofacade;
   }
 
-  ftoPairContract(address: `0x${string}`) {
-    return new FtoPairContract({ address });
-  }
-
   allPairsLength = async () =>
     await this.ftofactoryContract.allPairsLength.call();
 
   getPairAddress = async (index: bigint) =>
     await this.ftofactoryContract.allPairs.call([index]);
 
-  getPairInfo = async (pairAddress: `0x${string}`) => {
-    const ftoPairContract = this.ftoPairContract(pairAddress);
-    const launchedTokenAddress = await ftoPairContract.launchedTokenAddress();
-    const depositedRaisedToken = await ftoPairContract.depositedRaisedToken();
-    const depositedLaunchedToken =
-      await ftoPairContract.depositedLaunchedToken();
+  ftoPairs = new AsyncState<FtoPairContract []>(async () => {
+    const [pairsLength] = await this.allPairsLength();
+    return  Promise.all(Array.from({ length: Number(pairsLength) }, async (_, i) => {
+      const [pairAddress] = await this.getPairAddress(BigInt(i));
+      const pair = new FtoPairContract({ address: pairAddress as string })
+      pair.init()
+      return pair
+    }))
+  })
 
-    const price = BigNumber(formatEther(depositedRaisedToken))
-      .div(formatEther(depositedLaunchedToken))
-      .toFormat();
 
-    const endTime = await ftoPairContract.endTime();
+  // getPairInfo = async (pairAddress: `0x${string}`) => {
+  //   const ftoPairContract = this.ftoPairContract(pairAddress);
+  //   const launchedTokenAddress = await ftoPairContract.launchedTokenAddress();
+  //   const depositedRaisedToken = await ftoPairContract.depositedRaisedToken();
+  //   const depositedLaunchedToken =
+  //     await ftoPairContract.depositedLaunchedToken();
 
-    return {
-      price,
-      launchedTokenAddress,
-      depositedRaisedToken,
-      symbol: await ftoPairContract.symbol(),
-      timeline: calculateTimeDifference(Number(endTime) * 1000),
-    };
-  };
+  //   const price = BigNumber(formatEther(depositedRaisedToken))
+  //     .div(formatEther(depositedLaunchedToken))
+  //     .toFormat();
+  //   return {
+  //     price,
+  //     launchedTokenAddress,
+  //     depositedRaisedToken,
+  //     endTime: await ftoPairContract.endTime(),
+  //   };
+  // };
 
   createFTO = async ({
     provider,

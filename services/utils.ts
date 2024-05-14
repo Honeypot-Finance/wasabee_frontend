@@ -44,7 +44,7 @@ export class AsyncState<T, K extends (...args: any) => any = () => {}> {
   async call(...args: Parameters<K>) {
     this.setLoading(true);
     try {
-      const data = await this._call(args);
+      const data = await this._call(...args);
       this.setValue(data);
     } catch (error) {
       this.setError(error as Error);
@@ -68,6 +68,7 @@ export class ContractWrite<T extends (...args: any) => any> {
   error: Error | null = null;
   successMsg: string = "";
   failMsg: string = "";
+  silent: boolean = false;
   private _call: (...args: any) => any;
   constructor(func: T, options?: Partial<ContractWrite<T>>) {
     this._call = func;
@@ -88,16 +89,19 @@ export class ContractWrite<T extends (...args: any) => any> {
         await wallet.publicClient.waitForTransactionReceipt({
           hash,
           timeout: 1000 * 60 * 5,
-        });
-      switch (transaction.status) {
-        case "success":
-          toast.success(this.successMsg || `Transaction ${hash} Success`);
-          break;
-        case "reverted":
-          toast.error(this.failMsg || `Transaction ${hash} failed`);
-          break;
-        default:
-          throw new Error(`Transaction ${hash} Pending`);
+        })
+      console.log('transaction', transaction)
+      if (!this.silent) {
+        switch (transaction.status) {
+          case "success":
+            toast.success(this.successMsg || `Transaction ${hash} Success`);
+            break;
+          case "reverted":
+            toast.error(this.failMsg || `Transaction ${hash} failed`);
+            break;
+          default:
+            throw new Error(`Transaction ${hash} Pending`);
+        }
       }
     } catch (error: any) {
       toast.error(this.failMsg || error.message);

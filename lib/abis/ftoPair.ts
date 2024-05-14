@@ -777,4 +777,4 @@ export const MUBAI_FTO_PAIR_ABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const

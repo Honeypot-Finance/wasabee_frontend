@@ -157,8 +157,10 @@ export class PairContract implements BaseContract {
       .div(100)
     if (liquidity.gt(0)) {
       await this.token.approveIfNoAllowance(
-        liquidity.toFixed(0),
-        this.routerV2Contract.address
+        {
+          amount: liquidity.toFixed(0),
+          spender: this.routerV2Contract.address,
+        }
       );
       const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
       await this.routerV2Contract.removeLiquidity.call([

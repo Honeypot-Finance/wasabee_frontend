@@ -179,12 +179,16 @@ class Liquidity {
 
     await Promise.all([
       this.fromToken.approveIfNoAllowance(
-        token0AmountWithDec,
-        this.routerV2Contract.address
+       {
+          amount: token0AmountWithDec,
+          spender: this.routerV2Contract.address
+       }
       ),
       this.toToken.approveIfNoAllowance(
-        token1AmountWithDec,
-        this.routerV2Contract.address
+       {
+          amount: token1AmountWithDec,
+          spender: this.routerV2Contract.address
+       }
       ),
       this.routerV2Contract.addLiquidity.call([
         this.fromToken.address as `0x${string}`,

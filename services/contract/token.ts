@@ -49,10 +49,15 @@ export class Token implements BaseContract {
   }
 
   get faucet () {
-    return new ContractWrite(this.faucetContract.write?.faucet)
+    return new ContractWrite(this.faucetContract.write?.faucet, {
+      successMsg: 'Gte faucet successfully',
+
+    })
   } 
   get approve () {
-    return  new ContractWrite(this.contract.write?.approve)
+    return  new ContractWrite(this.contract.write?.approve, {
+      successMsg: 'Approved successfully',
+    })
   }
 
   async init (options?: {loadName?: boolean, loadSymbol?: boolean, loadDecimals?: boolean, loadBalance?: boolean, loadTotalSupply?: boolean}) {
@@ -77,9 +82,9 @@ export class Token implements BaseContract {
     this.isInit = true
   }
 
-  async approveIfNoAllowance(amount: string, spender: string) {
+  async approveIfNoAllowance({amount, spender}:{ amount: string, spender: string}) {
     const allowance = await this.contract.read.allowance([wallet.account as `0x${string}`, spender as `0x${string}`])
-    if (new BigNumber(allowance.toString()).gte(new BigNumber(amount))) {
+    if (new BigNumber(allowance.toString()).isGreaterThanOrEqualTo(new BigNumber(amount))) {
       return
     }
     await this.approve.call([spender as `0x${string}`, BigInt(amount)])
