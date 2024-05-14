@@ -12,13 +12,16 @@ export class Network {
     factory: string;
     ftoFactory: string;
     ftoFacade: string;
-    ftoTokens: string []
+    ftoTokens: string[];
   };
-  faucetTokens: Token [] = [];
+  faucetTokens: Token[] = [];
   chain!: Chain;
-  constructor(args: Omit<Partial<Network>, "faucetTokens"> & {
-    faucetTokens: Partial<Token>[];
-  }) {
+  faucetUrl!: string;
+  constructor(
+    args: Omit<Partial<Network>, "faucetTokens"> & {
+      faucetTokens: Partial<Token>[];
+    }
+  ) {
     Object.assign(this, args);
   }
 }
@@ -62,12 +65,16 @@ export class Network {
 
 export const berachainTestNetwork = new Network({
   chain: berachainTestnet,
+  faucetUrl: "https://artio.faucet.berachain.com",
   contracts: {
     routerV2: "0xB192af2225791c439CB2024290158d3202DbcD95",
     factory: "0xE0D1F1cE03A7598EE7FdF7E5DB837d9726C0Ea5c",
     ftoFactory: "0xEd6a0A29A962B4296bCeEC4e1E55F5Ec0474EAC7",
     ftoFacade: "0x3aCCC3dD26EeC5F6e254060906b7FA24D98E6722",
-    ftoTokens: ["0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46", '0x5806E416dA447b267cEA759358cF22Cc41FAE80F'],
+    ftoTokens: [
+      "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
+      "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
+    ],
   },
   faucetTokens: [
     {
@@ -99,6 +106,7 @@ export const berachainTestNetwork = new Network({
 
 export const sepoliaNetwork = new Network({
   chain: sepolia,
+  faucetUrl: "https://access.rockx.com/faucet-sepolia",
   contracts: {
     routerV2: "0xBF5BB6e4189877bA03168035a56CBC452f59c0d2",
     factory: "0x51089092b3c40c15698818592f9487340C2379B5",
@@ -113,10 +121,8 @@ export const networks = [
   berachainTestNetwork,
   sepoliaNetwork,
   // polygonTestNetwork,
-
 ];
 export const networksMap = networks.reduce((acc, network) => {
   acc[network.chainId] = network;
   return acc;
-}
-, {} as Record<number | string, Network>);
+}, {} as Record<number | string, Network>);

@@ -1,7 +1,6 @@
 import { BaseContract } from ".";
 import { wallet } from "../wallet";
 import { getContract } from "viem";
-import { AsyncState } from "../utils";
 import { makeAutoObservable } from "mobx";
 import { ftoFacadeABI } from "@/lib/abis/ftoFacade";
 

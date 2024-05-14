@@ -46,11 +46,7 @@ export class FtoPairContract implements BaseContract {
     return (await this.contract.read.endTime()) as bigint;
   }
 
-  async tokenBProvider() {
-    return await this.contract.read.tokenB_provider();
-  }
-
-  async totalSupply() {
-    return (await this.contract.read.totalSupply()) as bigint;
+  async symbol() {
+    return (await this.contract.read.symbol()) as string;
   }
 }

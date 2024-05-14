@@ -1,8 +1,31 @@
+import dayjs from "dayjs";
 import { wallet } from "./wallet";
-import BigNumber from "bignumber.js";
 import { formatEther } from "viem";
+import BigNumber from "bignumber.js";
 import { FtoPairContract } from "./contract/ftopair-contract";
-import { useReadContract, useBalance, useAccount } from "wagmi";
+
+function calculateTimeDifference(timestamp: number): string {
+  if (timestamp.toString().length !== 13) {
+    return "Invaild";
+  }
+  const now = dayjs();
+  const targetTime = dayjs(timestamp);
+
+  const diffDays = now.diff(targetTime, "days");
+
+  if (Math.abs(diffDays) >= 1) {
+    return `${diffDays} ${diffDays > 0 ? "days later" : "days ago"}`;
+  }
+
+  const diffHours = now.diff(targetTime, "hours");
+
+  if (Math.abs(diffHours) >= 1) {
+    return `${diffHours} ${diffHours > 0 ? "hours later" : "hours ago"}`;
+  }
+
+  const diffMinutes = now.diff(targetTime, "minutes");
+  return `${diffMinutes} ${diffMinutes > 0 ? "minutes later" : "minutes ago"}`;
+}
 
 class LaunchPad {
   get ftofactoryContract() {
@@ -33,37 +56,17 @@ class LaunchPad {
     const price = BigNumber(formatEther(depositedRaisedToken))
       .div(formatEther(depositedLaunchedToken))
       .toFormat();
+
+    const endTime = await ftoPairContract.endTime();
+
     return {
       price,
       launchedTokenAddress,
       depositedRaisedToken,
-      endTime: await ftoPairContract.endTime(),
+      symbol: await ftoPairContract.symbol(),
+      timeline: calculateTimeDifference(Number(endTime) * 1000),
     };
   };
-
-  // useTokenDetail = async (tokenAddress: string) => {
-  //   const { address } = useAccount();
-  //   const ftoPairContract = new FtoPairContract({ address: tokenAddress });
-  //   const tokenBAddress = await ftoPairContract.tokenBAddress();
-  //   const { data: tokenBName } = useReadContract({
-  //     abi: erc20Abi,
-  //     address: tokenBAddress,
-  //     functionName: "name",
-  //   });
-  //   const tokenBProvider = await ftoPairContract.tokenBProvider();
-  //   const tokenAAddress = await ftoPairContract.tokenAAddress();
-  //   const { refetch: refetchTokenABalance, data: tokenAbalanceData } =
-  //     useBalance({
-  //       token: tokenAAddress,
-  //       address: address,
-  //     });
-
-  //   const { refetch: refetchTokenBBalance, data: tokenBbalanceData } =
-  //     useBalance({
-  //       token: tokenBAddress,
-  //       address: address,
-  //     });
-  // };
 
   createFTO = async ({
     provider,
@@ -82,16 +85,6 @@ class LaunchPad {
     poolHandler: string;
     rasing_cycle: string;
   }) => {
-    console.log(
-      "args",
-      provider as `0x${string}`,
-      raisedToken as `0x${string}`,
-      tokenName,
-      tokenSymbol,
-      BigInt(tokenAmount),
-      poolHandler as `0x${string}`,
-      BigInt(rasing_cycle)
-    );
     return await this.ftofactoryContract.createFTO.call([
       provider as `0x${string}`,
       raisedToken as `0x${string}`,

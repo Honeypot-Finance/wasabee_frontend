@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import Link from "next/link";
 import { useReadContract } from "wagmi";
 import { observer } from "mobx-react-lite";
@@ -15,27 +14,35 @@ import { TimelineSvg } from "@/components/svg/Timeline";
 import { TokenPriceSvg } from "@/components/svg/TokenPrice";
 import { TotalRaisedSvg } from "@/components/svg/TotalRaised";
 
-interface LaunchCardProps {
+interface PairInfo {
   price: string;
-  endTime: bigint;
-  pairAddresss: `0x${string}`;
+  symbol: string;
+  timeline: string;
   depositedRaisedToken: bigint;
   launchedTokenAddress: `0x${string}`;
 }
 
+const usePairInfo = (pairAddress: `0x${string}`) => {
+  const [pairInfo, setPairInfo] = useState<PairInfo>();
+  useEffect(() => {
+    const fetchPairInfo = async () => {
+      const pairInfo = await launchpad.getPairInfo(pairAddress);
+      setPairInfo(pairInfo);
+    };
+
+    fetchPairInfo();
+  }, [pairAddress]);
+
+  return pairInfo;
+};
+
 const LaunchCard = observer(
-  ({
-    price,
-    endTime,
-    pairAddresss,
-    launchedTokenAddress,
-    depositedRaisedToken,
-  }: LaunchCardProps) => {
-    const remainingDays = dayjs(Number(endTime) * 1000).diff(dayjs(), "days");
+  ({ pairAddress }: { pairAddress: `0x${string}` }) => {
+    const pairInfo = usePairInfo(pairAddress);
 
     const { data: launchedTokenName } = useReadContract({
       abi: erc20Abi,
-      address: launchedTokenAddress,
+      address: pairInfo?.launchedTokenAddress,
       functionName: "name",
     });
 
@@ -51,18 +58,14 @@ const LaunchCard = observer(
           </div>
         </div>
         <h4 className="text-white text-center [text-2xl font-bold">
-          {launchedTokenName}
+          {launchedTokenName || "--"}
         </h4>
         <div className="flex items-center gap-6 text-white mt-2">
           <div className="flex flex-col items-center gap-1">
             <h6 className="opacity-50 text-xs">Timeline</h6>
             <div className="flex items-center gap-2 text-sm">
               <TimelineSvg />
-              <span className="font-bold">
-                {`${remainingDays > 0 ? "Left" : "Passed"} ${Math.abs(
-                  remainingDays
-                )} Days`}
-              </span>
+              <span className="font-bold">{pairInfo?.timeline || "--"}</span>
             </div>
           </div>
           <div className="flex flex-col items-end gap-1">
@@ -70,7 +73,10 @@ const LaunchCard = observer(
             <div className="flex items-center gap-2 text-sm">
               <TotalRaisedSvg />
               <span className="font-bold">
-                {formatEther(depositedRaisedToken)} USD
+                {pairInfo?.depositedRaisedToken !== undefined
+                  ? formatEther(pairInfo.depositedRaisedToken)
+                  : "--"}
+                &nbsp;USD
               </span>
             </div>
           </div>
@@ -78,13 +84,15 @@ const LaunchCard = observer(
             <h6 className="opacity-50 text-xs">Token Price</h6>
             <div className="flex items-center gap-2 text-sm">
               <TokenPriceSvg />
-              <span className="font-bold">{price} ETH</span>
+              <span className="font-bold">
+                {pairInfo?.price || "--"} {pairInfo?.symbol}
+              </span>
             </div>
           </div>
         </div>
         <Button>
           <Link
-            href={`/launch-detail/${pairAddresss}`}
+            href={`/launch-detail/${pairAddress}`}
             className="text-black font-bold"
           >
             View Token
@@ -97,7 +105,8 @@ const LaunchCard = observer(
 
 const LauchPage: NextLayoutPage = observer(() => {
   const [loading, setLoading] = useState(true);
-  const [list, setList] = useState<LaunchCardProps[]>([]);
+  // const [list, setList] = useState<LaunchCardProps[]>([]);
+  const [list, setList] = useState<`0x${string}`[]>([]);
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -107,11 +116,12 @@ const LauchPage: NextLayoutPage = observer(() => {
       if (error) {
         throw error;
       }
-      const list = [];
+      const list: `0x${string}`[] = [];
       for (let i = 0; i < Number(pairsLength); i++) {
-        const [pairAddresss] = await launchpad.getPairAddress(BigInt(i));
-        const info = await launchpad.getPairInfo(pairAddresss as `0x${string}`);
-        list.push({ ...info, pairAddresss: pairAddresss as `0x${string}` });
+        const [pairAddress] = await launchpad.getPairAddress(BigInt(i));
+        // const info = await launchpad.getPairInfo(pairAddresss as `0x${string}`);
+        // list.push({ ...info, pairAddresss: pairAddresss as `0x${string}` });
+        list.push(pairAddress as `0x${string}`);
       }
 
       setList(list);
@@ -121,7 +131,16 @@ const LauchPage: NextLayoutPage = observer(() => {
 
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col gap-16">
-      <div className="flex w-full justify-end">
+      <div className="flex w-full justify-end gap-2">
+        <Button>
+          <a
+            target="_blank"
+            href={wallet.faucetUrl}
+            className="text-black font-bold"
+          >
+            Get Faucet
+          </a>
+        </Button>
         <Button>
           <Link href="/launch-token" className="text-black font-bold">
             Launch Token
@@ -148,9 +167,14 @@ const LauchPage: NextLayoutPage = observer(() => {
         </div>
       ) : (
         <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-          {list.map((info) => (
+          {/* {list.map((info) => (
             <div key={info.pairAddresss}>
               <LaunchCard {...info} />
+            </div>
+          ))} */}
+          {list.map((pairAddress) => (
+            <div key={pairAddress}>
+              <LaunchCard pairAddress={pairAddress} />
             </div>
           ))}
         </div>
