@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { useReadContract } from "wagmi";
 import { observer } from "mobx-react-lite";
@@ -11,16 +10,16 @@ import { TimelineSvg } from "@/components/svg/Timeline";
 import { TokenPriceSvg } from "@/components/svg/TokenPrice";
 import { TotalRaisedSvg } from "@/components/svg/TotalRaised";
 
-interface LaunchDetail {
+interface PairInfo {
   price: string;
-  endTime: bigint;
+  symbol: string;
+  timeline: string;
   depositedRaisedToken: bigint;
   launchedTokenAddress: `0x${string}`;
 }
 
 const LauchPage: NextLayoutPage = observer(() => {
-  const [info, setInfo] = useState<LaunchDetail>();
-  const [remainingDays, setRemainingDays] = useState("--");
+  const [info, setInfo] = useState<PairInfo>();
   const router = useRouter();
   const { token: pairAddresss } = router.query;
 
@@ -32,15 +31,6 @@ const LauchPage: NextLayoutPage = observer(() => {
 
   useEffect(() => {
     launchpad.getPairInfo(pairAddresss as `0x${string}`).then((info) => {
-      const remainingDays = dayjs(Number(info?.endTime) * 1000).diff(
-        dayjs(),
-        "days"
-      );
-      if (remainingDays > 0) {
-        setRemainingDays(`Left ${remainingDays}`);
-      } else {
-        setRemainingDays(`Passed ${Math.abs(remainingDays)}`);
-      }
       setInfo(info);
     });
   }, []);
@@ -66,7 +56,7 @@ const LauchPage: NextLayoutPage = observer(() => {
               <h6 className="opacity-50 text-xs">Timeline</h6>
               <div className="flex items-center gap-2 text-sm">
                 <TimelineSvg />
-                <span className="font-bold">{remainingDays} Days</span>
+                <span className="font-bold">{info?.timeline || "--"}</span>
               </div>
             </div>
             <div className="flex flex-col items-end gap-1">
@@ -74,7 +64,10 @@ const LauchPage: NextLayoutPage = observer(() => {
               <div className="flex items-center gap-2 text-sm">
                 <TotalRaisedSvg />
                 <span className="font-bold">
-                  {formatEther(info?.depositedRaisedToken || BigInt(0))} USD
+                  {info?.depositedRaisedToken !== undefined
+                    ? formatEther(info.depositedRaisedToken)
+                    : "--"}
+                  &nbsp;USD
                 </span>
               </div>
             </div>
@@ -82,7 +75,9 @@ const LauchPage: NextLayoutPage = observer(() => {
               <h6 className="opacity-50 text-xs">Token Price</h6>
               <div className="flex items-center gap-2 text-sm">
                 <TokenPriceSvg />
-                <span className="font-bold">{info?.price} ETH</span>
+                <span className="font-bold">
+                  {info?.price || "--"} {info?.symbol}
+                </span>
               </div>
             </div>
           </div>
