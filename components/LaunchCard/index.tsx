@@ -56,7 +56,7 @@ export const LaunchCard = observer(
             )}
           </div>
         </h4>
-        <div className={cn("grid  items-start gap-6 text-white mt-2 justify-between w-full break-words", type === 'detail' ? 'grid-cols-4' : ' grid-cols-2')}>
+        <div className={cn("grid  items-start gap-6 text-white mt-2 justify-between w-full break-all ", type === 'detail' ? 'grid-cols-4' : ' grid-cols-2')}>
           <div className="flex flex-col items-center gap-1">
             <h6 className="opacity-50 text-xs">Timeline</h6>
             <div className="flex items-center gap-2 text-sm">
