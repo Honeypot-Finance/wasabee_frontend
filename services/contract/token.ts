@@ -50,7 +50,7 @@ export class Token implements BaseContract {
 
   get faucet () {
     return new ContractWrite(this.faucetContract.write?.faucet, {
-      successMsg: 'Gte faucet successfully',
+      successMsg: 'Get faucet successfully',
 
     })
   } 

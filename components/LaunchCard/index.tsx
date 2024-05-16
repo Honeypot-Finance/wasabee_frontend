@@ -45,7 +45,7 @@ export const LaunchCard = observer(
             <Logo />
           </div>
         </div>
-        <h4 className="text-white text-center text-[1rem] font-bold flex items-center">
+        <h4 className="text-white text-center text-[1rem] font-bold flex items-center h-[1.5em]">
           <div className=" relative">
             {pair?.launchedToken.displayName}
             {pair?.launchedToken.displayName && (
@@ -56,7 +56,7 @@ export const LaunchCard = observer(
             )}
           </div>
         </h4>
-        <div className={cn("grid  items-start gap-6 text-white mt-2 justify-between w-full break-all ", type === 'detail' ? 'grid-cols-4' : ' grid-cols-2')}>
+        <div className={cn("grid  items-start gap-6 text-white mt-2 justify-between w-full break-all ", type === 'detail' ? 'sm:grid-cols-4 grid-cols-2' : ' grid-cols-2')}>
           <div className="flex flex-col items-center gap-1">
             <h6 className="opacity-50 text-xs">Timeline</h6>
             <div className="flex items-center gap-2 text-sm">
@@ -69,7 +69,7 @@ export const LaunchCard = observer(
             <div className="flex items-center gap-2 text-sm">
               {/* <TotalRaisedSvg /> */}
               <span className="font-bold">
-                {pair?.depositedLaunchedToken?.toFormat(0)}&nbsp;
+                {pair?.depositedLaunchedToken ? pair?.depositedLaunchedToken?.toFormat(0) : '-'}&nbsp;
                 {pair?.launchedToken.displayName}
               </span>
             </div>
@@ -79,7 +79,7 @@ export const LaunchCard = observer(
             <div className="flex items-center gap-2 text-sm">
               {/* <TotalRaisedSvg /> */}
               <span className="font-bold">
-                {pair?.depositedRaisedToken?.toFormat(3)}&nbsp;
+                {pair?.depositedRaisedToken ? pair.depositedRaisedToken.toFormat(3) : '-'}&nbsp;
                 {pair?.raiseToken.displayName}
               </span>
             </div>

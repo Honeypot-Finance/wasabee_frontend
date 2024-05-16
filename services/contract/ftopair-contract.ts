@@ -15,7 +15,7 @@ export class FtoPairContract implements BaseContract {
   abi = MUBAI_FTO_PAIR_ABI;
   raiseToken = new Token({});
   launchedToken = new Token({});
-  depositedRaisedToken: BigNumber | null = null;
+  depositedRaisedTokenWithoutDecimals: BigNumber | null = null;
   depositedLaunchedToken: BigNumber | null = null;
   endTime: string = '';
   ftoState: number = -1;
@@ -24,6 +24,14 @@ export class FtoPairContract implements BaseContract {
   constructor(args: Partial<FtoPairContract>) {
     Object.assign(this, args);
     makeAutoObservable(this);
+  }
+
+  get depositedRaisedToken() {
+    return this.depositedRaisedTokenWithoutDecimals && this.raiseToken.decimals
+      ? this.depositedRaisedTokenWithoutDecimals.div(
+          new BigNumber(10).pow(this.raiseToken.decimals)
+        )
+      : undefined;
   }
 
   get isProvider() {
@@ -53,7 +61,6 @@ export class FtoPairContract implements BaseContract {
   }
 
   get isCompleted() {
-    console.log('this.endTime && new BigNumber(this.endTime).isLessThan(dayjs().unix());', this.endTime && new BigNumber(this.endTime).isLessThan(dayjs().unix()))
     return this.endTime && new BigNumber(this.endTime).isLessThan(dayjs().unix());
   }
 
@@ -101,6 +108,10 @@ export class FtoPairContract implements BaseContract {
       BigInt(amount),
       BigInt(0),
     ])
+    await Promise.all([
+      this.getDepositedRaisedToken(),
+      this.raiseToken.getBalance(),
+    ])
   });
 
   claimLP = new AsyncState(async () => {
@@ -109,10 +120,12 @@ export class FtoPairContract implements BaseContract {
 
   resume = new AsyncState(async () => {
     await this.fotFactoryContract.resume.call([this.raiseToken.address as `0x${string}`, this.launchedToken.address as `0x${string}`])
+    await this.getFTOState()
   });
 
   pause = new AsyncState(async () => {
     await this.fotFactoryContract.pause.call([this.raiseToken.address as `0x${string}`, this.launchedToken.address as `0x${string}`])
+    await this.getFTOState()
   });
 
 
@@ -161,6 +174,7 @@ export class FtoPairContract implements BaseContract {
       this.getDepositedLaunchedToken(),
       this.getEndTime(),
       this.getFTOState(),
+      this.getLaunchedTokenProvider()
     ]);
   }
 
@@ -178,7 +192,7 @@ export class FtoPairContract implements BaseContract {
 
   async getDepositedRaisedToken() {
     const res = (await this.contract.read.depositedRaisedToken()) as bigint;
-    this.depositedRaisedToken = new BigNumber(res.toString());
+    this.depositedRaisedTokenWithoutDecimals = new BigNumber(res.toString());
   }
 
   async getDepositedLaunchedToken() {
@@ -193,6 +207,7 @@ export class FtoPairContract implements BaseContract {
   async getFTOState() {
     const res = await this.contract.read.FTOState();
     this.ftoState = res;
+    console.log('this.ftoState', this.ftoState)
   }
   async getLaunchedTokenProvider() {
     const res = await this.contract.read.launchedTokenProvider();

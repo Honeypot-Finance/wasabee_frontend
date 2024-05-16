@@ -140,6 +140,9 @@ const Action = observer(({ pair }: { pair: FtoPairContract }) => {
     case 2:
       return <PauseAction pair={pair}></PauseAction>;
     case 3:
+      if (pair.isCompleted) {
+         return <></>
+      }
       return <ProcessingAction pair={pair}></ProcessingAction>;
   }
 });
@@ -170,7 +173,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
     <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col  items-center pt-[24px]">
       <LaunchCard
         type="detail"
-        className=" w-[450px] max-w-full"
+        className=" w-[450px] max-w-full p-[24px]"
         pair={state.pair.value}
         action={state.pair.value && <Action pair={state.pair.value}></Action>}
       ></LaunchCard>

@@ -105,7 +105,12 @@ export class ContractWrite<T extends (...args: any) => any> {
         }
       }
     } catch (error: any) {
-      toast.error(this.failMsg || error.message);
+      if (error.message.includes("User rejected the request")) {
+        toast.error("User rejected the request");
+      } else {
+        toast.error(this.failMsg || error.message);
+      }
+      
       console.error(error);
       this.setError(error as Error);
     }

@@ -18,27 +18,6 @@ import { AmountFormat } from "@/components/AmountFormat";
 import { Copy } from "@/components/copy";
 import { LaunchCard } from "@/components/LaunchCard";
 
-interface PairInfo {
-  price: string;
-  symbol: string;
-  timeline: string;
-  depositedRaisedToken: bigint;
-  launchedTokenAddress: `0x${string}`;
-}
-
-// const usePairInfo = (pairAddress: `0x${string}`) => {
-//   const [pairInfo, setPairInfo] = useState<PairInfo>();
-//   useEffect(() => {
-//     const fetchPairInfo = async () => {
-//       const pairInfo = await launchpad.getPairInfo(pairAddress);
-//       setPairInfo(pairInfo);
-//     };
-
-//     fetchPairInfo();
-//   }, [pairAddress]);
-
-//   return pairInfo;
-// };
 
 const LaunchPage: NextLayoutPage = observer(() => {
   useEffect(() => {
