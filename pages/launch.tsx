@@ -47,7 +47,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
       </div>
 
       {launchpad.ftoPairs.loading ? (
-        <div className="flex h-[566px] w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
+        <div className="flex h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
           <div className="flex flex-col items-center">
             <div className="relative">
               <PeddingSvg />
