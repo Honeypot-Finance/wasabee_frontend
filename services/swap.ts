@@ -165,13 +165,14 @@ class Swap {
         amount: fromAmountDecimals,
         spender: this.routerV2Contract.address
       }
-    ),  this.routerV2Contract.swapExactTokensForTokens.call([
+    )])
+    await this.routerV2Contract.swapExactTokensForTokens.call([
       BigInt(fromAmountDecimals),
       BigInt(toAmountDecimals),
       path,
       wallet.account as `0x${string}`,
       BigInt(deadline),
-    ])])
+    ])
 
     console.log('fromAmountDecimals', fromAmountDecimals, toAmountDecimals, path, wallet.account as `0x${string}`, deadline)
     Promise.all([

@@ -178,28 +178,24 @@ class Liquidity {
     ]);
 
     await Promise.all([
-      this.fromToken.approveIfNoAllowance(
-       {
-          amount: token0AmountWithDec,
-          spender: this.routerV2Contract.address
-       }
-      ),
-      this.toToken.approveIfNoAllowance(
-       {
-          amount: token1AmountWithDec,
-          spender: this.routerV2Contract.address
-       }
-      ),
-      this.routerV2Contract.addLiquidity.call([
-        this.fromToken.address as `0x${string}`,
-        this.toToken.address as `0x${string}`,
-        BigInt(token0AmountWithDec),
-        BigInt(token1AmountWithDec),
-        BigInt(0),
-        BigInt(0),
-        wallet.account as `0x${string}`,
-        BigInt(deadline),
-      ])
+      this.fromToken.approveIfNoAllowance({
+        amount: token0AmountWithDec,
+        spender: this.routerV2Contract.address,
+      }),
+      this.toToken.approveIfNoAllowance({
+        amount: token1AmountWithDec,
+        spender: this.routerV2Contract.address,
+      }),
+    ]);
+    await this.routerV2Contract.addLiquidity.call([
+      this.fromToken.address as `0x${string}`,
+      this.toToken.address as `0x${string}`,
+      BigInt(token0AmountWithDec),
+      BigInt(token1AmountWithDec),
+      BigInt(0),
+      BigInt(0),
+      wallet.account as `0x${string}`,
+      BigInt(deadline),
     ]);
     Promise.all([this.fromToken.getBalance(), this.toToken.getBalance()]);
   });
