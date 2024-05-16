@@ -38,7 +38,7 @@ export const SwapCard = observer(() => {
             inputProps={{
               value: swap.fromAmount,
               disabled: !swap.fromToken,
-              max: swap.toToken?.balance.toNumber(),
+              max: swap.fromToken?.balance.toNumber(),
               min: 0,
               onClear: () => {
                 swap.setFromAmount("");
