@@ -54,7 +54,6 @@ class LaunchPad {
     }))
   })
 
-
   // getPairInfo = async (pairAddress: `0x${string}`) => {
   //   const ftoPairContract = this.ftoPairContract(pairAddress);
   //   const launchedTokenAddress = await ftoPairContract.launchedTokenAddress();
@@ -80,7 +79,7 @@ class LaunchPad {
     tokenSymbol,
     tokenAmount,
     poolHandler,
-    rasing_cycle,
+    raisingCycle,
   }: {
     provider: string;
     raisedToken: string;
@@ -88,7 +87,7 @@ class LaunchPad {
     tokenSymbol: string;
     tokenAmount: number;
     poolHandler: string;
-    rasing_cycle: string;
+    raisingCycle: number;
   }) => {
     return await this.ftofactoryContract.createFTO.call([
       provider as `0x${string}`,
@@ -97,7 +96,7 @@ class LaunchPad {
       tokenSymbol,
       BigInt(tokenAmount),
       poolHandler as `0x${string}`,
-      BigInt(rasing_cycle),
+      BigInt(raisingCycle),
     ]);
   };
 }

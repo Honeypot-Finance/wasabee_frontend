@@ -36,7 +36,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
     },
     {
       path: "/launch",
-      title: "Lauch",
+      title: "Launch",
     },
   ];
   return (

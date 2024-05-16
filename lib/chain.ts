@@ -1,4 +1,4 @@
-import { Chain, berachainTestnet as viemBerachainTestnet, polygonMumbai, sepolia } from "viem/chains";
+import { Chain, berachainTestnet as viemBerachainTestnet, polygonMumbai, sepolia as viewSepolia } from "viem/chains";
 export const polygonMumbaiChain: Chain = {
   ...polygonMumbai,
   rpcUrls: {
@@ -18,6 +18,16 @@ export const berachainTestnet: Chain = {
      }
   }
 
+}
+
+export const sepolia:Chain = {
+  ...viewSepolia,
+  rpcUrls: {
+    default: {
+      http: ["https://eth-sepolia.public.blastapi.io"],
+    },
+  },
+  
 }
 
 

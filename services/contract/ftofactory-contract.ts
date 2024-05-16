@@ -32,4 +32,15 @@ export class FtoFactoryContract implements BaseContract {
   get allPairs() {
     return new AsyncState(this.contract.read.allPairs);
   }
+
+  get resume () {
+    return new ContractWrite(this.contract.write.resume, {
+      successMsg: "Resume success"
+    });
+  } 
+  get pause () {
+    return new ContractWrite(this.contract.write.pause, {
+      successMsg: "Pause success"
+    });
+  } 
 }

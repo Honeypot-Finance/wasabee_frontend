@@ -29,5 +29,11 @@ export class FtoFacadeContract implements BaseContract {
     });
   }
 
+  get claimLP () {
+    return new ContractWrite(this.contract.write?.claimLP, {
+      successMsg: "Claim liquidity pool successfully",
+    });
+  }
+
 
 }

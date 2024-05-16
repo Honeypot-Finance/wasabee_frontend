@@ -6,6 +6,7 @@ const config: Config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./services/**/*.{js,ts}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"
   ],
@@ -39,7 +40,11 @@ const config: Config = {
       themes: {
         dark: {
           colors: {
-            primary: "#FFCD4D",
+            primary: {
+              DEFAULT:  "#FFCD4D",
+              50: "#523914",
+              400:  "#FFCD4D"
+            },
           },
         },
       },

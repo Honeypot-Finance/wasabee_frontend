@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import launchpad from "@/services/launchpad";
@@ -12,36 +12,40 @@ import { PeddingSvg } from "@/components/svg/Pedding";
 import { ApprovedSvg } from "@/components/svg/Approved";
 import { DreampadSvg } from "@/components/svg/Dreampad";
 import { Select, SelectItem } from "@nextui-org/select";
+import { now, getLocalTimeZone, fromDate } from "@internationalized/date";
+// import { DatePicker } from "@/components/DatePicker";
+import { dayjs } from "@/lib/dayjs";
+import { DateValue } from "@nextui-org/react";
 import { DatePicker } from "@nextui-org/date-picker";
-import { now, getLocalTimeZone } from "@internationalized/date";
+import { useRouter } from "next/router";
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
 const minimumTimePattern = /^(6[1-9]|[7-9][0-9]|[1-9][0-9]{2,})$/;
 
-const LauchTokenPage: NextLayoutPage = observer(() => {
-  const [approved, setApproved] = useState(false);
+const LaunchTokenPage: NextLayoutPage = observer(() => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm();
-
-  const onSubmit = async (data: any) => {
+  const router = useRouter()
+  const onSubmit = async (data: {
+    provider: string;
+    raisedToken: string;
+    tokenName: string;
+    tokenSymbol: string;
+    tokenAmount: number;
+    poolHandler: string;
+    raisingCycle: DateValue;
+  }) => {
     try {
-      // console.log(data);
-      // const res = await launchpad.createFTO(
-      //   data as {
-      //     provider: string;
-      //     raisedToken: string;
-      //     tokenName: string;
-      //     tokenSymbol: string;
-      //     tokenAmount: number;
-      //     poolHandler: string;
-      //     rasing_cycle: string;
-      //   }
-      // );
-      // console.log("createFTORes", res);
-      setApproved(true);
+      const res = await launchpad.createFTO({
+        ...data,
+        // @ts-ignore
+        raisingCycle: Math.floor((data.raisingCycle.toDate().getTime() - Date.now()))
+      });
+      router.push('/launch')
     } catch (error) {
       console.error(error);
     }
@@ -65,24 +69,6 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
             </div>
           </div>
         </div>
-      ) : !launchpad.ftofactoryContract?.createFTO.error && approved ? (
-        <div className="w-[583px] h-[576px] shrink-0 border border-[color:var(--Button-Gradient,#F7931A)] [background:#121212] rounded-[40px] border-solid flex flex-col items-center pt-[84px]">
-          <ApprovedSvg />
-          <div className="text-[#43D9A3] mt-[27px] font-bold">
-            Transaction Approved
-          </div>
-          <div className="text-[#868B9A] mt-2  text-xs text-center">
-            Your transaction has been approved.
-          </div>
-          <div className="text-gray-500 text-xs flex items-center gap-1 mt-[5px]">
-            View on Minstscan <ViewSvg />
-          </div>
-          <Button className="w-[521px] h-[60px] mx-auto mt-[60px]">
-            <Link href="/launch" className="text-black font-bold">
-              Create new Token
-            </Link>
-          </Button>
-        </div>
       ) : (
         <div className="flex flex-col w-full sm:w-[580.188px] items-center border-[color:var(--Button-Gradient,#F7931A)] bg-[#291C0A] py-4 px-[5px] rounded-[54px] border-2">
           <div className="flex items-center gap-2">
@@ -95,26 +81,37 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
             Dreampad.
           </div>
           <form
+            //@ts-ignore
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-[22px] w-full px-4 sm:w-auto sm:px-0"
           >
-            <div className="flex flex-col gap-4 hidden">
+            <div className="flex-col gap-4 hidden">
               <label htmlFor="provider">Token Provider</label>
-              <input
-                type="text"
-                {...register("provider", { required: true })}
-                value={wallet.account}
-                className="outline-none w-full sm:w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
-              />
+              {wallet.account && (
+                <input
+                  type="text"
+                  {...register("provider")}
+                  defaultValue={wallet.account}
+                  className="outline-none w-full sm:w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
+                />
+              )}
             </div>
             <div className="flex flex-col gap-4">
               <label htmlFor="raisedToken">Rasied Token</label>
               <Select
+                classNames={{
+                  trigger: "bg-transparent data-[hover=true]:bg-transparent",
+                }}
                 {...register("raisedToken", { required: true })}
                 className="outline-none w-full sm:w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
               >
-                {wallet.currentChain?.contracts.ftoTokens.map((address) => (
-                  <SelectItem key={address}>{address}</SelectItem>
+                {wallet.currentChain?.contracts.ftoTokens.map((token) => (
+                  <SelectItem
+                    key={token.address as string}
+                    value={token.address}
+                  >
+                    {token.symbol}
+                  </SelectItem>
                 ))}
               </Select>
               {errors.raisedToken && (
@@ -162,31 +159,48 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
                 </span>
               )}
             </div>
-            <div className="flex flex-col gap-4 hidden">
+            <div className="flex-col gap-4 hidden">
               <label htmlFor="poolHandler">Pool Handler</label>
-              <input
-                type="text"
-                {...register("poolHandler", { required: true })}
-                value={wallet.currentChain?.contracts?.routerV2}
-                className="outline-none w-full sm:w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
-              />
+              {wallet.currentChain?.contracts?.routerV2 && (
+                <input
+                  defaultValue={wallet.currentChain?.contracts?.routerV2}
+                  // defaultValue={'0x1a12as1212'}
+                  type="text"
+                  {...register("poolHandler", {})}
+                  className="outline-none w-full sm:w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
+                />
+                
+              )}
             </div>
             <div className="flex flex-col gap-4">
-              <div>Compaign Duration(s)</div>
-              <input
-                type="number"
-                {...register("rasing_cycle", {
-                  required: "Rasing Cycle is required",
-                  pattern: {
-                    value: minimumTimePattern,
-                    message: "Raising Cycle should be over 60s",
-                  },
-                })}
-                className="outline-none w-full sm:w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
-              />
+              <div>Campaign End</div>
+              <Controller
+                control={control}
+                name="raisingCycle"
+                defaultValue={fromDate(
+                  dayjs().add(30, "minutes").toDate(),
+                  getLocalTimeZone()
+                )}
+                render={({ field: { onChange, onBlur, value, ref } }) => {
+                  return (
+                    <DatePicker
+                      ref={ref}
+                      classNames={{
+                        inputWrapper: "bg-transparent",
+                      }}
+                      hideTimeZone
+                      showMonthAndYearPickers
+                      onChange={onChange} // send value to hook form
+                      minValue={now(getLocalTimeZone())}
+                      onBlur={onBlur} // notify when input is touched/blur
+                      value={value}
+                    />
+                  );
+                }}
+              ></Controller>
               {errors.rasing_cycle && (
                 <span className="text-red-500">
-                  {errors.rasing_cycle.message as any}
+                  {"Please select an end date"}
                 </span>
               )}
             </div>
@@ -200,4 +214,4 @@ const LauchTokenPage: NextLayoutPage = observer(() => {
   );
 });
 
-export default LauchTokenPage;
+export default LaunchTokenPage;

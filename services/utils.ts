@@ -79,12 +79,13 @@ export class ContractWrite<T extends (...args: any) => any> {
     makeAutoObservable(this);
   }
 
-  async call(args?: Parameters<T>[0]) {
+  call = async (args?: Parameters<T>[0]) => {
     this.setLoading(true);
     try {
       const hash = await this._call(args, {
          account: wallet.account,
       });
+      console.log('hash', hash)
       const transaction =
         await wallet.publicClient.waitForTransactionReceipt({
           hash,

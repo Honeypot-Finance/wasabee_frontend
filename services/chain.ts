@@ -1,7 +1,7 @@
 import { Token } from "./contract/token";
 import { createPublicClientByChain } from "@/lib/client";
-import { Chain, sepolia } from "viem/chains";
-import { berachainTestnet, polygonMumbaiChain } from "@/lib/chain";
+import { Chain} from "viem/chains";
+import { berachainTestnet, polygonMumbaiChain, sepolia } from "@/lib/chain";
 
 export class Network {
   get chainId() {
@@ -12,7 +12,7 @@ export class Network {
     factory: string;
     ftoFactory: string;
     ftoFacade: string;
-    ftoTokens: string[];
+    ftoTokens: Partial<Token>[];
   };
   faucetTokens: Token[] = [];
   chain!: Chain;
@@ -72,8 +72,18 @@ export const berachainTestNetwork = new Network({
     ftoFactory: "0xEd6a0A29A962B4296bCeEC4e1E55F5Ec0474EAC7",
     ftoFacade: "0x3aCCC3dD26EeC5F6e254060906b7FA24D98E6722",
     ftoTokens: [
-      "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
-      "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
+      {
+        address: "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
+        name: "USDT",
+        symbol: "USDT",
+        decimals: 18,
+      },
+      {
+        address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
+        name: "Wrapped BERA",
+        symbol: "WBERA",
+        decimals: 18,
+      },
     ],
   },
   faucetTokens: [
@@ -124,7 +134,12 @@ export const sepoliaNetwork = new Network({
     factory: "0x51089092b3c40c15698818592f9487340C2379B5",
     ftoFactory: "0x16b7e526cE35061de7c26E6D943687460637BB6D",
     ftoFacade: "0xf7D56579e12e43984f1Ff90Cd9E9fc8c93c1ACF2",
-    ftoTokens: ["0x5d116b0032188519e62858dFd3b7917ccEcad170"],
+    ftoTokens: [{
+      address: "0x5d116b0032188519e62858dFd3b7917ccEcad170",
+      name:"USDT",
+      symbol: "USDT",
+      decimals: 18,
+    }],
   },
   faucetTokens: [{
     address: "0x5d116b0032188519e62858dFd3b7917ccEcad170",

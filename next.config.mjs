@@ -1,11 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  async rewrites() {
+  async redirects() {
     return [
       {
         source: '/',
         destination: '/swap',
+        permanent: false,
       },
     ]
   },

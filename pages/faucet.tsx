@@ -1,4 +1,5 @@
 import { Button } from "@/components/button";
+import { Copy } from "@/components/copy";
 import { NoData } from "@/components/table";
 import { wallet } from "@/services/wallet";
 import { NextLayoutPage } from "@/types/nextjs";
@@ -19,7 +20,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
         {wallet.currentChain?.faucetTokens?.length ? wallet.currentChain?.faucetTokens.map((token) => (
           <div key={token.address} className="flex  items-center">
             <div className="flex-1 flex w-[439px] items-center gap-[100px] border [background:var(--card-color,#271A0C)] pl-3 pr-4 py-3 rounded-2xl border-solid border-[rgba(255,255,255,0.10)]">
-              <div className="flex-1">{token.displayName}</div>
+              <div className="flex-1 flex items-center">{token.displayName}<Copy className="ml-[8px]" value={token.address}></Copy></div>
               <div className="flex-1">{token.balance.toFormat(6)}</div>
             </div>
             <Button isLoading={token.faucet.loading} className="ml-[13px]" onClick={async () => {

@@ -51,7 +51,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col gap-16">
       <div className="flex w-full justify-end gap-2">
-        <Button>
+        {/* <Button>
           <a
             target="_blank"
             href={wallet.faucetUrl}
@@ -59,7 +59,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
           >
             Get Faucet
           </a>
-        </Button>
+        </Button> */}
         <Button>
           <Link href="/launch-token" className="text-black font-bold">
             Launch Token
@@ -86,19 +86,18 @@ const LaunchPage: NextLayoutPage = observer(() => {
         </div>
       ) : (
         <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-          {launchpad.ftoPairs.value?.map((pair: FtoPairContract) => (
+          {launchpad.ftoPairs.value?.slice().reverse().map((pair: FtoPairContract) => (
             <div key={pair.address}>
               <LaunchCard
                 pair={pair}
                 action={
-                  <Button>
-                    <Link
-                      href={`/launch-detail/${pair.address}`}
-                      className="text-black font-bold"
-                    >
-                      View Token
-                    </Link>
-                  </Button>
+                  <Link
+                    
+                    href={`/launch-detail/${pair.address}`}
+                    className="text-black font-bold w-full px-[8px]"
+                  >
+                    <Button className="w-full">View Token</Button>
+                  </Link>
                 }
               />
             </div>
