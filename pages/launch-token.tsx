@@ -43,7 +43,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
       const res = await launchpad.createFTO({
         ...data,
         // @ts-ignore
-        raisingCycle: Math.floor((data.raisingCycle.toDate().getTime() - Date.now()))
+        raisingCycle: Math.floor((data.raisingCycle.toDate().getTime() - Date.now()) / 1000)
       });
       router.push('/launch')
     } catch (error) {
