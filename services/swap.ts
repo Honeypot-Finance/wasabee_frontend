@@ -75,7 +75,7 @@ class Swap {
 
   get minToAmount () {
     return new BigNumber(this.toAmount || 0)
-    .minus(new BigNumber(this.toAmount || 0).multipliedBy(this.slippage))
+    .minus(new BigNumber(this.toAmount || 0).multipliedBy(this.slippage).div(100))
   }
 
   constructor() {
