@@ -93,6 +93,29 @@ export class PairContract implements BaseContract {
       };
     }
   }
+  getAmountOut = new AsyncState(async (fromAmount: string) => {
+    if (!this.reserves) {
+      return new BigNumber(0)
+    }
+     const amountOut = await this.routerV2Contract.contract.read.getAmountOut([
+      BigInt(
+        new BigNumber(fromAmount)
+          .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
+          .toFixed(0)
+      ),
+      BigInt(
+        this.reserves.reserve0
+          .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
+          .toFixed(0)
+      ),
+      BigInt(
+        this.reserves.reserve1
+          .multipliedBy(new BigNumber(10).pow(this.token1.decimals))
+          .toFixed(0)
+      ),
+    ]);
+    return new BigNumber(amountOut.toString()).div(new BigNumber(10).pow(this.token1.decimals))
+  })
 
   async getPrice() {
     if (this.reserves) {

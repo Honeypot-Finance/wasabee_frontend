@@ -67,8 +67,8 @@ export const Slippage = observer(
               <div className="flex items-center">
                 <div className="text-[color:var(--Neutral-300,#D9D7E0)] text-xs font-normal leading-[normal]">Slippage</div>
                 <ItemSelect selectState={state.selectState}  className=" ml-[24px]">
-                  <SelectItem value={0.01}>0.01%</SelectItem>
                   <SelectItem value={0.5}>0.5%</SelectItem>
+                  <SelectItem value={1}>1%</SelectItem>
                   <SelectItem value={'custom'}>
                     <Input type="number" max={100} min={0} value={String(state.customSlippage.value)} classNames={{
                       input: "w-[50px]",

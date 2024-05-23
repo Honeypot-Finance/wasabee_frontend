@@ -80,10 +80,14 @@ export class ContractWrite<T extends (...args: any) => any> {
   }
 
   call = async (args?: Parameters<T>[0]) => {
+    const count = await wallet.publicClient.getTransactionCount({
+      address: wallet.account as `0x${string}` ,
+    })
     this.setLoading(true);
     try {
       const hash = await this._call(args, {
          account: wallet.account,
+         nonce: count + 1
       });
       console.log('hash', hash)
       const transaction =

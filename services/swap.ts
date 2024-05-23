@@ -8,6 +8,7 @@ import { liquidity } from "./liquidity";
 import { exec } from "~/lib/contract";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { AsyncState } from "./utils";
+import { debounce } from "lodash";
 
 class Swap {
   fromToken: Token | null = null;
@@ -15,7 +16,7 @@ class Swap {
 
   fromAmount: string = "";
   toAmount: string = "";
-  slippage: number = 0;
+  slippage: number = 1;
   deadline: number = 0;
 
   currentPair = new AsyncState<PairContract | undefined>(async () => {
@@ -100,11 +101,15 @@ class Swap {
     );
     reaction(
       () => this.price?.multipliedBy(this.fromAmount || 0).toFixed(),
-      () => {
-        if (this.fromAmount && this.price) {
-          this.toAmount = this.price.multipliedBy(this.fromAmount).toFixed();
+      debounce(async () => {
+        if (this.fromAmount && this.currentPair.value && this.price) {
+          await this.currentPair.value.getAmountOut.call(this.fromAmount)
+          //@ts-ignore
+          this.toAmount = this.currentPair.value.getAmountOut.value.toFixed() 
+        } else {
+          this.toAmount = ''
         }
-      }
+      }, 200)
     );
   }
 
@@ -155,9 +160,7 @@ class Swap {
     const fromAmountDecimals =  new BigNumber(this.fromAmount)
     .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
     .toFixed(0)
-    const toAmountDecimals = new BigNumber(this.minToAmount).multipliedBy(
-      new BigNumber(10).pow(this.toToken.decimals)
-    ).toFixed(0)
+ 
     const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
     const path = [this.fromToken.address, this.toToken.address] as readonly `0x${string}`[];
     await Promise.all([this.fromToken.approveIfNoAllowance(
@@ -166,6 +169,10 @@ class Swap {
         spender: this.routerV2Contract.address
       }
     )])
+    await this.currentPair.value.getAmountOut.call(this.fromAmount)
+    const toAmountDecimals = (this.currentPair.value.getAmountOut.value as BigNumber).multipliedBy(1- this.slippage/100).multipliedBy(
+      new BigNumber(10).pow(this.toToken.decimals)
+    ).toFixed(0)
     console.log('fromAmountDecimals', fromAmountDecimals, toAmountDecimals, path, wallet.account as `0x${string}`, deadline)
     await this.routerV2Contract.swapExactTokensForTokens.call([
       BigInt(fromAmountDecimals),

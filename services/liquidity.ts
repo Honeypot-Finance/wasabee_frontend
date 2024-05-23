@@ -8,6 +8,7 @@ import { exec } from "~/lib/contract";
 import { trpcClient } from "@/lib/trpc";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { AsyncState, ValueState } from "./utils";
+import { debounce } from 'lodash';
 
 class Liquidity {
   pairs: PairContract[] = [];
@@ -108,11 +109,15 @@ class Liquidity {
     );
     reaction(
       () => this.price?.multipliedBy(this.fromAmount || 0).toFixed(),
-      () => {
-        if (this.fromAmount && this.price) {
-          this.toAmount = this.price.multipliedBy(this.fromAmount).toFixed();
+      debounce(async () => {
+        if (this.fromAmount && this.currentPair.value && this.price) {
+          await this.currentPair.value.getAmountOut.call(this.fromAmount)
+          //@ts-ignore
+          this.toAmount = this.currentPair.value.getAmountOut.value.toFixed() 
+        } else {
+          this.toAmount = ''
         }
-      }
+      }, 200)
     );
   }
 

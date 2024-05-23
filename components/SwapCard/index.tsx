@@ -30,7 +30,7 @@ export const SwapCard = observer(() => {
     }
   }, [inputCurrency, outputCurrency, wallet.isInit]);
   return (
-    <SpinnerContainer isLoading={swap.currentPair.loading}>
+    <SpinnerContainer isLoading={swap.currentPair.loading || !!swap.currentPair.value?.getAmountOut.loading}>
       <div className=" flex flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
         <div className="flex justify-between items-center w-full">
           <SwapAmount
@@ -118,7 +118,7 @@ export const SwapCard = observer(() => {
             <div>
               <div>{swap.price.toFormat(6)}</div>
               <div>
-                {swap.fromToken?.displayName} per {swap.toToken?.displayName}
+                {swap.toToken?.displayName} per {swap.fromToken?.displayName}
               </div>
             </div>
             <div>
