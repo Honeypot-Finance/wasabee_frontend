@@ -63,7 +63,9 @@ export class AsyncState<T, K extends (...args: any) => any = () => {}> {
   }
 }
 
+
 export class ContractWrite<T extends (...args: any) => any> {
+  static nonce = 0
   loading = false;
   error: Error | null = null;
   successMsg: string = "";
@@ -83,11 +85,19 @@ export class ContractWrite<T extends (...args: any) => any> {
     const count = await wallet.publicClient.getTransactionCount({
       address: wallet.account as `0x${string}` ,
     })
+    console.log('ContractWrite.nonce', ContractWrite.nonce)
+    if (ContractWrite.nonce < count + 1) {
+      ContractWrite.nonce = count + 1
+    } else {
+      ContractWrite.nonce += 1
+    }
+
+    console.log('nonce', ContractWrite.nonce)
     this.setLoading(true);
     try {
       const hash = await this._call(args, {
          account: wallet.account,
-         nonce: count + 1
+         nonce: ContractWrite.nonce
       });
       console.log('hash', hash)
       const transaction =
