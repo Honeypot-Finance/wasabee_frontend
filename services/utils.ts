@@ -43,7 +43,7 @@ export class AsyncState<T, K extends (...args: any) => any = () => {}> {
   }
   async call(...args: Parameters<K>) {
     this.setLoading(true);
-    this.value = null
+    this.value = null;
     try {
       const data = await this._call(...args);
       this.setValue(data);
@@ -64,9 +64,8 @@ export class AsyncState<T, K extends (...args: any) => any = () => {}> {
   }
 }
 
-
 export class ContractWrite<T extends (...args: any) => any> {
-  static nonce = 0
+  static nonce = 0;
   loading = false;
   error: Error | null = null;
   successMsg: string = "";
@@ -84,28 +83,26 @@ export class ContractWrite<T extends (...args: any) => any> {
 
   call = async (args?: Parameters<T>[0]) => {
     const count = await wallet.publicClient.getTransactionCount({
-      address: wallet.account as `0x${string}` ,
-    })
+      address: wallet.account as `0x${string}`,
+    });
     if (ContractWrite.nonce < count) {
-      ContractWrite.nonce = count
+      ContractWrite.nonce = count;
     } else {
-      ContractWrite.nonce += 1
+      ContractWrite.nonce += 1;
     }
 
-    console.log('nonce', ContractWrite.nonce)
+    console.log("nonce", ContractWrite.nonce);
     this.setLoading(true);
     try {
       const hash = await this._call(args, {
-         account: wallet.account,
-        //  nonce: ContractWrite.nonce
+        account: wallet.account,
       });
-      console.log('hash', hash)
-      const transaction =
-        await wallet.publicClient.waitForTransactionReceipt({
-          hash,
-          timeout: 1000 * 60 * 5,
-        })
-      console.log('transaction', transaction)
+      console.log("hash", hash);
+      const transaction = await wallet.publicClient.waitForTransactionReceipt({
+        hash,
+        timeout: 1000 * 60 * 5,
+      });
+      console.log("transaction", transaction);
       if (!this.silent) {
         switch (transaction.status) {
           case "success":
@@ -124,12 +121,14 @@ export class ContractWrite<T extends (...args: any) => any> {
       } else {
         toast.error(this.failMsg || error.message);
       }
-      
+
       console.error(error);
       this.setError(error as Error);
+      throw error;
+    } finally {
+      this.setLoading(false);
     }
-    this.setLoading(false);
-  }
+  };
   setLoading(loading: boolean) {
     this.loading = loading;
   }
