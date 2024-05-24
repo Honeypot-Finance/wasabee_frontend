@@ -122,6 +122,7 @@ export class PairContract implements BaseContract {
   })
 
   async getPrice() {
+    await this.getReserves()
     if (this.reserves) {
       const price = await this.routerV2Contract.contract.read.getAmountOut([
         BigInt(
@@ -166,7 +167,6 @@ export class PairContract implements BaseContract {
             });
           })(),
           (async () => {
-            await this.getReserves();
             await this.getPrice();
           })(),
         ]);
