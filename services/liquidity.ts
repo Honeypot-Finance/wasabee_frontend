@@ -117,7 +117,7 @@ class Liquidity {
         } else {
           this.toAmount = ''
         }
-      }, 200)
+      }, 300)
     );
   }
 

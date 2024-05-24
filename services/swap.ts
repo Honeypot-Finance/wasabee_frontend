@@ -109,7 +109,7 @@ class Swap {
         } else {
           this.toAmount = ''
         }
-      }, 200)
+      }, 300)
     );
   }
 

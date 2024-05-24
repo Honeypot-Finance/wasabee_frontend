@@ -24,7 +24,7 @@ export const sepolia:Chain = {
   ...viewSepolia,
   rpcUrls: {
     default: {
-      http: ["https://eth-sepolia.public.blastapi.io"],
+      http: [" https://ethereum-sepolia.blockpi.network/v1/rpc/public"],
     },
   },
   

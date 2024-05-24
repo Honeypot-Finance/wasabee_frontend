@@ -43,6 +43,7 @@ export class AsyncState<T, K extends (...args: any) => any = () => {}> {
   }
   async call(...args: Parameters<K>) {
     this.setLoading(true);
+    this.value = null
     try {
       const data = await this._call(...args);
       this.setValue(data);
@@ -96,7 +97,7 @@ export class ContractWrite<T extends (...args: any) => any> {
     try {
       const hash = await this._call(args, {
          account: wallet.account,
-         nonce: ContractWrite.nonce
+        //  nonce: ContractWrite.nonce
       });
       console.log('hash', hash)
       const transaction =

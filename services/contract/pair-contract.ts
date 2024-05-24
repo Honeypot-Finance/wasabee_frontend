@@ -94,6 +94,7 @@ export class PairContract implements BaseContract {
     }
   }
   getAmountOut = new AsyncState(async (fromAmount: string) => {
+    await this.getReserves()
     if (!this.reserves) {
       return new BigNumber(0)
     }
@@ -114,6 +115,9 @@ export class PairContract implements BaseContract {
           .toFixed(0)
       ),
     ]);
+    console.log(
+      new BigNumber(amountOut.toString()).div(new BigNumber(10).pow(this.token1.decimals)).toFixed()
+    )
     return new BigNumber(amountOut.toString()).div(new BigNumber(10).pow(this.token1.decimals))
   })
 
