@@ -182,7 +182,7 @@ class Swap {
       BigInt(deadline),
     ])
 
-
+    this.fromAmount = ''
     Promise.all([
       this.currentPair.value.init(true),
       this.fromToken.getBalance(),

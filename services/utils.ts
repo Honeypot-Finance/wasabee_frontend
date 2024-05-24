@@ -85,9 +85,8 @@ export class ContractWrite<T extends (...args: any) => any> {
     const count = await wallet.publicClient.getTransactionCount({
       address: wallet.account as `0x${string}` ,
     })
-    console.log('ContractWrite.nonce', ContractWrite.nonce)
-    if (ContractWrite.nonce < count + 1) {
-      ContractWrite.nonce = count + 1
+    if (ContractWrite.nonce < count) {
+      ContractWrite.nonce = count
     } else {
       ContractWrite.nonce += 1
     }

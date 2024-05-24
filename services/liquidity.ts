@@ -181,7 +181,7 @@ class Liquidity {
       wallet.account as `0x${string}`,
       deadline,
     ]);
-
+    
     await Promise.all([
       this.fromToken.approveIfNoAllowance({
         amount: token0AmountWithDec,
@@ -202,6 +202,8 @@ class Liquidity {
       wallet.account as `0x${string}`,
       BigInt(deadline),
     ]);
+    this.fromAmount = "";
+    this.toAmount = "";
     Promise.all([this.fromToken.getBalance(), this.toToken.getBalance()]);
   });
 
