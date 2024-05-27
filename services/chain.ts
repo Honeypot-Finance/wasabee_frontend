@@ -16,7 +16,10 @@ export class Network {
   };
   faucetTokens: Token[] = [];
   chain!: Chain;
-  faucetUrl!: string;
+  faucets?: {
+    url: string,
+    name: string,
+  }[]
   constructor(
     args: Omit<Partial<Network>, "faucetTokens"> & {
       faucetTokens: Partial<Token>[];
@@ -65,7 +68,10 @@ export class Network {
 
 export const berachainTestNetwork = new Network({
   chain: berachainTestnet,
-  faucetUrl: "https://artio.faucet.berachain.com",
+  faucets: [{
+    url: "https://artio.faucet.berachain.com",
+    name: "Official Faucet",
+  }],
   contracts: {
     routerV2: "0xB192af2225791c439CB2024290158d3202DbcD95",
     factory: "0xE0D1F1cE03A7598EE7FdF7E5DB837d9726C0Ea5c",
@@ -128,7 +134,28 @@ export const berachainTestNetwork = new Network({
 
 export const sepoliaNetwork = new Network({
   chain: sepolia,
-  faucetUrl: "https://access.rockx.com/faucet-sepolia",
+  faucets: [
+    {
+      url: "https://www.alchemy.com/faucets/ethereum-sepolia",
+      name: "Alchemy",
+    },
+    {
+      url: "https://www.infura.io/faucet/sepolia",
+      name: "Infura",
+    },
+    {
+      url: "https://sepolia-faucet.pk910.de/",
+      name: "PowFaucet",
+    },
+    {
+      url: "https://faucet.quicknode.com/ethereum/sepolia",
+      name: "QuickNode",
+    },
+    {
+      url: "https://cloud.google.com/application/web3/faucet/ethereum/sepolia",
+      name: "Google",
+    },
+  ],
   contracts: {
     routerV2: "0xBF5BB6e4189877bA03168035a56CBC452f59c0d2",
     factory: "0x51089092b3c40c15698818592f9487340C2379B5",

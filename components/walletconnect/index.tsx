@@ -4,7 +4,10 @@ import { BalanceSvg } from "../svg/balance";
 import { ButtonHTMLAttributes } from "react";
 import { WalletSvg } from "../svg/wallet";
 import { observer } from "mobx-react-lite";
-
+import { FaFaucet } from "react-icons/fa";
+import { wallet } from "@/services/wallet";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
+import Link from "next/link";
 const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   return (
     <button
@@ -61,7 +64,28 @@ export const WalletConnect = () => {
                 );
               }
               return (
-                <div style={{ display: "flex", gap: 12 }}>
+                <div className="flex gap-[12px] items-center relative">
+                  {wallet.currentChain?.faucets?.length && (
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <div className=" cursor-pointer"><FaFaucet
+                          width={"36px"}
+                          height={"36px"}
+                          className=" shrink-0"
+                        ></FaFaucet></div>
+                      </DropdownTrigger>
+                      <DropdownMenu classNames={{
+                      
+                      }} aria-label="Actions">
+                        {wallet.currentChain?.faucets?.map((faucet) => (
+                          <DropdownItem key={faucet.name}>
+                             <Link className="w-full inline-block" href={faucet.url} target="_blank">{faucet.name}</Link>
+                          </DropdownItem>
+                        ))}
+                
+                      </DropdownMenu>
+                    </Dropdown>
+                  )}
                   <Balance className="hidden md:flex">
                     <>
                       <BalanceSvg></BalanceSvg>{" "}
