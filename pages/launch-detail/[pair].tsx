@@ -19,9 +19,7 @@ import { Input } from "@/components/input";
 import BigNumber from "bignumber.js";
 
 const SuccessAction = observer(({ pair }: { pair: FtoPairContract }) => {
-  return pair.isProvider ? (
-    <></>
-  ) : (
+  return (
     <div className="px-[8px] flex flex-col gap-[16px]">
       <Button
         className="w-full"
@@ -141,7 +139,7 @@ const Action = observer(({ pair }: { pair: FtoPairContract }) => {
       return <PauseAction pair={pair}></PauseAction>;
     case 3:
       if (pair.isCompleted) {
-         return <></>
+        return <></>;
       }
       return <ProcessingAction pair={pair}></ProcessingAction>;
   }
