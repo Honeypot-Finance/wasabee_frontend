@@ -99,12 +99,12 @@ export const berachainTestNetwork = new Network({
       symbol: "USDT",
       decimals: 18,
     },
-    {
-      address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
-      name: "Wrapped BERA",
-      symbol: "WBERA",
-      decimals: 18,
-    },
+    // {
+    //   address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
+    //   name: "Wrapped BERA",
+    //   symbol: "WBERA",
+    //   decimals: 18,
+    // },
     {
       name: "AORI",
       symbol: "AORI",
