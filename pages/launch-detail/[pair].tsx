@@ -17,6 +17,7 @@ import { LaunchCard } from "@/components/LaunchCard";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import BigNumber from "bignumber.js";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 const SuccessAction = observer(({ pair }: { pair: FtoPairContract }) => {
   return (
@@ -168,13 +169,27 @@ const LaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit, pairAddress]);
 
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col  items-center pt-[24px]">
-      <LaunchCard
-        type="detail"
-        className=" w-[450px] max-w-full p-[24px]"
-        pair={state.pair.value}
-        action={state.pair.value && <Action pair={state.pair.value}></Action>}
-      ></LaunchCard>
+    <div className="px-6 xl:max-w-[1200px] mx-auto">
+      <Breadcrumbs
+        breadcrumbs={[
+          {
+            title: "Projects",
+            href: "/launch",
+          },
+          {
+            title: state.pair.value?.launchedToken.displayName || '-',
+            href: "/launch-token",
+          },
+        ]}
+      ></Breadcrumbs>
+      <div className="flex flex-col  items-center  pt-[24px]">
+        <LaunchCard
+          type="detail"
+          className=" w-[450px] max-w-full p-[24px]"
+          pair={state.pair.value}
+          action={state.pair.value && <Action pair={state.pair.value}></Action>}
+        ></LaunchCard>
+      </div>
     </div>
   );
 });

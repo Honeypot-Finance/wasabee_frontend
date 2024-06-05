@@ -117,6 +117,7 @@ export class ContractWrite<T extends (...args: any) => any> {
             throw new Error(`Transaction ${hash} Pending`);
         }
       }
+      return transaction
     } catch (error: any) {
       if (error.message.includes("User rejected the request")) {
         toast.error("User rejected the request");

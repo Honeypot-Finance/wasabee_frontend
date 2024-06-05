@@ -17,14 +17,18 @@ import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { AmountFormat } from "@/components/AmountFormat";
 import { Copy } from "@/components/copy";
 import { LaunchCard } from "@/components/LaunchCard";
-
+import { Pagination, Tab, Tabs } from "@nextui-org/react";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   useEffect(() => {
     if (!wallet.isInit) {
       return;
     }
-    launchpad.ftoPairs.call();
+    launchpad.ftoPairs.call({
+      page: launchpad.ftoPairsPagination.page,
+      limit: launchpad.ftoPairsPagination.limit,
+    });
+    launchpad.myFtoPairs.call()
   }, [wallet.isInit]);
 
   return (
@@ -64,23 +68,80 @@ const LaunchPage: NextLayoutPage = observer(() => {
           </div>
         </div>
       ) : (
-        <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-          {launchpad.ftoPairs.value?.slice().reverse().map((pair: FtoPairContract) => (
-            <div key={pair.address}>
-              <LaunchCard
-                pair={pair}
-                action={
-                  <Link
-                    
-                    href={`/launch-detail/${pair.address}`}
-                    className="text-black font-bold w-full px-[8px]"
-                  >
-                    <Button className="w-full">View Token</Button>
-                  </Link>
-                }
+        <div>
+          <Tabs
+            aria-label="Options"
+            classNames={{
+              tabList: "bg-transparent",
+              tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
+            }}
+            className="next-tab"
+          >
+            <Tab key="all" title="All Projects">
+              <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
+                {launchpad.ftoPairs.value?.data.map((pair: FtoPairContract) => (
+                  <div key={pair.address}>
+                    <LaunchCard
+                      pair={pair}
+                      action={
+                        <Link
+                          href={`/launch-detail/${pair.address}`}
+                          className="text-black font-bold w-full px-[8px]"
+                        >
+                          <Button className="w-full">View Token</Button>
+                        </Link>
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+              <Pagination
+                className="flex justify-center mt-[12px]"
+                total={launchpad.ftoPairsPagination.totalPage}
+                page={launchpad.ftoPairsPagination.page}
+                initialPage={launchpad.ftoPairsPagination.page}
+                onChange={(page) => {
+                  launchpad.ftoPairsPagination.onPageChange(page);
+                  launchpad.ftoPairs.call({
+                    page,
+                    limit: launchpad.ftoPairsPagination.limit,
+                  });
+                }}
               />
-            </div>
-          ))}
+            </Tab>
+            <Tab key="my" title="My Projects">
+              <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
+                {launchpad.myFtoPairs.value?.data.map((pair: FtoPairContract) => (
+                  <div key={pair.address}>
+                    <LaunchCard
+                      pair={pair}
+                      action={
+                        <Link
+                          href={`/launch-detail/${pair.address}`}
+                          className="text-black font-bold w-full px-[8px]"
+                        >
+                          <Button className="w-full">View Token</Button>
+                        </Link>
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+              {/* <Pagination
+                className="flex justify-center mt-[12px]"
+                total={launchpad.ftoPairsPagination.totalPage}
+                page={launchpad.ftoPairsPagination.page}
+                initialPage={launchpad.ftoPairsPagination.page}
+                onChange={(page) => {
+                  launchpad.ftoPairsPagination.onPageChange(page);
+                  launchpad.ftoPairs.call({
+                    page,
+                    limit: launchpad.ftoPairsPagination.limit,
+                  });
+                }}
+              /> */}
+            </Tab>
+          </Tabs>
         </div>
       )}
     </div>

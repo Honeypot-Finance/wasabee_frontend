@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { observer } from "mobx-react-lite";
+import { observer, useLocalObservable } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import launchpad from "@/services/launchpad";
 import { Button } from "@/components/button";
@@ -18,6 +18,9 @@ import { dayjs } from "@/lib/dayjs";
 import { DateValue } from "@nextui-org/react";
 import { DatePicker } from "@nextui-org/date-picker";
 import { useRouter } from "next/router";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { Copy } from "@/components/copy";
+import { trpcClient } from "@/lib/trpc";
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
 const minimumTimePattern = /^(6[1-9]|[7-9][0-9]|[1-9][0-9]{2,})$/;
@@ -30,6 +33,12 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
     formState: { errors },
   } = useForm();
   const router = useRouter()
+  const state = useLocalObservable(() => ({
+    pairAddress: '',
+    setPairAddress (pairAddress: string) {
+      this.pairAddress = pairAddress
+    }
+  }))
   const onSubmit = async (data: {
     provider: string;
     raisedToken: string;
@@ -45,13 +54,30 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
         // @ts-ignore
         raisingCycle: Math.floor((data.raisingCycle.toDate().getTime() - Date.now()) / 1000)
       });
-      router.push('/launch')
+      const pairAddress = res.logs.pop()?.address as string
+      state.setPairAddress(pairAddress)
+      await trpcClient.fto.createProject.mutate({
+        pair: pairAddress,
+        account: wallet.account
+      })
+      // router.push('/launch')
     } catch (error) {
       console.error(error);
     }
   };
   return (
-    <div className="md:px-6 md:max-w-full xl:max-w-[1200px] mx-auto flex items-center justify-center">
+    <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto">
+    <Breadcrumbs breadcrumbs={[
+      {
+        title: 'Projects',
+        href: '/launch'
+      },
+      {
+        title: 'Launch Token',
+        href: '/launch-token'
+      }
+    ]}></Breadcrumbs>
+    <div className=" flex items-center justify-center mt-[24px]">
       {launchpad.ftofactoryContract?.createFTO.loading ? (
         <div className="flex h-[566px] w-full sm:w-[583px] justify-center items-center [background:#121212] rounded-[54px]">
           <div className="flex flex-col items-center">
@@ -204,12 +230,16 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                 </span>
               )}
             </div>
+            {state.pairAddress && <div className="flex items-center">
+              Pair Address:&nbsp;<Link className="text-primary" href={`/launch-detail/${state.pairAddress}`} target="_blank">{state.pairAddress}</Link><Copy className="ml-[8px]" value={state.pairAddress}></Copy>
+            </div>}
             <Button type="submit" className="text-black font-bold">
               Launch Token
             </Button>
           </form>
         </div>
       )}
+    </div>
     </div>
   );
 });

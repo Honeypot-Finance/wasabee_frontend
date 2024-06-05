@@ -3,7 +3,8 @@ import { wallet } from "./wallet";
 import { formatEther } from "viem";
 import BigNumber from "bignumber.js";
 import { FtoPairContract } from "./contract/ftopair-contract";
-import { AsyncState } from "./utils";
+import { AsyncState, PaginationState } from "./utils";
+import { trpcClient } from "@/lib/trpc";
 
 function calculateTimeDifference(timestamp: number): string {
   if (timestamp.toString().length !== 13) {
@@ -44,16 +45,59 @@ class LaunchPad {
   getPairAddress = async (index: bigint) =>
     await this.ftofactoryContract.allPairs.call([index]);
 
-  ftoPairs = new AsyncState<FtoPairContract []>(async () => {
+  
+
+  ftoPairs = new AsyncState<{
+    data: FtoPairContract [],
+    total: number
+  }, ({page, limit}: {page: number, limit: number}) => Promise<({
+    data: FtoPairContract [],
+    total: number
+  })>>(async ({page, limit}) => {
     const [pairsLength] = await this.allPairsLength();
-    return  Promise.all(Array.from({ length: Number(pairsLength) }, async (_, i) => {
-      const [pairAddress] = await this.getPairAddress(BigInt(i));
+    const size = Math.min(Number(pairsLength) - (page - 1) * limit, limit);
+    const pairIndexesByPage = Array.from({ length: Number(size) }, (_,index) => {
+      return Number(pairsLength) - (page - 1) * limit - index - 1
+    })
+    const data = await Promise.all(pairIndexesByPage.map(async (_) => {
+      const [pairAddress] = await this.getPairAddress(BigInt(_));
       const pair = new FtoPairContract({ address: pairAddress as string })
       pair.init()
       return pair
     }))
+    this.ftoPairsPagination.setTotal(Number(pairsLength))
+    return  {
+      data,
+      total: Number(pairsLength)
+    }
   })
 
+  myFtoPairs = new AsyncState<{
+    data: FtoPairContract [],
+    total: number
+  }>(async () => {
+    const projects = await trpcClient.fto.getProjectsByAccount.query({
+       account: wallet.account,
+    })
+    const data = await Promise.all(projects.map(async ({pair: pairAddress}) => {
+      console.log('pairAddress', pairAddress)
+      const pair = new FtoPairContract({ address: pairAddress as string })
+      pair.init()
+      return pair
+    }))
+    return {
+      data,
+      total: data.length
+    }
+  })
+
+  ftoPairsPagination =  new PaginationState({
+    limit: 9
+  })
+
+  myFtoPairsPagination =  new PaginationState({
+    limit: 9
+  })
   // getPairInfo = async (pairAddress: `0x${string}`) => {
   //   const ftoPairContract = this.ftoPairContract(pairAddress);
   //   const launchedTokenAddress = await ftoPairContract.launchedTokenAddress();
