@@ -15,6 +15,16 @@ const Home: NextLayoutPage = () => {
     icon?: React.ReactNode;
     target?: string;
   }[] = [
+
+    {
+      text: "HenloDex",
+      href: "/swap",
+    },
+    {
+      text: "HoneyGenesis",
+      href: "https://mint.honeypotfinance.xyz",
+      target: "_blank",
+    },
     {
       text: "Twitter",
       href: "https://twitter.com/honeypotfinance",
@@ -27,15 +37,6 @@ const Home: NextLayoutPage = () => {
           alt="twitter"
         ></Image>
       ),
-    },
-    {
-      text: "HenloDex",
-      href: "/swap",
-    },
-    {
-      text: "HoneyGenesis",
-      href: "https://mint.honeypotfinance.xyz",
-      target: "_blank",
     },
     {
       text: "Discord",
@@ -102,6 +103,7 @@ const Home: NextLayoutPage = () => {
               key={link.text}
               href={link.href}
             >
+              {link.icon}
               {link.text}
             </Link>
           ))}
