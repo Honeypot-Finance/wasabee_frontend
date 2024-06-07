@@ -57,7 +57,7 @@ const Home: NextLayoutPage = () => {
     },
   ];
   return (
-    <div className=" relative  min-h-full">
+    <div className=" relative  min-h-screen">
       <Image
         className=" absolute left-0 top-0"
         src="/images/homepage.png"

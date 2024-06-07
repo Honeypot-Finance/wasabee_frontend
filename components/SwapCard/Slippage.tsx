@@ -25,13 +25,13 @@ export const Slippage = observer(
             swap.setSlippage(value)
           }
           if (value === 'custom') {
-            swap.setSlippage(state.customSlippage.value / 100)
+            swap.setSlippage(state.customSlippage.value)
           }
         },
         value: 0
       }),
       customSlippage: new ValueState<number>({
-        value: 0
+        value: 1
       }),
     }));
     // console.log('state.customSlippage.value', state.customSlippage.value)
