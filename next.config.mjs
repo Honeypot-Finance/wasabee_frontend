@@ -3,11 +3,11 @@ const nextConfig = {
   reactStrictMode: false,
   async redirects() {
     return [
-      {
-        source: '/',
-        destination: '/swap',
-        permanent: false,
-      },
+      // {
+      //   source: '/',
+      //   destination: '/swap',
+      //   permanent: false,
+      // },
     ]
   },
 };

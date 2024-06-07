@@ -22,7 +22,7 @@ const config: Config = {
         display: "Oswald, ui-serif", // Adds a new `font-display` class
       },
       backgroundColor: {
-        default: "var(--bg,#1F1609)",
+        default: "var(--bg,#140E06)",
       },
       textColor: {
         default: "white",
