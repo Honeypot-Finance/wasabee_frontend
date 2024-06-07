@@ -101,6 +101,7 @@ export class ContractWrite<T extends (...args: any) => any> {
       console.log('hash', hash)
       const transaction =
         await wallet.publicClient.waitForTransactionReceipt({
+          confirmations: 2,
           hash,
           timeout: 1000 * 60 * 5,
         })
