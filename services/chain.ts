@@ -159,8 +159,8 @@ export const sepoliaNetwork = new Network({
   contracts: {
     routerV2: "0xBF5BB6e4189877bA03168035a56CBC452f59c0d2",
     factory: "0x51089092b3c40c15698818592f9487340C2379B5",
-    ftoFactory: "0x16b7e526cE35061de7c26E6D943687460637BB6D",
-    ftoFacade: "0xf7D56579e12e43984f1Ff90Cd9E9fc8c93c1ACF2",
+    ftoFactory: "0x13Db24fF75a7FB3Cc22Fa938c3a07C5938A7d0cD",
+    ftoFacade: "0x27bAceFAA89c00d29B4F7a3424c648f34e092009",
     ftoTokens: [{
       address: "0x5d116b0032188519e62858dFd3b7917ccEcad170",
       name:"USDT",
