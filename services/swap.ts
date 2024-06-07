@@ -17,7 +17,7 @@ class Swap {
   fromAmount: string = "";
   toAmount: string = "";
   slippage: number = 1;
-  deadline: number = 0;
+  deadline: number = 20;
 
   currentPair = new AsyncState<PairContract | undefined>(async () => {
     if (this.fromToken && this.toToken) {
