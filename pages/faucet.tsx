@@ -6,6 +6,7 @@ import { NextLayoutPage } from "@/types/nextjs";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useEffect } from "react";
+import { amountFormatted } from '../lib/format';
 
 const FaucetPage: NextLayoutPage = observer(() => {
   useEffect(() =>{
@@ -21,7 +22,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
           <div key={token.address} className="flex  items-center">
             <div className="flex-1 flex w-[439px] items-center gap-[100px] border [background:var(--card-color,#271A0C)] pl-3 pr-4 py-3 rounded-2xl border-solid border-[rgba(255,255,255,0.10)]">
               <div className="flex-1 flex items-center">{token.displayName}<Copy className="ml-[8px]" value={token.address}></Copy></div>
-              <div className="flex-1">{token.balance.toFormat(6)}</div>
+              <div className="flex-1">{token.balanceFormatted}</div>
             </div>
             <Button isLoading={token.faucet.loading} className="ml-[13px]" onClick={async () => {
               await token.faucet.call()

@@ -6,6 +6,7 @@ import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import { makeAutoObservable } from "mobx";
 import { getContract } from "viem";
 import { AsyncState } from "../utils";
+import { amountFormatted } from "@/lib/format";
 
 // const totalSupply = await pairContract.methods.totalSupply().call()
 // const LPTokenBalance = await this.balanceOf(pairAddress)
@@ -44,15 +45,27 @@ export class PairContract implements BaseContract {
       : new BigNumber(0);
   }
   get myLiquidityDisplay() {
-    return this.token0LpBalance && this.token0.displayName && this.token1LpBalance && this.token1.displayName ? `${this.token0LpBalance.toFixed(3)} ${
+    return this.token0LpBalance && this.token0.displayName && this.token1LpBalance && this.token1.displayName ? `${amountFormatted(this.token0LpBalance, {
+      decimals:0,
+      fixed: 3
+    })} ${
       this.token0.displayName
-    } - ${this.token1LpBalance.toFixed(3)} ${this.token1.displayName}` : '-'
+    } - ${amountFormatted(this.token1LpBalance, {
+      decimals:0,
+      fixed: 3
+    })} ${this.token1.displayName}` : '-'
   }
 
   get liquidityDisplay() {
-    return this.reserves?.reserve0 &&  this.token0.displayName &&  this.reserves?.reserve1 &&  this.token1.displayName ?`${this.reserves?.reserve0.toFixed(3)} ${
+    return this.reserves?.reserve0 &&  this.token0.displayName &&  this.reserves?.reserve1 &&  this.token1.displayName ?`${amountFormatted(this.reserves?.reserve0, {
+      decimals: 0,
+      fixed: 3
+    })} ${
       this.token0.displayName
-    } - ${this.reserves?.reserve1.toFixed(3)} ${this.token1.displayName}` : '-'
+    } - ${amountFormatted(this.reserves?.reserve1, {
+      decimals: 0,
+      fixed: 3
+    })} ${this.token1.displayName}` : '-'
   }
 
   get poolName() {

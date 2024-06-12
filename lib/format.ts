@@ -13,7 +13,7 @@ export const amountFormatted = (amount: number | string | BigNumber, {
     }
     fixed = fixed ?? 6
     const r = bigAmount.div(new BigNumber(10).pow(decimals ?? 18))
-    const minValue = new BigNumber(1).div(new BigNumber(10).pow(fixed - 1))
+    const minValue = new BigNumber(1).div(new BigNumber(10).pow(fixed))
     if (r.isLessThan(minValue)) {
        return `<${minValue.toFixed()}`
     }
