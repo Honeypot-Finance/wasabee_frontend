@@ -16,7 +16,7 @@ export class FtoPairContract implements BaseContract {
   raiseToken = new Token({});
   launchedToken = new Token({});
   depositedRaisedTokenWithoutDecimals: BigNumber | null = null;
-  depositedLaunchedToken: BigNumber | null = null;
+  depositedLaunchedTokenWithoutDecimals: BigNumber | null = null;
   endTime: string = '';
   ftoState: number = -1;
   launchedTokenProvider: string = '';
@@ -30,6 +30,13 @@ export class FtoPairContract implements BaseContract {
     return this.depositedRaisedTokenWithoutDecimals && this.raiseToken.decimals
       ? this.depositedRaisedTokenWithoutDecimals.div(
           new BigNumber(10).pow(this.raiseToken.decimals)
+        )
+      : undefined;
+  }
+  get depositedLaunchedToken() {
+    return this.depositedLaunchedTokenWithoutDecimals && this.launchedToken.decimals
+      ? this.depositedLaunchedTokenWithoutDecimals.div(
+          new BigNumber(10).pow(this.launchedToken.decimals)
         )
       : undefined;
   }
@@ -197,7 +204,7 @@ export class FtoPairContract implements BaseContract {
 
   async getDepositedLaunchedToken() {
     const res = (await this.contract.read.depositedLaunchedToken()) as bigint;
-    this.depositedLaunchedToken = new BigNumber(res.toString());
+    this.depositedLaunchedTokenWithoutDecimals = new BigNumber(res.toString());
   }
 
   async getEndTime() {

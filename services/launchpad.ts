@@ -138,7 +138,7 @@ class LaunchPad {
       raisedToken as `0x${string}`,
       tokenName,
       tokenSymbol,
-      BigInt(tokenAmount),
+      BigInt(new BigNumber(tokenAmount).multipliedBy(1e18).toFixed()),
       poolHandler as `0x${string}`,
       BigInt(raisingCycle),
     ]);
