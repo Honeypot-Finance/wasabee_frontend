@@ -73,13 +73,13 @@ export const berachainTestNetwork = new Network({
     name: "Official Faucet",
   }],
   contracts: {
-    routerV2: "0xB192af2225791c439CB2024290158d3202DbcD95",
-    factory: "0xE0D1F1cE03A7598EE7FdF7E5DB837d9726C0Ea5c",
-    ftoFactory: "0xEd6a0A29A962B4296bCeEC4e1E55F5Ec0474EAC7",
-    ftoFacade: "0x3aCCC3dD26EeC5F6e254060906b7FA24D98E6722",
+    routerV2: "0x482270069fF98a0dF528955B651494759b3B2F8C",
+    factory: "0x2f795195bae7E61E848ffC87ba7f6ae1A06c0527",
+    ftoFactory: "0x5C4cDd0160c0CB4C606365dD98783064335A9ce0",
+    ftoFacade: "0x51e4fF69060CD62dE1a9374799a0BddeB55cb1E4",
     ftoTokens: [
       {
-        address: "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
+        address: "0x2A108225249CB5B3E1E33943F5FEfAec33b1D452",
         name: "USDT",
         symbol: "USDT",
         decimals: 18,
@@ -94,7 +94,7 @@ export const berachainTestNetwork = new Network({
   },
   faucetTokens: [
     {
-      address: "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
+      address: "0x2A108225249CB5B3E1E33943F5FEfAec33b1D452",
       name: "USDT",
       symbol: "USDT",
       decimals: 18,
