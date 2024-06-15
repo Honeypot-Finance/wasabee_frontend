@@ -1,7 +1,7 @@
 import { Token } from "./contract/token";
 import { createPublicClientByChain } from "@/lib/client";
 import { Chain} from "viem/chains";
-import { berachainTestnet, polygonMumbaiChain, sepolia } from "@/lib/chain";
+import { berachainBartioTestnet, berachainTestnet, polygonMumbaiChain, sepolia } from "@/lib/chain";
 
 export class Network {
   get chainId() {
@@ -66,10 +66,10 @@ export class Network {
 //   ],
 // });
 
-export const berachainTestNetwork = new Network({
-  chain: berachainTestnet,
+export const berachainBartioTestnetNetwork = new Network({
+  chain: berachainBartioTestnet,
   faucets: [{
-    url: "https://artio.faucet.berachain.com",
+    url: "https://bartio.faucet.berachain.com",
     name: "Official Faucet",
   }],
   contracts: {
@@ -84,6 +84,48 @@ export const berachainTestNetwork = new Network({
         symbol: "USDT",
         decimals: 18,
       },
+      // {
+      //   address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
+      //   name: "Wrapped BERA",
+      //   symbol: "WBERA",
+      //   decimals: 18,
+      // },
+    ],
+  },
+  faucetTokens: [
+    {
+      address: "0x2A108225249CB5B3E1E33943F5FEfAec33b1D452",
+      name: "USDT",
+      symbol: "USDT",
+      decimals: 18,
+    },
+    // {
+    //   address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
+    //   name: "Wrapped BERA",
+    //   symbol: "WBERA",
+    //   decimals: 18,
+    // },
+  ],
+});
+
+export const berachainTestNetwork = new Network({
+  chain: berachainTestnet,
+  faucets: [{
+    url: "https://artio.faucet.berachain.com",
+    name: "Official Faucet",
+  }],
+  contracts: {
+    routerV2: "0xB192af2225791c439CB2024290158d3202DbcD95",
+    factory: "0xE0D1F1cE03A7598EE7FdF7E5DB837d9726C0Ea5c",
+    ftoFactory: "0xEd6a0A29A962B4296bCeEC4e1E55F5Ec0474EAC7",
+    ftoFacade: "0x3aCCC3dD26EeC5F6e254060906b7FA24D98E6722",
+    ftoTokens: [
+      {
+        address: "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
+        name: "USDT",
+        symbol: "USDT",
+        decimals: 18,
+      },
       {
         address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
         name: "Wrapped BERA",
@@ -94,7 +136,7 @@ export const berachainTestNetwork = new Network({
   },
   faucetTokens: [
     {
-      address: "0x2A108225249CB5B3E1E33943F5FEfAec33b1D452",
+      address: "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
       name: "USDT",
       symbol: "USDT",
       decimals: 18,
@@ -178,6 +220,7 @@ export const sepoliaNetwork = new Network({
 
 export const networks = [
   berachainTestNetwork,
+  berachainBartioTestnetNetwork,
   sepoliaNetwork,
   // polygonTestNetwork,
 ];

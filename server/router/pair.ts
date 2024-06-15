@@ -58,6 +58,7 @@ export const pairRouter = router({
           public: createPublicClientByChain(currentNetwork.chain),
         },
       });
+      console.log('factoryContract-------', factoryContract)
       const length = Number(
         ((await factoryContract.read.allPairsLength()) as BigInt).toString()
       );

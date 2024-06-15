@@ -174,15 +174,19 @@ export class FtoPairContract implements BaseContract {
   }
 
   async init() {
-    await Promise.all([
-      this.getRaisedToken(),
-      this.getLaunchedToken(),
-      this.getDepositedRaisedToken(),
-      this.getDepositedLaunchedToken(),
-      this.getEndTime(),
-      this.getFTOState(),
-      this.getLaunchedTokenProvider()
-    ]);
+    try {
+      await Promise.all([
+        this.getRaisedToken(),
+        this.getLaunchedToken(),
+        this.getDepositedRaisedToken(),
+        this.getDepositedLaunchedToken(),
+        this.getEndTime(),
+        this.getFTOState(),
+        this.getLaunchedTokenProvider()
+      ]);
+    } catch (error) {
+      console.error(error, `init-${this.address}`);
+    }
   }
 
   async getRaisedToken() {
