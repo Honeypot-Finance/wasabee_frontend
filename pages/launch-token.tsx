@@ -58,6 +58,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
       state.setPairAddress(pairAddress)
       await trpcClient.fto.createProject.mutate({
         pair: pairAddress,
+        chain_id: wallet.currentChainId,
         account: wallet.account
       })
       // router.push('/launch')

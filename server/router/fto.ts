@@ -18,6 +18,7 @@ export const ftoRouter = router({
   createProject: publicProcedure
     .input(
       z.object({
+        chain_id: z.number(),
         pair: z.string(),
         account: z.string(),
       })
@@ -30,8 +31,9 @@ export const ftoRouter = router({
     .input(
       z.object({
         account: z.string(),
+        chain_id: z.number()
       })
     ).query(async ({ input }) => {
-        return ftoService.getFtoProjectsByAccount(input.account)
+        return ftoService.getFtoProjectsByAccount(input)
         }),
 });

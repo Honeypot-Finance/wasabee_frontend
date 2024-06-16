@@ -78,6 +78,7 @@ class LaunchPad {
   }>(async () => {
     const projects = await trpcClient.fto.getProjectsByAccount.query({
        account: wallet.account,
+       chain_id: wallet.currentChainId
     })
     const data = await Promise.all(projects.map(async ({pair: pairAddress}) => {
       console.log('pairAddress', pairAddress)
