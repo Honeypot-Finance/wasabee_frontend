@@ -7,6 +7,7 @@ import { makeAutoObservable } from "mobx";
 import { getContract } from "viem";
 import { AsyncState } from "../utils";
 import { amountFormatted } from "@/lib/format";
+import dayjs from "dayjs";
 
 // const totalSupply = await pairContract.methods.totalSupply().call()
 // const LPTokenBalance = await this.balanceOf(pairAddress)
@@ -18,6 +19,7 @@ export class PairContract implements BaseContract {
   name: string = "";
   abi = IUniswapV2Pair.abi;
   token: Token = new Token({});
+  deadline: number = 20
 
   reserves: {
     reserve0: BigNumber;
@@ -174,7 +176,7 @@ export class PairContract implements BaseContract {
           spender: this.routerV2Contract.address,
         }
       );
-      const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
+      const deadline = dayjs().unix() + 60 * (this.deadline || 20);
       await this.routerV2Contract.removeLiquidity.call([
         this.token0.address as `0x${string}`,
         this.token1.address as `0x${string}`,

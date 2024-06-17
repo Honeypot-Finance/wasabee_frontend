@@ -8,7 +8,8 @@ import { exec } from "~/lib/contract";
 import { trpcClient } from "@/lib/trpc";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { AsyncState, ValueState } from "./utils";
-import { debounce } from 'lodash';
+import { debounce } from "lodash";
+import dayjs from "dayjs";
 
 class Liquidity {
   pairs: PairContract[] = [];
@@ -111,11 +112,11 @@ class Liquidity {
       () => this.price?.multipliedBy(this.fromAmount || 0).toFixed(),
       debounce(async () => {
         if (this.fromAmount && this.currentPair.value && this.price) {
-          await this.currentPair.value.getAmountOut.call(this.fromAmount)
+          await this.currentPair.value.getAmountOut.call(this.fromAmount);
           //@ts-ignore
-          this.toAmount = this.currentPair.value.getAmountOut.value.toFixed() 
+          this.toAmount = this.currentPair.value.getAmountOut.value.toFixed();
         } else {
-          this.toAmount = ''
+          this.toAmount = "";
         }
       }, 300)
     );
@@ -170,7 +171,7 @@ class Liquidity {
     const token1AmountWithDec = new BigNumber(this.toAmount)
       .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
       .toFixed(0);
-    const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
+    const deadline = dayjs().unix() + 60 * (this.deadline || 20);
     console.log("liqidity agrs", [
       this.fromToken.address as `0x${string}`,
       this.toToken.address as `0x${string}`,
@@ -181,7 +182,7 @@ class Liquidity {
       wallet.account as `0x${string}`,
       deadline,
     ]);
-    
+
     await Promise.all([
       this.fromToken.approveIfNoAllowance({
         amount: token0AmountWithDec,
