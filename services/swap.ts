@@ -19,6 +19,7 @@ class Swap {
   toAmount: string = "";
   slippage: number = 1;
   deadline: number = 20;
+  price: BigNumber | null = null
 
   currentPair = new AsyncState<PairContract | undefined>(async () => {
     if (this.fromToken && this.toToken) {
@@ -68,13 +69,6 @@ class Swap {
     return wallet.contracts.routerV2;
   }
 
-  // each from token amount can be swapped to how many to token
-  get price () {
-    if (this.currentPair.value?.price) {
-       return this.isTokenPairSortMatch ? this.currentPair.value.price : new BigNumber(1).div(this.currentPair.value.price)
-    }
-  }
-
   get minToAmount () {
     return new BigNumber(this.toAmount || 0)
     .minus(new BigNumber(this.toAmount || 0).multipliedBy(this.slippage).div(100))
@@ -101,12 +95,13 @@ class Swap {
       }
     );
     reaction(
-      () => this.price?.multipliedBy(this.fromAmount || 0).toFixed(),
+      () => this.fromAmount,
       debounce(async () => {
-        if (this.fromAmount && this.currentPair.value && this.price) {
+        if (this.fromAmount && this.currentPair.value) {
           await this.currentPair.value.getAmountOut.call(this.fromAmount)
           //@ts-ignore
           this.toAmount = this.currentPair.value.getAmountOut.value.toFixed() 
+          this.price = new BigNumber(this.toAmount).div(this.fromAmount)
         } else {
           this.toAmount = ''
         }

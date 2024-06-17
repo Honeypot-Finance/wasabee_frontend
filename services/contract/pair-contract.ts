@@ -134,31 +134,6 @@ export class PairContract implements BaseContract {
     return new BigNumber(amountOut.toString()).div(new BigNumber(10).pow(this.token1.decimals))
   })
 
-  async getPrice() {
-    await this.getReserves()
-    if (this.reserves) {
-      const price = await this.routerV2Contract.contract.read.getAmountOut([
-        BigInt(
-          new BigNumber(1)
-            .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
-            .toFixed(0)
-        ),
-        BigInt(
-          this.reserves.reserve0
-            .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
-            .toFixed(0)
-        ),
-        BigInt(
-          this.reserves.reserve1
-            .multipliedBy(new BigNumber(10).pow(this.token1.decimals))
-            .toFixed(0)
-        ),
-      ]);
-      this.price = new BigNumber(price.toString()).div(
-        new BigNumber(10).pow(this.token1.decimals)
-      );
-    }
-  }
 
   async init(force = false) {
     if (this.isLoading) {
@@ -178,9 +153,6 @@ export class PairContract implements BaseContract {
               loadDecimals: false,
               loadTotalSupply: true,
             });
-          })(),
-          (async () => {
-            await this.getPrice();
           })(),
         ]);
       } catch (error) {
