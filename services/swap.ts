@@ -9,6 +9,7 @@ import { exec } from "~/lib/contract";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { AsyncState } from "./utils";
 import { debounce } from "lodash";
+import dayjs from "dayjs";
 
 class Swap {
   fromToken: Token | null = null;
@@ -161,7 +162,7 @@ class Swap {
     .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
     .toFixed(0)
  
-    const deadline = this.deadline || Math.floor(Date.now() / 1000) + 60 * 20; // 20 mins time
+    const deadline = dayjs().unix() + 60 * (this.deadline || 20)
     const path = [this.fromToken.address, this.toToken.address] as readonly `0x${string}`[];
     await Promise.all([this.fromToken.approveIfNoAllowance(
       {
