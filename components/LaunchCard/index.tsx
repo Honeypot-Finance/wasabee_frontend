@@ -11,6 +11,10 @@ import Link from "next/link";
 import { HTMLAttributes } from "react";
 import { cn } from "@/lib/tailwindcss";
 
+const Actions = () => {
+
+}
+
 export const LaunchCard = observer(
   ({
     pair,

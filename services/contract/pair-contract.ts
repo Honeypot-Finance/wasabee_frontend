@@ -59,6 +59,7 @@ export class PairContract implements BaseContract {
   }
 
   get liquidityDisplay() {
+    console.log('----', this.reserves?.reserve0,  this.token0.displayName ,  this.reserves?.reserve1,  this.token1.displayName )
     return this.reserves?.reserve0 &&  this.token0.displayName &&  this.reserves?.reserve1 &&  this.token1.displayName ?`${amountFormatted(this.reserves?.reserve0, {
       decimals: 0,
       fixed: 3
@@ -156,6 +157,7 @@ export class PairContract implements BaseContract {
               loadTotalSupply: true,
             });
           })(),
+          this.getReserves(),
         ]);
       } catch (error) {
         throw error;

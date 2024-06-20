@@ -177,7 +177,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
             href: "/launch",
           },
           {
-            title: state.pair.value?.launchedToken.displayName || '-',
+            title: state.pair.value?.launchedToken.displayName || "-",
             href: "/launch-token",
           },
         ]}
@@ -189,6 +189,19 @@ const LaunchPage: NextLayoutPage = observer(() => {
           pair={state.pair.value}
           action={state.pair.value && <Action pair={state.pair.value}></Action>}
         ></LaunchCard>
+        <div  className="max-w-full w-[600px]">
+          <div className="flex">
+            <div>Website</div>
+            <div>Twitter</div>
+            <div>Telegram</div>
+          </div>
+          <div>
+            Introducing $WINE - The Liquid Gold of Memecoins $WINE is the
+            ultimate memecoin, blending humor with the refined world of wine.
+            Designed for those who appreciate a good laugh as much as a fine
+            vintage, $WINE is the liquid gold of digital currencies.
+          </div>
+        </div>
       </div>
     </div>
   );
