@@ -2,7 +2,6 @@
 import { Button } from "@nextui-org/react";
 import EChartsReact from "echarts-for-react";
 import { useEffect, useState } from "react";
-import { wallet } from "@/services/wallet";
 import { Token } from "@/services/contract/token";
 import { networksMap } from "@/services/chain";
 import { useAccount } from "wagmi";
@@ -67,9 +66,7 @@ export default function PriceFeedGraph() {
     },
     yAxis: {
       scale: true,
-      splitArea: {
-        show: true,
-      },
+      splitArea: {},
     },
     dataZoom: [
       {
@@ -98,6 +95,7 @@ export default function PriceFeedGraph() {
         },
       },
     ],
+    backgroundColor: "transparent",
   });
   const [currentToken, setCurrentToken] = useState<Token>(
     networksMap[chainId as number].faucetTokens[0]
