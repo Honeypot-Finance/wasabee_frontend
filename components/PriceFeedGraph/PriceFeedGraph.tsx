@@ -83,14 +83,13 @@ export default function PriceFeedGraph() {
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log(data as DefinedChartDataResponse);
         setPriceData(splitData(data));
       });
   }, [chainId, currentToken]);
 
   useEffect(() => {
-    setOption({
-      ...option,
+    setOption((prev: any) => ({
+      ...prev,
       xAxis: {
         type: "category",
         data: priceData?.categoryData,
@@ -113,22 +112,7 @@ export default function PriceFeedGraph() {
           },
         },
       ],
-      dataZoom: [
-        {
-          type: "inside",
-          startValue: priceData?.categoryData?.length - 30,
-          endValue: priceData?.categoryData?.length,
-        },
-        {
-          show: true,
-          type: "slider",
-          top: "90%",
-          startValue: priceData?.categoryData?.length - 30,
-          endValue: priceData?.categoryData?.length,
-        },
-      ],
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }));
   }, [priceData]);
 
   function splitData(rawData: any) {
@@ -136,8 +120,6 @@ export default function PriceFeedGraph() {
     const values = [];
 
     const data = rawData.data.data.getBars;
-    console.log(rawData);
-    console.log(data);
     for (let i = 0; i < data.c.length; i++) {
       categoryData.push(
         new Date((data.t[i] ?? 0) * 1000).toLocaleDateString("en-US")
