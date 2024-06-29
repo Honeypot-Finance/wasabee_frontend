@@ -29,10 +29,7 @@ export const handler = withErrorHandler(
         data: data,
       });
     } else {
-      res.status(405).json({
-        status: "error",
-        message: "method not allowed",
-      });
+      throw new Error("Method not allowed.");
     }
 
     return { req, res };
