@@ -12,14 +12,20 @@ export default async function handler(
       if (!tokenaddress || !networkId) {
         throw new Error("Invalid query parameters.");
       }
+
       const data = await getDefinedTokenPriceForLast3Years(
         tokenaddress as string,
         networkId as string
       );
+
+      if (!data) {
+        throw new Error("Failed to fetch data.");
+      }
+
       res.status(200).json({
         status: "success",
         message: "success",
-        data: { ...data },
+        data: data,
       } as ApiResponseType);
     } else {
       res.status(405).json({

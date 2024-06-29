@@ -68,20 +68,6 @@ export default function PriceFeedGraph() {
       scale: true,
       splitArea: {},
     },
-    dataZoom: [
-      {
-        type: "inside",
-        startValue: priceData?.categoryData?.length - 30,
-        endValue: priceData?.categoryData?.length,
-      },
-      {
-        show: true,
-        type: "slider",
-        top: "90%",
-        startValue: priceData?.categoryData?.length - 30,
-        endValue: priceData?.categoryData?.length,
-      },
-    ],
     series: [
       {
         name: "price",
@@ -104,11 +90,13 @@ export default function PriceFeedGraph() {
   useEffect(() => {
     fetch(
       `/api/defined/get-price?tokenaddress=${currentToken.address}&networkId=${chainId}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
+    ).then((res) => {
+      console.log(res);
+      res.json().then((data) => {
+        console.log(data);
         setPriceData(splitData(data));
       });
+    });
   }, [chainId, currentToken]);
 
   useEffect(() => {
@@ -136,6 +124,20 @@ export default function PriceFeedGraph() {
           },
         },
       ],
+      dataZoom: [
+        {
+          type: "inside",
+          startValue: priceData?.categoryData?.length - 30,
+          endValue: priceData?.categoryData?.length,
+        },
+        {
+          show: true,
+          type: "slider",
+          top: "90%",
+          startValue: priceData?.categoryData?.length - 30,
+          endValue: priceData?.categoryData?.length,
+        },
+      ],
     }));
   }, [priceData]);
 
@@ -143,7 +145,7 @@ export default function PriceFeedGraph() {
     const categoryData = [];
     const values = [];
 
-    const data = rawData.data.data.getBars;
+    const data = rawData.data.getBars;
     for (let i = 0; i < data.c.length; i++) {
       categoryData.push(
         new Date((data.t[i] ?? 0) * 1000).toLocaleDateString("en-US")
