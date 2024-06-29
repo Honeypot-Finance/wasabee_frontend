@@ -7,10 +7,43 @@ import { Token } from "@/services/contract/token";
 import { networksMap } from "@/services/chain";
 import { useAccount } from "wagmi";
 
+type viewRangeType = {
+  [key: string]: {
+    name: string;
+    value: number;
+  };
+};
+
 const upColor = "#ec0000";
 const upBorderColor = "#8A0000";
 const downColor = "#00da3c";
 const downBorderColor = "#008F28";
+const viewRanges = Object.values({
+  "1095d": {
+    name: "3 years",
+    value: 1095,
+  },
+  "365d": {
+    name: "1 year",
+    value: 365,
+  },
+  "180d": {
+    name: "6 months",
+    value: 180,
+  },
+  "90d": {
+    name: "3 months",
+    value: 90,
+  },
+  "30d": {
+    name: "1 month",
+    value: 30,
+  },
+  "7d": {
+    name: "7 Days",
+    value: 7,
+  },
+});
 
 export default function PriceFeedGraph() {
   const { chainId } = useAccount();
@@ -165,41 +198,16 @@ export default function PriceFeedGraph() {
         </Button>
       ))}
       <EChartsReact option={option} />
-      <Button
-        onClick={() => {
-          toViewHandler(1095);
-        }}
-      >
-        3 Years
-      </Button>
-      <Button
-        onClick={() => {
-          toViewHandler(365);
-        }}
-      >
-        1 Year
-      </Button>
-      <Button
-        onClick={() => {
-          toViewHandler(180);
-        }}
-      >
-        6 Months
-      </Button>
-      <Button
-        onClick={() => {
-          toViewHandler(30);
-        }}
-      >
-        1 Month
-      </Button>
-      <Button
-        onClick={() => {
-          toViewHandler(7);
-        }}
-      >
-        1 Week
-      </Button>
+      {viewRanges.map((days) => (
+        <Button
+          key={days.value}
+          onClick={() => {
+            toViewHandler(days.value);
+          }}
+        >
+          {days.name}
+        </Button>
+      ))}
     </>
   );
 }
