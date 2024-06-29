@@ -7,13 +7,6 @@ import { Token } from "@/services/contract/token";
 import { networksMap } from "@/services/chain";
 import { useAccount } from "wagmi";
 
-type viewRangeType = {
-  [key: string]: {
-    name: string;
-    value: number;
-  };
-};
-
 const upColor = "#ec0000";
 const upBorderColor = "#8A0000";
 const downColor = "#00da3c";
