@@ -1,34 +1,6 @@
 import axios from "axios";
 import { definedNetworks, netWorkDisplayTokens } from "./const";
 
-export type TokenHistoryPrice = {
-  token: {
-    name: string;
-    symbol: string;
-    address: string;
-    decimals: number;
-  };
-  data: {
-    priceUsd: number;
-  }[];
-};
-
-export interface DefinedChartDataResponse {
-  data: Data;
-}
-
-export interface Data {
-  getBars: GetBars;
-}
-
-export interface GetBars {
-  o: number[] | undefined[];
-  h: number[] | undefined[];
-  l: number[] | undefined[];
-  c: number[] | undefined[];
-  t: number[] | undefined[];
-}
-
 const DEFINED_API_KEY = process.env.DEFINED_API_KEY;
 
 const callDefinedApi = async (query: string) => {
@@ -59,9 +31,6 @@ export const getDefinedTokenPriceForLast3Years = async (
 ) => {
   let data;
 
-  console.log(new Date().getTime() / 1000 - 3 * 365 * 24 * 60 * 60);
-  console.log(new Date().getTime() / 1000);
-
   await callDefinedApi(
     `{
   getBars(
@@ -79,11 +48,10 @@ export const getDefinedTokenPriceForLast3Years = async (
   }
 }`
   ).then((response) => {
-    console.log(response);
     data = response;
   });
 
-  return data as unknown as DefinedChartDataResponse;
+  return { ...(data as unknown as DefinedChartDataResponse) };
 };
 
 export const getDefinedNetworks = async () => {
@@ -119,7 +87,7 @@ export const getPriceOfTokensInNetwork = async (id: string) => {
   }
   const tokens = Object(netWorkDisplayTokens)[id].tokens;
   const dayCount = 30;
-  let data = [] as TokenHistoryPrice[];
+  let data = [] as DefinedTokenHistoryPrice[];
 
   function getTimestamps() {
     const timestamps = [];
@@ -132,11 +100,7 @@ export const getPriceOfTokensInNetwork = async (id: string) => {
   }
 
   for (let i = 0; i < tokens.length; i++) {
-    await axios
-      .post(
-        "https://graph.defined.fi/graphql",
-        {
-          query: `{
+    await callDefinedApi(`{
                     getTokenPrices(
                       inputs: [
                         ${getTimestamps().map((timestamp) => {
@@ -150,21 +114,12 @@ export const getPriceOfTokensInNetwork = async (id: string) => {
                     ) {
                       priceUsd
                     }
-                  }`,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: DEFINED_API_KEY,
-          },
-        }
-      )
-      .then((response) => {
-        data.push({
-          token: tokens[i],
-          data: response.data.data.getTokenPrices,
-        });
+                  }`).then((response: any) => {
+      data.push({
+        token: tokens[i],
+        data: response.getTokenPrices,
       });
+    });
   }
 
   return data;
