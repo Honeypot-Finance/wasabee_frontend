@@ -157,26 +157,6 @@ export default function PriceFeedGraph() {
     });
   }
 
-  function to3YearsViewButtonHandler() {
-    toViewHandler(1095);
-  }
-
-  function to1YearViewButtonHandler() {
-    toViewHandler(365);
-  }
-
-  function to6MonthViewButtonHandler() {
-    toViewHandler(180);
-  }
-
-  function to1MonthViewButtonHandler() {
-    toViewHandler(30);
-  }
-
-  function to1WeekViewButtonHandler() {
-    toViewHandler(7);
-  }
-
   return (
     <>
       {networksMap[chainId as number].faucetTokens.map((token) => (
@@ -185,11 +165,41 @@ export default function PriceFeedGraph() {
         </Button>
       ))}
       <EChartsReact option={option} />
-      <Button onClick={to3YearsViewButtonHandler}>3 Years</Button>
-      <Button onClick={to1YearViewButtonHandler}>1 Year</Button>
-      <Button onClick={to6MonthViewButtonHandler}>6 Months</Button>
-      <Button onClick={to1MonthViewButtonHandler}>1 Month</Button>
-      <Button onClick={to1WeekViewButtonHandler}>1 Week</Button>
+      <Button
+        onClick={() => {
+          toViewHandler(1095);
+        }}
+      >
+        3 Years
+      </Button>
+      <Button
+        onClick={() => {
+          toViewHandler(365);
+        }}
+      >
+        1 Year
+      </Button>
+      <Button
+        onClick={() => {
+          toViewHandler(180);
+        }}
+      >
+        6 Months
+      </Button>
+      <Button
+        onClick={() => {
+          toViewHandler(30);
+        }}
+      >
+        1 Month
+      </Button>
+      <Button
+        onClick={() => {
+          toViewHandler(7);
+        }}
+      >
+        1 Week
+      </Button>
     </>
   );
 }
