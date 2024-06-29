@@ -1,12 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getDefinedTokenPriceForLast3Years } from "@/lib/defined/defined";
+import { withErrorHandler } from "../apiHandler";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  try {
+export const handler = withErrorHandler(
+  async (
+    req: NextApiRequest,
+    res: NextApiResponse
+  ): Promise<{ req: NextApiRequest; res: NextApiResponse }> => {
     if (req.method === "GET") {
       const { tokenaddress, networkId } = req.query;
       if (!tokenaddress || !networkId) {
@@ -26,16 +27,16 @@ export default async function handler(
         status: "success",
         message: "success",
         data: data,
-      } as ApiResponseType);
+      });
     } else {
       res.status(405).json({
         status: "error",
         message: "method not allowed",
-      } as ApiResponseType);
+      });
     }
-  } catch (error: any) {
-    res
-      .status(500)
-      .json({ status: "error", message: error ?? "" } as ApiResponseType);
+
+    return { req, res };
   }
-}
+);
+
+export default handler;
