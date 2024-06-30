@@ -20,8 +20,9 @@ export const ftoService = {
         website: string;
         description: string;
         name: string;
+        provider: string
       }[]
-    >`SELECT twitter, telegram, website,description,name  FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
+    >`SELECT twitter, telegram, website,description,name, provider  FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
       data.chain_id
     }`;
     return res?.[0];

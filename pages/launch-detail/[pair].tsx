@@ -152,7 +152,13 @@ const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
 </>)
   return (
     <>
-      <LuFileEdit onClick={onOpen} className="cursor-pointer"></LuFileEdit>
+      <LuFileEdit onClick={() => {
+        if (pair.provider.toLowerCase() !== wallet.account.toLowerCase()) {
+          toast.warning("You are not the owner of this project")
+          return
+        }
+        onOpen()
+      }} className="cursor-pointer"></LuFileEdit>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -328,8 +334,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
         ]}
       ></Breadcrumbs>
       <div className="flex justify-center mt-[24px]">
-        <div className="flex gap-[20px] flex-wrap">
-          <div className="flex-1 flex   basis-full sm:basis-0  sm:min-w-[500px]  h-[425px] flex-col items-center  shrink-0 [background:#271B0C] rounded-2xl">
+        <div className="flex gap-[20px] flex-wrap min-h-[425px]">
+          <div className="flex-1 flex   basis-full sm:basis-0  sm:min-w-[500px] flex-col items-center  shrink-0 [background:#271B0C] rounded-2xl">
             <div className="h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px]"></div>
             <div className="relative w-full px-[29px] pb-[26px]">
               <div className=" relative translate-y-[-50%] w-[65px] h-[65px] [background:#271B0C] rounded-[11.712px] p-[3px]">
@@ -379,7 +385,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
               </div>
             </div>
           </div>
-          <div className="text-left relative flex-1 flex basis-full  sm:basis-0 sm:min-w-[500px] h-[425px] flex-col gap-[10px] shrink-0 [background:#271B0C] rounded-2xl py-[12px] px-[24px]">
+          <div className="text-left relative flex-1 flex basis-full  sm:basis-0 sm:min-w-[500px]  flex-col gap-[10px] shrink-0 [background:#271B0C] rounded-2xl py-[12px] px-[24px]">
             <div className=" absolute right-[24px] top-[12px]">
               {state.pair.value?.isInit && (
                 <UpdateProjectAction

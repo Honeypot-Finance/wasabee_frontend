@@ -27,6 +27,7 @@ export const ftoRouter = router({
       website: z.string(),
       description: z.string(),
       name: z.string(),
+      provider: z.string()
     })).query(async ({ input }) => {
       return ftoService.getProjectInfo(input)
     }),

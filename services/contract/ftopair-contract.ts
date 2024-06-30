@@ -28,6 +28,7 @@ export class FtoPairContract implements BaseContract {
   twitter = "";
   website = "";
   isInit = false;
+  provider = "";
   socials: {
     name: string;
     link: string;
@@ -261,6 +262,9 @@ export class FtoPairContract implements BaseContract {
     }
     if (res.name) {
       this.projectName = res.name;
+    }
+    if (res.provider) {
+      this.provider = res.provider;
     }
   }
 
