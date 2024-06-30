@@ -5,6 +5,7 @@ import BigNumber from "bignumber.js";
 import { FtoPairContract } from "./contract/ftopair-contract";
 import { AsyncState, PaginationState } from "./utils";
 import { trpcClient } from "@/lib/trpc";
+import { createSiweMessage } from "@/lib/siwe";
 
 function calculateTimeDifference(timestamp: number): string {
   if (timestamp.toString().length !== 13) {
@@ -30,7 +31,6 @@ function calculateTimeDifference(timestamp: number): string {
 }
 
 class LaunchPad {
-
   get ftofactoryContract() {
     return wallet.contracts.ftofactory;
   }
@@ -45,60 +45,68 @@ class LaunchPad {
   getPairAddress = async (index: bigint) =>
     await this.ftofactoryContract.allPairs.call([index]);
 
-  
-
-  ftoPairs = new AsyncState<{
-    data: FtoPairContract [],
-    total: number
-  }, ({page, limit}: {page: number, limit: number}) => Promise<({
-    data: FtoPairContract [],
-    total: number
-  })>>(async ({page, limit}) => {
+  ftoPairs = new AsyncState<
+    {
+      data: FtoPairContract[];
+      total: number;
+    },
+    ({ page, limit }: { page: number; limit: number }) => Promise<{
+      data: FtoPairContract[];
+      total: number;
+    }>
+  >(async ({ page, limit }) => {
     const [pairsLength] = await this.allPairsLength();
     const size = Math.min(Number(pairsLength) - (page - 1) * limit, limit);
-    const pairIndexesByPage = Array.from({ length: Number(size) }, (_,index) => {
-      return Number(pairsLength) - (page - 1) * limit - index - 1
-    })
-    const data = await Promise.all(pairIndexesByPage.map(async (_) => {
-      const [pairAddress] = await this.getPairAddress(BigInt(_));
-      const pair = new FtoPairContract({ address: pairAddress as string })
-      pair.init()
-      return pair
-    }))
-    this.ftoPairsPagination.setTotal(Number(pairsLength))
-    return  {
-      data,
-      total: Number(pairsLength)
-    }
-  })
-
-  myFtoPairs = new AsyncState<{
-    data: FtoPairContract [],
-    total: number
-  }>(async () => {
-    const projects = await trpcClient.fto.getProjectsByAccount.query({
-       account: wallet.account,
-       chain_id: wallet.currentChainId
-    })
-    const data = await Promise.all(projects.map(async ({pair: pairAddress}) => {
-      console.log('pairAddress', pairAddress)
-      const pair = new FtoPairContract({ address: pairAddress as string })
-      pair.init()
-      return pair
-    }))
+    const pairIndexesByPage = Array.from(
+      { length: Number(size) },
+      (_, index) => {
+        return Number(pairsLength) - (page - 1) * limit - index - 1;
+      }
+    );
+    const data = await Promise.all(
+      pairIndexesByPage.map(async (_) => {
+        const [pairAddress] = await this.getPairAddress(BigInt(_));
+        const pair = new FtoPairContract({ address: pairAddress as string });
+        pair.init();
+        return pair;
+      })
+    );
+    this.ftoPairsPagination.setTotal(Number(pairsLength));
     return {
       data,
-      total: data.length
-    }
-  })
+      total: Number(pairsLength),
+    };
+  });
 
-  ftoPairsPagination =  new PaginationState({
-    limit: 9
-  })
+  myFtoPairs = new AsyncState<{
+    data: FtoPairContract[];
+    total: number;
+  }>(async () => {
+    const projects = await trpcClient.fto.getProjectsByAccount.query({
+      provider: wallet.account,
+      chain_id: wallet.currentChainId,
+    });
+    const data = await Promise.all(
+      projects.map(async ({ pair: pairAddress }) => {
+        console.log("pairAddress", pairAddress);
+        const pair = new FtoPairContract({ address: pairAddress as string });
+        pair.init();
+        return pair;
+      })
+    );
+    return {
+      data,
+      total: data.length,
+    };
+  });
 
-  myFtoPairsPagination =  new PaginationState({
-    limit: 9
-  })
+  ftoPairsPagination = new PaginationState({
+    limit: 9,
+  });
+
+  myFtoPairsPagination = new PaginationState({
+    limit: 9,
+  });
   // getPairInfo = async (pairAddress: `0x${string}`) => {
   //   const ftoPairContract = this.ftoPairContract(pairAddress);
   //   const launchedTokenAddress = await ftoPairContract.launchedTokenAddress();
@@ -134,7 +142,7 @@ class LaunchPad {
     poolHandler: string;
     raisingCycle: number;
   }) => {
-    return await this.ftofactoryContract.createFTO.call([
+    const res = await this.ftofactoryContract.createFTO.call([
       provider as `0x${string}`,
       raisedToken as `0x${string}`,
       tokenName,
@@ -143,7 +151,32 @@ class LaunchPad {
       poolHandler as `0x${string}`,
       BigInt(raisingCycle),
     ]);
+    const pairAddress = res.logs.pop()?.address as string;
+    await trpcClient.fto.createProject.mutate({
+      pair: pairAddress,
+      chain_id: wallet.currentChainId,
+      provider: provider,
+    });
+    return pairAddress;
   };
+  updateFtoProject = new AsyncState(
+    async (data: {
+      pair: string;
+      chain_id: number;
+      twitter: string;
+      telegram: string;
+      website: string;
+      description: string;
+      projectName: string;
+    }) => {
+      await createSiweMessage(
+        wallet.account,
+        "Sign In With Honeypot",
+        wallet.walletClient
+      );
+      await trpcClient.fto.createOrUpdateProjectInfo.mutate(data);
+    }
+  );
 }
 
 const launchpad = new LaunchPad();

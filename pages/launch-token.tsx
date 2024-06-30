@@ -49,18 +49,12 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
     raisingCycle: DateValue;
   }) => {
     try {
-      const res = await launchpad.createFTO({
+      const pairAddress = await launchpad.createFTO({
         ...data,
         // @ts-ignore
         raisingCycle: Math.floor((data.raisingCycle.toDate().getTime() - Date.now()) / 1000)
       });
-      const pairAddress = res.logs.pop()?.address as string
       state.setPairAddress(pairAddress)
-      await trpcClient.fto.createProject.mutate({
-        pair: pairAddress,
-        chain_id: wallet.currentChainId,
-        account: wallet.account
-      })
       // router.push('/launch')
     } catch (error) {
       console.error(error);
