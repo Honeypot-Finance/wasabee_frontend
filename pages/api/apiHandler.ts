@@ -1,10 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 export const withErrorHandler = (
-  handler: (
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) => Promise<{ req: NextApiRequest; res: NextApiResponse }>
+  handler: (req: NextApiRequest, res: NextApiResponse) => void
 ) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     try {

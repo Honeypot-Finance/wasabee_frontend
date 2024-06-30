@@ -4,10 +4,7 @@ import { getDefinedTokenPriceForLast3Years } from "@/lib/defined/defined";
 import { withErrorHandler } from "../apiHandler";
 
 export const handler = withErrorHandler(
-  async (
-    req: NextApiRequest,
-    res: NextApiResponse
-  ): Promise<{ req: NextApiRequest; res: NextApiResponse }> => {
+  async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
     if (req.method === "GET") {
       const { tokenaddress, networkId } = req.query;
       if (!tokenaddress || !networkId) {
@@ -31,8 +28,6 @@ export const handler = withErrorHandler(
     } else {
       throw new Error("Method not allowed.");
     }
-
-    return { req, res };
   }
 );
 
