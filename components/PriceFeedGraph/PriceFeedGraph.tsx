@@ -161,6 +161,12 @@ export default function PriceFeedGraph() {
 
   function changeTokenHandler(tokenAddress: Token) {
     setCurrentToken(tokenAddress);
+    setOption((prev: any) => ({
+      ...prev,
+      title: {
+        text: tokenAddress.name,
+      },
+    }));
   }
 
   function toViewHandler(days: number) {
