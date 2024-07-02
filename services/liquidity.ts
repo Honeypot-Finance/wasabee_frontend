@@ -47,14 +47,6 @@ class Liquidity {
     );
   }
 
-  get price() {
-    if (this.currentPair.value?.price) {
-      return this.isTokenPairSortMatch
-        ? this.currentPair.value.price
-        : new BigNumber(1).div(this.currentPair.value.price);
-    }
-  }
-
   get routerV2Contract() {
     return wallet.contracts.routerV2;
   }
@@ -109,9 +101,9 @@ class Liquidity {
       }
     );
     reaction(
-      () => this.price?.multipliedBy(this.fromAmount || 0).toFixed(),
+      () => this.fromAmount,
       debounce(async () => {
-        if (this.fromAmount && this.currentPair.value && this.price) {
+        if (this.fromAmount && this.currentPair.value) {
           await this.currentPair.value.getAmountOut.call(this.fromAmount);
           //@ts-ignore
           this.toAmount = this.currentPair.value.getAmountOut.value.toFixed();
@@ -128,9 +120,14 @@ class Liquidity {
 
   setFromToken(token: Token) {
     if (this.fromToken?.address !== token.address) {
+      if (this.toToken?.address === token.address) {
+        this.toToken = this.fromToken;
+        this.toAmount = "";
+      }
       this.fromToken = token;
       this.fromToken.init();
       this.fromAmount = "";
+     
     }
   }
 
@@ -140,6 +137,10 @@ class Liquidity {
 
   setToToken(token: Token) {
     if (this.toToken?.address !== token.address) {
+      if (this.fromToken?.address === token.address) {
+        this.fromToken = this.toToken;
+        this.fromAmount = "";
+      }
       this.toToken = token;
       this.toToken.init();
       this.toAmount = "";

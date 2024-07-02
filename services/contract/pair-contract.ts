@@ -27,7 +27,6 @@ export class PairContract implements BaseContract {
   } | null = null;
   token0: Token = new Token({}); // fixed
   token1: Token = new Token({}); // fixed
-  price: BigNumber | null = null;
   isInit = false;
   isLoading = false;
 
@@ -59,7 +58,6 @@ export class PairContract implements BaseContract {
   }
 
   get liquidityDisplay() {
-    console.log('----', this.reserves?.reserve0,  this.token0.displayName ,  this.reserves?.reserve1,  this.token1.displayName )
     return this.reserves?.reserve0 &&  this.token0.displayName &&  this.reserves?.reserve1 &&  this.token1.displayName ?`${amountFormatted(this.reserves?.reserve0, {
       decimals: 0,
       fixed: 3

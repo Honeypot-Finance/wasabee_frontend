@@ -104,6 +104,7 @@ class Swap {
           this.price = new BigNumber(this.toAmount).div(this.fromAmount)
         } else {
           this.toAmount = ''
+          this.price = null
         }
       }, 300)
     );
@@ -126,6 +127,10 @@ class Swap {
 
   setFromToken(token: Token) {
     if (this.fromToken?.address !== token.address) {
+      if (this.toToken?.address === token.address) {
+        this.toToken = this.fromToken;
+        this.toAmount = "";
+      }
       this.fromToken = token;
       this.fromToken.init()
       this.fromAmount = "";
@@ -139,6 +144,10 @@ class Swap {
 
   setToToken(token: Token) {
     if (this.toToken?.address !== token.address) {
+      if (this.fromToken?.address === token.address) {
+        this.fromToken = this.toToken;
+        this.fromAmount = "";
+      }
       this.toToken = token;
       this.toToken.init()
       this.toAmount = "";
