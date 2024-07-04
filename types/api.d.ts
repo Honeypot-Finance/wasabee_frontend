@@ -1,11 +1,10 @@
-declare type ApiResponseType =
+declare type ApiResponseType<T extends any> =
   | {
       status: "success";
-      data: DefinedChartDataResponse;
+      data: T;
       message: string;
     }
   | {
       status: "error";
-      data: null;
       message: string;
     };

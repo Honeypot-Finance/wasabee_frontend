@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Token } from "@/services/contract/token";
 import { networksMap } from "@/services/chain";
 import { useAccount } from "wagmi";
+import { trpcClient } from "@/lib/trpc";
 
 const upColor = "#ec0000";
 const upBorderColor = "#8A0000";
@@ -38,6 +39,14 @@ const viewRanges = Object.values({
 });
 
 export default function PriceFeedGraph() {
+  trpcClient.priceFeed.getSingleTokenPrice
+    .query({
+      chainId: "1",
+      tokenAddress: "0x6b175474e89094c44da98b954eedeac495271d0f",
+    })
+    .then((res) => {
+      console.log(res);
+    });
   const { chainId } = useAccount();
   const [priceData, setPriceData] = useState<any>();
   const [option, setOption] = useState<any>({
@@ -91,9 +100,7 @@ export default function PriceFeedGraph() {
     fetch(
       `/api/defined/get-price?tokenaddress=${currentToken.address}&networkId=${chainId}`
     ).then((res) => {
-      console.log(res);
       res.json().then((data) => {
-        console.log(data);
         setPriceData(splitData(data));
       });
     });
