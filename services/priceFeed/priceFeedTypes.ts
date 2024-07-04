@@ -1,8 +1,3 @@
-export type TokenCurrentPriceResponseType = {
-  price: number;
-  lastUpdated: number;
-};
-
 export interface PriceFeedProvider {
   getTokenCurrentPrice(
     address: string,
@@ -18,18 +13,19 @@ export interface PriceFeedProvider {
   ): Promise<ApiResponseType<ChartDataResponse>>;
 }
 
-export interface ChartDataResponse {
-  data: ChartDataResponseData;
-}
+export type TokenCurrentPriceResponseType = {
+  price: number;
+  lastUpdated: number;
+};
 
-export interface ChartDataResponseData {
+export interface ChartDataResponse {
   getBars: ChartDataResponseGetBars;
 }
 
 export interface ChartDataResponseGetBars {
-  o: number | undefined[];
-  h: number | undefined[];
-  l: number | undefined[];
-  c: number | undefined[];
-  t: number | undefined[];
+  o: number[] | undefined[];
+  h: number[] | undefined[];
+  l: number[] | undefined[];
+  c: number[] | undefined[];
+  t: number[] | undefined[];
 }

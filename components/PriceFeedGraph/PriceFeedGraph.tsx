@@ -7,6 +7,7 @@ import { networksMap } from "@/services/chain";
 import { useAccount } from "wagmi";
 import { trpcClient } from "@/lib/trpc";
 import { dayjs } from "@/lib/dayjs";
+import { ChartDataResponse } from "@/services/priceFeed/priceFeedTypes";
 
 const upColor = "#ec0000";
 const upBorderColor = "#8A0000";
@@ -90,7 +91,7 @@ export default function PriceFeedGraph() {
   );
 
   useEffect(() => {
-    if (!chainId) return;
+    if (!chainId || !currentToken) return;
 
     trpcClient.priceFeed.getChartData
       .query({
@@ -101,8 +102,21 @@ export default function PriceFeedGraph() {
         resolution: "1D",
       })
       .then((data) => {
-        console.log(data);
-        setPriceData(splitData(data.status === "success" ? data.data : []));
+        setPriceData(
+          splitData(
+            data.status === "success"
+              ? data.data
+              : {
+                  getBars: {
+                    o: [],
+                    h: [],
+                    l: [],
+                    c: [],
+                    t: [],
+                  },
+                }
+          )
+        );
       })
       .catch((e) => {
         console.error(e);
@@ -152,12 +166,11 @@ export default function PriceFeedGraph() {
     }));
   }, [priceData]);
 
-  function splitData(rawData: any) {
+  function splitData(rawData: ChartDataResponse) {
     const categoryData = [];
     const values = [];
-    console.log(rawData);
-
     const data = rawData.getBars;
+
     for (let i = 0; i < data.c.length; i++) {
       categoryData.push(
         new Date((data.t[i] ?? 0) * 1000).toLocaleDateString("en-US")
