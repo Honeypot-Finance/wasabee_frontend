@@ -228,19 +228,22 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
       this.depositAmount = val;
     },
   }));
-  return pair.isProvider ? (
-    <div className="flex flex-col gap-[16px]">
-      <Button
-        className="w-full"
-        isLoading={pair.pause.loading}
-        onClick={() => {
-          pair.pause.call();
-        }}
-      >
-        Pause
-      </Button>
-    </div>
-  ) : (
+  return pair.isProvider ? 
+  // (
+  //   <div className="flex flex-col gap-[16px]">
+  //     <Button
+  //       className="w-full"
+  //       isLoading={pair.pause.loading}
+  //       onClick={() => {
+  //         pair.pause.call();
+  //       }}
+  //     >
+  //       Pause
+  //     </Button>
+  //   </div>
+  // ) 
+  <></>
+  : (
     <div className="flex flex-col gap-[16px]">
       <Input
         className="bg-[#2F200B] rounded-[10px]"
@@ -288,7 +291,8 @@ const Action = observer(({ pair }: { pair: FtoPairContract }) => {
     case 1:
       return <FailAction pair={pair}></FailAction>;
     case 2:
-      return <PauseAction pair={pair}></PauseAction>;
+      // return <PauseAction pair={pair}></PauseAction>;
+      return <></>;
     case 3:
       if (pair.isCompleted) {
         return <></>;

@@ -22,11 +22,11 @@ export const ftoRouter = router({
       pair: z.string(),
       chain_id: z.number()
     })).output(z.object({
-      twitter: z.string(),
-      telegram: z.string(),
-      website: z.string(),
-      description: z.string(),
-      name: z.string(),
+      twitter: z.string().or(z.null()),
+      telegram: z.string().or(z.null()),
+      website: z.string().or(z.null()),
+      description: z.string().or(z.null()),
+      name: z.string().or(z.null()),
       provider: z.string()
     })).query(async ({ input }) => {
       return ftoService.getProjectInfo(input)

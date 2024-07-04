@@ -213,7 +213,7 @@ export const sepoliaNetwork = new Network({
 });
 
 export const networks = [
-  berachainTestNetwork,
+  // berachainTestNetwork,
   berachainBartioTestnetNetwork,
   sepoliaNetwork,
   // polygonTestNetwork,

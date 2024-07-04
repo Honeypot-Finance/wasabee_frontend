@@ -281,10 +281,10 @@ export class FtoPairContract implements BaseContract {
         this.getLaunchedTokenProvider(),
         this.getProjectInfo(),
       ]);
-      this.isInit = true;
     } catch (error) {
       console.error(error, `init-${this.address}`);
     }
+    this.isInit = true;
   }
 
   async getRaisedToken() {
