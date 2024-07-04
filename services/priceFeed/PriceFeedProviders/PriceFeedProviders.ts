@@ -1,4 +1,5 @@
 import {
+  ChartDataResponse,
   PriceFeedProvider,
   TokenCurrentPriceResponseType,
 } from "./../priceFeedTypes";
@@ -74,5 +75,33 @@ export class DefinedPriceFeed implements PriceFeedProvider {
         message: "Success",
       };
     }
+  };
+
+  getChartData = async (
+    address: string,
+    networkId: string,
+    from: number,
+    to: number,
+    resolution: string
+  ): Promise<ApiResponseType<ChartDataResponse>> => {
+    const res = await this.callDefinedApi<ChartDataResponse>(
+      `{
+        getBars(
+          symbol: "${address}:${networkId}"
+          from: ${from}
+          to: ${to}
+          resolution: "${resolution}"
+          quoteToken: token1
+        ) {
+          o
+          h
+          l
+          c
+          t
+        }
+      }`
+    );
+
+    return res;
   };
 }

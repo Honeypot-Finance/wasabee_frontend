@@ -6,6 +6,7 @@ import { Token } from "@/services/contract/token";
 import { networksMap } from "@/services/chain";
 import { useAccount } from "wagmi";
 import { trpcClient } from "@/lib/trpc";
+import { dayjs } from "@/lib/dayjs";
 
 const upColor = "#ec0000";
 const upBorderColor = "#8A0000";
@@ -39,14 +40,6 @@ const viewRanges = Object.values({
 });
 
 export default function PriceFeedGraph() {
-  trpcClient.priceFeed.getSingleTokenPrice
-    .query({
-      chainId: "1",
-      tokenAddress: "0x6b175474e89094c44da98b954eedeac495271d0f",
-    })
-    .then((res) => {
-      console.log(res);
-    });
   const { chainId } = useAccount();
   const [priceData, setPriceData] = useState<any>();
   const [option, setOption] = useState<any>({
@@ -97,16 +90,27 @@ export default function PriceFeedGraph() {
   );
 
   useEffect(() => {
-    fetch(
-      `/api/defined/get-price?tokenaddress=${currentToken.address}&networkId=${chainId}`
-    ).then((res) => {
-      res.json().then((data) => {
-        setPriceData(splitData(data));
+    if (!chainId) return;
+
+    trpcClient.priceFeed.getChartData
+      .query({
+        chainId: chainId.toString(),
+        tokenAddress: currentToken.address,
+        from: dayjs().subtract(3, "year").unix(),
+        to: dayjs().unix(),
+        resolution: "1D",
+      })
+      .then((data) => {
+        console.log(data);
+        setPriceData(splitData(data.status === "success" ? data.data : []));
+      })
+      .catch((e) => {
+        console.error(e);
       });
-    });
   }, [chainId, currentToken]);
 
   useEffect(() => {
+    if (!priceData) return;
     setOption((prev: any) => ({
       ...prev,
       xAxis: {
@@ -151,8 +155,9 @@ export default function PriceFeedGraph() {
   function splitData(rawData: any) {
     const categoryData = [];
     const values = [];
+    console.log(rawData);
 
-    const data = rawData.data.getBars;
+    const data = rawData.getBars;
     for (let i = 0; i < data.c.length; i++) {
       categoryData.push(
         new Date((data.t[i] ?? 0) * 1000).toLocaleDateString("en-US")

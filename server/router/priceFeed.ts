@@ -2,7 +2,10 @@ import { TokenPriceDataFeed } from "@/services/priceFeed/tokenPriceDataFeed";
 import { publicProcedure, router } from "../trpc";
 import z from "zod";
 import { DefinedPriceFeed } from "@/services/priceFeed/PriceFeedProviders/PriceFeedProviders";
-import { TokenCurrentPriceResponseType } from "@/services/priceFeed/priceFeedTypes";
+import {
+  ChartDataResponse,
+  TokenCurrentPriceResponseType,
+} from "@/services/priceFeed/priceFeedTypes";
 
 const definedApiKey = process.env.DEFINED_API_KEY || "";
 const priceFeed = new TokenPriceDataFeed(new DefinedPriceFeed(definedApiKey));
@@ -19,7 +22,6 @@ export const priceFeedRouter = router({
       async ({
         input,
       }): Promise<ApiResponseType<TokenCurrentPriceResponseType>> => {
-        console.log(priceFeed);
         const res = await priceFeed.getTokenCurrentPrice(
           input.tokenAddress,
           input.chainId
@@ -39,4 +41,37 @@ export const priceFeedRouter = router({
         }
       }
     ),
+  getChartData: publicProcedure
+    .input(
+      z.object({
+        chainId: z.string(),
+        tokenAddress: z.string(),
+        from: z.number(),
+        to: z.number(),
+        resolution: z.string(),
+      })
+    )
+    .query(async ({ input }): Promise<ApiResponseType<ChartDataResponse>> => {
+      console.log(input);
+      const res = await priceFeed.getChartData(
+        input.tokenAddress,
+        input.chainId,
+        input.from,
+        input.to,
+        input.resolution
+      );
+
+      if (res.status === "error") {
+        return {
+          status: "error",
+          message: res.message,
+        };
+      } else {
+        return {
+          status: "success",
+          data: res.data,
+          message: "Success",
+        };
+      }
+    }),
 });

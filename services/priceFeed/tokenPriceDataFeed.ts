@@ -1,4 +1,5 @@
 import {
+  ChartDataResponse,
   PriceFeedProvider,
   TokenCurrentPriceResponseType,
 } from "./priceFeedTypes";
@@ -33,6 +34,38 @@ export class TokenPriceDataFeed<T extends PriceFeedProvider> {
       return {
         status: "success",
         data: price.data,
+        message: "Success",
+      };
+    }
+  };
+
+  getChartData = async (
+    address: string,
+    networkId: string,
+    from: number,
+    to: number,
+    resolution: string
+  ): Promise<ApiResponseType<ChartDataResponse>> => {
+    const data = await this.dataProvider.getChartData(
+      address,
+      networkId,
+      from,
+      to,
+      resolution
+    );
+    if (this.debug) {
+      console.log(data);
+    }
+
+    if (data.status === "error") {
+      return {
+        status: "error",
+        message: data.message,
+      };
+    } else {
+      return {
+        status: "success",
+        data: data.data,
         message: "Success",
       };
     }
