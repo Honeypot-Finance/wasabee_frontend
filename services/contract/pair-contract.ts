@@ -168,7 +168,6 @@ export class PairContract implements BaseContract {
   removeLiquidity = new AsyncState(async (percent: number) => {
     const liquidity = this.token.balanceWithoutDecimals
       .multipliedBy(percent)
-      .div(100)
     if (liquidity.gt(0)) {
       await this.token.approveIfNoAllowance(
         {
