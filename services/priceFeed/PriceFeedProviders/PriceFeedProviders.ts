@@ -2,6 +2,7 @@ import {
   ChartDataResponse,
   PriceFeedProvider,
   TokenCurrentPriceResponseType,
+  getChartDataInputsType,
 } from "./../priceFeedTypes";
 import { getTokenCurrentPriceTypeDataType } from "./defined";
 const DEFINED_API_ENDPOINT = "https://graph.defined.fi/graphql";
@@ -78,20 +79,17 @@ export class DefinedPriceFeed implements PriceFeedProvider {
   };
 
   getChartData = async (
-    address: string,
-    networkId: string,
-    from: number,
-    to: number,
-    resolution: string
+    input: getChartDataInputsType
   ): Promise<ApiResponseType<ChartDataResponse>> => {
     const res = await this.callDefinedApi<ChartDataResponse>(
       `{
         getBars(
-          symbol: "${address}:${networkId}"
-          from: ${from}
-          to: ${to}
-          resolution: "${resolution}"
-          quoteToken: token1
+          symbol: "${input.address}:${input.networkId}"
+          currencyCode: "USD"
+          from: ${input.from}
+          to: ${input.to}
+          resolution: "${input.resolution}"
+          quoteToken: token0
         ) {
           o
           h

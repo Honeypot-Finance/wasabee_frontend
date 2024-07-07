@@ -1,7 +1,12 @@
 import { Token } from "./contract/token";
 import { createPublicClientByChain } from "@/lib/client";
-import { Chain} from "viem/chains";
-import { berachainBartioTestnet, berachainTestnet, polygonMumbaiChain, sepolia } from "@/lib/chain";
+import { Chain } from "viem/chains";
+import {
+  berachainBartioTestnet,
+  berachainTestnet,
+  polygonMumbaiChain,
+  sepolia,
+} from "@/lib/chain";
 
 export class Network {
   get chainId() {
@@ -17,9 +22,9 @@ export class Network {
   faucetTokens: Token[] = [];
   chain!: Chain;
   faucets?: {
-    url: string,
-    name: string,
-  }[]
+    url: string;
+    name: string;
+  }[];
   constructor(
     args: Omit<Partial<Network>, "faucetTokens"> & {
       faucetTokens: Partial<Token>[];
@@ -68,10 +73,12 @@ export class Network {
 
 export const berachainBartioTestnetNetwork = new Network({
   chain: berachainBartioTestnet,
-  faucets: [{
-    url: "https://bartio.faucet.berachain.com",
-    name: "Official Faucet",
-  }],
+  faucets: [
+    {
+      url: "https://bartio.faucet.berachain.com",
+      name: "Official Faucet",
+    },
+  ],
   contracts: {
     routerV2: "0x482270069fF98a0dF528955B651494759b3B2F8C",
     factory: "0x2f795195bae7E61E848ffC87ba7f6ae1A06c0527",
@@ -99,6 +106,12 @@ export const berachainBartioTestnetNetwork = new Network({
       symbol: "USDT",
       decimals: 18,
     },
+    {
+      name: "YEET",
+      symbol: "YEET",
+      decimals: 18,
+      address: "0xb6a43bc17680fb67fd8371977d264e047f47c675",
+    },
     // {
     //   address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
     //   name: "Wrapped BERA",
@@ -110,10 +123,12 @@ export const berachainBartioTestnetNetwork = new Network({
 
 export const berachainTestNetwork = new Network({
   chain: berachainTestnet,
-  faucets: [{
-    url: "https://artio.faucet.berachain.com",
-    name: "Official Faucet",
-  }],
+  faucets: [
+    {
+      url: "https://artio.faucet.berachain.com",
+      name: "Official Faucet",
+    },
+  ],
   contracts: {
     routerV2: "0xB192af2225791c439CB2024290158d3202DbcD95",
     factory: "0xE0D1F1cE03A7598EE7FdF7E5DB837d9726C0Ea5c",
@@ -203,19 +218,23 @@ export const sepoliaNetwork = new Network({
     factory: "0x51089092b3c40c15698818592f9487340C2379B5",
     ftoFactory: "0x13Db24fF75a7FB3Cc22Fa938c3a07C5938A7d0cD",
     ftoFacade: "0x27bAceFAA89c00d29B4F7a3424c648f34e092009",
-    ftoTokens: [{
+    ftoTokens: [
+      {
+        address: "0x5d116b0032188519e62858dFd3b7917ccEcad170",
+        name: "USDT",
+        symbol: "USDT",
+        decimals: 18,
+      },
+    ],
+  },
+  faucetTokens: [
+    {
       address: "0x5d116b0032188519e62858dFd3b7917ccEcad170",
-      name:"USDT",
+      name: "USDT",
       symbol: "USDT",
       decimals: 18,
-    }],
-  },
-  faucetTokens: [{
-    address: "0x5d116b0032188519e62858dFd3b7917ccEcad170",
-    name:"USDT",
-    symbol: "USDT",
-    decimals: 18,
-  }],
+    },
+  ],
 });
 
 export const networks = [

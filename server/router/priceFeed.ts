@@ -48,18 +48,27 @@ export const priceFeedRouter = router({
         tokenAddress: z.string(),
         from: z.number(),
         to: z.number(),
-        resolution: z.string(),
+        resolution: z.union([
+          z.literal("1"),
+          z.literal("5"),
+          z.literal("15"),
+          z.literal("30"),
+          z.literal("60"),
+          z.literal("240"),
+          z.literal("720"),
+          z.literal("1D"),
+          z.literal("7D"),
+        ]),
       })
     )
     .query(async ({ input }): Promise<ApiResponseType<ChartDataResponse>> => {
-      console.log(input);
-      const res = await priceFeed.getChartData(
-        input.tokenAddress,
-        input.chainId,
-        input.from,
-        input.to,
-        input.resolution
-      );
+      const res = await priceFeed.getChartData({
+        address: input.tokenAddress,
+        networkId: input.chainId,
+        from: input.from,
+        to: input.to,
+        resolution: input.resolution,
+      });
 
       if (res.status === "error") {
         return {

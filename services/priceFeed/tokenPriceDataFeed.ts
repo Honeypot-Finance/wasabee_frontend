@@ -2,6 +2,7 @@ import {
   ChartDataResponse,
   PriceFeedProvider,
   TokenCurrentPriceResponseType,
+  getChartDataInputsType,
 } from "./priceFeedTypes";
 
 export class TokenPriceDataFeed<T extends PriceFeedProvider> {
@@ -40,19 +41,9 @@ export class TokenPriceDataFeed<T extends PriceFeedProvider> {
   };
 
   getChartData = async (
-    address: string,
-    networkId: string,
-    from: number,
-    to: number,
-    resolution: string
+    input: getChartDataInputsType
   ): Promise<ApiResponseType<ChartDataResponse>> => {
-    const data = await this.dataProvider.getChartData(
-      address,
-      networkId,
-      from,
-      to,
-      resolution
-    );
+    const data = await this.dataProvider.getChartData(input);
     if (this.debug) {
       console.log(data);
     }

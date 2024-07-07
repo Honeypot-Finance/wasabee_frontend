@@ -5,13 +5,28 @@ export interface PriceFeedProvider {
   ): Promise<ApiResponseType<TokenCurrentPriceResponseType>>;
 
   getChartData(
-    address: string,
-    networkId: string,
-    from: number,
-    to: number,
-    resolution: string
+    input: getChartDataInputsType
   ): Promise<ApiResponseType<ChartDataResponse>>;
 }
+
+export type getChartDataInputsType = {
+  address: string;
+  networkId: string;
+  from: number;
+  to: number;
+  resolution: resolutionType;
+};
+
+export type resolutionType =
+  | "1"
+  | "5"
+  | "15"
+  | "30"
+  | "60"
+  | "240"
+  | "720"
+  | "1D"
+  | "7D";
 
 export type TokenCurrentPriceResponseType = {
   price: number;

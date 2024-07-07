@@ -1,13 +1,26 @@
 "use client";
 import { Button } from "@nextui-org/react";
 import EChartsReact from "echarts-for-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Token } from "@/services/contract/token";
 import { networksMap } from "@/services/chain";
 import { useAccount } from "wagmi";
 import { trpcClient } from "@/lib/trpc";
 import { dayjs } from "@/lib/dayjs";
 import { ChartDataResponse } from "@/services/priceFeed/priceFeedTypes";
+import dynamic from "next/dynamic";
+import Script from "next/script";
+import {
+  ChartingLibraryWidgetOptions,
+  ResolutionString,
+} from "@/public/static/charting_library/charting_library";
+const TVChartContainer = dynamic(
+  () =>
+    import("@/components/AdvancedChart/TVChartContainer/TVChartContainer").then(
+      (mod) => mod.TVChartContainer
+    ),
+  { ssr: false }
+);
 
 const upColor = "#ec0000";
 const upBorderColor = "#8A0000";
@@ -41,6 +54,7 @@ const viewRanges = Object.values({
 });
 
 export default function PriceFeedGraph() {
+  const [isScriptReady, setIsScriptReady] = useState(false);
   const { chainId } = useAccount();
   const [priceData, setPriceData] = useState<any>();
   const [option, setOption] = useState<any>({
@@ -89,6 +103,26 @@ export default function PriceFeedGraph() {
   const [currentToken, setCurrentToken] = useState<Token>(
     networksMap[chainId as number].faucetTokens[0]
   );
+  const [defaultWidgetProps, setDefaultWidgetProps] = useState<
+    Partial<ChartingLibraryWidgetOptions>
+  >({
+    symbol:
+      currentToken.name +
+      ":" +
+      networksMap[chainId as number].chain.id +
+      ":" +
+      currentToken.address,
+    interval: "1D" as ResolutionString,
+    library_path: "/static/charting_library/charting_library/",
+    locale: "en",
+    charts_storage_url: "https://saveload.tradingview.com",
+    charts_storage_api_version: "1.1",
+    client_id: "tradingview.com",
+    user_id: "public_user_id",
+    fullscreen: false,
+    autosize: true,
+    theme: "dark",
+  });
 
   useEffect(() => {
     if (!chainId || !currentToken) return;
@@ -232,6 +266,17 @@ export default function PriceFeedGraph() {
           {days.name}
         </Button>
       ))}
+      <Script
+        src="/static/charting_library/datafeeds/udf/dist/bundle.js"
+        strategy="lazyOnload"
+        onReady={() => {
+          setIsScriptReady(true);
+        }}
+      />
+      <h1>AC</h1>
+      {isScriptReady && currentToken.name && (
+        <TVChartContainer {...defaultWidgetProps} />
+      )}
     </>
   );
 }
