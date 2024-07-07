@@ -13,6 +13,7 @@ import { LuPlus } from "react-icons/lu";
 import { IoSearchOutline } from "react-icons/io5";
 import { useRouter } from "next/router";
 import { set } from "lodash";
+import Link from 'next/link';
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
@@ -99,7 +100,8 @@ const PoolsPage: NextLayoutPage = observer(() => {
             onClick={() => {
               router.push("/pool");
             }}
-            className="px-[12px] w-[170px] h-[41px] outline-0 justify-center items-center gap-2.5 border-[color:var(--e-18-a-20,rgba(225,138,32,0.40))] [background:var(--e-18-a-20,rgba(225,138,32,0.40))] backdrop-blur-[10px] py-2.5 rounded-[100px] border-2 border-solid"
+            styleMode="plain"
+            className=" w-[170px] h-[41px] gap-2.5"
           >
             <LuPlus />
             Create Pool
@@ -128,6 +130,16 @@ const PoolsPage: NextLayoutPage = observer(() => {
                     {
                       title: "Liquidity",
                       dataKey: "liquidityDisplay",
+                    },     
+                    {
+                      title: "Action",
+                      dataKey: "_action",
+                      render (value, row) {
+                        return <div className="flex gap-[12px]">
+                          <Button><Link href={`/pool?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}>Add</Link></Button>
+                          <Button styleMode="plain"><Link href={`/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}>Swap</Link></Button>
+                        </div>
+                      }
                     },
                   ]}
                   datasource={state.pairsByPage}

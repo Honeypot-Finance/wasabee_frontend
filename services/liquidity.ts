@@ -104,7 +104,7 @@ class Liquidity {
       () => this.fromAmount,
       debounce(async () => {
         if (this.fromAmount && this.currentPair.value) {
-          await this.currentPair.value.getAmountOut.call(this.fromAmount);
+          await this.currentPair.value.getAmountOut.call(this.fromAmount, this.fromToken as Token);
           //@ts-ignore
           this.toAmount = this.currentPair.value.getAmountOut.value.toFixed();
         } else {

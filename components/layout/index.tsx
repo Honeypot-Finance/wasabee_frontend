@@ -7,13 +7,14 @@ import { wallet } from "@/services/wallet";
 import { config } from "@/config/wagmi";
 import { networksMap } from "@/services/chain";
 import LaunchHeader from "./LaunchHeader";
+import { cn } from "@/lib/tailwindcss";
 
-export const Layout = ({ children }: { children: React.ReactNode }) => {
+export const Layout = ({ children, className }: { children: React.ReactNode, className?: string }) => {
   const router = useRouter();
   const { chainId } = useAccount();
   const currentChain = chainId ? networksMap[chainId] : null;
   return (
-    <div className="flex flex-col min-h-screen overflow-auto">
+    <div className={cn(" flex flex-col min-h-screen overflow-auto", className)}>
       {router.pathname.startsWith("/launch") ? <LaunchHeader /> : <Header />}
       {currentChain ? (
         <div className=" px-[12px] sm:pt-[72px] pt-[24px] flex-1">

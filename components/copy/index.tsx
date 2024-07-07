@@ -25,7 +25,7 @@ export const CopyTrigger = observer(
       <Tooltip
         color="primary"
         isOpen={state.isTooltipOpen}
-        content={state.copied ? "Copied" : "Copy token address to clipboard"}
+        content={state.copied ? "Copied" : "Copy"}
       >
         <span
           onMouseEnter={() => {
