@@ -13,6 +13,7 @@ export const Layout = ({ children, className }: { children: React.ReactNode, cla
   const router = useRouter();
   const { chainId } = useAccount();
   const currentChain = chainId ? networksMap[chainId] : null;
+  console.log("currentChain", currentChain);
   return (
     <div className={cn(" flex flex-col min-h-screen overflow-auto", className)}>
       {router.pathname.startsWith("/launch") ? <LaunchHeader /> : <Header />}

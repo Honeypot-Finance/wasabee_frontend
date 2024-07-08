@@ -2,9 +2,9 @@ import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import type { AppRouter } from "@/server/_app";
 import superjson from "superjson";
-import { createTRPCReact } from '@trpc/react-query';
+import { createTRPCReact } from "@trpc/react-query";
 
-function getBaseUrl() {
+export function getBaseUrl() {
   if (typeof window !== "undefined")
     // browser should use relative path
     return "";
@@ -47,7 +47,7 @@ function getBaseUrl() {
 //    **/
 //   ssr: false,
 // });
-console.log('`${getBaseUrl()}/api/trpc`', `${getBaseUrl()}/api/trpc`)
+console.log("`${getBaseUrl()}/api/trpc`", `${getBaseUrl()}/api/trpc`);
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
@@ -66,11 +66,11 @@ export const trpcClient = createTRPCClient<AppRouter>({
   ],
 });
 
-export const trpc = createTRPCReact<AppRouter>()
+export const trpc = createTRPCReact<AppRouter>();
 export const trpcQueryClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url:`${getBaseUrl()}/api/trpc` ,
+      url: `${getBaseUrl()}/api/trpc`,
       // You can pass any HTTP headers you wish here
       transformer: superjson,
       async headers() {
@@ -83,4 +83,4 @@ export const trpcQueryClient = trpc.createClient({
       },
     }),
   ],
-})
+});
