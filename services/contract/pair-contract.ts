@@ -19,7 +19,7 @@ export class PairContract implements BaseContract {
   name: string = "";
   abi = IUniswapV2Pair.abi;
   token: Token = new Token({});
-  deadline: number = 20
+  deadline: number = 20;
 
   reserves: {
     reserve0: BigNumber;
@@ -27,7 +27,6 @@ export class PairContract implements BaseContract {
   } | null = null;
   token0: Token = new Token({}); // fixed
   token1: Token = new Token({}); // fixed
-  price: BigNumber | null = null;
   isInit = false;
   isLoading = false;
 
@@ -47,28 +46,39 @@ export class PairContract implements BaseContract {
       : new BigNumber(0);
   }
   get myLiquidityDisplay() {
-    return this.token0LpBalance && this.token0.displayName && this.token1LpBalance && this.token1.displayName ? `${amountFormatted(this.token0LpBalance, {
-      decimals:0,
-      fixed: 3
-    })} ${
-      this.token0.displayName
-    } - ${amountFormatted(this.token1LpBalance, {
-      decimals:0,
-      fixed: 3
-    })} ${this.token1.displayName}` : '-'
+    return this.token0LpBalance &&
+      this.token0.displayName &&
+      this.token1LpBalance &&
+      this.token1.displayName
+      ? `${amountFormatted(this.token0LpBalance, {
+          decimals: 0,
+          fixed: 3,
+        })} ${this.token0.displayName} - ${amountFormatted(
+          this.token1LpBalance,
+          {
+            decimals: 0,
+            fixed: 3,
+          }
+        )} ${this.token1.displayName}`
+      : "-";
   }
 
   get liquidityDisplay() {
-    console.log('----', this.reserves?.reserve0,  this.token0.displayName ,  this.reserves?.reserve1,  this.token1.displayName )
-    return this.reserves?.reserve0 &&  this.token0.displayName &&  this.reserves?.reserve1 &&  this.token1.displayName ?`${amountFormatted(this.reserves?.reserve0, {
-      decimals: 0,
-      fixed: 3
-    })} ${
-      this.token0.displayName
-    } - ${amountFormatted(this.reserves?.reserve1, {
-      decimals: 0,
-      fixed: 3
-    })} ${this.token1.displayName}` : '-'
+    return this.reserves?.reserve0 &&
+      this.token0.displayName &&
+      this.reserves?.reserve1 &&
+      this.token1.displayName
+      ? `${amountFormatted(this.reserves?.reserve0, {
+          decimals: 0,
+          fixed: 3,
+        })} ${this.token0.displayName} - ${amountFormatted(
+          this.reserves?.reserve1,
+          {
+            decimals: 0,
+            fixed: 3,
+          }
+        )} ${this.token1.displayName}`
+      : "-";
   }
 
   get poolName() {
@@ -109,34 +119,44 @@ export class PairContract implements BaseContract {
       };
     }
   }
-  getAmountOut = new AsyncState(async (fromAmount: string) => {
-    await this.getReserves()
-    if (!this.reserves) {
-      return new BigNumber(0)
-    }
-     const amountOut = await this.routerV2Contract.contract.read.getAmountOut([
-      BigInt(
-        new BigNumber(fromAmount)
-          .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
-          .toFixed(0)
-      ),
-      BigInt(
+  getAmountOut = new AsyncState(
+    async (fromAmount: string, fromToken: Token) => {
+      await this.getReserves();
+      if (!this.reserves) {
+        return new BigNumber(0);
+      }
+      const reserve0 = BigInt(
         this.reserves.reserve0
           .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
           .toFixed(0)
-      ),
-      BigInt(
+      )
+      const reserve1 = BigInt(
         this.reserves.reserve1
           .multipliedBy(new BigNumber(10).pow(this.token1.decimals))
           .toFixed(0)
-      ),
-    ]);
-    console.log(
-      new BigNumber(amountOut.toString()).div(new BigNumber(10).pow(this.token1.decimals)).toFixed()
-    )
-    return new BigNumber(amountOut.toString()).div(new BigNumber(10).pow(this.token1.decimals))
-  })
+      )
 
+      const reserveIn = fromToken.address === this.token0.address ? reserve0 : reserve1
+      const reserveOut = fromToken.address === this.token0.address ? reserve1 : reserve0
+      const amountOut = await this.routerV2Contract.contract.read.getAmountOut([
+        BigInt(
+          new BigNumber(fromAmount)
+            .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
+            .toFixed(0)
+        ),
+        reserveIn,
+        reserveOut,
+      ]);
+      console.log(
+        new BigNumber(amountOut.toString())
+          .div(new BigNumber(10).pow(this.token1.decimals))
+          .toFixed()
+      );
+      return new BigNumber(amountOut.toString()).div(
+        new BigNumber(10).pow(this.token1.decimals)
+      );
+    }
+  );
 
   async init(force = false) {
     if (this.isLoading) {
@@ -151,7 +171,7 @@ export class PairContract implements BaseContract {
               address: this.address,
             });
             await this.token.init({
-              loadName:false,
+              loadName: false,
               loadSymbol: false,
               loadDecimals: false,
               loadTotalSupply: true,
@@ -168,16 +188,12 @@ export class PairContract implements BaseContract {
     this.isInit = true;
   }
   removeLiquidity = new AsyncState(async (percent: number) => {
-    const liquidity = this.token.balanceWithoutDecimals
-      .multipliedBy(percent)
-      .div(100)
+    const liquidity = this.token.balanceWithoutDecimals.multipliedBy(percent);
     if (liquidity.gt(0)) {
-      await this.token.approveIfNoAllowance(
-        {
-          amount: liquidity.toFixed(0),
-          spender: this.routerV2Contract.address,
-        }
-      );
+      await this.token.approveIfNoAllowance({
+        amount: liquidity.toFixed(0),
+        spender: this.routerV2Contract.address,
+      });
       const deadline = dayjs().unix() + 60 * (this.deadline || 20);
       await this.routerV2Contract.removeLiquidity.call([
         this.token0.address as `0x${string}`,
@@ -190,5 +206,5 @@ export class PairContract implements BaseContract {
       ]);
       await this.init(true);
     }
-  })
+  });
 }

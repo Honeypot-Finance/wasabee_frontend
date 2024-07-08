@@ -98,12 +98,13 @@ class Swap {
       () => this.fromAmount,
       debounce(async () => {
         if (this.fromAmount && this.currentPair.value) {
-          await this.currentPair.value.getAmountOut.call(this.fromAmount)
+          await this.currentPair.value.getAmountOut.call(this.fromAmount, this.fromToken as Token)
           //@ts-ignore
           this.toAmount = this.currentPair.value.getAmountOut.value.toFixed() 
           this.price = new BigNumber(this.toAmount).div(this.fromAmount)
         } else {
           this.toAmount = ''
+          this.price = null
         }
       }, 300)
     );
@@ -126,6 +127,10 @@ class Swap {
 
   setFromToken(token: Token) {
     if (this.fromToken?.address !== token.address) {
+      if (this.toToken?.address === token.address) {
+        this.toToken = this.fromToken;
+        this.toAmount = "";
+      }
       this.fromToken = token;
       this.fromToken.init()
       this.fromAmount = "";
@@ -139,6 +144,10 @@ class Swap {
 
   setToToken(token: Token) {
     if (this.toToken?.address !== token.address) {
+      if (this.fromToken?.address === token.address) {
+        this.fromToken = this.toToken;
+        this.fromAmount = "";
+      }
       this.toToken = token;
       this.toToken.init()
       this.toAmount = "";
@@ -165,11 +174,10 @@ class Swap {
         spender: this.routerV2Contract.address
       }
     )])
-    await this.currentPair.value.getAmountOut.call(this.fromAmount)
+    await this.currentPair.value.getAmountOut.call(this.fromAmount, this.fromToken)
     const toAmountDecimals = (this.currentPair.value.getAmountOut.value as BigNumber).multipliedBy(1- this.slippage/100).multipliedBy(
       new BigNumber(10).pow(this.toToken.decimals)
     ).toFixed(0)
-    console.log('fromAmountDecimals', fromAmountDecimals, toAmountDecimals, path, wallet.account as `0x${string}`, deadline)
     await this.routerV2Contract.swapExactTokensForTokens.call([
       BigInt(fromAmountDecimals),
       BigInt(toAmountDecimals),

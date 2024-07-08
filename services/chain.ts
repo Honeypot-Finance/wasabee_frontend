@@ -169,12 +169,6 @@ export const berachainTestNetwork = new Network({
       address: "0x388e116A5FE443dfc1A7338AED7D22be925E31f2",
     },
     {
-      name: "YEET",
-      symbol: "YEET",
-      decimals: 18,
-      address: "0x265277a6c3C8e15DdC3Ee837fc88aeD8092E3de1",
-    },
-    {
       name: "HONEY",
       symbol: "HONEY",
       decimals: 18,
@@ -238,7 +232,7 @@ export const sepoliaNetwork = new Network({
 });
 
 export const networks = [
-  berachainTestNetwork,
+  // berachainTestNetwork,
   berachainBartioTestnetNetwork,
   sepoliaNetwork,
   // polygonTestNetwork,

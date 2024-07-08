@@ -5,7 +5,7 @@ import { use, useEffect } from "react";
 
 export type Column<T> = {
   title: string;
-  dataKey?: keyof T;
+  dataKey?: keyof T | '_action';
   key?: string;
   render?: (value: any, row: T) => JSX.Element;
 };

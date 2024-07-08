@@ -14,6 +14,8 @@ import { config } from "@/config/wagmi";
 import { trpc, trpcQueryClient } from "../lib/trpc";
 import { useEffect } from "react";
 import { wallet } from "@/services/wallet";
+import { DM_Sans } from "next/font/google";
+const dmSans = DM_Sans({ subsets: ["latin"], weight: ["400"] });
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
 
@@ -43,7 +45,7 @@ export default function App({
           <RainbowKitProvider>
             <NextUIProvider>
               <Provider>
-                <ComponentLayout>
+                <ComponentLayout className={dmSans.className}>
                   <Component {...pageProps} />
                 </ComponentLayout>
               </Provider>

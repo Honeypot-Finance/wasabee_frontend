@@ -48,6 +48,7 @@ export class AsyncState<T, K extends (...args: any) => any = () => {}> {
       const data = await this._call(...args);
       this.setValue(data);
     } catch (error) {
+      console.error(error)
       this.setError(error as Error);
     }
     this.setLoading(false);
