@@ -73,7 +73,7 @@ export default function PriceFeedGraph() {
 
   return (
     <>
-      {networksMap[chainId as number].faucetTokens.map((token) => (
+      {/* {networksMap[chainId as number].faucetTokens.map((token) => (
         <Button key={token.address} onClick={() => changeTokenHandler(token)}>
           {token.name}
         </Button>
@@ -93,7 +93,7 @@ export default function PriceFeedGraph() {
         >
           {token.token0.name}/{token.token1.name}
         </Button>
-      ))}
+      ))} */}
 
       <Script
         src="/static/charting_library/datafeeds/udf/dist/bundle.js"
