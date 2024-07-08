@@ -30,7 +30,6 @@ export default async function handler(
   });
 
   if (data.status === "success") {
-    console.log(data.data);
     res.status(200).json({
       s: "ok",
       t: data.data.getBars.t,
