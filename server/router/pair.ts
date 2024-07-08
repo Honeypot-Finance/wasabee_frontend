@@ -10,6 +10,8 @@ import PQueue from "p-queue";
 import { getCacheKey } from "@/lib/cache";
 import { networksMap } from "@/services/chain";
 import { kv } from "@/lib/kv";
+import { Token } from "@/services/contract/token";
+import { pairQueryOutput } from "@/types/pair";
 
 const queue = new PQueue({ concurrency: 10 });
 
@@ -47,7 +49,7 @@ export const pairRouter = router({
         chainId: z.number(),
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input }): Promise<pairQueryOutput> => {
       const { chainId } = input;
       const currentNetwork = networksMap[chainId];
       const factoryContract = getContract({
@@ -58,12 +60,12 @@ export const pairRouter = router({
           public: createPublicClientByChain(currentNetwork.chain),
         },
       });
-      console.log('factoryContract-------', factoryContract)
+      console.log("factoryContract-------", factoryContract);
       const length = Number(
         ((await factoryContract.read.allPairsLength()) as BigInt).toString()
       );
       if (!length) {
-        return [];
+        return {};
       }
       console.log("total pairs", length);
       // await kv.del(getCacheKey(chainId, 'allPairs'));
@@ -76,7 +78,9 @@ export const pairRouter = router({
           const pair = allPairs?.[index];
           if (!pair) {
             try {
-              const pairAddress = await factoryContract.read.allPairs([BigInt(index)]);
+              const pairAddress = await factoryContract.read.allPairs([
+                BigInt(index),
+              ]);
               const pairContract = getContract({
                 address: pairAddress as `0x${string}`,
                 abi: IUniswapV2Pair.abi,
