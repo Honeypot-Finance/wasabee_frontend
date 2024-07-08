@@ -1,10 +1,10 @@
+"use client";
 import styles from "./TVChartContainer.module.css";
 import { useEffect, useRef } from "react";
 import {
   ChartingLibraryWidgetOptions,
   LanguageCode,
   ResolutionString,
-  SearchSymbolResultItem,
   widget,
 } from "@/public/static/charting_library/charting_library";
 import { getBaseUrl } from "@/lib/trpc";
@@ -32,7 +32,7 @@ export const TVChartContainer = (
       library_path: props.library_path,
       locale: props.locale as LanguageCode,
       disabled_features: ["use_localstorage_for_settings"],
-      enabled_features: ["study_templates"],
+      enabled_features: ["study_templates", "hide_left_toolbar_by_default"],
       charts_storage_url: props.charts_storage_url,
       charts_storage_api_version: props.charts_storage_api_version,
       client_id: props.client_id,
@@ -40,6 +40,7 @@ export const TVChartContainer = (
       fullscreen: props.fullscreen,
       autosize: props.autosize,
       theme: props.theme,
+      symbol_search_complete: props.symbol_search_complete,
     };
 
     const tvWidget = new widget(widgetOptions);

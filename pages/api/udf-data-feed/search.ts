@@ -7,6 +7,7 @@ import {
 } from "@/public/static/charting_library/charting_library";
 import { chains, chainsMap } from "@/lib/chain";
 import { Network, networks, networksMap } from "@/services/chain";
+import { trpc, trpcClient } from "@/lib/trpc";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,26 +21,59 @@ export default async function handler(
   const limit = req.query.limit as string;
 
   const symbols: SearchSymbolResultItem[] = [];
-  networks.forEach((network) => {
+
+  networks.forEach(async (network) => {
     networksMap[network.chain.id].faucetTokens.map((token) => {
       symbols.push({
         ticker: token.symbol + ":" + network.chain.id + ":" + token.address,
         description: token.symbol + ":" + network.chain.name,
-        type: "crypto",
+        type: "token",
         exchange: network.chain.name,
         symbol: token.symbol,
         full_name: token.symbol + ":" + network.chain.name,
       });
     });
+
+    const pairs = await trpcClient.pair.getPairs.query({
+      chainId: network.chain.id as number,
+    });
+
+    if (pairs) {
+      Object.values(pairs).map((pair) => {
+        symbols.push({
+          ticker:
+            pair.token0.symbol +
+            "/" +
+            pair.token1.symbol +
+            ":" +
+            network.chain.id +
+            ":" +
+            pair.address,
+          description:
+            pair.token0.symbol +
+            "/" +
+            pair.token1.symbol +
+            ":" +
+            network.chain.id,
+          type: "pair",
+          exchange: network.chain.name,
+          symbol: pair.token0.symbol + "/" + pair.token1.symbol,
+          full_name:
+            pair.token0.symbol +
+            "/" +
+            pair.token1.symbol +
+            ":" +
+            network.chain.id,
+        });
+      });
+    }
+
+    res
+      .status(200)
+      .json(
+        symbols
+          .filter((symbol) => symbol.symbol.includes(query))
+          .slice(0, parseInt(limit))
+      );
   });
-
-  console.log(symbols);
-
-  res
-    .status(200)
-    .json(
-      symbols
-        .filter((symbol) => symbol.symbol.includes(query))
-        .slice(0, parseInt(limit))
-    );
 }
