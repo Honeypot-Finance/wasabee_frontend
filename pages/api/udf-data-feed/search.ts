@@ -7,7 +7,7 @@ import {
 } from "@/public/static/charting_library/charting_library";
 import { chains, chainsMap } from "@/lib/chain";
 import { Network, networks, networksMap } from "@/services/chain";
-import { trpc, trpcClient } from "@/lib/trpc";
+import { appRouter, caller } from "@/server/_app";
 
 export default async function handler(
   req: NextApiRequest,
@@ -34,7 +34,7 @@ export default async function handler(
       });
     });
 
-    const pairs = await trpcClient.pair.getPairs.query({
+    const pairs = await caller.pair.getPairs({
       chainId: network.chain.id as number,
     });
 

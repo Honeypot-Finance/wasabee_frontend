@@ -10,8 +10,14 @@ import { userService } from "./service/user";
 
 export const getUser = async (req: NextApiRequest) => {
   if (req.headers.message && req.headers.signature) {
-    const message = Buffer.from(req.headers.message as string, 'base64').toString('utf-8')
-    const signature = Buffer.from(req.headers.signature as string, 'base64').toString('utf-8')
+    const message = Buffer.from(
+      req.headers.message as string,
+      "base64"
+    ).toString("utf-8");
+    const signature = Buffer.from(
+      req.headers.signature as string,
+      "base64"
+    ).toString("utf-8");
     try {
       const siweMessage = new SiweMessage(message);
 
@@ -36,14 +42,14 @@ export const createContext = async ({ req }: CreateNextContextOptions) => {
 };
 // You can use any variable name you like.
 // We use t to keep things simple.
-const t = initTRPC.context<typeof createContext>().create({
+export const t = initTRPC.context<typeof createContext>().create({
   transformer: superjson,
 });
 export const router = t.router;
 export const publicProcedure = t.procedure;
 
 export const authProcedure = publicProcedure.use(async ({ ctx, next }) => {
-    console.log('ctx.user', ctx.user)
+  console.log("ctx.user", ctx.user);
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
