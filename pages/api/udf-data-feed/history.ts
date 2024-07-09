@@ -1,8 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { trpcClient } from "@/lib/trpc";
+import { trpc, trpcClient, trpcQueryClient } from "@/lib/trpc";
 import { resolutionType } from "@/services/priceFeed/priceFeedTypes";
 import { priceFeedRouter } from "@/server/router/priceFeed";
+import Trpc from "../trpc/[trpc]";
+import { appRouter, caller } from "@/server/_app";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
@@ -21,7 +23,7 @@ export default async function handler(
   const chain = ticker.split(":")[1];
   const address = ticker.split(":")[2];
 
-  const data = await trpcClient.priceFeed.getChartData.query({
+  const data = await caller.priceFeed.getChartData({
     chainId: chain,
     tokenAddress: address,
     from: parseInt(from),
