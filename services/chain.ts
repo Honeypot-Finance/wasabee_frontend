@@ -106,12 +106,12 @@ export const berachainBartioTestnetNetwork = new Network({
       symbol: "USDT",
       decimals: 18,
     },
-    {
-      name: "YEET",
-      symbol: "YEET",
-      decimals: 18,
-      address: "0xb6a43bc17680fb67fd8371977d264e047f47c675",
-    },
+    // {
+    //   name: "YEET",
+    //   symbol: "YEET",
+    //   decimals: 18,
+    //   address: "0xb6a43bc17680fb67fd8371977d264e047f47c675",
+    // },
     // {
     //   address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
     //   name: "Wrapped BERA",
