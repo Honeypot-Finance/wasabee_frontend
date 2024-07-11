@@ -42,6 +42,10 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
       path: "/price",
       title: "price",
     },
+    {
+      path: "/test",
+      title: "test",
+    },
   ];
   return (
     <Navbar
