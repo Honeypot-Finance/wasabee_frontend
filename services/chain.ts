@@ -91,6 +91,24 @@ export const berachainBartioTestnetNetwork = new Network({
         symbol: "USDT",
         decimals: 18,
       },
+      {
+        address: "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8",
+        name: "Wrapped Bera",
+        symbol: "WBERA",
+        decimals: 18,
+      },
+      {
+        address: "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03",
+        name: "Honey",
+        symbol: "HONEY",
+        decimals: 18,
+      },
+      {
+        address: "0xfF95cdfC724Ca85b8d96D5a6Ea86333AC6a4799D",
+        name: "HPOT",
+        symbol: "HPOT",
+        decimals: 18,
+      },
       // {
       //   address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
       //   name: "Wrapped BERA",
@@ -139,12 +157,6 @@ export const berachainTestNetwork = new Network({
         address: "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
         name: "USDT",
         symbol: "USDT",
-        decimals: 18,
-      },
-      {
-        address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
-        name: "Wrapped BERA",
-        symbol: "WBERA",
         decimals: 18,
       },
     ],

@@ -84,11 +84,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                     <LaunchCard
                       pair={pair}
                       action={
-                        <div
-                          style={{
-                            display: "flex",
-                          }}
-                        >
+                        <div className="flex">
                           <Link
                             href={`/launch-detail/${pair.address}`}
                             className="text-black font-bold w-full px-[8px]"
