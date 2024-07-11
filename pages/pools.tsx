@@ -13,7 +13,8 @@ import { LuPlus } from "react-icons/lu";
 import { IoSearchOutline } from "react-icons/io5";
 import { useRouter } from "next/router";
 import { set } from "lodash";
-import Link from 'next/link';
+import Link from "next/link";
+import { Copy } from "@/components/copy";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
@@ -130,16 +131,49 @@ const PoolsPage: NextLayoutPage = observer(() => {
                     {
                       title: "Liquidity",
                       dataKey: "liquidityDisplay",
-                    },     
+                    },
                     {
                       title: "Action",
                       dataKey: "_action",
-                      render (value, row) {
-                        return <div className="flex gap-[12px]">
-                          <Button><Link href={`/pool?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}>Add</Link></Button>
-                          <Button styleMode="plain"><Link href={`/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}>Swap</Link></Button>
-                        </div>
-                      }
+                      render(value, row) {
+                        return (
+                          <div className="flex gap-[12px]">
+                            <Button>
+                              <Link
+                                href={`/pool?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
+                              >
+                                Add
+                                <p>
+                                  <Copy
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                    }}
+                                    className=" absolute ml-[20px] top-[50%] translate-y-[-50%]"
+                                    value={`${window.location.origin}/pool?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
+                                  ></Copy>
+                                </p>
+                              </Link>
+                            </Button>
+                            <Button styleMode="plain">
+                              <Link
+                                href={`/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
+                              >
+                                <p>Swap</p>
+
+                                <p>
+                                  <Copy
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                    }}
+                                    className=" absolute ml-[20px] top-[50%] translate-y-[-50%]"
+                                    value={`${window.location.origin}/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
+                                  ></Copy>
+                                </p>
+                              </Link>
+                            </Button>
+                          </div>
+                        );
+                      },
                     },
                   ]}
                   datasource={state.pairsByPage}
