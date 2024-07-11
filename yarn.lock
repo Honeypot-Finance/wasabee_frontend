@@ -650,6 +650,11 @@
   dependencies:
     tslib "^2.4.0"
 
+"@hookform/resolvers@^3.9.0":
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-3.9.0.tgz#cf540ac21c6c0cd24a40cf53d8e6d64391fb753d"
+  integrity sha512-bU0Gr4EepJ/EQsH/IwEzYLsT/PEj5C0ynLQ4m+GSHS+xKH4TfSelhluTgOaoc4kA5s7eCsQbM4wvZLzELmWzUg==
+
 "@humanwhocodes/config-array@^0.11.14":
   version "0.11.14"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.14.tgz#d78e481a039f7566ecc9660b4ea7fe6b1fec442b"
@@ -8381,11 +8386,6 @@ simple-swizzle@^0.2.2:
   dependencies:
     is-arrayish "^0.3.1"
 
-size-sensor@^1.0.1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/size-sensor/-/size-sensor-1.0.2.tgz#b8f8da029683cf2b4e22f12bf8b8f0a1145e8471"
-  integrity sha512-2NCmWxY7A9pYKGXNBfteo4hy14gWu47rg5692peVMst6lQLPKrVjhY+UTEsPI5ceFRJSl3gVgMYaUi/hKuaiKw==
-
 siwe@^2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/siwe/-/siwe-2.3.2.tgz#0794ae25f734f3068de0ab093ddd2f7867bc2d67"
@@ -8395,6 +8395,11 @@ siwe@^2.3.2:
     "@stablelib/random" "^1.0.1"
     uri-js "^4.4.1"
     valid-url "^1.0.9"
+
+size-sensor@^1.0.1:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/size-sensor/-/size-sensor-1.0.2.tgz#b8f8da029683cf2b4e22f12bf8b8f0a1145e8471"
+  integrity sha512-2NCmWxY7A9pYKGXNBfteo4hy14gWu47rg5692peVMst6lQLPKrVjhY+UTEsPI5ceFRJSl3gVgMYaUi/hKuaiKw==
 
 slash@^3.0.0:
   version "3.0.0"

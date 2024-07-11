@@ -24,6 +24,10 @@ import {
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import { Resolver } from "dns";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
@@ -31,139 +35,151 @@ const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
-  const FormBody = observer(({onClose}: any) => <>
-  <ModalHeader className="flex flex-col gap-1">
-    Update {pair.launchedToken.displayName}
-  </ModalHeader>
-  <ModalBody>
-    <div>
-      <div className="flex flex-col gap-4">
-        <div>Project Name</div>
-        <input
-          type="text"
-          {...register("projectName", {
-            value: pair.projectName,
-            required: "Project name is required",
-          })}
-          className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
-        />
-        {errors.projectName && (
-          <span className="text-red-500">
-            {errors.projectName.message as any}
-          </span>
-        )}
-      </div>
-      <div className="flex flex-col gap-4">
-        <div>Description</div>
-        <input
-          type="text"
-          {...register("description", {
-            value: pair.description,
-            required: "Description is required",
-          })}
-          className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
-        />
-        {errors.description && (
-          <span className="text-red-500">
-            {errors.description.message as any}
-          </span>
-        )}
-      </div>
-      <div className="flex flex-col gap-4">
-        <div>Twitter</div>
-        <input
-          type="text"
-          {...register("twitter", {
-            value: pair.twitter,
-          })}
-          className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
-        />
-        {errors.twitter && (
-          <span className="text-red-500">
-            {errors.twitter.message as any}
-          </span>
-        )}
-      </div>
-      <div className="flex flex-col gap-4">
-        <div>Website</div>
-        <input
-          type="text"
-          {...register("website", {
-            value: pair.website,
-          })}
-          className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
-        />
-        {errors.website && (
-          <span className="text-red-500">
-            {errors.website.message as any}
-          </span>
-        )}
-      </div>
-      <div className="flex flex-col gap-4">
-        <div>Telegram</div>
-        <input
-          type="text"
-          {...register("telegram", {
-            value: pair.telegram,
-
-          })}
-          className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
-        />
-        {errors.telegram && (
-          <span className="text-red-500">
-            {errors.telegram.message as any}
-          </span>
-        )}
-      </div>
-    </div>
-  </ModalBody>
-  <ModalFooter>
-    <Button variant="light" onPress={onClose}>
-      Close
-    </Button>
-    <Button
-      isLoading={launchpad.updateFtoProject.loading}
-      color="primary"
-      onPress={async () => {
-        handleSubmit(async (data) => {
-          await launchpad.updateFtoProject.call({
-            pair: pair.address,
-            chain_id: wallet.currentChainId,
-            projectName: data.projectName,
-            description: data.description,
-            twitter: data.twitter || "",
-            website: data.website || "",
-            telegram: data.telegram || "",
-          });
-          if (launchpad.updateFtoProject.error) {
-            toast.error("Update failed");
-            return;
-          }
-          await pair.getProjectInfo()
-          toast.success("Update success");
-          onClose();
-        })();
-      }}
-    >
-      Submit
-    </Button>
-  </ModalFooter>
-</>)
+  } = useForm({
+    resolver: zodResolver(
+      z.object({
+        projectName: z.string(),
+        description: z.string(),
+        twitter: z.string().url().optional(),
+        website: z.string().url().optional(),
+        telegram: z.string().url().optional(),
+      })
+    ),
+  });
+  const FormBody = observer(({ onClose }: any) => (
+    <>
+      <ModalHeader className="flex flex-col gap-1">
+        Update {pair.launchedToken.displayName}
+      </ModalHeader>
+      <ModalBody>
+        <div>
+          <div className="flex flex-col gap-4">
+            <div>Project Name</div>
+            <input
+              type="text"
+              {...register("projectName", {
+                value: pair.projectName,
+                required: "Project name is required",
+              })}
+              className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+            />
+            {errors.projectName && (
+              <span className="text-red-500">
+                {errors.projectName.message as any}
+              </span>
+            )}
+          </div>
+          <div className="flex flex-col gap-4">
+            <div>Description</div>
+            <input
+              type="text"
+              {...register("description", {
+                value: pair.description,
+                required: "Description is required",
+              })}
+              className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+            />
+            {errors.description && (
+              <span className="text-red-500">
+                {errors.description.message as any}
+              </span>
+            )}
+          </div>
+          <div className="flex flex-col gap-4">
+            <div>Twitter</div>
+            <input
+              type="text"
+              {...register("twitter", {
+                value: pair.twitter,
+              })}
+              className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+            />
+            {errors.twitter && (
+              <span className="text-red-500">
+                {errors.twitter.message as any}
+              </span>
+            )}
+          </div>
+          <div className="flex flex-col gap-4">
+            <div>Website</div>
+            <input
+              type="text"
+              {...register("website", {
+                value: pair.website,
+              })}
+              className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+            />
+            {errors.website && (
+              <span className="text-red-500">
+                {errors.website.message as any}
+              </span>
+            )}
+          </div>
+          <div className="flex flex-col gap-4">
+            <div>Telegram</div>
+            <input
+              type="text"
+              {...register("telegram", {
+                value: pair.telegram,
+              })}
+              className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+            />
+            {errors.telegram && (
+              <span className="text-red-500">
+                {errors.telegram.message as any}
+              </span>
+            )}
+          </div>
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <Button variant="light" onPress={onClose}>
+          Close
+        </Button>
+        <Button
+          isLoading={launchpad.updateFtoProject.loading}
+          color="primary"
+          onPress={async () => {
+            handleSubmit(async (data) => {
+              await launchpad.updateFtoProject.call({
+                pair: pair.address,
+                chain_id: wallet.currentChainId,
+                projectName: data.projectName,
+                description: data.description,
+                twitter: data.twitter || "",
+                website: data.website || "",
+                telegram: data.telegram || "",
+              });
+              if (launchpad.updateFtoProject.error) {
+                toast.error("Update failed");
+                return;
+              }
+              await pair.getProjectInfo();
+              toast.success("Update success");
+              onClose();
+            })();
+          }}
+        >
+          Submit
+        </Button>
+      </ModalFooter>
+    </>
+  ));
   return (
     <>
-      <LuFileEdit onClick={() => {
-        if (pair.provider.toLowerCase() !== wallet.account.toLowerCase()) {
-          toast.warning("You are not the owner of this project")
-          return
-        }
-        onOpen()
-      }} className="cursor-pointer"></LuFileEdit>
+      <LuFileEdit
+        onClick={() => {
+          if (pair.provider.toLowerCase() !== wallet.account.toLowerCase()) {
+            toast.warning("You are not the owner of this project");
+            return;
+          }
+          onOpen();
+        }}
+        className="cursor-pointer"
+      ></LuFileEdit>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
-          {(onClose) => (
-              <FormBody onClose={onClose}></FormBody>
-          )}
+          {(onClose) => <FormBody onClose={onClose}></FormBody>}
         </ModalContent>
       </Modal>
     </>
@@ -228,22 +244,22 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
       this.depositAmount = val;
     },
   }));
-  return pair.isProvider ? 
-  // (
-  //   <div className="flex flex-col gap-[16px]">
-  //     <Button
-  //       className="w-full"
-  //       isLoading={pair.pause.loading}
-  //       onClick={() => {
-  //         pair.pause.call();
-  //       }}
-  //     >
-  //       Pause
-  //     </Button>
-  //   </div>
-  // ) 
-  <></>
-  : (
+  return pair.isProvider ? (
+    // (
+    //   <div className="flex flex-col gap-[16px]">
+    //     <Button
+    //       className="w-full"
+    //       isLoading={pair.pause.loading}
+    //       onClick={() => {
+    //         pair.pause.call();
+    //       }}
+    //     >
+    //       Pause
+    //     </Button>
+    //   </div>
+    // )
+    <></>
+  ) : (
     <div className="flex flex-col gap-[16px]">
       <Input
         className="bg-[#2F200B] rounded-[10px]"
