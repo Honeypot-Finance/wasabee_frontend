@@ -119,9 +119,9 @@ export const berachainBartioTestnetNetwork = new Network({
   },
   faucetTokens: [
     {
-      address: "0x2A108225249CB5B3E1E33943F5FEfAec33b1D452",
-      name: "USDT",
-      symbol: "USDT",
+      address: "0xfF95cdfC724Ca85b8d96D5a6Ea86333AC6a4799D",
+      name: "HPOT",
+      symbol: "HPOT",
       decimals: 18,
     },
     // {
