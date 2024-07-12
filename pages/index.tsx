@@ -15,10 +15,14 @@ const Home: NextLayoutPage = () => {
     icon?: React.ReactNode;
     target?: string;
   }[] = [
-
     {
       text: "HenloDex",
       href: "/swap",
+    },
+    {
+      text: "Dream Pad",
+      href: "/launch-token",
+      target: "_blank",
     },
     {
       text: "HoneyGenesis",
@@ -99,7 +103,7 @@ const Home: NextLayoutPage = () => {
                 "text-[#FFCD4D] text-[14.705px] font-bold leading-[119%] capitalize flex w-[135px] h-[51px] justify-center items-center gap-[6.127px] [background:rgba(255,205,77,0.10)] backdrop-blur-[122.54356384277344px] rounded-[122.544px] border-[1.225px] border-solid border-[rgba(255,205,77,0.50)]",
                 poppins.className
               )}
-              target={link.target || '_self'}
+              target={link.target || "_self"}
               key={link.text}
               href={link.href}
             >
