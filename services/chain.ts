@@ -104,7 +104,7 @@ export const berachainBartioTestnetNetwork = new Network({
         decimals: 18,
       },
       {
-        address: "0xfF95cdfC724Ca85b8d96D5a6Ea86333AC6a4799D",
+        address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
         name: "HPOT",
         symbol: "HPOT",
         decimals: 18,
@@ -119,7 +119,7 @@ export const berachainBartioTestnetNetwork = new Network({
   },
   faucetTokens: [
     {
-      address: "0xfF95cdfC724Ca85b8d96D5a6Ea86333AC6a4799D",
+      address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
       name: "HPOT",
       symbol: "HPOT",
       decimals: 18,
