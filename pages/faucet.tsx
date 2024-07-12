@@ -11,7 +11,7 @@ import { amountFormatted } from "../lib/format";
 const FaucetPage: NextLayoutPage = observer(() => {
   useEffect(() => {
     wallet.currentChain?.faucetTokens?.forEach((token) => {
-      token.init();
+      token.init({ loadClaimed: true });
     });
   }, [wallet.currentChain?.faucetTokens]);
   return (

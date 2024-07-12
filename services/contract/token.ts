@@ -64,12 +64,14 @@ export class Token implements BaseContract {
     loadDecimals?: boolean;
     loadBalance?: boolean;
     loadTotalSupply?: boolean;
+    loadClaimed?: boolean;
   }) {
     const loadName = options?.loadName ?? true;
     const loadSymbol = options?.loadSymbol ?? true;
     const loadDecimals = options?.loadDecimals ?? true;
     const loadBalance = options?.loadBalance ?? true;
     const loadTotalSupply = options?.loadTotalSupply ?? false;
+    const loadClaimed = options?.loadClaimed ?? false;
     await Promise.all([
       loadName && !this.name
         ? this.contract.read.name().then((name) => {
@@ -88,9 +90,11 @@ export class Token implements BaseContract {
         : Promise.resolve(),
       loadBalance ? this.getBalance() : Promise.resolve(),
       loadTotalSupply ? this.getTotalSupply() : Promise.resolve(),
-      this.getClaimed().then((claimed) => {
-        this.claimed = claimed;
-      }),
+      loadClaimed
+        ? this.getClaimed().then((claimed) => {
+            this.claimed = claimed;
+          })
+        : Promise.resolve(),
     ]);
     this.isInit = true;
   }
