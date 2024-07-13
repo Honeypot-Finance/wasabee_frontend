@@ -1,34 +1,38 @@
 import Link from "next/link";
-import { useReadContract } from "wagmi";
-import { observer } from "mobx-react-lite";
+import { Observer, observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { useEffect, useState } from "react";
-import { formatEther, erc20Abi } from "viem";
 import { Button } from "@/components/button";
-import { Logo } from "@/components/svg/logo";
 import launchpad from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { RocketSvg } from "@/components/svg/Rocket";
 import { PeddingSvg } from "@/components/svg/Pedding";
-import { TimelineSvg } from "@/components/svg/Timeline";
-import { TokenPriceSvg } from "@/components/svg/TokenPrice";
-import { TotalRaisedSvg } from "@/components/svg/TotalRaised";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
-import { AmountFormat } from "@/components/AmountFormat";
 import { Copy } from "@/components/copy";
 import { LaunchCard } from "@/components/LaunchCard";
-import { Pagination, Tab, Tabs } from "@nextui-org/react";
+import {
+  Input,
+  Pagination,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Tab,
+  Tabs,
+  useDisclosure,
+  Button as NextButton,
+} from "@nextui-org/react";
+import { IoClose, IoSearchOutline } from "react-icons/io5";
+import { SpinnerContainer } from "@/components/Spinner";
+import { DropdownSvg } from "@/components/svg/dropdown";
 
 const LaunchPage: NextLayoutPage = observer(() => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   useEffect(() => {
     if (!wallet.isInit) {
       return;
     }
-    launchpad.ftoPairs.call({
-      page: launchpad.ftoPairsPagination.page,
-      limit: launchpad.ftoPairsPagination.limit,
-    });
-    launchpad.myFtoPairs.call();
+    launchpad.getFtoPairs.call();
+    launchpad.getMyFtoPairs.call();
   }, [wallet.isInit]);
 
   return (
@@ -48,6 +52,98 @@ const LaunchPage: NextLayoutPage = observer(() => {
             Launch Token
           </Link>
         </Button>
+      </div>
+
+      <div className="flex">
+        <Input
+          onChange={(e) => {
+            launchpad.pairFilterSearch = e.target.value;
+            launchpad.ftoPairsPagination.page = 1;
+          }}
+          startContent={<IoSearchOutline></IoSearchOutline>}
+          placeholder="Search by name, symbol or address"
+          classNames={{
+            innerWrapper: "w-[369px] h-[32px]",
+          }}
+          className=" border [background:var(--card-color,#271A0C)] rounded-2xl border-solid border-[rgba(225,138,32,0.10)]"
+        ></Input>{" "}
+        <Popover
+          isOpen={isOpen}
+          onOpenChange={(isOpen) => {
+            isOpen ? onOpen() : onClose();
+          }}
+          placement="bottom"
+          classNames={{
+            base: [
+              // arrow color
+              "before:bg-default-200",
+            ],
+            content: [
+              "py-3 px-4 border border-default-200",
+              "bg-gradient-to-br from-white to-default-300",
+              "dark:from-default-100 dark:to-default-50",
+            ],
+          }}
+        >
+          <PopoverTrigger>
+            <NextButton className="inline-flex w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)] text-white text-center">
+              <span className="flex-1">{launchpad.pairFilter.status}</span>
+              <DropdownSvg></DropdownSvg>
+            </NextButton>
+          </PopoverTrigger>
+          <PopoverContent className="flex w-[352px] flex-col items-center gap-4 border border-[color:var(--card-stroke,#F7931A)] [background:var(--card-color,#271A0C)] rounded-xl border-solid">
+            <Observer>
+              {() => (
+                <div className="w-full">
+                  <SpinnerContainer isLoading={launchpad.ftoPairs.loading}>
+                    <div>
+                      <div></div>
+
+                      <div className="max-h-[300px] overflow-auto flex justify-between">
+                        <NextButton
+                          onClick={() => {
+                            launchpad.pairFilterStatus = "all";
+                            launchpad.ftoPairsPagination.page = 1;
+                          }}
+                          className="w-[100px]"
+                        >
+                          All
+                        </NextButton>
+                        <NextButton
+                          onClick={() => {
+                            launchpad.pairFilterStatus = "success";
+                            launchpad.ftoPairsPagination.page = 1;
+                          }}
+                          className="w-[100px]"
+                        >
+                          Success
+                        </NextButton>
+                        <NextButton
+                          onClick={() => {
+                            launchpad.pairFilterStatus = "fail";
+                            launchpad.ftoPairsPagination.page = 1;
+                          }}
+                          className="w-[100px]"
+                        >
+                          Failed
+                        </NextButton>
+                        <NextButton
+                          onClick={() => {
+                            launchpad.pairFilterStatus = "processing";
+                            launchpad.ftoPairsPagination.page = 1;
+                          }}
+                          className="w-[100px]"
+                        >
+                          Processing
+                        </NextButton>
+                      </div>
+                    </div>
+                  </SpinnerContainer>
+                </div>
+              )}
+            </Observer>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {launchpad.ftoPairs.loading ? (
@@ -79,42 +175,49 @@ const LaunchPage: NextLayoutPage = observer(() => {
           >
             <Tab key="all" title="All Projects">
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-                {launchpad.ftoPairs.value?.data.map((pair: FtoPairContract) => (
-                  <div key={pair.address}>
-                    <LaunchCard
-                      pair={pair}
-                      action={
-                        <div className="flex">
-                          <Link
-                            href={`/launch-detail/${pair.address}`}
-                            className="text-black font-bold w-full px-[8px]"
-                          >
-                            <Button className="w-full">View Token</Button>
-                          </Link>
-                          {pair.ftoState === 0 && (
+                {launchpad.getFtoPairs.value
+                  ?.slice(
+                    (launchpad.ftoPairsPagination.page - 1) *
+                      launchpad.ftoPairsPagination.limit,
+                    launchpad.ftoPairsPagination.page *
+                      launchpad.ftoPairsPagination.limit
+                  )
+                  .map((pair: FtoPairContract) => (
+                    <div key={pair.address}>
+                      <LaunchCard
+                        pair={pair}
+                        action={
+                          <div className="flex">
                             <Link
-                              href={`/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
+                              href={`/launch-detail/${pair.address}`}
                               className="text-black font-bold w-full px-[8px]"
                             >
-                              <Button className="w-full">
-                                <p>Swap Token</p>
-                                <p>
-                                  <Copy
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                    }}
-                                    className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-                                    value={`${window.location.origin}/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
-                                  ></Copy>
-                                </p>
-                              </Button>{" "}
+                              <Button className="w-full">View Token</Button>
                             </Link>
-                          )}
-                        </div>
-                      }
-                    />
-                  </div>
-                ))}
+                            {pair.ftoState === 0 && (
+                              <Link
+                                href={`/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
+                                className="text-black font-bold w-full px-[8px]"
+                              >
+                                <Button className="w-full">
+                                  <p>Swap Token</p>
+                                  <p>
+                                    <Copy
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                      }}
+                                      className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
+                                      value={`${window.location.origin}/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
+                                    ></Copy>
+                                  </p>
+                                </Button>{" "}
+                              </Link>
+                            )}
+                          </div>
+                        }
+                      />
+                    </div>
+                  ))}
               </div>
               <Pagination
                 className="flex justify-center mt-[12px]"
@@ -123,32 +226,26 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 initialPage={launchpad.ftoPairsPagination.page}
                 onChange={(page) => {
                   launchpad.ftoPairsPagination.onPageChange(page);
-                  launchpad.ftoPairs.call({
-                    page,
-                    limit: launchpad.ftoPairsPagination.limit,
-                  });
                 }}
               />
             </Tab>
             <Tab key="my" title="My Projects">
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-                {launchpad.myFtoPairs.value?.data.map(
-                  (pair: FtoPairContract) => (
-                    <div key={pair.address}>
-                      <LaunchCard
-                        pair={pair}
-                        action={
-                          <Link
-                            href={`/launch-detail/${pair.address}`}
-                            className="text-black font-bold w-full px-[8px]"
-                          >
-                            <Button className="w-full">View Token</Button>
-                          </Link>
-                        }
-                      />
-                    </div>
-                  )
-                )}
+                {launchpad.getMyFtoPairs.value?.map((pair: FtoPairContract) => (
+                  <div key={pair.address}>
+                    <LaunchCard
+                      pair={pair}
+                      action={
+                        <Link
+                          href={`/launch-detail/${pair.address}`}
+                          className="text-black font-bold w-full px-[8px]"
+                        >
+                          <Button className="w-full">View Token</Button>
+                        </Link>
+                      }
+                    />
+                  </div>
+                ))}
               </div>
               {/* <Pagination
                 className="flex justify-center mt-[12px]"

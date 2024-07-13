@@ -6,6 +6,7 @@ import { FtoPairContract } from "./contract/ftopair-contract";
 import { AsyncState, PaginationState } from "./utils";
 import { trpcClient } from "@/lib/trpc";
 import { createSiweMessage } from "@/lib/siwe";
+import { Lexend_Zetta } from "next/font/google";
 
 function calculateTimeDifference(timestamp: number): string {
   if (timestamp.toString().length !== 13) {
@@ -31,6 +32,26 @@ function calculateTimeDifference(timestamp: number): string {
 }
 
 class LaunchPad {
+  pairFilter: {
+    search: string;
+    status: "all" | "processing" | "success" | "fail";
+  } = {
+    search: "",
+    status: "all",
+  };
+
+  set pairFilterSearch(search: string) {
+    this.pairFilter.search = search;
+    this.getFtoPairs.call();
+    this.getMyFtoPairs.call();
+  }
+
+  set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
+    this.pairFilter.status = status;
+    this.getFtoPairs.call();
+    this.getMyFtoPairs.call();
+  }
+
   get ftofactoryContract() {
     return wallet.contracts.ftofactory;
   }
@@ -45,6 +66,68 @@ class LaunchPad {
   getPairAddress = async (index: bigint) =>
     await this.ftofactoryContract.allPairs.call([index]);
 
+  filterPairs = (pairs: FtoPairContract[]) => {
+    const filteredPairs = pairs
+      .filter((pair) => {
+        if (this.pairFilter.status === "all") return true;
+        else if (this.pairFilter.status === "processing") {
+          return pair.ftoState === 3;
+        } else if (this.pairFilter.status === "success") {
+          return pair.ftoState === 0;
+        } else if (this.pairFilter.status === "fail") {
+          return pair.ftoState === 1;
+        }
+      })
+      .filter((pair) => {
+        if (
+          pair.projectName
+            .toLowerCase()
+            .includes(this.pairFilter.search.toLowerCase()) ||
+          pair.name
+            .toLowerCase()
+            .includes(this.pairFilter.search.toLowerCase()) ||
+          pair.description
+            .toLowerCase()
+            .includes(this.pairFilter.search.toLowerCase()) ||
+          pair.address
+            .toLowerCase()
+            .includes(this.pairFilter.search.toLowerCase()) ||
+          pair.launchedToken.address
+            .toLowerCase()
+            .includes(this.pairFilter.search.toLowerCase()) ||
+          pair.launchedToken.name
+            .toLowerCase()
+            .includes(this.pairFilter.search.toLowerCase()) ||
+          pair.launchedToken.symbol
+            .toLowerCase()
+            .includes(this.pairFilter.search.toLowerCase())
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    return filteredPairs;
+  };
+
+  getFtoPairs = new AsyncState<FtoPairContract[]>(async () => {
+    if (!this.ftoPairs.value) {
+      await this.ftoPairs.call({
+        page: this.ftoPairsPagination.page,
+        limit: this.ftoPairsPagination.limit,
+      });
+    }
+    console.log("this.ftoPairs.value", this.ftoPairs.value);
+    return this.filterPairs(this.ftoPairs.value?.data ?? []) ?? [];
+  });
+
+  getMyFtoPairs = new AsyncState<FtoPairContract[]>(async () => {
+    if (!this.myFtoPairs.value) {
+      await this.myFtoPairs.call();
+    }
+    return this.filterPairs(this.myFtoPairs.value?.data ?? []) ?? [];
+  });
+
   ftoPairs = new AsyncState<
     {
       data: FtoPairContract[];
@@ -56,22 +139,35 @@ class LaunchPad {
     }>
   >(async ({ page, limit }) => {
     const [pairsLength] = await this.allPairsLength();
-    const size = Math.min(Number(pairsLength) - (page - 1) * limit, limit);
-    const pairIndexesByPage = Array.from(
-      { length: Number(size) },
-      (_, index) => {
-        return Number(pairsLength) - (page - 1) * limit - index - 1;
-      }
-    );
+    //const size = Math.min(Number(pairsLength) - (page - 1) * limit, limit);
+    // const pairIndexesByPage = Array.from(
+    //   { length: Number(pairsLength) },
+    //   (_, index) => {
+    //     return Number(pairsLength) - (page - 1) * limit - index - 1;
+    //   }
+    // );
+    // let data = await Promise.all(
+    //   pairIndexesByPage.map(async (_) => {
+    //     const [pairAddress] = await this.getPairAddress(BigInt(_));
+    //     const pair = new FtoPairContract({ address: pairAddress as string });
+    //     pair.init();
+    //     return pair;
+    //   })
+    // );
+
     const data = await Promise.all(
-      pairIndexesByPage.map(async (_) => {
-        const [pairAddress] = await this.getPairAddress(BigInt(_));
-        const pair = new FtoPairContract({ address: pairAddress as string });
-        pair.init();
-        return pair;
-      })
+      Array.from({ length: Number(pairsLength) }, (_, index) => index).map(
+        async (index) => {
+          const [pairAddress] = await this.getPairAddress(BigInt(index));
+          const pair = new FtoPairContract({ address: pairAddress as string });
+          pair.init();
+          return pair;
+        }
+      )
     );
+
     this.ftoPairsPagination.setTotal(Number(pairsLength));
+
     return {
       data,
       total: Number(pairsLength),
@@ -86,7 +182,8 @@ class LaunchPad {
       provider: wallet.account,
       chain_id: wallet.currentChainId,
     });
-    const data = await Promise.all(
+
+    let data = await Promise.all(
       projects.map(async ({ pair: pairAddress }) => {
         console.log("pairAddress", pairAddress);
         const pair = new FtoPairContract({ address: pairAddress as string });
@@ -94,6 +191,7 @@ class LaunchPad {
         return pair;
       })
     );
+
     return {
       data,
       total: data.length,
@@ -107,6 +205,7 @@ class LaunchPad {
   myFtoPairsPagination = new PaginationState({
     limit: 9,
   });
+
   // getPairInfo = async (pairAddress: `0x${string}`) => {
   //   const ftoPairContract = this.ftoPairContract(pairAddress);
   //   const launchedTokenAddress = await ftoPairContract.launchedTokenAddress();
