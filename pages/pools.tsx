@@ -15,6 +15,9 @@ import { useRouter } from "next/router";
 import { set } from "lodash";
 import Link from "next/link";
 import { Copy } from "@/components/copy";
+import { wallet } from "@/services/wallet";
+import { chainsMap } from "@/lib/chain";
+import { networksMap } from "@/services/chain";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
@@ -22,6 +25,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
   const { data: pairsMap, isLoading } = trpc.pair.getPairs.useQuery(
     {
       chainId: chainId as number,
+      blockAddress: networksMap[chainId as number].blacklist?.poolBlacklist,
     },
     {
       enabled: !!chainId,

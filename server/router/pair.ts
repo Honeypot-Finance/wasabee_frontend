@@ -3,7 +3,7 @@ import { factoryABI } from "@/lib/abis/factory";
 import { publicProcedure, router } from "../trpc";
 import z from "zod";
 import { pairByTokensLoader, tokenLoader } from "@/lib/dataloader/pair";
-import { getContract } from "viem";
+import { Address, getContract } from "viem";
 import { createPublicClientByChain } from "@/lib/client";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import PQueue from "p-queue";
@@ -12,6 +12,7 @@ import { networksMap } from "@/services/chain";
 import { kv } from "@/lib/kv";
 import { Token } from "@/services/contract/token";
 import { pairQueryOutput } from "@/types/pair";
+import { BlockList } from "net";
 
 const queue = new PQueue({ concurrency: 10 });
 
@@ -47,6 +48,7 @@ export const pairRouter = router({
     .input(
       z.object({
         chainId: z.number(),
+        blockAddress: z.array(z.string().startsWith("0x")).optional(),
       })
     )
     .query(async ({ input }): Promise<pairQueryOutput> => {
@@ -80,6 +82,7 @@ export const pairRouter = router({
               const pairAddress = await factoryContract.read.allPairs([
                 BigInt(index),
               ]);
+
               const pairContract = getContract({
                 address: pairAddress as `0x${string}`,
                 abi: IUniswapV2Pair.abi,
@@ -91,6 +94,7 @@ export const pairRouter = router({
                 pairContract.read.token0(),
                 pairContract.read.token1(),
               ]);
+
               const tokens = await Promise.all([
                 tokenLoader.load({
                   address: token0 as `0x${string}`,
@@ -106,6 +110,15 @@ export const pairRouter = router({
                 token0: tokens[0],
                 token1: tokens[1],
               };
+
+              if (
+                input.blockAddress?.includes(pair.address) ||
+                input.blockAddress?.includes(pair.token0.address) ||
+                input.blockAddress?.includes(pair.token1.address)
+              ) {
+                return null;
+              }
+
               allPairs[index] = pair;
             } catch (error) {
               console.error(error);
@@ -116,6 +129,7 @@ export const pairRouter = router({
       });
       await queue.onIdle();
       await kv.set(getCacheKey(chainId, "allPairs"), allPairs);
+
       return allPairs;
     }),
 });

@@ -32,6 +32,9 @@ export class Network {
   ) {
     Object.assign(this, args);
   }
+  blacklist?: {
+    poolBlacklist: string[];
+  };
 }
 // export const polygonTestNetwork = new Network({
 //   chain: polygonMumbaiChain,
@@ -137,63 +140,66 @@ export const berachainBartioTestnetNetwork = new Network({
     //   decimals: 18,
     // },
   ],
+  blacklist: {
+    poolBlacklist: ["0xfc5e3743E9FAC8BB60408797607352E24Db7d65E"],
+  },
 });
 
-export const berachainTestNetwork = new Network({
-  chain: berachainTestnet,
-  faucets: [
-    {
-      url: "https://artio.faucet.berachain.com",
-      name: "Official Faucet",
-    },
-  ],
-  contracts: {
-    routerV2: "0xB192af2225791c439CB2024290158d3202DbcD95",
-    factory: "0xE0D1F1cE03A7598EE7FdF7E5DB837d9726C0Ea5c",
-    ftoFactory: "0xEd6a0A29A962B4296bCeEC4e1E55F5Ec0474EAC7",
-    ftoFacade: "0x3aCCC3dD26EeC5F6e254060906b7FA24D98E6722",
-    ftoTokens: [
-      {
-        address: "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
-        name: "USDT",
-        symbol: "USDT",
-        decimals: 18,
-      },
-    ],
-  },
-  faucetTokens: [
-    {
-      address: "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
-      name: "USDT",
-      symbol: "USDT",
-      decimals: 18,
-    },
-    // {
-    //   address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
-    //   name: "Wrapped BERA",
-    //   symbol: "WBERA",
-    //   decimals: 18,
-    // },
-    {
-      name: "AORI",
-      symbol: "AORI",
-      decimals: 18,
-      address: "0x388e116A5FE443dfc1A7338AED7D22be925E31f2",
-    },
-    {
-      name: "HONEY",
-      symbol: "HONEY",
-      decimals: 18,
-      address: "0xB2a1216856880D07eee9C4f71756FA8f72036e1E",
-    },
-    {
-      name: "tHPOT",
-      symbol: "tHPOT",
-      decimals: 18,
-      address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
-    },
-  ],
-});
+// export const berachainTestNetwork = new Network({
+//   chain: berachainTestnet,
+//   faucets: [
+//     {
+//       url: "https://artio.faucet.berachain.com",
+//       name: "Official Faucet",
+//     },
+//   ],
+//   contracts: {
+//     routerV2: "0xB192af2225791c439CB2024290158d3202DbcD95",
+//     factory: "0xE0D1F1cE03A7598EE7FdF7E5DB837d9726C0Ea5c",
+//     ftoFactory: "0xEd6a0A29A962B4296bCeEC4e1E55F5Ec0474EAC7",
+//     ftoFacade: "0x3aCCC3dD26EeC5F6e254060906b7FA24D98E6722",
+//     ftoTokens: [
+//       {
+//         address: "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
+//         name: "USDT",
+//         symbol: "USDT",
+//         decimals: 18,
+//       },
+//     ],
+//   },
+//   faucetTokens: [
+//     {
+//       address: "0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46",
+//       name: "USDT",
+//       symbol: "USDT",
+//       decimals: 18,
+//     },
+//     // {
+//     //   address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
+//     //   name: "Wrapped BERA",
+//     //   symbol: "WBERA",
+//     //   decimals: 18,
+//     // },
+//     {
+//       name: "AORI",
+//       symbol: "AORI",
+//       decimals: 18,
+//       address: "0x388e116A5FE443dfc1A7338AED7D22be925E31f2",
+//     },
+//     {
+//       name: "HONEY",
+//       symbol: "HONEY",
+//       decimals: 18,
+//       address: "0xB2a1216856880D07eee9C4f71756FA8f72036e1E",
+//     },
+//     {
+//       name: "tHPOT",
+//       symbol: "tHPOT",
+//       decimals: 18,
+//       address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
+//     },
+//   ],
+// });
 
 export const sepoliaNetwork = new Network({
   chain: sepolia,
