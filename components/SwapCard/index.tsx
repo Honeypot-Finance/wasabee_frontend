@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import { isEthAddress } from "@/lib/address";
 import { useAccount } from "wagmi";
 import { wallet } from "@/services/wallet";
-import { amountFormatted } from '../../lib/format';
+import { amountFormatted } from "../../lib/format";
 import { AmountFormat } from "../AmountFormat";
 
 export const SwapCard = observer(() => {
@@ -32,7 +32,12 @@ export const SwapCard = observer(() => {
     }
   }, [inputCurrency, outputCurrency, wallet.isInit]);
   return (
-    <SpinnerContainer isLoading={swap.currentPair.loading || !!swap.currentPair.value?.getAmountOut.loading}>
+    <SpinnerContainer
+      isLoading={
+        swap.currentPair.loading ||
+        !!swap.currentPair.value?.getAmountOut.loading
+      }
+    >
       <div className=" flex flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
         <div className="flex justify-between items-center w-full">
           <SwapAmount
@@ -118,7 +123,9 @@ export const SwapCard = observer(() => {
         {!!swap.price && (
           <div className="flex w-[529px] max-w-full h-[71px] justify-between items-center border [background:#291C0A] px-5 py-2.5 rounded-2xl border-solid border-[rgba(247,147,26,0.20)]">
             <div>
-              <div><AmountFormat amount={swap.price?.toFixed()}></AmountFormat></div>
+              <div>
+                <AmountFormat amount={swap.price?.toFixed()}></AmountFormat>
+              </div>
               <div>
                 {swap.toToken?.displayName} per {swap.fromToken?.displayName}
               </div>
@@ -126,9 +133,10 @@ export const SwapCard = observer(() => {
             <div>
               <div>
                 {amountFormatted(swap.minToAmount, {
-                decimals: 0,
-                fixed: 6
-              })} {swap.toToken?.displayName}
+                  decimals: 0,
+                  fixed: 6,
+                })}{" "}
+                {swap.toToken?.displayName}
               </div>
               <div>Minimum Received</div>
             </div>
