@@ -38,21 +38,19 @@ const FaucetPage: NextLayoutPage = observer(() => {
                 </div>
                 <div className="flex-1">{token.balanceFormatted}</div>
               </div>
-              {!token.claimed && (
-                <Button
-                  isDisabled={token.claimed}
-                  isLoading={token.faucet.loading}
-                  className="ml-[13px]"
-                  onClick={async () => {
-                    token.claimed = true;
-                    await token.faucet.call();
-                    await token.getBalance();
-                    await token.getClaimed();
-                  }}
-                >
-                  Claim Tokens
-                </Button>
-              )}
+              <Button
+                isDisabled={token.claimed}
+                isLoading={token.faucet.loading}
+                className="ml-[13px]"
+                onClick={async () => {
+                  token.claimed = true;
+                  await token.faucet.call();
+                  await token.getBalance();
+                  await token.getClaimed();
+                }}
+              >
+                {token.claimed ? "Tokens Claimed" : "Claim Tokens"}
+              </Button>
             </div>
           ))
         ) : (
