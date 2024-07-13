@@ -12,18 +12,20 @@ import { observer, useLocalObservable } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { getHash } from "@/lib/url";
 import Link from "next/link";
+import TransactionPendingToastify from "../CustomToastify/TransactionPendingToastify/TransactionPendingToastify";
+import { toast } from "react-toastify";
 
-export const Swap = observer(({activeTab}: {activeTab?: 'swap' | 'lp'}) => {
+export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
   const { chainId } = useAccount();
   const state = useLocalObservable(() => ({
     activeTab: activeTab || "swap",
-    get isSwap(){
-      return state.activeTab === 'swap'
+    get isSwap() {
+      return state.activeTab === "swap";
     },
-    get isLp () {
-      return state.activeTab === 'lp'
+    get isLp() {
+      return state.activeTab === "lp";
     },
-    setActiveTab(tab: 'swap' | 'lp') {
+    setActiveTab(tab: "swap" | "lp") {
       this.activeTab = tab;
     },
   }));
@@ -36,19 +38,20 @@ export const Swap = observer(({activeTab}: {activeTab?: 'swap' | 'lp'}) => {
       refetchOnWindowFocus: false,
     }
   );
+
   useEffect(() => {
     if (pairsMap) {
       liquidity.initPool(Object.values(pairsMap));
     }
   }, [pairsMap]);
-//   useEffect(() => {
-//     window.onhashchange = () => {
-//       const hash = getHash();
-//       if (hash) {
-//         state.setActiveTab(hash);
-//       }
-//     }
-//   }, [])
+  //   useEffect(() => {
+  //     window.onhashchange = () => {
+  //       const hash = getHash();
+  //       if (hash) {
+  //         state.setActiveTab(hash);
+  //       }
+  //     }
+  //   }, [])
   return (
     <div className="flex justify-center gap-[44px] flex-wrap">
       {/* <Image
@@ -59,9 +62,9 @@ export const Swap = observer(({activeTab}: {activeTab?: 'swap' | 'lp'}) => {
       ></Image> */}
       <div className=" relative w-[569px] max-w-full">
         <Tabs
-        //   onSelectionChange={(tab) => {
-        //     router.pus
-        //   }}
+          //   onSelectionChange={(tab) => {
+          //     router.pus
+          //   }}
           selectedKey={state.activeTab}
           disableAnimation
           classNames={{
@@ -97,13 +100,14 @@ export const Swap = observer(({activeTab}: {activeTab?: 'swap' | 'lp'}) => {
             <LPCard></LPCard>
           </Tab>
         </Tabs>
-        {state.isSwap && <div className=" absolute right-0 top-0">
-          <Slippage onSelect={() => {}}></Slippage>
-        </div>}
+        {state.isSwap && (
+          <div className=" absolute right-0 top-0">
+            <Slippage onSelect={() => {}}></Slippage>
+          </div>
+        )}
       </div>
     </div>
   );
 });
-
 
 Swap.displayName = "Swap";

@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import { ToastOptions, toast } from "react-toastify";
 import { wallet } from "./wallet";
+import TransactionPendingToastify from "@/components/CustomToastify/TransactionPendingToastify/TransactionPendingToastify";
 
 export class ValueState<T> {
   _value!: T;
@@ -99,7 +100,7 @@ export class ContractWrite<T extends (...args: any) => any> {
         account: wallet.account,
       });
       console.log("hash", hash);
-      const pendingPopup = toast.info(`Transaction ${hash} Pending`, {
+      const pendingPopup = toast(TransactionPendingToastify(hash), {
         autoClose: false,
         isLoading: true,
       } as ToastOptions);
