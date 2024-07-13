@@ -105,8 +105,8 @@ export const berachainBartioTestnetNetwork = new Network({
       },
       {
         address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
-        name: "HPOT",
-        symbol: "HPOT",
+        name: "tHPOT",
+        symbol: "tHPOT",
         decimals: 18,
       },
       // {
@@ -120,8 +120,8 @@ export const berachainBartioTestnetNetwork = new Network({
   faucetTokens: [
     {
       address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
-      name: "HPOT",
-      symbol: "HPOT",
+      name: "tHPOT",
+      symbol: "tHPOT",
       decimals: 18,
     },
     // {
@@ -187,10 +187,10 @@ export const berachainTestNetwork = new Network({
       address: "0xB2a1216856880D07eee9C4f71756FA8f72036e1E",
     },
     {
-      name: "HPOT",
-      symbol: "HPOT",
+      name: "tHPOT",
+      symbol: "tHPOT",
       decimals: 18,
-      address: "0x46bf2B606A217dBD8724B2AC9Cd7e9d1bc71D78A",
+      address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
     },
   ],
 });
