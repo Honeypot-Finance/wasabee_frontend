@@ -24,7 +24,6 @@ import {
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import { Resolver } from "dns";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -37,13 +36,37 @@ const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(
-      z.object({
-        projectName: z.string(),
-        description: z.string(),
-        twitter: z.string().url().optional(),
-        website: z.string().url().optional(),
-        telegram: z.string().url().optional(),
-      })
+      z
+        .object({
+          projectName: z.string(),
+          description: z.string(),
+          twitter: z
+            .union([
+              z.string().url().startsWith("https://x.com/"),
+              z.string().url().startsWith("https://twitter.com/"),
+            ])
+            .optional(),
+          website: z.string().url().startsWith("https://").optional(),
+          telegram: z
+            .union([
+              z.string().startsWith("https://t.me/"),
+              z.string().startsWith("@"),
+            ])
+            .optional(),
+        })
+        .transform((data) => {
+          const mutateTelegram = (telegram: string | undefined) => {
+            if (telegram && telegram.startsWith("@")) {
+              return `https://t.me/${telegram.split("@")[1]}`;
+            }
+
+            return telegram;
+          };
+          return {
+            ...data,
+            telegram: mutateTelegram(data.telegram),
+          };
+        })
     ),
   });
   const FormBody = observer(({ onClose }: any) => (
