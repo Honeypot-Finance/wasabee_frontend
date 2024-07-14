@@ -41,6 +41,12 @@ export const TVChartContainer = (
       autosize: props.autosize,
       theme: props.theme,
       symbol_search_complete: props.symbol_search_complete,
+      overrides: {
+        "paneProperties.background": "#271A0C",
+        "paneProperties.backgroundType": "solid",
+        "paneProperties.separatorColor": "#F7931A",
+      },
+      custom_css_url: "./TVChartContainer.module.css",
     };
 
     const tvWidget = new widget(widgetOptions);

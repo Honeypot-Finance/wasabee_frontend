@@ -12,5 +12,6 @@
 }
 
 .TVChartContainer {
-  height: calc(100vh - 60px);
+  border-radius: 2rem;
+  overflow: hidden;
 }
