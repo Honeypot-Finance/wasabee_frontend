@@ -155,7 +155,7 @@ export const berachainBartioTestnetNetwork = new Network({
     // },
   ],
   blacklist: {
-    poolBlacklist: ["0xfc5e3743E9FAC8BB60408797607352E24Db7d65E"],
+    poolBlacklist: ["0xfF95cdfC724Ca85b8d96D5a6Ea86333AC6a4799D"],
   },
   validatedTokensInfo: {
     "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8": {
