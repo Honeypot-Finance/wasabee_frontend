@@ -18,6 +18,7 @@ import { Copy } from "@/components/copy";
 import { wallet } from "@/services/wallet";
 import { chainsMap } from "@/lib/chain";
 import { networksMap } from "@/services/chain";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
@@ -78,6 +79,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
       );
     },
   }));
+
   useEffect(() => {
     if (pairsMap) {
       liquidity.initPool(Object.values(pairsMap));
@@ -122,12 +124,30 @@ const PoolsPage: NextLayoutPage = observer(() => {
         >
           <Tab key="all" title="All Pools">
             <Card className="[background:#1D1407] rounded-[20px]">
-              <CardBody>
+              <CardBody className="">
                 <Table
                   rowKey="address"
                   pagination={state.pagination}
                   isLoading={isLoading}
                   columns={[
+                    {
+                      title: "",
+                      dataKey: "_action",
+                      render(value, row) {
+                        return (
+                          <div className="flex items-center gap-[12px]">
+                            <TokenLogo
+                              token={row.token0}
+                              addtionalClasses="translate-x-[10px]"
+                            ></TokenLogo>
+                            <TokenLogo
+                              token={row.token1}
+                              addtionalClasses="translate-x-[-10px]"
+                            ></TokenLogo>
+                          </div>
+                        );
+                      },
+                    },
                     {
                       title: "Pool Name",
                       dataKey: "poolName",

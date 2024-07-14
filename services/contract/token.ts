@@ -45,6 +45,11 @@ export class Token implements BaseContract {
     if (balance) {
       this.balanceWithoutDecimals = new BigNumber(balance);
     }
+
+    this.logoURI =
+      networksMap[wallet.currentChainId].validatedTokensInfo[this.address]
+        ?.logoURI ?? "/images/icons/unknown-token-icon.png";
+
     makeAutoObservable(this);
   }
 
@@ -97,11 +102,6 @@ export class Token implements BaseContract {
           })
         : Promise.resolve(),
     ]);
-
-    this.logoURI =
-      networksMap[wallet.currentChainId].validatedTokensInfo[this.address]
-        ?.logoURI ?? "/images/icons/unknown-token-icon.png";
-
     this.isInit = true;
   }
 
