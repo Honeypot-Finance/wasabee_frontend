@@ -1,13 +1,10 @@
 import dayjs from "dayjs";
 import { wallet } from "./wallet";
-import { formatEther } from "viem";
 import BigNumber from "bignumber.js";
 import { FtoPairContract } from "./contract/ftopair-contract";
 import { AsyncState, PaginationState } from "./utils";
 import { trpcClient } from "@/lib/trpc";
 import { createSiweMessage } from "@/lib/siwe";
-import { Lexend_Zetta } from "next/font/google";
-
 function calculateTimeDifference(timestamp: number): string {
   if (timestamp.toString().length !== 13) {
     return "Invaild";
@@ -117,7 +114,7 @@ class LaunchPad {
         limit: this.ftoPairsPagination.limit,
       });
     }
-    console.log("this.ftoPairs.value", this.ftoPairs.value);
+
     return this.filterPairs(this.ftoPairs.value?.data ?? []) ?? [];
   });
 
@@ -125,6 +122,7 @@ class LaunchPad {
     if (!this.myFtoPairs.value) {
       await this.myFtoPairs.call();
     }
+
     return this.filterPairs(this.myFtoPairs.value?.data ?? []) ?? [];
   });
 
@@ -160,11 +158,15 @@ class LaunchPad {
         async (index) => {
           const [pairAddress] = await this.getPairAddress(BigInt(index));
           const pair = new FtoPairContract({ address: pairAddress as string });
-          pair.init();
+          await pair.init();
           return pair;
         }
       )
     );
+
+    data.sort((a, b) => {
+      return Number(b.startTime) - Number(a.startTime);
+    });
 
     this.ftoPairsPagination.setTotal(Number(pairsLength));
 
@@ -191,6 +193,12 @@ class LaunchPad {
         return pair;
       })
     );
+
+    data.sort((a, b) => {
+      return Number(b.startTime) - Number(a.startTime);
+    });
+
+    this.myFtoPairsPagination.setTotal(data.length);
 
     return {
       data,
