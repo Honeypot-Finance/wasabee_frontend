@@ -25,6 +25,16 @@ export class Network {
     url: string;
     name: string;
   }[];
+  blacklist?: {
+    poolBlacklist: string[];
+  };
+  validatedTokensInfo: Record<
+    string,
+    {
+      name: string;
+      logoURI?: string;
+    }
+  > = {};
   constructor(
     args: Omit<Partial<Network>, "faucetTokens"> & {
       faucetTokens: Partial<Token>[];
@@ -32,9 +42,6 @@ export class Network {
   ) {
     Object.assign(this, args);
   }
-  blacklist?: {
-    poolBlacklist: string[];
-  };
 }
 // export const polygonTestNetwork = new Network({
 //   chain: polygonMumbaiChain,
@@ -99,6 +106,7 @@ export const berachainBartioTestnetNetwork = new Network({
         name: "Wrapped Bera",
         symbol: "WBERA",
         decimals: 18,
+        logoURI: "/images/icons/wbera-token-icon.png",
       },
       {
         address: "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03",
@@ -112,12 +120,12 @@ export const berachainBartioTestnetNetwork = new Network({
         symbol: "tHPOT",
         decimals: 18,
       },
-      // {
-      //   address: "0x5806E416dA447b267cEA759358cF22Cc41FAE80F",
-      //   name: "Wrapped BERA",
-      //   symbol: "WBERA",
-      //   decimals: 18,
-      // },
+      {
+        address: "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d",
+        name: "Bera the Pooh",
+        symbol: "Bera the Pooh",
+        decimals: 18,
+      },
     ],
   },
   faucetTokens: [
@@ -148,6 +156,28 @@ export const berachainBartioTestnetNetwork = new Network({
   ],
   blacklist: {
     poolBlacklist: ["0xfc5e3743E9FAC8BB60408797607352E24Db7d65E"],
+  },
+  validatedTokensInfo: {
+    "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8": {
+      name: "Wrapped Bera",
+      logoURI: "/images/icons/wbera-token-icon.png",
+    },
+    "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d": {
+      name: "Bera the Pooh",
+      logoURI: "/images/icons/bera-the-pooh-token-icon.png",
+    },
+    "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03": {
+      name: "Honey",
+      logoURI: "/images/icons/honey-token-icon.png",
+    },
+    "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E": {
+      name: "tHPOT",
+      logoURI: "/images/icons/thpot-token-icon.jpg",
+    },
+    "0x2A108225249CB5B3E1E33943F5FEfAec33b1D452": {
+      name: "USDT",
+      logoURI: "/images/icons/usdt-token-icon.png",
+    },
   },
 });
 

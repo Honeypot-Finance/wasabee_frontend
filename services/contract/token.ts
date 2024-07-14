@@ -7,6 +7,7 @@ import { ContractWrite } from "../utils";
 import { amountFormatted } from "@/lib/format";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { faucetABI } from "@/lib/abis/faucet";
+import { networksMap } from "../chain";
 
 export class Token implements BaseContract {
   address: string = "";
@@ -96,6 +97,11 @@ export class Token implements BaseContract {
           })
         : Promise.resolve(),
     ]);
+
+    this.logoURI =
+      networksMap[wallet.currentChainId].validatedTokensInfo[this.address]
+        ?.logoURI ?? "/images/icons/unknown-token-icon.png";
+
     this.isInit = true;
   }
 
