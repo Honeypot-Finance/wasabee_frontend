@@ -7,6 +7,7 @@ import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useEffect } from "react";
 import { amountFormatted } from "../lib/format";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
 
 const FaucetPage: NextLayoutPage = observer(() => {
   useEffect(() => {
@@ -31,12 +32,13 @@ const FaucetPage: NextLayoutPage = observer(() => {
         {wallet.currentChain?.faucetTokens?.length ? (
           wallet.currentChain?.faucetTokens.map((token) => (
             <div key={token.address} className="flex  items-center">
-              <div className="flex-1 flex w-[439px] items-center gap-[100px] border [background:var(--card-color,#271A0C)] pl-3 pr-4 py-3 rounded-2xl border-solid border-[rgba(255,255,255,0.10)]">
+              <div className="flex-1 flex w-[439px] items-center gap-[1rem] border [background:var(--card-color,#271A0C)] pl-3 pr-4 py-3 rounded-2xl border-solid border-[rgba(255,255,255,0.10)]">
+                <TokenLogo token={token}></TokenLogo>
                 <div className="flex-1 flex items-center">
                   {token.displayName}
                   <Copy className="ml-[8px]" value={token.address}></Copy>
                 </div>
-                <div className="flex-1">{token.balanceFormatted}</div>
+                <div className="">{token.balanceFormatted}</div>
               </div>
               <Button
                 isDisabled={token.claimed}

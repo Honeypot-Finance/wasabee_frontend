@@ -25,6 +25,7 @@ import { Copy } from "../copy/index";
 import { BiLinkExternal } from "react-icons/bi";
 import { wallet } from "@/services/wallet";
 import Image from "next/image";
+import TokenLogo from "../TokenLogo/TokenLogo";
 
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
@@ -79,8 +80,6 @@ export const TokenSelector = observer(
       tokens: [] as Token[],
     }));
 
-    console.log(state.tokens);
-
     useOnce(() => {
       isConnected && liquidity.tokens.forEach((t) => t.getBalance());
     }, [liquidity.tokens, isConnected]);
@@ -120,19 +119,7 @@ export const TokenSelector = observer(
         >
           <PopoverTrigger>
             <Button className="inline-flex w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]">
-              {value && (
-                <Image
-                  className="border border-[color:var(--card-stroke,#F7931A)] rounded-[50%]"
-                  src={
-                    !!value.logoURI
-                      ? value.logoURI
-                      : "/images/icons/unknown-token-icon.png"
-                  }
-                  alt=""
-                  width={24}
-                  height={24}
-                />
-              )}
+              {value && <TokenLogo token={value}></TokenLogo>}
               {value?.displayName ? value.displayName : "Select Token"}
               <DropdownSvg></DropdownSvg>
             </Button>
@@ -174,17 +161,7 @@ export const TokenSelector = observer(
                                 }}
                                 className="py-[8px] px-[8px] rounded-[8px] flex justify-between items-center cursor-pointer hover:[background:rgba(255,255,255,0.04)]"
                               >
-                                <Image
-                                  className="border border-[color:var(--card-stroke,#F7931A)] rounded-[50%]"
-                                  src={
-                                    !!token.logoURI
-                                      ? token.logoURI
-                                      : "/images/icons/unknown-token-icon.png"
-                                  }
-                                  alt=""
-                                  width={24}
-                                  height={24}
-                                />
+                                <TokenLogo token={token}></TokenLogo>
                                 <div className="flex-grow-[1] px-2">
                                   <div>{token.name}</div>
                                   <div className="text-[rgba(255,255,255,0.50)] [font-kerning:none] [font-feature-settings:'calt'_off] [font-family:Inter] text-xs font-normal leading-[14px]">
