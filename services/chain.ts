@@ -127,6 +127,12 @@ export const berachainBartioTestnetNetwork = new Network({
       symbol: "tHPOT",
       decimals: 18,
     },
+    {
+      address: "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d",
+      name: "Bera the Pooh",
+      symbol: "Bera the Pooh",
+      decimals: 18,
+    },
     // {
     //   name: "YEET",
     //   symbol: "YEET",
