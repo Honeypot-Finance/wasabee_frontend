@@ -31,6 +31,7 @@ import { BiLinkExternal } from "react-icons/bi";
 import { PopupActions } from "reactjs-popup/dist/types";
 import PopUp from "@/components/PopUp/PopUp";
 import { info } from "console";
+import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 
 const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -351,7 +352,6 @@ const Action = observer(({ pair }: { pair: FtoPairContract }) => {
 });
 
 const LaunchPage: NextLayoutPage = observer(() => {
-  const popupRef = useRef<PopupActions | null>(null);
   const router = useRouter();
   const { pair: pairAddress } = router.query;
   const state = useLocalObservable(() => ({
@@ -467,33 +467,10 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 {state.pair.value?.raiseToken.address && (
                   <span className="flex flex-row">
                     <Copy value={state.pair.value?.raiseToken.address}></Copy>
-                    <PopUp
-                      info="normal"
-                      trigger={
-                        <BiLinkExternal
-                          onClick={() => {
-                            popupRef.current?.open();
-                          }}
-                          className=" cursor-pointer hover:text-primary "
-                        />
-                      }
-                      contents={
-                        <div className="flex flex-wrap justify-around">
-                          <Link
-                            target="_blank"
-                            href={`https://twitter.com/intent/tweet?text=Check Out Our Launchpad Project ${state.pair.value?.projectName} 
-                            
-                            ${window.location.href}`}
-                          >
-                            <Button>Share With Twitter</Button>
-                          </Link>
-                          <Link
-                            target="_blank"
-                            href={`https://telegram.me/share/url?url=${window.location.href}&text=Check Out Our Launchpad Project ${state.pair.value?.projectName}`}
-                          >
-                            <Button>Share With Telegram</Button>
-                          </Link>
-                        </div>
+                    <ShareSocialMedialPopUp
+                      shareUrl={window.location.href}
+                      shareText={
+                        "Checkout our Token " + state.pair.value?.projectName
                       }
                     />
                   </span>
