@@ -211,6 +211,23 @@ const PoolsPage: NextLayoutPage = observer(() => {
                   rowKey="address"
                   columns={[
                     {
+                      title: "",
+                      render(value, row) {
+                        return (
+                          <div className="flex items-center gap-[12px]">
+                            <TokenLogo
+                              token={row.token0}
+                              addtionalClasses="translate-x-[10px]"
+                            ></TokenLogo>
+                            <TokenLogo
+                              token={row.token1}
+                              addtionalClasses="translate-x-[-10px]"
+                            ></TokenLogo>
+                          </div>
+                        );
+                      },
+                    },
+                    {
                       title: "Pool Name",
                       dataKey: "poolName",
                     },

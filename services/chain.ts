@@ -116,29 +116,53 @@ export const berachainBartioTestnetNetwork = new Network({
       },
       {
         address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
-        name: "tHPOT",
-        symbol: "tHPOT",
+        name: "T-HPOT",
+        symbol: "T-HPOT",
         decimals: 18,
       },
       {
         address: "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d",
         name: "Bera the Pooh",
-        symbol: "Bera the Pooh",
+        symbol: "BERA THE POOH",
         decimals: 18,
       },
+      // {
+      //   address: "0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c",
+      //   name: "USDC",
+      //   symbol: "USDC",
+      //   decimals: 18,
+      // },
+      // {
+      //   address: "0x286F1C3f0323dB9c91D1E8f45c8DF2d065AB5fae",
+      //   name: "WBTC",
+      //   symbol: "WBTC",
+      //   decimals: 18,
+      // },
+      // {
+      //   address: "0x6E1E9896e93F7A71ECB33d4386b49DeeD67a231A",
+      //   name: "WETH",
+      //   symbol: "WETH",
+      //   decimals: 18,
+      // },
+      // {
+      //   address: "0x806Ef538b228844c73E8E692ADCFa8Eb2fCF729c",
+      //   name: "DAI",
+      //   symbol: "DAI",
+      //   decimals: 18,
+      // },
     ],
   },
   faucetTokens: [
     {
       address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
-      name: "tHPOT",
-      symbol: "tHPOT",
+      name: "T-HPOT",
+      symbol: "T-HPOT",
       decimals: 18,
     },
     {
       address: "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d",
       name: "Bera the Pooh",
-      symbol: "Bera the Pooh",
+      symbol: "BERA THE POOH",
       decimals: 18,
     },
     // {
@@ -171,12 +195,28 @@ export const berachainBartioTestnetNetwork = new Network({
       logoURI: "/images/icons/honey-token-icon.png",
     },
     "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E": {
-      name: "tHPOT",
+      name: "T-HPOT",
       logoURI: "/images/icons/thpot-token-icon.jpg",
     },
     "0x2A108225249CB5B3E1E33943F5FEfAec33b1D452": {
       name: "USDT",
       logoURI: "/images/icons/usdt-token-icon.png",
+    },
+    "0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c": {
+      name: "USDC",
+      logoURI: "/images/icons/usdc-token-icon.png",
+    },
+    "0x286F1C3f0323dB9c91D1E8f45c8DF2d065AB5fae": {
+      name: "WBTC",
+      logoURI: "/images/icons/wbtc-token-icon.png",
+    },
+    "0x6E1E9896e93F7A71ECB33d4386b49DeeD67a231A": {
+      name: "WETH",
+      logoURI: "/images/icons/weth-token-icon.png",
+    },
+    "0x806Ef538b228844c73E8E692ADCFa8Eb2fCF729c": {
+      name: "DAI",
+      logoURI: "/images/icons/dai-token-icon.png",
     },
   },
 });

@@ -248,6 +248,18 @@ class Liquidity {
       pairContract.init();
       return pairContract;
     });
+
+    Object.keys(wallet.currentChain.validatedTokensInfo).forEach((address) => {
+      if (!this.tokensMap[address]) {
+        const token = new Token({
+          address,
+          ...wallet.currentChain.validatedTokensInfo[address],
+        });
+        this.tokensMap[address] = token;
+        token.init();
+      }
+    });
+
     this.isInit = true;
   }
 

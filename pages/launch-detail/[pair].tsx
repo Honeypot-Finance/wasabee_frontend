@@ -26,6 +26,7 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
 
 const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -295,7 +296,12 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
           state.setDepositAmount(e.target.value);
         }}
         defaultValue="0"
-        endContent={pair.raiseToken.displayName}
+        endContent={
+          <div className="flex items-center">
+            <span className="mr-2">{pair.raiseToken.displayName}</span>
+            <TokenLogo token={pair.raiseToken} />
+          </div>
+        }
       ></Input>
       <div className="flex items-center gap-[8px]">
         <div>Balance: {pair.raiseToken.balance.toFormat()}</div>
