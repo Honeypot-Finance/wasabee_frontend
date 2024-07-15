@@ -5,7 +5,8 @@ import PopUp from "../PopUp/PopUp";
 import { useRef } from "react";
 import { PopupActions } from "reactjs-popup/dist/types";
 
-interface IShareSocialMedialPopUpProps {
+interface IShareSocialMedialPopUpProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   shareUrl: string;
   shareText: string;
 }
@@ -16,14 +17,18 @@ export default function ShareSocialMedialPopUp(
   const popupRef = useRef<PopupActions | null>(null);
   return (
     <PopUp
+      {...props}
       info="normal"
       trigger={
-        <BiLinkExternal
-          onClick={() => {
-            popupRef.current?.open();
-          }}
-          className=" cursor-pointer hover:text-primary "
-        />
+        <div>
+          <BiLinkExternal
+            onClick={(e) => {
+              popupRef.current?.open();
+              e.preventDefault();
+            }}
+            className="cursor-pointer hover:text-primary "
+          />
+        </div>
       }
       contents={
         <div className="flex flex-wrap justify-around">

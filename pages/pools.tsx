@@ -19,6 +19,7 @@ import { wallet } from "@/services/wallet";
 import { chainsMap } from "@/lib/chain";
 import { networksMap } from "@/services/chain";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
+import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
@@ -161,37 +162,35 @@ const PoolsPage: NextLayoutPage = observer(() => {
                       render(value, row) {
                         return (
                           <div className="flex gap-[12px]">
-                            <Button>
-                              <Link
-                                href={`/pool?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
-                              >
-                                Add
-                                <p>
-                                  <Copy
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                    }}
-                                    className=" absolute ml-[20px] top-[50%] translate-y-[-50%]"
-                                    value={`${window.location.origin}/pool?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
-                                  ></Copy>
-                                </p>
-                              </Link>
-                            </Button>
+                            <Link
+                              className="flex items-center gap-[6px]"
+                              href={`/pool?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
+                            >
+                              <Button>
+                                <p>Add</p>
+                                <div>
+                                  <ShareSocialMedialPopUp
+                                    shareUrl={`${window.location.origin}/pool?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
+                                    shareText="Add Liquidity to this pool"
+                                  />
+                                </div>
+                              </Button>
+                            </Link>
                             <Button styleMode="plain">
                               <Link
+                                className="flex items-center gap-[6px]"
                                 href={`/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
                               >
                                 <p>Swap</p>
 
-                                <p>
-                                  <Copy
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                    }}
-                                    className=" absolute ml-[20px] top-[50%] translate-y-[-50%]"
-                                    value={`${window.location.origin}/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
-                                  ></Copy>
-                                </p>
+                                <ShareSocialMedialPopUp
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                  shareUrl={`${window.location.origin}/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
+                                  shareText="Swap with this pool"
+                                />
                               </Link>
                             </Button>
                           </div>
