@@ -5,6 +5,7 @@ import { FtoPairContract } from "./contract/ftopair-contract";
 import { AsyncState, PaginationState } from "./utils";
 import { trpcClient } from "@/lib/trpc";
 import { createSiweMessage } from "@/lib/siwe";
+import { Address } from "viem";
 function calculateTimeDifference(timestamp: number): string {
   if (timestamp.toString().length !== 13) {
     return "Invaild";
@@ -41,12 +42,14 @@ class LaunchPad {
     this.pairFilter.search = search;
     this.getFtoPairs.call();
     this.getMyFtoPairs.call();
+    this.getMyFtoParticipatedPairs.call();
   }
 
   set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
     this.pairFilter.status = status;
     this.getFtoPairs.call();
     this.getMyFtoPairs.call();
+    this.getMyFtoParticipatedPairs.call();
   }
 
   get ftofactoryContract() {
@@ -126,6 +129,16 @@ class LaunchPad {
     return this.filterPairs(this.myFtoPairs.value?.data ?? []) ?? [];
   });
 
+  getMyFtoParticipatedPairs = new AsyncState<FtoPairContract[]>(async () => {
+    if (!this.myFtoParticipatedPairs.value) {
+      await this.myFtoParticipatedPairs.call();
+    }
+
+    return (
+      this.filterPairs(this.myFtoParticipatedPairs.value?.data ?? []) ?? []
+    );
+  });
+
   ftoPairs = new AsyncState<
     {
       data: FtoPairContract[];
@@ -176,6 +189,34 @@ class LaunchPad {
     };
   });
 
+  myFtoParticipatedPairs = new AsyncState<{
+    data: FtoPairContract[];
+    total: number;
+  }>(async () => {
+    const projects = await this.ftofactoryContract.events(
+      wallet.account as Address
+    );
+
+    let data = await Promise.all(
+      projects.map(async (pairAddress) => {
+        const pair = new FtoPairContract({ address: pairAddress as string });
+        await pair.init();
+        return pair;
+      })
+    );
+
+    data.sort((a, b) => {
+      return Number(b.startTime) - Number(a.startTime);
+    });
+
+    this.myFtoParticipatedPairsPagination.setTotal(data.length);
+
+    return {
+      data,
+      total: data.length,
+    };
+  });
+
   myFtoPairs = new AsyncState<{
     data: FtoPairContract[];
     total: number;
@@ -189,7 +230,7 @@ class LaunchPad {
       projects.map(async ({ pair: pairAddress }) => {
         console.log("pairAddress", pairAddress);
         const pair = new FtoPairContract({ address: pairAddress as string });
-        pair.init();
+        await pair.init();
         return pair;
       })
     );
@@ -211,6 +252,10 @@ class LaunchPad {
   });
 
   myFtoPairsPagination = new PaginationState({
+    limit: 9,
+  });
+
+  myFtoParticipatedPairsPagination = new PaginationState({
     limit: 9,
   });
 

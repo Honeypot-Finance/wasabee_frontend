@@ -7,7 +7,6 @@ interface TokenLogoProps {
 }
 
 export default function TokenLogo({ token, addtionalClasses }: TokenLogoProps) {
-  console.log(token);
   return (
     <Image
       className={

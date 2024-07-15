@@ -1,9 +1,10 @@
 import { BaseContract } from ".";
 import { wallet } from "../wallet";
-import { getContract } from "viem";
+import { Address, getContract } from "viem";
 import { makeAutoObservable } from "mobx";
 import { ContractWrite, AsyncState } from "../utils";
 import { ftoFactoryABI } from "@/lib/abis/ftoFactory";
+import { FtoPairContract } from "./ftopair-contract";
 
 export class FtoFactoryContract implements BaseContract {
   address = "";
@@ -19,6 +20,12 @@ export class FtoFactoryContract implements BaseContract {
       abi: this.abi,
       client: { public: wallet.publicClient, wallet: wallet.walletClient },
     });
+  }
+
+  async events(depositerAddress: Address): Promise<readonly Address[]> {
+    const res = await this.contract.read.events([depositerAddress]);
+    console.log("res", res);
+    return res;
   }
 
   get createFTO() {
