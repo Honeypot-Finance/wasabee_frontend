@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import "@/styles/overrides/reactjs-popup.css";
 //@ts-ignore
 import type { AppProps } from "next/app";
 import { Layout } from "@/components/layout";

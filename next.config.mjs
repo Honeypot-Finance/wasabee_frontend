@@ -8,7 +8,7 @@ const nextConfig = {
       //   destination: '/swap',
       //   permanent: false,
       // },
-    ]
+    ];
   },
 };
 
