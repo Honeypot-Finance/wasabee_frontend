@@ -8,6 +8,7 @@ import { FtoFacadeContract } from "./contract/ftofacade-contract";
 import { makeAutoObservable } from "mobx";
 import { Token } from "./contract/token";
 import { createPublicClientByChain } from "@/lib/client";
+import { AsyncState } from "./utils";
 
 export class Wallet {
   account: string = "";

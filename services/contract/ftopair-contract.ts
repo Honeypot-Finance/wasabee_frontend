@@ -112,7 +112,7 @@ export class FtoPairContract implements BaseContract {
     if (!this.endTime) {
       return "-";
     }
-    console.log("this.endTime", this.endTime);
+    //console.log("this.endTime", this.endTime);
     const targetTime = dayjs(
       new BigNumber(this.endTime).multipliedBy(1000).toNumber()
     );
@@ -232,7 +232,7 @@ export class FtoPairContract implements BaseContract {
       chain_id: wallet.currentChainId,
       pair: this.address,
     });
-    this.socials = []
+    this.socials = [];
     if (res.telegram) {
       this.telegram = res.telegram;
       this.socials.push({

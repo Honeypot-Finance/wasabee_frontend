@@ -132,7 +132,6 @@ const PoolsPage: NextLayoutPage = observer(() => {
                   columns={[
                     {
                       title: "",
-                      dataKey: "_action",
                       render(value, row) {
                         return (
                           <div className="flex items-center gap-[12px]">

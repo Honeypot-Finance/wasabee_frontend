@@ -24,6 +24,7 @@ import {
 import { IoClose, IoSearchOutline } from "react-icons/io5";
 import { SpinnerContainer } from "@/components/Spinner";
 import { DropdownSvg } from "@/components/svg/dropdown";
+import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -148,20 +149,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
 
       {launchpad.ftoPairs.loading ? (
         <div className="flex h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
-          <div className="flex flex-col items-center">
-            <div className="relative">
-              <PeddingSvg />
-              <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
-                <RocketSvg />
-              </div>
-            </div>
-            <div className="text-gold-primary mt-[59px] font-bold">
-              Token List Loading...
-            </div>
-            <div className="text-[#868B9A] mt-2 w-[250px] text-xs text-center">
-              Waiting for the token list to be generated
-            </div>
-          </div>
+          <LoadingDisplay />
         </div>
       ) : (
         <div>

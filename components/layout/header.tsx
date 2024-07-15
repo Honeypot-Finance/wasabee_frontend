@@ -38,6 +38,10 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
       path: "/launch",
       title: "Launch",
     },
+    {
+      path: "/profile",
+      title: "Profile",
+    },
   ];
   return (
     <Navbar
