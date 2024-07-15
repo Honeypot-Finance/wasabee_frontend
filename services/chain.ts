@@ -96,6 +96,12 @@ export const berachainBartioTestnetNetwork = new Network({
     ftoFacade: "0x51e4fF69060CD62dE1a9374799a0BddeB55cb1E4",
     ftoTokens: [
       {
+        address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
+        name: "T-HPOT",
+        symbol: "T-HPOT",
+        decimals: 18,
+      },
+      {
         address: "0x2A108225249CB5B3E1E33943F5FEfAec33b1D452",
         name: "USDT",
         symbol: "USDT",
@@ -112,12 +118,6 @@ export const berachainBartioTestnetNetwork = new Network({
         address: "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03",
         name: "Honey",
         symbol: "HONEY",
-        decimals: 18,
-      },
-      {
-        address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
-        name: "T-HPOT",
-        symbol: "T-HPOT",
         decimals: 18,
       },
       {
