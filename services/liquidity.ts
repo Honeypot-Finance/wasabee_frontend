@@ -77,7 +77,7 @@ class Liquidity {
     if (!this.fromAmount || !this.toAmount) {
       return "Enter Amount";
     }
-    return "Create LP";
+    return "Add LP";
   }
 
   constructor() {
