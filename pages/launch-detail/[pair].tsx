@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { observer, useLocalObservable } from "mobx-react-lite";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import launchpad from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { AsyncState } from "@/services/utils";
@@ -32,6 +32,7 @@ import { PopupActions } from "reactjs-popup/dist/types";
 import PopUp from "@/components/PopUp/PopUp";
 import { info } from "console";
 import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import { trpcClient } from "@/lib/trpc";
 
 const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -354,6 +355,12 @@ const Action = observer(({ pair }: { pair: FtoPairContract }) => {
 const LaunchPage: NextLayoutPage = observer(() => {
   const router = useRouter();
   const { pair: pairAddress } = router.query;
+  const [votes, setVotes] = useState({
+    rocket_count: 0,
+    fire_count: 0,
+    poo_count: 0,
+    flag_count: 0,
+  });
   const state = useLocalObservable(() => ({
     pair: new AsyncState<
       FtoPairContract,
@@ -364,6 +371,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
       return pair;
     }),
   }));
+
   useEffect(() => {
     if (!wallet.isInit || !pairAddress) {
       return;
@@ -371,7 +379,19 @@ const LaunchPage: NextLayoutPage = observer(() => {
     state.pair.call({
       pairAddress: pairAddress as string,
     });
+
+    console.log("pairAddress", pairAddress);
+
+    refreshVotes();
   }, [wallet.isInit, pairAddress]);
+
+  function refreshVotes() {
+    trpcClient.fto.getProjectVotes
+      .query({ pair: pairAddress as string })
+      .then((data) => {
+        setVotes(data);
+      });
+  }
 
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto">
@@ -524,28 +544,40 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 </div>
               </div>
             </div>
-            <div></div>
-            <div></div>
+            <p>Token Vote</p>
+            <hr />
+            <div className="flex gap-5">
+              {Object.entries(votes).map(([key, value]) => {
+                return (
+                  <div
+                    key={key}
+                    onClick={() => {
+                      if (!wallet.account || !state.pair.value?.address) return;
+
+                      trpcClient.fto.createOrUpdateProjectVotes
+                        .mutate({
+                          project_pair: state.pair.value?.address,
+                          wallet_address: wallet.account,
+                          vote: key.split("_")[0],
+                        })
+                        .then(() => {
+                          refreshVotes();
+                        });
+                    }}
+                    className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
+                  >
+                    <p>
+                      {(key.split("_")[0] === "rocket" && "🚀") ||
+                        (key.split("_")[0] === "fire" && "🔥") ||
+                        (key.split("_")[0] === "poo" && "💩") ||
+                        (key.split("_")[0] === "flag" && "🚩")}
+                    </p>
+                    <p>{value}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          {/* <LaunchCard
-          type="detail"
-          className=" w-[450px] max-w-full p-[24px]"
-          pair={state.pair.value}
-          action={state.pair.value && <Action pair={state.pair.value}></Action>}
-        ></LaunchCard> */}
-          {/* <div  className="max-w-full w-[600px]">
-          <div className="flex">
-            <div>Website</div>
-            <div>Twitter</div>
-            <div>Telegram</div>
-          </div>
-          <div>
-            Introducing $WINE - The Liquid Gold of Memecoins $WINE is the
-            ultimate memecoin, blending humor with the refined world of wine.
-            Designed for those who appreciate a good laugh as much as a fine
-            vintage, $WINE is the liquid gold of digital currencies.
-          </div>
-        </div> */}
         </div>
       </div>
     </div>
