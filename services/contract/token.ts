@@ -48,7 +48,7 @@ export class Token implements BaseContract {
 
     this.logoURI =
       networksMap[wallet.currentChainId].validatedTokensInfo[this.address]
-        ?.logoURI ?? "/images/icons/unknown-token-icon.png";
+        ?.logoURI ?? "/images/icons/tokens/unknown-token-icon.png";
 
     makeAutoObservable(this);
   }

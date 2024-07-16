@@ -14,7 +14,9 @@ export default function TokenLogo({ token, addtionalClasses }: TokenLogoProps) {
         addtionalClasses
       }
       src={
-        !!token.logoURI ? token.logoURI : "/images/icons/unknown-token-icon.png"
+        !!token.logoURI
+          ? token.logoURI
+          : "/images/icons/tokens/unknown-token-icon.png"
       }
       alt=""
       width={24}
