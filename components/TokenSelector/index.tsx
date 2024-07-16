@@ -87,7 +87,7 @@ export const TokenSelector = observer(
       liquidity.isInit && state.filterTokensBySearch();
     }, [state.search, liquidity.isInit]);
     return (
-      <div className="flex items-center">
+      <div className="flex items-center group">
         {value && (
           <>
             <Link
@@ -121,7 +121,9 @@ export const TokenSelector = observer(
             <Button className="inline-flex w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]">
               {value && <TokenLogo token={value}></TokenLogo>}
               {value?.displayName ? value.displayName : "Select Token"}
-              <DropdownSvg></DropdownSvg>
+              <div className="group-hover:translate-y-1 transition-all">
+                <DropdownSvg></DropdownSvg>
+              </div>
             </Button>
           </PopoverTrigger>
           <PopoverContent className="flex w-[352px] flex-col items-center gap-4 border border-[color:var(--card-stroke,#F7931A)] [background:var(--card-color,#271A0C)] rounded-xl border-solid">

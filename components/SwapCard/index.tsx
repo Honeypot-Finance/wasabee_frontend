@@ -84,7 +84,7 @@ export const SwapCard = observer(() => {
         <div className="flex w-full items-center gap-[5px]">
           <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
           <ExchangeSvg
-            className=" cursor-pointer"
+            className=" cursor-pointer hover:rotate-180 transition-all"
             onClick={() => {
               swap.switchTokens();
             }}
