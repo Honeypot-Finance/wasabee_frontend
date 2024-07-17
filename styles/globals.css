@@ -39,7 +39,7 @@ body {
 }
 
 .border-bottom {
-  @apply after:content-[''] after:h-[1px] after:bg-[rgba(255,255,255,0.1)] after:absolute after:bottom-[0] after:left-[0] after:w-full after:z-[1000];
+  @apply after:content-[''] after:h-[1px] after:bg-[rgba(255,255,255,0.1)] after:absolute after:bottom-[0] after:left-[0] after:w-full after:z-[100];
 }
 
 .next-tab button[data-selected="true"] {

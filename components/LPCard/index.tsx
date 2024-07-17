@@ -128,11 +128,7 @@ const AddLiquidity = observer(() => {
 });
 
 export const RemoveLiquidity = observer(
-  ({
-    cancelButtonFn,
-  }: {
-    cancelButtonFn?: (e: MouseEvent<HTMLButtonElement>) => void;
-  }) => {
+  ({ noCancelButton = false }: { noCancelButton?: boolean }) => {
     const state = useLocalObservable(() => ({
       selectState: new SelectState({
         value: 0.25,
@@ -178,15 +174,16 @@ export const RemoveLiquidity = observer(
             </div>
           </div>
           <div className="flex w-full gap-[16px] justify-between">
-            <Button
-              className="flex-1"
-              onClick={(e) => {
-                cancelButtonFn && cancelButtonFn(e);
-                liquidity.setCurrentRemovePair(null);
-              }}
-            >
-              Cancel
-            </Button>
+            {noCancelButton && (
+              <Button
+                className="flex-1"
+                onClick={(e) => {
+                  liquidity.setCurrentRemovePair(null);
+                }}
+              >
+                Cancel
+              </Button>
+            )}
             <Button
               className="flex-1"
               isLoading={liquidity.currentRemovePair?.removeLiquidity.loading}

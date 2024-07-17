@@ -246,24 +246,14 @@ const PoolsPage: NextLayoutPage = observer(() => {
                               info="normal"
                               trigger={
                                 <Button
-                                  onClick={() => {
-                                    console.log("remove:", row);
+                                  onPress={(e) => {
                                     liquidity.setCurrentRemovePair(row);
                                   }}
                                 >
                                   Remove LP
                                 </Button>
                               }
-                              contents={
-                                <RemoveLiquidity
-                                  cancelButtonFn={(e) => {
-                                    console.log("cancel");
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    return;
-                                  }}
-                                ></RemoveLiquidity>
-                              }
+                              contents={<RemoveLiquidity></RemoveLiquidity>}
                             />
                           </div>
                         );
