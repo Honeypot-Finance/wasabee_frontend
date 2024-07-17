@@ -19,8 +19,8 @@ export const PoolLiquidityCard = observer(
     return (
       <CardContianer autoSize={autoSize}>
         {" "}
-        <div className="flex justify-between align-middle items-center">
-          <div className="flex mr-5">
+        <div className="flex flex-1 justify-between align-middle items-center">
+          <div className="flex  mr-5">
             <div className="flex mr-2 items-center">
               <TokenLogo token={pair.token0} />
               <TokenLogo token={pair.token1} />
@@ -29,7 +29,7 @@ export const PoolLiquidityCard = observer(
               {pair.token0.symbol} / {pair.token1.symbol}
             </p>
           </div>
-          <div className="flex-1 pr-5">
+          <div className="flex-1">
             <div>
               <span>Your Liquidity: </span>
               {pair.myLiquidityDisplay}
@@ -39,21 +39,21 @@ export const PoolLiquidityCard = observer(
               {pair.liquidityDisplay}
             </div>
           </div>
-          <div>
-            <PopUp
-              info="normal"
-              trigger={
-                <Button
-                  onPress={(e) => {
-                    liquidity.setCurrentRemovePair(pair);
-                  }}
-                >
-                  Remove LP
-                </Button>
-              }
-              contents={<RemoveLiquidity noCancelButton></RemoveLiquidity>}
-            />
-          </div>
+        </div>{" "}
+        <div className="flex justify-end">
+          <PopUp
+            info="normal"
+            trigger={
+              <Button
+                onPress={(e) => {
+                  liquidity.setCurrentRemovePair(pair);
+                }}
+              >
+                Remove LP
+              </Button>
+            }
+            contents={<RemoveLiquidity noCancelButton></RemoveLiquidity>}
+          />
         </div>
       </CardContianer>
     );
