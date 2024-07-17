@@ -1,8 +1,8 @@
-import { Layout } from '@/components/layout';
-import { Swap } from '@/components/swap'
+import { Layout } from "@/components/layout";
+import { Swap } from "@/components/swap";
 
 const Pool = () => {
-    return <Swap activeTab='lp'></Swap>
-}
+  return <Swap activeTab="lp"></Swap>;
+};
 
 export default Pool;

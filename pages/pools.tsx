@@ -253,7 +253,11 @@ const PoolsPage: NextLayoutPage = observer(() => {
                                   Remove LP
                                 </Button>
                               }
-                              contents={<RemoveLiquidity></RemoveLiquidity>}
+                              contents={
+                                <RemoveLiquidity
+                                  noCancelButton
+                                ></RemoveLiquidity>
+                              }
                             />
                           </div>
                         );
