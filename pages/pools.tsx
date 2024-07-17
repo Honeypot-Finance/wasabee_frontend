@@ -20,6 +20,8 @@ import { chainsMap } from "@/lib/chain";
 import { networksMap } from "@/services/chain";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import PopUp from "@/components/PopUp/PopUp";
+import { RemoveLiquidity } from "@/components/LPCard";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
@@ -233,6 +235,39 @@ const PoolsPage: NextLayoutPage = observer(() => {
                     {
                       title: "Liquidity",
                       dataKey: "liquidityDisplay",
+                    },
+                    {
+                      title: "Action",
+                      dataKey: "_action",
+                      render(value, row) {
+                        return (
+                          <div className="flex gap-[12px]">
+                            <PopUp
+                              info="normal"
+                              trigger={
+                                <Button
+                                  onClick={() => {
+                                    console.log("remove:", row);
+                                    liquidity.setCurrentRemovePair(row);
+                                  }}
+                                >
+                                  Remove LP
+                                </Button>
+                              }
+                              contents={
+                                <RemoveLiquidity
+                                  cancelButtonFn={(e) => {
+                                    console.log("cancel");
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    return;
+                                  }}
+                                ></RemoveLiquidity>
+                              }
+                            />
+                          </div>
+                        );
+                      },
                     },
                   ]}
                   datasource={liquidity.myPairs}
