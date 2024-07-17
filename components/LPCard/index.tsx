@@ -14,6 +14,7 @@ import { Tab, Tabs } from "@nextui-org/react";
 import { Table } from "../table";
 import { ItemSelect, SelectState } from "../ItemSelect";
 import { SelectItem } from "../ItemSelect/index";
+import { MouseEvent } from "react";
 
 const AddLiquidity = observer(() => {
   return (
@@ -126,98 +127,110 @@ const AddLiquidity = observer(() => {
   );
 });
 
-const RemoveLiquidity = observer(() => {
-  const state = useLocalObservable(() => ({
-    selectState: new SelectState({
-      value: 0.25,
-    }),
-  }));
-  return liquidity.currentRemovePair ? (
-    <div className="flex justify-center">
-      <div className="flex flex-col gap-[24px] items-center w-[360px]">
-        <div className="w-full"></div>
-        <ItemSelect
-          selectState={state.selectState}
-          className="gap-[16px] justify-between w-full"
-        >
-          <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
-            25%
-          </SelectItem>
-          <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
-            50%
-          </SelectItem>
-          <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
-            75%
-          </SelectItem>
-          <SelectItem className="rounded-[30px] px-[24px]" value={1}>
-            100%
-          </SelectItem>
-        </ItemSelect>
-        <div className="w-full">
-          <div className="flex justify-between">
-            <div>{liquidity.currentRemovePair?.token0.displayName}</div>
-            <div>{liquidity.currentRemovePair?.token0LpBalance.multipliedBy(state.selectState.value as number).toFixed(3)}</div>
-          </div>
-          <div className="mt-[16px] flex justify-between">
-          <div>{liquidity.currentRemovePair?.token1.displayName}</div>
-            <div>{liquidity.currentRemovePair?.token1LpBalance.multipliedBy((state.selectState.value as number)).toFixed(3)}</div>
-          </div>
-        </div>
-        <div className="flex w-full gap-[16px] justify-between">
-          <Button
-            className="flex-1"
-            onClick={() => {
-              liquidity.setCurrentRemovePair(null);
-            }}
+export const RemoveLiquidity = observer(
+  ({ noCancelButton = false }: { noCancelButton?: boolean }) => {
+    const state = useLocalObservable(() => ({
+      selectState: new SelectState({
+        value: 0.25,
+      }),
+    }));
+    return liquidity.currentRemovePair ? (
+      <div className="flex justify-center">
+        <div className="flex flex-col gap-[24px] items-center w-[360px]">
+          <div className="w-full"></div>
+          <ItemSelect
+            selectState={state.selectState}
+            className="gap-[16px] justify-between w-full"
           >
-            Cancel
-          </Button>
-          <Button
-            className="flex-1"
-            isLoading={liquidity.currentRemovePair?.removeLiquidity.loading}
-            onClick={() => {
-              liquidity.currentRemovePair?.removeLiquidity.call(
-                state.selectState.value as number
-              );
-            }}
-          >
-            Remove
-          </Button>
-        </div>
-      </div>
-    </div>
-  ) : (
-    <Table
-      rowKey="address"
-      columns={[
-        {
-          title: "Pool Name",
-          dataKey: "poolName",
-        },
-        {
-          title: "Self Liquidity",
-          dataKey: "myLiquidityDisplay",
-        },
-        {
-          title: "Action",
-          key: "action",
-          render: (value, record) => {
-            return (
+            <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
+              25%
+            </SelectItem>
+            <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
+              50%
+            </SelectItem>
+            <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
+              75%
+            </SelectItem>
+            <SelectItem className="rounded-[30px] px-[24px]" value={1}>
+              100%
+            </SelectItem>
+          </ItemSelect>
+          <div className="w-full">
+            <div className="flex justify-between">
+              <div>{liquidity.currentRemovePair?.token0.displayName}</div>
+              <div>
+                {liquidity.currentRemovePair?.token0LpBalance
+                  .multipliedBy(state.selectState.value as number)
+                  .toFixed(3)}
+              </div>
+            </div>
+            <div className="mt-[16px] flex justify-between">
+              <div>{liquidity.currentRemovePair?.token1.displayName}</div>
+              <div>
+                {liquidity.currentRemovePair?.token1LpBalance
+                  .multipliedBy(state.selectState.value as number)
+                  .toFixed(3)}
+              </div>
+            </div>
+          </div>
+          <div className="flex w-full gap-[16px] justify-between">
+            {noCancelButton && (
               <Button
-                onClick={() => {
-                  liquidity.setCurrentRemovePair(record);
+                className="flex-1"
+                onClick={(e) => {
+                  liquidity.setCurrentRemovePair(null);
                 }}
               >
-                Remove
+                Cancel
               </Button>
-            );
+            )}
+            <Button
+              className="flex-1"
+              isLoading={liquidity.currentRemovePair?.removeLiquidity.loading}
+              onClick={() => {
+                liquidity.currentRemovePair?.removeLiquidity.call(
+                  state.selectState.value as number
+                );
+              }}
+            >
+              Remove
+            </Button>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <Table
+        rowKey="address"
+        columns={[
+          {
+            title: "Pool Name",
+            dataKey: "poolName",
           },
-        },
-      ]}
-      datasource={liquidity.myPairs}
-    ></Table>
-  );
-});
+          {
+            title: "Self Liquidity",
+            dataKey: "myLiquidityDisplay",
+          },
+          {
+            title: "Action",
+            key: "action",
+            render: (value, record) => {
+              return (
+                <Button
+                  onClick={() => {
+                    liquidity.setCurrentRemovePair(record);
+                  }}
+                >
+                  Remove
+                </Button>
+              );
+            },
+          },
+        ]}
+        datasource={liquidity.myPairs}
+      ></Table>
+    );
+  }
+);
 
 export const LPCard = observer(() => {
   const router = useRouter();
