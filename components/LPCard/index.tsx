@@ -15,6 +15,7 @@ import { Table } from "../table";
 import { ItemSelect, SelectState } from "../ItemSelect";
 import { SelectItem } from "../ItemSelect/index";
 import { MouseEvent } from "react";
+import _ from "lodash";
 
 const AddLiquidity = observer(() => {
   return (
@@ -174,7 +175,7 @@ export const RemoveLiquidity = observer(
             </div>
           </div>
           <div className="flex w-full gap-[16px] justify-between">
-            {noCancelButton && (
+            {!noCancelButton && (
               <Button
                 className="flex-1"
                 onClick={(e) => {
@@ -238,6 +239,9 @@ export const LPCard = observer(() => {
     inputCurrency: string;
     outputCurrency: string;
   };
+  useEffect(() => {
+    liquidity.setCurrentRemovePair(null);
+  }, []);
   useEffect(() => {
     if (!wallet.isInit) {
       return;
