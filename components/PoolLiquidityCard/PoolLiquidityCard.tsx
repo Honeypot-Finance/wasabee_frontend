@@ -20,7 +20,7 @@ export const PoolLiquidityCard = observer(
       <CardContianer autoSize={autoSize}>
         {" "}
         <div className="flex flex-1 justify-between align-middle items-center">
-          <div className="flex  mr-5">
+          <div className="flex mr-5">
             <div className="flex mr-2 items-center">
               <TokenLogo token={pair.token0} />
               <TokenLogo token={pair.token1} />

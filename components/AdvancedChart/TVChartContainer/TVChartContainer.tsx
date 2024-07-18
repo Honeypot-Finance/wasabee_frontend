@@ -1,6 +1,6 @@
 "use client";
 import styles from "./TVChartContainer.module.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ChartingLibraryWidgetOptions,
   LanguageCode,
@@ -8,13 +8,16 @@ import {
   widget,
 } from "@/public/static/charting_library/charting_library";
 import { getBaseUrl } from "@/lib/trpc";
+import { observable } from "mobx";
+import { ParseTicker } from "@/lib/advancedChart.util";
+import { chart } from "@/services/chart";
+import { wallet } from "@/services/wallet";
 
 export const TVChartContainer = (
   props: Partial<ChartingLibraryWidgetOptions>
 ) => {
   const chartContainerRef =
     useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
-
   useEffect(() => {
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: props.symbol,
@@ -50,7 +53,6 @@ export const TVChartContainer = (
     };
 
     const tvWidget = new widget(widgetOptions);
-
     // tvWidget.onChartReady(() => {
     //   tvWidget.headerReady().then(() => {
     //     const button = tvWidget.createButton();

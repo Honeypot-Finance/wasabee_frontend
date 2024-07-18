@@ -14,9 +14,16 @@ import {
   ChartingLibraryWidgetOptions,
   ResolutionString,
 } from "@/public/static/charting_library/charting_library";
-import { pairToTicker, tokenToTicker } from "@/lib/advancedChart.util";
+import {
+  pairToTicker,
+  ParseTicker,
+  tokenToTicker,
+} from "@/lib/advancedChart.util";
 import { pairQueryOutput } from "@/types/pair";
 import { PairContract } from "@/services/contract/pair-contract";
+import { observe } from "mobx";
+import { useObserver } from "mobx-react-lite";
+import { wallet } from "@/services/wallet";
 
 const TVChartContainer = dynamic(
   () =>
@@ -27,36 +34,24 @@ const TVChartContainer = dynamic(
 );
 
 type SwapProps = {
-  priceFeedTarget: Token | PairContract;
+  priceFeedTarget: Token | PairContract | null;
 };
 
 export default function SwapPriceFeedGraph(props: SwapProps) {
   const [isScriptReady, setIsScriptReady] = useState(false);
-  const { chainId } = useAccount();
-  const getTokenTicker = useMemo(() => {
-    if (props.priceFeedTarget instanceof Token) {
-      return tokenToTicker(props.priceFeedTarget, chainId as number);
-    } else if (props.priceFeedTarget instanceof PairContract) {
-      return pairToTicker(props.priceFeedTarget, chainId as number);
-    } else {
-      return "None";
-    }
-  }, [props.priceFeedTarget, chainId]);
-  const [defaultWidgetProps, setDefaultWidgetProps] = useState<
-    Partial<ChartingLibraryWidgetOptions>
-  >({
-    symbol: getTokenTicker,
+
+  console.log("SwapPriceFeedGraph", props.priceFeedTarget);
+  const defaultWidgetProps = {
+    symbol: ParseTicker(props.priceFeedTarget, wallet.currentChainId),
     interval: "1D" as ResolutionString,
     library_path: "/static/charting_library/charting_library/",
     locale: "en",
-    charts_storage_url: "https://saveload.tradingview.com",
     charts_storage_api_version: "1.1",
     client_id: "tradingview.com",
-    user_id: "public_user_id",
     fullscreen: false,
     autosize: true,
     theme: "dark",
-  });
+  } as Partial<ChartingLibraryWidgetOptions>;
   return (
     <>
       <Script

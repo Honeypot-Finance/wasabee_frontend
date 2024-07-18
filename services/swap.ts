@@ -10,6 +10,7 @@ import { makeAutoObservable, reaction, when } from "mobx";
 import { AsyncState } from "./utils";
 import { debounce } from "lodash";
 import dayjs from "dayjs";
+import { chart } from "./chart";
 
 class Swap {
   fromToken: Token | null = null;
@@ -27,6 +28,7 @@ class Swap {
         this.fromToken.address,
         this.toToken.address
       );
+      await res?.init();
       return res;
     }
   });
@@ -88,19 +90,25 @@ class Swap {
     makeAutoObservable(this);
     reaction(
       () => this.fromToken?.address,
-      () => {
+      async () => {
         this.currentPair.setValue(undefined);
+        await this.toToken?.init();
+        chart.setChartTarget(this.fromToken as Token);
         if (this.fromToken && this.toToken) {
-          this.currentPair.call();
+          await this.currentPair.call();
+          chart.setChartTarget(this.currentPair.value as PairContract);
         }
       }
     );
     reaction(
       () => this.toToken?.address,
-      () => {
+      async () => {
         this.currentPair.setValue(undefined);
+        await this.toToken?.init();
+        chart.setChartTarget(this.toToken);
         if (this.fromToken && this.toToken) {
-          this.currentPair.call();
+          await this.currentPair.call();
+          chart.setChartTarget(this.currentPair.value as PairContract);
         }
       }
     );

@@ -1,16 +1,33 @@
 import { TVChartContainer } from "@/components/AdvancedChart/TVChartContainer/TVChartContainer";
 import SwapPriceFeedGraph from "@/components/PriceFeedGraph/SwapPriceFeedGraph";
 import { Swap } from "@/components/swap";
+import { chart } from "@/services/chart";
+import { PairContract } from "@/services/contract/pair-contract";
 import { Token } from "@/services/contract/token";
-import { useState } from "react";
+import { observe, toJS } from "mobx";
+import { observer } from "mobx-react-lite";
+import { useEffect, useState } from "react";
 
-const SwapPage = () => {
+const SwapPage = observer(() => {
+  useEffect(() => {
+    observe(chart, "chartTarget", () => {
+      console.log("chart.chartTarget", chart.chartTarget);
+    });
+  }, []);
   return (
     <>
-      <div>
+      <div className="lg:flex justify-around items-center">
         <Swap activeTab="swap"></Swap>
+        {chart.showChart && (
+          <div className="flex justify-center m-auto h-[50vh] w-[90vw] *:flex-1 lg:w-[40vw] lg:h-[50vh]">
+            <SwapPriceFeedGraph
+              priceFeedTarget={toJS(chart.chartTarget)}
+            ></SwapPriceFeedGraph>
+          </div>
+        )}
       </div>
     </>
   );
-};
+});
+
 export default SwapPage;

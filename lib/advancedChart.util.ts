@@ -39,3 +39,16 @@ export const tickerToToken = (ticker: string) => {
     address,
   });
 };
+
+export const ParseTicker = (
+  ticker: Token | PairContract | null,
+  chainId: number
+) => {
+  if (ticker instanceof Token) {
+    return tokenToTicker(ticker, chainId);
+  } else if (ticker instanceof PairContract) {
+    return pairToTicker(ticker, chainId);
+  } else {
+    return "None";
+  }
+};

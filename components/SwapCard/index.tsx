@@ -7,12 +7,16 @@ import { Button } from "@/components/button";
 import { Token } from "@/services/contract/token";
 import { SpinnerContainer } from "../Spinner";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { isEthAddress } from "@/lib/address";
 import { useAccount } from "wagmi";
 import { wallet } from "@/services/wallet";
 import { amountFormatted } from "../../lib/format";
 import { AmountFormat } from "../AmountFormat";
+import ChartData from "../svg/chartData";
+import SwapPriceFeedGraph from "../PriceFeedGraph/SwapPriceFeedGraph";
+import { liquidity } from "@/services/liquidity";
+import { chart } from "@/services/chart";
 
 export const SwapCard = observer(() => {
   const router = useRouter();
@@ -33,12 +37,21 @@ export const SwapCard = observer(() => {
   }, [inputCurrency, outputCurrency, wallet.isInit]);
   return (
     <SpinnerContainer
+      className="flex flex-1 justify-around items-center"
       isLoading={
         swap.currentPair.loading ||
         !!swap.currentPair.value?.getAmountOut.loading
       }
     >
-      <div className=" flex flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
+      <div className=" flex flex-1 flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
+        <div
+          onClick={() => {
+            chart.toggleChart();
+          }}
+          className="cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px]"
+        >
+          <ChartData></ChartData>
+        </div>
         <div className="flex justify-between items-center w-full">
           <SwapAmount
             label="From"
