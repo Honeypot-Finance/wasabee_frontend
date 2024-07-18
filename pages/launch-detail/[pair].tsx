@@ -472,7 +472,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 Token Raised
               </div>
               <div className="text-[color:var(--Button-Gradient,var(--card-stroke,#F7931A))] text-[16.727px] font-normal leading-[normal]">
-                {amountFormatted(state.pair.value?.depositedRaisedToken)}{" "}
+                {state.pair.value?.depositedRaisedToken?.toFormat(3)}
                 {state.pair.value?.raiseToken.displayName}
               </div>
             </div>
