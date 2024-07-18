@@ -486,7 +486,9 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 {state.pair.value?.raiseToken.address}{" "}
                 {state.pair.value?.raiseToken.address && (
                   <span className="flex flex-row">
-                    <Copy value={state.pair.value?.raiseToken.address}></Copy>
+                    <Copy
+                      value={state.pair.value?.launchedToken.address}
+                    ></Copy>
                     <ShareSocialMedialPopUp
                       shareUrl={window.location.href}
                       shareText={
