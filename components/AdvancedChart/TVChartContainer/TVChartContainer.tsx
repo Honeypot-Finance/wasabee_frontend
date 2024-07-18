@@ -79,7 +79,7 @@ export const TVChartContainer = (
 
   return (
     <>
-      <div ref={chartContainerRef} className={`w-full h-full`} />
+      <div ref={chartContainerRef} className={`w-full min-h-full`} />
     </>
   );
 };
