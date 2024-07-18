@@ -19,7 +19,7 @@ const SwapPage = observer(() => {
       <div className={`lg:grid ${chart.showChart && "grid-cols-2"}`}>
         <Swap activeTab="swap"></Swap>
         {chart.showChart && (
-          <div className="m-auto w-full h-full">
+          <div className="m-auto w-full h-full lg:pr-20">
             <SwapPriceFeedGraph
               priceFeedTarget={chart.chartTarget}
             ></SwapPriceFeedGraph>

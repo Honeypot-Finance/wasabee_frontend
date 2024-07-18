@@ -10,9 +10,7 @@ import PQueue from "p-queue";
 import { getCacheKey } from "@/lib/cache";
 import { networksMap } from "@/services/chain";
 import { kv } from "@/lib/kv";
-import { Token } from "@/services/contract/token";
 import { pairQueryOutput } from "@/types/pair";
-import { BlockList } from "net";
 
 const queue = new PQueue({ concurrency: 10 });
 
@@ -68,7 +66,7 @@ export const pairRouter = router({
       if (!length) {
         return {};
       }
-      console.log("total pairs", length);
+      //console.log("total pairs", length);
       // await kv.del(getCacheKey(chainId, 'allPairs'));
       const allPairs =
         (await kv.get<Record<string, any>>(getCacheKey(chainId, "allPairs"))) ||

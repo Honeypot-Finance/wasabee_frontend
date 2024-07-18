@@ -47,20 +47,23 @@ export function getBaseUrl() {
 //    **/
 //   ssr: false,
 // });
-console.log("`${getBaseUrl()}/api/trpc`", `${getBaseUrl()}/api/trpc`);
+
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
       transformer: superjson,
-      url:`${getBaseUrl()}/api/trpc` ,
+      url: `${getBaseUrl()}/api/trpc`,
       async headers() {
-        const headers = {} as Record<string, string>
-        if (localStorage.getItem('message') && localStorage.getItem('signature')) {
-          headers['message'] = localStorage.getItem('message') as string
-          headers['signature'] = localStorage.getItem('signature') as string
+        const headers = {} as Record<string, string>;
+        if (
+          localStorage.getItem("message") &&
+          localStorage.getItem("signature")
+        ) {
+          headers["message"] = localStorage.getItem("message") as string;
+          headers["signature"] = localStorage.getItem("signature") as string;
         }
-        console.log('headers', headers)
-        return headers
+        console.log("headers", headers);
+        return headers;
       },
     }),
   ],
@@ -74,12 +77,15 @@ export const trpcQueryClient = trpc.createClient({
       // You can pass any HTTP headers you wish here
       transformer: superjson,
       async headers() {
-        const headers = {} as Record<string, string>
-        if (localStorage.getItem('message') && localStorage.getItem('signature')) {
-          headers['message'] = localStorage.getItem('message') as string
-          headers['signature'] = localStorage.getItem('signature') as string
+        const headers = {} as Record<string, string>;
+        if (
+          localStorage.getItem("message") &&
+          localStorage.getItem("signature")
+        ) {
+          headers["message"] = localStorage.getItem("message") as string;
+          headers["signature"] = localStorage.getItem("signature") as string;
         }
-        return headers
+        return headers;
       },
     }),
   ],
