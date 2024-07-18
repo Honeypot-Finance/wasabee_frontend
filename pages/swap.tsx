@@ -16,10 +16,10 @@ const SwapPage = observer(() => {
   }, []);
   return (
     <>
-      <div className="lg:flex justify-around items-center *:flex-1 gap-5">
+      <div className={`lg:grid ${chart.showChart && "grid-cols-2"}`}>
         <Swap activeTab="swap"></Swap>
         {chart.showChart && (
-          <div className="flex justify-center m-auto h-[50vh] w-[90vw] *:flex-1 lg:w-[40vw] lg:h-[50vh]">
+          <div className="m-auto w-full h-full">
             <SwapPriceFeedGraph
               priceFeedTarget={chart.chartTarget}
             ></SwapPriceFeedGraph>
