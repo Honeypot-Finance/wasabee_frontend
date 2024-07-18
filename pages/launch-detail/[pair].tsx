@@ -483,8 +483,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 Token address
               </div>
               <div className="mt-[8px] flex  h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px]">
-                {state.pair.value?.raiseToken.address}{" "}
-                {state.pair.value?.raiseToken.address && (
+                {state.pair.value?.launchedToken.address}{" "}
+                {state.pair.value?.launchedToken.address && (
                   <span className="flex flex-row">
                     <Copy
                       value={state.pair.value?.launchedToken.address}
