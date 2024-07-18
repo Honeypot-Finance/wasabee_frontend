@@ -103,7 +103,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
               <span>Dreampad</span>
             </div>
             <div className="mt-4 opacity-50 w-full sm:w-[409px] text-center mb-4 ">
-              Launch your token with in three steps.{" "}
+              Launch your token within three steps.{" "}
               <span className="underline cursor-pointer">Read more </span>about
               Dreampad.
             </div>
@@ -124,7 +124,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                 )}
               </div>
               <div className="flex flex-col gap-4">
-                <label htmlFor="raisedToken">Rasied Token</label>
+                <label htmlFor="raisedToken">Raised Token</label>
                 <Select
                   classNames={{
                     trigger: "bg-transparent data-[hover=true]:bg-transparent",
