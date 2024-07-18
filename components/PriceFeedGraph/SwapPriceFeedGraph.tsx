@@ -40,7 +40,6 @@ type SwapProps = {
 export default function SwapPriceFeedGraph(props: SwapProps) {
   const [isScriptReady, setIsScriptReady] = useState(false);
 
-  console.log("SwapPriceFeedGraph", props.priceFeedTarget);
   const defaultWidgetProps = {
     symbol: ParseTicker(props.priceFeedTarget, wallet.currentChainId),
     interval: "1D" as ResolutionString,
@@ -52,6 +51,7 @@ export default function SwapPriceFeedGraph(props: SwapProps) {
     autosize: true,
     theme: "dark",
   } as Partial<ChartingLibraryWidgetOptions>;
+
   return (
     <>
       <Script

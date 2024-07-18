@@ -15,7 +15,6 @@ class Chart {
   }
 
   setChartTarget(target: Token | PairContract | null) {
-    console.log("setChartTarget", target);
     this.chartTarget = target;
   }
 }
