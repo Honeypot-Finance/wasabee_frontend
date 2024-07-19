@@ -54,8 +54,6 @@ export const Profile = observer(() => {
     launchpad.getMyFtoParticipatedPairs.call();
   }, [wallet.isInit]);
 
-  console.log("launchpad", launchpad.getMyFtoParticipatedPairs);
-
   return (
     <div className="m-auto flex justify-center items-center flex-col w-[800px]">
       <div>

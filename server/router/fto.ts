@@ -26,14 +26,16 @@ export const ftoRouter = router({
       })
     )
     .output(
-      z.object({
-        twitter: z.string().or(z.null()),
-        telegram: z.string().or(z.null()),
-        website: z.string().or(z.null()),
-        description: z.string().or(z.null()),
-        name: z.string().or(z.null()),
-        provider: z.string(),
-      })
+      z
+        .object({
+          twitter: z.string().or(z.null()),
+          telegram: z.string().or(z.null()),
+          website: z.string().or(z.null()),
+          description: z.string().or(z.null()),
+          name: z.string().or(z.null()),
+          provider: z.string(),
+        })
+        .or(z.null())
     )
     .query(async ({ input }) => {
       return ftoService.getProjectInfo(input);

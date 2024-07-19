@@ -62,7 +62,6 @@ export const trpcClient = createTRPCClient<AppRouter>({
           headers["message"] = localStorage.getItem("message") as string;
           headers["signature"] = localStorage.getItem("signature") as string;
         }
-        console.log("headers", headers);
         return headers;
       },
     }),

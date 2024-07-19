@@ -24,7 +24,6 @@ export class FtoFactoryContract implements BaseContract {
 
   async events(depositerAddress: Address): Promise<readonly Address[]> {
     const res = await this.contract.read.events([depositerAddress]);
-    console.log("res", res);
     return res;
   }
 
