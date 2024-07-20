@@ -9,6 +9,7 @@ import { Token } from "./token";
 import { dayjs } from "@/lib/dayjs";
 import { cn } from "@/lib/tailwindcss";
 import { trpcClient } from "@/lib/trpc";
+import { ZodError } from "zod";
 
 export class FtoPairContract implements BaseContract {
   address = "";
