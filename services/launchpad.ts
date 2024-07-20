@@ -228,7 +228,6 @@ class LaunchPad {
 
     let data = await Promise.all(
       projects.map(async ({ pair: pairAddress }) => {
-        console.log("pairAddress", pairAddress);
         const pair = new FtoPairContract({ address: pairAddress as string });
         await pair.init();
         return pair;

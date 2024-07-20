@@ -25,7 +25,7 @@ export const ftoService = {
     >`SELECT twitter, telegram, website,description,name, provider  FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
       data.chain_id
     }`;
-    console.log(res);
+    // console.log(res);
     return res?.[0];
   },
   getFtoProjectsByAccount: async ({

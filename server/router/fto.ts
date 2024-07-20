@@ -38,7 +38,9 @@ export const ftoRouter = router({
         .or(z.null())
     )
     .query(async ({ input }) => {
-      return ftoService.getProjectInfo(input);
+      const info = await ftoService.getProjectInfo(input);
+      console.log(info);
+      return info;
     }),
   getProjectsByAccount: publicProcedure
     .input(

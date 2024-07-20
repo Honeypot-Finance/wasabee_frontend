@@ -11,7 +11,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { ftoaddress, chainid } = req.query;
-  console.log(ftoaddress, chainid);
+  console.log("handler: ", ftoaddress, chainid);
   if (!ftoaddress || chainid) {
     return res.status(400);
   }
@@ -21,7 +21,7 @@ export default async function handler(
     chain_id: parseInt(chainid as string),
   });
 
-  console.log(data);
+  console.log("getProjectInfo", data);
 
   if (!data) {
     return res.status(404).json({ ftoName: "Not Found" });
