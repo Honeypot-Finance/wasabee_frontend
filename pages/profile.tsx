@@ -41,7 +41,10 @@ export const Profile = observer(() => {
 
   useEffect(() => {
     if (pairsMap) {
-      liquidity.initPool(Object.values(pairsMap));
+      liquidity.initPool(
+        Object.values(pairsMap),
+        wallet.currentChain.validatedTokensInfo
+      );
     }
   }, [pairsMap]);
 

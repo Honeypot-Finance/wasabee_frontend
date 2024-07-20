@@ -107,7 +107,7 @@ const createFtoProject = async (data: {
 }) => {
   await pg`INSERT INTO fto_project ${pg({
     pair: data.pair.toLowerCase(),
-    provider: data.provider ?? "",
+    provider: data.provider?.toLowerCase() ?? "",
     chain_id: data.chain_id,
   })}`;
 };
