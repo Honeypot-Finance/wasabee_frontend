@@ -5,7 +5,7 @@ import {
   berachainBartioTestnet,
   berachainTestnet,
   polygonMumbaiChain,
-  sepolia,
+  //sepolia,
 } from "@/lib/chain";
 
 export class Network {
@@ -277,58 +277,58 @@ export const berachainBartioTestnetNetwork = new Network({
 //   ],
 // });
 
-export const sepoliaNetwork = new Network({
-  chain: sepolia,
-  faucets: [
-    {
-      url: "https://www.alchemy.com/faucets/ethereum-sepolia",
-      name: "Alchemy",
-    },
-    {
-      url: "https://www.infura.io/faucet/sepolia",
-      name: "Infura",
-    },
-    {
-      url: "https://sepolia-faucet.pk910.de/",
-      name: "PowFaucet",
-    },
-    {
-      url: "https://faucet.quicknode.com/ethereum/sepolia",
-      name: "QuickNode",
-    },
-    {
-      url: "https://cloud.google.com/application/web3/faucet/ethereum/sepolia",
-      name: "Google",
-    },
-  ],
-  contracts: {
-    routerV2: "0xBF5BB6e4189877bA03168035a56CBC452f59c0d2",
-    factory: "0x51089092b3c40c15698818592f9487340C2379B5",
-    ftoFactory: "0x13Db24fF75a7FB3Cc22Fa938c3a07C5938A7d0cD",
-    ftoFacade: "0x27bAceFAA89c00d29B4F7a3424c648f34e092009",
-    ftoTokens: [
-      {
-        address: "0x5d116b0032188519e62858dFd3b7917ccEcad170",
-        name: "USDT",
-        symbol: "USDT",
-        decimals: 18,
-      },
-    ],
-  },
-  faucetTokens: [
-    {
-      address: "0x5d116b0032188519e62858dFd3b7917ccEcad170",
-      name: "USDT",
-      symbol: "USDT",
-      decimals: 18,
-    },
-  ],
-});
+// export const sepoliaNetwork = new Network({
+//   chain: sepolia,
+//   faucets: [
+//     {
+//       url: "https://www.alchemy.com/faucets/ethereum-sepolia",
+//       name: "Alchemy",
+//     },
+//     {
+//       url: "https://www.infura.io/faucet/sepolia",
+//       name: "Infura",
+//     },
+//     {
+//       url: "https://sepolia-faucet.pk910.de/",
+//       name: "PowFaucet",
+//     },
+//     {
+//       url: "https://faucet.quicknode.com/ethereum/sepolia",
+//       name: "QuickNode",
+//     },
+//     {
+//       url: "https://cloud.google.com/application/web3/faucet/ethereum/sepolia",
+//       name: "Google",
+//     },
+//   ],
+//   contracts: {
+//     routerV2: "0xBF5BB6e4189877bA03168035a56CBC452f59c0d2",
+//     factory: "0x51089092b3c40c15698818592f9487340C2379B5",
+//     ftoFactory: "0x13Db24fF75a7FB3Cc22Fa938c3a07C5938A7d0cD",
+//     ftoFacade: "0x27bAceFAA89c00d29B4F7a3424c648f34e092009",
+//     ftoTokens: [
+//       {
+//         address: "0x5d116b0032188519e62858dFd3b7917ccEcad170",
+//         name: "USDT",
+//         symbol: "USDT",
+//         decimals: 18,
+//       },
+//     ],
+//   },
+//   faucetTokens: [
+//     {
+//       address: "0x5d116b0032188519e62858dFd3b7917ccEcad170",
+//       name: "USDT",
+//       symbol: "USDT",
+//       decimals: 18,
+//     },
+//   ],
+// });
 
 export const networks = [
   // berachainTestNetwork,
   berachainBartioTestnetNetwork,
-  sepoliaNetwork,
+  //sepoliaNetwork,
   // polygonTestNetwork,
 ];
 export const networksMap = networks.reduce((acc, network) => {
