@@ -118,7 +118,11 @@ class LaunchPad {
       });
     }
 
-    return this.filterPairs(this.ftoPairs.value?.data ?? []) ?? [];
+    const filteredPairs = this.filterPairs(this.ftoPairs.value?.data ?? []);
+
+    this.ftoPairsPagination.setTotal(filteredPairs.length);
+
+    return filteredPairs ?? [];
   });
 
   getMyFtoPairs = new AsyncState<FtoPairContract[]>(async () => {
@@ -126,7 +130,11 @@ class LaunchPad {
       await this.myFtoPairs.call();
     }
 
-    return this.filterPairs(this.myFtoPairs.value?.data ?? []) ?? [];
+    const filteredPairs = this.filterPairs(this.myFtoPairs.value?.data ?? []);
+
+    this.myFtoPairsPagination.setTotal(filteredPairs.length);
+
+    return filteredPairs ?? [];
   });
 
   getMyFtoParticipatedPairs = new AsyncState<FtoPairContract[]>(async () => {
@@ -134,9 +142,13 @@ class LaunchPad {
       await this.myFtoParticipatedPairs.call();
     }
 
-    return (
-      this.filterPairs(this.myFtoParticipatedPairs.value?.data ?? []) ?? []
+    const filteredPairs = this.filterPairs(
+      this.myFtoParticipatedPairs.value?.data ?? []
     );
+
+    this.myFtoParticipatedPairsPagination.setTotal(filteredPairs.length);
+
+    return filteredPairs ?? [];
   });
 
   ftoPairs = new AsyncState<
@@ -181,11 +193,11 @@ class LaunchPad {
       return Number(b.startTime) - Number(a.startTime);
     });
 
-    this.ftoPairsPagination.setTotal(Number(pairsLength));
+    this.ftoPairsPagination.setTotal(data.length);
 
     return {
       data,
-      total: Number(pairsLength),
+      total: data.length,
     };
   });
 

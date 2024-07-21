@@ -164,9 +164,10 @@ export class PaginationState {
     return this.page * this.limit;
   }
 
-  get totalPage() {
+  totalPage = new AsyncState<number, () => Promise<number>>(async () => {
     return Math.ceil(this.total / this.limit);
-  }
+  });
+
   setData(args: Partial<PaginationState>) {
     Object.assign(this, args);
   }
@@ -179,5 +180,6 @@ export class PaginationState {
   };
   setTotal(total: number) {
     this.total = total;
+    this.totalPage.call();
   }
 }

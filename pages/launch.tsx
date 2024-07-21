@@ -105,6 +105,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                           onClick={() => {
                             launchpad.pairFilterStatus = "all";
                             launchpad.ftoPairsPagination.page = 1;
+                            launchpad.ftoPairsPagination.totalPage.call();
                           }}
                           className="w-[100px]"
                         >
@@ -114,6 +115,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                           onClick={() => {
                             launchpad.pairFilterStatus = "success";
                             launchpad.ftoPairsPagination.page = 1;
+                            launchpad.ftoPairsPagination.totalPage.call();
                           }}
                           className="w-[100px]"
                         >
@@ -123,6 +125,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                           onClick={() => {
                             launchpad.pairFilterStatus = "fail";
                             launchpad.ftoPairsPagination.page = 1;
+                            launchpad.ftoPairsPagination.totalPage.call();
                           }}
                           className="w-[100px]"
                         >
@@ -209,7 +212,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
               </div>
               <Pagination
                 className="flex justify-center mt-[12px]"
-                total={launchpad.ftoPairsPagination.totalPage}
+                total={launchpad.ftoPairsPagination.totalPage.value ?? 1}
                 page={launchpad.ftoPairsPagination.page}
                 initialPage={launchpad.ftoPairsPagination.page}
                 onChange={(page) => {
