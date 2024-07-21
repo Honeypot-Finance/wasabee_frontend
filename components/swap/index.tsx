@@ -14,6 +14,7 @@ import { getHash } from "@/lib/url";
 import Link from "next/link";
 import TransactionPendingToastify from "../CustomToastify/TransactionPendingToastify/TransactionPendingToastify";
 import { toast } from "react-toastify";
+import { wallet } from "@/services/wallet";
 
 export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
   const { chainId } = useAccount();
@@ -41,7 +42,10 @@ export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
 
   useEffect(() => {
     if (pairsMap) {
-      liquidity.initPool(Object.values(pairsMap));
+      liquidity.initPool(
+        Object.values(pairsMap),
+        wallet.currentChain.validatedTokensInfo
+      );
     }
   }, [pairsMap]);
   //   useEffect(() => {

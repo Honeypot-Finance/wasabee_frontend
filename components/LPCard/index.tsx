@@ -16,6 +16,7 @@ import { ItemSelect, SelectState } from "../ItemSelect";
 import { SelectItem } from "../ItemSelect/index";
 import { MouseEvent } from "react";
 import _ from "lodash";
+import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
 
 const AddLiquidity = observer(() => {
   return (
@@ -239,37 +240,40 @@ export const LPCard = observer(() => {
     inputCurrency: string;
     outputCurrency: string;
   };
+  const isinit = wallet.isInit && liquidity.isInit;
   useEffect(() => {
     liquidity.setCurrentRemovePair(null);
   }, []);
   useEffect(() => {
-    if (!wallet.isInit) {
+    if (!isinit) {
       return;
     }
     if (inputCurrency && isEthAddress(inputCurrency)) {
-      liquidity.setFromToken(new Token({ address: inputCurrency }));
+      liquidity.setFromToken(liquidity.tokensMap[inputCurrency]);
     }
     if (outputCurrency && isEthAddress(outputCurrency)) {
-      liquidity.setToToken(new Token({ address: outputCurrency }));
+      liquidity.setToToken(liquidity.tokensMap[outputCurrency]);
     }
-  }, [inputCurrency, outputCurrency, wallet.isInit]);
+  }, [inputCurrency, outputCurrency, isinit]);
   return (
     <div className="[background:var(--card-color,#271A0C)]   p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
-      <Tabs
-        variant="light"
-        disableAnimation
-        classNames={{
-          tabList: "gap-16px p-0 bg-transparent",
-          tab: "px-[0.25rem] data-[selected=true]:bg-transparent font-bold text-[1.2rem]",
-        }}
-      >
-        <Tab key="addLiquidity" title="Add Liquidity">
-          <AddLiquidity></AddLiquidity>
-        </Tab>
-        <Tab key="removeLiquidity" title="Remove Liquidity">
-          <RemoveLiquidity></RemoveLiquidity>
-        </Tab>
-      </Tabs>
+      {(isinit && (
+        <Tabs
+          variant="light"
+          disableAnimation
+          classNames={{
+            tabList: "gap-16px p-0 bg-transparent",
+            tab: "px-[0.25rem] data-[selected=true]:bg-transparent font-bold text-[1.2rem]",
+          }}
+        >
+          <Tab key="addLiquidity" title="Add Liquidity">
+            <AddLiquidity></AddLiquidity>
+          </Tab>
+          <Tab key="removeLiquidity" title="Remove Liquidity">
+            <RemoveLiquidity></RemoveLiquidity>
+          </Tab>
+        </Tabs>
+      )) || <LoadingDisplay></LoadingDisplay>}
     </div>
   );
 });

@@ -147,8 +147,8 @@ class Swap {
   }
 
   setFromToken(token: Token) {
-    if (this.fromToken?.address !== token.address) {
-      if (this.toToken?.address === token.address) {
+    if (this.fromToken?.address !== token?.address) {
+      if (this.toToken?.address === token?.address) {
         this.toToken = this.fromToken;
         this.toAmount = "";
       }
@@ -163,8 +163,8 @@ class Swap {
   }
 
   setToToken(token: Token) {
-    if (this.toToken?.address !== token.address) {
-      if (this.fromToken?.address === token.address) {
+    if (this.toToken?.address !== token?.address) {
+      if (this.fromToken?.address === token?.address) {
         this.fromToken = this.toToken;
         this.fromAmount = "";
       }
