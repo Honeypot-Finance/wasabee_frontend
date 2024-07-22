@@ -394,8 +394,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
       <div className="flex justify-center mt-[24px]">
         <div className="flex gap-[20px] flex-wrap min-h-[425px]">
           <div className="flex-1 flex   basis-full sm:basis-0  sm:min-w-[500px] flex-col items-center  shrink-0 [background:#271B0C] rounded-2xl">
-            <div className="h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px]"></div>
-            <div className="relative w-full px-[29px] pb-[26px]">
+            <div className="flex h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px]"></div>
+            <div className="relative flex-1 w-full h-full px-[29px] pb-[26px]">
               <TokenStatusDisplay pair={state.pair.value} />
               <div className=" relative translate-y-[-50%] w-[65px] h-[65px] [background:#271B0C] rounded-[11.712px] p-[3px]">
                 <div className="w-full h-full flex items-center justify-center [background:#ECC94E] rounded-[11.712px]">
@@ -443,7 +443,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 </div>
               </div>
               {state.pair.value?.launchedToken.address && (
-                <span className="flex justify-end flex-row ml-2">
+                <span className="flex justify-end flex-row ml-2 absolute right-4 bottom-4">
                   <ShareSocialMedialPopUp
                     shareUrl={window.location.href}
                     shareText={
