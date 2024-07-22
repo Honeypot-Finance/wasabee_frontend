@@ -5,7 +5,7 @@ import { use, useEffect } from "react";
 
 export type Column<T> = {
   title: string;
-  dataKey?: keyof T | '_action';
+  dataKey?: keyof T | "_action";
   key?: string;
   render?: (value: any, row: T) => JSX.Element;
 };
@@ -33,12 +33,14 @@ function TableBase<T extends Record<string, any>>({
   paginationProps,
   pagination,
   isLoading,
-  rowKey
+  rowKey,
 }: TableProps<T>) {
   const state = useLocalObservable(() => ({
-    pagination: pagination || new PaginationState({
-      total: datasource.length,
-    }),
+    pagination:
+      pagination ||
+      new PaginationState({
+        total: datasource.length,
+      }),
     datasource,
     setDatasource(datasource: T[]) {
       this.datasource = datasource;
@@ -47,56 +49,68 @@ function TableBase<T extends Record<string, any>>({
       }
     },
     get tableData() {
-      return pagination? this.datasource : this.datasource.slice(
-        state.pagination.offset,
-        state.pagination.end
-      );
+      return pagination
+        ? this.datasource
+        : this.datasource.slice(state.pagination.offset, state.pagination.end);
     },
   }));
   useEffect(() => {
     state.setDatasource(datasource || []);
   }, [datasource]);
-  
+
   return (
     <>
       <div className="flex flex-col">
         <div className="flex text-[rgba(255,255,255,0.55)] text-sm font-bold leading-4">
           {columns.map((column) => (
-            <div className="flex-1 p-[16px]" key={column.dataKey as string}>{column.title}</div>
+            <div className="flex-1 p-[16px]" key={column.dataKey as string}>
+              {column.title}
+            </div>
           ))}
         </div>
-        
-        {
-          isLoading ? <Spinner /> :
+
+        {isLoading ? (
+          <Spinner />
+        ) : (
           <div>
-            {state.tableData?.length ? state.tableData.map((data, index) => (
-          <div key={data[rowKey] || index} className="flex relative border-bottom">
-            {columns.map((column) => {
-              const value = column.dataKey ? data[column.dataKey] : null
-              return (
-                <div className="flex-1 p-[16px]" key={(column.dataKey || column.key) as string}>
-                  {column.render
-                    ? column.render(value, data)
-                    : value}
+            {state.tableData?.length ? (
+              state.tableData.map((data, index) => (
+                <div
+                  key={data[rowKey] || index}
+                  className="flex relative border-bottom"
+                >
+                  {columns.map((column) => {
+                    const value = column.dataKey ? data[column.dataKey] : null;
+                    return (
+                      <div
+                        className="flex-1 p-[16px]"
+                        key={(column.dataKey || column.key) as string}
+                      >
+                        {column.render ? column.render(value, data) : value}
+                      </div>
+                    );
+                  })}
                 </div>
-              )
-            })}
+              ))
+            ) : (
+              <NoData></NoData>
+            )}
           </div>
-        )) : <NoData></NoData>}
-          </div>
-        }
+        )}
       </div>
-      {state.pagination.total > state.pagination.limit &&  <Pagination
-        className="flex justify-center mt-[12px]"
-        total={state.pagination.totalPage}
-        page={state.pagination.page}
-        initialPage={state.pagination.page}
-        onChange={(page) => {
-          state.pagination.onPageChange(page);
-        }}
-        {...paginationProps}
-      />}
-    </>      
+      {state.pagination.total > state.pagination.limit && (
+        <Pagination
+          className="flex justify-center mt-[12px]"
+          total={state.pagination.totalPage.value ?? 1}
+          page={state.pagination.page}
+          initialPage={state.pagination.page}
+          onChange={(page) => {
+            state.pagination.onPageChange(page);
+          }}
+          {...paginationProps}
+        />
+      )}
+    </>
   );
 }
 
