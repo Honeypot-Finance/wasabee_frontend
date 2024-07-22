@@ -395,7 +395,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
         <div className="flex gap-[20px] flex-wrap min-h-[425px]">
           <div className="flex-1 flex   basis-full sm:basis-0  sm:min-w-[500px] flex-col items-center  shrink-0 [background:#271B0C] rounded-2xl">
             <div className="h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px]"></div>
-
             <div className="relative w-full px-[29px] pb-[26px]">
               <TokenStatusDisplay pair={state.pair.value} />
               <div className=" relative translate-y-[-50%] w-[65px] h-[65px] [background:#271B0C] rounded-[11.712px] p-[3px]">
@@ -443,6 +442,17 @@ const LaunchPage: NextLayoutPage = observer(() => {
                   })}
                 </div>
               </div>
+              {state.pair.value?.launchedToken.address && (
+                <span className="flex justify-end flex-row ml-2">
+                  <ShareSocialMedialPopUp
+                    shareUrl={window.location.href}
+                    shareText={
+                      "Checkout our Token " + state.pair.value?.projectName
+                    }
+                    text="share this project"
+                  />
+                </span>
+              )}
             </div>
           </div>
           <div className="text-left relative flex-1 flex basis-full  sm:basis-0 sm:min-w-[500px]  flex-col gap-[10px] shrink-0 [background:#271B0C] rounded-2xl py-[12px] px-[24px]">
@@ -478,12 +488,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
                     <Copy
                       value={state.pair.value?.launchedToken.address}
                     ></Copy>
-                    <ShareSocialMedialPopUp
-                      shareUrl={window.location.href}
-                      shareText={
-                        "Checkout our Token " + state.pair.value?.projectName
-                      }
-                    />
                   </span>
                 )}
               </div>
