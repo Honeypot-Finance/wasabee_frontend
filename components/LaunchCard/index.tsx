@@ -10,10 +10,9 @@ import { Button } from "@/components/button";
 import Link from "next/link";
 import { HTMLAttributes } from "react";
 import { cn } from "@/lib/tailwindcss";
+import TokenStatusDisplay from "../atoms/TokenStatusDisplay/TokenStatusDisplay";
 
-const Actions = () => {
-
-}
+const Actions = () => {};
 
 export const LaunchCard = observer(
   ({
@@ -22,9 +21,11 @@ export const LaunchCard = observer(
     type,
     className,
     ...props
-  }: { type?: 'list' | 'detail', pair?: FtoPairContract | null; action: React.ReactNode } & Partial<
-    HTMLAttributes<any>
-  >) => {
+  }: {
+    type?: "list" | "detail";
+    pair?: FtoPairContract | null;
+    action: React.ReactNode;
+  } & Partial<HTMLAttributes<any>>) => {
     return (
       <div
         className={cn(
@@ -33,17 +34,7 @@ export const LaunchCard = observer(
         )}
         {...props}
       >
-        <div
-          className={cn(
-            "flex px-[8px] h-[29px] justify-center items-center gap-[5px] absolute  rounded-[20px] right-2.5 top-[9px]",
-            pair?.ftoStatusDisplay?.color
-          )}
-        >
-          <div className="rounded-full bg-current w-2 h-2"></div>
-          <span className="text-ss  text-current">
-            {pair?.ftoStatusDisplay?.status}
-          </span>
-        </div>
+        <TokenStatusDisplay pair={pair} />
         <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square">
           <div className="w-8">
             <Logo />
@@ -60,7 +51,12 @@ export const LaunchCard = observer(
             )}
           </div>
         </h4>
-        <div className={cn("grid  items-start gap-6 text-white mt-2 justify-between w-full break-all ", type === 'detail' ? 'sm:grid-cols-4 grid-cols-2' : ' grid-cols-2')}>
+        <div
+          className={cn(
+            "grid  items-start gap-6 text-white mt-2 justify-between w-full break-all ",
+            type === "detail" ? "sm:grid-cols-4 grid-cols-2" : " grid-cols-2"
+          )}
+        >
           <div className="flex flex-col items-center gap-1">
             <h6 className="opacity-50 text-xs">Timeline</h6>
             <div className="flex items-center gap-2 text-sm">
@@ -73,7 +69,10 @@ export const LaunchCard = observer(
             <div className="flex items-center gap-2 text-sm">
               {/* <TotalRaisedSvg /> */}
               <span className="font-bold">
-                {pair?.depositedLaunchedToken ? pair?.depositedLaunchedToken?.toFormat(0) : '-'}&nbsp;
+                {pair?.depositedLaunchedToken
+                  ? pair?.depositedLaunchedToken?.toFormat(0)
+                  : "-"}
+                &nbsp;
                 {pair?.launchedToken.displayName}
               </span>
             </div>
@@ -83,7 +82,10 @@ export const LaunchCard = observer(
             <div className="flex items-center gap-2 text-sm">
               {/* <TotalRaisedSvg /> */}
               <span className="font-bold">
-                {pair?.depositedRaisedToken ? pair.depositedRaisedToken.toFormat(3) : '-'}&nbsp;
+                {pair?.depositedRaisedToken
+                  ? pair.depositedRaisedToken.toFormat(3)
+                  : "-"}
+                &nbsp;
                 {pair?.raiseToken.displayName}
               </span>
             </div>
