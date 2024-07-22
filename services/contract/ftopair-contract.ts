@@ -30,6 +30,7 @@ export class FtoPairContract implements BaseContract {
   website = "";
   isInit = false;
   provider = "";
+  canClaimLP = false;
   socials: {
     name: string;
     link: string;
@@ -288,11 +289,23 @@ export class FtoPairContract implements BaseContract {
         this.getFTOState(),
         this.getLaunchedTokenProvider(),
         this.getProjectInfo(),
+        this.getCanClaimLP(),
       ]);
     } catch (error) {
       console.error(error, `init-${this.address}`);
     }
     this.isInit = true;
+  }
+
+  async getCanClaimLP() {
+    try {
+      const res = await this.contract.read.claimableLP([wallet.account] as [
+        `0x${string}`
+      ]);
+      this.canClaimLP = res > 0;
+    } catch (error) {
+      console.error(error, `getCanClaimLP-${this.address}`);
+    }
   }
 
   async getRaisedToken() {

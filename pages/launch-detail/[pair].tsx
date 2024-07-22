@@ -226,8 +226,9 @@ const SuccessAction = observer(({ pair }: { pair: FtoPairContract }) => {
         onClick={() => {
           pair.claimLP.call();
         }}
+        isDisabled={!pair.canClaimLP}
       >
-        Claim LP
+        {pair.canClaimLP ? "Claim LP" : "Claim LP (Not available)"}
       </Button>
     </div>
   );
