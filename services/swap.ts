@@ -119,12 +119,13 @@ class Swap {
             return
         }
         if (this.fromAmount) {
+          
           const [toAmount] = await this.currentPair.value.getAmountOut.call(
             this.fromAmount,
             this.fromToken as Token
           );
           //@ts-ignore
-          this.toAmount = toAmount.toFixed();
+          this.toAmount = toAmount?.toFixed();
           this.price = new BigNumber(this.toAmount).div(this.fromAmount);
         } else {
           this.toAmount = "";
