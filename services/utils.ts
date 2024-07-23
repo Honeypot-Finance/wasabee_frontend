@@ -70,6 +70,7 @@ export class ContractWrite<T extends (...args: any) => any> {
   static nonce = 0;
   loading = false;
   error: Error | null = null;
+  action?: string = "";
   successMsg: string = "";
   failMsg: string = "";
   silent: boolean = false;
@@ -82,6 +83,21 @@ export class ContractWrite<T extends (...args: any) => any> {
 
     makeAutoObservable(this);
   }
+
+  get successMsgAgg () {
+    if (this.successMsg) {
+      return this.successMsg
+    } 
+    return this.action ? `${this.action} successfully` : `Transaction Success`
+  }
+
+  get failMsgAgg () {
+    if (this.failMsg) {
+      return this.failMsg
+    } 
+    return this.action ? `${this.action} Failed` : `Transaction Failed`
+  }
+
 
   call = async (args?: Parameters<T>[0]) => {
     const count = await wallet.publicClient.getTransactionCount({
@@ -100,7 +116,7 @@ export class ContractWrite<T extends (...args: any) => any> {
         account: wallet.account,
       });
       console.log("hash", hash);
-      const pendingPopup = toast(TransactionPendingToastify(hash), {
+      const pendingPopup = toast(TransactionPendingToastify({hash, action: this.action}), {
         autoClose: false,
         isLoading: true,
       } as ToastOptions);
@@ -114,10 +130,10 @@ export class ContractWrite<T extends (...args: any) => any> {
       if (!this.silent) {
         switch (transaction.status) {
           case "success":
-            toast.success(this.successMsg || `Transaction ${hash} Success`);
+            toast.success(this.successMsgAgg);
             break;
           case "reverted":
-            toast.error(this.failMsg || `Transaction ${hash} failed`);
+            toast.error(this.failMsgAgg);
             break;
           default:
             throw new Error(`Transaction ${hash} Pending`);

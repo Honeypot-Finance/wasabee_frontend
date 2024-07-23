@@ -136,24 +136,27 @@ export class PairContract implements BaseContract {
           .toFixed(0)
       )
 
+
       const reserveIn = fromToken.address === this.token0.address ? reserve0 : reserve1
       const reserveOut = fromToken.address === this.token0.address ? reserve1 : reserve0
+      const toToken = fromToken.address === this.token0.address ? this.token1 : this.token0
       const amountOut = await this.routerV2Contract.contract.read.getAmountOut([
         BigInt(
           new BigNumber(fromAmount)
-            .multipliedBy(new BigNumber(10).pow(this.token0.decimals))
+            .multipliedBy(new BigNumber(10).pow(fromToken.decimals))
             .toFixed(0)
         ),
         reserveIn,
         reserveOut,
       ]);
+      console.log('toToken.decimals', toToken.decimals)
       console.log(
         new BigNumber(amountOut.toString())
-          .div(new BigNumber(10).pow(this.token1.decimals))
+          .div(new BigNumber(10).pow(toToken.decimals))
           .toFixed()
       );
       return new BigNumber(amountOut.toString()).div(
-        new BigNumber(10).pow(this.token1.decimals)
+        new BigNumber(10).pow(toToken.decimals)
       );
     }
   );

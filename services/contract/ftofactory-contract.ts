@@ -28,7 +28,9 @@ export class FtoFactoryContract implements BaseContract {
   }
 
   get createFTO() {
-    return new ContractWrite(this.contract.write.createFTO);
+    return new ContractWrite(this.contract.write.createFTO, {
+      action: "Create FTO Project",
+    });
   }
 
   get allPairsLength(): AsyncState<number> {
@@ -41,12 +43,12 @@ export class FtoFactoryContract implements BaseContract {
 
   get resume() {
     return new ContractWrite(this.contract.write.resume, {
-      successMsg: "Resume success",
+      action: "Resume",
     });
   }
   get pause() {
     return new ContractWrite(this.contract.write.pause, {
-      successMsg: "Pause success",
+      action: "Pause",
     });
   }
 }

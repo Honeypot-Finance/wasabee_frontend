@@ -27,7 +27,7 @@ const AddLiquidity = observer(() => {
       <div className=" flex flex-col justify-center items-start gap-[23px] ">
         <div className="flex justify-between items-center w-full">
           <SwapAmount
-            label="From"
+            label=""
             inputProps={{
               value: liquidity.fromAmount,
               disabled: !liquidity.fromToken,
@@ -39,6 +39,9 @@ const AddLiquidity = observer(() => {
               onChange: (e) => {
                 liquidity.setFromAmount(e.target.value);
               },
+              onInput: (e) => {
+                liquidity.onFromAmountInputChange();
+              }
             }}
           ></SwapAmount>
           <div className="flex flex-col items-end">
@@ -74,10 +77,10 @@ const AddLiquidity = observer(() => {
         </div>
         <div className="flex justify-between  items-center w-full">
           <SwapAmount
-            label="To"
+            label=""
             inputProps={{
               value: liquidity.toAmount,
-              disabled: !liquidity.toToken || !!liquidity.currentPair.value,
+              disabled: !liquidity.toToken,
               max: liquidity.toToken?.balance.toNumber(),
               min: 0,
               onClear: () => {
@@ -87,6 +90,10 @@ const AddLiquidity = observer(() => {
               onChange: (e) => {
                 liquidity.setToAmount(e.target.value);
               },
+              onInput: (e) => {
+         
+                liquidity.onToAmountInputChange();
+              }
             }}
           ></SwapAmount>
           <div className="flex flex-col items-end">

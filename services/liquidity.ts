@@ -100,22 +100,39 @@ class Liquidity {
         }
       }
     );
-    reaction(
-      () => this.fromAmount,
-      debounce(async () => {
-        if (this.fromAmount && this.currentPair.value) {
-          await this.currentPair.value.getAmountOut.call(
-            this.fromAmount,
-            this.fromToken as Token
-          );
-          //@ts-ignore
-          this.toAmount = this.currentPair.value.getAmountOut.value.toFixed();
-        } else {
-          this.toAmount = "";
-        }
-      }, 300)
-    );
   }
+
+  onFromAmountInputChange = debounce(async () => {
+    if (!this.currentPair.value) {
+      return
+    }
+    if (this.fromAmount) {
+     const [toAmount] = await this.currentPair.value.getAmountOut.call(
+        this.fromAmount,
+        this.fromToken as Token
+      );
+      //@ts-ignore
+      this.toAmount = toAmount.toFixed();
+    } else {
+      this.toAmount = "";
+    }
+  }, 300)
+
+  onToAmountInputChange = debounce(async () => {
+    if (!this.currentPair.value) {
+      return
+    }
+    if (this.toAmount) {
+      const [fromAmount] = await this.currentPair.value.getAmountOut.call(
+        this.toAmount,
+        this.toToken as Token
+      );
+      //@ts-ignore
+      this.fromAmount = fromAmount.toFixed();
+    } else {
+      this.fromAmount = "";
+    }
+  }, 300)
 
   setCurrentRemovePair(pair: PairContract | null) {
     this.currentRemovePair = pair;
