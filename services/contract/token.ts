@@ -55,12 +55,12 @@ export class Token implements BaseContract {
 
   get faucet() {
     return new ContractWrite(this.faucetContract.write?.faucet, {
-      successMsg: "Get faucet successfully",
+      action: "Get Faucet",
     });
   }
   get approve() {
     return new ContractWrite(this.contract.write?.approve, {
-      successMsg: "Approved successfully",
+      action: "Approve",
     });
   }
 

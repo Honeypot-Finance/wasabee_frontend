@@ -194,7 +194,7 @@ export class FtoPairContract implements BaseContract {
 
   get withdraw() {
     return new ContractWrite(this.contract.write.withdraw, {
-      successMsg: "Withdraw success",
+      action: "Withdraw",
     });
   }
 

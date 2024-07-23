@@ -2,10 +2,10 @@ import Link from "next/link";
 import { wallet } from "@/services/wallet";
 import { ViewSvg } from "@/components/svg/View";
 
-export default function TransactionPendingToastify(hash: string) {
+export default function TransactionPendingToastify({hash, action}: {hash: string, action?: string}) {
   return (
     <div>
-      <div>Transaction Pending</div>
+      <div>{action || 'Transaction'} Pending</div>
       <div className="m-2 text-right text-gray-800">
         <Link
           className="flex justify-end text-right items-center gap-2"

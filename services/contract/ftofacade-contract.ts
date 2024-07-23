@@ -25,13 +25,13 @@ export class FtoFacadeContract implements BaseContract {
 
   get deposit() {
     return new ContractWrite(this.contract.write?.deposit, {
-      successMsg: "Deposit successfully",
+      action: "Deposit",
     });
   }
 
   get claimLP () {
     return new ContractWrite(this.contract.write?.claimLP, {
-      successMsg: "Claim liquidity pool successfully",
+      action: "Claim Liquidity Pool",
     });
   }
 

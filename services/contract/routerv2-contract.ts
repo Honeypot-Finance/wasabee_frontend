@@ -28,21 +28,21 @@ export class RouterV2Contract implements BaseContract {
 
   get addLiquidity () {
     return new ContractWrite(this.contract.write.addLiquidity, {
-      successMsg: 'Add liquidity successfully'
+      action: 'Add Liquidity'
     }
     )
   }
   get removeLiquidity () {
     return new ContractWrite(this.contract.write.removeLiquidity, 
       {
-        successMsg: 'Remove liquidity successfully'
+        action: 'Remove Liquidity'
       }
     )
   }
 
   get swapExactTokensForTokens () {
     return new ContractWrite(this.contract.write.swapExactTokensForTokens, {
-      successMsg: 'Swap successfully'
+      action: 'Swap'
     })
   }
 }
