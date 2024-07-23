@@ -48,22 +48,20 @@ const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
         .object({
           projectName: z.string(),
           description: z.string(),
-          twitter: z
-            .union([
-              z.string().url().startsWith("https://x.com/"),
-              z.string().url().startsWith("https://twitter.com/"),
-            ])
-            .optional(),
-          website: z.string().url().startsWith("https://").optional(),
-          telegram: z
-            .union([
-              z.string().startsWith("https://t.me/"),
-              z.string().startsWith("@"),
-            ])
-            .optional(),
+          twitter: z.union([
+            z.string().url().startsWith("https://x.com/").optional().nullable(),
+            z.string().url().startsWith("https://twitter.com/"),
+            z.literal(""),
+          ]),
+          website: z.string().url().startsWith("https://").or(z.literal("")),
+          telegram: z.union([
+            z.string().startsWith("https://t.me/").optional().nullable(),
+            z.string().startsWith("@").optional().nullable(),
+            z.literal(""),
+          ]),
         })
         .transform((data) => {
-          const mutateTelegram = (telegram: string | undefined) => {
+          const mutateTelegram = (telegram: string | undefined | null) => {
             if (telegram && telegram.startsWith("@")) {
               return `https://t.me/${telegram.split("@")[1]}`;
             }
