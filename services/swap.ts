@@ -115,13 +115,16 @@ class Swap {
     reaction(
       () => this.fromAmount,
       debounce(async () => {
-        if (this.fromAmount && this.currentPair.value) {
-          await this.currentPair.value.getAmountOut.call(
+        if (!this.currentPair.value) {
+            return
+        }
+        if (this.fromAmount) {
+          const [toAmount] = await this.currentPair.value.getAmountOut.call(
             this.fromAmount,
             this.fromToken as Token
           );
           //@ts-ignore
-          this.toAmount = this.currentPair.value.getAmountOut.value.toFixed();
+          this.toAmount = toAmount.toFixed();
           this.price = new BigNumber(this.toAmount).div(this.fromAmount);
         } else {
           this.toAmount = "";
