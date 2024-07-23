@@ -48,7 +48,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
             Get Faucet
           </a>
         </Button> */}
-        <Button>
+        <Button className="scale-[0.8] sm:scale-100">
           <Link href="/launch-token" className="text-black font-bold">
             Launch Token
           </Link>

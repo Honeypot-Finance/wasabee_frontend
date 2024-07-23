@@ -12,7 +12,7 @@ const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   return (
     <button
       type="button"
-      className="flex h-[42px] px-[12px] justify-center items-center gap-[4.411px] shrink-0 [background:rgba(247,147,26,0.10)] backdrop-blur-[10px] rounded-[100px] border-[1.654px] border-solid border-[rgba(247,147,26,0.20)]"
+      className="flex py-2 sm:h-[42px] px-3 justify-center items-center gap-[4.411px] shrink-0 [background:rgba(247,147,26,0.10)] backdrop-blur-[10px] rounded-[100px] border-[1.654px] border-solid border-[rgba(247,147,26,0.20)]"
       {...props}
     ></button>
   );

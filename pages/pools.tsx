@@ -95,7 +95,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
 
   return (
     <div className="flex flex-col  items-center">
-      <div className="w-[800px] max-w-full relative">
+      <div className="w-[800px] max-w-full relative space-y-4">
         <div className="flex top-0 md:absolute right-0 md:flex-row flex-col md:gap-[16px] gap-[8px]">
           <Input
             value={state.searchValue}
@@ -114,7 +114,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
               router.push("/pool");
             }}
             styleMode="plain"
-            className=" w-[170px] h-[41px] gap-2.5"
+            className=" md:w-[170px] h-[41px] gap-2.5"
           >
             <LuPlus />
             Create Pool
@@ -171,7 +171,10 @@ const PoolsPage: NextLayoutPage = observer(() => {
                               className="flex items-center gap-[6px]"
                               href={`/pool?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
                             >
-                              <Button>
+                              <span className="inline-block sm:hidden hover:text-[#FCD729] cursor-pointer hover:underline">
+                                Add
+                              </span>
+                              <Button className="hidden sm:flex">
                                 <p>Add</p>
                                 <div>
                                   <ShareSocialMedialPopUp
@@ -181,23 +184,30 @@ const PoolsPage: NextLayoutPage = observer(() => {
                                 </div>
                               </Button>
                             </Link>
-                            <Button styleMode="plain">
-                              <Link
-                                className="flex items-center gap-[6px]"
-                                href={`/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
+                            <Link
+                              className="flex items-center gap-[6px]"
+                              href={`/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
+                            >
+                              <span className="inline-block sm:hidden hover:text-[#FCD729] cursor-pointer hover:underline">
+                                Swap
+                              </span>
+                              <Button
+                                styleMode="plain"
+                                className="hidden sm:flex"
                               >
                                 <p>Swap</p>
-
-                                <ShareSocialMedialPopUp
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                  }}
-                                  shareUrl={`${window.location.origin}/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
-                                  shareText="Swap with this pool"
-                                />
-                              </Link>
-                            </Button>
+                                <div>
+                                  <ShareSocialMedialPopUp
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                    }}
+                                    shareUrl={`${window.location.origin}/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
+                                    shareText="Swap with this pool"
+                                  />
+                                </div>
+                              </Button>
+                            </Link>
                           </div>
                         );
                       },

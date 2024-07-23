@@ -18,7 +18,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
   }, [wallet.currentChain?.faucetTokens]);
   return (
     <div className="flex flex-col  items-center ">
-      <div className="flex items-center relative w-[578px] h-[138px] overflow-hidden">
+      <div className="flex items-center relative w-full sm:w-[578px] h-[138px] overflow-hidden">
         <Image src="/images/faucet_bg_v2.png" alt="faucet" fill></Image>
         <Image
           src="/images/bera/honeybera.svg"
@@ -30,7 +30,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
           <div className="text-[black] text-2xl font-bold leading-7 tracking-[-0.24px]">
             Faucet
           </div>
-          <div className="w-[309px] text-[black] mt-[8px] text-base font-bold leading-6 opacity-[0.5]">
+          <div className="w-[309px] text-[black] mt-[8px] text-pretty text-sm sm:text-base font-bold leading-6 opacity-[0.5]">
             Claim test tokens to try out the Berachain testnet.
           </div>
         </div>
