@@ -29,8 +29,6 @@ export default async function handler(
     creator_api_key: api_key as string,
   });
 
-  console.log("getProjectInfo", data);
-
   if (!data) {
     return res.status(404).json({
       status: "error",
