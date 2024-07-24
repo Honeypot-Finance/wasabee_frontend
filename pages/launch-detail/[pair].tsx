@@ -34,6 +34,7 @@ import { info } from "console";
 import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { trpcClient } from "@/lib/trpc";
 import TokenStatusDisplay from "@/components/atoms/TokenStatusDisplay/TokenStatusDisplay";
+import { Provider } from "ethcall";
 
 const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -49,14 +50,14 @@ const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
           projectName: z.string(),
           description: z.string(),
           twitter: z.union([
-            z.string().url().startsWith("https://x.com/").optional().nullable(),
+            z.string().url().startsWith("https://x.com/"),
             z.string().url().startsWith("https://twitter.com/"),
             z.literal(""),
           ]),
           website: z.string().url().startsWith("https://").or(z.literal("")),
           telegram: z.union([
-            z.string().startsWith("https://t.me/").optional().nullable(),
-            z.string().startsWith("@").optional().nullable(),
+            z.string().startsWith("https://t.me/"),
+            z.string().startsWith("@"),
             z.literal(""),
           ]),
         })
@@ -463,6 +464,30 @@ const LaunchPage: NextLayoutPage = observer(() => {
               )}
             </div>
             <div>
+              <Button
+                onClick={() => {
+                  fetch("/api/fto/updatefto", {
+                    method: "POST",
+                    body: JSON.stringify({
+                      twitter: "https://twitter.com/123",
+                      telegram: "https://t.me/1234",
+                      website: "https://12345",
+                      description: "description",
+                      projectName: "projectName",
+                      pair: state.pair.value?.address,
+                      chain_id: wallet.currentChainId,
+                      creator_api_key: "7523695c-ba97-43bf-bd0c-5740cfddd532",
+                    }),
+                  }).then((res) => {
+                    console.log(res);
+                    res.json().then((data) => {
+                      console.log(data);
+                    });
+                  });
+                }}
+              >
+                test
+              </Button>
               <div className="text-[rgba(255,255,255,0.66)] text-[15.958px] font-bold leading-[normal]">
                 Token Raised
               </div>
