@@ -464,7 +464,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
               )}
             </div>
             <div>
-              <Button
+              {/* <Button
                 onClick={() => {
                   fetch("/api/fto/updatefto", {
                     method: "POST",
@@ -487,7 +487,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 }}
               >
                 test
-              </Button>
+              </Button> */}
               <div className="text-[rgba(255,255,255,0.66)] text-[15.958px] font-bold leading-[normal]">
                 Token Raised
               </div>
