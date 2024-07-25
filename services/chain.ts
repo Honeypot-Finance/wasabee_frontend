@@ -35,6 +35,7 @@ export class Network {
       logoURI?: string;
     }
   > = {};
+  validatedFtoAddresses: string[] = [];
   constructor(
     args: Omit<Partial<Network>, "faucetTokens"> & {
       faucetTokens: Partial<Token>[];
@@ -219,6 +220,9 @@ export const berachainBartioTestnetNetwork = new Network({
       logoURI: "/images/icons/tokens/dai-token-icon.png",
     },
   },
+  validatedFtoAddresses: [
+    "0x1a58303C577CBbEA0714588059De9052896CaCF7".toLowerCase(),
+  ],
 });
 
 // export const berachainTestNetwork = new Network({

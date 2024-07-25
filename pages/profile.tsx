@@ -52,6 +52,7 @@ export const Profile = observer(() => {
     if (!wallet.isInit) {
       return;
     }
+    launchpad.showNotValidatedPairs = true;
     launchpad.getFtoPairs.call();
     launchpad.getMyFtoPairs.call();
     launchpad.getMyFtoParticipatedPairs.call();
