@@ -106,7 +106,7 @@ export const Profile = observer(() => {
           }}
           className="next-tab"
         >
-          <Tab key="protfolio" title="Protfolio">
+          <Tab key="portfolio" title="Portfolio">
             <Card className="next-card">
               <CardBody className="">
                 {wallet?.currentChain?.faucetTokens &&
