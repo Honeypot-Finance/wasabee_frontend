@@ -428,42 +428,44 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 <div className="flex gap-[10px] justify-center">
                   {state.pair.value?.socials.map((social) => {
                     return social.name === "website" ? (
-                      <div key={social.name}>
-                        <span
-                          className="cursor-pointer"
-                          onClick={() => {
-                            toast.warn(
-                              <div>
-                                <h2 className="text-red-500">Caution!</h2>
-                                <p>
-                                  this project is not verified, are you sure you
-                                  want to proceed?
-                                </p>
-                                <div className="flex justify-end">
-                                  <Link
-                                    className="text-blue-500 text-right flex"
-                                    href={social.link}
-                                    target="_blank"
-                                  >
-                                    Proceed
-                                    <BiLinkExternal />
-                                  </Link>
-                                </div>
-                              </div>,
-                              {
-                                autoClose: false,
-                              }
-                            );
-                          }}
-                        >
-                          <Image
-                            src={social.icon}
-                            width={23}
-                            height={23}
-                            alt={social.name}
-                          ></Image>
-                        </span>
-                      </div>
+                      <PopUp
+                        info="warning"
+                        trigger={
+                          <div key={social.name}>
+                            <span className="cursor-pointer">
+                              <Image
+                                src={social.icon}
+                                width={23}
+                                height={23}
+                                alt={social.name}
+                              ></Image>
+                            </span>
+                          </div>
+                        }
+                        contents={
+                          <div>
+                            <h2 className="text-red-500 text-[2rem]">
+                              Caution!
+                            </h2>
+                            <p>
+                              This project is not verified, are you sure you
+                              want to proceed to the website?
+                            </p>
+                            <div className="flex justify-end">
+                              <Link
+                                className="text-blue-500 text-right flex"
+                                href={social.link}
+                                target="_blank"
+                              >
+                                <Button>
+                                  Proceed
+                                  <BiLinkExternal />
+                                </Button>
+                              </Link>
+                            </div>
+                          </div>
+                        }
+                      ></PopUp>
                     ) : (
                       <div key={social.name}>
                         <Link href={social.link} target="_blank">
