@@ -35,6 +35,7 @@ export class Network {
       logoURI?: string;
     }
   > = {};
+  validatedFtoAddresses: string[] = [];
   constructor(
     args: Omit<Partial<Network>, "faucetTokens"> & {
       faucetTokens: Partial<Token>[];
@@ -102,7 +103,7 @@ export const berachainBartioTestnetNetwork = new Network({
         decimals: 18,
       },
       {
-        address: "0x2A108225249CB5B3E1E33943F5FEfAec33b1D452",
+        address: "0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D",
         name: "USDT",
         symbol: "USDT",
         decimals: 18,
@@ -198,7 +199,7 @@ export const berachainBartioTestnetNetwork = new Network({
       name: "T-HPOT",
       logoURI: "/images/icons/tokens/thpot-token-icon.jpg",
     },
-    "0x2A108225249CB5B3E1E33943F5FEfAec33b1D452": {
+    "0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D": {
       name: "USDT",
       logoURI: "/images/icons/tokens/usdt-token-icon.png",
     },
@@ -219,6 +220,9 @@ export const berachainBartioTestnetNetwork = new Network({
       logoURI: "/images/icons/tokens/dai-token-icon.png",
     },
   },
+  validatedFtoAddresses: [
+    "0x1a58303C577CBbEA0714588059De9052896CaCF7".toLowerCase(),
+  ],
 });
 
 // export const berachainTestNetwork = new Network({

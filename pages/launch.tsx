@@ -20,6 +20,7 @@ import {
   Tabs,
   useDisclosure,
   Button as NextButton,
+  Checkbox,
 } from "@nextui-org/react";
 import { IoClose, IoSearchOutline } from "react-icons/io5";
 import { SpinnerContainer } from "@/components/Spinner";
@@ -32,6 +33,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
     if (!wallet.isInit) {
       return;
     }
+    launchpad.showNotValidatedPairs = false;
     launchpad.getFtoPairs.call();
     launchpad.getMyFtoPairs.call();
   }, [wallet.isInit]);
@@ -55,99 +57,112 @@ const LaunchPage: NextLayoutPage = observer(() => {
         </Button>
       </div>
 
-      <div className="flex">
-        <Input
-          onChange={(e) => {
-            launchpad.pairFilterSearch = e.target.value;
+      <div>
+        <div className="flex">
+          <Input
+            onChange={(e) => {
+              launchpad.pairFilterSearch = e.target.value;
+              launchpad.ftoPairsPagination.page = 1;
+            }}
+            startContent={<IoSearchOutline></IoSearchOutline>}
+            placeholder="Search by name, symbol or address"
+            classNames={{
+              innerWrapper: "w-[369px] h-[32px]",
+            }}
+            className=" border [background:var(--card-color,#271A0C)] rounded-2xl border-solid border-[rgba(225,138,32,0.10)]"
+          ></Input>{" "}
+          <Popover
+            isOpen={isOpen}
+            onOpenChange={(isOpen) => {
+              isOpen ? onOpen() : onClose();
+            }}
+            placement="bottom"
+            classNames={{
+              base: [
+                // arrow color
+                "before:bg-default-200",
+              ],
+              content: [
+                "py-3 px-4 border border-default-200",
+                "bg-gradient-to-br from-white to-default-300",
+                "dark:from-default-100 dark:to-default-50",
+              ],
+            }}
+          >
+            <PopoverTrigger>
+              <NextButton className="inline-flex w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)] text-white text-center">
+                <span className="flex-1">{launchpad.pairFilter.status}</span>
+                <DropdownSvg></DropdownSvg>
+              </NextButton>
+            </PopoverTrigger>
+            <PopoverContent className="flex w-[352px] flex-col items-center gap-4 border border-[color:var(--card-stroke,#F7931A)] [background:var(--card-color,#271A0C)] rounded-xl border-solid">
+              <Observer>
+                {() => (
+                  <div className="w-full">
+                    <SpinnerContainer isLoading={launchpad.ftoPairs.loading}>
+                      <div>
+                        <div></div>
+
+                        <div className="max-h-[300px] overflow-auto flex justify-between">
+                          <NextButton
+                            onClick={() => {
+                              launchpad.pairFilterStatus = "all";
+                              launchpad.ftoPairsPagination.page = 1;
+                              launchpad.ftoPairsPagination.totalPage.call();
+                            }}
+                            className="w-[100px]"
+                          >
+                            All
+                          </NextButton>
+                          <NextButton
+                            onClick={() => {
+                              launchpad.pairFilterStatus = "success";
+                              launchpad.ftoPairsPagination.page = 1;
+                              launchpad.ftoPairsPagination.totalPage.call();
+                            }}
+                            className="w-[100px]"
+                          >
+                            Success
+                          </NextButton>
+                          <NextButton
+                            onClick={() => {
+                              launchpad.pairFilterStatus = "fail";
+                              launchpad.ftoPairsPagination.page = 1;
+                              launchpad.ftoPairsPagination.totalPage.call();
+                            }}
+                            className="w-[100px]"
+                          >
+                            Failed
+                          </NextButton>
+                          <NextButton
+                            onClick={() => {
+                              launchpad.pairFilterStatus = "processing";
+                              launchpad.ftoPairsPagination.page = 1;
+                            }}
+                            className="w-[100px]"
+                          >
+                            Processing
+                          </NextButton>
+                        </div>
+                      </div>
+                    </SpinnerContainer>
+                  </div>
+                )}
+              </Observer>
+            </PopoverContent>
+          </Popover>
+        </div>
+        <Checkbox
+          onClick={() => {
+            launchpad.showNotValidatedPairs =
+              !launchpad.pairFilter.showNotValidatedPairs;
             launchpad.ftoPairsPagination.page = 1;
           }}
-          startContent={<IoSearchOutline></IoSearchOutline>}
-          placeholder="Search by name, symbol or address"
-          classNames={{
-            innerWrapper: "w-[369px] h-[32px]",
-          }}
-          className=" border [background:var(--card-color,#271A0C)] rounded-2xl border-solid border-[rgba(225,138,32,0.10)]"
-        ></Input>{" "}
-        <Popover
-          isOpen={isOpen}
-          onOpenChange={(isOpen) => {
-            isOpen ? onOpen() : onClose();
-          }}
-          placement="bottom"
-          classNames={{
-            base: [
-              // arrow color
-              "before:bg-default-200",
-            ],
-            content: [
-              "py-3 px-4 border border-default-200",
-              "bg-gradient-to-br from-white to-default-300",
-              "dark:from-default-100 dark:to-default-50",
-            ],
-          }}
+          checked={launchpad.pairFilter.showNotValidatedPairs}
+          className="mt-2"
         >
-          <PopoverTrigger>
-            <NextButton className="inline-flex w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)] text-white text-center">
-              <span className="flex-1">{launchpad.pairFilter.status}</span>
-              <DropdownSvg></DropdownSvg>
-            </NextButton>
-          </PopoverTrigger>
-          <PopoverContent className="flex w-[352px] flex-col items-center gap-4 border border-[color:var(--card-stroke,#F7931A)] [background:var(--card-color,#271A0C)] rounded-xl border-solid">
-            <Observer>
-              {() => (
-                <div className="w-full">
-                  <SpinnerContainer isLoading={launchpad.ftoPairs.loading}>
-                    <div>
-                      <div></div>
-
-                      <div className="max-h-[300px] overflow-auto flex justify-between">
-                        <NextButton
-                          onClick={() => {
-                            launchpad.pairFilterStatus = "all";
-                            launchpad.ftoPairsPagination.page = 1;
-                            launchpad.ftoPairsPagination.totalPage.call();
-                          }}
-                          className="w-[100px]"
-                        >
-                          All
-                        </NextButton>
-                        <NextButton
-                          onClick={() => {
-                            launchpad.pairFilterStatus = "success";
-                            launchpad.ftoPairsPagination.page = 1;
-                            launchpad.ftoPairsPagination.totalPage.call();
-                          }}
-                          className="w-[100px]"
-                        >
-                          Success
-                        </NextButton>
-                        <NextButton
-                          onClick={() => {
-                            launchpad.pairFilterStatus = "fail";
-                            launchpad.ftoPairsPagination.page = 1;
-                            launchpad.ftoPairsPagination.totalPage.call();
-                          }}
-                          className="w-[100px]"
-                        >
-                          Failed
-                        </NextButton>
-                        <NextButton
-                          onClick={() => {
-                            launchpad.pairFilterStatus = "processing";
-                            launchpad.ftoPairsPagination.page = 1;
-                          }}
-                          className="w-[100px]"
-                        >
-                          Processing
-                        </NextButton>
-                      </div>
-                    </div>
-                  </SpinnerContainer>
-                </div>
-              )}
-            </Observer>
-          </PopoverContent>
-        </Popover>
+          Show Not verified Projects
+        </Checkbox>
       </div>
 
       {launchpad.ftoPairs.loading ? (

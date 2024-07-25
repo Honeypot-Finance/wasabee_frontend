@@ -14,7 +14,7 @@ export default function handler(
   const symbol = ticker.split(":")[0];
   const chain = ticker.split(":")[1];
   const address = ticker.split(":")[2];
-  const chainName = chainsMap[chain].name ?? "";
+  const chainName = chainsMap[chain]?.name ?? "";
 
   res.status(200).json({
     name: symbol + ":" + chainName,

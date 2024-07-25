@@ -34,6 +34,7 @@ import { info } from "console";
 import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { trpcClient } from "@/lib/trpc";
 import TokenStatusDisplay from "@/components/atoms/TokenStatusDisplay/TokenStatusDisplay";
+import { Provider } from "ethcall";
 
 const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -48,22 +49,20 @@ const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
         .object({
           projectName: z.string(),
           description: z.string(),
-          twitter: z
-            .union([
-              z.string().url().startsWith("https://x.com/"),
-              z.string().url().startsWith("https://twitter.com/"),
-            ])
-            .optional(),
-          website: z.string().url().startsWith("https://").optional(),
-          telegram: z
-            .union([
-              z.string().startsWith("https://t.me/"),
-              z.string().startsWith("@"),
-            ])
-            .optional(),
+          twitter: z.union([
+            z.string().url().startsWith("https://x.com/"),
+            z.string().url().startsWith("https://twitter.com/"),
+            z.literal(""),
+          ]),
+          website: z.string().url().startsWith("https://").or(z.literal("")),
+          telegram: z.union([
+            z.string().startsWith("https://t.me/"),
+            z.string().startsWith("@"),
+            z.literal(""),
+          ]),
         })
         .transform((data) => {
-          const mutateTelegram = (telegram: string | undefined) => {
+          const mutateTelegram = (telegram: string | undefined | null) => {
             if (telegram && telegram.startsWith("@")) {
               return `https://t.me/${telegram.split("@")[1]}`;
             }
@@ -428,7 +427,46 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 </div>
                 <div className="flex gap-[10px] justify-center">
                   {state.pair.value?.socials.map((social) => {
-                    return (
+                    return social.name === "website" ? (
+                      <PopUp
+                        info="warning"
+                        trigger={
+                          <div key={social.name}>
+                            <span className="cursor-pointer">
+                              <Image
+                                src={social.icon}
+                                width={23}
+                                height={23}
+                                alt={social.name}
+                              ></Image>
+                            </span>
+                          </div>
+                        }
+                        contents={
+                          <div>
+                            <h2 className="text-red-500 text-[2rem]">
+                              Caution!
+                            </h2>
+                            <p>
+                              This project is not verified, are you sure you
+                              want to proceed to the website?
+                            </p>
+                            <div className="flex justify-end">
+                              <Link
+                                className="text-blue-500 text-right flex"
+                                href={social.link}
+                                target="_blank"
+                              >
+                                <Button>
+                                  Proceed
+                                  <BiLinkExternal />
+                                </Button>
+                              </Link>
+                            </div>
+                          </div>
+                        }
+                      ></PopUp>
+                    ) : (
                       <div key={social.name}>
                         <Link href={social.link} target="_blank">
                           <Image
@@ -465,6 +503,30 @@ const LaunchPage: NextLayoutPage = observer(() => {
               )}
             </div>
             <div>
+              {/* <Button
+                onClick={() => {
+                  fetch("/api/fto/updatefto", {
+                    method: "POST",
+                    body: JSON.stringify({
+                      twitter: "https://twitter.com/123",
+                      telegram: "https://t.me/1234",
+                      website: "https://12345",
+                      description: "description",
+                      projectName: "projectName",
+                      pair: state.pair.value?.address,
+                      chain_id: wallet.currentChainId,
+                      creator_api_key: "7523695c-ba97-43bf-bd0c-5740cfddd532",
+                    }),
+                  }).then((res) => {
+                    console.log(res);
+                    res.json().then((data) => {
+                      console.log(data);
+                    });
+                  });
+                }}
+              >
+                test
+              </Button> */}
               <div className="text-[rgba(255,255,255,0.66)] text-[15.958px] font-bold leading-[normal]">
                 Token Raised
               </div>

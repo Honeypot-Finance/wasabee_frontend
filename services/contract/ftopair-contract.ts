@@ -28,6 +28,7 @@ export class FtoPairContract implements BaseContract {
   telegram = "";
   twitter = "";
   website = "";
+  isValidated = false;
   isInit = false;
   provider = "";
   canClaimLP = false;
@@ -290,11 +291,18 @@ export class FtoPairContract implements BaseContract {
         this.getLaunchedTokenProvider(),
         this.getProjectInfo(),
         this.getCanClaimLP(),
+        this.getIsValidated(),
       ]);
     } catch (error) {
       console.error(error, `init-${this.address}`);
     }
     this.isInit = true;
+  }
+
+  async getIsValidated() {
+    this.isValidated = wallet.currentChain.validatedFtoAddresses.includes(
+      this.address.toLowerCase()
+    );
   }
 
   async getCanClaimLP() {

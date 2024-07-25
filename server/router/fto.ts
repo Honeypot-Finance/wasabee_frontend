@@ -5,6 +5,8 @@ import { ftoService } from "../service/fto";
 
 const queue = new PQueue({ concurrency: 10 });
 
+const api_key = process.env.FTO_API_KEY ?? "";
+
 export const ftoRouter = router({
   createProject: publicProcedure
     .input(
@@ -16,7 +18,7 @@ export const ftoRouter = router({
     )
     .mutation(async ({ input }) => {
       // const { index } = input;
-      await ftoService.createFtoProject(input);
+      await ftoService.createFtoProject({ ...input, creator_api_key: api_key });
     }),
   getProjectInfo: publicProcedure
     .input(
@@ -26,17 +28,22 @@ export const ftoRouter = router({
       })
     )
     .output(
-      z.object({
-        twitter: z.string().or(z.null()),
-        telegram: z.string().or(z.null()),
-        website: z.string().or(z.null()),
-        description: z.string().or(z.null()),
-        name: z.string().or(z.null()),
-        provider: z.string(),
-      })
+      z
+        .object({
+          twitter: z.string().or(z.null()),
+          telegram: z.string().or(z.null()),
+          website: z.string().or(z.null()),
+          description: z.string().or(z.null()),
+          name: z.string().or(z.null()),
+          provider: z.string(),
+        })
+        .or(z.null())
     )
     .query(async ({ input }) => {
-      const info = await ftoService.getProjectInfo(input);
+      const info = await ftoService.getProjectInfo({
+        ...input,
+        creator_api_key: api_key,
+      });
       return info;
     }),
   getProjectsByAccount: publicProcedure
@@ -62,7 +69,10 @@ export const ftoRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      await ftoService.createOrUpdateProjectInfo(input);
+      await ftoService.createOrUpdateProjectInfo({
+        ...input,
+        creator_api_key: api_key,
+      });
     }),
   createOrUpdateProjectVotes: publicProcedure
     .input(

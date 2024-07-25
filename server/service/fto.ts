@@ -5,20 +5,47 @@ import { pg } from "@/lib/db";
 import { wallet } from "@/services/wallet";
 import { Contract, ethers, providers } from "ethers";
 import { getContract } from "viem";
+import { record } from "zod";
+
+const super_api_key = process.env.FTO_API_KEY ?? "";
+
+const fto_api_key_list = [
+  "b3a3a02a-a665-4fb5-bb17-153d05863efe", //bera boyz
+];
 
 export const ftoService = {
   createFtoProject: async (data: {
     pair: string;
     provider: string;
     chain_id: number;
+    creator_api_key: string;
   }) => {
+    if (
+      !fto_api_key_list.includes(data.creator_api_key) &&
+      data.creator_api_key !== super_api_key
+    ) {
+      return;
+    }
+
     await pg`INSERT INTO fto_project ${pg({
       pair: data.pair.toLowerCase(),
       provider: data.provider.toLowerCase(),
       chain_id: data.chain_id,
+      creator_api_key: data.creator_api_key,
     })}`;
   },
-  getProjectInfo: async (data: { pair: string; chain_id: number }) => {
+  getProjectInfo: async (data: {
+    pair: string;
+    chain_id: number;
+    creator_api_key: string;
+  }) => {
+    if (
+      !fto_api_key_list.includes(data.creator_api_key) &&
+      data.creator_api_key !== super_api_key
+    ) {
+      return null;
+    }
+
     let output;
     output = await selectFtoProject(data);
 
@@ -37,6 +64,7 @@ export const ftoService = {
         pair: data.pair,
         chain_id: data.chain_id,
         provider: provider,
+        creator_api_key: data.creator_api_key,
       });
       output = await selectFtoProject(data);
     }
@@ -52,15 +80,22 @@ export const ftoService = {
     return pg`SELECT * FROM fto_project WHERE provider = ${provider.toLowerCase()} and chain_id = ${chain_id} order by id desc`;
   },
   createOrUpdateProjectInfo: async (data: {
-    twitter: string;
-    telegram: string;
-    website: string;
-    description: string;
-    projectName: string;
+    twitter?: string;
+    telegram?: string;
+    website?: string;
+    description?: string;
+    projectName?: string;
     pair: string;
     chain_id: number;
+    creator_api_key: string;
   }) => {
-    await updateFtoProject(data);
+    if (
+      !fto_api_key_list.includes(data.creator_api_key) &&
+      data.creator_api_key.toLowerCase() != super_api_key.toLowerCase()
+    ) {
+      return false;
+    }
+    return await updateFtoProject(data);
   },
   createOrUpdateProjectVotes: async (data: {
     project_pair: string;
@@ -104,11 +139,13 @@ const createFtoProject = async (data: {
   pair: string;
   chain_id: number;
   provider?: string;
+  creator_api_key: string;
 }) => {
   await pg`INSERT INTO fto_project ${pg({
     pair: data.pair.toLowerCase(),
     provider: data.provider?.toLowerCase() ?? "",
     chain_id: data.chain_id,
+    creator_api_key: data.creator_api_key,
   })}`;
 };
 
@@ -117,25 +154,37 @@ const updateFtoProject = async (data: {
   telegram?: string;
   website?: string;
   description?: string;
-  projectName: string;
+  projectName?: string;
   pair: string;
   chain_id: number;
+  creator_api_key: string;
 }) => {
-  await pg`INSERT INTO fto_project ${pg({
-    twitter: data.twitter ?? "",
-    telegram: data.telegram ?? "",
-    website: data.website ?? "",
-    description: data.description ?? "",
-    name: data.projectName,
-    pair: data.pair.toLowerCase(),
-    chain_id: data.chain_id,
-  })} ON CONFLICT (pair, chain_id) DO UPDATE SET twitter = ${
-    data.twitter ?? ""
-  }, telegram = ${data.telegram ?? ""}, website = ${
-    data.website ?? ""
-  }, description = ${data.description ?? ""}, name = ${
-    data.projectName ?? "Unknown"
-  }`;
+  try {
+    await pg`INSERT INTO fto_project ${pg({
+      twitter: data.twitter ?? "",
+      telegram: data.telegram ?? "",
+      website: data.website ?? "",
+      description: data.description ?? "",
+      name: data.projectName,
+      pair: data.pair.toLowerCase(),
+      chain_id: data.chain_id,
+      creator_api_key: data.creator_api_key,
+    })}
+   ON CONFLICT (pair, chain_id) DO UPDATE SET twitter = ${
+     data.twitter ?? ""
+   }, telegram = ${data.telegram ?? ""}, website = ${
+      data.website ?? ""
+    }, description = ${data.description ?? ""}, name = ${
+      data.projectName ?? "Unknown"
+    }
+  WHERE fto_project.creator_api_key = EXCLUDED.creator_api_key OR EXCLUDED.creator_api_key = ${super_api_key};
+ `;
+
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
 };
 
 const selectFtoProject = async (data: { pair: string; chain_id: number }) => {

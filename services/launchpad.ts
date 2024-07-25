@@ -33,9 +33,11 @@ class LaunchPad {
   pairFilter: {
     search: string;
     status: "all" | "processing" | "success" | "fail";
+    showNotValidatedPairs: boolean;
   } = {
     search: "",
     status: "all",
+    showNotValidatedPairs: false,
   };
 
   set pairFilterSearch(search: string) {
@@ -47,6 +49,13 @@ class LaunchPad {
 
   set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
     this.pairFilter.status = status;
+    this.getFtoPairs.call();
+    this.getMyFtoPairs.call();
+    this.getMyFtoParticipatedPairs.call();
+  }
+
+  set showNotValidatedPairs(show: boolean) {
+    this.pairFilter.showNotValidatedPairs = show;
     this.getFtoPairs.call();
     this.getMyFtoPairs.call();
     this.getMyFtoParticipatedPairs.call();
@@ -68,6 +77,13 @@ class LaunchPad {
 
   filterPairs = (pairs: FtoPairContract[]) => {
     const filteredPairs = pairs
+      .filter((pair) => {
+        if (this.pairFilter.showNotValidatedPairs) {
+          return true;
+        } else {
+          return pair.isValidated;
+        }
+      })
       .filter((pair) => {
         if (this.pairFilter.status === "all") return true;
         else if (this.pairFilter.status === "processing") {

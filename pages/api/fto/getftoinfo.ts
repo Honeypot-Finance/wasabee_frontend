@@ -1,33 +1,44 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { caller } from "@/server/_app";
-
-interface resType {
-  ftoName: string;
-}
+import { ftoService } from "@/server/service/fto";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<ApiResponseType<any>>
 ) {
-  const { ftoaddress, chainid } = req.query;
-  console.log("handler: ", ftoaddress, chainid);
-  if (!ftoaddress || chainid) {
-    return res.status(400);
+  if (req.method !== "GET") {
+    return res.status(405).json({
+      status: "error",
+      message: "Method Not Allowed",
+    });
   }
 
-  const data = await caller.fto.getProjectInfo({
+  const { ftoaddress, chainid, api_key } = req.query;
+  console.log("handler: ", ftoaddress, chainid, api_key);
+  if (!ftoaddress || !chainid || !api_key) {
+    return res.status(400).json({
+      status: "error",
+      message: "Invalid request params",
+    });
+  }
+
+  const data = await ftoService.getProjectInfo({
     pair: ftoaddress as string,
     chain_id: parseInt(chainid as string),
+    creator_api_key: api_key as string,
   });
 
-  console.log("getProjectInfo", data);
-
   if (!data) {
-    return res.status(404).json({ ftoName: "Not Found" });
+    return res.status(404).json({
+      status: "error",
+      message: "No data found",
+    });
   }
 
-  res.status(200).json({ ftoName: data.name });
-
-  return data;
+  res.status(200).json({
+    status: "success",
+    data: data,
+    message: "Success",
+  });
 }
