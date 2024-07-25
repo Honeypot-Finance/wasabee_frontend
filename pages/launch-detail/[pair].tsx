@@ -427,7 +427,44 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 </div>
                 <div className="flex gap-[10px] justify-center">
                   {state.pair.value?.socials.map((social) => {
-                    return (
+                    return social.name === "website" ? (
+                      <div key={social.name}>
+                        <span
+                          className="cursor-pointer"
+                          onClick={() => {
+                            toast.warn(
+                              <div>
+                                <h2 className="text-red-500">Caution!</h2>
+                                <p>
+                                  this project is not verified, are you sure you
+                                  want to proceed?
+                                </p>
+                                <div className="flex justify-end">
+                                  <Link
+                                    className="text-blue-500 text-right flex"
+                                    href={social.link}
+                                    target="_blank"
+                                  >
+                                    Proceed
+                                    <BiLinkExternal />
+                                  </Link>
+                                </div>
+                              </div>,
+                              {
+                                autoClose: false,
+                              }
+                            );
+                          }}
+                        >
+                          <Image
+                            src={social.icon}
+                            width={23}
+                            height={23}
+                            alt={social.name}
+                          ></Image>
+                        </span>
+                      </div>
+                    ) : (
                       <div key={social.name}>
                         <Link href={social.link} target="_blank">
                           <Image
