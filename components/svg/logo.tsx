@@ -1,4 +1,4 @@
-export const Logo = (width: number) => {
+export const Logo = ({ width }: { width?: number }) => {
   return (
     <svg
       className="size-[18px] sm:size-[29px]"
