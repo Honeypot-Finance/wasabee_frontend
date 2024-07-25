@@ -236,7 +236,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                   </span>
                 )}
               </div>
-              {state.pairAddress && (
+              {(state.pairAddress && (
                 <div className="flex items-center">
                   Pair Address:&nbsp;
                   <Link
@@ -248,10 +248,11 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                   </Link>
                   <Copy className="ml-[8px]" value={state.pairAddress}></Copy>
                 </div>
+              )) || (
+                <Button type="submit" className="text-black font-bold">
+                  Launch Token
+                </Button>
               )}
-              <Button type="submit" className="text-black font-bold">
-                Launch Token
-              </Button>
             </form>
           </div>
         )}
