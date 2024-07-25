@@ -39,17 +39,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col gap-16">
+    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col gap-y-4 sm:gap-y-16">
       <div className="flex w-full justify-end gap-2">
-        {/* <Button>
-          <a
-            target="_blank"
-            href={wallet.faucetUrl}
-            className="text-black font-bold"
-          >
-            Get Faucet
-          </a>
-        </Button> */}
         <Button className="scale-[0.8] sm:scale-100">
           <Link href="/launch-token" className="text-black font-bold">
             Launch Token
@@ -58,7 +49,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
       </div>
 
       <div>
-        <div className="flex">
+        <div className="flex flex-col sm:flex-row gap-2">
           <Input
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
@@ -90,7 +81,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
             }}
           >
             <PopoverTrigger>
-              <NextButton className="inline-flex w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)] text-white text-center">
+              <NextButton className="inline-flex w-full sm:w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)] text-white text-center">
                 <span className="flex-1">{launchpad.pairFilter.status}</span>
                 <DropdownSvg></DropdownSvg>
               </NextButton>
@@ -100,50 +91,46 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 {() => (
                   <div className="w-full">
                     <SpinnerContainer isLoading={launchpad.ftoPairs.loading}>
-                      <div>
-                        <div></div>
-
-                        <div className="max-h-[300px] overflow-auto flex justify-between">
-                          <NextButton
-                            onClick={() => {
-                              launchpad.pairFilterStatus = "all";
-                              launchpad.ftoPairsPagination.page = 1;
-                              launchpad.ftoPairsPagination.totalPage.call();
-                            }}
-                            className="w-[100px]"
-                          >
-                            All
-                          </NextButton>
-                          <NextButton
-                            onClick={() => {
-                              launchpad.pairFilterStatus = "success";
-                              launchpad.ftoPairsPagination.page = 1;
-                              launchpad.ftoPairsPagination.totalPage.call();
-                            }}
-                            className="w-[100px]"
-                          >
-                            Success
-                          </NextButton>
-                          <NextButton
-                            onClick={() => {
-                              launchpad.pairFilterStatus = "fail";
-                              launchpad.ftoPairsPagination.page = 1;
-                              launchpad.ftoPairsPagination.totalPage.call();
-                            }}
-                            className="w-[100px]"
-                          >
-                            Failed
-                          </NextButton>
-                          <NextButton
-                            onClick={() => {
-                              launchpad.pairFilterStatus = "processing";
-                              launchpad.ftoPairsPagination.page = 1;
-                            }}
-                            className="w-[100px]"
-                          >
-                            Processing
-                          </NextButton>
-                        </div>
+                      <div className="max-h-[300px] grid grid-cols-3 gap-2">
+                        <NextButton
+                          onClick={() => {
+                            launchpad.pairFilterStatus = "all";
+                            launchpad.ftoPairsPagination.page = 1;
+                            launchpad.ftoPairsPagination.totalPage.call();
+                          }}
+                          className="w-[100px]"
+                        >
+                          All
+                        </NextButton>
+                        <NextButton
+                          onClick={() => {
+                            launchpad.pairFilterStatus = "success";
+                            launchpad.ftoPairsPagination.page = 1;
+                            launchpad.ftoPairsPagination.totalPage.call();
+                          }}
+                          className="w-[100px]"
+                        >
+                          Success
+                        </NextButton>
+                        <NextButton
+                          onClick={() => {
+                            launchpad.pairFilterStatus = "fail";
+                            launchpad.ftoPairsPagination.page = 1;
+                            launchpad.ftoPairsPagination.totalPage.call();
+                          }}
+                          className="w-[100px]"
+                        >
+                          Failed
+                        </NextButton>
+                        <NextButton
+                          onClick={() => {
+                            launchpad.pairFilterStatus = "processing";
+                            launchpad.ftoPairsPagination.page = 1;
+                          }}
+                          className="w-[100px]"
+                        >
+                          Processing
+                        </NextButton>
                       </div>
                     </SpinnerContainer>
                   </div>
@@ -166,7 +153,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
       </div>
 
       {launchpad.ftoPairs.loading ? (
-        <div className="flex h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
+        <div className="flex h-80 sm:h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
           <LoadingDisplay />
         </div>
       ) : (

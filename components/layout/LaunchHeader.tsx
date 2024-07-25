@@ -12,7 +12,7 @@ const LaunchHeader: React.FC = () => {
       <Header />
       {router.pathname === "/launch" ? (
         <div className="flex justify-between items-center sm:mt-8 px-6 xl:max-w-[1200px] mx-auto h-28 md:h-auto">
-          <h1 className="text-xl sm:text-3xl md:text-5xl font-bold w-[624px] text-pretty">
+          <h1 className="text-xl sm:text-4xl md:text-5xl font-bold w-[624px] text-pretty">
             <span>The first & fairest protocol on </span>
             <span className="text-[#F7931A]">Berachain</span>
           </h1>

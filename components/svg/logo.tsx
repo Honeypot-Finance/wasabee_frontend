@@ -1,7 +1,8 @@
-export const Logo = () => {
+export const Logo = (width: number) => {
   return (
     <svg
-    className="size-[18px] sm:size-[29px]"
+      className="size-[18px] sm:size-[29px]"
+      style={width ? { width: `${width}px !important` } : {}}
       viewBox="0 0 29 29"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

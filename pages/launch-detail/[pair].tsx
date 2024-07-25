@@ -393,7 +393,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
       ></Breadcrumbs>
       <div className="flex justify-center mt-[24px]">
         <div className="flex gap-[20px] flex-wrap min-h-[425px]">
-          <div className="flex-1 flex   basis-full sm:basis-0  sm:min-w-[500px] flex-col items-center  shrink-0 [background:#271B0C] rounded-2xl">
+          <div className="flex-1 flex basis-full sm:basis-0 w-full sm:min-w-[500px] flex-col items-center  shrink-0 [background:#271B0C] rounded-2xl">
             <div className="flex h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px]"></div>
             <div className="relative flex-1 w-full h-full px-[29px] pb-[26px]">
               <TokenStatusDisplay pair={state.pair.value} />
@@ -494,7 +494,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
               )}
             </div>
           </div>
-          <div className="text-left relative flex-1 flex basis-full  sm:basis-0 sm:min-w-[500px]  flex-col gap-[10px] shrink-0 [background:#271B0C] rounded-2xl py-[12px] px-[24px]">
+          <div className="text-left relative flex-1 flex basis-full w-full sm:basis-0 sm:min-w-[500px]  flex-col gap-[10px] shrink-0 [background:#271B0C] rounded-2xl py-[12px] px-[24px]">
             <div className=" absolute right-[24px] top-[12px]">
               {state.pair.value?.isInit && (
                 <UpdateProjectAction
@@ -586,7 +586,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
                   Start Date
                 </div>
                 <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
-                  {state.pair.value?.startTimeDisplay}
+                  {state.pair.value?.startTimeDisplay
+                    ? new Date(
+                        state.pair.value?.startTimeDisplay
+                      ).toLocaleString()
+                    : "--"}
                 </div>
               </div>
               <div>
@@ -600,7 +604,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
                   End Date
                 </div>
                 <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
-                  {state.pair.value?.endTimeDisplay}
+                  {state.pair.value?.endTimeDisplay
+                    ? new Date(
+                        state.pair.value?.endTimeDisplay
+                      ).toLocaleString()
+                    : "--"}
                 </div>
               </div>
             </div>
