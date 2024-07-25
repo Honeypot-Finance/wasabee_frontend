@@ -1,9 +1,8 @@
 export const BearSvg = () => {
   return (
     <svg
-      width="208"
-      height="207"
-      fill="none"
+    fill="none"
+    className="w-[112px] md:w-[208px]"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 208 207"
     >

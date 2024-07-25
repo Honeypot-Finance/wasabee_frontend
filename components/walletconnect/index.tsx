@@ -8,11 +8,12 @@ import { FaFaucet } from "react-icons/fa";
 import { wallet } from "@/services/wallet";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
 import Link from "next/link";
+import Image from "next/image";
 const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   return (
     <button
       type="button"
-      className="flex h-[42px] px-[12px] justify-center items-center gap-[4.411px] shrink-0 [background:rgba(247,147,26,0.10)] backdrop-blur-[10px] rounded-[100px] border-[1.654px] border-solid border-[rgba(247,147,26,0.20)]"
+      className="flex py-2 sm:h-[42px] px-3 justify-center items-center gap-[4.411px] shrink-0 [background:rgba(247,147,26,0.10)] backdrop-blur-[10px] rounded-[100px] border-[1.654px] border-solid border-[rgba(247,147,26,0.20)]"
       {...props}
     ></button>
   );
@@ -114,7 +115,7 @@ export const WalletConnect = () => {
                         }}
                       >
                         {chain.iconUrl && (
-                          <img
+                          <Image
                             alt={chain.name ?? "Chain icon"}
                             src={chain.iconUrl}
                             style={{ width: 12, height: 12 }}

@@ -37,7 +37,7 @@ export const LaunchCard = observer(
         <TokenStatusDisplay pair={pair} />
         <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square">
           <div className="w-8">
-            <Logo />
+            <Logo width={29} />
           </div>
         </div>
         <h4 className="text-white text-center text-[1rem] font-bold flex items-center h-[1.5em]">

@@ -63,7 +63,7 @@ function TableBase<T extends Record<string, any>>({
       <div className="flex flex-col">
         <div className="flex text-[rgba(255,255,255,0.55)] text-sm font-bold leading-4">
           {columns.map((column) => (
-            <div className="flex-1 p-[16px]" key={column.dataKey as string}>
+            <div className="flex-1 p-1 sm:p-[16px]" key={column.dataKey as string}>
               {column.title}
             </div>
           ))}
@@ -83,7 +83,7 @@ function TableBase<T extends Record<string, any>>({
                     const value = column.dataKey ? data[column.dataKey] : null;
                     return (
                       <div
-                        className="flex-1 p-[16px]"
+                        className="flex-1 p-1 sm:p-[16px] text-pretty"
                         key={(column.dataKey || column.key) as string}
                       >
                         {column.render ? column.render(value, data) : value}
