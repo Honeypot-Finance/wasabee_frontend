@@ -95,7 +95,7 @@ export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
             href="/pool"
             as={Link}
             title={
-              <div className="flex w-[113px] h-[43px] justify-center items-center gap-[5.748px] px-[14.369px] py-[7.184px]   border-solid border-[rgba(247,147,26,0.37)]">
+              <div className="flex w-[113px] h-[43px] justify-center items-center gap-[5.748px] px-[14.369px] py-[7.184px] border-solid border-[rgba(247,147,26,0.37)]">
                 {state.isLp && <SwapSvg></SwapSvg>}
                 LP Token
               </div>

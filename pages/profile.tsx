@@ -8,6 +8,7 @@ import { Button } from "@/components/button";
 import { Copy } from "@/components/copy";
 import { PeddingSvg } from "@/components/svg/Pedding";
 import { RocketSvg } from "@/components/svg/Rocket";
+import { truncate } from "@/lib/format";
 import { trpc } from "@/lib/trpc";
 import { networksMap } from "@/services/chain";
 import { PairContract } from "@/services/contract/pair-contract";
@@ -59,12 +60,12 @@ export const Profile = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <div className="m-auto flex justify-center items-center flex-col w-[800px]">
+    <div className="m-auto flex justify-center items-start flex-col max-w-[800px] gap-2">
       <div>
         {wallet.isInit && (
-          <>
-            <div className="flex align-middle justify-center">
-              <div className="flex h-10 w-10 mr-5 mt-1">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-center gap-2 sm:gap-4">
+              <div className="flex h-10 w-10">
                 <div
                   className="rounded-full w-full h-full "
                   style={{
@@ -79,29 +80,30 @@ export const Profile = observer(() => {
                   }}
                 ></div>
               </div>
-              <div>
+              <div className="grow">
                 <p>My Account</p>
-                <p>
-                  {wallet.account} <Copy value={wallet.account} />
+                <p className="w-full break-all">
+                  {truncate(wallet.account, 10)} <Copy value={wallet.account} />
                 </p>
               </div>
             </div>
             <div>
               <Link
                 target="_blank"
+                className="underline p-1"
                 href={`https://bartio.beratrail.io/address/${wallet.account}`}
               >
                 view on beratrail.io
               </Link>
             </div>
-          </>
+          </div>
         )}
       </div>
       <div className="w-full">
         <Tabs
           aria-label="Options"
           classNames={{
-            tabList: "bg-transparent ",
+            tabList: "bg-transparent flex-wrap sm:flex-nowrap",
             tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
           }}
           className="next-tab"
@@ -119,7 +121,7 @@ export const Profile = observer(() => {
                   ))}
               </CardBody>
             </Card>
-          </Tab>{" "}
+          </Tab>
           <Tab key="my-launch" title="My Launch">
             <Card className="next-card">
               <CardBody>

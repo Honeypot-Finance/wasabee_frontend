@@ -47,7 +47,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
     <Navbar
       onMenuOpenChange={setIsMenuOpen}
       classNames={{
-        wrapper: "max-w-[1200px]",
+        wrapper: "max-w-[1200px] px-4 sm:px-6",
       }}
       className={clsx("h-[63px] bg-transparent", props.className)}
       style={{
@@ -56,15 +56,21 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
     >
       <NavbarContent>
         <NavbarMenuToggle
+        aria-setsize={1}
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden  text-[white]"
+          className="sm:hidden  text-[white] scale-75"
         />
-        <NavbarBrand>
+        <NavbarBrand className="space-x-1 sm:space-x-2">
           <Link href="/">
             <Logo />
           </Link>
-          <p className='ml-[4px] w-[171px] h-8 text-[#FFCD4D] [font-family:"Bebas_Neue"] text-[28.927px] font-normal leading-[normal]'>
-            <Link href="/">Honeypot Finance</Link>
+          <p className='text-[#FFCD4D] [font-family:"Bebas_Neue"]'>
+            <Link
+              href="/"
+              className="text-lg sm:text-[28.927px] align-text-top"
+            >
+              Honeypot Finance
+            </Link>
           </p>
         </NavbarBrand>
       </NavbarContent>

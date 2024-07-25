@@ -41,7 +41,7 @@ const AddLiquidity = observer(() => {
               },
               onInput: (e) => {
                 liquidity.onFromAmountInputChange();
-              }
+              },
             }}
           ></SwapAmount>
           <div className="flex flex-col items-end">
@@ -91,9 +91,8 @@ const AddLiquidity = observer(() => {
                 liquidity.setToAmount(e.target.value);
               },
               onInput: (e) => {
-         
                 liquidity.onToAmountInputChange();
-              }
+              },
             }}
           ></SwapAmount>
           <div className="flex flex-col items-end">
@@ -273,10 +272,19 @@ export const LPCard = observer(() => {
             tab: "px-[0.25rem] data-[selected=true]:bg-transparent font-bold text-[1.2rem]",
           }}
         >
-          <Tab key="addLiquidity" title="Add Liquidity">
+          <Tab
+            key="addLiquidity"
+            title={<span className="text-sm sm:text-base">Add Liquidity</span>}
+            className="text-red-500"
+          >
             <AddLiquidity></AddLiquidity>
           </Tab>
-          <Tab key="removeLiquidity" title="Remove Liquidity">
+          <Tab
+            key="removeLiquidity"
+            title={
+              <span className="text-sm sm:text-base">Remove Liquidity</span>
+            }
+          >
             <RemoveLiquidity></RemoveLiquidity>
           </Tab>
         </Tabs>
