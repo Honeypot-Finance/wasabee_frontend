@@ -9,7 +9,7 @@ export const cache = (key: string, data: string) => {
 };
 
 export const getCache = (cacheKey: string): string | null => {
-  const timeBeforeRefresh = 5 * 60 * 1000; // 5 minutes
+  const timeBeforeRefresh = 15 * 60 * 1000; // 15 min
   const cacheData = kv.get(cacheKey);
 
   if (!cacheData) {

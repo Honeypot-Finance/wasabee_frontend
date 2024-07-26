@@ -152,6 +152,10 @@ class LaunchPad {
         page: this.ftoPairsPagination.page,
         limit: this.ftoPairsPagination.limit,
       });
+    } else {
+      this.ftoPairs.value.data.forEach(async (pair) => {
+        if (!pair.isInit) await pair.init();
+      });
     }
 
     const filteredPairs = this.filterPairs(this.ftoPairs.value?.data ?? []);
@@ -164,6 +168,10 @@ class LaunchPad {
   getMyFtoPairs = new AsyncState<FtoPairContract[]>(async () => {
     if (!this.myFtoPairs.value) {
       await this.myFtoPairs.call();
+    } else {
+      this.myFtoPairs.value.data.forEach(async (pair) => {
+        if (!pair.isInit) await pair.init();
+      });
     }
 
     const filteredPairs = this.filterPairs(this.myFtoPairs.value?.data ?? []);
@@ -176,6 +184,10 @@ class LaunchPad {
   getMyFtoParticipatedPairs = new AsyncState<FtoPairContract[]>(async () => {
     if (!this.myFtoParticipatedPairs.value) {
       await this.myFtoParticipatedPairs.call();
+    } else {
+      this.myFtoParticipatedPairs.value.data.forEach(async (pair) => {
+        if (!pair.isInit) await pair.init();
+      });
     }
 
     const filteredPairs = this.filterPairs(
@@ -219,7 +231,9 @@ class LaunchPad {
         async (index) => {
           const [pairAddress] = await this.getPairAddress(BigInt(index));
           const pair = new FtoPairContract({ address: pairAddress as string });
-          await pair.init();
+          if (!pair.isInit) {
+            await pair.init();
+          }
           return pair;
         }
       )
@@ -248,7 +262,9 @@ class LaunchPad {
     let data = await Promise.all(
       projects.map(async (pairAddress) => {
         const pair = new FtoPairContract({ address: pairAddress as string });
-        await pair.init();
+        if (!pair.isInit) {
+          await pair.init();
+        }
         return pair;
       })
     );
@@ -277,7 +293,9 @@ class LaunchPad {
     let data = await Promise.all(
       projects.map(async ({ pair: pairAddress }) => {
         const pair = new FtoPairContract({ address: pairAddress as string });
-        await pair.init();
+        if (!pair.isInit) {
+          await pair.init();
+        }
         return pair;
       })
     );
