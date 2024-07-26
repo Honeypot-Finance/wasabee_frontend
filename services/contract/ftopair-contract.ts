@@ -40,6 +40,7 @@ export class FtoPairContract implements BaseContract {
 
   constructor(args: Partial<FtoPairContract>) {
     Object.assign(this, args);
+    this.getIsValidated();
     makeAutoObservable(this);
   }
 
@@ -279,6 +280,31 @@ export class FtoPairContract implements BaseContract {
   }
 
   async init() {
+    const cachedData = await fetch(
+      `/api/server-cache/get-server-cache?key=fto:${this.address}:${wallet.currentChainId}`
+    ).then((res) => res.json());
+
+    //console.log("cachedData", cachedData);
+
+    if (cachedData.status === "success") {
+      const data = JSON.parse(cachedData.data);
+      Object.assign(this, {
+        ...data,
+        depositedRaisedTokenWithoutDecimals:
+          data.depositedRaisedTokenWithoutDecimals
+            ? new BigNumber(cachedData.data.depositedRaisedTokenWithoutDecimals)
+            : null,
+        depositedLaunchedTokenWithoutDecimals:
+          data.depositedLaunchedTokenWithoutDecimals
+            ? new BigNumber(
+                cachedData.data.depositedLaunchedTokenWithoutDecimals
+              )
+            : null,
+      });
+      await Promise.all([this.getRaisedToken(), this.getLaunchedToken()]);
+      return;
+    }
+
     try {
       await Promise.all([
         this.getRaisedToken(),
@@ -291,15 +317,30 @@ export class FtoPairContract implements BaseContract {
         this.getLaunchedTokenProvider(),
         this.getProjectInfo(),
         this.getCanClaimLP(),
-        this.getIsValidated(),
       ]);
     } catch (error) {
       console.error(error, `init-${this.address}`);
     }
+
+    const setData = await fetch(`/api/server-cache/set-server-cache`, {
+      method: "POST",
+      body: JSON.stringify({
+        key: `fto:${this.address}:${wallet.currentChainId}`,
+        data: JSON.stringify({
+          ...this,
+        }),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    //console.log("setData", setData);
+
     this.isInit = true;
   }
 
-  async getIsValidated() {
+  getIsValidated() {
     this.isValidated = wallet.currentChain.validatedFtoAddresses.includes(
       this.address.toLowerCase()
     );

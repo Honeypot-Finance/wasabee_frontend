@@ -69,6 +69,26 @@ class LaunchPad {
     return wallet.contracts.ftofacade;
   }
 
+  // loadCurrentPagePairs = async () => {
+  //   console.log(this.ftoPairsPagination.page);
+  //   for (
+  //     let i =
+  //       (this.ftoPairsPagination.page - 1) * this.ftoPairsPagination.limit;
+  //     i < this.ftoPairsPagination.page * this.ftoPairsPagination.limit;
+  //     i++
+  //   ) {
+  //     if (this.getFtoPairs?.value) {
+  //       if (this.getFtoPairs.value[i]) {
+  //         console.log("init", this.getFtoPairs.value[i]);
+  //         await this.getFtoPairs.value[i].init();
+  //         console.log("init", this.getFtoPairs.value[i]);
+  //       } else {
+  //         break;
+  //       }
+  //     }
+  //   }
+  // };
+
   allPairsLength = async () =>
     await this.ftofactoryContract.allPairsLength.call();
 

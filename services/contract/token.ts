@@ -72,12 +72,30 @@ export class Token implements BaseContract {
     loadTotalSupply?: boolean;
     loadClaimed?: boolean;
   }) {
+    const cachedData = await fetch(
+      `/api/server-cache/get-server-cache?key=token:${this.address}:${wallet.currentChainId}`
+    ).then((res) => res.json());
+
+    if (cachedData.status === "success") {
+      const data = JSON.parse(cachedData.data);
+      Object.assign(this, {
+        ...data,
+        balanceWithoutDecimals: new BigNumber(data.balanceWithoutDecimals),
+        totalSupplyWithoutDecimals: new BigNumber(
+          data.totalSupplyWithoutDecimals
+        ),
+        isInit: true,
+      });
+      return;
+    }
+
     const loadName = options?.loadName ?? true;
     const loadSymbol = options?.loadSymbol ?? true;
     const loadDecimals = options?.loadDecimals ?? true;
     const loadBalance = options?.loadBalance ?? true;
     const loadTotalSupply = options?.loadTotalSupply ?? false;
     const loadClaimed = options?.loadClaimed ?? false;
+
     await Promise.all([
       loadName && !this.name
         ? this.contract.read.name().then((name) => {
@@ -102,6 +120,18 @@ export class Token implements BaseContract {
           })
         : Promise.resolve(),
     ]);
+
+    const setData = await fetch(`/api/server-cache/set-server-cache`, {
+      method: "POST",
+      body: JSON.stringify({
+        key: `token:${this.address}:${wallet.currentChainId}`,
+        data: JSON.stringify(this),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
     this.isInit = true;
   }
 
@@ -131,7 +161,6 @@ export class Token implements BaseContract {
       wallet.account as `0x${string}`,
     ]);
 
-    console.log("claimed", claimed);
     return claimed;
   }
 
