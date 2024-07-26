@@ -93,8 +93,8 @@ export const berachainBartioTestnetNetwork = new Network({
   contracts: {
     routerV2: "0x482270069fF98a0dF528955B651494759b3B2F8C",
     factory: "0x2f795195bae7E61E848ffC87ba7f6ae1A06c0527",
-    ftoFactory: "0x5C4cDd0160c0CB4C606365dD98783064335A9ce0",
-    ftoFacade: "0x51e4fF69060CD62dE1a9374799a0BddeB55cb1E4",
+    ftoFactory: "0x0aa1b12C9A7858b43E5DdBfE82796DF644043783",
+    ftoFacade: "0xB934DF851949dad8992b0aEfa56Ffa1956eB779d",
     ftoTokens: [
       {
         address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
@@ -221,7 +221,7 @@ export const berachainBartioTestnetNetwork = new Network({
     },
   },
   validatedFtoAddresses: [
-    "0x1a58303C577CBbEA0714588059De9052896CaCF7".toLowerCase(),
+    "0x21ccE939ae1390890AacFe99aE768F1a37e8e7e8".toLowerCase(),
   ],
 });
 

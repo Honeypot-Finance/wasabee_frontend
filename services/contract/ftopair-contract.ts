@@ -175,6 +175,7 @@ export class FtoPairContract implements BaseContract {
       this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
     ]);
+    this.canClaimLP = false;
   });
 
   resume = new AsyncState(async () => {
