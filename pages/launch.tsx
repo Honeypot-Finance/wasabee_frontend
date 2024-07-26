@@ -29,6 +29,10 @@ import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  useEffect(() => {
+    launchpad.ftoPairsPagination.page = 1;
+  }, []);
   useEffect(() => {
     if (!wallet.isInit) {
       return;

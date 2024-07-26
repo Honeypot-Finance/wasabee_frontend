@@ -232,50 +232,46 @@ export class FtoPairContract implements BaseContract {
   }
 
   async getProjectInfo() {
-    try {
-      const res = await trpcClient.fto.getProjectInfo.query({
-        chain_id: wallet.currentChainId,
-        pair: this.address,
+    const res = await trpcClient.fto.getProjectInfo.query({
+      chain_id: wallet.currentChainId,
+      pair: this.address,
+    });
+    if (!res) {
+      return;
+    }
+    this.socials = [];
+    if (res.telegram) {
+      this.telegram = res.telegram;
+      this.socials.push({
+        name: "telegram",
+        link: res.telegram,
+        icon: "/images/telegram.png",
       });
-      if (!res) {
-        return;
-      }
-      this.socials = [];
-      if (res.telegram) {
-        this.telegram = res.telegram;
-        this.socials.push({
-          name: "telegram",
-          link: res.telegram,
-          icon: "/images/telegram.png",
-        });
-      }
-      if (res.twitter) {
-        this.twitter = res.twitter;
-        this.socials.push({
-          name: "twitter",
-          link: res.twitter,
-          icon: "/images/twitter.png",
-        });
-      }
-      if (res.website) {
-        this.website = res.website;
-        this.socials.push({
-          name: "website",
-          link: res.website,
-          icon: "/images/website.png",
-        });
-      }
-      if (res.description) {
-        this.description = res.description;
-      }
-      if (res.name) {
-        this.projectName = res.name;
-      }
-      if (res.provider) {
-        this.provider = res.provider;
-      }
-    } catch (error) {
-      console.error(error, `getProjectInfo-${this.address}`);
+    }
+    if (res.twitter) {
+      this.twitter = res.twitter;
+      this.socials.push({
+        name: "twitter",
+        link: res.twitter,
+        icon: "/images/twitter.png",
+      });
+    }
+    if (res.website) {
+      this.website = res.website;
+      this.socials.push({
+        name: "website",
+        link: res.website,
+        icon: "/images/website.png",
+      });
+    }
+    if (res.description) {
+      this.description = res.description;
+    }
+    if (res.name) {
+      this.projectName = res.name;
+    }
+    if (res.provider) {
+      this.provider = res.provider;
     }
   }
 
@@ -320,6 +316,7 @@ export class FtoPairContract implements BaseContract {
       ]);
     } catch (error) {
       console.error(error, `init-${this.address}`);
+      return;
     }
 
     const setData = await fetch(`/api/server-cache/set-server-cache`, {
