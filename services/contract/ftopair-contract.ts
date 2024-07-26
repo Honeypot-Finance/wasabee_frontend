@@ -350,7 +350,8 @@ export class FtoPairContract implements BaseContract {
       ]);
       this.canClaimLP = res > 0;
     } catch (error) {
-      console.error(error, `getCanClaimLP-${this.address}`);
+      this.canClaimLP = false;
+      //console.error(error, `getCanClaimLP-${this.address}`);
     }
   }
 
