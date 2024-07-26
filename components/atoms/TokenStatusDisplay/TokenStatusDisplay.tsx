@@ -8,7 +8,6 @@ interface TokenStatusDisplayProps {
 
 export const TokenStatusDisplay = observer(
   ({ pair }: TokenStatusDisplayProps) => {
-    console.log("isValidated", pair?.isValidated);
     return (
       <div className="flex absolute top-[9px] right-2.5 flex-col gap-[5px] ">
         <div

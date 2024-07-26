@@ -40,6 +40,7 @@ export class FtoPairContract implements BaseContract {
 
   constructor(args: Partial<FtoPairContract>) {
     Object.assign(this, args);
+    this.getIsValidated();
     makeAutoObservable(this);
   }
 
@@ -232,75 +233,109 @@ export class FtoPairContract implements BaseContract {
   }
 
   async getProjectInfo() {
-    try {
-      const res = await trpcClient.fto.getProjectInfo.query({
-        chain_id: wallet.currentChainId,
-        pair: this.address,
+    const res = await trpcClient.fto.getProjectInfo.query({
+      chain_id: wallet.currentChainId,
+      pair: this.address,
+    });
+    if (!res) {
+      return;
+    }
+    this.socials = [];
+    if (res.telegram) {
+      this.telegram = res.telegram;
+      this.socials.push({
+        name: "telegram",
+        link: res.telegram,
+        icon: "/images/telegram.png",
       });
-      if (!res) {
-        return;
-      }
-      this.socials = [];
-      if (res.telegram) {
-        this.telegram = res.telegram;
-        this.socials.push({
-          name: "telegram",
-          link: res.telegram,
-          icon: "/images/telegram.png",
-        });
-      }
-      if (res.twitter) {
-        this.twitter = res.twitter;
-        this.socials.push({
-          name: "twitter",
-          link: res.twitter,
-          icon: "/images/twitter.png",
-        });
-      }
-      if (res.website) {
-        this.website = res.website;
-        this.socials.push({
-          name: "website",
-          link: res.website,
-          icon: "/images/website.png",
-        });
-      }
-      if (res.description) {
-        this.description = res.description;
-      }
-      if (res.name) {
-        this.projectName = res.name;
-      }
-      if (res.provider) {
-        this.provider = res.provider;
-      }
-    } catch (error) {
-      console.error(error, `getProjectInfo-${this.address}`);
+    }
+    if (res.twitter) {
+      this.twitter = res.twitter;
+      this.socials.push({
+        name: "twitter",
+        link: res.twitter,
+        icon: "/images/twitter.png",
+      });
+    }
+    if (res.website) {
+      this.website = res.website;
+      this.socials.push({
+        name: "website",
+        link: res.website,
+        icon: "/images/website.png",
+      });
+    }
+    if (res.description) {
+      this.description = res.description;
+    }
+    if (res.name) {
+      this.projectName = res.name;
+    }
+    if (res.provider) {
+      this.provider = res.provider;
     }
   }
 
   async init() {
-    try {
-      await Promise.all([
-        this.getRaisedToken(),
-        this.getLaunchedToken(),
-        this.getDepositedRaisedToken(),
-        this.getDepositedLaunchedToken(),
-        this.getStartTime(),
-        this.getEndTime(),
-        this.getFTOState(),
-        this.getLaunchedTokenProvider(),
-        this.getProjectInfo(),
-        this.getCanClaimLP(),
-        this.getIsValidated(),
-      ]);
-    } catch (error) {
-      console.error(error, `init-${this.address}`);
+    const cachedData = await fetch(
+      `/api/server-cache/get-server-cache?key=fto:${this.address}:${wallet.currentChainId}`
+    ).then((res) => res.json());
+
+    //console.log("cachedData", cachedData);
+
+    if (cachedData.status === "success") {
+      const data = JSON.parse(cachedData.data);
+      Object.assign(this, {
+        ...data,
+        depositedRaisedTokenWithoutDecimals:
+          data.depositedRaisedTokenWithoutDecimals
+            ? new BigNumber(data.depositedRaisedTokenWithoutDecimals)
+            : null,
+        depositedLaunchedTokenWithoutDecimals:
+          data.depositedLaunchedTokenWithoutDecimals
+            ? new BigNumber(data.depositedLaunchedTokenWithoutDecimals)
+            : null,
+      });
+
+      await Promise.all([this.getRaisedToken(), this.getLaunchedToken()]);
+      return;
     }
+
+    await Promise.all([
+      this.getRaisedToken(),
+      this.getLaunchedToken(),
+      this.getDepositedRaisedToken(),
+      this.getDepositedLaunchedToken(),
+      this.getStartTime(),
+      this.getEndTime(),
+      this.getFTOState(),
+      this.getLaunchedTokenProvider(),
+      this.getProjectInfo(),
+      this.getCanClaimLP(),
+    ]).catch((error) => {
+      console.error(error, `init-${this.address}`);
+      return;
+    });
+
+    const setData = await fetch(`/api/server-cache/set-server-cache`, {
+      method: "POST",
+      body: JSON.stringify({
+        key: `fto:${this.address}:${wallet.currentChainId}`,
+        data: JSON.stringify({
+          ...this,
+        }),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    //console.log("setData", setData);
+
     this.isInit = true;
   }
 
-  async getIsValidated() {
+  getIsValidated() {
     this.isValidated = wallet.currentChain.validatedFtoAddresses.includes(
       this.address.toLowerCase()
     );
@@ -313,7 +348,8 @@ export class FtoPairContract implements BaseContract {
       ]);
       this.canClaimLP = res > 0;
     } catch (error) {
-      console.error(error, `getCanClaimLP-${this.address}`);
+      this.canClaimLP = false;
+      //console.error(error, `getCanClaimLP-${this.address}`);
     }
   }
 

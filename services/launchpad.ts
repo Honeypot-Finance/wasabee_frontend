@@ -69,6 +69,26 @@ class LaunchPad {
     return wallet.contracts.ftofacade;
   }
 
+  // loadCurrentPagePairs = async () => {
+  //   console.log(this.ftoPairsPagination.page);
+  //   for (
+  //     let i =
+  //       (this.ftoPairsPagination.page - 1) * this.ftoPairsPagination.limit;
+  //     i < this.ftoPairsPagination.page * this.ftoPairsPagination.limit;
+  //     i++
+  //   ) {
+  //     if (this.getFtoPairs?.value) {
+  //       if (this.getFtoPairs.value[i]) {
+  //         console.log("init", this.getFtoPairs.value[i]);
+  //         await this.getFtoPairs.value[i].init();
+  //         console.log("init", this.getFtoPairs.value[i]);
+  //       } else {
+  //         break;
+  //       }
+  //     }
+  //   }
+  // };
+
   allPairsLength = async () =>
     await this.ftofactoryContract.allPairsLength.call();
 
@@ -132,6 +152,10 @@ class LaunchPad {
         page: this.ftoPairsPagination.page,
         limit: this.ftoPairsPagination.limit,
       });
+    } else {
+      this.ftoPairs.value.data.forEach(async (pair) => {
+        if (!pair.isInit) await pair.init();
+      });
     }
 
     const filteredPairs = this.filterPairs(this.ftoPairs.value?.data ?? []);
@@ -144,6 +168,10 @@ class LaunchPad {
   getMyFtoPairs = new AsyncState<FtoPairContract[]>(async () => {
     if (!this.myFtoPairs.value) {
       await this.myFtoPairs.call();
+    } else {
+      this.myFtoPairs.value.data.forEach(async (pair) => {
+        if (!pair.isInit) await pair.init();
+      });
     }
 
     const filteredPairs = this.filterPairs(this.myFtoPairs.value?.data ?? []);
@@ -156,6 +184,10 @@ class LaunchPad {
   getMyFtoParticipatedPairs = new AsyncState<FtoPairContract[]>(async () => {
     if (!this.myFtoParticipatedPairs.value) {
       await this.myFtoParticipatedPairs.call();
+    } else {
+      this.myFtoParticipatedPairs.value.data.forEach(async (pair) => {
+        if (!pair.isInit) await pair.init();
+      });
     }
 
     const filteredPairs = this.filterPairs(
@@ -199,7 +231,9 @@ class LaunchPad {
         async (index) => {
           const [pairAddress] = await this.getPairAddress(BigInt(index));
           const pair = new FtoPairContract({ address: pairAddress as string });
-          await pair.init();
+          if (!pair.isInit) {
+            await pair.init();
+          }
           return pair;
         }
       )
@@ -228,7 +262,9 @@ class LaunchPad {
     let data = await Promise.all(
       projects.map(async (pairAddress) => {
         const pair = new FtoPairContract({ address: pairAddress as string });
-        await pair.init();
+        if (!pair.isInit) {
+          await pair.init();
+        }
         return pair;
       })
     );
@@ -257,7 +293,9 @@ class LaunchPad {
     let data = await Promise.all(
       projects.map(async ({ pair: pairAddress }) => {
         const pair = new FtoPairContract({ address: pairAddress as string });
-        await pair.init();
+        if (!pair.isInit) {
+          await pair.init();
+        }
         return pair;
       })
     );

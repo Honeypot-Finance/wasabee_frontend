@@ -87,7 +87,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
     if (pairsMap) {
       liquidity.initPool(
         Object.values(pairsMap),
-        wallet.currentChain.validatedTokensInfo
+        wallet?.currentChain?.validatedTokensInfo
       );
       state.pagination.setTotal(liquidity.pairs.length);
     }
