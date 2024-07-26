@@ -288,13 +288,11 @@ export class FtoPairContract implements BaseContract {
         ...data,
         depositedRaisedTokenWithoutDecimals:
           data.depositedRaisedTokenWithoutDecimals
-            ? new BigNumber(cachedData.data.depositedRaisedTokenWithoutDecimals)
+            ? new BigNumber(data.data.depositedRaisedTokenWithoutDecimals)
             : null,
         depositedLaunchedTokenWithoutDecimals:
           data.depositedLaunchedTokenWithoutDecimals
-            ? new BigNumber(
-                cachedData.data.depositedLaunchedTokenWithoutDecimals.toString()
-              )
+            ? new BigNumber(data.data.depositedLaunchedTokenWithoutDecimals)
             : null,
       });
 
