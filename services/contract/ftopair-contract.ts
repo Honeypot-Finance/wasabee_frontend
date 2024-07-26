@@ -293,31 +293,30 @@ export class FtoPairContract implements BaseContract {
         depositedLaunchedTokenWithoutDecimals:
           data.depositedLaunchedTokenWithoutDecimals
             ? new BigNumber(
-                cachedData.data.depositedLaunchedTokenWithoutDecimals
+                cachedData.data.depositedLaunchedTokenWithoutDecimals.toString()
               )
             : null,
       });
+
       await Promise.all([this.getRaisedToken(), this.getLaunchedToken()]);
       return;
     }
 
-    try {
-      await Promise.all([
-        this.getRaisedToken(),
-        this.getLaunchedToken(),
-        this.getDepositedRaisedToken(),
-        this.getDepositedLaunchedToken(),
-        this.getStartTime(),
-        this.getEndTime(),
-        this.getFTOState(),
-        this.getLaunchedTokenProvider(),
-        this.getProjectInfo(),
-        this.getCanClaimLP(),
-      ]);
-    } catch (error) {
+    await Promise.all([
+      this.getRaisedToken(),
+      this.getLaunchedToken(),
+      this.getDepositedRaisedToken(),
+      this.getDepositedLaunchedToken(),
+      this.getStartTime(),
+      this.getEndTime(),
+      this.getFTOState(),
+      this.getLaunchedTokenProvider(),
+      this.getProjectInfo(),
+      this.getCanClaimLP(),
+    ]).catch((error) => {
       console.error(error, `init-${this.address}`);
       return;
-    }
+    });
 
     const setData = await fetch(`/api/server-cache/set-server-cache`, {
       method: "POST",

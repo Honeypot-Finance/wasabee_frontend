@@ -84,7 +84,6 @@ export class Token implements BaseContract {
         totalSupplyWithoutDecimals: new BigNumber(
           data.totalSupplyWithoutDecimals
         ),
-        isInit: true,
       });
       return;
     }
@@ -119,7 +118,10 @@ export class Token implements BaseContract {
             this.claimed = claimed;
           })
         : Promise.resolve(),
-    ]);
+    ]).catch((e) => {
+      console.log(e);
+      return;
+    });
 
     const setData = await fetch(`/api/server-cache/set-server-cache`, {
       method: "POST",
