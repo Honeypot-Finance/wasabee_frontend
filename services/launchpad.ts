@@ -7,7 +7,7 @@ import { trpc, trpcClient } from "@/lib/trpc";
 import { createSiweMessage } from "@/lib/siwe";
 import { Address } from "viem";
 
-const pagelimit = 2;
+const pagelimit = 9;
 
 function calculateTimeDifference(timestamp: number): string {
   if (timestamp.toString().length !== 13) {
