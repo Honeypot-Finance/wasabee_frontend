@@ -54,7 +54,10 @@ export const Profile = observer(() => {
       return;
     }
     launchpad.showNotValidatedPairs = true;
-    launchpad.getFtoPairs.call();
+    launchpad.ftoPairs.call({
+      page: launchpad.ftoPairsPagination.page,
+      limit: launchpad.ftoPairsPagination.limit,
+    });
     launchpad.getMyFtoPairs.call();
     launchpad.getMyFtoParticipatedPairs.call();
   }, [wallet.isInit]);
