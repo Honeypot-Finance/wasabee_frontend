@@ -34,4 +34,21 @@ export default class GhostIndexer implements IndexerProvider {
       message: "Success",
     };
   };
+
+  getFilteredFtoPairs = async (
+    query: string
+  ): Promise<ApiResponseType<Array<string>>> => {
+    const res = await this.callIndexerApi(query);
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: (res.data as GhostFtoPairResponse).pairs.items.flatMap((item) => {
+          return item.id;
+        }),
+      };
+    }
+  };
 }

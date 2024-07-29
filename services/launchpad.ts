@@ -3,9 +3,12 @@ import { wallet } from "./wallet";
 import BigNumber from "bignumber.js";
 import { FtoPairContract } from "./contract/ftopair-contract";
 import { AsyncState, PaginationState } from "./utils";
-import { trpcClient } from "@/lib/trpc";
+import { trpc, trpcClient } from "@/lib/trpc";
 import { createSiweMessage } from "@/lib/siwe";
 import { Address } from "viem";
+
+const pagelimit = 2;
+
 function calculateTimeDifference(timestamp: number): string {
   if (timestamp.toString().length !== 13) {
     return "Invaild";
@@ -42,21 +45,30 @@ class LaunchPad {
 
   set pairFilterSearch(search: string) {
     this.pairFilter.search = search;
-    this.getFtoPairs.call();
+    this.ftoPairs.call({
+      page: this.ftoPairsPagination.page,
+      limit: this.ftoPairsPagination.limit,
+    });
     this.getMyFtoPairs.call();
     this.getMyFtoParticipatedPairs.call();
   }
 
   set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
     this.pairFilter.status = status;
-    this.getFtoPairs.call();
+    this.ftoPairs.call({
+      page: this.ftoPairsPagination.page,
+      limit: this.ftoPairsPagination.limit,
+    });
     this.getMyFtoPairs.call();
     this.getMyFtoParticipatedPairs.call();
   }
 
   set showNotValidatedPairs(show: boolean) {
     this.pairFilter.showNotValidatedPairs = show;
-    this.getFtoPairs.call();
+    this.ftoPairs.call({
+      page: this.ftoPairsPagination.page,
+      limit: this.ftoPairsPagination.limit,
+    });
     this.getMyFtoPairs.call();
     this.getMyFtoParticipatedPairs.call();
   }
@@ -89,6 +101,61 @@ class LaunchPad {
   //   }
   // };
 
+  filterQuery = () => {
+    const statusNum = this.statusTextToNumber(this.pairFilter.status);
+
+    const statusCondition = statusNum ? `status: "${statusNum}",` : "";
+    const searchIdCondition = this.pairFilter.search
+      ? `id: "${this.pairFilter.search}",`
+      : "";
+    const searchToken0IdCondition = this.pairFilter.search
+      ? `token0Id: "${this.pairFilter.search}",`
+      : "";
+    const searchToken1IdCondition = this.pairFilter.search
+      ? `token1Id: "${this.pairFilter.search}",`
+      : "";
+
+    return `
+    {
+      pairs(
+        where: {
+          OR:[
+            {
+              ${statusCondition}
+              ${searchIdCondition}
+            }
+            {
+              ${statusCondition}
+              ${searchToken0IdCondition}
+            }
+            {
+              ${statusCondition}
+              ${searchToken1IdCondition}
+            }
+          ]
+        }
+      ) {
+        items {
+          id
+        }
+      }
+    }
+  `;
+  };
+
+  statusTextToNumber = (status: string) => {
+    switch (status) {
+      case "processing":
+        return 3;
+      case "success":
+        return 0;
+      case "fail":
+        return 1;
+      default:
+        return;
+    }
+  };
+
   allPairsLength = async () =>
     await this.ftofactoryContract.allPairsLength.call();
 
@@ -96,83 +163,57 @@ class LaunchPad {
     await this.ftofactoryContract.allPairs.call([index]);
 
   filterPairs = (pairs: FtoPairContract[]) => {
-    const filteredPairs = pairs
-      .filter((pair) => {
-        if (this.pairFilter.showNotValidatedPairs) {
-          return true;
-        } else {
-          return pair.isValidated;
-        }
-      })
-      .filter((pair) => {
-        if (this.pairFilter.status === "all") return true;
-        else if (this.pairFilter.status === "processing") {
-          return pair.ftoState === 3;
-        } else if (this.pairFilter.status === "success") {
-          return pair.ftoState === 0;
-        } else if (this.pairFilter.status === "fail") {
-          return pair.ftoState === 1;
-        }
-      })
-      .filter((pair) => {
-        if (
-          pair.projectName
-            .toLowerCase()
-            .includes(this.pairFilter.search.toLowerCase()) ||
-          pair.name
-            .toLowerCase()
-            .includes(this.pairFilter.search.toLowerCase()) ||
-          pair.description
-            .toLowerCase()
-            .includes(this.pairFilter.search.toLowerCase()) ||
-          pair.address
-            .toLowerCase()
-            .includes(this.pairFilter.search.toLowerCase()) ||
-          pair.launchedToken.address
-            .toLowerCase()
-            .includes(this.pairFilter.search.toLowerCase()) ||
-          pair.launchedToken.name
-            .toLowerCase()
-            .includes(this.pairFilter.search.toLowerCase()) ||
-          pair.launchedToken.symbol
-            .toLowerCase()
-            .includes(this.pairFilter.search.toLowerCase())
-        ) {
-          return true;
-        } else {
-          return false;
-        }
-      });
+    const filteredPairs = pairs.filter((pair) => {
+      if (this.pairFilter.showNotValidatedPairs) {
+        return true;
+      } else {
+        return pair.isValidated;
+      }
+    });
+    // .filter((pair) => {
+    //   if (this.pairFilter.status === "all") return true;
+    //   else if (this.pairFilter.status === "processing") {
+    //     return pair.ftoState === 3;
+    //   } else if (this.pairFilter.status === "success") {
+    //     return pair.ftoState === 0;
+    //   } else if (this.pairFilter.status === "fail") {
+    //     return pair.ftoState === 1;
+    //   }
+    // })
+    // .filter((pair) => {
+    //   if (
+    //     pair.projectName
+    //       .toLowerCase()
+    //       .includes(this.pairFilter.search.toLowerCase()) ||
+    //     pair.name
+    //       .toLowerCase()
+    //       .includes(this.pairFilter.search.toLowerCase()) ||
+    //     pair.description
+    //       .toLowerCase()
+    //       .includes(this.pairFilter.search.toLowerCase()) ||
+    //     pair.address
+    //       .toLowerCase()
+    //       .includes(this.pairFilter.search.toLowerCase()) ||
+    //     pair.launchedToken.address
+    //       .toLowerCase()
+    //       .includes(this.pairFilter.search.toLowerCase()) ||
+    //     pair.launchedToken.name
+    //       .toLowerCase()
+    //       .includes(this.pairFilter.search.toLowerCase()) ||
+    //     pair.launchedToken.symbol
+    //       .toLowerCase()
+    //       .includes(this.pairFilter.search.toLowerCase())
+    //   ) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // });
     return filteredPairs;
   };
 
-  getFtoPairs = new AsyncState<FtoPairContract[]>(async () => {
-    if (!this.ftoPairs.value) {
-      await this.ftoPairs.call({
-        page: this.ftoPairsPagination.page,
-        limit: this.ftoPairsPagination.limit,
-      });
-    } else {
-      this.ftoPairs.value.data.forEach(async (pair) => {
-        if (!pair.isInit) await pair.init();
-      });
-    }
-
-    const filteredPairs = this.filterPairs(this.ftoPairs.value?.data ?? []);
-
-    this.ftoPairsPagination.setTotal(filteredPairs.length);
-
-    return filteredPairs ?? [];
-  });
-
   getMyFtoPairs = new AsyncState<FtoPairContract[]>(async () => {
-    if (!this.myFtoPairs.value) {
-      await this.myFtoPairs.call();
-    } else {
-      this.myFtoPairs.value.data.forEach(async (pair) => {
-        if (!pair.isInit) await pair.init();
-      });
-    }
+    await this.myFtoPairs.call();
 
     const filteredPairs = this.filterPairs(this.myFtoPairs.value?.data ?? []);
 
@@ -209,46 +250,46 @@ class LaunchPad {
       total: number;
     }>
   >(async ({ page, limit }) => {
-    const [pairsLength] = await this.allPairsLength();
-    //const size = Math.min(Number(pairsLength) - (page - 1) * limit, limit);
-    // const pairIndexesByPage = Array.from(
-    //   { length: Number(pairsLength) },
-    //   (_, index) => {
-    //     return Number(pairsLength) - (page - 1) * limit - index - 1;
-    //   }
-    // );
-    // let data = await Promise.all(
-    //   pairIndexesByPage.map(async (_) => {
-    //     const [pairAddress] = await this.getPairAddress(BigInt(_));
-    //     const pair = new FtoPairContract({ address: pairAddress as string });
-    //     pair.init();
-    //     return pair;
-    //   })
-    // );
+    const ftoAddresses =
+      await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
+        query: this.filterQuery(),
+      });
 
-    const data = await Promise.all(
-      Array.from({ length: Number(pairsLength) }, (_, index) => index).map(
-        async (index) => {
-          const [pairAddress] = await this.getPairAddress(BigInt(index));
-          const pair = new FtoPairContract({ address: pairAddress as string });
-          if (!pair.isInit) {
-            await pair.init();
+    const data: Array<FtoPairContract> = (
+      await Promise.all(
+        ftoAddresses.data.map(async (pairAddress, idx) => {
+          if (
+            idx >= (this.ftoPairsPagination.page - 1) * limit &&
+            idx <= this.ftoPairsPagination.page * limit
+          ) {
+            const pair = new FtoPairContract({
+              address: pairAddress as string,
+            });
+            if (!pair.isInit) {
+              await pair.init();
+            }
+            return pair;
           }
-          return pair;
-        }
+        })
       )
-    );
+    ).filter((pair) => pair !== undefined) as FtoPairContract[];
 
-    data.sort((a, b) => {
-      return Number(b.startTime) - Number(a.startTime);
-    });
+    const filteredPairs = this.filterPairs(data);
 
-    this.ftoPairsPagination.setTotal(data.length);
+    if (!filteredPairs || filteredPairs.length === 0) {
+      return { data: [], total: 0 };
+    } else {
+      filteredPairs.sort((a, b) => {
+        return Number(b.startTime) - Number(a.startTime);
+      });
 
-    return {
-      data,
-      total: data.length,
-    };
+      this.ftoPairsPagination.setTotal(ftoAddresses.data.length);
+
+      return {
+        data: filteredPairs,
+        total: ftoAddresses.data.length,
+      };
+    }
   });
 
   myFtoParticipatedPairs = new AsyncState<{
@@ -313,15 +354,15 @@ class LaunchPad {
   });
 
   ftoPairsPagination = new PaginationState({
-    limit: 9,
+    limit: pagelimit,
   });
 
   myFtoPairsPagination = new PaginationState({
-    limit: 9,
+    limit: pagelimit,
   });
 
   myFtoParticipatedPairsPagination = new PaginationState({
-    limit: 9,
+    limit: pagelimit,
   });
 
   // getPairInfo = async (pairAddress: `0x${string}`) => {
