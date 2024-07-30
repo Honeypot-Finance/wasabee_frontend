@@ -1,3 +1,6 @@
+import { PairFilter } from "../launchpad";
+import { IndexerProvider } from "./indexerTypes";
+
 export default class Indexer<T extends IndexerProvider> {
   dataProvider: T;
   debug: boolean;
@@ -14,8 +17,8 @@ export default class Indexer<T extends IndexerProvider> {
   };
 
   getFilteredFtoPairs = async (
-    query: string
+    filter: PairFilter
   ): Promise<ApiResponseType<Array<string>>> => {
-    return await this.dataProvider.getFilteredFtoPairs(query);
+    return await this.dataProvider.getFilteredFtoPairs(filter);
   };
 }

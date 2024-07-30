@@ -8,6 +8,8 @@ import {
 } from "@/services/priceFeed/priceFeedTypes";
 import GhostIndexer from "@/services/indexer/indexerProviders/ghost";
 import Indexer from "@/services/indexer/indexer";
+import { statusTextToNumber, type PairFilter } from "@/services/launchpad";
+import { filter } from "lodash";
 
 const ghostIndexer = new GhostIndexer(
   process.env.GHOST_INDEXER_API_KEY ?? "",
@@ -44,7 +46,10 @@ export const indexerFeedRouter = router({
   getFilteredFtoPairs: publicProcedure
     .input(
       z.object({
-        query: z.string(),
+        filter: z.object({
+          status: z.string().optional(),
+          search: z.string().optional(),
+        }),
       })
     )
     .output(
@@ -55,7 +60,8 @@ export const indexerFeedRouter = router({
       })
     )
     .query(async ({ input }): Promise<any> => {
-      const res = await indexer.getFilteredFtoPairs(input.query);
+      console.log(input);
+      const res = await indexer.getFilteredFtoPairs(input.filter as PairFilter);
 
       if (res.status === "error") {
         return {

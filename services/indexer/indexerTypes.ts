@@ -1,14 +1,16 @@
-interface IndexerProvider {
+import { PairFilter } from "../launchpad";
+
+export interface IndexerProvider {
   apiKey: string;
   apiEndpoint: string;
 
-  callIndexerApi: <T extends any>(query: string) => Promise<ApiResponseType<T>>;
+  callIndexerApi: <T>(query: string) => Promise<ApiResponseType<T>>;
   getFilteredFtoPairs: (
-    query: string
+    input: PairFilter
   ) => Promise<ApiResponseType<Array<string>>>;
 }
 
-type GhostFtoPairResponse = {
+export type GhostFtoPairResponse = {
   pairs: {
     items: Array<{ id: string }>;
   };

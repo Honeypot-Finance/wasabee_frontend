@@ -1,3 +1,6 @@
+import { PairFilter, statusTextToNumber } from "@/services/launchpad";
+import { IndexerProvider, GhostFtoPairResponse } from "./../indexerTypes";
+
 export default class GhostIndexer implements IndexerProvider {
   apiKey: string;
   apiEndpoint: string;
@@ -36,8 +39,48 @@ export default class GhostIndexer implements IndexerProvider {
   };
 
   getFilteredFtoPairs = async (
-    query: string
+    filter: PairFilter
   ): Promise<ApiResponseType<Array<string>>> => {
+    const statusNum = statusTextToNumber(filter.status);
+
+    const statusCondition = statusNum != -1 ? `status: "${statusNum}",` : "";
+    const searchIdCondition = filter.search ? `id: "${filter.search}",` : "";
+    const searchToken0IdCondition = filter.search
+      ? `token0Id: "${filter.search}",`
+      : "";
+    const searchToken1IdCondition = filter.search
+      ? `token1Id: "${filter.search}",`
+      : "";
+
+    const query = `
+        {
+          pairs(
+            where: {
+              OR:[
+                {
+                  ${statusCondition}
+                  ${searchIdCondition}
+                }
+                {
+                  ${statusCondition}
+                  ${searchToken0IdCondition}
+                }
+                {
+                  ${statusCondition}
+                  ${searchToken1IdCondition}
+                }
+              ]
+            }
+          ) {
+            items {
+              id
+            }
+          }
+        }
+      `;
+
+    console.log(query);
+
     const res = await this.callIndexerApi(query);
     if (res.status === "error") {
       return res;
