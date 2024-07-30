@@ -211,7 +211,7 @@ export const berachainBartioTestnetNetwork = new Network({
       name: "WBTC",
       logoURI: "/images/icons/tokens/wbtc-token-icon.png",
     },
-    "0x6E1E9896e93F7A71ECB33d4386b49DeeD67a231A": {
+    "0xE28AfD8c634946833e89ee3F122C06d7C537E8A8": {
       name: "WETH",
       logoURI: "/images/icons/tokens/weth-token-icon.png",
     },
