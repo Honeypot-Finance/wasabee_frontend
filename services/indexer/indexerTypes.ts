@@ -1,15 +1,54 @@
-interface IndexerProvider {
+import { PairFilter } from "../launchpad";
+
+export interface IndexerProvider {
   apiKey: string;
   apiEndpoint: string;
 
-  callIndexerApi: <T extends any>(query: string) => Promise<ApiResponseType<T>>;
+  callIndexerApi(query: string, option: any): Promise<ApiResponseType<any>>;
   getFilteredFtoPairs: (
-    query: string
-  ) => Promise<ApiResponseType<Array<string>>>;
+    input: PairFilter
+  ) => Promise<ApiResponseType<GhostFtoPairResponse>>;
+  getAllFtoTokens(): Promise<ApiResponseType<GhostFtoTokensResponse>>;
+  getAllPairs(): Promise<ApiResponseType<GhostPairResponse>>;
 }
 
-type GhostFtoPairResponse = {
-  pairs: {
-    items: Array<{ id: string }>;
-  };
+export type GhostFtoPairResponse = {
+  pairs: GhostFTOPair[];
+};
+
+export type GhostPairResponse = {
+  pairs: GhostPair[];
+};
+
+export type GhostFtoTokensResponse = {
+  items: GhostToken[];
+};
+
+export type GhostToken = {
+  id: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+};
+
+export type GhostPair = {
+  id: string;
+  token0: GhostToken;
+  token1: GhostToken;
+};
+export type GhostFTOPair = {
+  id: string;
+  token0Id: string;
+  token1Id: string;
+  depositedRaisedToken: string;
+  depositedLaunchedToken: string;
+  createdAt: string;
+  endTime: string;
+  status: string;
+  token0: GhostToken;
+  token1: GhostToken;
+};
+
+export type GhostAPIOpt = {
+  apiHandle: string;
 };

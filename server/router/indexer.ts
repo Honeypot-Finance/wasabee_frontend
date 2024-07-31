@@ -8,25 +8,61 @@ import {
 } from "@/services/priceFeed/priceFeedTypes";
 import GhostIndexer from "@/services/indexer/indexerProviders/ghost";
 import Indexer from "@/services/indexer/indexer";
+import { statusTextToNumber, type PairFilter } from "@/services/launchpad";
+import { filter } from "lodash";
 
 const ghostIndexer = new GhostIndexer(
   process.env.GHOST_INDEXER_API_KEY ?? "",
-  "https://api.ghostlogs.xyz/gg/pub/3b919a7d-94f2-492f-9ce6-e226b9ecdc45/ghostgraph"
+  "https://api.ghostlogs.xyz/gg/pub/"
 );
 
 const indexer = new Indexer(ghostIndexer);
 export const indexerFeedRouter = router({
-  indexerQuery: publicProcedure
+  getFilteredFtoPairs: publicProcedure
     .input(
+      z
+        .object({
+          filter: z.object({
+            status: z.string().optional(),
+            search: z.string().optional(),
+          }),
+        })
+        .optional()
+    )
+    .output(
       z.object({
-        query: z.string(),
+        status: z.literal("success"),
+        data: z.array(
+          z.object({
+            id: z.string(),
+            token0Id: z.string(),
+            token1Id: z.string(),
+            depositedRaisedToken: z.string(),
+            depositedLaunchedToken: z.string(),
+            createdAt: z.string(),
+            endTime: z.string(),
+            status: z.string(),
+            token0: z.object({
+              id: z.string(),
+              name: z.string(),
+              symbol: z.string(),
+              decimals: z.number(),
+            }),
+            token1: z.object({
+              id: z.string(),
+              name: z.string(),
+              symbol: z.string(),
+              decimals: z.number(),
+            }),
+          })
+        ),
+        message: z.string(),
       })
     )
     .query(async ({ input }): Promise<any> => {
-      console.log(input.query);
-      const res = await indexer.callIndexerApi(input.query);
-
-      console.log(res);
+      const res = await indexer.getFilteredFtoPairs(
+        input?.filter as PairFilter
+      );
 
       if (res.status === "error") {
         return {
@@ -41,21 +77,63 @@ export const indexerFeedRouter = router({
         };
       }
     }),
-  getFilteredFtoPairs: publicProcedure
-    .input(
-      z.object({
-        query: z.string(),
-      })
-    )
+  getAllFtoTokens: publicProcedure
     .output(
       z.object({
         status: z.literal("success"),
-        data: z.array(z.string()),
+        data: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string(),
+            symbol: z.string(),
+            decimals: z.number(),
+          })
+        ),
         message: z.string(),
       })
     )
-    .query(async ({ input }): Promise<any> => {
-      const res = await indexer.getFilteredFtoPairs(input.query);
+    .query(async (): Promise<any> => {
+      const res = await indexer.getAllFtoTokens();
+
+      if (res.status === "error") {
+        return {
+          status: "error",
+          message: res.message,
+        };
+      } else {
+        return {
+          status: "success",
+          data: res.data,
+          message: "Success",
+        };
+      }
+    }),
+  getAllPairs: publicProcedure
+    .output(
+      z.object({
+        status: z.literal("success"),
+        data: z.array(
+          z.object({
+            id: z.string(),
+            token0: z.object({
+              id: z.string(),
+              name: z.string(),
+              symbol: z.string(),
+              decimals: z.number(),
+            }),
+            token1: z.object({
+              id: z.string(),
+              name: z.string(),
+              symbol: z.string(),
+              decimals: z.number(),
+            }),
+          })
+        ),
+        message: z.string(),
+      })
+    )
+    .query(async (): Promise<any> => {
+      const res = await indexer.dataProvider.getAllPairs();
 
       if (res.status === "error") {
         return {

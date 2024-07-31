@@ -6,8 +6,28 @@ import { AsyncState, PaginationState } from "./utils";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { createSiweMessage } from "@/lib/siwe";
 import { Address } from "viem";
+import { Token } from "./contract/token";
 
 const pagelimit = 9;
+
+export type PairFilter = {
+  search: string;
+  status: "all" | "processing" | "success" | "fail";
+  showNotValidatedPairs: boolean;
+};
+
+export const statusTextToNumber = (status: string) => {
+  switch (status) {
+    case "processing":
+      return 3;
+    case "success":
+      return 0;
+    case "fail":
+      return 1;
+    default:
+      return -1;
+  }
+};
 
 function calculateTimeDifference(timestamp: number): string {
   if (timestamp.toString().length !== 13) {
@@ -33,11 +53,7 @@ function calculateTimeDifference(timestamp: number): string {
 }
 
 class LaunchPad {
-  pairFilter: {
-    search: string;
-    status: "all" | "processing" | "success" | "fail";
-    showNotValidatedPairs: boolean;
-  } = {
+  pairFilter: PairFilter = {
     search: "",
     status: "all",
     showNotValidatedPairs: false,
@@ -100,61 +116,6 @@ class LaunchPad {
   //     }
   //   }
   // };
-
-  filterQuery = () => {
-    const statusNum = this.statusTextToNumber(this.pairFilter.status);
-
-    const statusCondition = statusNum ? `status: "${statusNum}",` : "";
-    const searchIdCondition = this.pairFilter.search
-      ? `id: "${this.pairFilter.search}",`
-      : "";
-    const searchToken0IdCondition = this.pairFilter.search
-      ? `token0Id: "${this.pairFilter.search}",`
-      : "";
-    const searchToken1IdCondition = this.pairFilter.search
-      ? `token1Id: "${this.pairFilter.search}",`
-      : "";
-
-    return `
-    {
-      pairs(
-        where: {
-          OR:[
-            {
-              ${statusCondition}
-              ${searchIdCondition}
-            }
-            {
-              ${statusCondition}
-              ${searchToken0IdCondition}
-            }
-            {
-              ${statusCondition}
-              ${searchToken1IdCondition}
-            }
-          ]
-        }
-      ) {
-        items {
-          id
-        }
-      }
-    }
-  `;
-  };
-
-  statusTextToNumber = (status: string) => {
-    switch (status) {
-      case "processing":
-        return 3;
-      case "success":
-        return 0;
-      case "fail":
-        return 1;
-      default:
-        return;
-    }
-  };
 
   allPairsLength = async () =>
     await this.ftofactoryContract.allPairsLength.call();
@@ -252,8 +213,12 @@ class LaunchPad {
   >(async ({ page, limit }) => {
     const ftoAddresses =
       await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-        query: this.filterQuery(),
+        filter: this.pairFilter,
       });
+
+    if (!ftoAddresses || !ftoAddresses.data) {
+      return { data: [], total: 0 };
+    }
 
     const data: Array<FtoPairContract> = (
       await Promise.all(
@@ -263,10 +228,10 @@ class LaunchPad {
             idx <= this.ftoPairsPagination.page * limit
           ) {
             const pair = new FtoPairContract({
-              address: pairAddress as string,
+              address: pairAddress.id,
             });
             if (!pair.isInit) {
-              await pair.init();
+              pair.init();
             }
             return pair;
           }

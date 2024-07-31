@@ -1,3 +1,10 @@
+import { PairFilter } from "../launchpad";
+import {
+  GhostFtoPairResponse,
+  GhostFtoTokensResponse,
+  IndexerProvider,
+} from "./indexerTypes";
+
 export default class Indexer<T extends IndexerProvider> {
   dataProvider: T;
   debug: boolean;
@@ -8,14 +15,21 @@ export default class Indexer<T extends IndexerProvider> {
   }
 
   callIndexerApi = async <T extends any>(
-    query: string
+    query: string,
+    options: any
   ): Promise<ApiResponseType<T>> => {
-    return await this.dataProvider.callIndexerApi(query);
+    return await this.dataProvider.callIndexerApi(query, options);
   };
 
   getFilteredFtoPairs = async (
-    query: string
-  ): Promise<ApiResponseType<Array<string>>> => {
-    return await this.dataProvider.getFilteredFtoPairs(query);
+    filter: PairFilter
+  ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
+    return await this.dataProvider.getFilteredFtoPairs(filter);
+  };
+
+  getAllFtoTokens = async (): Promise<
+    ApiResponseType<GhostFtoTokensResponse>
+  > => {
+    return await this.dataProvider.getAllFtoTokens();
   };
 }
