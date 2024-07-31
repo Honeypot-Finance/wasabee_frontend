@@ -211,13 +211,17 @@ export const berachainBartioTestnetNetwork = new Network({
       name: "WBTC",
       logoURI: "/images/icons/tokens/wbtc-token-icon.png",
     },
-    "0x6E1E9896e93F7A71ECB33d4386b49DeeD67a231A": {
+    "0xE28AfD8c634946833e89ee3F122C06d7C537E8A8": {
       name: "WETH",
       logoURI: "/images/icons/tokens/weth-token-icon.png",
     },
     "0x806Ef538b228844c73E8E692ADCFa8Eb2fCF729c": {
       name: "DAI",
       logoURI: "/images/icons/tokens/dai-token-icon.png",
+    },
+    "0x343499E6315f7d3473a12aaf660Ac02b5739C382": {
+      name: "GCG",
+      logoURI: "/images/icons/tokens/grandconquest-token-icon.svg",
     },
   },
   validatedFtoAddresses: [
