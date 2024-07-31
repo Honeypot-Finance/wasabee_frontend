@@ -9,9 +9,14 @@ export interface IndexerProvider {
     input: PairFilter
   ) => Promise<ApiResponseType<GhostFtoPairResponse>>;
   getAllFtoTokens(): Promise<ApiResponseType<GhostFtoTokensResponse>>;
+  getAllPairs(): Promise<ApiResponseType<GhostPairResponse>>;
 }
 
 export type GhostFtoPairResponse = {
+  pairs: GhostFTOPair[];
+};
+
+export type GhostPairResponse = {
   pairs: GhostPair[];
 };
 
@@ -27,6 +32,11 @@ export type GhostToken = {
 };
 
 export type GhostPair = {
+  id: string;
+  token0: GhostToken;
+  token1: GhostToken;
+};
+export type GhostFTOPair = {
   id: string;
   token0Id: string;
   token1Id: string;

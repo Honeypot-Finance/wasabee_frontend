@@ -4,10 +4,12 @@ import {
   GhostFtoPairResponse,
   GhostAPIOpt,
   GhostFtoTokensResponse,
+  GhostPair,
+  GhostPairResponse,
 } from "./../indexerTypes";
 
 const ftoGraphHandle = "3b919a7d-94f2-492f-9ce6-e226b9ecdc45/ghostgraph";
-const pairGraphHandle = "1841a611-27a3-4e23-9013-18942fd90737/ghostgraph";
+const pairGraphHandle = "747fa52a-205d-4434-ac02-0dd20f49c0dd/ghostgraph";
 
 export default class GhostIndexer implements IndexerProvider {
   apiKey: string;
@@ -147,6 +149,44 @@ export default class GhostIndexer implements IndexerProvider {
         status: "success",
         message: "Success",
         data: (res.data as any).erc20s.items as GhostFtoTokensResponse,
+      };
+    }
+  };
+
+  getAllPairs = async (): Promise<ApiResponseType<GhostPairResponse>> => {
+    const query = `
+        {
+          pairs {
+            items {
+              id
+              token0 {
+                id
+                name
+                symbol
+                decimals
+              }
+              token1 {
+                id
+                name
+                symbol
+                decimals
+              }
+            }
+          }
+        }
+      `;
+
+    const res = await this.callIndexerApi(query, {
+      apiHandle: pairGraphHandle,
+    });
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: (res.data as any).pairs.items as GhostPairResponse,
       };
     }
   };

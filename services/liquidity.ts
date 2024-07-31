@@ -246,6 +246,19 @@ class Liquidity {
     }[],
     tokens?: Partial<Record<string, { name: string }>>
   ) {
+    if (tokens) {
+      Object.keys(tokens).forEach((address) => {
+        if (!this.tokensMap[address]) {
+          const token = new Token({
+            address,
+            ...wallet.currentChain.validatedTokensInfo[address],
+          });
+          this.tokensMap[address] = token;
+          token.init();
+        }
+      });
+    }
+
     this.pairs = pairs.map((pair) => {
       const token0 = new Token(pair.token0);
       const token1 = new Token(pair.token1);
@@ -266,19 +279,6 @@ class Liquidity {
       pairContract.init();
       return pairContract;
     });
-
-    if (tokens) {
-      Object.keys(tokens).forEach((address) => {
-        if (!this.tokensMap[address]) {
-          const token = new Token({
-            address,
-            ...wallet.currentChain.validatedTokensInfo[address],
-          });
-          this.tokensMap[address] = token;
-          token.init();
-        }
-      });
-    }
 
     this.isInit = true;
   }

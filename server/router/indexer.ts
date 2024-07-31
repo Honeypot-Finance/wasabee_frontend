@@ -108,4 +108,44 @@ export const indexerFeedRouter = router({
         };
       }
     }),
+  getAllPairs: publicProcedure
+    .output(
+      z.object({
+        status: z.literal("success"),
+        data: z.array(
+          z.object({
+            id: z.string(),
+            token0: z.object({
+              id: z.string(),
+              name: z.string(),
+              symbol: z.string(),
+              decimals: z.number(),
+            }),
+            token1: z.object({
+              id: z.string(),
+              name: z.string(),
+              symbol: z.string(),
+              decimals: z.number(),
+            }),
+          })
+        ),
+        message: z.string(),
+      })
+    )
+    .query(async (): Promise<any> => {
+      const res = await indexer.dataProvider.getAllPairs();
+
+      if (res.status === "error") {
+        return {
+          status: "error",
+          message: res.message,
+        };
+      } else {
+        return {
+          status: "success",
+          data: res.data,
+          message: "Success",
+        };
+      }
+    }),
 });
