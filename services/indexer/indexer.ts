@@ -1,5 +1,9 @@
 import { PairFilter } from "../launchpad";
-import { IndexerProvider } from "./indexerTypes";
+import {
+  GhostFtoPairResponse,
+  GhostFtoTokensResponse,
+  IndexerProvider,
+} from "./indexerTypes";
 
 export default class Indexer<T extends IndexerProvider> {
   dataProvider: T;
@@ -19,7 +23,13 @@ export default class Indexer<T extends IndexerProvider> {
 
   getFilteredFtoPairs = async (
     filter: PairFilter
-  ): Promise<ApiResponseType<Array<string>>> => {
+  ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
     return await this.dataProvider.getFilteredFtoPairs(filter);
+  };
+
+  getAllFtoTokens = async (): Promise<
+    ApiResponseType<GhostFtoTokensResponse>
+  > => {
+    return await this.dataProvider.getAllFtoTokens();
   };
 }

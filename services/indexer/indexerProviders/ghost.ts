@@ -3,6 +3,7 @@ import {
   IndexerProvider,
   GhostFtoPairResponse,
   GhostAPIOpt,
+  GhostFtoTokensResponse,
 } from "./../indexerTypes";
 
 const ftoGraphHandle = "3b919a7d-94f2-492f-9ce6-e226b9ecdc45/ghostgraph";
@@ -48,15 +49,15 @@ export default class GhostIndexer implements IndexerProvider {
 
   getFilteredFtoPairs = async (
     filter: PairFilter
-  ): Promise<ApiResponseType<Array<string>>> => {
-    const statusNum = statusTextToNumber(filter.status);
+  ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
+    const statusNum = statusTextToNumber(filter?.status ?? -1);
 
     const statusCondition = statusNum != -1 ? `status: "${statusNum}",` : "";
-    const searchIdCondition = filter.search ? `id: "${filter.search}",` : "";
-    const searchToken0IdCondition = filter.search
+    const searchIdCondition = filter?.search ? `id: "${filter.search}",` : "";
+    const searchToken0IdCondition = filter?.search
       ? `token0Id: "${filter.search}",`
       : "";
-    const searchToken1IdCondition = filter.search
+    const searchToken1IdCondition = filter?.search
       ? `token1Id: "${filter.search}",`
       : "";
 
@@ -82,6 +83,25 @@ export default class GhostIndexer implements IndexerProvider {
           ) {
             items {
               id
+              token0Id
+              token1Id
+              depositedRaisedToken
+              depositedLaunchedToken
+              createdAt
+              endTime
+              status
+              token0 {
+                id
+                name
+                symbol
+                decimals
+              }
+              token1 {
+                id
+                name
+                symbol
+                decimals
+              }
             }
           }
         }
@@ -90,15 +110,43 @@ export default class GhostIndexer implements IndexerProvider {
     console.log(query);
 
     const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
+
     if (res.status === "error") {
       return res;
     } else {
       return {
         status: "success",
         message: "Success",
-        data: (res.data as GhostFtoPairResponse).pairs.items.flatMap((item) => {
-          return item.id;
-        }),
+        data: (res.data as any).pairs.items as GhostFtoPairResponse,
+      };
+    }
+  };
+
+  getAllFtoTokens = async (): Promise<
+    ApiResponseType<GhostFtoTokensResponse>
+  > => {
+    const query = `
+        {
+          erc20s {
+            items {
+              id
+              name
+              symbol
+              decimals
+            }
+          }
+        }
+      `;
+
+    const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: (res.data as any).erc20s.items as GhostFtoTokensResponse,
       };
     }
   };

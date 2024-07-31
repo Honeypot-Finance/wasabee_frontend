@@ -104,10 +104,10 @@ class Liquidity {
 
   onFromAmountInputChange = debounce(async () => {
     if (!this.currentPair.value) {
-      return
+      return;
     }
     if (this.fromAmount) {
-     const [toAmount] = await this.currentPair.value.getAmountOut.call(
+      const [toAmount] = await this.currentPair.value.getAmountOut.call(
         this.fromAmount,
         this.fromToken as Token
       );
@@ -116,11 +116,11 @@ class Liquidity {
     } else {
       this.toAmount = "";
     }
-  }, 300)
+  }, 300);
 
   onToAmountInputChange = debounce(async () => {
     if (!this.currentPair.value) {
-      return
+      return;
     }
     if (this.toAmount) {
       const [fromAmount] = await this.currentPair.value.getAmountOut.call(
@@ -132,7 +132,7 @@ class Liquidity {
     } else {
       this.fromAmount = "";
     }
-  }, 300)
+  }, 300);
 
   setCurrentRemovePair(pair: PairContract | null) {
     this.currentRemovePair = pair;

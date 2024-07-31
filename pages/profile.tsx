@@ -27,7 +27,7 @@ export const Profile = observer(() => {
   const { data: pairsMap, isLoading } = trpc.pair.getPairs.useQuery(
     {
       chainId: chainId as number,
-      blockAddress: networksMap[chainId as number].blacklist?.poolBlacklist,
+      blackListAddress: networksMap[chainId as number].blacklist?.poolBlacklist,
     },
     {
       enabled: !!chainId,

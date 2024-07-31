@@ -46,7 +46,7 @@ export const pairRouter = router({
     .input(
       z.object({
         chainId: z.number(),
-        blockAddress: z.array(z.string().startsWith("0x")).optional(),
+        blackListAddress: z.array(z.string().startsWith("0x")).optional(),
       })
     )
     .query(async ({ input }): Promise<pairQueryOutput> => {
@@ -110,9 +110,9 @@ export const pairRouter = router({
               };
 
               if (
-                input.blockAddress?.includes(pair.address) ||
-                input.blockAddress?.includes(pair.token0.address) ||
-                input.blockAddress?.includes(pair.token1.address)
+                input.blackListAddress?.includes(pair.address) ||
+                input.blackListAddress?.includes(pair.token0.address) ||
+                input.blackListAddress?.includes(pair.token1.address)
               ) {
                 return null;
               }

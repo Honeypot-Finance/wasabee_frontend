@@ -6,6 +6,7 @@ import { AsyncState, PaginationState } from "./utils";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { createSiweMessage } from "@/lib/siwe";
 import { Address } from "viem";
+import { Token } from "./contract/token";
 
 const pagelimit = 9;
 
@@ -227,10 +228,10 @@ class LaunchPad {
             idx <= this.ftoPairsPagination.page * limit
           ) {
             const pair = new FtoPairContract({
-              address: pairAddress as string,
+              address: pairAddress.id,
             });
             if (!pair.isInit) {
-              await pair.init();
+              pair.init();
             }
             return pair;
           }
