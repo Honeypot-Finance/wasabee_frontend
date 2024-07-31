@@ -11,9 +11,10 @@ export default class Indexer<T extends IndexerProvider> {
   }
 
   callIndexerApi = async <T extends any>(
-    query: string
+    query: string,
+    options: any
   ): Promise<ApiResponseType<T>> => {
-    return await this.dataProvider.callIndexerApi(query);
+    return await this.dataProvider.callIndexerApi(query, options);
   };
 
   getFilteredFtoPairs = async (

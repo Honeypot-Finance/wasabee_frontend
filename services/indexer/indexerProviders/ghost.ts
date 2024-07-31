@@ -1,5 +1,12 @@
 import { PairFilter, statusTextToNumber } from "@/services/launchpad";
-import { IndexerProvider, GhostFtoPairResponse } from "./../indexerTypes";
+import {
+  IndexerProvider,
+  GhostFtoPairResponse,
+  GhostAPIOpt,
+} from "./../indexerTypes";
+
+const ftoGraphHandle = "3b919a7d-94f2-492f-9ce6-e226b9ecdc45/ghostgraph";
+const pairGraphHandle = "1841a611-27a3-4e23-9013-18942fd90737/ghostgraph";
 
 export default class GhostIndexer implements IndexerProvider {
   apiKey: string;
@@ -10,9 +17,10 @@ export default class GhostIndexer implements IndexerProvider {
     this.apiEndpoint = apiEndpoint;
   }
 
-  callIndexerApi = async <T extends any>(
-    query: string
-  ): Promise<ApiResponseType<T>> => {
+  callIndexerApi = async (
+    query: string,
+    option: GhostAPIOpt
+  ): Promise<ApiResponseType<any>> => {
     if (!this.apiKey || !query) {
       return {
         status: "error",
@@ -20,7 +28,7 @@ export default class GhostIndexer implements IndexerProvider {
       };
     }
 
-    const res = await fetch(this.apiEndpoint, {
+    const res = await fetch(this.apiEndpoint + option.apiHandle, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -81,7 +89,7 @@ export default class GhostIndexer implements IndexerProvider {
 
     console.log(query);
 
-    const res = await this.callIndexerApi(query);
+    const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
     if (res.status === "error") {
       return res;
     } else {

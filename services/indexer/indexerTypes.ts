@@ -4,7 +4,7 @@ export interface IndexerProvider {
   apiKey: string;
   apiEndpoint: string;
 
-  callIndexerApi: <T>(query: string) => Promise<ApiResponseType<T>>;
+  callIndexerApi(query: string, option: any): Promise<ApiResponseType<any>>;
   getFilteredFtoPairs: (
     input: PairFilter
   ) => Promise<ApiResponseType<Array<string>>>;
@@ -14,4 +14,8 @@ export type GhostFtoPairResponse = {
   pairs: {
     items: Array<{ id: string }>;
   };
+};
+
+export type GhostAPIOpt = {
+  apiHandle: string;
 };
