@@ -251,7 +251,7 @@ class Liquidity {
         if (!this.tokensMap[address]) {
           const token = new Token({
             address,
-            ...wallet.currentChain.validatedTokensInfo[address],
+            ...wallet.currentChain?.validatedTokensInfo[address],
           });
           this.tokensMap[address] = token;
           token.init();
@@ -269,10 +269,12 @@ class Liquidity {
       });
       if (!this.tokensMap[token0.address]) {
         this.tokensMap[token0.address] = token0;
+
         token0.init();
       }
       if (!this.tokensMap[token1.address]) {
         this.tokensMap[token1.address] = token1;
+
         token1.init();
       }
       this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract;

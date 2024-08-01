@@ -32,6 +32,8 @@ export class Network {
     string,
     {
       name: string;
+      symbol: string;
+      decimals: number;
       logoURI?: string;
     }
   > = {};
@@ -185,38 +187,56 @@ export const berachainBartioTestnetNetwork = new Network({
   validatedTokensInfo: {
     "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8": {
       name: "Wrapped Bera",
+      symbol: "WBERA",
+      decimals: 18,
       logoURI: "/images/icons/tokens/wbera-token-icon.png",
     },
     "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d": {
       name: "Bera the Pooh",
+      symbol: "BTP",
+      decimals: 18,
       logoURI: "/images/icons/tokens/bera-the-pooh-token-icon.png",
     },
     "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03": {
       name: "Honey",
+      symbol: "HONEY",
+      decimals: 18,
       logoURI: "/images/icons/tokens/honey-token-icon.png",
     },
     "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E": {
       name: "T-HPOT",
+      symbol: "tHPOT",
+      decimals: 18,
       logoURI: "/images/icons/tokens/thpot-token-icon.jpg",
     },
     "0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D": {
       name: "USDT",
+      symbol: "USDT",
+      decimals: 18,
       logoURI: "/images/icons/tokens/usdt-token-icon.png",
     },
     "0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c": {
       name: "USDC",
+      symbol: "USDC",
+      decimals: 18,
       logoURI: "/images/icons/tokens/usdc-token-icon.png",
     },
     "0x286F1C3f0323dB9c91D1E8f45c8DF2d065AB5fae": {
       name: "WBTC",
+      symbol: "WBTC",
+      decimals: 18,
       logoURI: "/images/icons/tokens/wbtc-token-icon.png",
     },
     "0xE28AfD8c634946833e89ee3F122C06d7C537E8A8": {
       name: "WETH",
+      symbol: "WETH",
+      decimals: 18,
       logoURI: "/images/icons/tokens/weth-token-icon.png",
     },
     "0x806Ef538b228844c73E8E692ADCFa8Eb2fCF729c": {
       name: "DAI",
+      symbol: "DAI",
+      decimals: 18,
       logoURI: "/images/icons/tokens/dai-token-icon.png",
     },
     "0x343499E6315f7d3473a12aaf660Ac02b5739C382": {

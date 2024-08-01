@@ -109,8 +109,6 @@ export default class GhostIndexer implements IndexerProvider {
         }
       `;
 
-    console.log(query);
-
     const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
 
     if (res.status === "error") {
