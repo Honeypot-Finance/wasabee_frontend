@@ -231,7 +231,15 @@ class LaunchPad {
               address: pairAddress.id,
             });
             if (!pair.isInit) {
-              pair.init();
+              pair.init({
+                raisedToken: new Token(pairAddress.token1),
+                launchedToken: new Token(pairAddress.token0),
+                depositedLaunchedToken: pairAddress.depositedLaunchedToken,
+                depositedRaisedToken: pairAddress.depositedRaisedToken,
+                startTime: pairAddress.createdAt,
+                endTime: pairAddress.endTime,
+                ftoState: Number(pairAddress.status),
+              });
             }
             return pair;
           }
@@ -270,6 +278,8 @@ class LaunchPad {
         const pair = new FtoPairContract({ address: pairAddress as string });
         if (!pair.isInit) {
           await pair.init();
+          pair.raiseToken.init();
+          pair.launchedToken.init();
         }
         return pair;
       })
@@ -301,6 +311,8 @@ class LaunchPad {
         const pair = new FtoPairContract({ address: pairAddress as string });
         if (!pair.isInit) {
           await pair.init();
+          pair.raiseToken.init();
+          pair.launchedToken.init();
         }
         return pair;
       })

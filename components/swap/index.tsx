@@ -50,7 +50,7 @@ export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
             decimals: pair.token1.decimals,
           },
         })),
-        wallet.currentChain.validatedTokensInfo
+        wallet.currentChain?.validatedTokensInfo
       );
     }
   }, [pairsMap]);

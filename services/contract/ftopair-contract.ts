@@ -286,13 +286,13 @@ export class FtoPairContract implements BaseContract {
     endTime,
     ftoState,
   }: {
-    raisedToken?: string;
-    launchedToken?: string;
+    raisedToken?: Token;
+    launchedToken?: Token;
     depositedRaisedToken?: string;
     depositedLaunchedToken?: string;
     startTime?: string;
     endTime?: string;
-    ftoState?: string;
+    ftoState?: number;
   } = {}) {
     if (this.isInit) {
       return;
@@ -316,8 +316,8 @@ export class FtoPairContract implements BaseContract {
       });
 
       await Promise.all([
-        this.getRaisedToken(depositedRaisedToken),
-        this.getLaunchedToken(depositedLaunchedToken),
+        this.getRaisedToken(raisedToken),
+        this.getLaunchedToken(launchedToken),
       ]);
       return;
     }
@@ -329,7 +329,7 @@ export class FtoPairContract implements BaseContract {
       this.getDepositedLaunchedToken(depositedLaunchedToken),
       this.getStartTime(startTime),
       this.getEndTime(endTime),
-      this.getFTOState(ftoState ? statusTextToNumber(ftoState) : undefined),
+      this.getFTOState(ftoState),
       this.getLaunchedTokenProvider(),
       this.getProjectInfo(),
       this.getCanClaimLP(),
@@ -357,7 +357,7 @@ export class FtoPairContract implements BaseContract {
   }
 
   getIsValidated() {
-    this.isValidated = wallet.currentChain.validatedFtoAddresses.includes(
+    this.isValidated = wallet.currentChain?.validatedFtoAddresses.includes(
       this.address.toLowerCase()
     );
   }
@@ -374,9 +374,9 @@ export class FtoPairContract implements BaseContract {
     }
   }
 
-  async getRaisedToken(tokenAddress?: string) {
+  async getRaisedToken(tokenAddress?: Token) {
     if (tokenAddress) {
-      this.raiseToken = new Token({ address: tokenAddress });
+      this.raiseToken = tokenAddress;
       this.raiseToken.init();
     } else {
       const res = (await this.contract.read.raisedToken()) as `0x${string}`;
@@ -385,14 +385,14 @@ export class FtoPairContract implements BaseContract {
     }
   }
 
-  async getLaunchedToken(launchedTokenAddress?: string) {
+  async getLaunchedToken(launchedTokenAddress?: Token) {
     if (launchedTokenAddress) {
-      this.launchedToken = new Token({ address: launchedTokenAddress });
-      this.launchedToken.init();
+      this.launchedToken = launchedTokenAddress;
+      //this.launchedToken.init();
     } else {
       const res = (await this.contract.read.launchedToken()) as `0x${string}`;
       this.launchedToken = new Token({ address: res });
-      this.launchedToken.init();
+      //this.launchedToken.init();
     }
   }
 
