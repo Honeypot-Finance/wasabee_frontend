@@ -30,21 +30,27 @@ export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
       this.activeTab = tab;
     },
   }));
-  const { data: pairsMap } = trpc.pair.getPairs.useQuery(
-    {
-      chainId: chainId as number,
-    },
-    {
-      enabled: !!chainId,
-      refetchOnWindowFocus: false,
-    }
-  );
+  const { data: pairsMap } = trpc.indexerFeedRouter.getAllPairs.useQuery();
 
   useEffect(() => {
     if (pairsMap) {
       liquidity.initPool(
-        Object.values(pairsMap),
-        wallet.currentChain.validatedTokensInfo
+        pairsMap.data.map((pair) => ({
+          address: pair.id,
+          token0: {
+            address: pair.token0.id,
+            name: pair.token0.name,
+            symbol: pair.token0.symbol,
+            decimals: pair.token0.decimals,
+          },
+          token1: {
+            address: pair.token1.id,
+            name: pair.token1.name,
+            symbol: pair.token1.symbol,
+            decimals: pair.token1.decimals,
+          },
+        })),
+        wallet.currentChain?.validatedTokensInfo
       );
     }
   }, [pairsMap]);

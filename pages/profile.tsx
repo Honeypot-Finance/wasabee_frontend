@@ -27,7 +27,7 @@ export const Profile = observer(() => {
   const { data: pairsMap, isLoading } = trpc.pair.getPairs.useQuery(
     {
       chainId: chainId as number,
-      blockAddress: networksMap[chainId as number].blacklist?.poolBlacklist,
+      blackListAddress: networksMap[chainId as number].blacklist?.poolBlacklist,
     },
     {
       enabled: !!chainId,
@@ -54,7 +54,10 @@ export const Profile = observer(() => {
       return;
     }
     launchpad.showNotValidatedPairs = true;
-    launchpad.getFtoPairs.call();
+    launchpad.ftoPairs.call({
+      page: launchpad.ftoPairsPagination.page,
+      limit: launchpad.ftoPairsPagination.limit,
+    });
     launchpad.getMyFtoPairs.call();
     launchpad.getMyFtoParticipatedPairs.call();
   }, [wallet.isInit]);
