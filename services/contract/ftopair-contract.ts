@@ -297,30 +297,6 @@ export class FtoPairContract implements BaseContract {
     if (this.isInit) {
       return;
     }
-    const cachedData = await fetch(
-      `/api/server-cache/get-server-cache?key=fto:${this.address}:${wallet.currentChainId}`
-    ).then((res) => res.json());
-
-    if (cachedData.status === "success") {
-      const data = JSON.parse(cachedData.data);
-      Object.assign(this, {
-        ...data,
-        depositedRaisedTokenWithoutDecimals:
-          data.depositedRaisedTokenWithoutDecimals
-            ? new BigNumber(data.depositedRaisedTokenWithoutDecimals)
-            : null,
-        depositedLaunchedTokenWithoutDecimals:
-          data.depositedLaunchedTokenWithoutDecimals
-            ? new BigNumber(data.depositedLaunchedTokenWithoutDecimals)
-            : null,
-      });
-
-      await Promise.all([
-        this.getRaisedToken(raisedToken),
-        this.getLaunchedToken(launchedToken),
-      ]);
-      return;
-    }
 
     await Promise.all([
       this.getRaisedToken(raisedToken),
@@ -337,21 +313,6 @@ export class FtoPairContract implements BaseContract {
       console.error(error, `init-${this.address}`);
       return;
     });
-
-    const setData = await fetch(`/api/server-cache/set-server-cache`, {
-      method: "POST",
-      body: JSON.stringify({
-        key: `fto:${this.address}:${wallet.currentChainId}`,
-        data: JSON.stringify({
-          ...this,
-        }),
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    //console.log("setData", setData);
 
     this.isInit = true;
   }

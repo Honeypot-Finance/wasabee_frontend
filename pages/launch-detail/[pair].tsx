@@ -353,7 +353,9 @@ const LaunchPage: NextLayoutPage = observer(() => {
       ({ pairAddress }: { pairAddress: string }) => Promise<FtoPairContract>
     >(async ({ pairAddress }: { pairAddress: string }) => {
       const pair = new FtoPairContract({ address: pairAddress as string });
-      pair.init();
+      await pair.init();
+      pair.raiseToken.init();
+      pair.launchedToken.init();
       return pair;
     }),
   }));
