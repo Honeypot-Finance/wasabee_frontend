@@ -46,7 +46,8 @@ const FaucetPage: NextLayoutPage = observer(() => {
         <div className="flex  items-center">
           <CardContianer>
             <div className="flex-1 flex items-center">
-              Native Token: ${wallet.currentChain?.chain.nativeCurrency.symbol}
+              Native Currency: $
+              {wallet.currentChain?.chain.nativeCurrency.symbol}
             </div>
             <div className="">
               {amountFormatted(balance.data?.value.toString(), {
