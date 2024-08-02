@@ -30,12 +30,12 @@ export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
       this.activeTab = tab;
     },
   }));
-  const { data: pairsMap } = trpc.indexerFeedRouter.getAllPairs.useQuery();
+  const { data } = trpc.indexerFeedRouter.getAllPairs.useQuery();
 
   useEffect(() => {
-    if (pairsMap && wallet.isInit) {
+    if (data?.data && wallet.isInit) {
       liquidity.initPool(
-        pairsMap.data.map((pair: any) => ({
+        data.data.map((pair: any) => ({
           address: pair.id,
           token0: {
             address: pair.token0.id,
@@ -52,7 +52,7 @@ export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
         }))
       );
     }
-  }, [pairsMap, wallet.isInit]);
+  }, [data, wallet.isInit]);
   //   useEffect(() => {
   //     window.onhashchange = () => {
   //       const hash = getHash();
