@@ -104,10 +104,10 @@ class Liquidity {
 
   onFromAmountInputChange = debounce(async () => {
     if (!this.currentPair.value) {
-      return;
+      return
     }
     if (this.fromAmount) {
-      const [toAmount] = await this.currentPair.value.getAmountOut.call(
+     const [toAmount] = await this.currentPair.value.getAmountOut.call(
         this.fromAmount,
         this.fromToken as Token
       );
@@ -116,11 +116,11 @@ class Liquidity {
     } else {
       this.toAmount = "";
     }
-  }, 300);
+  }, 300)
 
   onToAmountInputChange = debounce(async () => {
     if (!this.currentPair.value) {
-      return;
+      return
     }
     if (this.toAmount) {
       const [fromAmount] = await this.currentPair.value.getAmountOut.call(
@@ -132,7 +132,7 @@ class Liquidity {
     } else {
       this.fromAmount = "";
     }
-  }, 300);
+  }, 300)
 
   setCurrentRemovePair(pair: PairContract | null) {
     this.currentRemovePair = pair;
@@ -246,7 +246,6 @@ class Liquidity {
     }[]
   ) {
     if (!wallet.isInit) return;
-    console.log("wallet", wallet.currentChain);
     this.pairs = pairs.map((pair) => {
       const token0 = new Token(pair.token0);
       const token1 = new Token(pair.token1);
@@ -257,12 +256,10 @@ class Liquidity {
       });
       if (!this.tokensMap[token0.address]) {
         this.tokensMap[token0.address] = token0;
-
         token0.init();
       }
       if (!this.tokensMap[token1.address]) {
         this.tokensMap[token1.address] = token1;
-
         token1.init();
       }
       this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract;
