@@ -30,7 +30,15 @@ export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
       this.activeTab = tab;
     },
   }));
-  const { data: pairsMap } = trpc.indexerFeedRouter.getAllPairs.useQuery();
+  const { data: pairsMap } = trpc.pair.getPairs.useQuery(
+    {
+      chainId: chainId as number,
+    },
+    {
+      enabled: !!chainId,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   useEffect(() => {
     if (pairsMap && wallet.isInit) {

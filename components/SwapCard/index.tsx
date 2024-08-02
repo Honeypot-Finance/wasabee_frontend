@@ -79,7 +79,7 @@ export const SwapCard = observer(() => {
                     <div
                       onClick={() => {
                         swap.setFromAmount(
-                          (swap.fromToken as Token).balance.toFixed()
+                          (swap.fromToken as Token).balance?.toFixed()
                         );
                       }}
                       className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline"

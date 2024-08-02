@@ -29,7 +29,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
   const { data: pairsMap, isLoading } = trpc.pair.getPairs.useQuery(
     {
       chainId: chainId as number,
-      blackListAddress: networksMap[chainId as number].blacklist?.poolBlacklist,
+      blockAddress: networksMap[chainId as number].blacklist?.poolBlacklist,
     },
     {
       enabled: !!chainId,
