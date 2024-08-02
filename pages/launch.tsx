@@ -38,10 +38,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
       return;
     }
     launchpad.showNotValidatedPairs = false;
-    launchpad.ftoPairs.call({
-      page: launchpad.ftoPairsPagination.page,
-      limit: launchpad.ftoPairsPagination.limit,
-    });
+    launchpad.getFtoPairs.call();
     launchpad.getMyFtoPairs.call();
   }, [wallet.isInit]);
 
@@ -61,7 +58,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
               launchpad.ftoPairsPagination.page = 1;
-              launchpad.ftoPairsPagination.totalPage.call();
             }}
             startContent={<IoSearchOutline></IoSearchOutline>}
             placeholder="Search by name, symbol or address"
@@ -134,7 +130,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
                           onClick={() => {
                             launchpad.pairFilterStatus = "processing";
                             launchpad.ftoPairsPagination.page = 1;
-                            launchpad.ftoPairsPagination.totalPage.call();
                           }}
                           className="w-[100px]"
                         >
@@ -153,7 +148,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
             launchpad.showNotValidatedPairs =
               !launchpad.pairFilter.showNotValidatedPairs;
             launchpad.ftoPairsPagination.page = 1;
-            launchpad.ftoPairsPagination.totalPage.call();
           }}
           checked={launchpad.pairFilter.showNotValidatedPairs}
           className="mt-2"
@@ -178,7 +172,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
           >
             <Tab key="all" title="All Projects">
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-                {launchpad.ftoPairs.value?.data
+                {launchpad.getFtoPairs.value
                   ?.slice(
                     (launchpad.ftoPairsPagination.page - 1) *
                       launchpad.ftoPairsPagination.limit,
