@@ -46,9 +46,7 @@ export class Token implements BaseContract {
       this.balanceWithoutDecimals = new BigNumber(balance);
     }
 
-    this.logoURI =
-      networksMap[wallet.currentChainId]?.validatedTokensInfo[this.address]
-        ?.logoURI ?? "/images/icons/tokens/unknown-token-icon.png";
+    this.getLogoURI();
 
     makeAutoObservable(this);
   }
@@ -72,28 +70,14 @@ export class Token implements BaseContract {
     loadTotalSupply?: boolean;
     loadClaimed?: boolean;
   }) {
-    const cachedData = await fetch(
-      `/api/server-cache/get-server-cache?key=token:${this.address}:${wallet.currentChainId}`
-    ).then((res) => res.json());
-
-    if (cachedData.status === "success") {
-      const data = JSON.parse(cachedData.data);
-      Object.assign(this, {
-        ...data,
-        balanceWithoutDecimals: new BigNumber(data.balanceWithoutDecimals),
-        totalSupplyWithoutDecimals: new BigNumber(
-          data.totalSupplyWithoutDecimals
-        ),
-      });
-      return;
-    }
-
     const loadName = options?.loadName ?? true;
     const loadSymbol = options?.loadSymbol ?? true;
     const loadDecimals = options?.loadDecimals ?? true;
     const loadBalance = options?.loadBalance ?? true;
     const loadTotalSupply = options?.loadTotalSupply ?? false;
     const loadClaimed = options?.loadClaimed ?? false;
+
+    this.getLogoURI();
 
     await Promise.all([
       loadName && !this.name
@@ -123,18 +107,18 @@ export class Token implements BaseContract {
       return;
     });
 
-    const setData = await fetch(`/api/server-cache/set-server-cache`, {
-      method: "POST",
-      body: JSON.stringify({
-        key: `token:${this.address}:${wallet.currentChainId}`,
-        data: JSON.stringify(this),
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
     this.isInit = true;
+  }
+
+  getLogoURI() {
+    Object.entries(wallet.currentChain.validatedTokensInfo).forEach(
+      ([address, info]) => {
+        if (address.toLowerCase() === this.address.toLowerCase()) {
+          this.logoURI = info.logoURI ?? "";
+          return;
+        }
+      }
+    );
   }
 
   async approveIfNoAllowance({

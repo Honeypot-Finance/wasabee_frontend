@@ -243,9 +243,10 @@ class Liquidity {
         symbol: string;
         decimals: number;
       };
-    }[],
-    tokens?: Partial<Record<string, { name: string }>>
+    }[]
   ) {
+    if (!wallet.isInit) return;
+    console.log("wallet", wallet.currentChain);
     this.pairs = pairs.map((pair) => {
       const token0 = new Token(pair.token0);
       const token1 = new Token(pair.token1);
@@ -256,10 +257,12 @@ class Liquidity {
       });
       if (!this.tokensMap[token0.address]) {
         this.tokensMap[token0.address] = token0;
+
         token0.init();
       }
       if (!this.tokensMap[token1.address]) {
         this.tokensMap[token1.address] = token1;
+
         token1.init();
       }
       this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract;
@@ -267,18 +270,12 @@ class Liquidity {
       return pairContract;
     });
 
-    if (tokens) {
-      Object.keys(tokens).forEach((address) => {
-        if (!this.tokensMap[address]) {
-          const token = new Token({
-            address,
-            ...wallet.currentChain.validatedTokensInfo[address],
-          });
-          this.tokensMap[address] = token;
-          token.init();
-        }
-      });
-    }
+    //show logoURI token first, because it means its a validated token
+    this.tokensMap = Object.fromEntries(
+      Object.entries(this.tokensMap).sort((a, b) =>
+        a[1].logoURI ? -1 : b[1].logoURI ? 1 : 0
+      )
+    );
 
     this.isInit = true;
   }
