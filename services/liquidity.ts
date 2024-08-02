@@ -243,22 +243,10 @@ class Liquidity {
         symbol: string;
         decimals: number;
       };
-    }[],
-    tokens?: Partial<Record<string, { name: string }>>
+    }[]
   ) {
-    if (tokens) {
-      Object.keys(tokens).forEach((address) => {
-        if (!this.tokensMap[address]) {
-          const token = new Token({
-            address,
-            ...wallet.currentChain?.validatedTokensInfo[address],
-          });
-          this.tokensMap[address] = token;
-          token.init();
-        }
-      });
-    }
-
+    if (!wallet.isInit) return;
+    console.log("wallet", wallet.currentChain);
     this.pairs = pairs.map((pair) => {
       const token0 = new Token(pair.token0);
       const token1 = new Token(pair.token1);
@@ -281,6 +269,13 @@ class Liquidity {
       pairContract.init();
       return pairContract;
     });
+
+    //show logoURI token first, because it means its a validated token
+    this.tokensMap = Object.fromEntries(
+      Object.entries(this.tokensMap).sort((a, b) =>
+        a[1].logoURI ? -1 : b[1].logoURI ? 1 : 0
+      )
+    );
 
     this.isInit = true;
   }

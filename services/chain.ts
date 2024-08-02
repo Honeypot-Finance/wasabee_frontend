@@ -239,6 +239,12 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/dai-token-icon.png",
     },
+    "0x343499E6315f7d3473a12aaf660Ac02b5739C382": {
+      name: "Grand Conquest Gold",
+      symbol: "GCG",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/grandconquest-token-icon.svg",
+    },
   },
   validatedFtoAddresses: [
     "0x1a58303C577CBbEA0714588059De9052896CaCF7".toLowerCase(),
