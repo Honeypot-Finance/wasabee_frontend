@@ -29,131 +29,14 @@ type Menu = {
   title: string;
 };
 
-function WrapedDropdownItem({
-  dropdownMenu,
-}: {
-  dropdownMenu: {
-    path: {
-      path: string;
-      title: string;
-    }[];
-    title: string;
-  };
-}) {
-  const router = useRouter();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const dp = useRef<HTMLDivElement | null>(null);
-
-  function checkMouseInside(event: MouseEvent) {
-    if (dp.current) {
-      const rect = dp.current.getBoundingClientRect();
-      const x = event.clientX;
-      const y = event.clientY;
-      if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
-        setIsMenuOpen(false);
-      }
-    }
-  }
-  return (
-    <Dropdown
-      ref={dp}
-      isOpen={isMenuOpen}
-      onOpenChange={setIsMenuOpen}
-      onMouseLeave={() => setIsMenuOpen(false)}
-      onMouseEnter={() => setIsMenuOpen(true)}
-      onMouseMove={(e) => checkMouseInside(e.nativeEvent)}
-    >
-      <NavbarItem
-        className={cn(
-          "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal] cursor-pointer",
-          dropdownMenu.path.some((p) => router.pathname.includes(p.path))
-            ? router.pathname === "/launch"
-              ? "font-bold"
-              : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
-            : "hover:opacity-100 opacity-60"
-        )}
-        isActive={dropdownMenu.path.some((p) =>
-          router.pathname.includes(p.path)
-        )}
-        onMouseEnter={() => setIsMenuOpen(true)}
-        onMouseLeave={() => setIsMenuOpen(false)}
-      >
-        <DropdownTrigger
-          onClick={() => {
-            console.log(dropdownMenu.path[0].path);
-            router.push(dropdownMenu.path[0].path);
-          }}
-        >
-          <span className={cn("w-full inline-block")}>
-            {dropdownMenu.title}
-          </span>
-        </DropdownTrigger>
-      </NavbarItem>
-      <DropdownMenu>
-        {dropdownMenu.path.map((p) => (
-          <DropdownItem
-            key={p.title}
-            className={cn(
-              "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
-              router.pathname === p.path
-                ? router.pathname === "/launch"
-                  ? "font-bold"
-                  : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
-                : "hover:opacity-100 opacity-60"
-            )}
-          >
-            <Link className={cn("w-full inline-block")} href={p.path as string}>
-              {p.title}
-            </Link>
-          </DropdownItem>
-        ))}
-      </DropdownMenu>
-    </Dropdown>
-  );
-}
-function ListToElement({ list }: { list: Menu[] }) {
-  const router = useRouter();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  return list.map((m) => {
-    return m.path instanceof Array ? (
-      <WrapedDropdownItem
-        key={m.title}
-        dropdownMenu={
-          m as {
-            path: {
-              path: string;
-              title: string;
-            }[];
-            title: string;
-          }
-        }
-      ></WrapedDropdownItem>
-    ) : (
-      <NavbarMenuItem
-        key={m.title}
-        className={cn(
-          "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
-          router.pathname === m.path
-            ? router.pathname === "/launch"
-              ? "font-bold"
-              : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
-            : "hover:opacity-100 opacity-60"
-        )}
-        isActive={router.pathname === m.path}
-      >
-        <Link className={cn("w-full inline-block")} href={m.path as string}>
-          {m.title}
-        </Link>
-      </NavbarMenuItem>
-    );
-  });
-}
-
 export const Header = (props: HtmlHTMLAttributes<any>) => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuList: Menu[] = [
+    // {
+    //   path: "/navigation",
+    //   title: "Navigation",
+    // },
     {
       path: "/swap",
       title: "Swap",
@@ -282,3 +165,124 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
     </Navbar>
   );
 };
+
+function WrapedDropdownItem({
+  dropdownMenu,
+}: {
+  dropdownMenu: {
+    path: {
+      path: string;
+      title: string;
+    }[];
+    title: string;
+  };
+}) {
+  const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const dp = useRef<HTMLDivElement | null>(null);
+
+  function checkMouseInside(event: MouseEvent) {
+    if (dp.current) {
+      const rect = dp.current.getBoundingClientRect();
+      const x = event.clientX;
+      const y = event.clientY;
+      if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+        setIsMenuOpen(false);
+      }
+    }
+  }
+  return (
+    <Dropdown
+      ref={dp}
+      isOpen={isMenuOpen}
+      onOpenChange={setIsMenuOpen}
+      onMouseLeave={() => setIsMenuOpen(false)}
+      onMouseEnter={() => setIsMenuOpen(true)}
+      onMouseMove={(e) => checkMouseInside(e.nativeEvent)}
+    >
+      <NavbarItem
+        className={cn(
+          "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal] cursor-pointer",
+          dropdownMenu.path.some((p) => router.pathname.includes(p.path))
+            ? router.pathname === "/launch"
+              ? "font-bold"
+              : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
+            : "hover:opacity-100 opacity-60"
+        )}
+        isActive={dropdownMenu.path.some((p) =>
+          router.pathname.includes(p.path)
+        )}
+        onMouseEnter={() => setIsMenuOpen(true)}
+        onMouseLeave={() => setIsMenuOpen(false)}
+      >
+        <DropdownTrigger
+          onClick={() => {
+            console.log(dropdownMenu.path[0].path);
+            router.push(dropdownMenu.path[0].path);
+          }}
+        >
+          <span className={cn("w-full inline-block")}>
+            {dropdownMenu.title}
+          </span>
+        </DropdownTrigger>
+      </NavbarItem>
+      <DropdownMenu>
+        {dropdownMenu.path.map((p) => (
+          <DropdownItem
+            key={p.title}
+            className={cn(
+              "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
+              router.pathname === p.path
+                ? router.pathname === "/launch"
+                  ? "font-bold"
+                  : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
+                : "hover:opacity-100 opacity-60"
+            )}
+          >
+            <Link className={cn("w-full inline-block")} href={p.path as string}>
+              {p.title}
+            </Link>
+          </DropdownItem>
+        ))}
+      </DropdownMenu>
+    </Dropdown>
+  );
+}
+function ListToElement({ list }: { list: Menu[] }) {
+  const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  return list.map((m) => {
+    return m.path instanceof Array ? (
+      <WrapedDropdownItem
+        key={m.title}
+        dropdownMenu={
+          m as {
+            path: {
+              path: string;
+              title: string;
+            }[];
+            title: string;
+          }
+        }
+      ></WrapedDropdownItem>
+    ) : (
+      <NavbarMenuItem
+        key={m.title}
+        className={cn(
+          "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
+          router.pathname === m.path
+            ? router.pathname === "/launch"
+              ? "font-bold"
+              : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
+            : "hover:opacity-100 opacity-60"
+        )}
+        isActive={router.pathname === m.path}
+      >
+        <Link className={cn("w-full inline-block")} href={m.path as string}>
+          {m.title}
+        </Link>
+      </NavbarMenuItem>
+    );
+  });
+}
