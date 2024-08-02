@@ -35,7 +35,7 @@ export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
   useEffect(() => {
     if (pairsMap && wallet.isInit) {
       liquidity.initPool(
-        pairsMap.data.map((pair) => ({
+        Object.values(pairsMap.data).map((pair) => ({
           address: pair.id,
           token0: {
             address: pair.token0.id,
