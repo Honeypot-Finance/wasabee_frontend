@@ -53,7 +53,7 @@ const AddLiquidity = observer(() => {
                 <div
                   onClick={() => {
                     liquidity.setFromAmount(
-                      (liquidity.fromToken as Token).balance.toFixed()
+                      (liquidity.fromToken as Token).balance?.toFixed()
                     );
                   }}
                   className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline"
@@ -176,8 +176,8 @@ export const RemoveLiquidity = observer(
               <div>{liquidity.currentRemovePair?.token1.displayName}</div>
               <div>
                 {liquidity.currentRemovePair?.token1LpBalance
-                  .multipliedBy(state.selectState.value as number)
-                  .toFixed(3)}
+                  ?.multipliedBy(state.selectState.value as number)
+                  ?.toFixed(3)}
               </div>
             </div>
           </div>
