@@ -91,7 +91,7 @@ export const TokenSelector = observer(
         {value && (
           <>
             <Link
-              href={`${wallet.currentChain?.chain.blockExplorers?.default.url}/token/${value.address}`}
+              href={`${wallet.currentChain.chain.blockExplorers?.default.url}/token/${value.address}`}
               target="_blank"
             >
               <BiLinkExternal className=" cursor-pointer hover:text-primary "></BiLinkExternal>

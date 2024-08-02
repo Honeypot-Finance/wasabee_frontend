@@ -84,19 +84,20 @@ export class ContractWrite<T extends (...args: any) => any> {
     makeAutoObservable(this);
   }
 
-  get successMsgAgg() {
+  get successMsgAgg () {
     if (this.successMsg) {
-      return this.successMsg;
-    }
-    return this.action ? `${this.action} successfully` : `Transaction Success`;
+      return this.successMsg
+    } 
+    return this.action ? `${this.action} successfully` : `Transaction Success`
   }
 
-  get failMsgAgg() {
+  get failMsgAgg () {
     if (this.failMsg) {
-      return this.failMsg;
-    }
-    return this.action ? `${this.action} Failed` : `Transaction Failed`;
+      return this.failMsg
+    } 
+    return this.action ? `${this.action} Failed` : `Transaction Failed`
   }
+
 
   call = async (args?: Parameters<T>[0]) => {
     const count = await wallet.publicClient.getTransactionCount({
@@ -115,13 +116,10 @@ export class ContractWrite<T extends (...args: any) => any> {
         account: wallet.account,
       });
       console.log("hash", hash);
-      const pendingPopup = toast(
-        TransactionPendingToastify({ hash, action: this.action }),
-        {
-          autoClose: false,
-          isLoading: true,
-        } as ToastOptions
-      );
+      const pendingPopup = toast(TransactionPendingToastify({hash, action: this.action}), {
+        autoClose: false,
+        isLoading: true,
+      } as ToastOptions);
       const transaction = await wallet.publicClient.waitForTransactionReceipt({
         confirmations: 2,
         hash,
