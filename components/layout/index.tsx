@@ -8,7 +8,6 @@ import { config } from "@/config/wagmi";
 import { networksMap } from "@/services/chain";
 import LaunchHeader from "./LaunchHeader";
 import { cn } from "@/lib/tailwindcss";
-import NotConnetctedDisplay from "../NotConnetctedDisplay/NotConnetctedDisplay";
 
 export const Layout = ({
   children,
@@ -27,9 +26,7 @@ export const Layout = ({
         <div className=" px-[12px] sm:pt-[72px] pt-[24px] flex-1">
           {children}
         </div>
-      ) : (
-        <NotConnetctedDisplay />
-      )}
+      ) : null}
       {/* <Footer></Footer> */}
     </div>
   );

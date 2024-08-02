@@ -141,6 +141,7 @@ export class PairContract implements BaseContract {
           .multipliedBy(new BigNumber(10).pow(this.token1.decimals))
           .toFixed(0)
       );
+
       console.log("this", this);
 
       const reserveIn =
@@ -164,6 +165,7 @@ export class PairContract implements BaseContract {
         reserveIn,
         reserveOut,
       ]);
+      console.log("amountOut", toToken);
       console.log("toToken.decimals", toToken.decimals);
       console.log(
         new BigNumber(amountOut.toString())
