@@ -9,8 +9,15 @@ import { useEffect } from "react";
 import { amountFormatted } from "../lib/format";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import TokenBalanceCard from "@/components/TokenBalanceCard/TokenBalanceCard";
+import CardContianer from "@/components/CardContianer/CardContianer";
+import { useAccount, useBalance } from "wagmi";
+import Link from "next/link";
 
 const FaucetPage: NextLayoutPage = observer(() => {
+  const account = useAccount();
+  const balance = useBalance({
+    address: account?.address,
+  });
   useEffect(() => {
     wallet.currentChain?.faucetTokens?.forEach((token) => {
       token.init({ loadClaimed: true });
@@ -36,6 +43,29 @@ const FaucetPage: NextLayoutPage = observer(() => {
         </div>
       </div>
       <div className="w-[578px] max-w-[100%] mt-[30px] flex flex-col gap-[24px]">
+        <div className="flex  items-center">
+          <CardContianer>
+            <div className="flex-1 flex items-center">
+              Native Token: ${wallet.currentChain?.chain.nativeCurrency.symbol}
+            </div>
+            <div className="">
+              {amountFormatted(balance.data?.value.toString(), {
+                decimals: wallet.currentChain?.chain.nativeCurrency.decimals,
+                fixed: 3,
+              })}
+            </div>
+          </CardContianer>
+          <Link
+            href={
+              (wallet.currentChain?.faucets &&
+                wallet.currentChain?.faucets[0].url) ||
+              ""
+            }
+          >
+            <Button className="ml-[13px]">Claim on official faucet</Button>
+          </Link>
+        </div>
+
         {wallet.currentChain?.faucetTokens?.length ? (
           wallet.currentChain?.faucetTokens.map((token) => (
             <div key={token.address} className="flex  items-center">

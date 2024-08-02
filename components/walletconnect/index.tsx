@@ -6,7 +6,12 @@ import { WalletSvg } from "../svg/wallet";
 import { observer } from "mobx-react-lite";
 import { FaFaucet } from "react-icons/fa";
 import { wallet } from "@/services/wallet";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/react";
 import Link from "next/link";
 import Image from "next/image";
 const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
@@ -66,7 +71,7 @@ export const WalletConnect = () => {
               }
               return (
                 <div className="flex gap-[12px] items-center relative">
-                  {wallet.currentChain?.faucets?.length && (
+                  {/* {wallet.currentChain?.faucets?.length && (
                     <Dropdown>
                       <DropdownTrigger>
                         <div className=" cursor-pointer"><FaFaucet
@@ -86,7 +91,7 @@ export const WalletConnect = () => {
                 
                       </DropdownMenu>
                     </Dropdown>
-                  )}
+                  )} */}
                   <Balance className="hidden md:flex">
                     <>
                       <BalanceSvg></BalanceSvg>{" "}

@@ -136,6 +136,8 @@ export class PairContract implements BaseContract {
           .toFixed(0)
       );
 
+      console.log(this);
+
       const reserveIn =
         fromToken.address === this.token0.address ? reserve0 : reserve1;
       const reserveOut =
