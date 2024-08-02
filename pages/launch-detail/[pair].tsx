@@ -283,7 +283,7 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
         placeholder="Deposit amount"
         min={0}
         type="number"
-        max={pair.raiseToken.balance?.toFixed()}
+        max={pair.raiseToken.balance.toFixed()}
         onChange={(e) => {
           state.setDepositAmount(e.target.value);
         }}
@@ -299,7 +299,7 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
         <div>Balance: {pair.raiseToken.balance.toFormat()}</div>
         <div
           onClick={() => {
-            state.setDepositAmount(pair.raiseToken.balance?.toFixed());
+            state.setDepositAmount(pair.raiseToken.balance.toFixed());
           }}
           className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline"
         >
