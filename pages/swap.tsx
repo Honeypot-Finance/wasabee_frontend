@@ -1,6 +1,7 @@
 import { TVChartContainer } from "@/components/AdvancedChart/TVChartContainer/TVChartContainer";
 import SwapPriceFeedGraph from "@/components/PriceFeedGraph/SwapPriceFeedGraph";
 import { Swap } from "@/components/swap";
+import { SwapCard } from "@/components/SwapCard";
 import { chart } from "@/services/chart";
 import { PairContract } from "@/services/contract/pair-contract";
 import { Token } from "@/services/contract/token";
@@ -16,8 +17,10 @@ const SwapPage = observer(() => {
   }, []);
   return (
     <>
-      <div className={`lg:grid ${chart.showChart && "grid-cols-2"}`}>
-        <Swap activeTab="swap"></Swap>
+      <div className={`lg:grid ${chart.showChart && "grid-cols-2"} `}>
+        <div className="relative w-full flex justify-center content-center items-center">
+          <SwapCard></SwapCard>
+        </div>
         {chart.showChart && (
           <div className="m-auto w-[90%] h-full min-h-[400px] flex">
             <SwapPriceFeedGraph

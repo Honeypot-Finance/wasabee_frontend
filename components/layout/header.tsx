@@ -1,8 +1,12 @@
-import { HtmlHTMLAttributes, useState } from "react";
+import React, { HtmlHTMLAttributes, useRef, useState } from "react";
 import { Logo } from "../svg/logo";
 import { WalletConnect, WalletConnectMobile } from "../walletconnect";
 import clsx from "clsx";
 import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Navbar,
   NavbarBrand,
   NavbarContent,
@@ -15,13 +19,24 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { cn } from "@/lib/tailwindcss";
 
+type Menu = {
+  path:
+    | string
+    | {
+        path: string;
+        title: string;
+      }[];
+  title: string;
+};
+
 export const Header = (props: HtmlHTMLAttributes<any>) => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuList: {
-    path: string;
-    title: string;
-  }[] = [
+  const menuList: Menu[] = [
+    // {
+    //   path: "/navigation",
+    //   title: "Navigation",
+    // },
     {
       path: "/swap",
       title: "Swap",
@@ -31,11 +46,29 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
       title: "Faucet",
     },
     {
-      path: "/pools",
-      title: "Pools",
+      path: [
+        {
+          path: "/pools",
+          title: "LP Pool List",
+        },
+        {
+          path: "/pool",
+          title: "Add Liquidity",
+        },
+      ],
+      title: "Liquidity",
     },
     {
-      path: "/launch",
+      path: [
+        {
+          path: "/launch",
+          title: "Project List",
+        },
+        {
+          path: "/launch-token",
+          title: "Launch Project",
+        },
+      ],
       title: "Launch",
     },
     {
@@ -43,6 +76,45 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
       title: "Profile",
     },
   ];
+
+  const listToNavbarItem = (list: Menu[], isSub?: boolean): React.ReactNode => {
+    return list.map((m) =>
+      m.path instanceof Array ? (
+        <>
+          <NavbarMenuItem
+            key={m.title}
+            className={cn(
+              "p-[8px]",
+              m.path.some((p) => router.pathname.includes(p.path))
+                ? "[background:rgba(225,138,32,0.40)] border-2 border-solid border-[rgba(225,138,32,0.60)]"
+                : "",
+              isSub ? "pl-[2rem]" : ""
+            )}
+          >
+            {m.title}
+          </NavbarMenuItem>
+          {listToNavbarItem(m.path as Menu[], true)}
+        </>
+      ) : (
+        <NavbarMenuItem
+          key={m.title}
+          className={cn(
+            "p-[8px]",
+            router.pathname === m.path
+              ? "[background:rgba(225,74,32,0.40)] border-2 border-solid border-[rgba(225,74,32,0.6)]"
+              : "",
+            isSub ? "ml-[2rem]" : ""
+          )}
+          isActive={router.pathname === m.path}
+        >
+          <Link className={cn("w-full inline-block")} href={m.path as string}>
+            {m.title}
+          </Link>
+        </NavbarMenuItem>
+      )
+    );
+  };
+
   return (
     <Navbar
       onMenuOpenChange={setIsMenuOpen}
@@ -56,7 +128,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
     >
       <NavbarContent>
         <NavbarMenuToggle
-        aria-setsize={1}
+          aria-setsize={1}
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden  text-[white] scale-75"
         />
@@ -76,22 +148,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        {menuList.map((m) => (
-          <NavbarItem
-            key={m.title}
-            isActive={router.pathname === m.path}
-            className={cn(
-              "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
-              router.pathname === m.path
-                ? router.pathname === "/launch"
-                  ? "font-bold"
-                  : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
-                : "hover:opacity-100 opacity-60"
-            )}
-          >
-            <Link href={m.path}>{m.title}</Link>
-          </NavbarItem>
-        ))}
+        <ListToElement list={menuList}></ListToElement>
       </NavbarContent>
       <NavbarContent justify="end">
         {/* <NavbarItem className="hidden lg:flex">
@@ -100,22 +157,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
         <WalletConnect></WalletConnect>
       </NavbarContent>
       <NavbarMenu>
-        {menuList.map((m, index) => (
-          <NavbarMenuItem
-            key={m.title}
-            className={cn(
-              "p-[8px]",
-              router.pathname === m.path
-                ? "[background:rgba(225,138,32,0.40)] border-2 border-solid border-[rgba(225,138,32,0.60)]"
-                : ""
-            )}
-            isActive={router.pathname === m.path}
-          >
-            <Link className={cn("w-full inline-block")} href={m.path}>
-              {m.title}
-            </Link>
-          </NavbarMenuItem>
-        ))}
+        {listToNavbarItem(menuList)}
         <NavbarMenuItem className="mt-[24px]">
           <WalletConnectMobile></WalletConnectMobile>
         </NavbarMenuItem>
@@ -123,3 +165,124 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
     </Navbar>
   );
 };
+
+function WrapedDropdownItem({
+  dropdownMenu,
+}: {
+  dropdownMenu: {
+    path: {
+      path: string;
+      title: string;
+    }[];
+    title: string;
+  };
+}) {
+  const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const dp = useRef<HTMLDivElement | null>(null);
+
+  function checkMouseInside(event: MouseEvent) {
+    if (dp.current) {
+      const rect = dp.current.getBoundingClientRect();
+      const x = event.clientX;
+      const y = event.clientY;
+      if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+        setIsMenuOpen(false);
+      }
+    }
+  }
+  return (
+    <Dropdown
+      ref={dp}
+      isOpen={isMenuOpen}
+      onOpenChange={setIsMenuOpen}
+      onMouseLeave={() => setIsMenuOpen(false)}
+      onMouseEnter={() => setIsMenuOpen(true)}
+      onMouseMove={(e) => checkMouseInside(e.nativeEvent)}
+    >
+      <NavbarItem
+        className={cn(
+          "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal] cursor-pointer",
+          dropdownMenu.path.some((p) => router.pathname.includes(p.path))
+            ? router.pathname === "/launch"
+              ? "font-bold"
+              : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
+            : "hover:opacity-100 opacity-60"
+        )}
+        isActive={dropdownMenu.path.some((p) =>
+          router.pathname.includes(p.path)
+        )}
+        onMouseEnter={() => setIsMenuOpen(true)}
+        onMouseLeave={() => setIsMenuOpen(false)}
+      >
+        <DropdownTrigger
+          onClick={() => {
+            console.log(dropdownMenu.path[0].path);
+            router.push(dropdownMenu.path[0].path);
+          }}
+        >
+          <span className={cn("w-full inline-block")}>
+            {dropdownMenu.title}
+          </span>
+        </DropdownTrigger>
+      </NavbarItem>
+      <DropdownMenu>
+        {dropdownMenu.path.map((p) => (
+          <DropdownItem
+            key={p.title}
+            className={cn(
+              "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
+              router.pathname === p.path
+                ? router.pathname === "/launch"
+                  ? "font-bold"
+                  : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
+                : "hover:opacity-100 opacity-60"
+            )}
+          >
+            <Link className={cn("w-full inline-block")} href={p.path as string}>
+              {p.title}
+            </Link>
+          </DropdownItem>
+        ))}
+      </DropdownMenu>
+    </Dropdown>
+  );
+}
+function ListToElement({ list }: { list: Menu[] }) {
+  const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  return list.map((m) => {
+    return m.path instanceof Array ? (
+      <WrapedDropdownItem
+        key={m.title}
+        dropdownMenu={
+          m as {
+            path: {
+              path: string;
+              title: string;
+            }[];
+            title: string;
+          }
+        }
+      ></WrapedDropdownItem>
+    ) : (
+      <NavbarMenuItem
+        key={m.title}
+        className={cn(
+          "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
+          router.pathname === m.path
+            ? router.pathname === "/launch"
+              ? "font-bold"
+              : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
+            : "hover:opacity-100 opacity-60"
+        )}
+        isActive={router.pathname === m.path}
+      >
+        <Link className={cn("w-full inline-block")} href={m.path as string}>
+          {m.title}
+        </Link>
+      </NavbarMenuItem>
+    );
+  });
+}

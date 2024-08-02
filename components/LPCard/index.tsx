@@ -17,6 +17,7 @@ import { SelectItem } from "../ItemSelect/index";
 import { MouseEvent } from "react";
 import _ from "lodash";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
+import { trpc } from "@/lib/trpc";
 
 const AddLiquidity = observer(() => {
   return (
@@ -247,9 +248,26 @@ export const LPCard = observer(() => {
     outputCurrency: string;
   };
   const isinit = wallet.isInit && liquidity.isInit;
+
+  const { data: pairsMap } = trpc.pair.getPairs.useQuery(
+    {
+      chainId: wallet.currentChainId as number,
+    },
+    {
+      enabled: !!wallet.currentChainId,
+      refetchOnWindowFocus: false,
+    }
+  );
+
   useEffect(() => {
-    liquidity.setCurrentRemovePair(null);
-  }, []);
+    if (pairsMap) {
+      liquidity.initPool(
+        Object.values(pairsMap),
+        wallet.currentChain.validatedTokensInfo
+      );
+    }
+  }, [pairsMap]);
+
   useEffect(() => {
     if (!isinit) {
       return;

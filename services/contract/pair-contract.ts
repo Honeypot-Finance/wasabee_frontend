@@ -141,9 +141,7 @@ export class PairContract implements BaseContract {
           .multipliedBy(new BigNumber(10).pow(this.token1.decimals))
           .toFixed(0)
       );
-
-      console.log("this", this);
-
+      
       const reserveIn =
         fromToken.address.toLowerCase() === this.token0.address.toLowerCase()
           ? reserve0

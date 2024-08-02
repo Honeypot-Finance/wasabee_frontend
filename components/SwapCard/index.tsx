@@ -18,6 +18,7 @@ import SwapPriceFeedGraph from "../PriceFeedGraph/SwapPriceFeedGraph";
 import { liquidity } from "@/services/liquidity";
 import { chart } from "@/services/chart";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
+import { trpc } from "@/lib/trpc";
 
 export const SwapCard = observer(() => {
   const router = useRouter();
@@ -25,6 +26,26 @@ export const SwapCard = observer(() => {
     inputCurrency: string;
     outputCurrency: string;
   };
+
+  const { data: pairsMap } = trpc.pair.getPairs.useQuery(
+    {
+      chainId: wallet.currentChainId as number,
+    },
+    {
+      enabled: !!wallet.currentChainId,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  useEffect(() => {
+    if (pairsMap) {
+      liquidity.initPool(
+        Object.values(pairsMap),
+        wallet.currentChain.validatedTokensInfo
+      );
+    }
+  }, [pairsMap]);
+
   const isinit = wallet.isInit && liquidity.isInit;
 
   useEffect(() => {
@@ -40,7 +61,7 @@ export const SwapCard = observer(() => {
   }, [inputCurrency, outputCurrency, isinit]);
   return (
     <SpinnerContainer
-      className="flex flex-1 justify-around items-center"
+      className="flex flex-1 justify-around items-center max-w-[574px]"
       isLoading={false}
     >
       <div className=" flex flex-1 flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
