@@ -8,7 +8,7 @@ import {
   GhostPairResponse,
 } from "./../indexerTypes";
 
-const ftoGraphHandle = "3b919a7d-94f2-492f-9ce6-e226b9ecdc45/ghostgraph";
+const ftoGraphHandle = "c0ea90ad-1a89-4078-b789-aa41d791398d/ghostgraph";
 const pairGraphHandle = "747fa52a-205d-4434-ac02-0dd20f49c0dd/ghostgraph";
 
 export default class GhostIndexer implements IndexerProvider {
