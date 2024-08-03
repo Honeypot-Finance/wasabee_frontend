@@ -95,8 +95,8 @@ export const berachainBartioTestnetNetwork = new Network({
   contracts: {
     routerV2: "0x482270069fF98a0dF528955B651494759b3B2F8C",
     factory: "0x2f795195bae7E61E848ffC87ba7f6ae1A06c0527",
-    ftoFactory: "0x2B74f450371D9977E412609B37588D17d4985c36",
-    ftoFacade: "0x149519DD90392172467BfDb0cB91a04C0950e2DD",
+    ftoFactory: "0x5C4cDd0160c0CB4C606365dD98783064335A9ce0",
+    ftoFacade: "0x51e4fF69060CD62dE1a9374799a0BddeB55cb1E4",
     ftoTokens: [
       {
         address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
@@ -227,7 +227,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/wbtc-token-icon.png",
     },
-    "0x6E1E9896e93F7A71ECB33d4386b49DeeD67a231A": {
+    "0xE28AfD8c634946833e89ee3F122C06d7C537E8A8": {
       name: "WETH",
       symbol: "WETH",
       decimals: 18,
