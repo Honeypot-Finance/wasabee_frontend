@@ -104,7 +104,10 @@ const LaunchPage: NextLayoutPage = observer(() => {
                           onClick={() => {
                             launchpad.pairFilterStatus = "all";
                             launchpad.ftoPairsPagination.page = 1;
-                            launchpad.ftoPairsPagination.totalPage.call();
+                            launchpad.ftoPairs.call({
+                              page: launchpad.ftoPairsPagination.page,
+                              limit: launchpad.ftoPairsPagination.limit,
+                            });
                           }}
                           className="w-[100px]"
                         >
@@ -114,7 +117,10 @@ const LaunchPage: NextLayoutPage = observer(() => {
                           onClick={() => {
                             launchpad.pairFilterStatus = "success";
                             launchpad.ftoPairsPagination.page = 1;
-                            launchpad.ftoPairsPagination.totalPage.call();
+                            launchpad.ftoPairs.call({
+                              page: launchpad.ftoPairsPagination.page,
+                              limit: launchpad.ftoPairsPagination.limit,
+                            });
                           }}
                           className="w-[100px]"
                         >
@@ -124,7 +130,10 @@ const LaunchPage: NextLayoutPage = observer(() => {
                           onClick={() => {
                             launchpad.pairFilterStatus = "fail";
                             launchpad.ftoPairsPagination.page = 1;
-                            launchpad.ftoPairsPagination.totalPage.call();
+                            launchpad.ftoPairs.call({
+                              page: launchpad.ftoPairsPagination.page,
+                              limit: launchpad.ftoPairsPagination.limit,
+                            });
                           }}
                           className="w-[100px]"
                         >
@@ -134,7 +143,10 @@ const LaunchPage: NextLayoutPage = observer(() => {
                           onClick={() => {
                             launchpad.pairFilterStatus = "processing";
                             launchpad.ftoPairsPagination.page = 1;
-                            launchpad.ftoPairsPagination.totalPage.call();
+                            launchpad.ftoPairs.call({
+                              page: launchpad.ftoPairsPagination.page,
+                              limit: launchpad.ftoPairsPagination.limit,
+                            });
                           }}
                           className="w-[100px]"
                         >
@@ -178,49 +190,42 @@ const LaunchPage: NextLayoutPage = observer(() => {
           >
             <Tab key="all" title="All Projects">
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-                {launchpad.ftoPairs.value?.data
-                  ?.slice(
-                    (launchpad.ftoPairsPagination.page - 1) *
-                      launchpad.ftoPairsPagination.limit,
-                    launchpad.ftoPairsPagination.page *
-                      launchpad.ftoPairsPagination.limit
-                  )
-                  .map((pair: FtoPairContract) => (
-                    <div key={pair.address}>
-                      <LaunchCard
-                        pair={pair}
-                        action={
-                          <div className="flex">
+                {launchpad.ftoPairs.value?.data.map((pair: FtoPairContract) => (
+                  <div key={pair.address}>
+                    <LaunchCard
+                      pair={pair}
+                      action={
+                        <div className="flex">
+                          <Link
+                            href={`/launch-detail/${pair.address}`}
+                            className="text-black font-bold w-full px-[8px]"
+                          >
+                            <Button className="w-full">View Token</Button>
+                          </Link>
+                          {pair.ftoState === 0 && (
                             <Link
-                              href={`/launch-detail/${pair.address}`}
+                              href={`/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
                               className="text-black font-bold w-full px-[8px]"
                             >
-                              <Button className="w-full">View Token</Button>
+                              <Button className="w-full">
+                                <p>Swap Token</p>
+                                <p>
+                                  <Copy
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                    }}
+                                    className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
+                                    value={`${window.location.origin}/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
+                                  ></Copy>
+                                </p>
+                              </Button>{" "}
                             </Link>
-                            {pair.ftoState === 0 && (
-                              <Link
-                                href={`/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
-                                className="text-black font-bold w-full px-[8px]"
-                              >
-                                <Button className="w-full">
-                                  <p>Swap Token</p>
-                                  <p>
-                                    <Copy
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                      }}
-                                      className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-                                      value={`${window.location.origin}/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
-                                    ></Copy>
-                                  </p>
-                                </Button>{" "}
-                              </Link>
-                            )}
-                          </div>
-                        }
-                      />
-                    </div>
-                  ))}
+                          )}
+                        </div>
+                      }
+                    />
+                  </div>
+                ))}
               </div>
               <Pagination
                 className="flex justify-center mt-[12px]"
@@ -229,6 +234,10 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 initialPage={launchpad.ftoPairsPagination.page}
                 onChange={(page) => {
                   launchpad.ftoPairsPagination.onPageChange(page);
+                  launchpad.ftoPairs.call({
+                    page,
+                    limit: launchpad.ftoPairsPagination.limit,
+                  });
                 }}
               />
             </Tab>

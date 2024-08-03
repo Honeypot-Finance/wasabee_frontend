@@ -210,6 +210,10 @@ class LaunchPad {
       return { data: [], total: 0 };
     }
 
+    console.log(ftoAddresses.data);
+    console.log(this.ftoPairsPagination.page);
+    console.log(limit);
+
     const data: Array<FtoPairContract> = (
       await Promise.all(
         ftoAddresses.data.map(async (pairAddress, idx) => {
@@ -238,6 +242,7 @@ class LaunchPad {
     ).filter((pair) => pair !== undefined) as FtoPairContract[];
 
     const filteredPairs = this.filterPairs(data);
+    console.log("filteredPairs: " + filteredPairs);
 
     if (!filteredPairs || filteredPairs.length === 0) {
       return { data: [], total: 0 };
@@ -332,7 +337,7 @@ class LaunchPad {
         return Number(b.startTime) - Number(a.startTime);
       });
 
-      this.ftoPairsPagination.setTotal(ftoAddresses.data.length);
+      this.myFtoPairsPagination.setTotal(ftoAddresses.data.length);
 
       return {
         data: filteredPairs,
