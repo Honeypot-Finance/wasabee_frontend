@@ -17,6 +17,7 @@ const ghostIndexer = new GhostIndexer(
 );
 
 const indexer = new Indexer(ghostIndexer);
+
 export const indexerFeedRouter = router({
   getFilteredFtoPairs: publicProcedure
     .input(
@@ -26,6 +27,7 @@ export const indexerFeedRouter = router({
             status: z.string().optional(),
             search: z.string().optional(),
           }),
+          provider: z.string().optional(),
         })
         .optional()
     )
@@ -61,7 +63,8 @@ export const indexerFeedRouter = router({
     )
     .query(async ({ input }): Promise<any> => {
       const res = await indexer.getFilteredFtoPairs(
-        input?.filter as PairFilter
+        input?.filter as PairFilter,
+        input?.provider
       );
 
       if (res.status === "error") {

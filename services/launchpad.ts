@@ -65,7 +65,7 @@ class LaunchPad {
       page: this.ftoPairsPagination.page,
       limit: this.ftoPairsPagination.limit,
     });
-    this.getMyFtoPairs.call();
+    this.myFtoPairs.call();
     this.getMyFtoParticipatedPairs.call();
   }
 
@@ -75,7 +75,7 @@ class LaunchPad {
       page: this.ftoPairsPagination.page,
       limit: this.ftoPairsPagination.limit,
     });
-    this.getMyFtoPairs.call();
+    this.myFtoPairs.call();
     this.getMyFtoParticipatedPairs.call();
   }
 
@@ -85,7 +85,7 @@ class LaunchPad {
       page: this.ftoPairsPagination.page,
       limit: this.ftoPairsPagination.limit,
     });
-    this.getMyFtoPairs.call();
+    this.myFtoPairs.call();
     this.getMyFtoParticipatedPairs.call();
   }
 
@@ -172,16 +172,6 @@ class LaunchPad {
     // });
     return filteredPairs;
   };
-
-  getMyFtoPairs = new AsyncState<FtoPairContract[]>(async () => {
-    await this.myFtoPairs.call();
-
-    const filteredPairs = this.filterPairs(this.myFtoPairs.value?.data ?? []);
-
-    this.myFtoPairsPagination.setTotal(filteredPairs.length);
-
-    return filteredPairs ?? [];
-  });
 
   getMyFtoParticipatedPairs = new AsyncState<FtoPairContract[]>(async () => {
     if (!this.myFtoParticipatedPairs.value) {
@@ -301,33 +291,54 @@ class LaunchPad {
     data: FtoPairContract[];
     total: number;
   }>(async () => {
-    const projects = await trpcClient.fto.getProjectsByAccount.query({
-      provider: wallet.account,
-      chain_id: wallet.currentChainId,
-    });
+    const ftoAddresses =
+      await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
+        filter: this.pairFilter,
+        provider: wallet.account,
+      });
 
-    let data = await Promise.all(
-      projects.map(async ({ pair: pairAddress }) => {
-        const pair = new FtoPairContract({ address: pairAddress as string });
-        if (!pair.isInit) {
-          await pair.init();
-          pair.raiseToken.init();
-          pair.launchedToken.init();
-        }
-        return pair;
-      })
-    );
+    if (!ftoAddresses || !ftoAddresses.data) {
+      return { data: [], total: 0 };
+    }
 
-    data.sort((a, b) => {
-      return Number(b.startTime) - Number(a.startTime);
-    });
+    const data: Array<FtoPairContract> = (
+      await Promise.all(
+        ftoAddresses.data.map(async (pairAddress, idx) => {
+          const pair = new FtoPairContract({
+            address: pairAddress.id,
+          });
+          if (!pair.isInit) {
+            pair.init({
+              raisedToken: new Token(pairAddress.token1),
+              launchedToken: new Token(pairAddress.token0),
+              depositedLaunchedToken: pairAddress.depositedLaunchedToken,
+              depositedRaisedToken: pairAddress.depositedRaisedToken,
+              startTime: pairAddress.createdAt,
+              endTime: pairAddress.endTime,
+              ftoState: Number(pairAddress.status),
+            });
+          }
+          return pair;
+        })
+      )
+    ).filter((pair) => pair !== undefined) as FtoPairContract[];
 
-    this.myFtoPairsPagination.setTotal(data.length);
+    const filteredPairs = this.filterPairs(data);
 
-    return {
-      data,
-      total: data.length,
-    };
+    if (!filteredPairs || filteredPairs.length === 0) {
+      return { data: [], total: 0 };
+    } else {
+      filteredPairs.sort((a, b) => {
+        return Number(b.startTime) - Number(a.startTime);
+      });
+
+      this.ftoPairsPagination.setTotal(ftoAddresses.data.length);
+
+      return {
+        data: filteredPairs,
+        total: ftoAddresses.data.length,
+      };
+    }
   });
 
   ftoPairsPagination = new PaginationState({

@@ -55,7 +55,7 @@ export const Profile = observer(() => {
       page: launchpad.ftoPairsPagination.page,
       limit: launchpad.ftoPairsPagination.limit,
     });
-    launchpad.getMyFtoPairs.call();
+    launchpad.myFtoPairs.call();
     launchpad.getMyFtoParticipatedPairs.call();
   }, [wallet.isInit]);
 
@@ -128,7 +128,7 @@ export const Profile = observer(() => {
                 {launchpad.ftoPairs.loading ? (
                   <LoadingDisplay />
                 ) : (
-                  launchpad.getMyFtoPairs.value?.map((project) => (
+                  launchpad.myFtoPairs.value?.data.map((project) => (
                     <LaunchCard
                       key={project.address}
                       pair={project}

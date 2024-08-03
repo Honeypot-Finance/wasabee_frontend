@@ -50,7 +50,8 @@ export default class GhostIndexer implements IndexerProvider {
   };
 
   getFilteredFtoPairs = async (
-    filter: PairFilter
+    filter: PairFilter,
+    provider?: string
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
     const statusNum = statusTextToNumber(filter?.status ?? -1);
 
@@ -62,6 +63,9 @@ export default class GhostIndexer implements IndexerProvider {
     const searchToken1IdCondition = filter?.search
       ? `token1Id: "${filter.search}",`
       : "";
+    const providerCondition = provider
+      ? `launchedTokenProvider: "${provider}",`
+      : "";
 
     const query = `
         {
@@ -71,14 +75,17 @@ export default class GhostIndexer implements IndexerProvider {
                 {
                   ${statusCondition}
                   ${searchIdCondition}
+                  ${providerCondition}
                 }
                 {
                   ${statusCondition}
                   ${searchToken0IdCondition}
+                  ${providerCondition}
                 }
                 {
                   ${statusCondition}
                   ${searchToken1IdCondition}
+                  ${providerCondition}
                 }
               ]
             }

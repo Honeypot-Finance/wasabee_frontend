@@ -42,7 +42,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
       page: launchpad.ftoPairsPagination.page,
       limit: launchpad.ftoPairsPagination.limit,
     });
-    launchpad.getMyFtoPairs.call();
+    launchpad.myFtoPairs.call();
   }, [wallet.isInit]);
 
   return (
@@ -234,21 +234,23 @@ const LaunchPage: NextLayoutPage = observer(() => {
             </Tab>
             <Tab key="my" title="My Projects">
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-                {launchpad.getMyFtoPairs.value?.map((pair: FtoPairContract) => (
-                  <div key={pair.address}>
-                    <LaunchCard
-                      pair={pair}
-                      action={
-                        <Link
-                          href={`/launch-detail/${pair.address}`}
-                          className="text-black font-bold w-full px-[8px]"
-                        >
-                          <Button className="w-full">View Token</Button>
-                        </Link>
-                      }
-                    />
-                  </div>
-                ))}
+                {launchpad.myFtoPairs.value?.data.map(
+                  (pair: FtoPairContract) => (
+                    <div key={pair.address}>
+                      <LaunchCard
+                        pair={pair}
+                        action={
+                          <Link
+                            href={`/launch-detail/${pair.address}`}
+                            className="text-black font-bold w-full px-[8px]"
+                          >
+                            <Button className="w-full">View Token</Button>
+                          </Link>
+                        }
+                      />
+                    </div>
+                  )
+                )}
               </div>
               {/* <Pagination
                 className="flex justify-center mt-[12px]"
