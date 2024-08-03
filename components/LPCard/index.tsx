@@ -261,10 +261,7 @@ export const LPCard = observer(() => {
 
   useEffect(() => {
     if (pairsMap) {
-      liquidity.initPool(
-        Object.values(pairsMap),
-        wallet.currentChain.validatedTokensInfo
-      );
+      liquidity.initPool(Object.values(pairsMap));
     }
   }, [pairsMap]);
 

@@ -18,30 +18,41 @@ import SwapPriceFeedGraph from "../PriceFeedGraph/SwapPriceFeedGraph";
 import { liquidity } from "@/services/liquidity";
 import { chart } from "@/services/chart";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
-import { trpc } from "@/lib/trpc";
+import { trpc, trpcClient } from "@/lib/trpc";
+import { GhostPair } from "@/services/indexer/indexerTypes";
 
 export const SwapCard = observer(() => {
   const router = useRouter();
+  const [pairsMap, setPairsMap] = useState<GhostPair[]>();
   const { inputCurrency, outputCurrency } = router.query as {
     inputCurrency: string;
     outputCurrency: string;
   };
 
-  const { data: pairsMap } = trpc.pair.getPairs.useQuery(
-    {
-      chainId: wallet.currentChainId as number,
-    },
-    {
-      enabled: !!wallet.currentChainId,
-      refetchOnWindowFocus: false,
-    }
-  );
+  useEffect(() => {
+    trpcClient.indexerFeedRouter.getAllPairs.query().then((data) => {
+      setPairsMap(data.data);
+    });
+  }, []);
 
   useEffect(() => {
     if (pairsMap) {
       liquidity.initPool(
-        Object.values(pairsMap),
-        wallet.currentChain.validatedTokensInfo
+        pairsMap.map((pair: any) => ({
+          address: pair.id,
+          token0: {
+            address: pair.token0.id,
+            name: pair.token0.name,
+            symbol: pair.token0.symbol,
+            decimals: pair.token0.decimals,
+          },
+          token1: {
+            address: pair.token1.id,
+            name: pair.token1.name,
+            symbol: pair.token1.symbol,
+            decimals: pair.token1.decimals,
+          },
+        }))
       );
     }
   }, [pairsMap]);

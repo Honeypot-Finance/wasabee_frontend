@@ -307,15 +307,4 @@ const PoolsPage: NextLayoutPage = observer(() => {
   );
 });
 
-// export const getStaticProps = async (context: any) => {
-//   // prefetch `post.byId`
-//   const pairsMap = await trpcClient.pair.getPairs.query();
-//   return {
-//     props: {
-//       pairs: Object.values(pairsMap),
-//     },
-//     revalidate: 5,
-//   };
-// };
-
 export default PoolsPage;
