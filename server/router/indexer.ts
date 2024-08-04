@@ -9,7 +9,8 @@ import {
 import GhostIndexer from "@/services/indexer/indexerProviders/ghost";
 import Indexer from "@/services/indexer/indexer";
 import { statusTextToNumber, type PairFilter } from "@/services/launchpad";
-import { filter } from "lodash";
+import { chain, filter } from "lodash";
+import { GhostFtoPairResponse } from "@/services/indexer/indexerTypes";
 
 const ghostIndexer = new GhostIndexer(
   process.env.GHOST_INDEXER_API_KEY ?? "",
@@ -21,65 +22,38 @@ const indexer = new Indexer(ghostIndexer);
 export const indexerFeedRouter = router({
   getFilteredFtoPairs: publicProcedure
     .input(
-      z
-        .object({
-          filter: z.object({
-            status: z.string().optional(),
-            search: z.string().optional(),
-          }),
-          provider: z.string().optional(),
-        })
-        .optional()
-    )
-    .output(
       z.object({
-        status: z.literal("success"),
-        data: z.array(
-          z.object({
-            id: z.string(),
-            token0Id: z.string(),
-            token1Id: z.string(),
-            depositedRaisedToken: z.string(),
-            depositedLaunchedToken: z.string(),
-            createdAt: z.string(),
-            endTime: z.string(),
-            status: z.string(),
-            token0: z.object({
-              id: z.string(),
-              name: z.string(),
-              symbol: z.string(),
-              decimals: z.number(),
-            }),
-            token1: z.object({
-              id: z.string(),
-              name: z.string(),
-              symbol: z.string(),
-              decimals: z.number(),
-            }),
-          })
-        ),
-        message: z.string(),
+        filter: z.object({
+          status: z.string().optional(),
+          search: z.string().optional(),
+          showNotValidatedPairs: z.boolean().optional(),
+        }),
+        chainId: z.string(),
+        provider: z.string().optional(),
       })
     )
-    .query(async ({ input }): Promise<any> => {
-      const res = await indexer.getFilteredFtoPairs(
-        input?.filter as PairFilter,
-        input?.provider
-      );
+    .query(
+      async ({ input }): Promise<ApiResponseType<GhostFtoPairResponse>> => {
+        const res = await indexer.getFilteredFtoPairs(
+          input.filter as PairFilter,
+          input.chainId,
+          input.provider
+        );
 
-      if (res.status === "error") {
-        return {
-          status: "error",
-          message: res.message,
-        };
-      } else {
-        return {
-          status: "success",
-          data: res.data,
-          message: "Success",
-        };
+        if (res.status === "error") {
+          return {
+            status: "error",
+            message: res.message,
+          };
+        } else {
+          return {
+            status: "success",
+            data: res.data,
+            message: "Success",
+          };
+        }
       }
-    }),
+    ),
   getAllFtoTokens: publicProcedure
     .output(
       z.object({

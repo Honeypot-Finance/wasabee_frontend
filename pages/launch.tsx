@@ -165,7 +165,10 @@ const LaunchPage: NextLayoutPage = observer(() => {
             launchpad.showNotValidatedPairs =
               !launchpad.pairFilter.showNotValidatedPairs;
             launchpad.ftoPairsPagination.page = 1;
-            launchpad.ftoPairsPagination.totalPage.call();
+            launchpad.ftoPairs.call({
+              page: launchpad.ftoPairsPagination.page,
+              limit: launchpad.ftoPairsPagination.limit,
+            });
           }}
           checked={launchpad.pairFilter.showNotValidatedPairs}
           className="mt-2"

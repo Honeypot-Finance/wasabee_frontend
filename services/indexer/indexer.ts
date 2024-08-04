@@ -23,9 +23,14 @@ export default class Indexer<T extends IndexerProvider> {
 
   getFilteredFtoPairs = async (
     filter: PairFilter,
+    chainId: string,
     provider?: string
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
-    return await this.dataProvider.getFilteredFtoPairs(filter, provider);
+    return await this.dataProvider.getFilteredFtoPairs(
+      filter,
+      chainId,
+      provider
+    );
   };
 
   getAllFtoTokens = async (): Promise<

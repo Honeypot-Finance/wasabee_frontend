@@ -7,6 +7,7 @@ export interface IndexerProvider {
   callIndexerApi(query: string, option: any): Promise<ApiResponseType<any>>;
   getFilteredFtoPairs: (
     input: PairFilter,
+    chainId: string,
     provider?: string
   ) => Promise<ApiResponseType<GhostFtoPairResponse>>;
   getAllFtoTokens(): Promise<ApiResponseType<GhostFtoTokensResponse>>;

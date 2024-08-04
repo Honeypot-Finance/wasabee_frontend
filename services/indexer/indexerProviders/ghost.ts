@@ -6,7 +6,9 @@ import {
   GhostFtoTokensResponse,
   GhostPair,
   GhostPairResponse,
+  GhostFTOPair,
 } from "./../indexerTypes";
+import { networksMap } from "@/services/chain";
 
 const ftoGraphHandle = "c0ea90ad-1a89-4078-b789-aa41d791398d/ghostgraph";
 const pairGraphHandle = "747fa52a-205d-4434-ac02-0dd20f49c0dd/ghostgraph";
@@ -51,6 +53,7 @@ export default class GhostIndexer implements IndexerProvider {
 
   getFilteredFtoPairs = async (
     filter: PairFilter,
+    chainId: string,
     provider?: string
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
     const statusNum = statusTextToNumber(filter?.status ?? -1);
@@ -58,10 +61,10 @@ export default class GhostIndexer implements IndexerProvider {
     const statusCondition = statusNum != -1 ? `status: "${statusNum}",` : "";
     const searchIdCondition = filter?.search ? `id: "${filter.search}",` : "";
     const searchToken0IdCondition = filter?.search
-      ? `token0Id: "${filter.search}",`
+      ? `token0Id: "${filter?.search}",`
       : "";
     const searchToken1IdCondition = filter?.search
-      ? `token1Id: "${filter.search}",`
+      ? `token1Id: "${filter?.search}",`
       : "";
     const providerCondition = provider
       ? `launchedTokenProvider: "${provider}",`
@@ -121,14 +124,18 @@ export default class GhostIndexer implements IndexerProvider {
     if (res.status === "error") {
       return res;
     } else {
-      const pairs = ((res.data as any).pairs.items as GhostFtoPairResponse) ?? {
-        pairs: [],
-      };
+      let pairs = (res.data as any).pairs.items as GhostFTOPair[];
+
+      if (filter && !filter.showNotValidatedPairs) {
+        pairs = pairs?.filter((pair: GhostPair) => {
+          return networksMap[chainId].validatedFtoAddresses.includes(pair.id);
+        });
+      }
 
       return {
         status: "success",
         message: "Success",
-        data: pairs,
+        data: { pairs: pairs },
       };
     }
   };

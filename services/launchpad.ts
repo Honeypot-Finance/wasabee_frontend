@@ -204,19 +204,16 @@ class LaunchPad {
     const ftoAddresses =
       await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
         filter: this.pairFilter,
+        chainId: String(wallet.currentChainId),
       });
 
-    if (!ftoAddresses || !ftoAddresses.data) {
+    if (!ftoAddresses || ftoAddresses.status === "error") {
       return { data: [], total: 0 };
     }
 
-    console.log(ftoAddresses.data);
-    console.log(this.ftoPairsPagination.page);
-    console.log(limit);
-
     const data: Array<FtoPairContract> = (
       await Promise.all(
-        ftoAddresses.data.map(async (pairAddress, idx) => {
+        ftoAddresses.data.pairs.map(async (pairAddress, idx) => {
           if (
             idx >= (this.ftoPairsPagination.page - 1) * limit &&
             idx < this.ftoPairsPagination.page * limit
@@ -224,7 +221,6 @@ class LaunchPad {
             const pair = new FtoPairContract({
               address: pairAddress.id,
             });
-            console.log(idx);
             if (!pair.isInit) {
               pair.init({
                 raisedToken: new Token(pairAddress.token1),
@@ -242,21 +238,14 @@ class LaunchPad {
       )
     ).filter((pair) => pair !== undefined) as FtoPairContract[];
 
-    const filteredPairs = this.filterPairs(data);
-    console.log("filteredPairs: " + filteredPairs);
+    this.ftoPairsPagination.setTotal(ftoAddresses.data.pairs.length);
 
-    if (!filteredPairs || filteredPairs.length === 0) {
+    if (!data || data.length === 0) {
       return { data: [], total: 0 };
     } else {
-      filteredPairs.sort((a, b) => {
-        return Number(b.startTime) - Number(a.startTime);
-      });
-
-      this.ftoPairsPagination.setTotal(ftoAddresses.data.length);
-
       return {
-        data: filteredPairs,
-        total: ftoAddresses.data.length,
+        data: data,
+        total: ftoAddresses.data.pairs.length,
       };
     }
   });
@@ -300,16 +289,17 @@ class LaunchPad {
     const ftoAddresses =
       await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
         filter: this.pairFilter,
+        chainId: String(wallet.currentChainId),
         provider: wallet.account,
       });
 
-    if (!ftoAddresses || !ftoAddresses.data) {
+    if (!ftoAddresses || ftoAddresses.status === "error") {
       return { data: [], total: 0 };
     }
 
     const data: Array<FtoPairContract> = (
       await Promise.all(
-        ftoAddresses.data.map(async (pairAddress, idx) => {
+        ftoAddresses.data.pairs.map(async (pairAddress, idx) => {
           const pair = new FtoPairContract({
             address: pairAddress.id,
           });
@@ -338,11 +328,11 @@ class LaunchPad {
         return Number(b.startTime) - Number(a.startTime);
       });
 
-      this.myFtoPairsPagination.setTotal(ftoAddresses.data.length);
+      this.myFtoPairsPagination.setTotal(ftoAddresses.data.pairs.length);
 
       return {
         data: filteredPairs,
-        total: ftoAddresses.data.length,
+        total: ftoAddresses.data.pairs.length,
       };
     }
   });
