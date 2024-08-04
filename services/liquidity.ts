@@ -8,7 +8,7 @@ import { exec } from "~/lib/contract";
 import { trpcClient } from "@/lib/trpc";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { AsyncState, ValueState } from "./utils";
-import { debounce } from "lodash";
+import { add, debounce } from "lodash";
 import dayjs from "dayjs";
 
 class Liquidity {
@@ -275,6 +275,15 @@ class Liquidity {
       Object.entries(this.tokensMap).sort((a, b) =>
         a[1].logoURI ? -1 : b[1].logoURI ? 1 : 0
       )
+    );
+
+    console.log(
+      Object.values(this.tokensMap).map((token: Token) => {
+        return {
+          name: token.name,
+          address: token.address,
+        };
+      })
     );
 
     this.isInit = true;

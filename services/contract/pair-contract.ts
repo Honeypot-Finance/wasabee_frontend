@@ -108,7 +108,7 @@ export class PairContract implements BaseContract {
   async getReserves() {
     try {
       const reserves = await this.contract?.read.getReserves();
-      console.log("reserves", reserves);
+
       const [reserve0, reserve1] = (reserves as any[]) || [];
       if (reserve0 && reserve1) {
         this.reserves = {
@@ -141,7 +141,7 @@ export class PairContract implements BaseContract {
           .multipliedBy(new BigNumber(10).pow(this.token1.decimals))
           .toFixed(0)
       );
-      
+
       const reserveIn =
         fromToken.address.toLowerCase() === this.token0.address.toLowerCase()
           ? reserve0
