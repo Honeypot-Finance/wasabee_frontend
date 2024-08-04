@@ -195,7 +195,9 @@ export default class GhostIndexer implements IndexerProvider {
       return {
         status: "success",
         message: "Success",
-        data: (res.data as any).pairs.items as GhostPairResponse,
+        data: ((res.data as any).pairs.items as GhostPairResponse) ?? {
+          pairs: [],
+        },
       };
     }
   };
