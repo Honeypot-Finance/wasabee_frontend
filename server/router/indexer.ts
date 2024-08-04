@@ -37,13 +37,13 @@ export const indexerFeedRouter = router({
           return {
             status: "error",
             message: res.message,
-          };
+          } as const
         } else {
           return {
             status: "success",
             data: res.data,
             message: "Success",
-          };
+          } as const
         }
       }
     ),
