@@ -6,18 +6,11 @@ import {
   ChartDataResponse,
   TokenCurrentPriceResponseType,
 } from "@/services/priceFeed/priceFeedTypes";
-import GhostIndexer from "@/services/indexer/indexerProviders/ghost";
-import Indexer from "@/services/indexer/indexer";
+import Indexer, { indexer } from "@/services/indexer/indexer";
 import { statusTextToNumber, type PairFilter } from "@/services/launchpad";
-import { chain, filter } from "lodash";
-import { GhostFtoPairResponse } from "@/services/indexer/indexerTypes";
+import { filter } from "lodash";
+import { GhostIndexer } from "@/services/indexer/indexerProviders/ghost";
 
-const ghostIndexer = new GhostIndexer(
-  process.env.GHOST_INDEXER_API_KEY ?? "",
-  "https://api.ghostlogs.xyz/gg/pub/"
-);
-
-const indexer = new Indexer(ghostIndexer);
 
 export const indexerFeedRouter = router({
   getFilteredFtoPairs: publicProcedure
@@ -33,7 +26,7 @@ export const indexerFeedRouter = router({
       })
     )
     .query(
-      async ({ input }): Promise<ApiResponseType<GhostFtoPairResponse>> => {
+      async ({ input }) => {
         const res = await indexer.getFilteredFtoPairs(
           input.filter as PairFilter,
           input.chainId,

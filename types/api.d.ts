@@ -1,10 +1,6 @@
 declare type ApiResponseType<T extends any> =
-  | {
-      status: "success";
-      data: T;
+   {
+      status: "success" | "error";
+      data?: T;
       message: string;
     }
-  | {
-      status: "error";
-      message: string;
-    };

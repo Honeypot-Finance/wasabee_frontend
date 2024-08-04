@@ -13,7 +13,7 @@ import { networksMap } from "@/services/chain";
 const ftoGraphHandle = "c0ea90ad-1a89-4078-b789-aa41d791398d/ghostgraph";
 const pairGraphHandle = "747fa52a-205d-4434-ac02-0dd20f49c0dd/ghostgraph";
 
-export default class GhostIndexer implements IndexerProvider {
+export class GhostIndexer {
   apiKey: string;
   apiEndpoint: string;
 
@@ -22,7 +22,7 @@ export default class GhostIndexer implements IndexerProvider {
     this.apiEndpoint = apiEndpoint;
   }
 
-  callIndexerApi = async (
+  callIndexerApi = async <T>(
     query: string,
     option: GhostAPIOpt
   ): Promise<ApiResponseType<any>> => {
@@ -42,13 +42,16 @@ export default class GhostIndexer implements IndexerProvider {
       body: JSON.stringify({ query: query }),
     });
 
-    const data = await res.json();
-
-    return {
-      status: "success",
-      data: data.data,
-      message: "Success",
-    };
+    if (res.status === 200) {
+      const data = await res.json();
+      return {
+        status: "success",
+        data: data.data,
+        message: "Success",
+      };
+    } else {
+      throw new Error(res.statusText);
+    }
   };
 
   getFilteredFtoPairs = async (
@@ -208,4 +211,69 @@ export default class GhostIndexer implements IndexerProvider {
       };
     }
   };
+
+  async getPairByTokens({
+    token0,
+    token1,
+  }: {
+    token0: string;
+    token1: string;
+  }) {
+    console.log("token0", token0, token1);
+    const query = `#graphql
+      query {
+            
+        pairs0: pairs(
+    where: {token0Id: "${token0}", token1Id: "${token1}"}
+  ) {
+    items {
+      address: id
+      token0{
+        address: id
+        name
+        symbol
+        decimals
+      }
+      token1{
+        address: id
+        name
+        symbol
+        decimals
+      }
+      reserve0
+      reserve1
+    }
+  }
+    
+  pairs1: pairs(
+    where: {token0Id: "${token1}", token1Id: "${token0}"}
+  ) {
+    items {
+      address: id
+      token0{
+        address: id
+        name
+        symbol
+        decimals
+      }
+      token1{
+        address: id
+        name
+        symbol
+        decimals
+      }
+      reserve0
+      reserve1
+    }
+  }
+
+  }`;
+    const res = await this.callIndexerApi(query, {
+      apiHandle: pairGraphHandle,
+    });
+    if (res.status === "success") {
+      return res.data.pairs0.items[0] || res.data.pairs1.items[0];
+    }
+    return res;
+  }
 }

@@ -298,13 +298,18 @@ class Liquidity {
       memoryPair.init();
       return memoryPair;
     }
+    console.log("getPairByTokens", token0Address, token1Address);
     const pair = await trpcClient.pair.getPairByTokens.query({
       chainId: wallet.currentChainId,
       token0Address,
       token1Address,
     });
     if (pair) {
-      const pairContract = new PairContract({ ...pair });
+      const pairContract = new PairContract({
+        address: pair.address,
+        token0: new Token(pair.token0),
+        token1: new Token(pair.token1),
+      });
       pairContract.init();
 
       this.pairsByToken[`${token0Address}-${token1Address}`] = pairContract;
