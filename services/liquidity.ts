@@ -245,7 +245,8 @@ class Liquidity {
       };
     }[]
   ) {
-    if (!wallet.isInit) return;
+    if (!wallet.isInit || this.isInit) return;
+
     console.log("wallet", wallet.currentChain);
     this.pairs = pairs.map((pair) => {
       const token0 = new Token(pair.token0);

@@ -121,10 +121,14 @@ export default class GhostIndexer implements IndexerProvider {
     if (res.status === "error") {
       return res;
     } else {
+      const pairs = ((res.data as any).pairs.items as GhostFtoPairResponse) ?? {
+        pairs: [],
+      };
+
       return {
         status: "success",
         message: "Success",
-        data: (res.data as any).pairs.items as GhostFtoPairResponse,
+        data: pairs,
       };
     }
   };

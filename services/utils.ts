@@ -42,6 +42,7 @@ export class AsyncState<T, K extends (...args: any) => any = () => {}> {
 
     makeAutoObservable(this);
   }
+
   async call(...args: Parameters<K>) {
     this.setLoading(true);
     this.value = null;

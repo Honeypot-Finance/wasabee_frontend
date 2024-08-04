@@ -46,7 +46,15 @@ const FaucetPage: NextLayoutPage = observer(() => {
         <div className="flex  items-center">
           <CardContianer>
             <div className="flex-1 flex items-center">
-              Native Currency: $
+              <Image
+                className={
+                  "border border-[color:var(--card-stroke,#F7931A)] rounded-[50%] mr-[1rem]"
+                }
+                src={wallet.currentChain?.faucets?.[0].logoURI ?? ""}
+                alt=""
+                width={24}
+                height={24}
+              />
               {wallet.currentChain?.chain.nativeCurrency.symbol}
             </div>
             <div className="">
@@ -57,6 +65,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
             </div>
           </CardContianer>
           <Link
+            target="_blank"
             href={
               (wallet.currentChain?.faucets &&
                 wallet.currentChain?.faucets[0].url) ||

@@ -24,6 +24,7 @@ export class Network {
   faucets?: {
     url: string;
     name: string;
+    logoURI?: string;
   }[];
   blacklist?: {
     poolBlacklist: string[];
@@ -90,6 +91,8 @@ export const berachainBartioTestnetNetwork = new Network({
     {
       url: "https://bartio.faucet.berachain.com",
       name: "Official Faucet",
+      logoURI:
+        "https://res.cloudinary.com/duv0g402y/raw/upload/src/assets/bera.png",
     },
   ],
   contracts: {

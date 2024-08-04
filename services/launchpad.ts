@@ -219,11 +219,12 @@ class LaunchPad {
         ftoAddresses.data.map(async (pairAddress, idx) => {
           if (
             idx >= (this.ftoPairsPagination.page - 1) * limit &&
-            idx <= this.ftoPairsPagination.page * limit
+            idx < this.ftoPairsPagination.page * limit
           ) {
             const pair = new FtoPairContract({
               address: pairAddress.id,
             });
+            console.log(idx);
             if (!pair.isInit) {
               pair.init({
                 raisedToken: new Token(pairAddress.token1),

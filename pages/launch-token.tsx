@@ -59,7 +59,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
         ),
       });
       state.setPairAddress(pairAddress);
-      // router.push('/launch')
+      router.push(`/launch-detail/${pairAddress}`);
     } catch (error) {
       console.error(error);
     }
