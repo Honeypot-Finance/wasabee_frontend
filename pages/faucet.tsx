@@ -22,9 +22,6 @@ const FaucetPage: NextLayoutPage = observer(() => {
   const balance = useBalance({
     address: account?.address,
   });
-  const [beraFauset, setBeraFauset] = useState<NativeFaucetContract | null>(
-    null
-  );
 
   useEffect(() => {
     wallet.currentChain?.faucetTokens?.forEach((token) => {

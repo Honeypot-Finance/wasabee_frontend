@@ -14,6 +14,8 @@ class fauset {
       address: wallet.currentChain?.nativeFaucet?.address,
       name: wallet.currentChain?.nativeFaucet?.name,
     });
+
+    this.nativeFaucet.isClaimable();
   }
 }
 
