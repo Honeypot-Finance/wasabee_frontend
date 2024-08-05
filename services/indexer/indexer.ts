@@ -1,4 +1,5 @@
 import { PairFilter } from "../launchpad";
+import { GhostIndexer } from "./indexerProviders/ghost";
 import {
   GhostFtoPairResponse,
   GhostFtoTokensResponse,
@@ -38,4 +39,24 @@ export default class Indexer<T extends IndexerProvider> {
   > => {
     return await this.dataProvider.getAllFtoTokens();
   };
+
+  async getPairByTokens({
+    token0,
+    token1,
+  }: {
+    token0: string;
+    token1: string;
+  }) {
+    return await this.dataProvider.getPairByTokens({ token0, token1 });
+  }
 }
+
+
+const ghostIndexer = new GhostIndexer(
+  process.env.GHOST_INDEXER_API_KEY ?? "",
+  "https://api.ghostlogs.xyz/gg/pub/"
+);
+
+
+
+export const indexer = new Indexer(ghostIndexer);
