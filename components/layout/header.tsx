@@ -197,7 +197,6 @@ function WrapedDropdownItem({
 }
 function ListToElement({ list }: { list: Menu[] }) {
   const router = useRouter();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return list.map((m) => {
     return m.path instanceof Array ? (

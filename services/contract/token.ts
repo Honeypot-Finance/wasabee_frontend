@@ -8,6 +8,7 @@ import { amountFormatted } from "@/lib/format";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { faucetABI } from "@/lib/abis/faucet";
 import { networksMap } from "../chain";
+import { watchAsset } from "viem/actions";
 
 export class Token implements BaseContract {
   address: string = "";
@@ -179,6 +180,18 @@ export class Token implements BaseContract {
     return amountFormatted(this.balanceWithoutDecimals, {
       decimals: this.decimals,
       fixed: 3,
+    });
+  }
+
+  async watch() {
+    watchAsset(wallet.walletClient, {
+      type: "ERC20",
+      options: {
+        address: this.address,
+        symbol: this.symbol,
+        decimals: this.decimals,
+        image: window.location.origin + this.logoURI,
+      },
     });
   }
 }
