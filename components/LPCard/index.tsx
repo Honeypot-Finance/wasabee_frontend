@@ -6,7 +6,7 @@ import { Button } from "@/components/button";
 import { Token } from "@/services/contract/token";
 import { SpinnerContainer } from "../Spinner";
 import { PlusSvg } from "../svg/plus";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { isEthAddress } from "@/lib/address";
 import { wallet } from "@/services/wallet";
@@ -17,7 +17,8 @@ import { SelectItem } from "../ItemSelect/index";
 import { MouseEvent } from "react";
 import _ from "lodash";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
-import { trpc } from "@/lib/trpc";
+import { trpc, trpcClient } from "@/lib/trpc";
+import { GhostPair } from "@/services/indexer/indexerTypes";
 
 const AddLiquidity = observer(() => {
   return (
@@ -243,25 +244,39 @@ export const RemoveLiquidity = observer(
 
 export const LPCard = observer(() => {
   const router = useRouter();
+  const [pairsMap, setPairsMap] = useState<GhostPair[]>();
   const { inputCurrency, outputCurrency } = router.query as {
     inputCurrency: string;
     outputCurrency: string;
   };
+
   const isinit = wallet.isInit && liquidity.isInit;
 
-  const { data: pairsMap } = trpc.pair.getPairs.useQuery(
-    {
-      chainId: wallet.currentChainId as number,
-    },
-    {
-      enabled: !!wallet.currentChainId,
-      refetchOnWindowFocus: false,
-    }
-  );
+  useEffect(() => {
+    trpcClient.indexerFeedRouter.getAllPairs.query().then((data) => {
+      setPairsMap(data.data);
+    });
+  }, []);
 
   useEffect(() => {
     if (pairsMap) {
-      liquidity.initPool(Object.values(pairsMap));
+      liquidity.initPool(
+        pairsMap.map((pair: any) => ({
+          address: pair.id,
+          token0: {
+            address: pair.token0.id,
+            name: pair.token0.name,
+            symbol: pair.token0.symbol,
+            decimals: pair.token0.decimals,
+          },
+          token1: {
+            address: pair.token1.id,
+            name: pair.token1.name,
+            symbol: pair.token1.symbol,
+            decimals: pair.token1.decimals,
+          },
+        }))
+      );
     }
   }, [pairsMap]);
 

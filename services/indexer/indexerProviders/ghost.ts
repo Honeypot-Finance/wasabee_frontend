@@ -9,6 +9,7 @@ import {
   GhostFTOPair,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
+import { debounce } from "lodash";
 
 const ftoGraphHandle = "c0ea90ad-1a89-4078-b789-aa41d791398d/ghostgraph";
 const pairGraphHandle = "747fa52a-205d-4434-ac02-0dd20f49c0dd/ghostgraph";
@@ -127,7 +128,7 @@ export class GhostIndexer {
     if (res.status === "error") {
       return res;
     } else {
-      let pairs = (res.data as any).pairs.items as GhostFTOPair[];
+      let pairs = ((res.data as any)?.pairs?.items as GhostFTOPair[]) ?? [];
 
       if (filter && !filter.showNotValidatedPairs) {
         pairs = pairs?.filter((pair: GhostPair) => {
@@ -205,7 +206,7 @@ export class GhostIndexer {
       return {
         status: "success",
         message: "Success",
-        data: ((res.data as any).pairs.items as GhostPairResponse) ?? {
+        data: ((res.data as any).pairs?.items as GhostPairResponse) ?? {
           pairs: [],
         },
       };
@@ -268,6 +269,7 @@ export class GhostIndexer {
   }
 
   }`;
+
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
     });

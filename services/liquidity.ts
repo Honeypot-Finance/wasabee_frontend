@@ -245,49 +245,48 @@ class Liquidity {
       };
     }[]
   ) {
-    if (!wallet.isInit || this.isInit) return;
+    debounce(async () => {
+      this.pairs = pairs.map((pair) => {
+        const token0 = new Token(pair.token0);
+        const token1 = new Token(pair.token1);
+        const pairContract = new PairContract({
+          address: pair.address,
+          token0,
+          token1,
+        });
+        if (!this.tokensMap[token0.address]) {
+          this.tokensMap[token0.address] = token0;
 
-    console.log("wallet", wallet.currentChain);
-    this.pairs = pairs.map((pair) => {
-      const token0 = new Token(pair.token0);
-      const token1 = new Token(pair.token1);
-      const pairContract = new PairContract({
-        address: pair.address,
-        token0,
-        token1,
+          token0.init();
+        }
+        if (!this.tokensMap[token1.address]) {
+          this.tokensMap[token1.address] = token1;
+
+          token1.init();
+        }
+        this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract;
+        pairContract.init();
+        return pairContract;
       });
-      if (!this.tokensMap[token0.address]) {
-        this.tokensMap[token0.address] = token0;
 
-        token0.init();
-      }
-      if (!this.tokensMap[token1.address]) {
-        this.tokensMap[token1.address] = token1;
+      //show logoURI token first, because it means its a validated token
+      this.tokensMap = Object.fromEntries(
+        Object.entries(this.tokensMap).sort((a, b) =>
+          a[1].logoURI ? -1 : b[1].logoURI ? 1 : 0
+        )
+      );
 
-        token1.init();
-      }
-      this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract;
-      pairContract.init();
-      return pairContract;
-    });
+      console.log(
+        Object.values(this.tokensMap).map((token: Token) => {
+          return {
+            name: token.name,
+            address: token.address,
+          };
+        })
+      );
 
-    //show logoURI token first, because it means its a validated token
-    this.tokensMap = Object.fromEntries(
-      Object.entries(this.tokensMap).sort((a, b) =>
-        a[1].logoURI ? -1 : b[1].logoURI ? 1 : 0
-      )
-    );
-
-    console.log(
-      Object.values(this.tokensMap).map((token: Token) => {
-        return {
-          name: token.name,
-          address: token.address,
-        };
-      })
-    );
-
-    this.isInit = true;
+      this.isInit = true;
+    }, 300)();
   }
 
   async getPairByTokens(token0Address: string, token1Address: string) {

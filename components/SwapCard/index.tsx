@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer, useLocalObservable } from "mobx-react-lite";
 import { TokenSelector } from "@/components/TokenSelector";
 import { SwapAmount } from "../SwapAmount/index";
 import { swap } from "@/services/swap";
@@ -20,10 +20,21 @@ import { chart } from "@/services/chart";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { GhostPair } from "@/services/indexer/indexerTypes";
+import { ItemSelect, SelectItem, SelectState } from "../ItemSelect";
 
 export const SwapCard = observer(() => {
   const router = useRouter();
   const [pairsMap, setPairsMap] = useState<GhostPair[]>();
+  const state = useLocalObservable(() => ({
+    selectState: new SelectState({
+      value: 0,
+      onSelectChange: (value) => {
+        swap.setFromAmount(
+          (swap.fromToken as Token).balance.times(value).toFixed()
+        );
+      },
+    }),
+  }));
   const { inputCurrency, outputCurrency } = router.query as {
     inputCurrency: string;
     outputCurrency: string;
@@ -64,14 +75,17 @@ export const SwapCard = observer(() => {
       return;
     }
     if (inputCurrency && isEthAddress(inputCurrency)) {
-      swap.setFromToken(new Token({
-        address: inputCurrency,
-      }));
+      swap.setFromToken(
+        new Token({
+          address: inputCurrency,
+        })
+      );
     }
     if (outputCurrency && isEthAddress(outputCurrency)) {
-      swap.setToToken(new Token({
-        address: outputCurrency,
-      })
+      swap.setToToken(
+        new Token({
+          address: outputCurrency,
+        })
       );
     }
   }, [inputCurrency, outputCurrency, isinit]);
@@ -171,7 +185,6 @@ export const SwapCard = observer(() => {
                 ></TokenSelector>
               </div>
             </div>
-
             {!!swap.price && (
               <div className="flex w-[529px] max-w-full h-[71px] justify-between items-center border [background:#291C0A] px-5 py-2.5 rounded-2xl border-solid border-[rgba(247,147,26,0.20)]">
                 <div>
@@ -194,6 +207,25 @@ export const SwapCard = observer(() => {
                   <div>Minimum Received</div>
                 </div>
               </div>
+            )}{" "}
+            {swap.fromToken && swap.toToken && (
+              <ItemSelect
+                selectState={state.selectState}
+                className="gap-[16px] justify-between w-full"
+              >
+                <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
+                  25%
+                </SelectItem>
+                <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
+                  50%
+                </SelectItem>
+                <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
+                  75%
+                </SelectItem>
+                <SelectItem className="rounded-[30px] px-[24px]" value={1}>
+                  100%
+                </SelectItem>
+              </ItemSelect>
             )}
             <Button
               isDisabled={swap.isDisabled}
