@@ -24,6 +24,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
   });
 
   useEffect(() => {
+    if (!wallet.currentChain) return;
     wallet.currentChain?.faucetTokens?.forEach((token) => {
       token.init({ loadClaimed: true });
     });
