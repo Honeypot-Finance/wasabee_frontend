@@ -324,6 +324,14 @@ export class FtoPairContract implements BaseContract {
   }
 
   async getCanClaimLP() {
+    if (
+      !wallet.account ||
+      // provider can't claim LP
+      wallet.account.toLowerCase() === this.provider.toLowerCase()
+    ) {
+      return false;
+    }
+
     try {
       const res = await this.contract.read.claimableLP([wallet.account] as [
         `0x${string}`
@@ -331,13 +339,12 @@ export class FtoPairContract implements BaseContract {
       this.canClaimLP = res > 0;
     } catch (error) {
       this.canClaimLP = false;
-      //console.error(error, `getCanClaimLP-${this.address}`);
     }
   }
 
-  async getRaisedToken(tokenAddress?: Token) {
-    if (tokenAddress) {
-      this.raiseToken = tokenAddress;
+  async getRaisedToken(token?: Token) {
+    if (token) {
+      this.raiseToken = token;
       this.raiseToken.init();
     } else {
       const res = (await this.contract.read.raisedToken()) as `0x${string}`;
@@ -346,9 +353,9 @@ export class FtoPairContract implements BaseContract {
     }
   }
 
-  async getLaunchedToken(launchedTokenAddress?: Token) {
-    if (launchedTokenAddress) {
-      this.launchedToken = launchedTokenAddress;
+  async getLaunchedToken(launchedToken?: Token) {
+    if (launchedToken) {
+      this.launchedToken = launchedToken;
       //this.launchedToken.init();
     } else {
       const res = (await this.contract.read.launchedToken()) as `0x${string}`;

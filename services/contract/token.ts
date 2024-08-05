@@ -151,12 +151,18 @@ export class Token implements BaseContract {
   }
 
   async getBalance() {
-    const balance = await this.contract.read.balanceOf([
-      wallet.account as `0x${string}`,
-    ]);
-    this.balanceWithoutDecimals = new BigNumber(balance.toString());
-    return this.balanceWithoutDecimals;
+    try {
+      const balance = await this.contract.read.balanceOf([
+        wallet.account as `0x${string}`,
+      ]);
+      this.balanceWithoutDecimals = new BigNumber(balance.toString());
+      return this.balanceWithoutDecimals;
+    } catch (e) {
+      console.log(e);
+      return new BigNumber(0);
+    }
   }
+
   async getTotalSupply() {
     const totalSupply = await this.contract.read.totalSupply();
     this.totalSupplyWithoutDecimals = new BigNumber(totalSupply.toString());

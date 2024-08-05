@@ -218,17 +218,37 @@ const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
 
 const SuccessAction = observer(({ pair }: { pair: FtoPairContract }) => {
   return (
-    <div className=" flex flex-col gap-[16px]">
-      <Button
-        className="w-full"
-        isLoading={pair.claimLP.loading}
-        onClick={() => {
-          pair.claimLP.call();
-        }}
-        isDisabled={!pair.canClaimLP}
+    <div className="flex gap-[16px] justify-center items-center">
+      {wallet.account != pair.provider && (
+        <Button
+          className=""
+          isLoading={pair.claimLP.loading}
+          onClick={() => {
+            pair.claimLP.call();
+          }}
+          isDisabled={!pair.canClaimLP}
+        >
+          {pair.canClaimLP ? "Claim LP" : "Claim LP (Not available)"}
+        </Button>
+      )}
+
+      <Link
+        href={`/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
+        className="text-black font-bold"
       >
-        {pair.canClaimLP ? "Claim LP" : "Claim LP (Not available)"}
-      </Button>
+        <Button className="w-full">
+          <p>Swap Token</p>
+          <p>
+            <Copy
+              onClick={(e) => {
+                e.preventDefault();
+              }}
+              className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
+              value={`${window.location.origin}/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
+            ></Copy>
+          </p>
+        </Button>{" "}
+      </Link>
     </div>
   );
 });

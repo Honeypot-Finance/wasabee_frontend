@@ -223,8 +223,14 @@ class LaunchPad {
             });
             if (!pair.isInit) {
               pair.init({
-                raisedToken: new Token(pairAddress.token1),
-                launchedToken: new Token(pairAddress.token0),
+                raisedToken: new Token({
+                  ...pairAddress.token1,
+                  address: pairAddress.token1.id,
+                }),
+                launchedToken: new Token({
+                  ...pairAddress.token0,
+                  address: pairAddress.token0.id,
+                }),
                 depositedLaunchedToken: pairAddress.depositedLaunchedToken,
                 depositedRaisedToken: pairAddress.depositedRaisedToken,
                 startTime: pairAddress.createdAt,
@@ -232,6 +238,7 @@ class LaunchPad {
                 ftoState: Number(pairAddress.status),
               });
             }
+
             return pair;
           }
         })

@@ -33,6 +33,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
   useEffect(() => {
     launchpad.ftoPairsPagination.page = 1;
   }, []);
+
   useEffect(() => {
     if (!wallet.isInit) {
       return;
@@ -217,7 +218,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                                     onClick={(e) => {
                                       e.preventDefault();
                                     }}
-                                    className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
+                                    className="absolute ml-[8px] top-[50%] translate-y-[-50%]"
                                     value={`${window.location.origin}/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
                                   ></Copy>
                                 </p>

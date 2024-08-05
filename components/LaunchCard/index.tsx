@@ -42,7 +42,7 @@ export const LaunchCard = observer(
         </div>
         <h4 className="text-white text-center text-[1rem] font-bold flex items-center h-[1.5em]">
           <div className=" relative">
-            {pair?.launchedToken.displayName}
+            {pair?.launchedToken.name} ({pair?.launchedToken.symbol})
             {pair?.launchedToken.displayName && (
               <Copy
                 className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
