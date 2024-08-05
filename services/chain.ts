@@ -7,6 +7,7 @@ import {
   polygonMumbaiChain,
   //sepolia,
 } from "@/lib/chain";
+import { NativeFaucetContract } from "./contract/faucet-contract";
 
 export class Network {
   get chainId() {
@@ -20,8 +21,13 @@ export class Network {
     ftoTokens: Partial<Token>[];
   };
   faucetTokens: Token[] = [];
+  nativeFaucet?: {
+    address: string;
+    name: string;
+    requirements: string;
+  };
   chain!: Chain;
-  faucets?: {
+  officialFaucets?: {
     url: string;
     name: string;
     logoURI?: string;
@@ -87,7 +93,7 @@ export class Network {
 
 export const berachainBartioTestnetNetwork = new Network({
   chain: berachainBartioTestnet,
-  faucets: [
+  officialFaucets: [
     {
       url: "https://bartio.faucet.berachain.com",
       name: "Official Faucet",
@@ -95,6 +101,11 @@ export const berachainBartioTestnetNetwork = new Network({
         "https://res.cloudinary.com/duv0g402y/raw/upload/src/assets/bera.png",
     },
   ],
+  nativeFaucet: {
+    address: "0x57E2814Bd03B0b01B46d5112A238687a43E38271",
+    name: "Daily Faucet",
+    requirements: "You can claim 100 BERA tokens every 24 hours.",
+  },
   contracts: {
     routerV2: "0x482270069fF98a0dF528955B651494759b3B2F8C",
     factory: "0x2f795195bae7E61E848ffC87ba7f6ae1A06c0527",

@@ -5,23 +5,32 @@ import { wallet } from "@/services/wallet";
 import { NextLayoutPage } from "@/types/nextjs";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { amountFormatted } from "../lib/format";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import TokenBalanceCard from "@/components/TokenBalanceCard/TokenBalanceCard";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { useAccount, useBalance } from "wagmi";
 import Link from "next/link";
+import { Tooltip } from "@nextui-org/react";
+import { ControlledToolTip } from "@/components/molecule/ControlledToolTip/ControlledToolTip";
+import { NativeFaucetContract } from "@/services/contract/faucet-contract";
+import { faucet } from "@/services/faucet";
 
 const FaucetPage: NextLayoutPage = observer(() => {
   const account = useAccount();
   const balance = useBalance({
     address: account?.address,
   });
+  const [beraFauset, setBeraFauset] = useState<NativeFaucetContract | null>(
+    null
+  );
+
   useEffect(() => {
     wallet.currentChain?.faucetTokens?.forEach((token) => {
       token.init({ loadClaimed: true });
     });
+    faucet.init();
   }, [wallet.currentChain?.faucetTokens]);
   return (
     <div className="flex flex-col  items-center ">
@@ -43,39 +52,55 @@ const FaucetPage: NextLayoutPage = observer(() => {
         </div>
       </div>
       <div className="w-[578px] max-w-[100%] mt-[30px] flex flex-col gap-[24px]">
-        <div className="flex  items-center">
-          <CardContianer>
-            <div className="flex-1 flex items-center">
-              <Image
-                className={
-                  "border border-[color:var(--card-stroke,#F7931A)] rounded-[50%] mr-[1rem]"
-                }
-                src={wallet.currentChain?.faucets?.[0].logoURI ?? ""}
-                alt=""
-                width={24}
-                height={24}
-              />
-              {wallet.currentChain?.chain.nativeCurrency.symbol}
-            </div>
-            <div className="">
-              {amountFormatted(balance.data?.value.toString(), {
-                decimals: wallet.currentChain?.chain.nativeCurrency.decimals,
-                fixed: 3,
-              })}
-            </div>
-          </CardContianer>
-          <Link
-            target="_blank"
-            href={
-              (wallet.currentChain?.faucets &&
-                wallet.currentChain?.faucets[0].url) ||
-              ""
-            }
-          >
-            <Button className="ml-[13px]">Claim on official faucet</Button>
-          </Link>
-        </div>
-
+        {/** Native token faucet */}
+        {wallet.currentChain?.officialFaucets?.[0] && (
+          <div className="flex  items-center">
+            <CardContianer>
+              <div className="flex-1 flex items-center">
+                <Image
+                  className={
+                    "border border-[color:var(--card-stroke,#F7931A)] rounded-[50%] mr-[1rem]"
+                  }
+                  src={wallet.currentChain?.officialFaucets?.[0]?.logoURI ?? ""}
+                  alt=""
+                  width={24}
+                  height={24}
+                />
+                {wallet.currentChain?.chain.nativeCurrency.symbol}
+              </div>
+              <div className="">
+                {amountFormatted(balance.data?.value.toString(), {
+                  decimals: wallet.currentChain?.chain.nativeCurrency.decimals,
+                  fixed: 3,
+                })}
+              </div>
+            </CardContianer>
+            <Link
+              target="_blank"
+              href={
+                (wallet.currentChain?.officialFaucets &&
+                  wallet.currentChain?.officialFaucets[0].url) ||
+                ""
+              }
+            >
+              <Button className="ml-[13px]">Official faucet</Button>
+            </Link>
+            {faucet.nativeFaucet && (
+              <ControlledToolTip content="HPOT holders can claim BERA tokens every 24 hours.">
+                <Button
+                  className="ml-[13px]"
+                  onClick={async () => {
+                    faucet.nativeFaucet!.Claim.call();
+                  }}
+                  isDisabled={!faucet.nativeFaucet.canclaim}
+                  isLoading={faucet.nativeFaucet.Claim.loading}
+                >
+                  {faucet.nativeFaucet.canclaim ? "Claim" : "Not Available"}
+                </Button>
+              </ControlledToolTip>
+            )}
+          </div>
+        )}
         {wallet.currentChain?.faucetTokens?.length ? (
           wallet.currentChain?.faucetTokens.map((token) => (
             <div key={token.address} className="flex  items-center">

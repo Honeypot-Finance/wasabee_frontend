@@ -7,7 +7,6 @@ import { ContractWrite } from "../utils";
 import { amountFormatted } from "@/lib/format";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { faucetABI } from "@/lib/abis/faucet";
-import { networksMap } from "../chain";
 import { watchAsset } from "viem/actions";
 import { toast } from "react-toastify";
 
@@ -27,6 +26,7 @@ export class Token implements BaseContract {
   get displayName() {
     return this.symbol || this.name;
   }
+
   get faucetContract() {
     return getContract({
       address: this.address as `0x${string}`,
