@@ -9,6 +9,7 @@ import { ERC20ABI } from "@/lib/abis/erc20";
 import { faucetABI } from "@/lib/abis/faucet";
 import { networksMap } from "../chain";
 import { watchAsset } from "viem/actions";
+import { toast } from "react-toastify";
 
 export class Token implements BaseContract {
   address: string = "";
@@ -192,6 +193,12 @@ export class Token implements BaseContract {
         decimals: this.decimals,
         image: window.location.origin + this.logoURI,
       },
-    });
+    })
+      .then(() => {
+        toast.success("Token added to wallet");
+      })
+      .catch((e) => {
+        toast.error("Failed to add token to wallet");
+      });
   }
 }

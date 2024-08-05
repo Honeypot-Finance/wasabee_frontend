@@ -35,6 +35,7 @@ import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSoc
 import { trpcClient } from "@/lib/trpc";
 import TokenStatusDisplay from "@/components/atoms/TokenStatusDisplay/TokenStatusDisplay";
 import { Provider } from "ethcall";
+import { WatchAsset } from "@/components/atoms/WatchAsset/WatchAsset";
 
 const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -569,10 +570,15 @@ const LaunchPage: NextLayoutPage = observer(() => {
               <div className="mt-[8px] flex  h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px]">
                 {state.pair.value?.launchedToken.address}{" "}
                 {state.pair.value?.launchedToken.address && (
-                  <span className="flex flex-row">
+                  <span className="flex justify-center items-center">
                     <Copy
                       value={state.pair.value?.launchedToken.address}
                     ></Copy>
+                    {state.pair?.value.launchedToken.address && (
+                      <WatchAsset
+                        token={state.pair?.value.launchedToken}
+                      ></WatchAsset>
+                    )}
                   </span>
                 )}
               </div>

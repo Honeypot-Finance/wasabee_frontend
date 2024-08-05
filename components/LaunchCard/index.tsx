@@ -11,6 +11,7 @@ import Link from "next/link";
 import { HTMLAttributes } from "react";
 import { cn } from "@/lib/tailwindcss";
 import TokenStatusDisplay from "../atoms/TokenStatusDisplay/TokenStatusDisplay";
+import { WatchAsset } from "../atoms/WatchAsset/WatchAsset";
 
 const Actions = () => {};
 
@@ -43,12 +44,15 @@ export const LaunchCard = observer(
         <h4 className="text-white text-center text-[1rem] font-bold flex items-center h-[1.5em]">
           <div className=" relative">
             {pair?.launchedToken.name} ({pair?.launchedToken.symbol})
-            {pair?.launchedToken.displayName && (
-              <Copy
-                className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-                value={pair.launchedToken.address}
-              ></Copy>
-            )}
+            <div className="absolute top-[0.5rem] translate-y-[100%] w-full flex justify-center items-end">
+              {" "}
+              {pair?.launchedToken.displayName && (
+                <Copy value={pair.launchedToken.address}></Copy>
+              )}
+              {pair?.launchedToken.address && (
+                <WatchAsset token={pair.launchedToken}></WatchAsset>
+              )}
+            </div>
           </div>
         </h4>
         <div
