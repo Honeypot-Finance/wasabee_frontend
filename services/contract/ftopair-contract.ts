@@ -38,6 +38,7 @@ export class FtoPairContract implements BaseContract {
     link: string;
     icon: string;
   }[] = [];
+  logoUrl = "";
 
   constructor(args: Partial<FtoPairContract>) {
     Object.assign(this, args);
@@ -274,6 +275,9 @@ export class FtoPairContract implements BaseContract {
     }
     if (res.provider) {
       this.provider = res.provider;
+    }
+    if (res.logo_url) {
+      this.logoUrl = res.logo_url;
     }
   }
 

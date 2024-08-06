@@ -408,6 +408,7 @@ class LaunchPad {
     });
     return pairAddress;
   };
+
   updateFtoProject = new AsyncState(
     async (data: {
       pair: string;
@@ -424,6 +425,17 @@ class LaunchPad {
         wallet.walletClient
       );
       await trpcClient.fto.createOrUpdateProjectInfo.mutate(data);
+    }
+  );
+
+  updateProjectLogo = new AsyncState(
+    async (data: { logo_url: string; pair: string; chain_id: number }) => {
+      await createSiweMessage(
+        wallet.account,
+        "Sign In With Honeypot",
+        wallet.walletClient
+      );
+      await trpcClient.fto.updateProjectLogo.mutate(data);
     }
   );
 }

@@ -12,6 +12,7 @@ import { HTMLAttributes } from "react";
 import { cn } from "@/lib/tailwindcss";
 import TokenStatusDisplay from "../atoms/TokenStatusDisplay/TokenStatusDisplay";
 import { WatchAsset } from "../atoms/WatchAsset/WatchAsset";
+import Image from "next/image";
 
 const Actions = () => {};
 
@@ -37,9 +38,12 @@ export const LaunchCard = observer(
       >
         <TokenStatusDisplay pair={pair} />
         <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square">
-          <div className="w-8">
-            <Logo width={29} />
-          </div>
+          <Image
+            src={!!pair?.logoUrl ? pair.logoUrl : "/images/project_honey.png"}
+            alt="honey"
+            width={100}
+            height={100}
+          ></Image>
         </div>
         <h4 className="text-white text-center text-[1rem] font-bold flex items-center h-[1.5em]">
           <div className=" relative">

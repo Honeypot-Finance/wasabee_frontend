@@ -19,6 +19,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
@@ -36,6 +37,7 @@ import { trpcClient } from "@/lib/trpc";
 import TokenStatusDisplay from "@/components/atoms/TokenStatusDisplay/TokenStatusDisplay";
 import { Provider } from "ethcall";
 import { WatchAsset } from "@/components/atoms/WatchAsset/WatchAsset";
+import { UploadImage } from "@/components/UploadImage/UploadImage";
 
 const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -85,6 +87,20 @@ const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
       <ModalBody>
         <div>
           <div className="flex flex-col gap-4">
+            <UploadImage
+              imagePath={
+                !!pair.logoUrl ? pair.logoUrl : "/images/project_honey.png"
+              }
+              onUpload={async (url) => {
+                console.log(url);
+                await launchpad.updateProjectLogo.call({
+                  logo_url: url,
+                  pair: pair.address,
+                  chain_id: wallet.currentChainId,
+                });
+                pair.logoUrl = url;
+              }}
+            ></UploadImage>
             <div>Project Name</div>
             <input
               type="text"
@@ -420,13 +436,16 @@ const LaunchPage: NextLayoutPage = observer(() => {
             <div className="flex h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px]"></div>
             <div className="relative flex-1 w-full h-full px-[29px] pb-[26px]">
               <TokenStatusDisplay pair={state.pair.value} />
-              <div className=" relative translate-y-[-50%] w-[65px] h-[65px] [background:#271B0C] rounded-[11.712px] p-[3px]">
-                <div className="w-full h-full flex items-center justify-center [background:#ECC94E] rounded-[11.712px]">
+              <div className=" relative translate-y-[-50%] w-[65px] h-[65px] [background:#271B0C] rounded-[11.712px] overflow-hidden">
+                <div className="w-full h-full flex items-center justify-center [background:#ECC94E] rounded-[11.712px] overflow-hidden">
                   <Image
-                    src="/images/project_honey.png"
+                    src={
+                      !!state.pair.value?.logoUrl
+                        ? state.pair.value.logoUrl
+                        : "/images/project_honey.png"
+                    }
                     alt="honey"
-                    width={36}
-                    height={36}
+                    fill
                   ></Image>
                 </div>
               </div>
