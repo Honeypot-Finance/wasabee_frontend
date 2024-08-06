@@ -518,7 +518,19 @@ const LaunchPage: NextLayoutPage = observer(() => {
             </div>
           </div>
           <div className="text-left relative flex-1 flex basis-full w-full sm:basis-0 sm:min-w-[500px]  flex-col gap-[10px] shrink-0 [background:#271B0C] rounded-2xl py-[12px] px-[24px]">
-            <div className=" absolute right-[24px] top-[12px]">
+            <div className="flex absolute right-[24px] top-[12px]">
+              {state.pair.value?.launchedToken.address && (
+                <span className="flex justify-center items-center">
+                  <Copy value={state.pair.value?.launchedToken.address}></Copy>
+                  <span className="w-[1rem] h-[1rem]">
+                    {state.pair?.value.launchedToken.address && (
+                      <WatchAsset
+                        token={state.pair?.value.launchedToken}
+                      ></WatchAsset>
+                    )}
+                  </span>
+                </span>
+              )}
               {state.pair.value?.isInit && (
                 <UpdateProjectAction
                   pair={state.pair.value}
@@ -552,7 +564,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
               </Button> */}
               <div className="text-[rgba(255,255,255,0.66)] text-[15.958px] font-bold leading-[normal]">
                 Token Raised
-              </div>
+              </div>{" "}
               <div className="text-[color:var(--Button-Gradient,var(--card-stroke,#F7931A))] text-[16.727px] font-normal leading-[normal]">
                 {amountFormatted(state.pair.value?.depositedRaisedToken, {
                   decimals: 0,
@@ -569,18 +581,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
               </div>
               <div className="mt-[8px] flex  h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px]">
                 {state.pair.value?.launchedToken.address}{" "}
-                {state.pair.value?.launchedToken.address && (
-                  <span className="flex justify-center items-center">
-                    <Copy
-                      value={state.pair.value?.launchedToken.address}
-                    ></Copy>
-                    {state.pair?.value.launchedToken.address && (
-                      <WatchAsset
-                        token={state.pair?.value.launchedToken}
-                      ></WatchAsset>
-                    )}
-                  </span>
-                )}
               </div>
             </div>
 
