@@ -40,11 +40,11 @@ export const CopyTrigger = observer(
             state.setCopied(false);
           }}
           className={clsx(
-            " inline-block cursor-pointer hover:text-primary",
+            "inline-block cursor-pointer hover:text-primary",
             className
           )}
         >
-          <VscCopy {...props}></VscCopy>
+          <VscCopy className="w-full h-full" {...props}></VscCopy>
         </span>
       </Tooltip>
     );

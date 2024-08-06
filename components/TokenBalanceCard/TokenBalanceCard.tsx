@@ -21,7 +21,12 @@ export const TokenBalanceCard = observer(
         <TokenLogo token={token}></TokenLogo>
         <div className="flex-1 flex items-center">
           {token.displayName}
-          <WatchAsset className="ml-[8px]" token={token}></WatchAsset>
+          <span className="w-[1rem]">
+            <WatchAsset
+              className="ml-[8px] w-full h-full flex justify-center items-center"
+              token={token}
+            ></WatchAsset>
+          </span>
           <Copy className="ml-[8px]" value={token.address}></Copy>
         </div>
         <div className="">{token.balanceFormatted}</div>

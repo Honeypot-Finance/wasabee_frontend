@@ -29,7 +29,7 @@ export function WatchAsset(props: WatchAssetProps) {
           setState({ isTooltipOpen: false });
         }}
         className={clsx(
-          " inline-block cursor-pointer hover:text-primary",
+          " inline-block cursor-pointer hover:text-primary hover:stroke-primary hover:fill-primary ",
           props.className
         )}
         onClick={() => {

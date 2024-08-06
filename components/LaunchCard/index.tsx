@@ -44,17 +44,24 @@ export const LaunchCard = observer(
         <h4 className="text-white text-center text-[1rem] font-bold flex items-center h-[1.5em]">
           <div className=" relative">
             {pair?.launchedToken.name} ({pair?.launchedToken.symbol})
-            <div className="absolute top-[0.5rem] translate-y-[100%] w-full flex justify-center items-end">
-              {" "}
-              {pair?.launchedToken.displayName && (
-                <Copy value={pair.launchedToken.address}></Copy>
-              )}
-              {pair?.launchedToken.address && (
-                <WatchAsset token={pair.launchedToken}></WatchAsset>
-              )}
-            </div>
-          </div>
-        </h4>
+          </div>{" "}
+        </h4>{" "}
+        <div className=" w-full flex justify-center items-center gap-[2rem] lg:gap-[0.5rem]">
+          {" "}
+          {pair?.launchedToken.displayName && (
+            <span className="relative w-[2rem] h-[2rem] lg:w-[1rem] lg:h-[1rem]">
+              <Copy
+                className="w-full h-full"
+                value={pair.launchedToken.address}
+              ></Copy>
+            </span>
+          )}
+          {pair?.launchedToken.address && (
+            <span className="relative w-[2rem] h-[2rem] lg:w-[1rem] lg:h-[1rem]">
+              <WatchAsset token={pair.launchedToken}></WatchAsset>
+            </span>
+          )}
+        </div>
         <div
           className={cn(
             "grid  items-start gap-6 text-white mt-2 justify-between w-full break-all ",
