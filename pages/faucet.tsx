@@ -95,6 +95,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
                   onClick={async () => {
                     await faucet.nativeFaucet!.Claim.call();
                     faucet.nativeFaucet!.isClaimable();
+                    balance.refetch();
                   }}
                   isDisabled={!faucet.nativeFaucet.canclaim}
                   isLoading={faucet.nativeFaucet.Claim.loading}

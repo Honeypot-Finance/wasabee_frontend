@@ -53,13 +53,9 @@ export class NativeFaucetContract implements BaseContract {
     });
     await hpotContract.init();
 
-    const hpotBalance = hpotContract.balance;
-
-    console.log("hpotBalance", Number(hpotBalance.toString()));
-    console.log("minHpotBalance", Number(minHpotBalance.toString()));
-
     const enoughBalance =
-      Number(hpotBalance.toString()) >= Number(minHpotBalance.toString());
+      Number(hpotContract.balanceWithoutDecimals.toString()) >=
+      Number(minHpotBalance.toString());
 
     if (!enoughBalance) {
       this.canclaim = false;
