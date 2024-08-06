@@ -84,11 +84,17 @@ const FaucetPage: NextLayoutPage = observer(() => {
               <Button className="ml-[13px]">Official faucet</Button>
             </Link>
             {faucet.nativeFaucet && (
-              <ControlledToolTip content="HPOT holders can claim BERA tokens every 24 hours.">
+              <ControlledToolTip
+                content={
+                  faucet.nativeFaucet.cantClaimReason ??
+                  "HPOT holders can claim BERA tokens every 24 hours."
+                }
+              >
                 <Button
                   className="ml-[13px]"
                   onClick={async () => {
-                    faucet.nativeFaucet!.Claim.call();
+                    await faucet.nativeFaucet!.Claim.call();
+                    faucet.nativeFaucet!.isClaimable();
                   }}
                   isDisabled={!faucet.nativeFaucet.canclaim}
                   isLoading={faucet.nativeFaucet.Claim.loading}

@@ -11,11 +11,13 @@ import { faucetABI } from "@/lib/abis/faucet";
 import { ContractWrite } from "../utils";
 import { berachainBartioTestnetNetwork, networksMap } from "../chain";
 import { DailyFaucetABI } from "@/lib/abis/faucet/daily-faucet";
+import { Token } from "./token";
 
 export class NativeFaucetContract implements BaseContract {
   address = "";
   name: string = "";
   canclaim = false;
+  cantClaimReason = "";
   abi = DailyFaucetABI;
 
   constructor(args: Partial<NativeFaucetContract>) {
@@ -32,13 +34,43 @@ export class NativeFaucetContract implements BaseContract {
   }
 
   async isClaimable(): Promise<boolean> {
-    const faucetable = await this.contract.read.faucetable([
+    //check time
+    const timeFaucetable = await this.contract.read.faucetable([
       wallet.account as `0x${string}`,
     ]);
 
-    this.canclaim = faucetable;
+    if (!timeFaucetable) {
+      this.canclaim = false;
+      this.cantClaimReason = "Need to wait 24 hours before next claim";
+      return false;
+    }
 
-    return faucetable;
+    const hpotAdress = await this.contract.read.hpot();
+    const minHpotBalance = await this.contract.read.minHpot();
+
+    const hpotContract = new Token({
+      address: hpotAdress,
+    });
+    await hpotContract.init();
+
+    const hpotBalance = hpotContract.balance;
+
+    console.log("hpotBalance", Number(hpotBalance.toString()));
+    console.log("minHpotBalance", Number(minHpotBalance.toString()));
+
+    const enoughBalance =
+      Number(hpotBalance.toString()) >= Number(minHpotBalance.toString());
+
+    if (!enoughBalance) {
+      this.canclaim = false;
+      this.cantClaimReason = `Not enough HPOT balance, need at least ${
+        Number(minHpotBalance) / Math.pow(10, hpotContract.decimals)
+      } HPOT`;
+      return false;
+    }
+
+    this.canclaim = true;
+    return this.canclaim;
   }
 
   get Claim(): ContractWrite<any> {
