@@ -37,7 +37,7 @@ export const LaunchCard = observer(
         {...props}
       >
         <TokenStatusDisplay pair={pair} />
-        <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square">
+        <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
           <Image
             src={!!pair?.logoUrl ? pair.logoUrl : "/images/project_honey.png"}
             alt="honey"

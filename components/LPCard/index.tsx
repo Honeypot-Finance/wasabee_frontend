@@ -146,11 +146,11 @@ export const RemoveLiquidity = observer(
     }));
     return liquidity.currentRemovePair ? (
       <div className="flex justify-center">
-        <div className="flex flex-col gap-[24px] items-center w-[360px]">
+        <div className="flex flex-col gap-[24px] items-center lg:w-[360px]">
           <div className="w-full"></div>
           <ItemSelect
             selectState={state.selectState}
-            className="gap-[16px] justify-between w-full"
+            className="gap-[16px] justify-around w-full flex flex-wrap"
           >
             <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
               25%

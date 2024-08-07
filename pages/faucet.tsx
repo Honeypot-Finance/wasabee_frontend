@@ -52,7 +52,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
       <div className="w-[578px] max-w-[100%] mt-[30px] flex flex-col gap-[24px]">
         {/** Native token faucet */}
         {wallet.currentChain?.officialFaucets?.[0] && (
-          <div className="flex  items-center">
+          <div className="flex items-center flex-col gap-[0.5rem] lg:flex-row">
             <CardContianer>
               <div className="flex-1 flex items-center">
                 <Image
@@ -73,47 +73,52 @@ const FaucetPage: NextLayoutPage = observer(() => {
                 })}
               </div>
             </CardContianer>
-            <Link
-              target="_blank"
-              href={
-                (wallet.currentChain?.officialFaucets &&
-                  wallet.currentChain?.officialFaucets[0].url) ||
-                ""
-              }
-            >
-              <Button className="ml-[13px]">Official faucet</Button>
-            </Link>
-            {faucet.nativeFaucet && (
-              <ControlledToolTip
-                content={
-                  faucet.nativeFaucet.cantClaimReason ??
-                  "HPOT holders can claim BERA tokens every 24 hours."
+            <div className="flex">
+              <Link
+                target="_blank"
+                href={
+                  (wallet.currentChain?.officialFaucets &&
+                    wallet.currentChain?.officialFaucets[0].url) ||
+                  ""
                 }
               >
-                <Button
-                  className="ml-[13px]"
-                  onClick={async () => {
-                    await faucet.nativeFaucet!.Claim.call();
-                    faucet.nativeFaucet!.isClaimable();
-                    balance.refetch();
-                  }}
-                  isDisabled={!faucet.nativeFaucet.canclaim}
-                  isLoading={faucet.nativeFaucet.Claim.loading}
+                <Button className="lg:ml-[13px]">Official faucet</Button>
+              </Link>
+              {faucet.nativeFaucet && (
+                <ControlledToolTip
+                  content={
+                    faucet.nativeFaucet.cantClaimReason ??
+                    "HPOT holders can claim BERA tokens every 24 hours."
+                  }
                 >
-                  {faucet.nativeFaucet.canclaim ? "Claim" : "Not Available"}
-                </Button>
-              </ControlledToolTip>
-            )}
+                  <Button
+                    className="ml-[13px]"
+                    onClick={async () => {
+                      await faucet.nativeFaucet!.Claim.call();
+                      faucet.nativeFaucet!.isClaimable();
+                      balance.refetch();
+                    }}
+                    isDisabled={!faucet.nativeFaucet.canclaim}
+                    isLoading={faucet.nativeFaucet.Claim.loading}
+                  >
+                    {faucet.nativeFaucet.canclaim ? "Claim" : "Not Available"}
+                  </Button>
+                </ControlledToolTip>
+              )}
+            </div>
           </div>
         )}
         {wallet.currentChain?.faucetTokens?.length ? (
           wallet.currentChain?.faucetTokens.map((token) => (
-            <div key={token.address} className="flex  items-center">
+            <div
+              key={token.address}
+              className="flex items-center flex-col lg:flex-row gap-[0.5rem]"
+            >
               <TokenBalanceCard token={token}></TokenBalanceCard>
               <Button
                 isDisabled={token.claimed}
                 isLoading={token.faucet.loading}
-                className="ml-[13px]"
+                className="lg:ml-[13px]"
                 onClick={async () => {
                   token.claimed = true;
                   await token.faucet.call();

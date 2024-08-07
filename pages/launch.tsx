@@ -95,7 +95,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 <DropdownSvg></DropdownSvg>
               </NextButton>
             </PopoverTrigger>
-            <PopoverContent className="flex w-[352px] flex-col items-center gap-4 border border-[color:var(--card-stroke,#F7931A)] [background:var(--card-color,#271A0C)] rounded-xl border-solid">
+            <PopoverContent className="flex lg:w-[352px] flex-col items-center gap-4 border border-[color:var(--card-stroke,#F7931A)] [background:var(--card-color,#271A0C)] rounded-xl border-solid">
               <Observer>
                 {() => (
                   <div className="w-full">

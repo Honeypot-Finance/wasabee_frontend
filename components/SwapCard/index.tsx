@@ -35,6 +35,7 @@ export const SwapCard = observer(() => {
       },
     }),
   }));
+
   const { inputCurrency, outputCurrency } = router.query as {
     inputCurrency: string;
     outputCurrency: string;
@@ -105,7 +106,7 @@ export const SwapCard = observer(() => {
             >
               <ChartData></ChartData>
             </div>
-            <div className="flex justify-between items-center w-full">
+            <div className="flex flex-col lg:flex-row justify-between items-center w-full">
               <SwapAmount
                 label="From"
                 inputProps={{
@@ -121,7 +122,7 @@ export const SwapCard = observer(() => {
                   },
                 }}
               ></SwapAmount>
-              <div className="flex flex-col items-end">
+              <div className="flex flex-col items-end w-full lg:w-[unset]">
                 {!!swap.fromToken && (
                   <div className="flex items-center">
                     <div className="text-sub">
@@ -157,7 +158,7 @@ export const SwapCard = observer(() => {
               ></ExchangeSvg>
               <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
             </div>
-            <div className="flex justify-between  items-center w-full">
+            <div className="flex flex-col lg:flex-row justify-between items-center w-full">
               <SwapAmount
                 label="To"
                 inputProps={{
@@ -169,7 +170,7 @@ export const SwapCard = observer(() => {
                   },
                 }}
               ></SwapAmount>
-              <div className="flex flex-col items-end">
+              <div className="flex flex-col items-end w-full lg:w-[unset]">
                 {!!swap.toToken && (
                   <div className="flex items-center">
                     <div className="text-sub">
@@ -211,7 +212,7 @@ export const SwapCard = observer(() => {
             {swap.fromToken && swap.toToken && (
               <ItemSelect
                 selectState={state.selectState}
-                className="gap-[16px] justify-between w-full"
+                className="gap-[16px] flex justify-between w-full flex-wrap"
               >
                 <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
                   25%
