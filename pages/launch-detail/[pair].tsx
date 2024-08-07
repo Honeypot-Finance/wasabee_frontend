@@ -239,7 +239,7 @@ const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
 
 const SuccessAction = observer(({ pair }: { pair: FtoPairContract }) => {
   return (
-    <div className="flex gap-[16px] justify-center items-center">
+    <div className="flex gap-[16px] justify-center items-center flex-col lg:flex-row">
       {wallet.account != pair.provider && (
         <Button
           className=""
