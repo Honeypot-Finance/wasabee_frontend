@@ -13,6 +13,19 @@ import { cn } from "@/lib/tailwindcss";
 import TokenStatusDisplay from "../atoms/TokenStatusDisplay/TokenStatusDisplay";
 import { WatchAsset } from "../atoms/WatchAsset/WatchAsset";
 import Image from "next/image";
+import { SlOptions, SlShare } from "react-icons/sl";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/react";
+import { OptionsDropdown } from "../OptionsDropdown/OptionsDropdown";
+import { WalletSvg } from "../svg/wallet";
+import { VscCopy } from "react-icons/vsc";
+import { BiWallet } from "react-icons/bi";
+import ShareSocialMedialPopUp from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import { toast } from "react-toastify";
 
 const Actions = () => {};
 
@@ -37,6 +50,37 @@ export const LaunchCard = observer(
         {...props}
       >
         <TokenStatusDisplay pair={pair} />
+        <OptionsDropdown
+          options={[
+            {
+              icon: <VscCopy />,
+              name: "Copy token Address",
+              onClick: () => {
+                navigator.clipboard.writeText(
+                  pair?.launchedToken.address ?? ""
+                );
+                toast.success("Token Address copied to clipboard");
+              },
+            },
+            {
+              icon: <BiWallet />,
+              name: "Import token to wallet",
+              onClick: () => {
+                pair?.launchedToken.watch();
+              },
+            },
+            {
+              icon: <SlShare />,
+              name: (
+                <ShareSocialMedialPopUp
+                  shareUrl={`${window.location.origin}/launch-detail/${pair?.address}`}
+                  shareText={"Checkout our Token " + pair?.projectName}
+                  text="Share this project"
+                />
+              ),
+            },
+          ]}
+        />
         <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
           <Image
             src={!!pair?.logoUrl ? pair.logoUrl : "/images/project_honey.png"}
@@ -50,22 +94,6 @@ export const LaunchCard = observer(
             {pair?.launchedToken.name} ({pair?.launchedToken.symbol})
           </div>{" "}
         </h4>{" "}
-        <div className=" w-full flex justify-center items-center gap-[2rem] lg:gap-[0.5rem]">
-          {" "}
-          {pair?.launchedToken.displayName && (
-            <span className="relative w-[2rem] h-[2rem] lg:w-[1rem] lg:h-[1rem]">
-              <Copy
-                className="w-full h-full"
-                value={pair.launchedToken.address}
-              ></Copy>
-            </span>
-          )}
-          {pair?.launchedToken.address && (
-            <span className="relative w-[2rem] h-[2rem] lg:w-[1rem] lg:h-[1rem]">
-              <WatchAsset token={pair.launchedToken}></WatchAsset>
-            </span>
-          )}
-        </div>
         <div
           className={cn(
             "grid  items-start gap-6 text-white mt-2 justify-between w-full break-all ",
