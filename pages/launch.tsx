@@ -213,7 +213,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                             >
                               <Button className="w-full">
                                 <p>Swap Token</p>
-                                <p>
+                                {/* <p>
                                   <Copy
                                     onClick={(e) => {
                                       e.preventDefault();
@@ -221,7 +221,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                                     className="absolute ml-[8px] top-[50%] translate-y-[-50%]"
                                     value={`${window.location.origin}/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
                                   ></Copy>
-                                </p>
+                                </p> */}
                               </Button>{" "}
                             </Link>
                           )}

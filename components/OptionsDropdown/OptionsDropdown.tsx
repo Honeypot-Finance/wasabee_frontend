@@ -1,3 +1,4 @@
+import { cn } from "@/lib/tailwindcss";
 import {
   Dropdown,
   DropdownTrigger,
@@ -23,7 +24,7 @@ export function OptionsDropdown(props: OptionsDropdownProps) {
   return (
     <Dropdown className="text-3xl">
       <DropdownTrigger>
-        <Button className="absolute left-[0.5rem] top-[0.5rem] bg-transparent min-w-0">
+        <Button className={cn("bg-transparent min-w-0", props.className)}>
           <SlOptions
             size={20}
             className="cursor-pointer hover:text-[#F7931A]"

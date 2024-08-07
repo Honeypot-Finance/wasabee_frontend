@@ -28,7 +28,7 @@ import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
-import { BiLinkExternal } from "react-icons/bi";
+import { BiLinkExternal, BiWallet } from "react-icons/bi";
 import { PopupActions } from "reactjs-popup/dist/types";
 import PopUp from "@/components/PopUp/PopUp";
 import { info } from "console";
@@ -38,6 +38,9 @@ import TokenStatusDisplay from "@/components/atoms/TokenStatusDisplay/TokenStatu
 import { Provider } from "ethcall";
 import { WatchAsset } from "@/components/atoms/WatchAsset/WatchAsset";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
+import { OptionsDropdown } from "@/components/OptionsDropdown/OptionsDropdown";
+import { SlShare } from "react-icons/sl";
+import { VscCopy } from "react-icons/vsc";
 
 const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -539,23 +542,40 @@ const LaunchPage: NextLayoutPage = observer(() => {
           </div>
           <div className="text-left relative flex-1 flex basis-full w-full sm:basis-0 sm:min-w-[500px]  flex-col gap-[10px] shrink-0 [background:#271B0C] rounded-2xl py-[12px] px-[24px]">
             <div className="flex absolute right-[24px] top-[12px]">
-              {state.pair.value?.launchedToken.address && (
-                <span className="flex justify-center items-center">
-                  <Copy value={state.pair.value?.launchedToken.address}></Copy>
-                  <span className="w-[1rem] h-[1rem]">
-                    {state.pair?.value.launchedToken.address && (
-                      <WatchAsset
-                        token={state.pair?.value.launchedToken}
-                      ></WatchAsset>
-                    )}
-                  </span>
-                </span>
-              )}
-              {state.pair.value?.isInit && (
-                <UpdateProjectAction
-                  pair={state.pair.value}
-                ></UpdateProjectAction>
-              )}
+              <OptionsDropdown
+                className=""
+                options={[
+                  {
+                    icon: <VscCopy />,
+                    name: "Copy token Address",
+                    onClick: () => {
+                      navigator.clipboard.writeText(
+                        state.pair?.value?.launchedToken.address ?? ""
+                      );
+                      toast.success("Token Address copied to clipboard");
+                    },
+                  },
+                  {
+                    icon: <BiWallet />,
+                    name: "Import token to wallet",
+                    onClick: () => {
+                      state.pair?.value?.launchedToken.watch();
+                    },
+                  },
+                  {
+                    icon: <SlShare />,
+                    name: (
+                      <ShareSocialMedialPopUp
+                        shareUrl={`${window.location.origin}/launch-detail/${state.pair?.value?.address}`}
+                        shareText={
+                          "Checkout our Token " + state.pair?.value?.projectName
+                        }
+                        text="Share this project"
+                      />
+                    ),
+                  },
+                ]}
+              />
             </div>
             <div>
               {/* <Button

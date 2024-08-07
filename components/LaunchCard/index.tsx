@@ -51,6 +51,7 @@ export const LaunchCard = observer(
       >
         <TokenStatusDisplay pair={pair} />
         <OptionsDropdown
+          className="absolute left-[0.5rem] top-[0.5rem] "
           options={[
             {
               icon: <VscCopy />,
