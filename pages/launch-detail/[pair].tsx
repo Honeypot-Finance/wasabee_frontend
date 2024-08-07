@@ -91,6 +91,7 @@ const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
               imagePath={
                 !!pair.logoUrl ? pair.logoUrl : "/images/project_honey.png"
               }
+              blobName={pair.address}
               onUpload={async (url) => {
                 console.log(url);
                 await launchpad.updateProjectLogo.call({

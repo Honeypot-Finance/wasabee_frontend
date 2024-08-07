@@ -8,6 +8,7 @@ import { wallet } from "@/services/wallet";
 export interface UploadImageProps {
   onUpload: (url: string) => void;
   imagePath: string;
+  blobName: string;
 }
 
 export function UploadImage(props: UploadImageProps): JSX.Element {
@@ -17,7 +18,7 @@ export function UploadImage(props: UploadImageProps): JSX.Element {
     const file = e.target.files?.[0];
     if (file) {
       const response = await fetch(
-        `/api/upload/upload-project-icon?filename=${file.name}`,
+        `/api/upload/upload-project-icon?filename=${props.blobName}`,
         {
           method: "POST",
           body: file,
