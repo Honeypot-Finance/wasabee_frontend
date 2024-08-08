@@ -20,7 +20,7 @@ export const TokenBalanceCard = observer(
       <CardContianer autoSize={autoSize}>
         <TokenLogo token={token}></TokenLogo>
         <div className="flex-1 flex items-center">
-          {token.displayName}
+          {token.name} ({token.symbol})
           <span className="w-[1rem]">
             <WatchAsset
               className="ml-[8px] w-full h-full flex justify-center items-center"

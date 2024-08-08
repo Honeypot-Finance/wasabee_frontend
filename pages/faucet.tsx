@@ -64,7 +64,8 @@ const FaucetPage: NextLayoutPage = observer(() => {
                   width={24}
                   height={24}
                 />
-                {wallet.currentChain?.chain.nativeCurrency.symbol}
+                {wallet.currentChain?.chain.nativeCurrency.name} (
+                {wallet.currentChain?.chain.nativeCurrency.symbol})
               </div>
               <div className="">
                 {amountFormatted(balance.data?.value.toString(), {
