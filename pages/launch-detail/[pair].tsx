@@ -32,7 +32,9 @@ import { BiLinkExternal, BiWallet } from "react-icons/bi";
 import { PopupActions } from "reactjs-popup/dist/types";
 import PopUp from "@/components/PopUp/PopUp";
 import { info } from "console";
-import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import ShareSocialMedialPopUp, {
+  shareMediaToast,
+} from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { trpcClient } from "@/lib/trpc";
 import TokenStatusDisplay from "@/components/atoms/TokenStatusDisplay/TokenStatusDisplay";
 import { Provider } from "ethcall";
@@ -555,15 +557,16 @@ const LaunchPage: NextLayoutPage = observer(() => {
                   },
                   {
                     icon: <SlShare />,
-                    display: (
-                      <ShareSocialMedialPopUp
-                        shareUrl={`${window.location.origin}/launch-detail/${state.pair?.value?.address}`}
-                        shareText={
-                          "Checkout our Token " + state.pair?.value?.projectName
-                        }
-                        text="Share this project"
-                      />
-                    ),
+                    display: "Share this project",
+                    onClick: () =>
+                      shareMediaToast({
+                        shareUrl: `${window.location.origin}/launch-detail/${state.pair?.value?.address}`,
+                        shareText:
+                          "Checkout our Token " +
+                          state.pair?.value?.projectName,
+
+                        text: "Share this project",
+                      }),
                   },
                   {
                     icon: <LuFileEdit />,

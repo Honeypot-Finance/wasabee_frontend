@@ -24,7 +24,9 @@ import { OptionsDropdown } from "../OptionsDropdown/OptionsDropdown";
 import { WalletSvg } from "../svg/wallet";
 import { VscCopy } from "react-icons/vsc";
 import { BiWallet } from "react-icons/bi";
-import ShareSocialMedialPopUp from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import ShareSocialMedialPopUp, {
+  shareMediaToast,
+} from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { toast } from "react-toastify";
 
 const Actions = () => {};
@@ -72,13 +74,14 @@ export const LaunchCard = observer(
             },
             {
               icon: <SlShare />,
-              display: (
-                <ShareSocialMedialPopUp
-                  shareUrl={`${window.location.origin}/launch-detail/${pair?.address}`}
-                  shareText={"Checkout our Token " + pair?.projectName}
-                  text="Share this project"
-                />
-              ),
+              display: "Share this project",
+              onClick: () =>
+                shareMediaToast({
+                  shareUrl: `${window.location.origin}/launch-detail/${pair?.address}`,
+                  shareText: "Checkout our Token " + pair?.projectName,
+
+                  text: "Share this project",
+                }),
             },
           ]}
         />
