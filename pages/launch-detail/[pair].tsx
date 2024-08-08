@@ -542,29 +542,22 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 className=""
                 options={[
                   optionsPresets.copy(
-                    state.pair?.value?.address ?? "",
+                    state.pair?.value?.launchedToken.address ?? "",
                     "Copy Token address",
                     "Token address copied"
                   ),
+                  optionsPresets.share({
+                    shareUrl: `${window.location.origin}/launch-detail/${state.pair?.value?.address}`,
+                    displayText: "Share this project",
+                    shareText:
+                      "Checkout this Token: " + state.pair?.value?.projectName,
+                  }),
                   {
                     icon: <BiWallet />,
                     display: "Import token to wallet",
                     onClick: () => {
                       state.pair?.value?.launchedToken.watch();
                     },
-                  },
-                  {
-                    icon: <SlShare />,
-                    display: "Share this project",
-                    onClick: () =>
-                      shareMediaToast({
-                        shareUrl: `${window.location.origin}/launch-detail/${state.pair?.value?.address}`,
-                        shareText:
-                          "Checkout our Token " +
-                          state.pair?.value?.projectName,
-
-                        text: "Share this project",
-                      }),
                   },
                   {
                     icon: <LuFileEdit />,

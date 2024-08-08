@@ -6,10 +6,12 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
-import { SlOptions } from "react-icons/sl";
+import { SlOptions, SlShare } from "react-icons/sl";
 import { VscCopy } from "react-icons/vsc";
 import { toast } from "react-toastify";
 import * as clipboard from "clipboard-polyfill";
+import CopyToClipboard from "react-copy-to-clipboard";
+import { shareMediaToast } from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 
 type optionItem = {
   icon: JSX.Element;
@@ -28,35 +30,61 @@ export const optionsPresets = {
       icon: <VscCopy />,
       display: displayText ?? "Copy",
       onClick: async () => {
-        clipboard.writeText(copyText).then(
-          () => {
-            toast.success(copysSuccessText ?? "Copied");
-          },
-          () => {
-            toast.error("Failed to copy");
-          }
-        );
-
-        // navigator.clipboard
-        //   .write([
-        //     new ClipboardItem({
-        //       "text/plain": new Promise((resolve) => {
-        //         resolve(
-        //           new Blob([copyText], {
-        //             type: "text/plain",
-        //           })
-        //         );
-        //       }),
-        //     }),
-        //   ])
-        //   .then(() => {
-        //     toast.success(copysSuccessText ?? "Copied");
-        //   })
-        //   .catch((e) => {
-        //     console.error(e);
-        //     toast.error("Failed to copy");
-        //   });
+        if (window.navigator.clipboard) {
+          window.navigator.clipboard
+            .writeText(copyText)
+            .then(() => {
+              toast.success(copysSuccessText ?? "Copied");
+            })
+            .catch((error) => {
+              console.error("Copy failed", error);
+            });
+        } else {
+          clipboard.writeText(copyText).then(
+            () => {
+              toast.success(copysSuccessText ?? "Copied");
+            },
+            (error: Error) => {
+              toast.error(
+                <div>
+                  <h3>
+                    Copy failed, please do it manually, click this message to
+                    open prompt:
+                  </h3>
+                  <p>{copyText}</p>
+                </div>,
+                {
+                  autoClose: false,
+                  onClick: () => {
+                    window.prompt("Copy to clipboard: Ctrl+C, Enter", copyText);
+                  },
+                }
+              );
+              console.error("Copy failed", error);
+            }
+          );
+        }
       },
+    };
+  },
+  share: ({
+    shareText,
+    shareUrl,
+    displayText,
+  }: {
+    shareText: string;
+    shareUrl: string;
+    displayText?: string;
+  }) => {
+    return {
+      icon: <SlShare />,
+      display: displayText ?? "Share",
+      onClick: () =>
+        shareMediaToast({
+          shareUrl: shareUrl,
+          shareText: shareText,
+          text: "Share this project",
+        }),
     };
   },
 };

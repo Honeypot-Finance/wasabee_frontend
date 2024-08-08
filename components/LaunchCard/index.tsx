@@ -58,7 +58,7 @@ export const LaunchCard = observer(
           className="absolute left-[0.5rem] top-[0.5rem] "
           options={[
             optionsPresets.copy(
-              pair?.address ?? "",
+              pair?.launchedToken.address ?? "",
               "Copy Token address",
               "Token address copied"
             ),
@@ -69,17 +69,11 @@ export const LaunchCard = observer(
                 pair?.launchedToken.watch();
               },
             },
-            {
-              icon: <SlShare />,
-              display: "Share this project",
-              onClick: () =>
-                shareMediaToast({
-                  shareUrl: `${window.location.origin}/launch-detail/${pair?.address}`,
-                  shareText: "Checkout our Token " + pair?.projectName,
-
-                  text: "Share this project",
-                }),
-            },
+            optionsPresets.share({
+              shareUrl: `${window.location.origin}/launch-detail/${pair?.address}`,
+              displayText: "Share this project",
+              shareText: "Checkout this Token: " + pair?.projectName,
+            }),
           ]}
         />
         <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
