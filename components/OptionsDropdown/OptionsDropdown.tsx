@@ -6,11 +6,10 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
-import { useState } from "react";
-import copy from "copy-to-clipboard";
 import { SlOptions } from "react-icons/sl";
 import { VscCopy } from "react-icons/vsc";
 import { toast } from "react-toastify";
+import * as clipboard from "clipboard-polyfill";
 
 type optionItem = {
   icon: JSX.Element;
@@ -29,25 +28,14 @@ export const optionsPresets = {
       icon: <VscCopy />,
       display: displayText ?? "Copy",
       onClick: async () => {
-        const input = document.createElement("input");
-        input.setAttribute("contenteditable", "true");
-        input.setAttribute("type", "text");
-        input.value = copyText;
-        input.style.top = "0";
-        input.style.left = "0";
-        input.style.position = "fixed";
-        document.body.appendChild(input);
-        input.focus();
-        input.select();
-        input.setSelectionRange(0, 99999); /* For mobile devices */
-
-        document.execCommand("copy");
-
-        const copy = await navigator.clipboard.writeText(copyText);
-
-        document.body.removeChild(input);
-
-        toast.success(copysSuccessText ?? "Copied");
+        clipboard.writeText(copyText).then(
+          () => {
+            toast.success(copysSuccessText ?? "Copied");
+          },
+          () => {
+            toast.error("Failed to copy");
+          }
+        );
 
         // navigator.clipboard
         //   .write([
