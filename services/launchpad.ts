@@ -56,7 +56,7 @@ class LaunchPad {
   pairFilter: PairFilter = {
     search: "",
     status: "all",
-    showNotValidatedPairs: false,
+    showNotValidatedPairs: true,
   };
 
   set pairFilterSearch(search: string) {

@@ -276,15 +276,6 @@ class Liquidity {
         )
       );
 
-      console.log(
-        Object.values(this.tokensMap).map((token: Token) => {
-          return {
-            name: token.name,
-            address: token.address,
-          };
-        })
-      );
-
       this.isInit = true;
     }, 300)();
   }
@@ -314,6 +305,22 @@ class Liquidity {
       this.pairsByToken[`${token0Address}-${token1Address}`] = pairContract;
       return pairContract;
     }
+  }
+
+  async getTokenFtoPair(token: Token): Promise<Token[]> {
+    const pairTokens: Token[] = [];
+
+    wallet.currentChain.contracts.ftoTokens.forEach(async (ftoToken) => {
+      const pair = await this.getPairByTokens(
+        token.address,
+        ftoToken.address ?? ""
+      );
+      if (pair) {
+        pairTokens.push(ftoToken as Token);
+      }
+    });
+
+    return pairTokens;
   }
 }
 

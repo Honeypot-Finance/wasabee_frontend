@@ -38,7 +38,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
     if (!wallet.isInit) {
       return;
     }
-    launchpad.showNotValidatedPairs = false;
+    launchpad.showNotValidatedPairs = true;
     launchpad.ftoPairs.call({
       page: launchpad.ftoPairsPagination.page,
       limit: launchpad.ftoPairsPagination.limit,
@@ -171,6 +171,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
               limit: launchpad.ftoPairsPagination.limit,
             });
           }}
+          defaultSelected={launchpad.pairFilter.showNotValidatedPairs}
+          defaultChecked={launchpad.pairFilter.showNotValidatedPairs}
           checked={launchpad.pairFilter.showNotValidatedPairs}
           className="mt-2"
         >
