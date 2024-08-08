@@ -28,21 +28,30 @@ export const optionsPresets = {
       icon: <VscCopy />,
       display: displayText ?? "Copy",
       onClick: () => {
-        navigator.clipboard
-          .write([
-            new ClipboardItem({
-              "text/plain": new Blob([copyText], {
-                type: "text/plain",
-              }),
-            }),
-          ])
-          .then(() => {
-            toast.success(copysSuccessText ?? "Copied");
-          })
-          .catch((e) => {
-            console.error(e);
-            toast.error("Failed to copy");
-          });
+        const textInp = document.createElement("input");
+        textInp.value = copyText;
+        document.body.appendChild(textInp);
+        textInp.select();
+        textInp.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        document.body.removeChild(textInp);
+
+        toast.success(copysSuccessText ?? "Copied");
+        // navigator.clipboard
+        //   .write([
+        //     new ClipboardItem({
+        //       "text/plain": new Blob([copyText], {
+        //         type: "text/plain",
+        //       }),
+        //     }),
+        //   ])
+        //   .then(() => {
+        //     toast.success(copysSuccessText ?? "Copied");
+        //   })
+        //   .catch((e) => {
+        //     console.error(e);
+        //     toast.error("Failed to copy");
+        //   });
       },
     };
   },
