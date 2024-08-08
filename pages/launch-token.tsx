@@ -126,6 +126,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
               <div className="flex flex-col gap-4">
                 <label htmlFor="raisedToken">Raised Token</label>
                 <Select
+                  required
                   classNames={{
                     trigger: "bg-transparent data-[hover=true]:bg-transparent",
                   }}
