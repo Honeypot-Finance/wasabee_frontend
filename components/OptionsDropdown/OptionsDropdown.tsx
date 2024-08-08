@@ -28,14 +28,22 @@ export const optionsPresets = {
     return {
       icon: <VscCopy />,
       display: displayText ?? "Copy",
-      onClick: () => {
+      onClick: async () => {
         const input = document.createElement("input");
         input.setAttribute("contenteditable", "true");
+        input.setAttribute("type", "text");
         input.value = copyText;
+        input.style.top = "0";
+        input.style.left = "0";
+        input.style.position = "fixed";
         document.body.appendChild(input);
+        input.focus();
         input.select();
         input.setSelectionRange(0, 99999); /* For mobile devices */
+
         document.execCommand("copy");
+
+        const copy = await navigator.clipboard.writeText(copyText);
 
         document.body.removeChild(input);
 
