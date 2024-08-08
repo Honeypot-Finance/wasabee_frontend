@@ -26,6 +26,7 @@
     "axios": "^1.7.2",
     "bignumber.js": "^9.1.2",
     "clsx": "^2.1.0",
+    "copy-to-clipboard": "^3.3.3",
     "dataloader": "^2.2.2",
     "dayjs": "^1.11.11",
     "echarts": "^5.5.1",

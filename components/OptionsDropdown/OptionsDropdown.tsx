@@ -7,6 +7,7 @@ import {
   Button,
 } from "@nextui-org/react";
 import { useState } from "react";
+import copy from "copy-to-clipboard";
 import { SlOptions } from "react-icons/sl";
 import { VscCopy } from "react-icons/vsc";
 import { toast } from "react-toastify";
@@ -28,25 +29,31 @@ export const optionsPresets = {
       icon: <VscCopy />,
       display: displayText ?? "Copy",
       onClick: () => {
-        navigator.clipboard
-          .write([
-            new ClipboardItem({
-              "text/plain": new Promise((resolve) => {
-                resolve(
-                  new Blob([copyText], {
-                    type: "text/plain",
-                  })
-                );
-              }),
-            }),
-          ])
-          .then(() => {
-            toast.success(copysSuccessText ?? "Copied");
-          })
-          .catch((e) => {
-            console.error(e);
-            toast.error("Failed to copy");
-          });
+        const c = copy(copyText);
+        if (c) {
+          toast.success(copysSuccessText ?? "Copied");
+        } else {
+          toast.error("Failed to copy");
+        }
+        // navigator.clipboard
+        //   .write([
+        //     new ClipboardItem({
+        //       "text/plain": new Promise((resolve) => {
+        //         resolve(
+        //           new Blob([copyText], {
+        //             type: "text/plain",
+        //           })
+        //         );
+        //       }),
+        //     }),
+        //   ])
+        //   .then(() => {
+        //     toast.success(copysSuccessText ?? "Copied");
+        //   })
+        //   .catch((e) => {
+        //     console.error(e);
+        //     toast.error("Failed to copy");
+        //   });
       },
     };
   },
