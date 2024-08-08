@@ -6,6 +6,12 @@ import CardContianer from "../CardContianer/CardContianer";
 import { useEffect } from "react";
 import { Button } from "@nextui-org/react";
 import { WatchAsset } from "../atoms/WatchAsset/WatchAsset";
+import { BiWallet } from "react-icons/bi";
+import { SlShare } from "react-icons/sl";
+import { VscCopy } from "react-icons/vsc";
+import { toast } from "react-toastify";
+import { OptionsDropdown } from "../OptionsDropdown/OptionsDropdown";
+import { shareMediaToast } from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 interface TokenBalanceCardProps {
   token: Token;
   autoSize?: boolean;
@@ -21,13 +27,26 @@ export const TokenBalanceCard = observer(
         <TokenLogo token={token}></TokenLogo>
         <div className="flex-1 flex items-center">
           {token.name} ({token.symbol})
-          <span className="w-[1rem]">
-            <WatchAsset
-              className="ml-[8px] w-full h-full flex justify-center items-center"
-              token={token}
-            ></WatchAsset>
-          </span>
-          <Copy className="ml-[8px]" value={token.address}></Copy>
+          <OptionsDropdown
+            className="min-h-0 h-[unset]"
+            options={[
+              {
+                icon: <VscCopy />,
+                display: "Copy token Address",
+                onClick: () => {
+                  navigator.clipboard.writeText(token.address ?? "");
+                  toast.success("Token Address copied to clipboard");
+                },
+              },
+              {
+                icon: <BiWallet />,
+                display: "Import token to wallet",
+                onClick: () => {
+                  token.watch();
+                },
+              },
+            ]}
+          />
         </div>
         <div className="">{token.balanceFormatted}</div>
       </CardContianer>
