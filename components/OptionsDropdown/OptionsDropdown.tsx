@@ -29,12 +29,18 @@ export const optionsPresets = {
       icon: <VscCopy />,
       display: displayText ?? "Copy",
       onClick: () => {
-        const c = copy(copyText);
-        if (c) {
-          toast.success(copysSuccessText ?? "Copied");
-        } else {
-          toast.error("Failed to copy");
-        }
+        const input = document.createElement("input");
+        input.setAttribute("contenteditable", "true");
+        input.value = copyText;
+        document.body.appendChild(input);
+        input.select();
+        input.setSelectionRange(0, 99999); /* For mobile devices */
+        document.execCommand("copy");
+
+        document.body.removeChild(input);
+
+        toast.success(copysSuccessText ?? "Copied");
+
         // navigator.clipboard
         //   .write([
         //     new ClipboardItem({
