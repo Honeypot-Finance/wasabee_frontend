@@ -8,6 +8,8 @@ import {
 } from "@nextui-org/react";
 import { useState } from "react";
 import { SlOptions } from "react-icons/sl";
+import { VscCopy } from "react-icons/vsc";
+import { toast } from "react-toastify";
 
 type optionItem = {
   icon: JSX.Element;
@@ -19,6 +21,32 @@ interface OptionsDropdownProps {
   className?: string;
   options: optionItem[];
 }
+
+export const optionsPresets = {
+  copy: (copyText: string, displayText?: string, copysSuccessText?: string) => {
+    return {
+      icon: <VscCopy />,
+      display: displayText ?? "Copy",
+      onClick: () => {
+        navigator.clipboard
+          .write([
+            new ClipboardItem({
+              "text/plain": new Blob([copyText], {
+                type: "text/plain",
+              }),
+            }),
+          ])
+          .then(() => {
+            toast.success(copysSuccessText ?? "Copied");
+          })
+          .catch((e) => {
+            console.error(e);
+            toast.error("Failed to copy");
+          });
+      },
+    };
+  },
+};
 
 export function OptionsDropdown(props: OptionsDropdownProps) {
   return (

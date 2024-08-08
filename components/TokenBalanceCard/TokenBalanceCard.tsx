@@ -7,10 +7,10 @@ import { useEffect } from "react";
 import { Button } from "@nextui-org/react";
 import { WatchAsset } from "../atoms/WatchAsset/WatchAsset";
 import { BiWallet } from "react-icons/bi";
-import { SlShare } from "react-icons/sl";
-import { VscCopy } from "react-icons/vsc";
-import { toast } from "react-toastify";
-import { OptionsDropdown } from "../OptionsDropdown/OptionsDropdown";
+import {
+  OptionsDropdown,
+  optionsPresets,
+} from "../OptionsDropdown/OptionsDropdown";
 import { shareMediaToast } from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 interface TokenBalanceCardProps {
   token: Token;
@@ -30,14 +30,11 @@ export const TokenBalanceCard = observer(
           <OptionsDropdown
             className="min-h-0 h-[unset]"
             options={[
-              {
-                icon: <VscCopy />,
-                display: "Copy token Address",
-                onClick: () => {
-                  navigator.clipboard.writeText(token.address ?? "");
-                  toast.success("Token Address copied to clipboard");
-                },
-              },
+              optionsPresets.copy(
+                token.address ?? "",
+                "Copy Token address",
+                "Token address copied"
+              ),
               {
                 icon: <BiWallet />,
                 display: "Import token to wallet",

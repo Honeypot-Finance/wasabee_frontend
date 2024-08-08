@@ -40,7 +40,10 @@ import TokenStatusDisplay from "@/components/atoms/TokenStatusDisplay/TokenStatu
 import { Provider } from "ethcall";
 import { WatchAsset } from "@/components/atoms/WatchAsset/WatchAsset";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
-import { OptionsDropdown } from "@/components/OptionsDropdown/OptionsDropdown";
+import {
+  OptionsDropdown,
+  optionsPresets,
+} from "@/components/OptionsDropdown/OptionsDropdown";
 import { SlShare } from "react-icons/sl";
 import { VscCopy } from "react-icons/vsc";
 
@@ -538,16 +541,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
               <OptionsDropdown
                 className=""
                 options={[
-                  {
-                    icon: <VscCopy />,
-                    display: "Copy token Address",
-                    onClick: () => {
-                      navigator.clipboard.writeText(
-                        state.pair?.value?.launchedToken.address ?? ""
-                      );
-                      toast.success("Token Address copied to clipboard");
-                    },
-                  },
+                  optionsPresets.copy(
+                    state.pair?.value?.address ?? "",
+                    "Copy Token address",
+                    "Token address copied"
+                  ),
                   {
                     icon: <BiWallet />,
                     display: "Import token to wallet",

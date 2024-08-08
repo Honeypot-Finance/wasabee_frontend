@@ -20,9 +20,11 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import { OptionsDropdown } from "../OptionsDropdown/OptionsDropdown";
+import {
+  OptionsDropdown,
+  optionsPresets,
+} from "../OptionsDropdown/OptionsDropdown";
 import { WalletSvg } from "../svg/wallet";
-import { VscCopy } from "react-icons/vsc";
 import { BiWallet } from "react-icons/bi";
 import ShareSocialMedialPopUp, {
   shareMediaToast,
@@ -55,16 +57,11 @@ export const LaunchCard = observer(
         <OptionsDropdown
           className="absolute left-[0.5rem] top-[0.5rem] "
           options={[
-            {
-              icon: <VscCopy />,
-              display: "Copy token Address",
-              onClick: () => {
-                navigator.clipboard.writeText(
-                  pair?.launchedToken.address ?? ""
-                );
-                toast.success("Token Address copied to clipboard");
-              },
-            },
+            optionsPresets.copy(
+              pair?.address ?? "",
+              "Copy Token address",
+              "Token address copied"
+            ),
             {
               icon: <BiWallet />,
               display: "Import token to wallet",
