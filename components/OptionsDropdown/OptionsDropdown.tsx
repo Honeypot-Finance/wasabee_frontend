@@ -11,7 +11,7 @@ import { SlOptions } from "react-icons/sl";
 
 type optionItem = {
   icon: JSX.Element;
-  name: string | JSX.Element;
+  display: string | JSX.Element;
   onClick?: () => void;
 };
 
@@ -38,9 +38,12 @@ export function OptionsDropdown(props: OptionsDropdownProps) {
             onClick={() => {
               option.onClick && option.onClick();
             }}
+            onTouchStart={() => {
+              option.onClick && option.onClick();
+            }}
             startContent={option.icon}
           >
-            {option.name}
+            {option.display}
           </DropdownItem>
         ))}
       </DropdownMenu>

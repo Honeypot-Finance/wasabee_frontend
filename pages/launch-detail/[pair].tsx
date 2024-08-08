@@ -42,8 +42,7 @@ import { OptionsDropdown } from "@/components/OptionsDropdown/OptionsDropdown";
 import { SlShare } from "react-icons/sl";
 import { VscCopy } from "react-icons/vsc";
 
-const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+const UpdateProjectModal = observer(({ pair }: { pair: FtoPairContract }) => {
   const {
     register,
     handleSubmit,
@@ -217,23 +216,9 @@ const UpdateProjectAction = observer(({ pair }: { pair: FtoPairContract }) => {
     </>
   ));
   return (
-    <>
-      <LuFileEdit
-        onClick={() => {
-          if (pair.provider.toLowerCase() !== wallet.account.toLowerCase()) {
-            toast.warning("You are not the owner of this project");
-            return;
-          }
-          onOpen();
-        }}
-        className="cursor-pointer"
-      ></LuFileEdit>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => <FormBody onClose={onClose}></FormBody>}
-        </ModalContent>
-      </Modal>
-    </>
+    <ModalContent>
+      {(onClose) => <FormBody onClose={onClose}></FormBody>}
+    </ModalContent>
   );
 });
 
@@ -381,6 +366,7 @@ const Action = observer(({ pair }: { pair: FtoPairContract }) => {
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const router = useRouter();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { pair: pairAddress } = router.query;
   const [votes, setVotes] = useState({
     rocket_count: 0,
@@ -422,6 +408,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
 
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto">
+      {state.pair.value && (
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+          <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
+        </Modal>
+      )}
       <Breadcrumbs
         breadcrumbs={[
           {
@@ -547,7 +538,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 options={[
                   {
                     icon: <VscCopy />,
-                    name: "Copy token Address",
+                    display: "Copy token Address",
                     onClick: () => {
                       navigator.clipboard.writeText(
                         state.pair?.value?.launchedToken.address ?? ""
@@ -557,14 +548,14 @@ const LaunchPage: NextLayoutPage = observer(() => {
                   },
                   {
                     icon: <BiWallet />,
-                    name: "Import token to wallet",
+                    display: "Import token to wallet",
                     onClick: () => {
                       state.pair?.value?.launchedToken.watch();
                     },
                   },
                   {
                     icon: <SlShare />,
-                    name: (
+                    display: (
                       <ShareSocialMedialPopUp
                         shareUrl={`${window.location.origin}/launch-detail/${state.pair?.value?.address}`}
                         shareText={
@@ -573,6 +564,23 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         text="Share this project"
                       />
                     ),
+                  },
+                  {
+                    icon: <LuFileEdit />,
+                    display: "Update Project",
+                    onClick: () => {
+                      if (!state.pair.value) return;
+
+                      if (
+                        state.pair.value.provider.toLowerCase() !==
+                        wallet.account.toLowerCase()
+                      ) {
+                        toast.warning("You are not the owner of this project");
+                        return;
+                      }
+
+                      onOpen();
+                    },
                   },
                 ]}
               />

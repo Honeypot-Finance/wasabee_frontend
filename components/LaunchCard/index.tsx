@@ -55,7 +55,7 @@ export const LaunchCard = observer(
           options={[
             {
               icon: <VscCopy />,
-              name: "Copy token Address",
+              display: "Copy token Address",
               onClick: () => {
                 navigator.clipboard.writeText(
                   pair?.launchedToken.address ?? ""
@@ -65,14 +65,14 @@ export const LaunchCard = observer(
             },
             {
               icon: <BiWallet />,
-              name: "Import token to wallet",
+              display: "Import token to wallet",
               onClick: () => {
                 pair?.launchedToken.watch();
               },
             },
             {
               icon: <SlShare />,
-              name: (
+              display: (
                 <ShareSocialMedialPopUp
                   shareUrl={`${window.location.origin}/launch-detail/${pair?.address}`}
                   shareText={"Checkout our Token " + pair?.projectName}

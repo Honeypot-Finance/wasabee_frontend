@@ -113,11 +113,12 @@ export class Token implements BaseContract {
   }
 
   getLogoURI() {
+    if (this.logoURI) return;
+
     Object.entries(wallet.currentChain.validatedTokensInfo).forEach(
       ([address, info]) => {
         if (address.toLowerCase() === this.address.toLowerCase()) {
           this.logoURI = info.logoURI ?? "";
-          return;
         }
       }
     );
