@@ -541,11 +541,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
               <OptionsDropdown
                 className=""
                 options={[
-                  optionsPresets.copy(
-                    state.pair?.value?.launchedToken.address ?? "",
-                    "Copy Token address",
-                    "Token address copied"
-                  ),
+                  optionsPresets.copy({
+                    copyText: state.pair?.value?.launchedToken.address ?? "",
+                    displayText: "Copy Token address",
+                    copysSuccessText: "Token address copied",
+                  }),
                   optionsPresets.share({
                     shareUrl: `${window.location.origin}/launch-detail/${state.pair?.value?.address}`,
                     displayText: "Share this project",

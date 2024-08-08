@@ -57,11 +57,11 @@ export const LaunchCard = observer(
         <OptionsDropdown
           className="absolute left-[0.5rem] top-[0.5rem] "
           options={[
-            optionsPresets.copy(
-              pair?.launchedToken.address ?? "",
-              "Copy Token address",
-              "Token address copied"
-            ),
+            optionsPresets.copy({
+              copyText: pair?.launchedToken.address ?? "",
+              displayText: "Copy Token address",
+              copysSuccessText: "Token address copied",
+            }),
             {
               icon: <BiWallet />,
               display: "Import token to wallet",

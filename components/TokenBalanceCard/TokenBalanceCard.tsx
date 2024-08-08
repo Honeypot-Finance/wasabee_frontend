@@ -30,11 +30,11 @@ export const TokenBalanceCard = observer(
           <OptionsDropdown
             className="min-h-0 h-[unset]"
             options={[
-              optionsPresets.copy(
-                token.address ?? "",
-                "Copy Token address",
-                "Token address copied"
-              ),
+              optionsPresets.copy({
+                copyText: token?.address ?? "",
+                displayText: "Copy Token address",
+                copysSuccessText: "Token address copied",
+              }),
               {
                 icon: <BiWallet />,
                 display: "Import token to wallet",

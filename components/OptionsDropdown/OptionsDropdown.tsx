@@ -25,7 +25,15 @@ interface OptionsDropdownProps {
 }
 
 export const optionsPresets = {
-  copy: (copyText: string, displayText?: string, copysSuccessText?: string) => {
+  copy: ({
+    copyText,
+    displayText,
+    copysSuccessText,
+  }: {
+    copyText: string;
+    displayText?: string;
+    copysSuccessText?: string;
+  }) => {
     return {
       icon: <VscCopy />,
       display: displayText ?? "Copy",

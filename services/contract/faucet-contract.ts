@@ -74,4 +74,15 @@ export class NativeFaucetContract implements BaseContract {
       action: "Get Faucet",
     });
   }
+
+  donateToContract = async (amount: string) => {
+    const tx = await wallet.walletClient.sendTransaction({
+      account: wallet.account as `0x${string}`,
+      to: this.address as `0x${string}`,
+      value: ethers.utils.parseEther(amount).toBigInt(),
+      chain: null,
+    });
+
+    return tx;
+  };
 }
