@@ -21,6 +21,14 @@ import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { GhostPair } from "@/services/indexer/indexerTypes";
 import { ItemSelect, SelectItem, SelectState } from "../ItemSelect";
+import { Tooltip } from "@nextui-org/react";
+import Image from "next/image";
+import { delay } from "lodash";
+import { LuOption } from "react-icons/lu";
+import { IoOptions } from "react-icons/io5";
+import { SlOptions } from "react-icons/sl";
+import { FaLongArrowAltRight } from "react-icons/fa";
+import TokenLogo from "../TokenLogo/TokenLogo";
 
 export const SwapCard = observer(() => {
   const router = useRouter();
@@ -227,6 +235,61 @@ export const SwapCard = observer(() => {
                   100%
                 </SelectItem>
               </ItemSelect>
+            )}
+            {swap.routerToken && (
+              <div className="w-full p-1 flex justify-between items-center rounded-xl  bg-black/50">
+                <>
+                  <div>
+                    <Tooltip
+                      content={
+                        <div className="flex flex-col items-center gap-[8px]">
+                          {swap.fromToken?.name} ({swap.fromToken?.symbol})
+                        </div>
+                      }
+                      closeDelay={0}
+                    >
+                      <div>
+                        <TokenLogo token={swap.fromToken as Token} />
+                      </div>
+                    </Tooltip>
+                  </div>
+                  <FaLongArrowAltRight />
+                </>
+
+                {swap.routerToken.map((token) => (
+                  <>
+                    <div key={token.address}>
+                      <Tooltip
+                        content={
+                          <div className="flex flex-col items-center gap-[8px]">
+                            {token.name} ({token.symbol})
+                          </div>
+                        }
+                        closeDelay={0}
+                      >
+                        <div>
+                          <TokenLogo token={token} />
+                        </div>
+                      </Tooltip>
+                    </div>
+                    <FaLongArrowAltRight />
+                  </>
+                ))}
+                <div>
+                  <Tooltip
+                    content={
+                      <div className="flex flex-col items-center gap-[8px]">
+                        {swap.toToken?.name} ({swap.toToken?.symbol})
+                      </div>
+                    }
+                    closeDelay={0}
+                  >
+                    <div>
+                      <TokenLogo token={swap.toToken as Token} />
+                    </div>
+                  </Tooltip>
+                </div>
+              </div>
             )}
             <Button
               isDisabled={swap.isDisabled}

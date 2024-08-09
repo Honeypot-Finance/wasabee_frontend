@@ -281,14 +281,12 @@ class Liquidity {
   }
 
   async getPairByTokens(token0Address: string, token1Address: string) {
-    const memoryPair =
-      this.pairsByToken[`${token0Address}-${token1Address}`] ||
-      this.pairsByToken[`${token1Address}-${token0Address}`];
+    const memoryPair = this.getMemoryPair(token0Address, token1Address);
     if (memoryPair) {
       memoryPair.init();
       return memoryPair;
     }
-    console.log("getPairByTokens", token0Address, token1Address);
+
     const pair = await trpcClient.pair.getPairByTokens.query({
       chainId: wallet.currentChainId,
       token0Address,
@@ -307,20 +305,37 @@ class Liquidity {
     }
   }
 
-  async getTokenFtoPair(token: Token): Promise<Token[]> {
-    const pairTokens: Token[] = [];
+  isFtoRaiseToken(tokenAddress: string): boolean {
+    return wallet.currentChain.contracts.ftoTokens.some(
+      (ftoToken) =>
+        ftoToken.address?.toLowerCase() === tokenAddress.toLowerCase()
+    );
+  }
 
-    wallet.currentChain.contracts.ftoTokens.forEach(async (ftoToken) => {
-      const pair = await this.getPairByTokens(
-        token.address,
-        ftoToken.address ?? ""
+  getTokenFtoPairs(tokenAddress: string): string[] {
+    const pairTokens: string[] = [];
+
+    wallet.currentChain.contracts.ftoTokens.forEach((ftoToken) => {
+      const memoryPair = this.getMemoryPair(
+        tokenAddress.toLowerCase(),
+        ftoToken.address?.toLowerCase() ?? ""
       );
-      if (pair) {
-        pairTokens.push(ftoToken as Token);
+
+      if (memoryPair) {
+        pairTokens.push(ftoToken.address!);
       }
     });
 
+    console.log("pairTokens: " + pairTokens.toString());
+
     return pairTokens;
+  }
+
+  getMemoryPair(token0: string, token1: string) {
+    return (
+      this.pairsByToken[`${token0}-${token1}`] ||
+      this.pairsByToken[`${token1}-${token0}`]
+    );
   }
 }
 
