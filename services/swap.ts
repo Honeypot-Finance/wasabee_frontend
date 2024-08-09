@@ -186,7 +186,12 @@ class Swap {
         if (!this.currentPair.value && !this.routerToken) {
           return;
         }
-        if (this.fromAmount && this.fromToken && this.toToken) {
+        if (
+          this.fromAmount &&
+          Number(this.fromAmount) > 0 &&
+          this.fromToken &&
+          this.toToken
+        ) {
           if (this.routerToken) {
             console.log("router token: ", this.routerToken);
             if (this.routerToken.length === 1) {
