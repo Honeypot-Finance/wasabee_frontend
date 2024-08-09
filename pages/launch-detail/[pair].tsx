@@ -46,6 +46,7 @@ import {
 } from "@/components/OptionsDropdown/OptionsDropdown";
 import { SlShare } from "react-icons/sl";
 import { VscCopy } from "react-icons/vsc";
+import { Token } from "@/services/contract/token";
 
 const UpdateProjectModal = observer(({ pair }: { pair: FtoPairContract }) => {
   const {
@@ -109,6 +110,9 @@ const UpdateProjectModal = observer(({ pair }: { pair: FtoPairContract }) => {
                 pair.logoUrl = url;
               }}
             ></UploadImage>
+            <div className="text align opacity-50 text-center">
+              click icon to upload
+            </div>
             <div>Project Name</div>
             <input
               type="text"
@@ -552,13 +556,9 @@ const LaunchPage: NextLayoutPage = observer(() => {
                     shareText:
                       "Checkout this Token: " + state.pair?.value?.projectName,
                   }),
-                  {
-                    icon: <BiWallet />,
-                    display: "Import token to wallet",
-                    onClick: () => {
-                      state.pair?.value?.launchedToken.watch();
-                    },
-                  },
+                  optionsPresets.importTokenToWallet({
+                    token: state.pair?.value?.launchedToken,
+                  }),
                   {
                     icon: <LuFileEdit />,
                     display: "Update Project",

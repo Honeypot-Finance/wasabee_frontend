@@ -62,13 +62,9 @@ export const LaunchCard = observer(
               displayText: "Copy Token address",
               copysSuccessText: "Token address copied",
             }),
-            {
-              icon: <BiWallet />,
-              display: "Import token to wallet",
-              onClick: () => {
-                pair?.launchedToken.watch();
-              },
-            },
+            optionsPresets.importTokenToWallet({
+              token: pair?.launchedToken,
+            }),
             optionsPresets.share({
               shareUrl: `${window.location.origin}/launch-detail/${pair?.address}`,
               displayText: "Share this project",

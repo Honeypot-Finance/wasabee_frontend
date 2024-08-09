@@ -267,19 +267,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
                   )
                 )}
               </div>
-              {/* <Pagination
-                className="flex justify-center mt-[12px]"
-                total={launchpad.ftoPairsPagination.totalPage}
-                page={launchpad.ftoPairsPagination.page}
-                initialPage={launchpad.ftoPairsPagination.page}
-                onChange={(page) => {
-                  launchpad.ftoPairsPagination.onPageChange(page);
-                  launchpad.ftoPairs.call({
-                    page,
-                    limit: launchpad.ftoPairsPagination.limit,
-                  });
-                }}
-              /> */}
             </Tab>
           </Tabs>
         </div>

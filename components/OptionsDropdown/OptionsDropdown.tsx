@@ -6,12 +6,14 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
-import { SlOptions, SlShare } from "react-icons/sl";
+import { SlOptions, SlShare, SlWallet } from "react-icons/sl";
 import { VscCopy } from "react-icons/vsc";
 import { toast } from "react-toastify";
 import * as clipboard from "clipboard-polyfill";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { shareMediaToast } from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import { Token } from "@/services/contract/token";
+import { BiWallet } from "react-icons/bi";
 
 type optionItem = {
   icon: JSX.Element;
@@ -93,6 +95,21 @@ export const optionsPresets = {
           shareText: shareText,
           text: "Share this project",
         }),
+    };
+  },
+  importTokenToWallet: ({ token }: { token?: Token }) => {
+    return {
+      icon: <BiWallet />,
+      display: "Import token to wallet",
+      onClick: async () => {
+        console.log("importTokenToWallet", token);
+        if (!token) {
+          toast.error("Token not found or not initialized");
+          return;
+        }
+        await token.init();
+        token.watch();
+      },
     };
   },
 };

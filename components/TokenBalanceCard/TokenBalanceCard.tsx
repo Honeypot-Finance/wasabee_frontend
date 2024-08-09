@@ -35,13 +35,9 @@ export const TokenBalanceCard = observer(
                 displayText: "Copy Token address",
                 copysSuccessText: "Token address copied",
               }),
-              {
-                icon: <BiWallet />,
-                display: "Import token to wallet",
-                onClick: () => {
-                  token.watch();
-                },
-              },
+              optionsPresets.importTokenToWallet({
+                token: token,
+              }),
             ]}
           />
         </div>
