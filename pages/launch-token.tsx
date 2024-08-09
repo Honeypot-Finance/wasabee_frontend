@@ -166,6 +166,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                       })}
                       className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
                       defaultValue={1_000_000}
+                      value={1_000_000}
                     />
                     {errors.tokenAmount && (
                       <span className="text-red-500">
@@ -178,6 +179,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                     {wallet.currentChain?.contracts?.routerV2 && (
                       <input
                         defaultValue={wallet.currentChain?.contracts?.routerV2}
+                        value={wallet.currentChain?.contracts?.routerV2}
                         // defaultValue={'0x1a12as1212'}
                         type="text"
                         {...register("poolHandler", {})}
