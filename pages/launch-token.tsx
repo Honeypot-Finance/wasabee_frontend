@@ -147,7 +147,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                 )}
               </div>
 
-              <Accordion>
+              <Accordion variant="bordered">
                 <AccordionItem
                   key="advanced"
                   aria-label="advanced"
@@ -164,7 +164,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                           message: "Token Amount should be a positive integer",
                         },
                       })}
-                      className="outline-none w-full sm:w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                      className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
                       defaultValue={1_000_000}
                     />
                     {errors.tokenAmount && (
@@ -181,7 +181,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                         // defaultValue={'0x1a12as1212'}
                         type="text"
                         {...register("poolHandler", {})}
-                        className="outline-none w-full sm:w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
+                        className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
                       />
                     )}
                   </div>
@@ -230,7 +230,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                         wallet.currentChain?.contracts.ftoTokens[0]
                           .address as string,
                       ]}
-                      className="outline-none w-full sm:w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                      className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
                     >
                       {wallet.currentChain?.contracts.ftoTokens.map(
                         (token, idx) => (
