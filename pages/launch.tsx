@@ -26,6 +26,8 @@ import { IoClose, IoSearchOutline } from "react-icons/io5";
 import { SpinnerContainer } from "@/components/Spinner";
 import { DropdownSvg } from "@/components/svg/dropdown";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
+import { motion } from "framer-motion";
+import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -195,9 +197,14 @@ const LaunchPage: NextLayoutPage = observer(() => {
             className="next-tab"
           >
             <Tab key="all" title="All Projects">
-              <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
+              <motion.div
+                variants={defaultContainerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3"
+              >
                 {launchpad.ftoPairs.value?.data.map((pair: FtoPairContract) => (
-                  <div key={pair.address}>
+                  <motion.div variants={itemPopUpVariants} key={pair.address}>
                     <LaunchCard
                       pair={pair}
                       action={
@@ -230,9 +237,9 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         </div>
                       }
                     />
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
               <Pagination
                 className="flex justify-center mt-[12px]"
                 total={launchpad.ftoPairsPagination.totalPage.value ?? 1}

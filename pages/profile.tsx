@@ -8,6 +8,7 @@ import { Button } from "@/components/button";
 import { Copy } from "@/components/copy";
 import { PeddingSvg } from "@/components/svg/Pedding";
 import { RocketSvg } from "@/components/svg/Rocket";
+import { defaultContainerVariants, itemSlideVariants } from "@/lib/animation";
 import { truncate } from "@/lib/format";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { networksMap } from "@/services/chain";
@@ -17,6 +18,7 @@ import launchpad from "@/services/launchpad";
 import { liquidity } from "@/services/liquidity";
 import { wallet } from "@/services/wallet";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
+import { motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
@@ -120,14 +122,24 @@ export const Profile = observer(() => {
           <Tab key="portfolio" title="Portfolio">
             <Card className="next-card">
               <CardBody className="">
-                {wallet?.currentChain?.faucetTokens &&
-                  wallet?.currentChain?.faucetTokens?.map((token) => (
-                    <TokenBalanceCard
-                      key={token.address}
-                      token={token}
-                      autoSize
-                    ></TokenBalanceCard>
-                  ))}
+                <motion.div
+                  variants={defaultContainerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {wallet?.currentChain?.faucetTokens &&
+                    wallet?.currentChain?.faucetTokens?.map((token) => (
+                      <motion.div
+                        variants={itemSlideVariants}
+                        key={token.address}
+                      >
+                        <TokenBalanceCard
+                          token={token}
+                          autoSize
+                        ></TokenBalanceCard>
+                      </motion.div>
+                    ))}
+                </motion.div>
               </CardBody>
             </Card>
           </Tab>
@@ -224,14 +236,24 @@ export const Profile = observer(() => {
           <Tab key="my-pools" title="My Pools">
             <Card className="next-card">
               <CardBody>
-                {(liquidity.isInit &&
-                  liquidity.myPairs.map((pair) => (
-                    <PoolLiquidityCard
-                      key={pair.address}
-                      pair={pair}
-                      autoSize
-                    ></PoolLiquidityCard>
-                  ))) || <LoadingDisplay />}
+                <motion.div
+                  variants={defaultContainerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {(liquidity.isInit &&
+                    liquidity.myPairs.map((pair) => (
+                      <motion.div
+                        variants={itemSlideVariants}
+                        key={pair.address}
+                      >
+                        <PoolLiquidityCard
+                          pair={pair}
+                          autoSize
+                        ></PoolLiquidityCard>
+                      </motion.div>
+                    ))) || <LoadingDisplay />}
+                </motion.div>
               </CardBody>
             </Card>
           </Tab>

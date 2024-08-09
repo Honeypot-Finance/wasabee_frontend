@@ -8,6 +8,7 @@ import PopUp from "../PopUp/PopUp";
 import { Button } from "../button";
 import { liquidity } from "@/services/liquidity";
 import { RemoveLiquidity } from "../LPCard";
+import { motion } from "framer-motion";
 
 interface PoolLiquidityCardProps {
   pair: PairContract;
@@ -19,7 +20,17 @@ export const PoolLiquidityCard = observer(
     return (
       <CardContianer autoSize={autoSize}>
         {" "}
-        <div className="flex w-full flex-col lg:flex-row  gap-[0.5rem]">
+        <motion.div
+          initial={{
+            x: -100,
+            opacity: 0,
+          }}
+          whileInView={{
+            x: 0,
+            opacity: 1,
+          }}
+          className="flex w-full flex-col lg:flex-row  gap-[0.5rem]"
+        >
           <div className="flex flex-1 flex-col lg:flex-row justify-between align-middle items-center gap-[0.5rem]">
             <div className="flex mr-5">
               <div className="flex mr-2 items-center">
@@ -56,7 +67,7 @@ export const PoolLiquidityCard = observer(
               contents={<RemoveLiquidity noCancelButton></RemoveLiquidity>}
             />
           </div>
-        </div>
+        </motion.div>
       </CardContianer>
     );
   }

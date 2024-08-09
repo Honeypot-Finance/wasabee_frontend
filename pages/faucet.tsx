@@ -21,6 +21,7 @@ import { VscHome } from "react-icons/vsc";
 import { FaDonate } from "react-icons/fa";
 import { sendTransaction } from "viem/actions";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 
 export function DonationModal({
   balance,
@@ -103,64 +104,86 @@ const FaucetPage: NextLayoutPage = observer(() => {
         {/** Native token faucet */}
         {wallet.currentChain?.officialFaucets?.[0] && (
           <div className="flex items-center flex-col lg:grid lg:grid-cols-[1fr,200px] gap-[0.5rem]">
-            <CardContianer>
-              <div className="flex-1 flex items-center">
-                <Image
-                  className={
-                    "border border-[color:var(--card-stroke,#F7931A)] rounded-[50%] mr-[1rem]"
-                  }
-                  src={wallet.currentChain?.officialFaucets?.[0]?.logoURI ?? ""}
-                  alt=""
-                  width={24}
-                  height={24}
-                />
-                {wallet.currentChain?.chain.nativeCurrency.name} (
-                {wallet.currentChain?.chain.nativeCurrency.symbol})
-                <OptionsDropdown
-                  className="min-h-0 h-[unset]"
-                  options={[
-                    {
-                      icon: <VscHome />,
-                      display: (
-                        <Link
-                          target="_blank"
-                          href={
+            <motion.div
+              initial={{
+                x: -100,
+                opacity: 0,
+              }}
+              whileInView={{
+                x: 0,
+                opacity: 1,
+              }}
+            >
+              <CardContianer>
+                <div className="flex-1 flex items-center">
+                  <Image
+                    className={
+                      "border border-[color:var(--card-stroke,#F7931A)] rounded-[50%] mr-[1rem]"
+                    }
+                    src={
+                      wallet.currentChain?.officialFaucets?.[0]?.logoURI ?? ""
+                    }
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
+                  {wallet.currentChain?.chain.nativeCurrency.name} (
+                  {wallet.currentChain?.chain.nativeCurrency.symbol})
+                  <OptionsDropdown
+                    className="min-h-0 h-[unset]"
+                    options={[
+                      {
+                        icon: <VscHome />,
+                        display: (
+                          <Link
+                            target="_blank"
+                            href={
+                              (wallet.currentChain?.officialFaucets &&
+                                wallet.currentChain?.officialFaucets[0].url) ||
+                              ""
+                            }
+                          >
+                            Official Faucet
+                          </Link>
+                        ),
+                        onClick: () => {
+                          window.open(
                             (wallet.currentChain?.officialFaucets &&
                               wallet.currentChain?.officialFaucets[0].url) ||
-                            ""
-                          }
-                        >
-                          Official Faucet
-                        </Link>
-                      ),
-                      onClick: () => {
-                        window.open(
-                          (wallet.currentChain?.officialFaucets &&
-                            wallet.currentChain?.officialFaucets[0].url) ||
-                            "",
-                          "_blank"
-                        );
+                              "",
+                            "_blank"
+                          );
+                        },
                       },
-                    },
-                    {
-                      icon: <FaDonate />,
-                      display: "Donate",
-                      onClick: () => {
-                        setIsdonationModalOpen(true);
+                      {
+                        icon: <FaDonate />,
+                        display: "Donate",
+                        onClick: () => {
+                          setIsdonationModalOpen(true);
+                        },
                       },
-                    },
-                  ]}
-                ></OptionsDropdown>
-              </div>
-              <div className="">
-                {amountFormatted(balance.data?.value.toString(), {
-                  decimals: wallet.currentChain?.chain.nativeCurrency.decimals,
-                  fixed: 3,
-                })}
-              </div>
-            </CardContianer>
+                    ]}
+                  ></OptionsDropdown>
+                </div>
+                <div className="">
+                  {amountFormatted(balance.data?.value.toString(), {
+                    decimals:
+                      wallet.currentChain?.chain.nativeCurrency.decimals,
+                    fixed: 3,
+                  })}
+                </div>
+              </CardContianer>
+            </motion.div>
             {faucet.nativeFaucet && (
-              <div className="w-full">
+              <motion.div
+                initial={{
+                  opacity: 0,
+                }}
+                whileInView={{
+                  opacity: 1,
+                }}
+                className="w-full"
+              >
                 <ControlledToolTip
                   content={
                     faucet.nativeFaucet.cantClaimReason ??
@@ -180,13 +203,19 @@ const FaucetPage: NextLayoutPage = observer(() => {
                     {faucet.nativeFaucet.canclaim ? "Claim" : "Not Available"}
                   </Button>
                 </ControlledToolTip>
-              </div>
+              </motion.div>
             )}
           </div>
         )}
         {wallet.currentChain?.faucetTokens?.length ? (
           wallet.currentChain?.faucetTokens.map((token) => (
-            <div
+            <motion.div
+              initial={{
+                opacity: 0,
+              }}
+              whileInView={{
+                opacity: 1,
+              }}
               key={token.address}
               className="flex items-center flex-col lg:grid lg:grid-cols-[1fr,200px] gap-[0.5rem]"
             >
@@ -204,7 +233,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
               >
                 {token.claimed ? "Tokens Claimed" : "Claim Tokens"}
               </Button>
-            </div>
+            </motion.div>
           ))
         ) : (
           <NoData></NoData>

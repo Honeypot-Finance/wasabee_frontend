@@ -1,5 +1,7 @@
+import { defaultContainerVariants, itemSlideVariants } from "@/lib/animation";
 import { PaginationState } from "@/services/utils";
 import { Pagination, PaginationProps, Spinner } from "@nextui-org/react";
+import { motion } from "framer-motion";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import { use, useEffect } from "react";
 
@@ -63,7 +65,10 @@ function TableBase<T extends Record<string, any>>({
       <div className="flex flex-col">
         <div className="flex text-[rgba(255,255,255,0.55)] text-sm font-bold leading-4">
           {columns.map((column) => (
-            <div className="flex-1 p-1 sm:p-[16px]" key={column.dataKey as string}>
+            <div
+              className="flex-1 p-1 sm:p-[16px]"
+              key={column.dataKey as string}
+            >
               {column.title}
             </div>
           ))}
@@ -72,12 +77,17 @@ function TableBase<T extends Record<string, any>>({
         {isLoading ? (
           <Spinner />
         ) : (
-          <div>
+          <motion.div
+            variants={defaultContainerVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {state.tableData?.length ? (
               state.tableData.map((data, index) => (
-                <div
+                <motion.div
                   key={data[rowKey] || index}
                   className="flex relative border-bottom"
+                  variants={itemSlideVariants}
                 >
                   {columns.map((column) => {
                     const value = column.dataKey ? data[column.dataKey] : null;
@@ -90,12 +100,12 @@ function TableBase<T extends Record<string, any>>({
                       </div>
                     );
                   })}
-                </div>
+                </motion.div>
               ))
             ) : (
               <NoData></NoData>
             )}
-          </div>
+          </motion.div>
         )}
       </div>
       {state.pagination.total > state.pagination.limit && (

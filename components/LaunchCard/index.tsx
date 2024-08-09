@@ -30,6 +30,8 @@ import ShareSocialMedialPopUp, {
   shareMediaToast,
 } from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
+import { itemPopUpVariants, itemSlideVariants } from "@/lib/animation";
 
 const Actions = () => {};
 
@@ -46,12 +48,14 @@ export const LaunchCard = observer(
     action: React.ReactNode;
   } & Partial<HTMLAttributes<any>>) => {
     return (
-      <div
+      <motion.div
+        variants={itemPopUpVariants}
+        initial="hidden"
+        animate="visible"
         className={cn(
           "flex flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative",
           className
         )}
-        {...props}
       >
         <TokenStatusDisplay pair={pair} />
         <OptionsDropdown
@@ -136,7 +140,7 @@ export const LaunchCard = observer(
           </div>
         </div>
         {action && <div className="w-full mt-[16px]">{action}</div>}
-      </div>
+      </motion.div>
     );
   }
 );

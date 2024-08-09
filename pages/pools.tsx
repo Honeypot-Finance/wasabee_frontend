@@ -23,6 +23,7 @@ import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSoc
 import PopUp from "@/components/PopUp/PopUp";
 import { RemoveLiquidity } from "@/components/LPCard";
 import { GhostPair } from "@/services/indexer/indexerTypes";
+import { motion } from "framer-motion";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
