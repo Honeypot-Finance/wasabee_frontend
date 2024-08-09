@@ -95,6 +95,8 @@ export class GhostIndexer {
                 }
               ]
             }
+            orderBy:"createdAt"
+            orderDirection: "desc"
           ) {
             items {
               id
