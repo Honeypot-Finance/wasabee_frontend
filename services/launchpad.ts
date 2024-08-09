@@ -221,16 +221,36 @@ class LaunchPad {
             const pair = new FtoPairContract({
               address: pairAddress.id,
             });
-            if (!pair.isInit) {
-              pair.init({
-                raisedToken: new Token({
+
+            const raisedToken = wallet.currentChain.contracts.ftoTokens.find(
+              (token) =>
+                token.address?.toLowerCase() ===
+                pairAddress.token1.id.toLowerCase()
+            )
+              ? new Token({
                   ...pairAddress.token1,
                   address: pairAddress.token1.id,
-                }),
-                launchedToken: new Token({
-                  ...pairAddress.token0,
+                })
+              : new Token({
                   address: pairAddress.token0.id,
-                }),
+                });
+
+            const launchedToken =
+              raisedToken.address.toLowerCase() ===
+              pairAddress.token1.id.toLowerCase()
+                ? new Token({
+                    ...pairAddress.token0,
+                    address: pairAddress.token0.id,
+                  })
+                : new Token({
+                    ...pairAddress.token1,
+                    address: pairAddress.token1.id,
+                  });
+
+            if (!pair.isInit) {
+              pair.init({
+                raisedToken: raisedToken,
+                launchedToken: launchedToken,
                 depositedLaunchedToken: pairAddress.depositedLaunchedToken,
                 depositedRaisedToken: pairAddress.depositedRaisedToken,
                 startTime: pairAddress.createdAt,
@@ -310,16 +330,36 @@ class LaunchPad {
           const pair = new FtoPairContract({
             address: pairAddress.id,
           });
-          if (!pair.isInit) {
-            pair.init({
-              raisedToken: new Token({
+
+          const raisedToken = wallet.currentChain.contracts.ftoTokens.find(
+            (token) =>
+              token.address?.toLowerCase() ===
+              pairAddress.token1.id.toLowerCase()
+          )
+            ? new Token({
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
-              }),
-              launchedToken: new Token({
-                ...pairAddress.token0,
+              })
+            : new Token({
                 address: pairAddress.token0.id,
-              }),
+              });
+
+          const launchedToken =
+            raisedToken.address.toLowerCase() ===
+            pairAddress.token1.id.toLowerCase()
+              ? new Token({
+                  ...pairAddress.token0,
+                  address: pairAddress.token0.id,
+                })
+              : new Token({
+                  ...pairAddress.token1,
+                  address: pairAddress.token1.id,
+                });
+
+          if (!pair.isInit) {
+            pair.init({
+              raisedToken: raisedToken,
+              launchedToken: launchedToken,
               depositedLaunchedToken: pairAddress.depositedLaunchedToken,
               depositedRaisedToken: pairAddress.depositedRaisedToken,
               startTime: pairAddress.createdAt,

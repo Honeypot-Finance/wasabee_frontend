@@ -163,6 +163,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                           value: positiveIntegerPattern,
                           message: "Token Amount should be a positive integer",
                         },
+                        value: 1_000_000,
                       })}
                       className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
                       defaultValue={1_000_000}
