@@ -343,19 +343,17 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
           Max
         </div>
       </div>
-      {acc.address?.toLowerCase() != pair.provider.toLowerCase() && (
-        <Button
-          className="w-full"
-          isLoading={pair.deposit.loading}
-          onClick={() => {
-            pair.deposit.call({
-              amount: state.depositAmount,
-            });
-          }}
-        >
-          Deposit
-        </Button>
-      )}
+      <Button
+        className="w-full"
+        isLoading={pair.deposit.loading}
+        onClick={() => {
+          pair.deposit.call({
+            amount: state.depositAmount,
+          });
+        }}
+      >
+        Deposit
+      </Button>
     </div>
   );
 });

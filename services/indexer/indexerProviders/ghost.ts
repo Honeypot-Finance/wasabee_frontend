@@ -9,9 +9,8 @@ import {
   GhostFTOPair,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
-import { debounce } from "lodash";
 
-const ftoGraphHandle = "6674b0ba-5ab9-4666-bf5e-ad0242226a7f/ghostgraph";
+const ftoGraphHandle = "3cbba216-c29c-465b-95d4-be5ebeed1f35/ghostgraph";
 const pairGraphHandle = "747fa52a-205d-4434-ac02-0dd20f49c0dd/ghostgraph";
 
 export class GhostIndexer {
