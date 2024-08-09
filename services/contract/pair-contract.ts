@@ -163,13 +163,7 @@ export class PairContract implements BaseContract {
         reserveIn,
         reserveOut,
       ]);
-      console.log("amountOut", toToken);
-      console.log("toToken.decimals", toToken.decimals);
-      console.log(
-        new BigNumber(amountOut.toString())
-          .div(new BigNumber(10).pow(toToken.decimals))
-          .toFixed()
-      );
+
       return new BigNumber(amountOut.toString()).div(
         new BigNumber(10).pow(toToken.decimals)
       );

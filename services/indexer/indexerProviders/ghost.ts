@@ -11,7 +11,7 @@ import {
 import { networksMap } from "@/services/chain";
 import { debounce } from "lodash";
 
-const ftoGraphHandle = "c0ea90ad-1a89-4078-b789-aa41d791398d/ghostgraph";
+const ftoGraphHandle = "6674b0ba-5ab9-4666-bf5e-ad0242226a7f/ghostgraph";
 const pairGraphHandle = "747fa52a-205d-4434-ac02-0dd20f49c0dd/ghostgraph";
 
 export class GhostIndexer {

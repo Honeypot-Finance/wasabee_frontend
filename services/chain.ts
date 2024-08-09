@@ -109,7 +109,7 @@ export const berachainBartioTestnetNetwork = new Network({
   contracts: {
     routerV2: "0x482270069fF98a0dF528955B651494759b3B2F8C",
     factory: "0x2f795195bae7E61E848ffC87ba7f6ae1A06c0527",
-    ftoFactory: "0x2B74f450371D9977E412609B37588D17d4985c36",
+    ftoFactory: "0x7E0CCe2C9Ff537f8301dd40c652A03479B18dAef",
     ftoFacade: "0x149519DD90392172467BfDb0cB91a04C0950e2DD",
     ftoTokens: [
       {
