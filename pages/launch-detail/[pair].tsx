@@ -47,6 +47,7 @@ import {
 import { SlShare } from "react-icons/sl";
 import { VscCopy } from "react-icons/vsc";
 import { Token } from "@/services/contract/token";
+import { useAccount } from "wagmi";
 
 const UpdateProjectModal = observer(({ pair }: { pair: FtoPairContract }) => {
   const {
@@ -304,6 +305,7 @@ const PauseAction = observer(({ pair }: { pair: FtoPairContract }) => {
 });
 
 const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
+  const acc = useAccount();
   const state = useLocalObservable(() => ({
     depositAmount: "0",
     setDepositAmount(val: string) {
@@ -341,17 +343,19 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
           Max
         </div>
       </div>
-      <Button
-        className="w-full"
-        isLoading={pair.deposit.loading}
-        onClick={() => {
-          pair.deposit.call({
-            amount: state.depositAmount,
-          });
-        }}
-      >
-        Deposit
-      </Button>
+      {acc.address?.toLowerCase() != pair.provider.toLowerCase() && (
+        <Button
+          className="w-full"
+          isLoading={pair.deposit.loading}
+          onClick={() => {
+            pair.deposit.call({
+              amount: state.depositAmount,
+            });
+          }}
+        >
+          Deposit
+        </Button>
+      )}
     </div>
   );
 });
