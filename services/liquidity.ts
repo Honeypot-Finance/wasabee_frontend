@@ -305,6 +305,13 @@ class Liquidity {
     }
   }
 
+  isFtoRaiseToken(tokenAddress: string): boolean {
+    return wallet.currentChain.contracts.ftoTokens.some(
+      (ftoToken) =>
+        ftoToken.address?.toLowerCase() === tokenAddress.toLowerCase()
+    );
+  }
+
   getTokenFtoPairs(tokenAddress: string): string[] {
     const pairTokens: string[] = [];
 
