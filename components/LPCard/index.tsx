@@ -273,10 +273,10 @@ export const LPCard = observer(() => {
       return;
     }
     if (inputCurrency && isEthAddress(inputCurrency)) {
-      liquidity.setFromToken(liquidity.tokensMap[inputCurrency]);
+      liquidity.setFromToken(new Token({ address: inputCurrency }));
     }
     if (outputCurrency && isEthAddress(outputCurrency)) {
-      liquidity.setToToken(liquidity.tokensMap[outputCurrency]);
+      liquidity.setToToken(new Token({ address: outputCurrency }));
     }
   }, [inputCurrency, outputCurrency, isinit]);
   return (

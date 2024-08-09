@@ -46,17 +46,21 @@ export const SwapCard = observer(() => {
     }
   }, [pairsMap]);
 
-  const isinit = wallet.isInit && liquidity.isInit;
-
+  const isinit = wallet.isInit
   useEffect(() => {
     if (!isinit) {
       return;
     }
     if (inputCurrency && isEthAddress(inputCurrency)) {
-      swap.setFromToken(liquidity.tokensMap[inputCurrency]);
+      swap.setFromToken(new Token({
+        address: inputCurrency,
+      }));
     }
     if (outputCurrency && isEthAddress(outputCurrency)) {
-      swap.setToToken(liquidity.tokensMap[outputCurrency]);
+      swap.setToToken(new Token({
+        address: outputCurrency,
+      })
+      );
     }
   }, [inputCurrency, outputCurrency, isinit]);
   return (

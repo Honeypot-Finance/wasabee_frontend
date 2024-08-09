@@ -44,19 +44,19 @@ export const TokenSelector = observer(
       filterLoading: false,
       filterTokensBySearch: async function () {
         if (!state.search) {
-          state.tokens = liquidity.tokens;
+          state.filteredTokens = state.tokens;
           return;
         }
         state.filterLoading = true;
         const isEthAddr = isEthAddress(state.search);
         if (isEthAddr) {
-          const filterToken = liquidity.tokens?.find((token) => {
+          const filterToken = state.tokens?.find((token) => {
             return (
               token.address.toLowerCase() === state.search.toLocaleLowerCase()
             );
           });
           if (filterToken) {
-            state.tokens = [filterToken];
+            state.filteredTokens = [filterToken];
             state.filterLoading = false;
             return;
           }
@@ -64,11 +64,9 @@ export const TokenSelector = observer(
             address: state.search,
           });
           await token.init();
-          console.log(token);
-          liquidity.tokensMap[state.search] = token;
-          state.tokens = [token];
+          state.filteredTokens = [token];
         } else {
-          state.tokens = liquidity.tokens?.filter((token) => {
+          state.filteredTokens = state.tokens?.filter((token) => {
             return (
               token.name?.toLowerCase().includes(state.search) ||
               token.symbol?.toLowerCase().includes(state.search)
@@ -78,14 +76,15 @@ export const TokenSelector = observer(
         state.filterLoading = false;
       },
       tokens: [] as Token[],
+      filteredTokens: [] as Token[],
     }));
 
     useOnce(() => {
-      isConnected && liquidity.tokens.forEach((t) => t.getBalance());
-    }, [liquidity.tokens, isConnected]);
+      isConnected && state.tokens.forEach((t) => t.getBalance());
+    }, [isConnected]);
     useEffect(() => {
-      liquidity.isInit && state.filterTokensBySearch();
-    }, [state.search, liquidity.isInit]);
+      state.filterTokensBySearch();
+    }, [state.search]);
     return (
       <div className="flex items-center group">
         {value && (
@@ -131,7 +130,7 @@ export const TokenSelector = observer(
               {() => (
                 <div className="w-full">
                   <SpinnerContainer
-                    isLoading={state.filterLoading || !liquidity.isInit}
+                    isLoading={state.filterLoading}
                   >
                     <Input
                       placeholder="Search token by symbol or address"
@@ -152,8 +151,8 @@ export const TokenSelector = observer(
                       <div></div>
 
                       <div className="max-h-[300px] overflow-auto">
-                        {state.tokens.length ? (
-                          state.tokens.map((token) => {
+                        {state.filteredTokens.length ? (
+                          state.filteredTokens.map((token) => {
                             return (
                               <div
                                 key={token.address}
