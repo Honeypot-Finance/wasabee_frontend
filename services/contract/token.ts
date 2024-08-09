@@ -118,7 +118,7 @@ export class Token implements BaseContract {
     Object.entries(wallet.currentChain.validatedTokensInfo).forEach(
       ([address, info]) => {
         if (address.toLowerCase() === this.address.toLowerCase()) {
-          this.logoURI = info.logoURI ?? "";
+          this.logoURI = window.location.origin + info.logoURI ?? "";
         }
       }
     );
@@ -186,13 +186,14 @@ export class Token implements BaseContract {
   }
 
   async watch() {
+    console.log("watching image", window.location.origin + this.logoURI);
     watchAsset(wallet.walletClient, {
       type: "ERC20",
       options: {
         address: this.address,
         symbol: this.symbol,
         decimals: this.decimals,
-        image: window.location.origin + this.logoURI,
+        image: this.logoURI,
       },
     })
       .then(() => {

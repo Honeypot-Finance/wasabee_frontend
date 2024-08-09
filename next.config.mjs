@@ -22,6 +22,21 @@ const nextConfig = {
         port: "",
         hostname: "vphdxociarqnaxj6.public.blob.vercel-storage.com",
       },
+      {
+        protocol: "http",
+        port: "3000",
+        hostname: "localhost",
+      },
+      {
+        protocol: "https",
+        port: "",
+        hostname: "honeypotfinance.xyz",
+      },
+      {
+        protocol: "https",
+        port: "",
+        hostname: "*.honeypotfinance.xyz",
+      },
     ],
   },
 };
