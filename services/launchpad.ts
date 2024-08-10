@@ -7,6 +7,7 @@ import { trpc, trpcClient } from "@/lib/trpc";
 import { createSiweMessage } from "@/lib/siwe";
 import { Address } from "viem";
 import { Token } from "./contract/token";
+import { PageInfo } from "./indexer/indexerTypes";
 
 const pagelimit = 9;
 
@@ -14,6 +15,7 @@ export type PairFilter = {
   search: string;
   status: "all" | "processing" | "success" | "fail";
   showNotValidatedPairs: boolean;
+  limit: number;
 };
 
 export const statusTextToNumber = (status: string) => {
@@ -57,6 +59,14 @@ class LaunchPad {
     search: "",
     status: "all",
     showNotValidatedPairs: true,
+    limit: 9,
+  };
+
+  currentPage: PageInfo = {
+    hasNextPage: true,
+    hasPreviousPage: false,
+    startCursor: "",
+    endCursor: "",
   };
 
   set pairFilterSearch(search: string) {
@@ -131,45 +141,6 @@ class LaunchPad {
         return pair.isValidated;
       }
     });
-    // .filter((pair) => {
-    //   if (this.pairFilter.status === "all") return true;
-    //   else if (this.pairFilter.status === "processing") {
-    //     return pair.ftoState === 3;
-    //   } else if (this.pairFilter.status === "success") {
-    //     return pair.ftoState === 0;
-    //   } else if (this.pairFilter.status === "fail") {
-    //     return pair.ftoState === 1;
-    //   }
-    // })
-    // .filter((pair) => {
-    //   if (
-    //     pair.projectName
-    //       .toLowerCase()
-    //       .includes(this.pairFilter.search.toLowerCase()) ||
-    //     pair.name
-    //       .toLowerCase()
-    //       .includes(this.pairFilter.search.toLowerCase()) ||
-    //     pair.description
-    //       .toLowerCase()
-    //       .includes(this.pairFilter.search.toLowerCase()) ||
-    //     pair.address
-    //       .toLowerCase()
-    //       .includes(this.pairFilter.search.toLowerCase()) ||
-    //     pair.launchedToken.address
-    //       .toLowerCase()
-    //       .includes(this.pairFilter.search.toLowerCase()) ||
-    //     pair.launchedToken.name
-    //       .toLowerCase()
-    //       .includes(this.pairFilter.search.toLowerCase()) ||
-    //     pair.launchedToken.symbol
-    //       .toLowerCase()
-    //       .includes(this.pairFilter.search.toLowerCase())
-    //   ) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // });
     return filteredPairs;
   };
 
@@ -190,6 +161,45 @@ class LaunchPad {
 
     return filteredPairs ?? [];
   });
+
+  NextFtoPage = async () => {
+    if (this.currentPage.hasNextPage) {
+      const newPage =
+        await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
+          filter: this.pairFilter,
+          chainId: String(wallet.currentChainId),
+          pageRequest: {
+            direction: "next",
+            cursor: this.currentPage.endCursor,
+          },
+        });
+
+      if (newPage.status === "success") {
+        //TODO:
+        this.currentPage = newPage.data.pageInfo;
+      } else {
+        console.error(newPage);
+      }
+    }
+  };
+
+  PrevFtoPage = async () => {
+    if (this.currentPage.hasPreviousPage) {
+      const newPage =
+        await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
+          filter: this.pairFilter,
+          chainId: String(wallet.currentChainId),
+          pageRequest: {
+            direction: "prev",
+            cursor: this.currentPage.startCursor,
+          },
+        });
+
+      if (newPage.status === "success") {
+        this.currentPage = newPage.data.pageInfo;
+      }
+    }
+  };
 
   ftoPairs = new AsyncState<
     {

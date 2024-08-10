@@ -397,6 +397,66 @@ const LaunchPage: NextLayoutPage = observer(() => {
       return pair;
     }),
   }));
+  const account = useAccount();
+
+  useEffect(() => {
+    if (
+      !state.pair.value ||
+      !state.pair.value.isInit ||
+      !state.pair.value.isProvider
+    )
+      return;
+
+    if (
+      !state.pair.value.logoUrl ||
+      !state.pair.value.projectName ||
+      !state.pair.value.description ||
+      !state.pair.value.twitter ||
+      !state.pair.value.website ||
+      !state.pair.value.telegram
+    ) {
+      toast.warning(
+        <div>
+          <ul className="list-disc list-inside">
+            {!state.pair.value.logoUrl && (
+              <li className="text-orange-400">no icon</li>
+            )}
+            {!state.pair.value.projectName && (
+              <li className="text-orange-400">no project name</li>
+            )}
+            {!state.pair.value.description && (
+              <li className="text-orange-400">no description</li>
+            )}
+            {!state.pair.value.twitter && (
+              <li className="text-orange-400">no twitter link</li>
+            )}
+            {!state.pair.value.website && (
+              <li className="text-orange-400">no website link</li>
+            )}
+            {!state.pair.value.telegram && (
+              <li className="text-orange-400">no telegram link</li>
+            )}
+          </ul>
+          <p>
+            Click{" "}
+            <span onClick={onOpen} className="text-blue-500 cursor-pointer">
+              here
+            </span>{" "}
+            to update the project
+          </p>
+        </div>,
+        {
+          autoClose: false,
+        }
+      );
+    }
+  }, [
+    pairAddress,
+    account.address,
+    state.pair.value?.isProvider,
+    state.pair.value,
+    onOpen,
+  ]);
 
   useEffect(() => {
     if (!wallet.isInit || !pairAddress) {

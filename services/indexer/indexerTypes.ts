@@ -1,6 +1,6 @@
 import { PairFilter } from "../launchpad";
-import {GhostIndexer } from './indexerProviders/ghost'
-import Indexer from './indexer';
+import { GhostIndexer } from "./indexerProviders/ghost";
+import Indexer from "./indexer";
 
 // export interface IndexerProvider {
 //   apiKey: string;
@@ -19,6 +19,7 @@ export type IndexerProvider = GhostIndexer;
 
 export type GhostFtoPairResponse = {
   pairs: GhostFTOPair[];
+  pageInfo: PageInfo;
 };
 
 export type GhostPairResponse = {
@@ -27,6 +28,18 @@ export type GhostPairResponse = {
 
 export type GhostFtoTokensResponse = {
   items: GhostToken[];
+};
+
+export type PageInfo = {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor: string;
+  endCursor: string;
+};
+
+export type PageRequest = {
+  direction: "next" | "prev";
+  cursor?: string;
 };
 
 export type GhostToken = {

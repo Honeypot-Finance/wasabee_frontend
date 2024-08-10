@@ -7,6 +7,8 @@ import {
   GhostPair,
   GhostPairResponse,
   GhostFTOPair,
+  PageInfo,
+  PageRequest,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 
@@ -57,9 +59,16 @@ export class GhostIndexer {
   getFilteredFtoPairs = async (
     filter: PairFilter,
     chainId: string,
-    provider?: string
+    provider?: string,
+    pageRequest?: PageRequest
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
     const statusNum = statusTextToNumber(filter?.status ?? -1);
+
+    const dirCondition = pageRequest?.cursor
+      ? pageRequest?.direction === "next"
+        ? `after:"${pageRequest?.cursor}"`
+        : `before:"${pageRequest?.cursor}"`
+      : "";
 
     const statusCondition = statusNum != -1 ? `status: "${statusNum}",` : "";
     const searchIdCondition = filter?.search ? `id: "${filter.search}",` : "";
@@ -97,6 +106,8 @@ export class GhostIndexer {
             }
             orderBy:"createdAt"
             orderDirection: "desc"
+            limit: ${filter?.limit ?? 9}
+            ${dirCondition}
           ) {
             items {
               id
@@ -120,6 +131,12 @@ export class GhostIndexer {
                 decimals
               }
             }
+            pageInfo {
+              hasPreviousPage
+              hasNextPage
+              startCursor
+              endCursor
+            }
           }
         }
       `;
@@ -130,6 +147,7 @@ export class GhostIndexer {
       return res;
     } else {
       let pairs = ((res.data as any)?.pairs?.items as GhostFTOPair[]) ?? [];
+      let pageInfo = (res.data as any)?.pairs?.pageInfo as PageInfo;
 
       if (filter && !filter.showNotValidatedPairs) {
         pairs = pairs?.filter((pair: GhostPair) => {
@@ -140,7 +158,7 @@ export class GhostIndexer {
       return {
         status: "success",
         message: "Success",
-        data: { pairs: pairs },
+        data: { pairs: pairs, pageInfo: pageInfo },
       };
     }
   };

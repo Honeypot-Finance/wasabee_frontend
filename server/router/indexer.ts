@@ -11,7 +11,6 @@ import { statusTextToNumber, type PairFilter } from "@/services/launchpad";
 import { filter } from "lodash";
 import { GhostIndexer } from "@/services/indexer/indexerProviders/ghost";
 
-
 export const indexerFeedRouter = router({
   getFilteredFtoPairs: publicProcedure
     .input(
@@ -23,30 +22,34 @@ export const indexerFeedRouter = router({
         }),
         chainId: z.string(),
         provider: z.string().optional(),
+        pageRequest: z
+          .object({
+            direction: z.string(z.enum(["next", "prev"])),
+            cursor: z.string().optional(),
+          })
+          .optional(),
       })
     )
-    .query(
-      async ({ input }) => {
-        const res = await indexer.getFilteredFtoPairs(
-          input.filter as PairFilter,
-          input.chainId,
-          input.provider
-        );
+    .query(async ({ input }) => {
+      const res = await indexer.getFilteredFtoPairs(
+        input.filter as PairFilter,
+        input.chainId,
+        input.provider
+      );
 
-        if (res.status === "error") {
-          return {
-            status: "error",
-            message: res.message,
-          } as const
-        } else {
-          return {
-            status: "success",
-            data: res.data,
-            message: "Success",
-          } as const
-        }
+      if (res.status === "error") {
+        return {
+          status: "error",
+          message: res.message,
+        } as const;
+      } else {
+        return {
+          status: "success",
+          data: res.data,
+          message: "Success",
+        } as const;
       }
-    ),
+    }),
   getAllFtoTokens: publicProcedure
     .output(
       z.object({

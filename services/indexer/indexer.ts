@@ -4,6 +4,7 @@ import {
   GhostFtoPairResponse,
   GhostFtoTokensResponse,
   IndexerProvider,
+  PageRequest,
 } from "./indexerTypes";
 
 export default class Indexer<T extends IndexerProvider> {
@@ -25,12 +26,14 @@ export default class Indexer<T extends IndexerProvider> {
   getFilteredFtoPairs = async (
     filter: PairFilter,
     chainId: string,
-    provider?: string
+    provider?: string,
+    pageRequest?: PageRequest
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
     return await this.dataProvider.getFilteredFtoPairs(
       filter,
       chainId,
-      provider
+      provider,
+      pageRequest
     );
   };
 
@@ -51,12 +54,9 @@ export default class Indexer<T extends IndexerProvider> {
   }
 }
 
-
 const ghostIndexer = new GhostIndexer(
   process.env.GHOST_INDEXER_API_KEY ?? "",
   "https://api.ghostlogs.xyz/gg/pub/"
 );
-
-
 
 export const indexer = new Indexer(ghostIndexer);
