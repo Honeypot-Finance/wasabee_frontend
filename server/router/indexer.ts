@@ -10,7 +10,10 @@ import Indexer, { indexer } from "@/services/indexer/indexer";
 import { statusTextToNumber, type PairFilter } from "@/services/launchpad";
 import { filter } from "lodash";
 import { GhostIndexer } from "@/services/indexer/indexerProviders/ghost";
-import { PageRequest } from "@/services/indexer/indexerTypes";
+import {
+  GhostPairResponse,
+  PageRequest,
+} from "@/services/indexer/indexerTypes";
 
 export const indexerFeedRouter = router({
   getFilteredFtoPairs: publicProcedure
@@ -83,31 +86,8 @@ export const indexerFeedRouter = router({
         };
       }
     }),
-  getAllPairs: publicProcedure
-    .output(
-      z.object({
-        status: z.literal("success"),
-        data: z.array(
-          z.object({
-            id: z.string(),
-            token0: z.object({
-              id: z.string(),
-              name: z.string(),
-              symbol: z.string(),
-              decimals: z.number(),
-            }),
-            token1: z.object({
-              id: z.string(),
-              name: z.string(),
-              symbol: z.string(),
-              decimals: z.number(),
-            }),
-          })
-        ),
-        message: z.string(),
-      })
-    )
-    .query(async (): Promise<any> => {
+  getAllPairs: publicProcedure.query(
+    async (): Promise<ApiResponseType<GhostPairResponse>> => {
       const res = await indexer.dataProvider.getAllPairs();
 
       if (res.status === "error") {
@@ -122,5 +102,6 @@ export const indexerFeedRouter = router({
           message: "Success",
         };
       }
-    }),
+    }
+  ),
 });

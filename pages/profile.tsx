@@ -31,7 +31,9 @@ export const Profile = observer(() => {
 
   useEffect(() => {
     trpcClient.indexerFeedRouter.getAllPairs.query().then((data) => {
-      setPairsMap(data.data);
+      if (data.status === "success" && data.data) {
+        setPairsMap(data.data.pairs);
+      }
     });
   }, []);
 

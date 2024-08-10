@@ -82,7 +82,7 @@ export class GhostIndexer {
       ? `launchedTokenProvider: "${provider}",`
       : "";
 
-    const query = `
+    const query = `#graphql
         {
           pairs(
             where: {
@@ -168,7 +168,7 @@ export class GhostIndexer {
   getAllFtoTokens = async (): Promise<
     ApiResponseType<GhostFtoTokensResponse>
   > => {
-    const query = `
+    const query = `#graphql
         {
           erc20s {
             items {
@@ -195,9 +195,11 @@ export class GhostIndexer {
   };
 
   getAllPairs = async (): Promise<ApiResponseType<GhostPairResponse>> => {
-    const query = `
+    const query = `#graphql
         {
-          pairs {
+          pairs (
+            limit: 1000
+          ){
             items {
               id
               token0 {
@@ -227,7 +229,7 @@ export class GhostIndexer {
       return {
         status: "success",
         message: "Success",
-        data: ((res.data as any).pairs?.items as GhostPairResponse) ?? {
+        data: { pairs: (res.data as any).pairs?.items as GhostPair[] } ?? {
           pairs: [],
         },
       };

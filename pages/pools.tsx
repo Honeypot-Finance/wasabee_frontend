@@ -33,7 +33,9 @@ const PoolsPage: NextLayoutPage = observer(() => {
 
   useEffect(() => {
     trpcClient.indexerFeedRouter.getAllPairs.query().then((data) => {
-      setPairsMap(data.data);
+      if (data.status === "success" && data.data) {
+        setPairsMap(data.data.pairs);
+      }
     });
   }, []);
 
@@ -92,6 +94,12 @@ const PoolsPage: NextLayoutPage = observer(() => {
 
   useEffect(() => {
     if (pairsMap) {
+      console.log(
+        "pairsMap",
+        pairsMap.map((pair) => {
+          return { t1: pair.token0.symbol, t2: pair.token1.symbol };
+        })
+      );
       liquidity.initPool(
         pairsMap.map((pair: any) => ({
           address: pair.id,
