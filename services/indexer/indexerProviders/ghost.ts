@@ -106,7 +106,7 @@ export class GhostIndexer {
             }
             orderBy:"createdAt"
             orderDirection: "desc"
-            limit: ${filter?.limit ?? 9}
+            #limit: ${filter?.limit ?? 9}
             ${dirCondition}
           ) {
             items {
