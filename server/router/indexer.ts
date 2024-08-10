@@ -10,6 +10,7 @@ import Indexer, { indexer } from "@/services/indexer/indexer";
 import { statusTextToNumber, type PairFilter } from "@/services/launchpad";
 import { filter } from "lodash";
 import { GhostIndexer } from "@/services/indexer/indexerProviders/ghost";
+import { PageRequest } from "@/services/indexer/indexerTypes";
 
 export const indexerFeedRouter = router({
   getFilteredFtoPairs: publicProcedure
@@ -34,7 +35,8 @@ export const indexerFeedRouter = router({
       const res = await indexer.getFilteredFtoPairs(
         input.filter as PairFilter,
         input.chainId,
-        input.provider
+        input.provider,
+        input.pageRequest as PageRequest
       );
 
       if (res.status === "error") {

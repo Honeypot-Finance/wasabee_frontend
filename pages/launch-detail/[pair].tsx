@@ -48,6 +48,8 @@ import { SlShare } from "react-icons/sl";
 import { VscCopy } from "react-icons/vsc";
 import { Token } from "@/services/contract/token";
 import { useAccount } from "wagmi";
+import { useParams } from "next/navigation";
+import { useQueries } from "@tanstack/react-query";
 
 const UpdateProjectModal = observer(({ pair }: { pair: FtoPairContract }) => {
   const {
@@ -345,6 +347,7 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
       </div>
       <Button
         className="w-full"
+        isDisabled={!Number(state.depositAmount)}
         isLoading={pair.deposit.loading}
         onClick={() => {
           pair.deposit.call({
@@ -399,11 +402,13 @@ const LaunchPage: NextLayoutPage = observer(() => {
   }));
   const account = useAccount();
 
+  // remind provider to edit project details
   useEffect(() => {
     if (
       !state.pair.value ||
       !state.pair.value.isInit ||
-      !state.pair.value.isProvider
+      !state.pair.value.isProvider ||
+      router.query.edit == "true"
     )
       return;
 
@@ -439,7 +444,13 @@ const LaunchPage: NextLayoutPage = observer(() => {
           </ul>
           <p>
             Click{" "}
-            <span onClick={onOpen} className="text-blue-500 cursor-pointer">
+            <span
+              onClick={() => {
+                router.push(`/launch-detail/${pairAddress}?edit=true`);
+                toast.dismiss();
+              }}
+              className="text-blue-500 cursor-pointer"
+            >
               here
             </span>{" "}
             to update the project
@@ -456,6 +467,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
     state.pair.value?.isProvider,
     state.pair.value,
     onOpen,
+    router.query.edit,
   ]);
 
   useEffect(() => {
@@ -468,6 +480,13 @@ const LaunchPage: NextLayoutPage = observer(() => {
 
     refreshVotes();
   }, [wallet.isInit, pairAddress]);
+
+  useEffect(() => {
+    if (!state.pair.value) return;
+    if (router.query.edit == "true" && state.pair.value?.isProvider) {
+      onOpen();
+    }
+  }, [onOpen, router.query, state.pair.value, state.pair.value?.isProvider]);
 
   function refreshVotes() {
     trpcClient.fto.getProjectVotes

@@ -62,11 +62,34 @@ class LaunchPad {
     limit: 9,
   };
 
-  currentPage: PageInfo = {
-    hasNextPage: true,
-    hasPreviousPage: false,
-    startCursor: "",
-    endCursor: "",
+  currentPage: { pageItems: FtoPairContract[]; pageinfo: PageInfo } = {
+    pageItems: [],
+
+    pageinfo: {
+      hasNextPage: true,
+      hasPreviousPage: false,
+      startCursor: "",
+      endCursor: "",
+    },
+  };
+
+  resetPageInfo = () => {
+    this.currentPage.pageinfo = {
+      hasNextPage: true,
+      hasPreviousPage: false,
+      startCursor: "",
+      endCursor: "",
+    };
+
+    this.currentPage.pageItems = [];
+  };
+
+  setCurrentPageItemsData = (data: FtoPairContract[]) => {
+    this.currentPage.pageItems = data;
+  };
+
+  setCurrentPageInfo = (pageInfo: PageInfo) => {
+    this.currentPage.pageinfo = pageInfo;
   };
 
   set pairFilterSearch(search: string) {
@@ -107,26 +130,6 @@ class LaunchPad {
     return wallet.contracts.ftofacade;
   }
 
-  // loadCurrentPagePairs = async () => {
-  //   console.log(this.ftoPairsPagination.page);
-  //   for (
-  //     let i =
-  //       (this.ftoPairsPagination.page - 1) * this.ftoPairsPagination.limit;
-  //     i < this.ftoPairsPagination.page * this.ftoPairsPagination.limit;
-  //     i++
-  //   ) {
-  //     if (this.getFtoPairs?.value) {
-  //       if (this.getFtoPairs.value[i]) {
-  //         console.log("init", this.getFtoPairs.value[i]);
-  //         await this.getFtoPairs.value[i].init();
-  //         console.log("init", this.getFtoPairs.value[i]);
-  //       } else {
-  //         break;
-  //       }
-  //     }
-  //   }
-  // };
-
   allPairsLength = async () =>
     await this.ftofactoryContract.allPairsLength.call();
 
@@ -162,42 +165,70 @@ class LaunchPad {
     return filteredPairs ?? [];
   });
 
-  NextFtoPage = async () => {
-    if (this.currentPage.hasNextPage) {
-      const newPage =
-        await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-          filter: this.pairFilter,
-          chainId: String(wallet.currentChainId),
-          pageRequest: {
-            direction: "next",
-            cursor: this.currentPage.endCursor,
-          },
+  LoadMoreFtoPage = async () => {
+    const newPage =
+      await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
+        filter: this.pairFilter,
+        chainId: String(wallet.currentChainId),
+        pageRequest: {
+          direction: "next",
+          cursor: this.currentPage.pageinfo.endCursor,
+        },
+      });
+
+    if (newPage.status === "success") {
+      this.setCurrentPageInfo(newPage.data.pageInfo);
+
+      const newPageToContracts = newPage.data.pairs.map((pairAddress) => {
+        const pair = new FtoPairContract({
+          address: pairAddress.id,
         });
 
-      if (newPage.status === "success") {
-        //TODO:
-        this.currentPage = newPage.data.pageInfo;
-      } else {
-        console.error(newPage);
-      }
-    }
-  };
+        const raisedToken = wallet.currentChain.contracts.ftoTokens.find(
+          (token) =>
+            token.address?.toLowerCase() === pairAddress.token1.id.toLowerCase()
+        )
+          ? new Token({
+              ...pairAddress.token1,
+              address: pairAddress.token1.id,
+            })
+          : new Token({
+              address: pairAddress.token0.id,
+            });
 
-  PrevFtoPage = async () => {
-    if (this.currentPage.hasPreviousPage) {
-      const newPage =
-        await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-          filter: this.pairFilter,
-          chainId: String(wallet.currentChainId),
-          pageRequest: {
-            direction: "prev",
-            cursor: this.currentPage.startCursor,
-          },
-        });
+        const launchedToken =
+          raisedToken.address.toLowerCase() ===
+          pairAddress.token1.id.toLowerCase()
+            ? new Token({
+                ...pairAddress.token0,
+                address: pairAddress.token0.id,
+              })
+            : new Token({
+                ...pairAddress.token1,
+                address: pairAddress.token1.id,
+              });
 
-      if (newPage.status === "success") {
-        this.currentPage = newPage.data.pageInfo;
-      }
+        if (!pair.isInit) {
+          pair.init({
+            raisedToken: raisedToken,
+            launchedToken: launchedToken,
+            depositedLaunchedToken: pairAddress.depositedLaunchedToken,
+            depositedRaisedToken: pairAddress.depositedRaisedToken,
+            startTime: pairAddress.createdAt,
+            endTime: pairAddress.endTime,
+            ftoState: Number(pairAddress.status),
+          });
+        }
+
+        return pair;
+      });
+
+      this.setCurrentPageItemsData([
+        ...this.currentPage.pageItems,
+        ...newPageToContracts,
+      ]);
+    } else {
+      console.error(newPage);
     }
   };
 

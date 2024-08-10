@@ -31,20 +31,26 @@ import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [pageItems, setPageItems] = useState<FtoPairContract[]>([]);
 
-  useEffect(() => {
-    launchpad.ftoPairsPagination.page = 1;
-  }, []);
+  // useEffect(() => {
+  //   launchpad.ftoPairsPagination.page = 1;
+  // }, []);
 
   useEffect(() => {
     if (!wallet.isInit) {
       return;
     }
     launchpad.showNotValidatedPairs = true;
-    launchpad.ftoPairs.call({
-      page: launchpad.ftoPairsPagination.page,
-      limit: launchpad.ftoPairsPagination.limit,
+    // launchpad.ftoPairs.call({
+    //   page: launchpad.ftoPairsPagination.page,
+    //   limit: launchpad.ftoPairsPagination.limit,
+    // });
+    launchpad.resetPageInfo();
+    launchpad.LoadMoreFtoPage().then(() => {
+      setPageItems(launchpad.currentPage.pageItems);
     });
+
     launchpad.myFtoPairs.call();
   }, [wallet.isInit]);
 
@@ -203,7 +209,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 animate="visible"
                 className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3"
               >
-                {launchpad.ftoPairs.value?.data.map((pair: FtoPairContract) => (
+                {pageItems.map((pair: FtoPairContract) => (
                   <motion.div variants={itemPopUpVariants} key={pair.address}>
                     <LaunchCard
                       pair={pair}
@@ -240,7 +246,18 @@ const LaunchPage: NextLayoutPage = observer(() => {
                   </motion.div>
                 ))}
               </motion.div>
-              <Pagination
+              <div className="flex justify-around my-5">
+                <Button
+                  onClick={() => {
+                    launchpad.LoadMoreFtoPage().then(() => {
+                      setPageItems(launchpad.currentPage.pageItems);
+                    });
+                  }}
+                >
+                  Load More
+                </Button>
+              </div>
+              {/* <Pagination
                 className="flex justify-center mt-[12px]"
                 total={launchpad.ftoPairsPagination.totalPage.value ?? 1}
                 page={launchpad.ftoPairsPagination.page}
@@ -252,7 +269,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                     limit: launchpad.ftoPairsPagination.limit,
                   });
                 }}
-              />
+              /> */}
             </Tab>
             <Tab key="my" title="My Projects">
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">

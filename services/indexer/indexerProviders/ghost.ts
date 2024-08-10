@@ -106,7 +106,7 @@ export class GhostIndexer {
             }
             orderBy:"createdAt"
             orderDirection: "desc"
-            #limit: ${filter?.limit ?? 9}
+            limit: ${filter?.limit ?? 9}
             ${dirCondition}
           ) {
             items {
@@ -140,6 +140,8 @@ export class GhostIndexer {
           }
         }
       `;
+
+    console.log("query", query);
 
     const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
 
