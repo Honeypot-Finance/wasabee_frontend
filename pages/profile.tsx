@@ -6,6 +6,7 @@ import TokenBalanceCard from "@/components/TokenBalanceCard/TokenBalanceCard";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Button } from "@/components/button";
 import { Copy } from "@/components/copy";
+import HoneyStickSvg from "@/components/svg/HoneyStick";
 import { PeddingSvg } from "@/components/svg/Pedding";
 import { RocketSvg } from "@/components/svg/Rocket";
 import { defaultContainerVariants, itemSlideVariants } from "@/lib/animation";
@@ -148,90 +149,119 @@ export const Profile = observer(() => {
           <Tab key="my-launch" title="My Launch">
             <Card className="next-card">
               <CardBody>
-                {launchpad.ftoPairs.loading ? (
-                  <LoadingDisplay />
-                ) : (
-                  launchpad.myFtoPairs.value?.data.map((project) => (
-                    <LaunchCard
-                      key={project.address}
-                      pair={project}
-                      action={
-                        <div className="flex">
-                          <Link
-                            href={`/launch-detail/${project.address}`}
-                            className="text-black font-bold w-full px-[8px]"
-                          >
-                            <Button className="w-full">View Token</Button>
-                          </Link>
-                          {project.ftoState === 0 && (
+                <motion.div
+                  variants={defaultContainerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {launchpad.ftoPairs.loading ? (
+                    <LoadingDisplay />
+                  ) : launchpad.myFtoPairs.value?.data.length === 0 ? (
+                    <div className="flex flex-col justify-center items-center">
+                      <HoneyStickSvg />
+                      <div className="text-[#eee369] mt-2  text-[3rem] text-center">
+                        List is empty
+                      </div>
+                    </div>
+                  ) : (
+                    launchpad.myFtoPairs.value?.data.map((project) => (
+                      <LaunchCard
+                        key={project.address}
+                        pair={project}
+                        action={
+                          <div className="flex">
                             <Link
-                              href={`/swap?inputCurrency=${project.launchedToken.address}&outputCurrency=${project.raiseToken.address}`}
+                              href={`/launch-detail/${project.address}`}
                               className="text-black font-bold w-full px-[8px]"
                             >
-                              <Button className="w-full">
-                                <p>Swap Token</p>
-                                <p>
-                                  <Copy
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                    }}
-                                    className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-                                    value={`${window.location.origin}/swap?inputCurrency=${project.launchedToken.address}&outputCurrency=${project.raiseToken.address}`}
-                                  ></Copy>
-                                </p>
-                              </Button>{" "}
+                              <Button className="w-full">View Token</Button>
                             </Link>
-                          )}
-                        </div>
-                      }
-                    />
-                  ))
-                )}
+                            {project.ftoState === 0 && (
+                              <Link
+                                href={`/swap?inputCurrency=${project.launchedToken.address}&outputCurrency=${project.raiseToken.address}`}
+                                className="text-black font-bold w-full px-[8px]"
+                              >
+                                <Button className="w-full">
+                                  <p>Swap Token</p>
+                                  <p>
+                                    <Copy
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                      }}
+                                      className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
+                                      value={`${window.location.origin}/swap?inputCurrency=${project.launchedToken.address}&outputCurrency=${project.raiseToken.address}`}
+                                    ></Copy>
+                                  </p>
+                                </Button>{" "}
+                              </Link>
+                            )}
+                          </div>
+                        }
+                      />
+                    ))
+                  )}
+                </motion.div>
               </CardBody>
             </Card>
           </Tab>
           <Tab key="participated-launch" title="Participated Launch">
             <Card className="next-card">
               <CardBody>
-                {launchpad.ftoPairs.loading ? (
-                  <LoadingDisplay />
-                ) : (
-                  launchpad.getMyFtoParticipatedPairs.value?.map((project) => (
-                    <LaunchCard
-                      key={project.address}
-                      pair={project}
-                      action={
-                        <div className="flex">
-                          <Link
-                            href={`/launch-detail/${project.address}`}
-                            className="text-black font-bold w-full px-[8px]"
-                          >
-                            <Button className="w-full">View Token</Button>
-                          </Link>
-                          {project.ftoState === 0 && (
-                            <Link
-                              href={`/swap?inputCurrency=${project.launchedToken.address}&outputCurrency=${project.raiseToken.address}`}
-                              className="text-black font-bold w-full px-[8px]"
-                            >
-                              <Button className="w-full">
-                                <p>Swap Token</p>
-                                <p>
-                                  <Copy
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                    }}
-                                    className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-                                    value={`${window.location.origin}/swap?inputCurrency=${project.launchedToken.address}&outputCurrency=${project.raiseToken.address}`}
-                                  ></Copy>
-                                </p>
-                              </Button>{" "}
-                            </Link>
-                          )}
-                        </div>
-                      }
-                    />
-                  ))
-                )}
+                <motion.div
+                  variants={defaultContainerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {launchpad.ftoPairs.loading ? (
+                    <LoadingDisplay />
+                  ) : launchpad.getMyFtoParticipatedPairs.value?.length ??
+                    0 > 0 ? (
+                    launchpad.getMyFtoParticipatedPairs.value?.map(
+                      (project) => (
+                        <LaunchCard
+                          key={project.address}
+                          pair={project}
+                          action={
+                            <div className="flex">
+                              <Link
+                                href={`/launch-detail/${project.address}`}
+                                className="text-black font-bold w-full px-[8px]"
+                              >
+                                <Button className="w-full">View Token</Button>
+                              </Link>
+                              {project.ftoState === 0 && (
+                                <Link
+                                  href={`/swap?inputCurrency=${project.launchedToken.address}&outputCurrency=${project.raiseToken.address}`}
+                                  className="text-black font-bold w-full px-[8px]"
+                                >
+                                  <Button className="w-full">
+                                    <p>Swap Token</p>
+                                    <p>
+                                      <Copy
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                        }}
+                                        className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
+                                        value={`${window.location.origin}/swap?inputCurrency=${project.launchedToken.address}&outputCurrency=${project.raiseToken.address}`}
+                                      ></Copy>
+                                    </p>
+                                  </Button>{" "}
+                                </Link>
+                              )}
+                            </div>
+                          }
+                        />
+                      )
+                    )
+                  ) : (
+                    <div className="flex flex-col justify-center items-center">
+                      <HoneyStickSvg />
+                      <div className="text-[#eee369] mt-2  text-[3rem] text-center">
+                        List is empty
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
               </CardBody>
             </Card>
           </Tab>
@@ -243,18 +273,30 @@ export const Profile = observer(() => {
                   initial="hidden"
                   animate="visible"
                 >
-                  {(liquidity.isInit &&
-                    liquidity.myPairs.map((pair) => (
-                      <motion.div
-                        variants={itemSlideVariants}
-                        key={pair.address}
-                      >
-                        <PoolLiquidityCard
-                          pair={pair}
-                          autoSize
-                        ></PoolLiquidityCard>
-                      </motion.div>
-                    ))) || <LoadingDisplay />}
+                  {liquidity.isInit ? (
+                    liquidity.myPairs.length > 0 ? (
+                      liquidity.myPairs.map((pair) => (
+                        <motion.div
+                          variants={itemSlideVariants}
+                          key={pair.address}
+                        >
+                          <PoolLiquidityCard
+                            pair={pair}
+                            autoSize
+                          ></PoolLiquidityCard>
+                        </motion.div>
+                      ))
+                    ) : (
+                      <div className="flex flex-col justify-center items-center">
+                        <HoneyStickSvg />
+                        <div className="text-[#eee369] mt-2  text-[3rem] text-center">
+                          List is empty
+                        </div>
+                      </div>
+                    )
+                  ) : (
+                    <LoadingDisplay />
+                  )}
                 </motion.div>
               </CardBody>
             </Card>
