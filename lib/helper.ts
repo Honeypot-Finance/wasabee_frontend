@@ -7,5 +7,8 @@ export const helper = {
                 return null;
             }
         }
+    },
+    env: {
+        isBrowser: typeof window !== 'undefined',
     }
 }
