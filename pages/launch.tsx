@@ -332,29 +332,18 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 ))}
               </motion.div>
               <div className="flex justify-around my-5">
-                <Button
-                  onClick={() => {
-                    launchpad.LoadMoreFtoPage().then(() => {
-                      setPageItems(launchpad.currentPage.pageItems);
-                    });
-                  }}
-                >
-                  Load More
-                </Button>
+                {launchpad.currentPage.pageinfo.hasNextPage && (
+                  <Button
+                    onClick={() => {
+                      launchpad.LoadMoreFtoPage().then(() => {
+                        setPageItems(launchpad.currentPage.pageItems);
+                      });
+                    }}
+                  >
+                    Load More
+                  </Button>
+                )}
               </div>
-              {/* <Pagination
-                className="flex justify-center mt-[12px]"
-                total={launchpad.ftoPairsPagination.totalPage.value ?? 1}
-                page={launchpad.ftoPairsPagination.page}
-                initialPage={launchpad.ftoPairsPagination.page}
-                onChange={(page) => {
-                  launchpad.ftoPairsPagination.onPageChange(page);
-                  launchpad.ftoPairs.call({
-                    page,
-                    limit: launchpad.ftoPairsPagination.limit,
-                  });
-                }}
-              /> */}
             </Tab>
             <Tab key="my" title="My Projects">
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
