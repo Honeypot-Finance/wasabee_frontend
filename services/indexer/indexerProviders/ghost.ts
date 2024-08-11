@@ -9,6 +9,7 @@ import {
   GhostFTOPair,
   PageInfo,
   PageRequest,
+  GhostToken,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 
@@ -127,36 +128,58 @@ export class GhostIndexer {
       : "";
 
     const statusCondition = statusNum != -1 ? `status: "${statusNum}",` : "";
-    const searchIdCondition = filter?.search ? `id: "${filter.search}",` : "";
-    const searchToken0IdCondition = filter?.search
-      ? `token0Id: "${filter?.search}",`
-      : "";
-    const searchToken1IdCondition = filter?.search
-      ? `token1Id: "${filter?.search}",`
-      : "";
+    const searchIdCondition =
+      filter?.search && filter.search.startsWith("0x")
+        ? `id: "${filter.search}",`
+        : "";
+    const searchToken0IdCondition =
+      filter?.search && filter.search.startsWith("0x")
+        ? `token0Id: "${filter?.search}",`
+        : "";
+    const searchToken1IdCondition =
+      filter?.search && filter.search.startsWith("0x")
+        ? `token1Id: "${filter?.search}",`
+        : "";
     const providerCondition = provider
       ? `launchedTokenProvider: "${provider}",`
       : "";
+
+    const filteredTokens = await this.getFilteredFtoTokens(filter);
 
     const query = `#graphql
         {
           pairs(
             where: {
               OR:[
-                {
-                  ${statusCondition}
-                  ${searchIdCondition}
-                  ${providerCondition}
+                ${
+                  statusCondition ||
+                  searchIdCondition ||
+                  (filter?.search && filter.search.startsWith("0x"))
+                    ? `{
+                    ${statusCondition}
+                    ${searchIdCondition}
+                    ${providerCondition}
+                  }
+                  {
+                    ${statusCondition}
+                    ${searchToken0IdCondition}
+                    ${providerCondition}
+                  }
+                  {
+                    ${statusCondition}
+                    ${searchToken1IdCondition}
+                    ${providerCondition}
+                  }`
+                    : ""
                 }
-                {
-                  ${statusCondition}
-                  ${searchToken0IdCondition}
-                  ${providerCondition}
-                }
-                {
-                  ${statusCondition}
-                  ${searchToken1IdCondition}
-                  ${providerCondition}
+                ${
+                  filteredTokens.status === "success" &&
+                  filteredTokens.data.items.map((token: GhostToken) => {
+                    return `
+                    {token0Id: "${token.id}"}
+                    {token1Id: "${token.id}"}
+                    `;
+                  })
                 }
               ]
             }
@@ -246,6 +269,42 @@ export class GhostIndexer {
         status: "success",
         message: "Success",
         data: (res.data as any).erc20s.items as GhostFtoTokensResponse,
+      };
+    }
+  };
+
+  getFilteredFtoTokens = async (
+    filter: PairFilter
+  ): Promise<ApiResponseType<GhostFtoTokensResponse>> => {
+    const query = `#graphql
+        {
+          erc20s(
+            where: {
+              OR: [
+                { name_contains: "${filter.search}" },
+                { symbol_contains: "${filter.search}" }
+              ]
+            }
+          ) {
+            items {
+              id
+              name
+              symbol
+              decimals
+            }
+          }
+        }
+      `;
+
+    const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: { items: (res.data as any).erc20s.items as GhostToken[] },
       };
     }
   };
