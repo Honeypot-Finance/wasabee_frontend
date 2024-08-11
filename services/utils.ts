@@ -54,7 +54,7 @@ export class AsyncState<T, K extends (...args: any) => any = () => {}> {
       allowStale: false,
       ttl: 1000 * 5,
       max: 100,
-    }
+    };
     if (cache) {
       this.cache = new LRUCache({
         ...defaultCacheOptions,
@@ -223,20 +223,44 @@ export class PaginationState {
   }
 }
 
-export class StorageState<T> {
+export class StorageState<T = any, U = any> {
+  static storages = {} as Record<string, StorageState>;
+  static register(key: string, storage: StorageState) {
+    StorageState.storages[key] = storage;
+  }
+  static async sync() {
+    return Promise.all(
+      Object.values(StorageState.storages).map(async (storage) => {
+        return storage.syncValue();
+      })
+    );
+  }
   key: string = "";
   value: T | null = null;
-  constructor(args: Partial<StorageState<T>>) {
+  isInit = false;
+  transform?: (args?:any) => T | null;
+  serialize?: (value:T | null) => U;
+  deserialize?: (value: U) => T | null;
+  constructor({...args}: Pick<StorageState<T>, 'key' | 'value' | 'deserialize' | 'serialize'> & { transform?: (args?:any) => T | null; }) {
     Object.assign(this, args);
+    StorageState.register(this.key, this);
     makeAutoObservable(this);
   }
-
-  async sync() {
-    this.value = (await localforage.getItem(this.key)) as T;
+  async transformAndSetValue(value: any) {
+     await this.setValue(this.transform ? this.transform(value) : value);
   }
-
   async setValue(value: T | null) {
     this.value = value;
-    await localforage.setItem(this.key, value);
+    await localforage.setItem(this.key, this.serialize ? this.serialize(this.value) : this.value);
+  }
+
+  async syncValue() {
+    if (!this.isInit) {
+      const storedValue = (await localforage.getItem(this.key))
+      if (storedValue) {
+        this.value = this.deserialize ? this.deserialize(storedValue as any) : storedValue as T;
+      }
+      this.isInit = true;
+    }
   }
 }

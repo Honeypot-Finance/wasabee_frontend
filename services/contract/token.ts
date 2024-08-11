@@ -17,15 +17,20 @@ export class Token implements BaseContract {
   totalSupplyWithoutDecimals = new BigNumber(0);
   symbol: string = "";
   decimals: number = 0;
-  logoURI = "";
   abi = ERC20ABI;
   faucetLoading = false;
   claimed = false;
   isInit = false;
   isNative = false;
+  _logoURI = "";
+  priority = 0; // determines the order of the token in the list
 
   get displayName() {
     return this.symbol || this.name;
+  }
+
+  get logoURI () {
+    return this._logoURI || wallet.currentChain.validatedTokensInfo[this.address]?.logoURI || ""
   }
 
   get faucetContract() {
@@ -43,13 +48,14 @@ export class Token implements BaseContract {
     });
   }
 
-  constructor({ balance, ...args }: Partial<Token>) {
+  constructor({ balance, logoURI, ...args }: Partial<Token>) {
     Object.assign(this, args);
     if (balance) {
       this.balanceWithoutDecimals = new BigNumber(balance);
     }
-
-    this.getLogoURI();
+    if (logoURI) {
+      this._logoURI = logoURI;
+    }
 
     makeAutoObservable(this);
   }
@@ -63,6 +69,10 @@ export class Token implements BaseContract {
     return new ContractWrite(this.contract.write?.approve, {
       action: "Approve",
     });
+  }
+
+  setLogoURI(logoURI: string) {
+    this._logoURI = logoURI;
   }
 
   async init(options?: {
@@ -80,7 +90,6 @@ export class Token implements BaseContract {
     const loadTotalSupply = options?.loadTotalSupply ?? false;
     const loadClaimed = options?.loadClaimed ?? false;
 
-    this.getLogoURI();
 
     await Promise.all([
       loadName && !this.name
@@ -111,18 +120,6 @@ export class Token implements BaseContract {
     });
 
     this.isInit = true;
-  }
-
-  getLogoURI() {
-    if (this.logoURI) return;
-
-    Object.entries(wallet.currentChain.validatedTokensInfo).forEach(
-      ([address, info]) => {
-        if (address.toLowerCase() === this.address.toLowerCase()) {
-          this.logoURI = window.location.origin + info.logoURI ?? "";
-        }
-      }
-    );
   }
 
   async approveIfNoAllowance({

@@ -7,7 +7,7 @@ import BigNumber from "bignumber.js";
 import { exec } from "~/lib/contract";
 import { trpcClient } from "@/lib/trpc";
 import { makeAutoObservable, reaction, when } from "mobx";
-import { AsyncState, ValueState } from "./utils";
+import { AsyncState, StorageState, ValueState } from "./utils";
 import { add, debounce } from "lodash";
 import dayjs from "dayjs";
 
@@ -15,14 +15,65 @@ class Liquidity {
   pairs: PairContract[] = [];
   pairsByToken: Record<string, PairContract> = {};
   tokensMap: Record<string, Token> = {};
-  slippage = 10
+  slippage = 10;
+  localTokensMap = new StorageState<Record<string, Token>>({
+    key: "localTokens",
+    value: {} as Record<string, Token>,
+    serialize: (value) => {
+      const val = value
+        ? Object.values(value).reduce((acc, token) => {
+            acc[token.address] = {
+              address: token.address,
+              name: token.name,
+              symbol: token.symbol,
+              decimals: token.decimals,
+            };
+            return acc;
+          }, {} as Record<string, Pick<Token, "address" | "name" | "symbol" | "decimals">>)
+        : null;
+      return val;
+    },
+    deserialize: (
+      value: Record<
+        string,
+        Pick<Token, "address" | "name" | "symbol" | "decimals">
+      >
+    ) => {
+      return Object.values(value).reduce((acc, t) => {
+        const token = new Token({
+          ...t,
+          priority: 3,
+        });
+        token.init()
+        acc[token.address] = token;
+        return acc;
+      }, {} as Record<string, Token>);
+    },
+    transform(value: Token) {
+      this.value![value.address] = value;
+      return {
+        ...this.value,
+      };
+    },
+  });
 
   get tokens() {
-    return Object.values(this.tokensMap).sort((a, b) =>
-      a.logoURI ? -1 : b.logoURI ? 1 : 0
-    )
+    const tokens = Object.values(this.localTokensMap.value || {});
+    Object.values(this.tokensMap).forEach((t) => {
+      if (!this.localTokensMap.value?.[t.address]) {
+        tokens.push(t);
+      }
+    });
+   
+    const sortedTokens =  tokens.sort((a, b) => {
+      const diff =  b.priority - a.priority
+      if (diff === 0) {
+         return  a.logoURI ? -1 : b.logoURI ? 1 : 0;
+      }
+      return diff
+    });
+    return sortedTokens
   }
-
 
   fromToken: Token | null = null;
   toToken: Token | null = null;
@@ -222,22 +273,27 @@ class Liquidity {
       }),
     ]);
     if (this.fromToken.isNative) {
-      console.log("addLiquidityETH", [     this.toToken.address as `0x${string}`,
-        BigInt(token1AmountWithDec),
-        BigInt(token1MinAmountWithDec),
-        BigInt(token0MinAmountWithDec),
-        wallet.account as `0x${string}`,
-        BigInt(deadline),])
-      await this.routerV2Contract.addLiquidityETH.call([
+      console.log("addLiquidityETH", [
         this.toToken.address as `0x${string}`,
         BigInt(token1AmountWithDec),
         BigInt(token1MinAmountWithDec),
         BigInt(token0MinAmountWithDec),
         wallet.account as `0x${string}`,
         BigInt(deadline),
-      ], {
-        value: BigInt(token0AmountWithDec)
-      });
+      ]);
+      await this.routerV2Contract.addLiquidityETH.call(
+        [
+          this.toToken.address as `0x${string}`,
+          BigInt(token1AmountWithDec),
+          BigInt(token1MinAmountWithDec),
+          BigInt(token0MinAmountWithDec),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ],
+        {
+          value: BigInt(token0AmountWithDec),
+        }
+      );
     } else if (this.toToken.isNative) {
       await this.routerV2Contract.addLiquidityETH.call([
         this.fromToken.address as `0x${string}`,
@@ -246,9 +302,10 @@ class Liquidity {
         BigInt(token1MinAmountWithDec),
         wallet.account as `0x${string}`,
         BigInt(deadline),
-      ]), {
-        value: BigInt(token1AmountWithDec)
-      };
+      ]),
+        {
+          value: BigInt(token1AmountWithDec),
+        };
     } else {
       await this.routerV2Contract.addLiquidity.call([
         this.fromToken.address as `0x${string}`,
@@ -261,7 +318,7 @@ class Liquidity {
         BigInt(deadline),
       ]);
     }
-   
+
     this.fromAmount = "";
     this.toAmount = "";
     Promise.all([this.fromToken.getBalance(), this.toToken.getBalance()]);
@@ -308,11 +365,16 @@ class Liquidity {
         return pairContract;
       });
       wallet.currentChain.nativeTokens.forEach((token) => {
-        if (!this.tokensMap[token.address] || this.tokensMap[token.address].isNative === false) {
+        if (
+          !this.tokensMap[token.address] ||
+          this.tokensMap[token.address].isNative === false
+        ) {
           this.tokensMap[token.address] = token;
+          token.init()
         }
-      })
-     
+      });
+      await this.localTokensMap.syncValue()
+
 
       this.isInit = true;
     }, 300)();

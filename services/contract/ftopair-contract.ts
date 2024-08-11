@@ -278,7 +278,7 @@ export class FtoPairContract implements BaseContract {
     }
     if (res.logo_url) {
       this.logoUrl = res.logo_url;
-      this.launchedToken.logoURI = res.logo_url;
+      this.launchedToken.setLogoURI(res.logo_url);
     }
   }
 

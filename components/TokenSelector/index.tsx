@@ -64,8 +64,6 @@ export const TokenSelector = observer(
             address: state.search,
           });
           await token.init();
-          console.log(token);
-          liquidity.tokensMap[state.search] = token;
           state.tokens = [token];
         } else {
           state.tokens = liquidity.tokens?.filter((token) => {
@@ -158,6 +156,7 @@ export const TokenSelector = observer(
                               <div
                                 key={token.address}
                                 onClick={() => {
+                                  liquidity.localTokensMap.transformAndSetValue(token);
                                   onSelect(token);
                                   onClose();
                                 }}

@@ -209,7 +209,6 @@ export class PairContract implements BaseContract {
       const deadline = dayjs().unix() + 60 * (this.deadline || 20);
       if (this.token0.isNative) {
         await this.routerV2Contract.removeLiquidityETH.call([
-          this.token0.address as `0x${string}`,
           this.token1.address as `0x${string}`,
           BigInt(liquidity.toFixed(0)),
           BigInt(0),
@@ -220,7 +219,6 @@ export class PairContract implements BaseContract {
       } else if (this.token1.isNative) {
         await this.routerV2Contract.removeLiquidityETH.call([
           this.token0.address as `0x${string}`,
-          this.token1.address as `0x${string}`,
           BigInt(liquidity.toFixed(0)),
           BigInt(0),
           BigInt(0),
