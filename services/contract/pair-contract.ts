@@ -207,15 +207,38 @@ export class PairContract implements BaseContract {
         spender: this.routerV2Contract.address,
       });
       const deadline = dayjs().unix() + 60 * (this.deadline || 20);
-      await this.routerV2Contract.removeLiquidity.call([
-        this.token0.address as `0x${string}`,
-        this.token1.address as `0x${string}`,
-        BigInt(liquidity.toFixed(0)),
-        BigInt(0),
-        BigInt(0),
-        wallet.account as `0x${string}`,
-        BigInt(deadline),
-      ]);
+      if (this.token0.isNative) {
+        await this.routerV2Contract.removeLiquidityETH.call([
+          this.token0.address as `0x${string}`,
+          this.token1.address as `0x${string}`,
+          BigInt(liquidity.toFixed(0)),
+          BigInt(0),
+          BigInt(0),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]);
+      } else if (this.token1.isNative) {
+        await this.routerV2Contract.removeLiquidityETH.call([
+          this.token0.address as `0x${string}`,
+          this.token1.address as `0x${string}`,
+          BigInt(liquidity.toFixed(0)),
+          BigInt(0),
+          BigInt(0),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]);
+      } else {
+        await this.routerV2Contract.removeLiquidity.call([
+          this.token0.address as `0x${string}`,
+          this.token1.address as `0x${string}`,
+          BigInt(liquidity.toFixed(0)),
+          BigInt(0),
+          BigInt(0),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]);
+      }
+  
       await this.init(true);
     }
   });

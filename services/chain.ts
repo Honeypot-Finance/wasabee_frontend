@@ -20,6 +20,7 @@ export class Network {
     ftoFacade: string;
     ftoTokens: Partial<Token>[];
   };
+  nativeTokens: Token[] = [];
   faucetTokens: Token[] = [];
   nativeFaucet?: {
     address: string;
@@ -46,11 +47,15 @@ export class Network {
   > = {};
   validatedFtoAddresses: string[] = [];
   constructor(
-    args: Omit<Partial<Network>, "faucetTokens"> & {
+    args: Omit<Partial<Network>, "faucetTokens" | "nativeTokens"> & {
       faucetTokens: Partial<Token>[];
+      nativeTokens: Partial<Token>[];
     }
   ) {
     Object.assign(this, args);
+    if (args) {
+
+    }
   }
 }
 // export const polygonTestNetwork = new Network({
@@ -99,6 +104,15 @@ export const berachainBartioTestnetNetwork = new Network({
       name: "Official Faucet",
       logoURI:
         "https://res.cloudinary.com/duv0g402y/raw/upload/src/assets/bera.png",
+    },
+  ],
+  nativeTokens: [
+    {
+      address: "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8",
+      name: "Bera",
+      symbol: "BERA",
+      decimals: 18,
+      isNative: true,
     },
   ],
   nativeFaucet: {

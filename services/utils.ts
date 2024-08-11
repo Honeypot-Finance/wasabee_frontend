@@ -2,7 +2,10 @@ import { makeAutoObservable } from "mobx";
 import { ToastOptions, toast } from "react-toastify";
 import { wallet } from "./wallet";
 import TransactionPendingToastify from "@/components/CustomToastify/TransactionPendingToastify/TransactionPendingToastify";
-
+import { localforage } from "@/lib/storage";
+import { LRUCache } from "lru-cache";
+import { cache } from "../lib/cache";
+import { max } from "lodash";
 export class ValueState<T> {
   _value!: T;
   constructor(args: Partial<ValueState<T>> = {}) {
@@ -23,32 +26,55 @@ export class ValueState<T> {
     this._value = value;
   }
 }
-
 export class AsyncState<T, K extends (...args: any) => any = () => {}> {
   loading = false;
   error: Error | null = null;
   value: T | null = null;
+  cache?: LRUCache<string, any>;
   private _call: K;
   constructor(
     func: K,
     options?: {
       loading?: boolean;
+      cache: LRUCache.Options<string, any, any> | boolean;
     }
   ) {
     this._call = func;
     if (options) {
-      Object.assign(this, options);
+      const { cache, ...restOptions } = options;
+      this.handleCacheConfig(cache);
+      Object.assign(this, restOptions);
     }
 
     makeAutoObservable(this);
   }
 
+  handleCacheConfig(cache: LRUCache.Options<string, any, any> | boolean) {
+    const defaultCacheOptions = {
+      allowStale: false,
+      ttl: 1000 * 5,
+      max: 100,
+    }
+    if (cache) {
+      this.cache = new LRUCache({
+        ...defaultCacheOptions,
+        ...(cache === true ? {} : cache),
+      });
+    }
+  }
+
   async call(...args: Parameters<K>) {
+    const cachedValue = this.cache?.get(JSON.stringify(args));
+    if (cachedValue) {
+      this.setValue(cachedValue);
+      return [this.value, null] as [T, Error | null];
+    }
     this.setLoading(true);
     this.value = null;
     try {
       const data = await this._call(...args);
       this.setValue(data);
+      this.cache?.set(JSON.stringify(args), data);
     } catch (error) {
       console.error(error);
       this.setError(error as Error);
@@ -99,21 +125,15 @@ export class ContractWrite<T extends (...args: any) => any> {
     return this.action ? `${this.action} Failed` : `Transaction Failed`;
   }
 
-  call = async (args?: Parameters<T>[0]) => {
-    const count = await wallet.publicClient.getTransactionCount({
-      address: wallet.account as `0x${string}`,
-    });
-    if (ContractWrite.nonce < count) {
-      ContractWrite.nonce = count;
-    } else {
-      ContractWrite.nonce += 1;
-    }
-
-    console.log("nonce", ContractWrite.nonce);
+  call = async (
+    args: Parameters<T>[0] = [],
+    options?: Partial<Parameters<T>[1]>
+  ) => {
     this.setLoading(true);
     try {
       const hash = await this._call(args, {
         account: wallet.account,
+        ...options,
       });
       console.log("hash", hash);
       const pendingPopup = toast(
@@ -200,5 +220,23 @@ export class PaginationState {
   setTotal(total: number) {
     this.total = total;
     this.totalPage.call();
+  }
+}
+
+export class StorageState<T> {
+  key: string = "";
+  value: T | null = null;
+  constructor(args: Partial<StorageState<T>>) {
+    Object.assign(this, args);
+    makeAutoObservable(this);
+  }
+
+  async sync() {
+    this.value = (await localforage.getItem(this.key)) as T;
+  }
+
+  async setValue(value: T | null) {
+    this.value = value;
+    await localforage.setItem(this.key, value);
   }
 }

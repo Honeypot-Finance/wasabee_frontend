@@ -11,6 +11,7 @@ import { AsyncState } from "./utils";
 import { debounce } from "lodash";
 import dayjs from "dayjs";
 import { chart } from "./chart";
+import { zeroAddress } from "viem";
 
 class Swap {
   fromToken: Token | null = null;
@@ -358,18 +359,38 @@ class Swap {
 
     const finalAmountOut = await this.getFinalAmountOut();
 
-    const finalAmountOutDecimals = new BigNumber(finalAmountOut)
+    const minAmountOutDecimals = new BigNumber(finalAmountOut)
       .multipliedBy(1 - this.slippage / 100)
       .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
       .toFixed(0);
-
-    await this.routerV2Contract.swapExactTokensForTokens.call([
-      BigInt(fromAmountDecimals),
-      BigInt(finalAmountOutDecimals),
-      path,
-      wallet.account as `0x${string}`,
-      BigInt(deadline),
-    ]);
+    if (this.fromToken.isNative) {
+      await this.routerV2Contract.swapExactETHForTokens.call([
+        BigInt(minAmountOutDecimals),
+        path,
+        wallet.account as `0x${string}`,
+        BigInt(deadline),
+      ], {
+        value: BigInt(fromAmountDecimals),
+      })
+    } else if (this.toToken.isNative) {
+      await this.routerV2Contract.swapExactTokensForETH.call([
+        BigInt(fromAmountDecimals),
+        BigInt(minAmountOutDecimals),
+        path,
+        wallet.account as `0x${string}`,
+        BigInt(deadline),
+      ])
+    } else {
+      await this.routerV2Contract.swapExactTokensForTokens.call([
+        BigInt(fromAmountDecimals),
+        BigInt(minAmountOutDecimals),
+        path,
+        wallet.account as `0x${string}`,
+        BigInt(deadline),
+      ]);
+    }
+  
+  
 
     this.fromAmount = "";
 

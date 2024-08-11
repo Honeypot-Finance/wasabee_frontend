@@ -115,19 +115,8 @@ export const indexerFeedRouter = router({
   getAllPairs: publicProcedure.query(
     async (): Promise<ApiResponseType<GhostPairResponse>> => {
       const res = await indexer.dataProvider.getAllPairs();
+      return res
 
-      if (res.status === "error") {
-        return {
-          status: "error",
-          message: res.message,
-        };
-      } else {
-        return {
-          status: "success",
-          data: res.data,
-          message: "Success",
-        };
-      }
     }
   ),
 });

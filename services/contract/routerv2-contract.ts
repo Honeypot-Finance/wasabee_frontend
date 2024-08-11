@@ -32,6 +32,16 @@ export class RouterV2Contract implements BaseContract {
     }
     )
   }
+
+
+  get addLiquidityETH () {
+    return new ContractWrite(this.contract.write.addLiquidityETH, {
+      action: 'Add Liquidity'
+    }
+    )
+  }
+
+
   get removeLiquidity () {
     return new ContractWrite(this.contract.write.removeLiquidity, 
       {
@@ -40,8 +50,27 @@ export class RouterV2Contract implements BaseContract {
     )
   }
 
+  get removeLiquidityETH () {
+    return new ContractWrite(this.contract.write.removeLiquidityETH, 
+      {
+        action: 'Remove Liquidity'
+      }
+    )
+  }
+
   get swapExactTokensForTokens () {
     return new ContractWrite(this.contract.write.swapExactTokensForTokens, {
+      action: 'Swap'
+    })
+  }
+
+  get swapExactTokensForETH () {
+    return new ContractWrite(this.contract.write.swapExactTokensForETH, {
+      action: 'Swap'
+    })
+  }
+  get swapExactETHForTokens () {
+    return new ContractWrite(this.contract.write.swapExactETHForTokens, {
       action: 'Swap'
     })
   }

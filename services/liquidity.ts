@@ -15,10 +15,14 @@ class Liquidity {
   pairs: PairContract[] = [];
   pairsByToken: Record<string, PairContract> = {};
   tokensMap: Record<string, Token> = {};
+  slippage = 10
 
   get tokens() {
-    return Object.values(this.tokensMap);
+    return Object.values(this.tokensMap).sort((a, b) =>
+      a.logoURI ? -1 : b.logoURI ? 1 : 0
+    )
   }
+
 
   fromToken: Token | null = null;
   toToken: Token | null = null;
@@ -112,7 +116,7 @@ class Liquidity {
         this.fromToken as Token
       );
       //@ts-ignore
-      this.toAmount = toAmount.toFixed();
+      this.toAmount = toAmount?.toFixed();
     } else {
       this.toAmount = "";
     }
@@ -191,6 +195,10 @@ class Liquidity {
     const token1AmountWithDec = new BigNumber(this.toAmount)
       .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
       .toFixed(0);
+    // const token1MinAmountWithDec = new BigNumber(token1AmountWithDec).multipliedBy(1 - this.slippage / 100).toFixed(0);
+    const token1MinAmountWithDec = 0;
+    // const token0MinAmountWithDec = new BigNumber(token0AmountWithDec).multipliedBy(1 - this.slippage / 100).toFixed(0);
+    const token0MinAmountWithDec = 0;
     const deadline = dayjs().unix() + 60 * (this.deadline || 20);
     console.log("liqidity agrs", [
       this.fromToken.address as `0x${string}`,
@@ -213,16 +221,47 @@ class Liquidity {
         spender: this.routerV2Contract.address,
       }),
     ]);
-    await this.routerV2Contract.addLiquidity.call([
-      this.fromToken.address as `0x${string}`,
-      this.toToken.address as `0x${string}`,
-      BigInt(token0AmountWithDec),
-      BigInt(token1AmountWithDec),
-      BigInt(0),
-      BigInt(0),
-      wallet.account as `0x${string}`,
-      BigInt(deadline),
-    ]);
+    if (this.fromToken.isNative) {
+      console.log("addLiquidityETH", [     this.toToken.address as `0x${string}`,
+        BigInt(token1AmountWithDec),
+        BigInt(token1MinAmountWithDec),
+        BigInt(token0MinAmountWithDec),
+        wallet.account as `0x${string}`,
+        BigInt(deadline),])
+      await this.routerV2Contract.addLiquidityETH.call([
+        this.toToken.address as `0x${string}`,
+        BigInt(token1AmountWithDec),
+        BigInt(token1MinAmountWithDec),
+        BigInt(token0MinAmountWithDec),
+        wallet.account as `0x${string}`,
+        BigInt(deadline),
+      ], {
+        value: BigInt(token0AmountWithDec)
+      });
+    } else if (this.toToken.isNative) {
+      await this.routerV2Contract.addLiquidityETH.call([
+        this.fromToken.address as `0x${string}`,
+        BigInt(token0AmountWithDec),
+        BigInt(token0MinAmountWithDec),
+        BigInt(token1MinAmountWithDec),
+        wallet.account as `0x${string}`,
+        BigInt(deadline),
+      ]), {
+        value: BigInt(token1AmountWithDec)
+      };
+    } else {
+      await this.routerV2Contract.addLiquidity.call([
+        this.fromToken.address as `0x${string}`,
+        this.toToken.address as `0x${string}`,
+        BigInt(token0AmountWithDec),
+        BigInt(token1AmountWithDec),
+        BigInt(0),
+        BigInt(0),
+        wallet.account as `0x${string}`,
+        BigInt(deadline),
+      ]);
+    }
+   
     this.fromAmount = "";
     this.toAmount = "";
     Promise.all([this.fromToken.getBalance(), this.toToken.getBalance()]);
@@ -268,13 +307,12 @@ class Liquidity {
         pairContract.init();
         return pairContract;
       });
-
-      //show logoURI token first, because it means its a validated token
-      this.tokensMap = Object.fromEntries(
-        Object.entries(this.tokensMap).sort((a, b) =>
-          a[1].logoURI ? -1 : b[1].logoURI ? 1 : 0
-        )
-      );
+      wallet.currentChain.nativeTokens.forEach((token) => {
+        if (!this.tokensMap[token.address] || this.tokensMap[token.address].isNative === false) {
+          this.tokensMap[token.address] = token;
+        }
+      })
+     
 
       this.isInit = true;
     }, 300)();

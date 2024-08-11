@@ -61,7 +61,7 @@ export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
         }))
       );
     }
-  }, [pairsMap, wallet.isInit]);
+  }, [wallet.isInit]);
   //   useEffect(() => {
   //     window.onhashchange = () => {
   //       const hash = getHash();

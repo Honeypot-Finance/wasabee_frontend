@@ -22,6 +22,7 @@ export class Token implements BaseContract {
   faucetLoading = false;
   claimed = false;
   isInit = false;
+  isNative = false;
 
   get displayName() {
     return this.symbol || this.name;
@@ -155,9 +156,11 @@ export class Token implements BaseContract {
 
   async getBalance() {
     try {
-      const balance = await this.contract.read.balanceOf([
+      const balance = this.isNative ? (await wallet.publicClient.getBalance({
+        address: wallet.account as `0x${string}`,
+      })) : (await this.contract.read.balanceOf([
         wallet.account as `0x${string}`,
-      ]);
+      ]));
       this.balanceWithoutDecimals = new BigNumber(balance.toString());
       return this.balanceWithoutDecimals;
     } catch (e) {

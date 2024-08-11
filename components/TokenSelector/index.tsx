@@ -70,8 +70,8 @@ export const TokenSelector = observer(
         } else {
           state.tokens = liquidity.tokens?.filter((token) => {
             return (
-              token.name?.toLowerCase().includes(state.search) ||
-              token.symbol?.toLowerCase().includes(state.search)
+              token.name?.toLowerCase().includes(state.search.toLowerCase()) ||
+              token.symbol?.toLowerCase().includes(state.search.toLowerCase())
             );
           });
         }

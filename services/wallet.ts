@@ -54,6 +54,9 @@ export class Wallet {
     this.currentChain.faucetTokens = this.currentChain.faucetTokens.map(
       (token) => new Token(token)
     );
+    this.currentChain.nativeTokens = this.currentChain.nativeTokens.map((token) => {
+      return new Token(token)
+    })
     this.contracts = {
       routerV2: new RouterV2Contract({
         address: this.currentChain.contracts.routerV2,
