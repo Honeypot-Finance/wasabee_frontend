@@ -199,6 +199,7 @@ export class PairContract implements BaseContract {
     }
     this.isInit = true;
   }
+
   removeLiquidity = new AsyncState(async (percent: number) => {
     const liquidity = this.token.balanceWithoutDecimals.multipliedBy(percent);
     if (liquidity.gt(0)) {
@@ -236,7 +237,7 @@ export class PairContract implements BaseContract {
           BigInt(deadline),
         ]);
       }
-  
+
       await this.init(true);
     }
   });

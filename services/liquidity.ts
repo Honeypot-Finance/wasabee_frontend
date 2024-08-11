@@ -44,7 +44,7 @@ class Liquidity {
           ...t,
           priority: 3,
         });
-        token.init()
+        token.init();
         acc[token.address] = token;
         return acc;
       }, {} as Record<string, Token>);
@@ -64,15 +64,15 @@ class Liquidity {
         tokens.push(t);
       }
     });
-   
-    const sortedTokens =  tokens.sort((a, b) => {
-      const diff =  b.priority - a.priority
+
+    const sortedTokens = tokens.sort((a, b) => {
+      const diff = b.priority - a.priority;
       if (diff === 0) {
-         return  a.logoURI ? -1 : b.logoURI ? 1 : 0;
+        return a.logoURI ? -1 : b.logoURI ? 1 : 0;
       }
-      return diff
+      return diff;
     });
-    return sortedTokens
+    return sortedTokens;
   }
 
   fromToken: Token | null = null;
@@ -324,7 +324,7 @@ class Liquidity {
     Promise.all([this.fromToken.getBalance(), this.toToken.getBalance()]);
   });
 
-  initPool(
+  async initPool(
     pairs: {
       address: string;
       token0: {
@@ -341,43 +341,40 @@ class Liquidity {
       };
     }[]
   ) {
-    debounce(async () => {
-      this.pairs = pairs.map((pair) => {
-        const token0 = new Token(pair.token0);
-        const token1 = new Token(pair.token1);
-        const pairContract = new PairContract({
-          address: pair.address,
-          token0,
-          token1,
-        });
-        if (!this.tokensMap[token0.address]) {
-          this.tokensMap[token0.address] = token0;
-
-          token0.init();
-        }
-        if (!this.tokensMap[token1.address]) {
-          this.tokensMap[token1.address] = token1;
-
-          token1.init();
-        }
-        this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract;
-        pairContract.init();
-        return pairContract;
+    this.pairs = pairs.map((pair) => {
+      const token0 = new Token(pair.token0);
+      const token1 = new Token(pair.token1);
+      const pairContract = new PairContract({
+        address: pair.address,
+        token0,
+        token1,
       });
-      wallet.currentChain.nativeTokens.forEach((token) => {
-        if (
-          !this.tokensMap[token.address] ||
-          this.tokensMap[token.address].isNative === false
-        ) {
-          this.tokensMap[token.address] = token;
-          token.init()
-        }
-      });
-      await this.localTokensMap.syncValue()
+      if (!this.tokensMap[token0.address]) {
+        this.tokensMap[token0.address] = token0;
 
+        token0.init();
+      }
+      if (!this.tokensMap[token1.address]) {
+        this.tokensMap[token1.address] = token1;
 
-      this.isInit = true;
-    }, 300)();
+        token1.init();
+      }
+      this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract;
+      pairContract.init();
+      return pairContract;
+    });
+    wallet.currentChain.nativeTokens.forEach((token) => {
+      if (
+        !this.tokensMap[token.address] ||
+        this.tokensMap[token.address].isNative === false
+      ) {
+        this.tokensMap[token.address] = token;
+        token.init();
+      }
+    });
+    await this.localTokensMap.syncValue();
+
+    this.isInit = true;
   }
 
   async getPairByTokens(token0Address: string, token1Address: string) {

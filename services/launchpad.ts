@@ -190,17 +190,20 @@ class LaunchPad {
 
     this.setFtoPageIsInit(false);
     this.setFtoPageLoading(true);
+
     if (this.ftoPageInfo.value.pairFilter.showNotValidatedPairs) {
       this.resetFtoPageInfo();
       await this.LoadMoreFtoPage();
     } else {
       await this.loadVerifiedFTOProjects();
     }
+
     this.setFtoPageIsInit(true);
     this.setFtoPageLoading(false);
   };
 
   loadVerifiedFTOProjects = async () => {
+    this.setFtoPageLoading(true);
     const projects = wallet.currentChain.validatedFtoAddresses.map(
       (pairAddress) => {
         const pair = new FtoPairContract({
@@ -212,6 +215,7 @@ class LaunchPad {
     );
 
     this.ftoPageItems.setValue(projects);
+    this.setFtoPageLoading(false);
     return projects;
   };
 
@@ -228,6 +232,9 @@ class LaunchPad {
   });
 
   LoadMoreFtoPage = async () => {
+    if (!this.ftoPageInfo.value.pageInfo.hasNextPage) return;
+
+    this.setFtoPageLoading(true);
     const newPage =
       await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
         filter: this.ftoPageInfo.value.pairFilter,
@@ -270,17 +277,15 @@ class LaunchPad {
                 address: pairAddress.token1.id,
               });
 
-        if (!pair.isInit) {
-          pair.init({
-            raisedToken: raisedToken,
-            launchedToken: launchedToken,
-            depositedLaunchedToken: pairAddress.depositedLaunchedToken,
-            depositedRaisedToken: pairAddress.depositedRaisedToken,
-            startTime: pairAddress.createdAt,
-            endTime: pairAddress.endTime,
-            ftoState: Number(pairAddress.status),
-          });
-        }
+        pair.init({
+          raisedToken: raisedToken,
+          launchedToken: launchedToken,
+          depositedLaunchedToken: pairAddress.depositedLaunchedToken,
+          depositedRaisedToken: pairAddress.depositedRaisedToken,
+          startTime: pairAddress.createdAt,
+          endTime: pairAddress.endTime,
+          ftoState: Number(pairAddress.status),
+        });
 
         return pair;
       });
@@ -289,6 +294,8 @@ class LaunchPad {
         ...this.ftoPageItems.value,
         ...newPageToContracts,
       ]);
+
+      this.setFtoPageLoading(false);
     } else {
       console.error(newPage);
     }

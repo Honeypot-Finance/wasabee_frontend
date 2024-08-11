@@ -47,8 +47,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
     launchpad.showNotValidatedPairs = true;
     launchpad.reloadFtoPage();
 
-    launchpad.myFtoPairs.call();
-
     //loading most success projects
     launchpad.mostSuccessfulFtos().then((data) => {
       setMostSuccessProjects(data);
@@ -309,8 +307,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
                     onClick={() => {
                       launchpad.LoadMoreFtoPage();
                     }}
+                    isDisabled={launchpad.ftoPageInfo.value.ftoPageLoading}
                   >
-                    Load More
+                    {launchpad.ftoPageInfo.value.ftoPageLoading
+                      ? "Loading..."
+                      : "Load More"}
                   </Button>
                 )}
               </div>
