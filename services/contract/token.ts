@@ -30,11 +30,6 @@ export class Token implements BaseContract {
   }
 
   get logoURI() {
-    console.log(
-      "logoURI",
-      this._logoURI,
-      wallet.currentChain.validatedTokensInfo[this.address]?.logoURI
-    );
     return (
       this._logoURI ||
       wallet.currentChain.validatedTokensInfo[this.address]?.logoURI ||

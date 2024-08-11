@@ -45,7 +45,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
       return;
     }
     launchpad.showNotValidatedPairs = true;
-    launchpad.initFtoPage();
+    launchpad.reloadFtoPage();
 
     launchpad.myFtoPairs.call();
 
@@ -143,7 +143,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
           <Input
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
-              launchpad.initFtoPage();
             }}
             startContent={<IoSearchOutline></IoSearchOutline>}
             placeholder="Search by name, symbol or address"
@@ -189,8 +188,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "all";
-
-                            launchpad.initFtoPage();
                           }}
                           className="w-[100px]"
                         >
@@ -199,7 +196,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "success";
-                            launchpad.initFtoPage();
                           }}
                           className="w-[100px]"
                         >
@@ -208,7 +204,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "fail";
-                            launchpad.initFtoPage();
                           }}
                           className="w-[100px]"
                         >
@@ -217,7 +212,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "processing";
-                            launchpad.initFtoPage();
                           }}
                           className="w-[100px]"
                         >
@@ -236,7 +230,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
             launchpad.ftoPageInfo.value.pairFilter.showNotValidatedPairs =
               !launchpad.ftoPageInfo.value.pairFilter.showNotValidatedPairs;
 
-            launchpad.initFtoPage();
+            launchpad.reloadFtoPage();
           }}
           defaultSelected={
             launchpad.ftoPageInfo.value.pairFilter.showNotValidatedPairs
@@ -310,7 +304,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 ))}
               </motion.div>
               <div className="flex justify-around my-5">
-                {launchpad.ftoPageInfo.value.pageInfo.hasNextPage && (
+                {launchpad.ftoPageInfo.value?.pageInfo?.hasNextPage && (
                   <Button
                     onClick={() => {
                       launchpad.LoadMoreFtoPage();

@@ -9,6 +9,7 @@ import { Address } from "viem";
 import { Token } from "./contract/token";
 import { PageInfo } from "./indexer/indexerTypes";
 import { reset } from "viem/actions";
+import { debounce } from "lodash";
 
 const pagelimit = 9;
 
@@ -78,6 +79,17 @@ class LaunchPad {
     },
   });
 
+  updateFilter = debounce((filter: Partial<PairFilter>) => {
+    this.ftoPageInfo.value.pairFilter = {
+      ...this.ftoPageInfo.value.pairFilter,
+      ...filter,
+    };
+
+    this.reloadFtoPage();
+    this.myFtoPairs.call();
+    this.getMyFtoParticipatedPairs.call();
+  }, 500);
+
   ftoPageItems = new ValueState<FtoPairContract[]>({
     value: [],
   });
@@ -93,23 +105,15 @@ class LaunchPad {
   };
 
   set pairFilterSearch(search: string) {
-    this.ftoPageInfo.value.pairFilter.search = search;
-    this.resetFtoPageInfo();
-    this.myFtoPairs.call();
-    this.getMyFtoParticipatedPairs.call();
+    this.updateFilter({ search });
   }
 
   set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
-    this.ftoPageInfo.value.pairFilter.status = status;
-    this.resetFtoPageInfo();
-    this.myFtoPairs.call();
-    this.getMyFtoParticipatedPairs.call();
+    this.updateFilter({ status });
   }
 
   set showNotValidatedPairs(show: boolean) {
-    this.ftoPageInfo.value.pairFilter.showNotValidatedPairs = show;
-    this.myFtoPairs.call();
-    this.getMyFtoParticipatedPairs.call();
+    this.updateFilter({ showNotValidatedPairs: show });
   }
 
   get ftofactoryContract() {
@@ -190,7 +194,7 @@ class LaunchPad {
     }
   }
 
-  initFtoPage = async () => {
+  reloadFtoPage = async () => {
     this.setFtoPageIsInit(false);
     if (this.ftoPageInfo.value.pairFilter.showNotValidatedPairs) {
       await this.resetFtoPageInfo();
