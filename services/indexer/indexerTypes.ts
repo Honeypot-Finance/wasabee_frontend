@@ -1,19 +1,5 @@
-import { PairFilter } from "../launchpad";
 import { GhostIndexer } from "./indexerProviders/ghost";
 import Indexer from "./indexer";
-
-// export interface IndexerProvider {
-//   apiKey: string;
-//   apiEndpoint: string;
-
-//   callIndexerApi(query: string, option: any): Promise<ApiResponseType<any>>;
-//   getFilteredFtoPairs: (
-//     input: PairFilter,
-//     provider?: string
-//   ) => Promise<ApiResponseType<GhostFtoPairResponse>>;
-//   getAllFtoTokens(): Promise<ApiResponseType<GhostFtoTokensResponse>>;
-//   getAllPairs(): Promise<ApiResponseType<GhostPairResponse>>;
-// }
 
 export type IndexerProvider = GhostIndexer;
 
@@ -24,6 +10,11 @@ export type GhostFtoPairResponse = {
 
 export type GhostPairResponse = {
   pairs: GhostPair[];
+};
+
+export type PairFilter = {
+  searchString: string;
+  limit: number;
 };
 
 export type GhostFtoTokensResponse = {

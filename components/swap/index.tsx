@@ -18,7 +18,6 @@ import { wallet } from "@/services/wallet";
 import { GhostPair, GhostPairResponse } from "@/services/indexer/indexerTypes";
 
 export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
-  const { chainId } = useAccount();
   const [pairsMap, setPairsMap] = useState<GhostPair[]>();
   const state = useLocalObservable(() => ({
     activeTab: activeTab || "swap",

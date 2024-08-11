@@ -63,7 +63,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
         </Button>
       </div>
 
-      {mostSuccessProjects && (
+      {mostSuccessProjects.length > 0 && (
         <>
           <h2 className="w-full text-center">Trending Projects</h2>
           <motion.div

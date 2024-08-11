@@ -363,6 +363,7 @@ class Liquidity {
       pairContract.init();
       return pairContract;
     });
+
     wallet.currentChain.nativeTokens.forEach((token) => {
       if (
         !this.tokensMap[token.address] ||

@@ -1,4 +1,7 @@
-import { PairFilter, statusTextToNumber } from "@/services/launchpad";
+import {
+  PairFilter as FtoPairFilter,
+  statusTextToNumber,
+} from "@/services/launchpad";
 import {
   IndexerProvider,
   GhostFtoPairResponse,
@@ -10,6 +13,7 @@ import {
   PageInfo,
   PageRequest,
   GhostToken,
+  PairFilter,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 
@@ -114,7 +118,7 @@ export class GhostIndexer {
   };
 
   getFilteredFtoPairs = async (
-    filter: PairFilter,
+    filter: FtoPairFilter,
     chainId: string,
     provider?: string,
     pageRequest?: PageRequest
@@ -274,7 +278,7 @@ export class GhostIndexer {
   };
 
   getFilteredFtoTokens = async (
-    filter: PairFilter
+    filter: FtoPairFilter
   ): Promise<ApiResponseType<GhostFtoTokensResponse>> => {
     const query = `#graphql
         {
@@ -315,6 +319,70 @@ export class GhostIndexer {
           pairs (
             limit: 1000
           ){
+            items {
+              id
+              token0 {
+                id
+                name
+                symbol
+                decimals
+              }
+              token1 {
+                id
+                name
+                symbol
+                decimals
+              }
+            }
+          }
+        }
+      `;
+
+    const res = await this.callIndexerApi(query, {
+      apiHandle: pairGraphHandle,
+    });
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: { pairs: (res.data as any).pairs?.items as GhostPair[] } ?? {
+          pairs: [],
+        },
+      };
+    }
+  };
+
+  getFilteredPairs = async (
+    filter: Partial<PairFilter>,
+    chainId: string,
+    pageRequest?: PageRequest
+  ): Promise<ApiResponseType<GhostPairResponse>> => {
+    const dirCondition = pageRequest?.cursor
+      ? pageRequest?.direction === "next"
+        ? `after:"${pageRequest?.cursor}"`
+        : `before:"${pageRequest?.cursor}"`
+      : "";
+
+    const query = `#graphql
+        {
+          pairs(
+            where: {
+              OR: [
+                { id: "${filter.searchString}" },
+                { token0: { name_contains: "${filter.searchString}" } },
+                { token0: { symbol_contains: "${filter.searchString}" } },
+                { token0: { id: "${filter.searchString}" } },
+                { token1: { name_contains: "${filter.searchString}" } }
+                { token1: { symbol_contains: "${filter.searchString}" } }
+                { token1: { id: "${filter.searchString}" } }
+              ]
+            }
+            limit: ${filter.limit}
+            ${dirCondition}
+          ) {
             items {
               id
               token0 {

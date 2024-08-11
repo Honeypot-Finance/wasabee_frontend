@@ -3,6 +3,7 @@ import { GhostIndexer } from "./indexerProviders/ghost";
 import {
   GhostFtoPairResponse,
   GhostFtoTokensResponse,
+  GhostPairResponse,
   IndexerProvider,
   PageRequest,
 } from "./indexerTypes";
@@ -48,6 +49,18 @@ export default class Indexer<T extends IndexerProvider> {
     ApiResponseType<GhostFtoTokensResponse>
   > => {
     return await this.dataProvider.getAllFtoTokens();
+  };
+
+  getFilteredPairs = async (
+    filter: Partial<PairFilter>,
+    chainId: string,
+    pageRequest?: PageRequest
+  ): Promise<ApiResponseType<GhostPairResponse>> => {
+    return await this.dataProvider.getFilteredPairs(
+      filter,
+      chainId,
+      pageRequest
+    );
   };
 
   async getPairByTokens({
