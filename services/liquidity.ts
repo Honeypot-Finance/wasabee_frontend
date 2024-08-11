@@ -324,28 +324,17 @@ class Liquidity {
     Promise.all([this.fromToken.getBalance(), this.toToken.getBalance()]);
   });
 
-  async initPool(
-    pairs: {
-      address: string;
-      token0: {
-        address: string;
-        name: string;
-        symbol: string;
-        decimals: number;
-      };
-      token1: {
-        address: string;
-        name: string;
-        symbol: string;
-        decimals: number;
-      };
-    }[]
-  ) {
-    this.pairs = pairs.map((pair) => {
-      const token0 = new Token(pair.token0);
-      const token1 = new Token(pair.token1);
+  async initPool() {
+    const pairs = await trpcClient.indexerFeedRouter.getAllPairs.query();
+    if (pairs.status === "error") {
+      return;
+    }
+
+    this.pairs = pairs.data.pairs.map((pair) => {
+      const token0 = new Token({ ...pair.token0, address: pair.token0.id });
+      const token1 = new Token({ ...pair.token1, address: pair.token1.id });
       const pairContract = new PairContract({
-        address: pair.address,
+        address: pair.id,
         token0,
         token1,
       });

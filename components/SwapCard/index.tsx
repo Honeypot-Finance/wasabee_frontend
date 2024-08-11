@@ -32,7 +32,6 @@ import TokenLogo from "../TokenLogo/TokenLogo";
 
 export const SwapCard = observer(() => {
   const router = useRouter();
-  const [pairsMap, setPairsMap] = useState<GhostPair[]>();
   const state = useLocalObservable(() => ({
     selectState: new SelectState({
       value: 0,
@@ -50,34 +49,8 @@ export const SwapCard = observer(() => {
   };
 
   useEffect(() => {
-    trpcClient.indexerFeedRouter.getAllPairs.query().then((data) => {
-      if (data.status === "success" && data.data) {
-        setPairsMap(data.data.pairs);
-      }
-    });
+    liquidity.initPool();
   }, []);
-
-  useEffect(() => {
-    if (pairsMap) {
-      liquidity.initPool(
-        pairsMap.map((pair: any) => ({
-          address: pair.id,
-          token0: {
-            address: pair.token0.id,
-            name: pair.token0.name,
-            symbol: pair.token0.symbol,
-            decimals: pair.token0.decimals,
-          },
-          token1: {
-            address: pair.token1.id,
-            name: pair.token1.name,
-            symbol: pair.token1.symbol,
-            decimals: pair.token1.decimals,
-          },
-        }))
-      );
-    }
-  }, [pairsMap]);
 
   const isinit = wallet.isInit && liquidity.isInit;
 

@@ -115,8 +115,7 @@ export const indexerFeedRouter = router({
   getAllPairs: publicProcedure.query(
     async (): Promise<ApiResponseType<GhostPairResponse>> => {
       const res = await indexer.dataProvider.getAllPairs();
-      return res
-
+      return res;
     }
   ),
 });

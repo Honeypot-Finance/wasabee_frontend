@@ -28,16 +28,7 @@ import { motion } from "framer-motion";
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
   const router = useRouter();
-  const [pairsMap, setPairsMap] = useState<GhostPair[]>();
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    trpcClient.indexerFeedRouter.getAllPairs.query().then((data) => {
-      if (data.status === "success" && data.data) {
-        setPairsMap(data.data.pairs);
-      }
-    });
-  }, []);
 
   useEffect(() => {
     if (wallet.isInit && liquidity.isInit) {
@@ -93,33 +84,8 @@ const PoolsPage: NextLayoutPage = observer(() => {
   }));
 
   useEffect(() => {
-    if (pairsMap) {
-      console.log(
-        "pairsMap",
-        pairsMap.map((pair) => {
-          return { t1: pair.token0.symbol, t2: pair.token1.symbol };
-        })
-      );
-      liquidity.initPool(
-        pairsMap.map((pair: any) => ({
-          address: pair.id,
-          token0: {
-            address: pair.token0.id,
-            name: pair.token0.name,
-            symbol: pair.token0.symbol,
-            decimals: pair.token0.decimals,
-          },
-          token1: {
-            address: pair.token1.id,
-            name: pair.token1.name,
-            symbol: pair.token1.symbol,
-            decimals: pair.token1.decimals,
-          },
-        }))
-      );
-      state.pagination.setTotal(liquidity.pairs.length);
-    }
-  }, [pairsMap]);
+    liquidity.initPool();
+  }, []);
 
   return (
     <div className="flex flex-col  items-center">

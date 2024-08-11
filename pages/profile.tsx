@@ -28,37 +28,6 @@ import { useAccount } from "wagmi";
 
 export const Profile = observer(() => {
   const { chainId } = useAccount();
-  const [pairsMap, setPairsMap] = useState<GhostPair[]>();
-
-  useEffect(() => {
-    trpcClient.indexerFeedRouter.getAllPairs.query().then((data) => {
-      if (data.status === "success" && data.data) {
-        setPairsMap(data.data.pairs);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (pairsMap) {
-      liquidity.initPool(
-        pairsMap.map((pair: any) => ({
-          address: pair.id,
-          token0: {
-            address: pair.token0.id,
-            name: pair.token0.name,
-            symbol: pair.token0.symbol,
-            decimals: pair.token0.decimals,
-          },
-          token1: {
-            address: pair.token1.id,
-            name: pair.token1.name,
-            symbol: pair.token1.symbol,
-            decimals: pair.token1.decimals,
-          },
-        }))
-      );
-    }
-  }, [pairsMap]);
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -67,6 +36,7 @@ export const Profile = observer(() => {
     launchpad.showNotValidatedPairs = true;
     launchpad.myFtoPairs.call();
     launchpad.getMyFtoParticipatedPairs.call();
+    liquidity.initPool();
   }, [wallet.isInit]);
 
   return (

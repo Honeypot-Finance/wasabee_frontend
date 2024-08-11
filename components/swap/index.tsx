@@ -18,7 +18,6 @@ import { wallet } from "@/services/wallet";
 import { GhostPair, GhostPairResponse } from "@/services/indexer/indexerTypes";
 
 export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
-  const [pairsMap, setPairsMap] = useState<GhostPair[]>();
   const state = useLocalObservable(() => ({
     activeTab: activeTab || "swap",
     get isSwap() {
@@ -33,42 +32,9 @@ export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
   }));
 
   useEffect(() => {
-    trpcClient.indexerFeedRouter.getAllPairs.query().then((data) => {
-      if (data.status === "success" && data.data) {
-        setPairsMap(data.data.pairs);
-      }
-    });
+    liquidity.initPool();
   }, []);
 
-  useEffect(() => {
-    if (pairsMap && wallet.isInit) {
-      liquidity.initPool(
-        pairsMap.map((pair: any) => ({
-          address: pair.id,
-          token0: {
-            address: pair.token0.id,
-            name: pair.token0.name,
-            symbol: pair.token0.symbol,
-            decimals: pair.token0.decimals,
-          },
-          token1: {
-            address: pair.token1.id,
-            name: pair.token1.name,
-            symbol: pair.token1.symbol,
-            decimals: pair.token1.decimals,
-          },
-        }))
-      );
-    }
-  }, [wallet.isInit]);
-  //   useEffect(() => {
-  //     window.onhashchange = () => {
-  //       const hash = getHash();
-  //       if (hash) {
-  //         state.setActiveTab(hash);
-  //       }
-  //     }
-  //   }, [])
   return (
     <div className="flex justify-center gap-[44px] flex-wrap">
       {/* <Image

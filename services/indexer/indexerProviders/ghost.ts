@@ -148,7 +148,12 @@ export class GhostIndexer {
       ? `launchedTokenProvider: "${provider}",`
       : "";
 
-    const filteredTokens = await this.getFilteredFtoTokens(filter);
+    const filteredTokens = filter.search
+      ? await this.getFilteredFtoTokens(filter)
+      : {
+          status: "success",
+          data: { items: [] },
+        };
 
     const query = `#graphql
         {
@@ -158,6 +163,7 @@ export class GhostIndexer {
                 ${
                   statusCondition ||
                   searchIdCondition ||
+                  !filter.search ||
                   (filter?.search && filter.search.startsWith("0x"))
                     ? `{
                     ${statusCondition}
@@ -178,7 +184,7 @@ export class GhostIndexer {
                 }
                 ${
                   filteredTokens.status === "success" &&
-                  filteredTokens.data.items.map((token: GhostToken) => {
+                  filteredTokens.data!.items.map((token: GhostToken) => {
                     return `
                     {token0Id: "${token.id}"}
                     {token1Id: "${token.id}"}
@@ -476,6 +482,7 @@ export class GhostIndexer {
 
   }`;
 
+    console.log("fto request");
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
     });

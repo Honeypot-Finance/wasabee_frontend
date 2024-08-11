@@ -17,7 +17,6 @@ export const ftoRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      // const { index } = input;
       await ftoService.createFtoProject({ ...input, creator_api_key: api_key });
     }),
   getProjectInfo: publicProcedure

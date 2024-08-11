@@ -238,27 +238,36 @@ export class StorageState<T = any, U = any> {
   key: string = "";
   value: T | null = null;
   isInit = false;
-  transform?: (args?:any) => T | null;
-  serialize?: (value:T | null) => U;
+  transform?: (args?: any) => T | null;
+  serialize?: (value: T | null) => U;
   deserialize?: (value: U) => T | null;
-  constructor({...args}: Pick<StorageState<T>, 'key' | 'value' | 'deserialize' | 'serialize'> & { transform?: (args?:any) => T | null; }) {
+  constructor({
+    ...args
+  }: Pick<StorageState<T>, "key" | "value" | "deserialize" | "serialize"> & {
+    transform?: (args?: any) => T | null;
+  }) {
     Object.assign(this, args);
     StorageState.register(this.key, this);
     makeAutoObservable(this);
   }
   async transformAndSetValue(value: any) {
-     await this.setValue(this.transform ? this.transform(value) : value);
+    await this.setValue(this.transform ? this.transform(value) : value);
   }
   async setValue(value: T | null) {
     this.value = value;
-    await localforage.setItem(this.key, this.serialize ? this.serialize(this.value) : this.value);
+    await localforage.setItem(
+      this.key,
+      this.serialize ? this.serialize(this.value) : this.value
+    );
   }
 
   async syncValue() {
     if (!this.isInit) {
-      const storedValue = (await localforage.getItem(this.key))
+      const storedValue = await localforage.getItem(this.key);
       if (storedValue) {
-        this.value = this.deserialize ? this.deserialize(storedValue as any) : storedValue as T;
+        this.value = this.deserialize
+          ? this.deserialize(storedValue as any)
+          : (storedValue as T);
       }
       this.isInit = true;
     }
