@@ -10,6 +10,7 @@ import { PeddingSvg } from "@/components/svg/Pedding";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { Copy } from "@/components/copy";
 import { LaunchCard } from "@/components/LaunchCard";
+import Image from "next/image";
 import {
   Input,
   Pagination,
@@ -28,10 +29,20 @@ import { DropdownSvg } from "@/components/svg/dropdown";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
+import { trpcClient } from "@/lib/trpc";
+import { Token } from "@/services/contract/token";
+import CardContianer from "@/components/CardContianer/CardContianer";
+import { FaCrown } from "react-icons/fa";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [pageItems, setPageItems] = useState<FtoPairContract[]>([]);
+  const [mostSuccessProjects, setMostSuccessProjects] = useState<
+    FtoPairContract[]
+  >([]);
+  const [trendingProjects, setTrendingProjects] = useState<FtoPairContract[]>(
+    []
+  );
 
   // useEffect(() => {
   //   launchpad.ftoPairsPagination.page = 1;
@@ -52,6 +63,12 @@ const LaunchPage: NextLayoutPage = observer(() => {
     });
 
     launchpad.myFtoPairs.call();
+
+    //loading most success projects
+    launchpad.mostSuccessfulFtos().then((data) => {
+      setMostSuccessProjects(data);
+      console.log("most success projects: ", data);
+    });
   }, [wallet.isInit]);
 
   return (
@@ -64,13 +81,87 @@ const LaunchPage: NextLayoutPage = observer(() => {
         </Button>
       </div>
 
+      {mostSuccessProjects && (
+        <>
+          <h2 className="w-full text-center">Trending Projects</h2>
+          <motion.div
+            variants={defaultContainerVariants}
+            initial="hidden"
+            animate="visible"
+            className="w-full flex flex-col lg:flex-row gap-2 flex-grow-[1]"
+          >
+            {mostSuccessProjects.map((pair: FtoPairContract, idx) => (
+              <motion.div
+                variants={itemPopUpVariants}
+                key={pair.address}
+                className={
+                  "flex-grow relative " + (idx !== 0 && "hidden lg:flex")
+                }
+              >
+                <CardContianer>
+                  {idx === 0 && (
+                    <FaCrown className="absolute top-0 left-2 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[500%] fill-yellow-300" />
+                  )}
+                  {idx === 1 && (
+                    <FaCrown className="absolute top-0 left-1 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[300%] fill-gray-300" />
+                  )}
+                  {idx === 2 && (
+                    <FaCrown className="absolute top-0 left-0 rotate-[-30deg] translate-x-[-30%] translate-y-[-50%] scale-[100%] fill-amber-800" />
+                  )}
+                  <div className="flex flex-col gap-2 justify-center items-center flex-grow-[1] basis-1">
+                    <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
+                      <Image
+                        src={
+                          !!pair?.logoUrl
+                            ? pair.logoUrl
+                            : "/images/project_honey.png"
+                        }
+                        alt="honey"
+                        width={100}
+                        height={100}
+                      ></Image>
+                    </div>
+                    <h4 className="text-white text-center text-[1rem] font-bold flex items-center">
+                      <div className=" relative">
+                        {pair?.launchedToken.name} <br />(
+                        {pair?.launchedToken.symbol})
+                      </div>
+                    </h4>{" "}
+                    <motion.div className="flex flex-col items-center gap-1">
+                      <h6 className="opacity-50 text-xs">Total raised</h6>
+                      <div className="flex items-center gap-2 text-sm">
+                        {/* <TotalRaisedSvg /> */}
+                        <span className="font-bold">
+                          {pair?.depositedRaisedToken
+                            ? pair.depositedRaisedToken.toFormat(0)
+                            : "-"}
+                          &nbsp;
+                          {pair?.raiseToken.displayName}
+                        </span>
+                      </div>
+                    </motion.div>
+                    <Link
+                      href={`/launch-detail/${pair.address}`}
+                      className="text-black font-bold px-[8px]"
+                    >
+                      <Button className="">View Token</Button>
+                    </Link>
+                  </div>
+                </CardContianer>
+              </motion.div>
+            ))}
+          </motion.div>
+        </>
+      )}
+
       <div>
         <div className="flex flex-col sm:flex-row gap-2">
           <Input
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
-              launchpad.ftoPairsPagination.page = 1;
-              launchpad.ftoPairsPagination.totalPage.call();
+              launchpad.LoadMoreFtoPage().then(() => {
+                setPageItems(launchpad.currentPage.pageItems);
+              });
             }}
             startContent={<IoSearchOutline></IoSearchOutline>}
             placeholder="Search by name, symbol or address"
@@ -99,7 +190,9 @@ const LaunchPage: NextLayoutPage = observer(() => {
           >
             <PopoverTrigger>
               <NextButton className="inline-flex w-full sm:w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)] text-white text-center">
-                <span className="flex-1">{launchpad.pairFilter.status}</span>
+                <span className="flex-1">
+                  {launchpad.pairFilter.status.toUpperCase()}
+                </span>
                 <DropdownSvg></DropdownSvg>
               </NextButton>
             </PopoverTrigger>
@@ -112,10 +205,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "all";
-                            launchpad.ftoPairsPagination.page = 1;
-                            launchpad.ftoPairs.call({
-                              page: launchpad.ftoPairsPagination.page,
-                              limit: launchpad.ftoPairsPagination.limit,
+                            launchpad.LoadMoreFtoPage().then(() => {
+                              setPageItems(launchpad.currentPage.pageItems);
                             });
                           }}
                           className="w-[100px]"
@@ -125,10 +216,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "success";
-                            launchpad.ftoPairsPagination.page = 1;
-                            launchpad.ftoPairs.call({
-                              page: launchpad.ftoPairsPagination.page,
-                              limit: launchpad.ftoPairsPagination.limit,
+                            launchpad.LoadMoreFtoPage().then(() => {
+                              setPageItems(launchpad.currentPage.pageItems);
                             });
                           }}
                           className="w-[100px]"
@@ -138,10 +227,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "fail";
-                            launchpad.ftoPairsPagination.page = 1;
-                            launchpad.ftoPairs.call({
-                              page: launchpad.ftoPairsPagination.page,
-                              limit: launchpad.ftoPairsPagination.limit,
+                            launchpad.LoadMoreFtoPage().then(() => {
+                              setPageItems(launchpad.currentPage.pageItems);
                             });
                           }}
                           className="w-[100px]"
@@ -151,10 +238,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "processing";
-                            launchpad.ftoPairsPagination.page = 1;
-                            launchpad.ftoPairs.call({
-                              page: launchpad.ftoPairsPagination.page,
-                              limit: launchpad.ftoPairsPagination.limit,
+                            launchpad.LoadMoreFtoPage().then(() => {
+                              setPageItems(launchpad.currentPage.pageItems);
                             });
                           }}
                           className="w-[100px]"

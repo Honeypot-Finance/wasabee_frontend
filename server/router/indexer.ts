@@ -55,6 +55,32 @@ export const indexerFeedRouter = router({
         } as const;
       }
     }),
+  getMostSuccessfulFtos: publicProcedure
+    .input(
+      z.object({
+        chainId: z.string(),
+        limit: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const res = await indexer.getMostSuccessfulFtos(
+        input.chainId,
+        input.limit
+      );
+
+      if (res.status === "error") {
+        return {
+          status: "error",
+          message: res.message,
+        } as const;
+      } else {
+        return {
+          status: "success",
+          data: res.data,
+          message: "Success",
+        } as const;
+      }
+    }),
   getAllFtoTokens: publicProcedure
     .output(
       z.object({

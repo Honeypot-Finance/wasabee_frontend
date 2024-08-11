@@ -94,6 +94,7 @@ class LaunchPad {
 
   set pairFilterSearch(search: string) {
     this.pairFilter.search = search;
+    this.resetPageInfo();
     this.ftoPairs.call({
       page: this.ftoPairsPagination.page,
       limit: this.ftoPairsPagination.limit,
@@ -104,6 +105,7 @@ class LaunchPad {
 
   set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
     this.pairFilter.status = status;
+    this.resetPageInfo();
     this.ftoPairs.call({
       page: this.ftoPairsPagination.page,
       limit: this.ftoPairsPagination.limit,
@@ -146,6 +148,59 @@ class LaunchPad {
     });
     return filteredPairs;
   };
+
+  async mostSuccessfulFtos(): Promise<FtoPairContract[]> {
+    const mostSuccessfulFtos =
+      await trpcClient.indexerFeedRouter.getMostSuccessfulFtos.query({
+        chainId: String(wallet.currentChainId),
+        limit: 5,
+      });
+
+    if (mostSuccessfulFtos.status === "success") {
+      return mostSuccessfulFtos.data.pairs.map((pairAddress) => {
+        const pair = new FtoPairContract({
+          address: pairAddress.id,
+        });
+
+        const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
+          ? new Token({
+              ...pairAddress.token1,
+              address: pairAddress.token1.id,
+            })
+          : new Token({
+              address: pairAddress.token0.id,
+            });
+
+        const launchedToken =
+          raisedToken.address.toLowerCase() ===
+          pairAddress.token1.id.toLowerCase()
+            ? new Token({
+                ...pairAddress.token0,
+                address: pairAddress.token0.id,
+              })
+            : new Token({
+                ...pairAddress.token1,
+                address: pairAddress.token1.id,
+              });
+
+        if (!pair.isInit) {
+          pair.init({
+            raisedToken: raisedToken,
+            launchedToken: launchedToken,
+            depositedLaunchedToken: pairAddress.depositedLaunchedToken,
+            depositedRaisedToken: pairAddress.depositedRaisedToken,
+            startTime: pairAddress.createdAt,
+            endTime: pairAddress.endTime,
+            ftoState: Number(pairAddress.status),
+          });
+        }
+
+        return pair;
+      });
+    } else {
+      return [];
+    }
+  }
 
   getMyFtoParticipatedPairs = new AsyncState<FtoPairContract[]>(async () => {
     if (!this.myFtoParticipatedPairs.value) {
@@ -263,11 +318,7 @@ class LaunchPad {
               address: pairAddress.id,
             });
 
-            const raisedToken = wallet.currentChain.contracts.ftoTokens.find(
-              (token) =>
-                token.address?.toLowerCase() ===
-                pairAddress.token1.id.toLowerCase()
-            )
+            const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
               ? new Token({
                   ...pairAddress.token1,
                   address: pairAddress.token1.id,
@@ -372,11 +423,7 @@ class LaunchPad {
             address: pairAddress.id,
           });
 
-          const raisedToken = wallet.currentChain.contracts.ftoTokens.find(
-            (token) =>
-              token.address?.toLowerCase() ===
-              pairAddress.token1.id.toLowerCase()
-          )
+          const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
             ? new Token({
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
@@ -526,6 +573,13 @@ class LaunchPad {
       await trpcClient.fto.updateProjectLogo.mutate(data);
     }
   );
+
+  isFtoRaiseToken(tokenAddress: string): boolean {
+    return wallet.currentChain.contracts.ftoTokens.some(
+      (ftoToken) =>
+        ftoToken.address?.toLowerCase() === tokenAddress.toLowerCase()
+    );
+  }
 }
 
 const launchpad = new LaunchPad();

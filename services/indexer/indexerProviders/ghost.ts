@@ -56,6 +56,62 @@ export class GhostIndexer {
     }
   };
 
+  getMostSuccessfulFTOPairs = async (
+    chainId: string,
+    limit: number
+  ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
+    const query = `#graphql
+    {
+      pairs(
+        where:{
+          status: "3"
+        }
+        orderBy: "depositedRaisedToken"
+        orderDirection: "desc"
+        limit: ${limit}
+      ) {
+        items {
+          id
+          token0Id
+          token1Id
+          depositedRaisedToken
+          depositedLaunchedToken
+          createdAt
+          endTime
+          status
+          token0 {
+            id
+            name
+            symbol
+            decimals
+          }
+          token1 {
+            id
+            name
+            symbol
+            decimals
+          }
+        }
+      }
+    }
+  `;
+
+    const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      let pairs = ((res.data as any)?.pairs?.items as GhostFTOPair[]) ?? [];
+      let pageInfo = (res.data as any)?.pairs?.pageInfo as PageInfo;
+
+      return {
+        status: "success",
+        message: "Success",
+        data: { pairs: pairs, pageInfo: pageInfo },
+      };
+    }
+  };
+
   getFilteredFtoPairs = async (
     filter: PairFilter,
     chainId: string,

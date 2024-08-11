@@ -37,6 +37,13 @@ export default class Indexer<T extends IndexerProvider> {
     );
   };
 
+  getMostSuccessfulFtos = async (
+    chainId: string,
+    limit: number
+  ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
+    return await this.dataProvider.getMostSuccessfulFTOPairs(chainId, limit);
+  };
+
   getAllFtoTokens = async (): Promise<
     ApiResponseType<GhostFtoTokensResponse>
   > => {
