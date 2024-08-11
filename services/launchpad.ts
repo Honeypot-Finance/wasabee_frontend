@@ -61,6 +61,7 @@ class LaunchPad {
     pageInfo: PageInfo;
     pairFilter: PairFilter;
     ftoPageInit: boolean;
+    ftoPageLoading: boolean;
   }>({
     value: {
       pageInfo: {
@@ -76,6 +77,7 @@ class LaunchPad {
         limit: 9,
       },
       ftoPageInit: false,
+      ftoPageLoading: false,
     },
   });
 
@@ -129,17 +131,6 @@ class LaunchPad {
 
   getPairAddress = async (index: bigint) =>
     await this.ftofactoryContract.allPairs.call([index]);
-
-  filterPairs = (pairs: FtoPairContract[]) => {
-    const filteredPairs = pairs.filter((pair) => {
-      if (this.ftoPageInfo.value.pairFilter.showNotValidatedPairs) {
-        return true;
-      } else {
-        return pair.isValidated;
-      }
-    });
-    return filteredPairs;
-  };
 
   async mostSuccessfulFtos(): Promise<FtoPairContract[]> {
     const mostSuccessfulFtos =
@@ -195,15 +186,18 @@ class LaunchPad {
   }
 
   reloadFtoPage = async () => {
+    if (this.ftoPageInfo.value.ftoPageLoading) return;
+
     this.setFtoPageIsInit(false);
+    this.setFtoPageLoading(true);
     if (this.ftoPageInfo.value.pairFilter.showNotValidatedPairs) {
-      await this.resetFtoPageInfo();
+      this.resetFtoPageInfo();
       await this.LoadMoreFtoPage();
     } else {
       await this.loadVerifiedFTOProjects();
     }
     this.setFtoPageIsInit(true);
-    console.log("initFtoPage");
+    this.setFtoPageLoading(false);
   };
 
   loadVerifiedFTOProjects = async () => {
@@ -230,13 +224,7 @@ class LaunchPad {
       });
     }
 
-    const filteredPairs = this.filterPairs(
-      this.myFtoParticipatedPairs.value?.data ?? []
-    );
-
-    this.myFtoParticipatedPairsPagination.setTotal(filteredPairs.length);
-
-    return filteredPairs ?? [];
+    return this.myFtoParticipatedPairs.value?.data ?? [];
   });
 
   LoadMoreFtoPage = async () => {
@@ -397,29 +385,13 @@ class LaunchPad {
       )
     ).filter((pair) => pair !== undefined) as FtoPairContract[];
 
-    const filteredPairs = this.filterPairs(data);
-
-    if (!filteredPairs || filteredPairs.length === 0) {
-      return { data: [], total: 0 };
-    } else {
-      filteredPairs.sort((a, b) => {
-        return Number(b.startTime) - Number(a.startTime);
-      });
-
-      this.myFtoPairsPagination.setTotal(ftoAddresses.data.pairs.length);
-
-      return {
-        data: filteredPairs,
-        total: ftoAddresses.data.pairs.length,
-      };
-    }
+    return {
+      data,
+      total: 999,
+    };
   });
 
   ftoPairsPagination = new PaginationState({
-    limit: pagelimit,
-  });
-
-  myFtoPairsPagination = new PaginationState({
     limit: pagelimit,
   });
 
@@ -506,6 +478,10 @@ class LaunchPad {
 
   setFtoPageIsInit = (isInit: boolean) => {
     this.ftoPageInfo.value.ftoPageInit = isInit;
+  };
+
+  setFtoPageLoading = (isLoading: boolean) => {
+    this.ftoPageInfo.value.ftoPageLoading = isLoading;
   };
 }
 
