@@ -54,7 +54,6 @@ export class Network {
   ) {
     Object.assign(this, args);
     if (args) {
-
     }
   }
 }
@@ -213,61 +212,61 @@ export const berachainBartioTestnetNetwork = new Network({
     poolBlacklist: ["0xfF95cdfC724Ca85b8d96D5a6Ea86333AC6a4799D"],
   },
   validatedTokensInfo: {
-    "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8": {
+    "0x7507c1dc16935b82698e4c63f2746a2fcf994df8": {
       name: "Wrapped Bera",
       symbol: "WBERA",
       decimals: 18,
       logoURI: "/images/icons/tokens/wbera-token-icon.png",
     },
-    "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d": {
+    "0x2c2fc71339acdd913734a4cae9dd95d9d2b1438d": {
       name: "Bera the Pooh",
       symbol: "BTP",
       decimals: 18,
       logoURI: "/images/icons/tokens/bera-the-pooh-token-icon.png",
     },
-    "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03": {
+    "0x0e4aaf1351de4c0264c5c7056ef3777b41bd8e03": {
       name: "Honey",
       symbol: "HONEY",
       decimals: 18,
       logoURI: "/images/icons/tokens/honey-token-icon.png",
     },
-    "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E": {
+    "0xfc5e3743e9fac8bb60408797607352e24db7d65e": {
       name: "T-HPOT",
       symbol: "tHPOT",
       decimals: 18,
       logoURI: "/images/icons/tokens/thpot-token-icon.jpg",
     },
-    "0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D": {
+    "0x05d0dd5135e3ef3ade32a9ef9cb06e8d37a6795d": {
       name: "USDT",
       symbol: "USDT",
       decimals: 18,
       logoURI: "/images/icons/tokens/usdt-token-icon.png",
     },
-    "0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c": {
+    "0xd6d83af58a19cd14ef3cf6fe848c9a4d21e5727c": {
       name: "USDC",
       symbol: "USDC",
       decimals: 18,
       logoURI: "/images/icons/tokens/usdc-token-icon.png",
     },
-    "0x286F1C3f0323dB9c91D1E8f45c8DF2d065AB5fae": {
+    "0x286f1c3f0323db9c91d1e8f45c8df2d065ab5fae": {
       name: "WBTC",
       symbol: "WBTC",
       decimals: 18,
       logoURI: "/images/icons/tokens/wbtc-token-icon.png",
     },
-    "0xE28AfD8c634946833e89ee3F122C06d7C537E8A8": {
+    "0xe28afd8c634946833e89ee3f122c06d7c537e8a8": {
       name: "WETH",
       symbol: "WETH",
       decimals: 18,
       logoURI: "/images/icons/tokens/weth-token-icon.png",
     },
-    "0x806Ef538b228844c73E8E692ADCFa8Eb2fCF729c": {
+    "0x806ef538b228844c73e8e692adcfa8eb2fcf729c": {
       name: "DAI",
       symbol: "DAI",
       decimals: 18,
       logoURI: "/images/icons/tokens/dai-token-icon.png",
     },
-    "0x343499E6315f7d3473a12aaf660Ac02b5739C382": {
+    "0x343499e6315f7d3473a12aaf660ac02b5739c382": {
       name: "Grand Conquest Gold",
       symbol: "GCG",
       decimals: 18,

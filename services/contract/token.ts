@@ -29,8 +29,17 @@ export class Token implements BaseContract {
     return this.symbol || this.name;
   }
 
-  get logoURI () {
-    return this._logoURI || wallet.currentChain.validatedTokensInfo[this.address]?.logoURI || ""
+  get logoURI() {
+    console.log(
+      "logoURI",
+      this._logoURI,
+      wallet.currentChain.validatedTokensInfo[this.address]?.logoURI
+    );
+    return (
+      this._logoURI ||
+      wallet.currentChain.validatedTokensInfo[this.address]?.logoURI ||
+      ""
+    );
   }
 
   get faucetContract() {
@@ -65,6 +74,7 @@ export class Token implements BaseContract {
       action: "Get Faucet",
     });
   }
+
   get approve() {
     return new ContractWrite(this.contract.write?.approve, {
       action: "Approve",
@@ -82,6 +92,7 @@ export class Token implements BaseContract {
     loadBalance?: boolean;
     loadTotalSupply?: boolean;
     loadClaimed?: boolean;
+    loadLogoURI?: boolean;
   }) {
     const loadName = options?.loadName ?? true;
     const loadSymbol = options?.loadSymbol ?? true;
@@ -89,7 +100,7 @@ export class Token implements BaseContract {
     const loadBalance = options?.loadBalance ?? true;
     const loadTotalSupply = options?.loadTotalSupply ?? false;
     const loadClaimed = options?.loadClaimed ?? false;
-
+    const loadLogoURI = options?.loadLogoURI ?? true;
 
     await Promise.all([
       loadName && !this.name
@@ -114,6 +125,7 @@ export class Token implements BaseContract {
             this.claimed = claimed;
           })
         : Promise.resolve(),
+      loadLogoURI ? this.logoURI : Promise.resolve(),
     ]).catch((e) => {
       console.log(e);
       return;
@@ -153,11 +165,11 @@ export class Token implements BaseContract {
 
   async getBalance() {
     try {
-      const balance = this.isNative ? (await wallet.publicClient.getBalance({
-        address: wallet.account as `0x${string}`,
-      })) : (await this.contract.read.balanceOf([
-        wallet.account as `0x${string}`,
-      ]));
+      const balance = this.isNative
+        ? await wallet.publicClient.getBalance({
+            address: wallet.account as `0x${string}`,
+          })
+        : await this.contract.read.balanceOf([wallet.account as `0x${string}`]);
       this.balanceWithoutDecimals = new BigNumber(balance.toString());
       return this.balanceWithoutDecimals;
     } catch (e) {
