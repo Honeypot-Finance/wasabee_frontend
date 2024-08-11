@@ -2,12 +2,13 @@ import dayjs from "dayjs";
 import { wallet } from "./wallet";
 import BigNumber from "bignumber.js";
 import { FtoPairContract } from "./contract/ftopair-contract";
-import { AsyncState, PaginationState } from "./utils";
+import { AsyncState, PaginationState, ValueState } from "./utils";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { createSiweMessage } from "@/lib/siwe";
 import { Address } from "viem";
 import { Token } from "./contract/token";
 import { PageInfo } from "./indexer/indexerTypes";
+import { reset } from "viem/actions";
 
 const pagelimit = 9;
 
@@ -55,71 +56,58 @@ function calculateTimeDifference(timestamp: number): string {
 }
 
 class LaunchPad {
-  pairFilter: PairFilter = {
-    search: "",
-    status: "all",
-    showNotValidatedPairs: true,
-    limit: 9,
-  };
-
-  currentPage: { pageItems: FtoPairContract[]; pageinfo: PageInfo } = {
-    pageItems: [],
-
-    pageinfo: {
-      hasNextPage: true,
-      hasPreviousPage: false,
-      startCursor: "",
-      endCursor: "",
+  ftoPageInfo = new ValueState<{
+    pageInfo: PageInfo;
+    pairFilter: PairFilter;
+    ftoPageInit: boolean;
+  }>({
+    value: {
+      pageInfo: {
+        hasNextPage: true,
+        hasPreviousPage: false,
+        startCursor: "",
+        endCursor: "",
+      },
+      pairFilter: {
+        search: "",
+        status: "all",
+        showNotValidatedPairs: true,
+        limit: 9,
+      },
+      ftoPageInit: false,
     },
-  };
+  });
 
-  resetPageInfo = () => {
-    this.currentPage.pageinfo = {
+  ftoPageItems = new ValueState<FtoPairContract[]>({
+    value: [],
+  });
+
+  resetFtoPageInfo = () => {
+    this.ftoPageInfo.value.pageInfo = {
       hasNextPage: true,
       hasPreviousPage: false,
       startCursor: "",
       endCursor: "",
     };
-
-    this.currentPage.pageItems = [];
-  };
-
-  setCurrentPageItemsData = (data: FtoPairContract[]) => {
-    this.currentPage.pageItems = data;
-  };
-
-  setCurrentPageInfo = (pageInfo: PageInfo) => {
-    this.currentPage.pageinfo = pageInfo;
+    this.ftoPageItems.setValue([]);
   };
 
   set pairFilterSearch(search: string) {
-    this.pairFilter.search = search;
-    this.resetPageInfo();
-    this.ftoPairs.call({
-      page: this.ftoPairsPagination.page,
-      limit: this.ftoPairsPagination.limit,
-    });
+    this.ftoPageInfo.value.pairFilter.search = search;
+    this.resetFtoPageInfo();
     this.myFtoPairs.call();
     this.getMyFtoParticipatedPairs.call();
   }
 
   set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
-    this.pairFilter.status = status;
-    this.resetPageInfo();
-    this.ftoPairs.call({
-      page: this.ftoPairsPagination.page,
-      limit: this.ftoPairsPagination.limit,
-    });
+    this.ftoPageInfo.value.pairFilter.status = status;
+    this.resetFtoPageInfo();
     this.myFtoPairs.call();
     this.getMyFtoParticipatedPairs.call();
   }
 
   set showNotValidatedPairs(show: boolean) {
-    this.pairFilter.showNotValidatedPairs = show;
-    this.ftoPairs.call({
-      page: this.ftoPairsPagination.page,
-      limit: this.ftoPairsPagination.limit,
-    });
+    this.ftoPageInfo.value.pairFilter.showNotValidatedPairs = show;
     this.myFtoPairs.call();
     this.getMyFtoParticipatedPairs.call();
   }
@@ -140,7 +128,7 @@ class LaunchPad {
 
   filterPairs = (pairs: FtoPairContract[]) => {
     const filteredPairs = pairs.filter((pair) => {
-      if (this.pairFilter.showNotValidatedPairs) {
+      if (this.ftoPageInfo.value.pairFilter.showNotValidatedPairs) {
         return true;
       } else {
         return pair.isValidated;
@@ -202,6 +190,33 @@ class LaunchPad {
     }
   }
 
+  initFtoPage = async () => {
+    this.setFtoPageIsInit(false);
+    if (this.ftoPageInfo.value.pairFilter.showNotValidatedPairs) {
+      await this.resetFtoPageInfo();
+      await this.LoadMoreFtoPage();
+    } else {
+      await this.loadVerifiedFTOProjects();
+    }
+    this.setFtoPageIsInit(true);
+    console.log("initFtoPage");
+  };
+
+  loadVerifiedFTOProjects = async () => {
+    const projects = wallet.currentChain.validatedFtoAddresses.map(
+      (pairAddress) => {
+        const pair = new FtoPairContract({
+          address: pairAddress,
+        });
+        pair.init();
+        return pair;
+      }
+    );
+
+    this.ftoPageItems.setValue(projects);
+    return projects;
+  };
+
   getMyFtoParticipatedPairs = new AsyncState<FtoPairContract[]>(async () => {
     if (!this.myFtoParticipatedPairs.value) {
       await this.myFtoParticipatedPairs.call();
@@ -223,11 +238,11 @@ class LaunchPad {
   LoadMoreFtoPage = async () => {
     const newPage =
       await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-        filter: this.pairFilter,
+        filter: this.ftoPageInfo.value.pairFilter,
         chainId: String(wallet.currentChainId),
         pageRequest: {
           direction: "next",
-          cursor: this.currentPage.pageinfo.endCursor,
+          cursor: this.ftoPageInfo.value.pageInfo.endCursor,
         },
       });
 
@@ -278,96 +293,14 @@ class LaunchPad {
         return pair;
       });
 
-      this.setCurrentPageItemsData([
-        ...this.currentPage.pageItems,
+      this.ftoPageItems.setValue([
+        ...this.ftoPageItems.value,
         ...newPageToContracts,
       ]);
     } else {
       console.error(newPage);
     }
   };
-
-  ftoPairs = new AsyncState<
-    {
-      data: FtoPairContract[];
-      total: number;
-    },
-    ({ page, limit }: { page: number; limit: number }) => Promise<{
-      data: FtoPairContract[];
-      total: number;
-    }>
-  >(async ({ page, limit }) => {
-    const ftoAddresses =
-      await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-        filter: this.pairFilter,
-        chainId: String(wallet.currentChainId),
-      });
-
-    if (!ftoAddresses || ftoAddresses.status === "error") {
-      return { data: [], total: 0 };
-    }
-
-    const data: Array<FtoPairContract> = (
-      await Promise.all(
-        ftoAddresses.data.pairs.map(async (pairAddress, idx) => {
-          if (
-            idx >= (this.ftoPairsPagination.page - 1) * limit &&
-            idx < this.ftoPairsPagination.page * limit
-          ) {
-            const pair = new FtoPairContract({
-              address: pairAddress.id,
-            });
-
-            const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
-              ? new Token({
-                  ...pairAddress.token1,
-                  address: pairAddress.token1.id,
-                })
-              : new Token({
-                  address: pairAddress.token0.id,
-                });
-
-            const launchedToken =
-              raisedToken.address.toLowerCase() ===
-              pairAddress.token1.id.toLowerCase()
-                ? new Token({
-                    ...pairAddress.token0,
-                    address: pairAddress.token0.id,
-                  })
-                : new Token({
-                    ...pairAddress.token1,
-                    address: pairAddress.token1.id,
-                  });
-
-            if (!pair.isInit) {
-              pair.init({
-                raisedToken: raisedToken,
-                launchedToken: launchedToken,
-                depositedLaunchedToken: pairAddress.depositedLaunchedToken,
-                depositedRaisedToken: pairAddress.depositedRaisedToken,
-                startTime: pairAddress.createdAt,
-                endTime: pairAddress.endTime,
-                ftoState: Number(pairAddress.status),
-              });
-            }
-
-            return pair;
-          }
-        })
-      )
-    ).filter((pair) => pair !== undefined) as FtoPairContract[];
-
-    this.ftoPairsPagination.setTotal(ftoAddresses.data.pairs.length);
-
-    if (!data || data.length === 0) {
-      return { data: [], total: 0 };
-    } else {
-      return {
-        data: data,
-        total: ftoAddresses.data.pairs.length,
-      };
-    }
-  });
 
   myFtoParticipatedPairs = new AsyncState<{
     data: FtoPairContract[];
@@ -407,7 +340,7 @@ class LaunchPad {
   }>(async () => {
     const ftoAddresses =
       await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-        filter: this.pairFilter,
+        filter: this.ftoPageInfo.value.pairFilter,
         chainId: String(wallet.currentChainId),
         provider: wallet.account,
       });
@@ -490,24 +423,6 @@ class LaunchPad {
     limit: pagelimit,
   });
 
-  // getPairInfo = async (pairAddress: `0x${string}`) => {
-  //   const ftoPairContract = this.ftoPairContract(pairAddress);
-  //   const launchedTokenAddress = await ftoPairContract.launchedTokenAddress();
-  //   const depositedRaisedToken = await ftoPairContract.depositedRaisedToken();
-  //   const depositedLaunchedToken =
-  //     await ftoPairContract.depositedLaunchedToken();
-
-  //   const price = BigNumber(formatEther(depositedRaisedToken))
-  //     .div(formatEther(depositedLaunchedToken))
-  //     .toFormat();
-  //   return {
-  //     price,
-  //     launchedTokenAddress,
-  //     depositedRaisedToken,
-  //     endTime: await ftoPairContract.endTime(),
-  //   };
-  // };
-
   createFTO = async ({
     provider,
     raisedToken,
@@ -580,6 +495,14 @@ class LaunchPad {
         ftoToken.address?.toLowerCase() === tokenAddress.toLowerCase()
     );
   }
+
+  setCurrentPageInfo = (pageInfo: PageInfo) => {
+    this.ftoPageInfo.value.pageInfo = pageInfo;
+  };
+
+  setFtoPageIsInit = (isInit: boolean) => {
+    this.ftoPageInfo.value.ftoPageInit = isInit;
+  };
 }
 
 const launchpad = new LaunchPad();

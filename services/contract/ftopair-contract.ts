@@ -361,11 +361,11 @@ export class FtoPairContract implements BaseContract {
   async getLaunchedToken(launchedToken?: Token) {
     if (launchedToken) {
       this.launchedToken = launchedToken;
-      //this.launchedToken.init();
+      this.launchedToken.init();
     } else {
       const res = (await this.contract.read.launchedToken()) as `0x${string}`;
       this.launchedToken = new Token({ address: res });
-      //this.launchedToken.init();
+      this.launchedToken.init();
     }
   }
 

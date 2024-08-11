@@ -65,10 +65,6 @@ export const Profile = observer(() => {
       return;
     }
     launchpad.showNotValidatedPairs = true;
-    launchpad.ftoPairs.call({
-      page: launchpad.ftoPairsPagination.page,
-      limit: launchpad.ftoPairsPagination.limit,
-    });
     launchpad.myFtoPairs.call();
     launchpad.getMyFtoParticipatedPairs.call();
   }, [wallet.isInit]);
@@ -154,7 +150,7 @@ export const Profile = observer(() => {
                   initial="hidden"
                   animate="visible"
                 >
-                  {launchpad.ftoPairs.loading ? (
+                  {launchpad.myFtoPairs.loading ? (
                     <LoadingDisplay />
                   ) : launchpad.myFtoPairs.value?.data.length === 0 ? (
                     <div className="flex flex-col justify-center items-center">
@@ -212,7 +208,7 @@ export const Profile = observer(() => {
                   initial="hidden"
                   animate="visible"
                 >
-                  {launchpad.ftoPairs.loading ? (
+                  {launchpad.myFtoPairs.loading ? (
                     <LoadingDisplay />
                   ) : launchpad.getMyFtoParticipatedPairs.value?.length ??
                     0 > 0 ? (
