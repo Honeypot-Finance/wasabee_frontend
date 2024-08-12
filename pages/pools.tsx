@@ -98,12 +98,10 @@ const PoolsPage: NextLayoutPage = observer(() => {
       <div className="w-[800px] max-w-full relative space-y-4">
         <div className="flex top-0 md:absolute right-0 md:flex-row flex-col md:gap-[16px] gap-[8px]">
           <Input
-            value={
-              //state.searchValue
-              ""
-            }
             onChange={(e) => {
-              //state.setSearchValue(e.target.value);
+              liquidity.pairPage.updateFilter({
+                searchString: e.target.value,
+              });
             }}
             startContent={<IoSearchOutline></IoSearchOutline>}
             placeholder="Search by name, symbol or address"

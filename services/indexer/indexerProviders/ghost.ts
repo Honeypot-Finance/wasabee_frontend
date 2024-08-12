@@ -18,7 +18,7 @@ import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 
 const ftoGraphHandle = "3cbba216-c29c-465b-95d4-be5ebeed1f35/ghostgraph";
-const pairGraphHandle = "747fa52a-205d-4434-ac02-0dd20f49c0dd/ghostgraph";
+const pairGraphHandle = "77979e53-744b-48a4-b3d5-dfa9dbb07efa/ghostgraph";
 
 export class GhostIndexer {
   apiKey: string;
@@ -237,10 +237,6 @@ export class GhostIndexer {
         }
       `;
 
-    if (!provider) {
-      console.log("query", query);
-    }
-
     const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
 
     if (res.status === "error") {
@@ -407,6 +403,8 @@ export class GhostIndexer {
         )
       : undefined;
 
+    console.log(filter.searchString);
+
     const query = `#graphql
         {
           pairs(
@@ -415,13 +413,27 @@ export class GhostIndexer {
                 filter.searchString
                   ? `
               OR: [
-                { id: "${filter.searchString}" },
-                { token0: { name_contains: "${filter.searchString}" } },
-                { token0: { symbol_contains: "${filter.searchString}" } },
-                { token0: { id: "${filter.searchString}" } },
-                { token1: { name_contains: "${filter.searchString}" } }
-                { token1: { symbol_contains: "${filter.searchString}" } }
-                { token1: { id: "${filter.searchString}" } }
+                ${
+                  filter.searchString.startsWith("0x")
+                    ? `{ id: "${filter.searchString}"  }`
+                    : ""
+                }
+                
+                 ${
+                   filter.searchString.startsWith("0x")
+                     ? `{ token1Id: "${filter.searchString}"  }`
+                     : ""
+                 }
+                {token0name_contains:"${filter.searchString}" }
+                {token0symbol_contains:"${filter.searchString}" }
+                
+                 ${
+                   filter.searchString.startsWith("0x")
+                     ? `{ token1Id: "${filter.searchString}"  }`
+                     : ""
+                 }
+                {token1name_contains:"${filter.searchString}" }
+                {token1symbol_contains:"${filter.searchString}" }
               ]`
                   : ""
               }
@@ -453,6 +465,8 @@ export class GhostIndexer {
           }
         }
       `;
+
+    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,

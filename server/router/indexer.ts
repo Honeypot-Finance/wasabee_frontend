@@ -122,7 +122,7 @@ export const indexerFeedRouter = router({
     .input(
       z.object({
         filter: z.object({
-          search: z.string().optional(),
+          searchString: z.string().optional(),
           limit: z.number().optional(),
         }),
         chainId: z.string(),
