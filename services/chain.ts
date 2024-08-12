@@ -70,7 +70,7 @@ export const berachainBartioTestnetNetwork = new Network({
   ],
   nativeTokens: [
     {
-      address: "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8",
+      address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
       name: "Bera",
       symbol: "BERA",
       decimals: 18,
@@ -89,32 +89,32 @@ export const berachainBartioTestnetNetwork = new Network({
     ftoFacade: "0x0264D933F13eE993270591668CfF87b8D35Dd3b4",
     ftoTokens: [
       {
-        address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
+        address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E".toLowerCase(),
         name: "T-HPOT",
         symbol: "T-HPOT",
         decimals: 18,
       },
       {
-        address: "0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D",
+        address: "0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D".toLowerCase(),
         name: "USDT",
         symbol: "USDT",
         decimals: 18,
       },
       {
-        address: "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8",
+        address: "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8".toLowerCase(),
         name: "Wrapped Bera",
         symbol: "WBERA",
         decimals: 18,
         logoURI: "/images/icons/wbera-token-icon.png",
       },
       {
-        address: "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03",
+        address: "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03".toLowerCase(),
         name: "Honey",
         symbol: "HONEY",
         decimals: 18,
       },
       {
-        address: "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d",
+        address: "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d".toLowerCase(),
         name: "Bera the Pooh",
         symbol: "BERA THE POOH",
         decimals: 18,
@@ -123,20 +123,20 @@ export const berachainBartioTestnetNetwork = new Network({
   },
   faucetTokens: [
     {
-      address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
+      address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E".toLowerCase(),
       name: "T-HPOT",
       symbol: "tHPOT",
       decimals: 18,
     },
     {
-      address: "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d",
+      address: "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d".toLowerCase(),
       name: "Bera the Pooh",
       symbol: "BTP",
       decimals: 18,
     },
   ],
   blacklist: {
-    poolBlacklist: ["0xfF95cdfC724Ca85b8d96D5a6Ea86333AC6a4799D"],
+    poolBlacklist: ["0xfF95cdfC724Ca85b8d96D5a6Ea86333AC6a4799D".toLowerCase()],
   },
   validatedTokensInfo: {
     "0x7507c1dc16935b82698e4c63f2746a2fcf994df8": {

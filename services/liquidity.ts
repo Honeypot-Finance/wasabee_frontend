@@ -7,11 +7,75 @@ import BigNumber from "bignumber.js";
 import { exec } from "~/lib/contract";
 import { trpcClient } from "@/lib/trpc";
 import { makeAutoObservable, reaction, when } from "mobx";
-import { AsyncState, StorageState, ValueState } from "./utils";
+import {
+  AsyncState,
+  IndexerPaginationState,
+  StorageState,
+  ValueState,
+} from "./utils";
 import { add, debounce } from "lodash";
 import dayjs from "dayjs";
+import { PageRequest, PairFilter } from "./indexer/indexerTypes";
 
 class Liquidity {
+  pairPage = new IndexerPaginationState<PairFilter, PairContract>(
+    async (filter: PairFilter, pageRequest: PageRequest) => {
+      const pairs = await trpcClient.indexerFeedRouter.getFilteredPairs.query({
+        filter: filter,
+        chainId: String(wallet.currentChainId),
+        pageRequest: pageRequest,
+      });
+
+      if (pairs.status === "success") {
+        const pariContracts = pairs.data.pairs.map((pair) => {
+          const token0 = new Token({ ...pair.token0, address: pair.token0.id });
+          const token1 = new Token({ ...pair.token1, address: pair.token1.id });
+          const pairContract = new PairContract({
+            address: pair.id,
+            token0,
+            token1,
+          });
+
+          if (!this.tokensMap[token0.address]) {
+            this.tokensMap[token0.address] = token0;
+
+            token0.init();
+          }
+          if (!this.tokensMap[token1.address]) {
+            this.tokensMap[token1.address] = token1;
+
+            token1.init();
+          }
+          this.pairsByToken[`${token0.address}-${token1.address}`] =
+            pairContract;
+          pairContract.init();
+          return pairContract;
+        });
+
+        return {
+          items: pariContracts,
+          pageInfo: pairs.data.pageInfo,
+        };
+      } else {
+        return {
+          items: [],
+          pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: "",
+            endCursor: "",
+          },
+        };
+      }
+    },
+    {
+      filter: {
+        searchString: "",
+        limit: 10,
+      },
+    }
+  );
+
   pairs: PairContract[] = [];
   pairsByToken: Record<string, PairContract> = {};
   tokensMap: Record<string, Token> = {};
@@ -325,33 +389,37 @@ class Liquidity {
   });
 
   async initPool() {
-    const pairs = await trpcClient.indexerFeedRouter.getAllPairs.query();
-    if (pairs.status === "error") {
+    if (this.isInit || !wallet.currentChain) {
       return;
     }
 
-    this.pairs = pairs.data.pairs.map((pair) => {
-      const token0 = new Token({ ...pair.token0, address: pair.token0.id });
-      const token1 = new Token({ ...pair.token1, address: pair.token1.id });
-      const pairContract = new PairContract({
-        address: pair.id,
-        token0,
-        token1,
+    const pairs = await trpcClient.indexerFeedRouter.getAllPairs.query();
+
+    if (pairs.status === "success") {
+      this.pairs = pairs.data.pairs.map((pair) => {
+        const token0 = new Token({ ...pair.token0, address: pair.token0.id });
+        const token1 = new Token({ ...pair.token1, address: pair.token1.id });
+        const pairContract = new PairContract({
+          address: pair.id,
+          token0,
+          token1,
+        });
+
+        if (!this.tokensMap[token0.address]) {
+          this.tokensMap[token0.address] = token0;
+
+          token0.init();
+        }
+        if (!this.tokensMap[token1.address]) {
+          this.tokensMap[token1.address] = token1;
+
+          token1.init();
+        }
+        this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract;
+        pairContract.init();
+        return pairContract;
       });
-      if (!this.tokensMap[token0.address]) {
-        this.tokensMap[token0.address] = token0;
-
-        token0.init();
-      }
-      if (!this.tokensMap[token1.address]) {
-        this.tokensMap[token1.address] = token1;
-
-        token1.init();
-      }
-      this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract;
-      pairContract.init();
-      return pairContract;
-    });
+    }
 
     wallet.currentChain.nativeTokens.forEach((token) => {
       if (
@@ -362,6 +430,7 @@ class Liquidity {
         token.init();
       }
     });
+
     await this.localTokensMap.syncValue();
 
     this.isInit = true;

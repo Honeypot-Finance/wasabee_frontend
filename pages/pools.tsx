@@ -24,6 +24,10 @@ import PopUp from "@/components/PopUp/PopUp";
 import { RemoveLiquidity } from "@/components/LPCard";
 import { GhostPair } from "@/services/indexer/indexerTypes";
 import { motion } from "framer-motion";
+import PoolLiquidityCard from "@/components/PoolLiquidityCard/PoolLiquidityCard";
+import { defaultContainerVariants, itemSlideVariants } from "@/lib/animation";
+import HoneyStickSvg from "@/components/svg/HoneyStick";
+import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
@@ -33,68 +37,73 @@ const PoolsPage: NextLayoutPage = observer(() => {
   useEffect(() => {
     if (wallet.isInit && liquidity.isInit) {
       setLoading(false);
+      liquidity.pairPage.reloadPage();
     }
   }, [wallet.isInit, liquidity.isInit]);
 
-  const state = useLocalObservable(() => ({
-    columns: [
-      {
-        key: "name",
-        label: "Pool Name",
-      },
-      {
-        key: "liquidity",
-        label: "Liquidity",
-      },
-    ],
-    pagination: new PaginationState({}),
-    searchValue: "",
-    setSearchValue(value: string) {
-      this.searchValue = value;
-    },
+  // const state = useLocalObservable(() => ({
+  //   columns: [
+  //     {
+  //       key: "name",
+  //       label: "Pool Name",
+  //     },
+  //     {
+  //       key: "liquidity",
+  //       label: "Liquidity",
+  //     },
+  //   ],
+  //   pagination: new PaginationState({}),
+  //   searchValue: "",
+  //   setSearchValue(value: string) {
+  //     this.searchValue = value;
+  //   },
 
-    get columnsMap() {
-      return this.columns.reduce((acc, column) => {
-        acc[column.key] = column;
-        return acc;
-      }, {} as Record<string, (typeof this.columns)[number]>);
-    },
-    get filteredPairs() {
-      return liquidity.pairs.filter((pair) => {
-        return (
-          pair.poolName
-            .toLowerCase()
-            .includes(this.searchValue.toLowerCase()) ||
-          pair.address.toLowerCase().includes(this.searchValue.toLowerCase()) ||
-          pair.token0.address
-            .toLowerCase()
-            .includes(this.searchValue.toLowerCase()) ||
-          pair.token1.address
-            .toLowerCase()
-            .includes(this.searchValue.toLowerCase())
-        );
-      });
-    },
-    get pairsByPage() {
-      return this.filteredPairs.slice(
-        state.pagination.offset,
-        state.pagination.end
-      );
-    },
-  }));
+  //   get columnsMap() {
+  //     return this.columns.reduce((acc, column) => {
+  //       acc[column.key] = column;
+  //       return acc;
+  //     }, {} as Record<string, (typeof this.columns)[number]>);
+  //   },
+
+  //   get filteredPairs() {
+  //     return liquidity.pairs.filter((pair) => {
+  //       return (
+  //         pair.poolName
+  //           .toLowerCase()
+  //           .includes(this.searchValue.toLowerCase()) ||
+  //         pair.address.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+  //         pair.token0.address
+  //           .toLowerCase()
+  //           .includes(this.searchValue.toLowerCase()) ||
+  //         pair.token1.address
+  //           .toLowerCase()
+  //           .includes(this.searchValue.toLowerCase())
+  //       );
+  //     });
+  //   },
+  //   get pairsByPage() {
+  //     return this.filteredPairs.slice(
+  //       state.pagination.offset,
+  //       state.pagination.end
+  //     );
+  //   },
+  // }));
 
   useEffect(() => {
     liquidity.initPool();
-  }, []);
+  }, [wallet.isInit]);
 
   return (
     <div className="flex flex-col  items-center">
       <div className="w-[800px] max-w-full relative space-y-4">
         <div className="flex top-0 md:absolute right-0 md:flex-row flex-col md:gap-[16px] gap-[8px]">
           <Input
-            value={state.searchValue}
+            value={
+              //state.searchValue
+              ""
+            }
             onChange={(e) => {
-              state.setSearchValue(e.target.value);
+              //state.setSearchValue(e.target.value);
             }}
             startContent={<IoSearchOutline></IoSearchOutline>}
             placeholder="Search by name, symbol or address"
@@ -125,154 +134,61 @@ const PoolsPage: NextLayoutPage = observer(() => {
           <Tab key="all" title="All Pools">
             <Card className="[background:#1D1407] rounded-[20px]">
               <CardBody className="">
-                <Table
-                  rowKey="address"
-                  pagination={state.pagination}
-                  isLoading={loading}
-                  columns={[
-                    {
-                      title: "",
-                      render(value, row) {
-                        return (
-                          <div className="flex items-center gap-[12px]">
-                            <TokenLogo
-                              token={row.token0}
-                              addtionalClasses="translate-x-[10px]"
-                            ></TokenLogo>
-                            <TokenLogo
-                              token={row.token1}
-                              addtionalClasses="translate-x-[-10px]"
-                            ></TokenLogo>
-                          </div>
-                        );
-                      },
-                    },
-                    {
-                      title: "Pool Name",
-                      dataKey: "poolName",
-                    },
-                    {
-                      title: "Liquidity",
-                      dataKey: "liquidityDisplay",
-                    },
-                    {
-                      title: "Action",
-                      dataKey: "_action",
-                      render(value, row) {
-                        return (
-                          <div className="flex gap-[12px]">
-                            <Link
-                              className="flex items-center gap-[6px]"
-                              href={`/pool?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
-                            >
-                              <span className="inline-block sm:hidden hover:text-[#FCD729] cursor-pointer hover:underline">
-                                Add
-                              </span>
-                              <Button className="hidden sm:flex">
-                                <p>Add</p>
-                                <div>
-                                  <ShareSocialMedialPopUp
-                                    shareUrl={`${window.location.origin}/pool?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
-                                    shareText="Add Liquidity to this pool"
-                                  />
-                                </div>
-                              </Button>
-                            </Link>
-                            <Link
-                              className="flex items-center gap-[6px]"
-                              href={`/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
-                            >
-                              <span className="inline-block sm:hidden hover:text-[#FCD729] cursor-pointer hover:underline">
-                                Swap
-                              </span>
-                              <Button
-                                styleMode="plain"
-                                className="hidden sm:flex"
-                              >
-                                <p>Swap</p>
-                                <div>
-                                  <ShareSocialMedialPopUp
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                    }}
-                                    shareUrl={`${window.location.origin}/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}
-                                    shareText="Swap with this pool"
-                                  />
-                                </div>
-                              </Button>
-                            </Link>
-                          </div>
-                        );
-                      },
-                    },
-                  ]}
-                  datasource={state.pairsByPage}
-                ></Table>
+                {liquidity.pairPage.pageItems.value.map((pair) => (
+                  <motion.div variants={itemSlideVariants} key={pair.address}>
+                    <PoolLiquidityCard pair={pair} autoSize></PoolLiquidityCard>
+                  </motion.div>
+                ))}
+                <div className="flex justify-around my-5">
+                  {liquidity.pairPage.pageInfo.hasNextPage && (
+                    <Button
+                      onClick={() => {
+                        liquidity.pairPage.loadMore();
+                      }}
+                      isDisabled={liquidity.pairPage.isLoading}
+                    >
+                      {liquidity.pairPage.isLoading
+                        ? "Loading..."
+                        : "Load More"}
+                    </Button>
+                  )}
+                </div>
               </CardBody>
             </Card>
           </Tab>
           <Tab key="my" title="My Pools">
             <Card className="[background:#1D1407] rounded-[20px]">
               <CardBody>
-                <Table
-                  rowKey="address"
-                  columns={[
-                    {
-                      title: "",
-                      render(value, row) {
-                        return (
-                          <div className="flex items-center gap-[12px]">
-                            <TokenLogo
-                              token={row.token0}
-                              addtionalClasses="translate-x-[10px]"
-                            ></TokenLogo>
-                            <TokenLogo
-                              token={row.token1}
-                              addtionalClasses="translate-x-[-10px]"
-                            ></TokenLogo>
-                          </div>
-                        );
-                      },
-                    },
-                    {
-                      title: "Pool Name",
-                      dataKey: "poolName",
-                    },
-                    {
-                      title: "Liquidity",
-                      dataKey: "liquidityDisplay",
-                    },
-                    {
-                      title: "Action",
-                      dataKey: "_action",
-                      render(value, row) {
-                        return (
-                          <div className="flex gap-[12px]">
-                            <PopUp
-                              info="normal"
-                              trigger={
-                                <Button
-                                  onPress={(e) => {
-                                    liquidity.setCurrentRemovePair(row);
-                                  }}
-                                >
-                                  Remove LP
-                                </Button>
-                              }
-                              contents={
-                                <RemoveLiquidity
-                                  noCancelButton
-                                ></RemoveLiquidity>
-                              }
-                            />
-                          </div>
-                        );
-                      },
-                    },
-                  ]}
-                  datasource={liquidity.myPairs}
-                ></Table>
+                <motion.div
+                  variants={defaultContainerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {liquidity.isInit ? (
+                    liquidity.myPairs.length > 0 ? (
+                      liquidity.myPairs.map((pair) => (
+                        <motion.div
+                          variants={itemSlideVariants}
+                          key={pair.address}
+                        >
+                          <PoolLiquidityCard
+                            pair={pair}
+                            autoSize
+                          ></PoolLiquidityCard>
+                        </motion.div>
+                      ))
+                    ) : (
+                      <div className="flex flex-col justify-center items-center">
+                        <HoneyStickSvg />
+                        <div className="text-[#eee369] mt-2  text-[3rem] text-center">
+                          List is empty
+                        </div>
+                      </div>
+                    )
+                  ) : (
+                    <LoadingDisplay />
+                  )}
+                </motion.div>
               </CardBody>
             </Card>
           </Tab>

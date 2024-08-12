@@ -118,4 +118,42 @@ export const indexerFeedRouter = router({
       return res;
     }
   ),
+  getFilteredPairs: publicProcedure
+    .input(
+      z.object({
+        filter: z.object({
+          search: z.string().optional(),
+          limit: z.number().optional(),
+        }),
+        chainId: z.string(),
+        provider: z.string().optional(),
+        pageRequest: z
+          .object({
+            direction: z.enum(["next", "prev"]),
+            cursor: z.string().optional(),
+          })
+          .optional(),
+      })
+    )
+    .query(async ({ input }): Promise<ApiResponseType<GhostPairResponse>> => {
+      const res = await indexer.getFilteredPairs(
+        input.filter,
+        input.chainId,
+        input.provider,
+        input.pageRequest
+      );
+
+      if (res.status === "error") {
+        return {
+          status: "error",
+          message: res.message,
+        };
+      } else {
+        return {
+          status: "success",
+          data: res.data,
+          message: "Success",
+        };
+      }
+    }),
 });

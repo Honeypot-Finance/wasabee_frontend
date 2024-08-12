@@ -5,7 +5,16 @@ import TransactionPendingToastify from "@/components/CustomToastify/TransactionP
 import { localforage } from "@/lib/storage";
 import { LRUCache } from "lru-cache";
 import { cache } from "../lib/cache";
-import { max } from "lodash";
+import { debounce, max } from "lodash";
+import { PageRequest, PairFilter } from "./indexer/indexerTypes";
+
+export type PageInfo = {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor: string;
+  endCursor: string;
+};
+
 export class ValueState<T> {
   _value!: T;
   constructor(args: Partial<ValueState<T>> = {}) {
@@ -221,6 +230,87 @@ export class PaginationState {
     this.total = total;
     this.totalPage.call();
   }
+}
+
+export class IndexerPaginationState<FilterT, ItemT> {
+  pageInfo: PageInfo = {
+    hasNextPage: true,
+    hasPreviousPage: false,
+    startCursor: "",
+    endCursor: "",
+  };
+  filter: FilterT = {} as FilterT;
+  isInit: boolean = false;
+  isLoading: boolean = false;
+  pageItems = new ValueState<ItemT[]>({
+    value: [],
+  });
+  LoadNextPageFunction: (
+    filter: FilterT,
+    pageRequest: PageRequest
+  ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }>;
+
+  constructor(
+    LoadNextPageFunction: (
+      filter: FilterT,
+
+      pageRequest: PageRequest
+    ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }>,
+    args: Partial<IndexerPaginationState<FilterT, ItemT>>
+  ) {
+    Object.assign(this, args);
+    this.LoadNextPageFunction = LoadNextPageFunction;
+    makeAutoObservable(this);
+  }
+
+  updateFilter = debounce((filter: Partial<PairFilter>) => {
+    this.filter = {
+      ...this.filter,
+      ...filter,
+    };
+
+    this.reloadPage();
+  }, 500);
+
+  resetPage = () => {
+    this.pageInfo = {
+      hasNextPage: true,
+      hasPreviousPage: false,
+      startCursor: "",
+      endCursor: "",
+    };
+    this.pageItems.setValue([]);
+  };
+
+  reloadPage = () => {
+    this.resetPage();
+    this.loadMore();
+  };
+
+  loadMore = async () => {
+    if (this.isLoading || !this.pageInfo.hasNextPage) {
+      return;
+    }
+
+    this.isLoading = true;
+
+    try {
+      const { items, pageInfo } = await this.LoadNextPageFunction(this.filter, {
+        direction: "next",
+        cursor: this.pageInfo.endCursor,
+      });
+      this.pageItems.setValue([...this.pageItems.value, ...items]);
+      this.pageInfo = pageInfo;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.isLoading = false;
+    }
+  };
+
+  SetPageItems = (items: ItemT[]) => {
+    this.pageItems.setValue(items);
+  };
 }
 
 export class StorageState<T = any, U = any> {

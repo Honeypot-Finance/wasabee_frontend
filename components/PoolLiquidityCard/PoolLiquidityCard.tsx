@@ -9,6 +9,12 @@ import { Button } from "../button";
 import { liquidity } from "@/services/liquidity";
 import { RemoveLiquidity } from "../LPCard";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import ShareSocialMedialPopUp from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import { OptionsDropdown } from "../OptionsDropdown/OptionsDropdown";
+import { IoAdd, IoRemove } from "react-icons/io5";
+import { VscArrowSwap } from "react-icons/vsc";
+import { useState } from "react";
 
 interface PoolLiquidityCardProps {
   pair: PairContract;
@@ -17,9 +23,17 @@ interface PoolLiquidityCardProps {
 
 export const PoolLiquidityCard = observer(
   ({ pair, autoSize }: PoolLiquidityCardProps) => {
+    const [isRemoveLpPopUpOpen, setIsRemoveLpPopUpOpen] = useState(false);
+    console.log("isRemoveLpPopUpOpen", isRemoveLpPopUpOpen);
     return (
       <CardContianer autoSize={autoSize}>
-        {" "}
+        <PopUp
+          open={isRemoveLpPopUpOpen}
+          info="normal"
+          onClose={() => setIsRemoveLpPopUpOpen(false)}
+          trigger={<></>}
+          contents={<RemoveLiquidity noCancelButton></RemoveLiquidity>}
+        />{" "}
         <motion.div
           initial={{
             x: -100,
@@ -52,21 +66,34 @@ export const PoolLiquidityCard = observer(
               </div>
             </div>
           </div>{" "}
-          <div className="flex lg:justify-end">
-            <PopUp
-              info="normal"
-              trigger={
-                <Button
-                  onPress={(e) => {
+          <div className="flex lg:justify-end ">
+            <OptionsDropdown
+              options={[
+                {
+                  icon: <IoRemove />,
+                  display: "Remove LP",
+                  onClick: () => {
                     liquidity.setCurrentRemovePair(pair);
-                  }}
-                >
-                  Remove LP
-                </Button>
-              }
-              contents={<RemoveLiquidity noCancelButton></RemoveLiquidity>}
+                    setIsRemoveLpPopUpOpen(true);
+                  },
+                },
+                {
+                  icon: <IoAdd />,
+                  display: "Add LP",
+                  onClick: () => {
+                    window.location.href = `/pool?inputCurrency=${pair.token0.address}&outputCurrency=${pair.token1.address}`;
+                  },
+                },
+                {
+                  icon: <VscArrowSwap />,
+                  display: "Swap",
+                  onClick: () => {
+                    window.location.href = `/swap?inputCurrency=${pair.token0.address}&outputCurrency=${pair.token1.address}`;
+                  },
+                },
+              ]}
             />
-          </div>
+          </div>{" "}
         </motion.div>
       </CardContianer>
     );

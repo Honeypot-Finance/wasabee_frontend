@@ -50,7 +50,7 @@ export const SwapCard = observer(() => {
 
   useEffect(() => {
     liquidity.initPool();
-  }, []);
+  }, [wallet.isInit]);
 
   const isinit = wallet.isInit && liquidity.isInit;
 

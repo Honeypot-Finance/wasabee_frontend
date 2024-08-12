@@ -10,12 +10,12 @@ import {
   GhostPair,
   GhostPairResponse,
   GhostFTOPair,
-  PageInfo,
   PageRequest,
   GhostToken,
   PairFilter,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
+import { PageInfo } from "@/services/utils";
 
 const ftoGraphHandle = "3cbba216-c29c-465b-95d4-be5ebeed1f35/ghostgraph";
 const pairGraphHandle = "747fa52a-205d-4434-ac02-0dd20f49c0dd/ghostgraph";
@@ -118,12 +118,12 @@ export class GhostIndexer {
   };
 
   getFilteredFtoPairs = async (
-    filter: FtoPairFilter,
+    filter: Partial<FtoPairFilter>,
     chainId: string,
     provider?: string,
     pageRequest?: PageRequest
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
-    const statusNum = statusTextToNumber(filter?.status ?? -1);
+    const statusNum = statusTextToNumber(filter?.status ?? "all");
 
     const dirCondition = pageRequest?.cursor
       ? pageRequest?.direction === "next"
@@ -136,14 +136,17 @@ export class GhostIndexer {
       filter?.search && filter.search.startsWith("0x")
         ? `id: "${filter.search}",`
         : "";
+
     const searchToken0IdCondition =
       filter?.search && filter.search.startsWith("0x")
         ? `token0Id: "${filter?.search}",`
         : "";
+
     const searchToken1IdCondition =
       filter?.search && filter.search.startsWith("0x")
         ? `token1Id: "${filter?.search}",`
         : "";
+
     const providerCondition = provider
       ? `launchedTokenProvider: "${provider}",`
       : "";
@@ -161,10 +164,8 @@ export class GhostIndexer {
             where: {
               OR:[
                 ${
-                  statusCondition ||
-                  searchIdCondition ||
-                  !filter.search ||
-                  (filter?.search && filter.search.startsWith("0x"))
+                  (statusCondition || searchIdCondition || !filter.search) &&
+                  (!filter.search || filter.search.startsWith("0x"))
                     ? `{
                     ${statusCondition}
                     ${searchIdCondition}
@@ -186,8 +187,14 @@ export class GhostIndexer {
                   filteredTokens.status === "success" &&
                   filteredTokens.data!.items.map((token: GhostToken) => {
                     return `
-                    {token0Id: "${token.id}"}
-                    {token1Id: "${token.id}"}
+                    {token0Id: "${token.id}"
+                    ${statusCondition}
+                    ${searchIdCondition}
+                    ${providerCondition}}
+                    {token1Id: "${token.id}"
+                    ${statusCondition}
+                    ${searchIdCondition}
+                    ${providerCondition}}
                     `;
                   })
                 }
@@ -230,7 +237,9 @@ export class GhostIndexer {
         }
       `;
 
-    console.log("query", query);
+    if (!provider) {
+      console.log("query", query);
+    }
 
     const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
 
@@ -284,7 +293,7 @@ export class GhostIndexer {
   };
 
   getFilteredFtoTokens = async (
-    filter: FtoPairFilter
+    filter: Partial<FtoPairFilter>
   ): Promise<ApiResponseType<GhostFtoTokensResponse>> => {
     const query = `#graphql
         {
@@ -340,6 +349,12 @@ export class GhostIndexer {
                 decimals
               }
             }
+            pageInfo {
+              hasPreviousPage
+              hasNextPage
+              startCursor
+              endCursor
+            }
           }
         }
       `;
@@ -354,8 +369,17 @@ export class GhostIndexer {
       return {
         status: "success",
         message: "Success",
-        data: { pairs: (res.data as any).pairs?.items as GhostPair[] } ?? {
+        data: {
+          pairs: (res.data as any).pairs?.items as GhostPair[],
+          pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
+        } ?? {
           pairs: [],
+          pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: "",
+            endCursor: "",
+          },
         },
       };
     }
@@ -364,6 +388,7 @@ export class GhostIndexer {
   getFilteredPairs = async (
     filter: Partial<PairFilter>,
     chainId: string,
+    provider?: string,
     pageRequest?: PageRequest
   ): Promise<ApiResponseType<GhostPairResponse>> => {
     const dirCondition = pageRequest?.cursor
@@ -372,10 +397,23 @@ export class GhostIndexer {
         : `before:"${pageRequest?.cursor}"`
       : "";
 
+    const providerFtos = provider
+      ? this.getFilteredFtoPairs(
+          {
+            limit: 9999,
+          },
+          chainId,
+          provider
+        )
+      : undefined;
+
     const query = `#graphql
         {
           pairs(
             where: {
+              ${
+                filter.searchString
+                  ? `
               OR: [
                 { id: "${filter.searchString}" },
                 { token0: { name_contains: "${filter.searchString}" } },
@@ -384,7 +422,9 @@ export class GhostIndexer {
                 { token1: { name_contains: "${filter.searchString}" } }
                 { token1: { symbol_contains: "${filter.searchString}" } }
                 { token1: { id: "${filter.searchString}" } }
-              ]
+              ]`
+                  : ""
+              }
             }
             limit: ${filter.limit}
             ${dirCondition}
@@ -404,6 +444,12 @@ export class GhostIndexer {
                 decimals
               }
             }
+            pageInfo {
+              hasPreviousPage
+              hasNextPage
+              startCursor
+              endCursor
+            }
           }
         }
       `;
@@ -418,8 +464,17 @@ export class GhostIndexer {
       return {
         status: "success",
         message: "Success",
-        data: { pairs: (res.data as any).pairs?.items as GhostPair[] } ?? {
+        data: {
+          pairs: (res.data as any).pairs?.items as GhostPair[],
+          pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
+        } ?? {
           pairs: [],
+          pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: "",
+            endCursor: "",
+          },
         },
       };
     }
@@ -432,12 +487,10 @@ export class GhostIndexer {
     token0: string;
     token1: string;
   }) {
-    console.log("token0", token0, token1);
     const query = `#graphql
-      query {
-            
+      query {   
         pairs0: pairs(
-    where: {token0Id: "${token0}", token1Id: "${token1}"}
+        where: {token0Id: "${token0}", token1Id: "${token1}"}
   ) {
     items {
       address: id
@@ -482,7 +535,6 @@ export class GhostIndexer {
 
   }`;
 
-    console.log("fto request");
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
     });

@@ -1,3 +1,4 @@
+import { providers } from "ethers";
 import { PairFilter } from "../launchpad";
 import { GhostIndexer } from "./indexerProviders/ghost";
 import {
@@ -54,11 +55,13 @@ export default class Indexer<T extends IndexerProvider> {
   getFilteredPairs = async (
     filter: Partial<PairFilter>,
     chainId: string,
+    provider?: string,
     pageRequest?: PageRequest
   ): Promise<ApiResponseType<GhostPairResponse>> => {
     return await this.dataProvider.getFilteredPairs(
       filter,
       chainId,
+      provider,
       pageRequest
     );
   };

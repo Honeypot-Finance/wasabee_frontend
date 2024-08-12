@@ -253,7 +253,7 @@ export const LPCard = observer(() => {
 
   useEffect(() => {
     liquidity.initPool();
-  }, []);
+  }, [wallet.isInit]);
 
   useEffect(() => {
     if (!isinit) {

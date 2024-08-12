@@ -170,7 +170,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
             <PopoverTrigger>
               <NextButton className="inline-flex w-full sm:w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)] text-white text-center">
                 <span className="flex-1">
-                  {launchpad.ftoPageInfo.value.pairFilter.status.toUpperCase()}
+                  {launchpad.ftoPageInfo.filter.status.toUpperCase()}
                 </span>
                 <DropdownSvg></DropdownSvg>
               </NextButton>
@@ -179,9 +179,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
               <Observer>
                 {() => (
                   <div className="w-full">
-                    <SpinnerContainer
-                      isLoading={!launchpad.ftoPageInfo.value.ftoPageInit}
-                    >
+                    <SpinnerContainer isLoading={!launchpad.ftoPageInfo.isInit}>
                       <div className="max-h-[300px] grid grid-cols-3 gap-2">
                         <NextButton
                           onClick={() => {
@@ -225,25 +223,21 @@ const LaunchPage: NextLayoutPage = observer(() => {
         </div>
         <Checkbox
           onClick={() => {
-            launchpad.ftoPageInfo.value.pairFilter.showNotValidatedPairs =
-              !launchpad.ftoPageInfo.value.pairFilter.showNotValidatedPairs;
+            launchpad.ftoPageInfo.filter.showNotValidatedPairs =
+              !launchpad.ftoPageInfo.filter.showNotValidatedPairs;
 
             launchpad.reloadFtoPage();
           }}
-          defaultSelected={
-            launchpad.ftoPageInfo.value.pairFilter.showNotValidatedPairs
-          }
-          defaultChecked={
-            launchpad.ftoPageInfo.value.pairFilter.showNotValidatedPairs
-          }
-          checked={launchpad.ftoPageInfo.value.pairFilter.showNotValidatedPairs}
+          defaultSelected={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
+          defaultChecked={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
+          checked={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
           className="mt-2"
         >
           Show Not verified Projects
         </Checkbox>
       </div>
 
-      {!launchpad.ftoPageInfo.value.ftoPageInit ? (
+      {!launchpad.ftoPageInfo.isInit ? (
         <div className="flex h-80 sm:h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
           <LoadingDisplay />
         </div>
@@ -302,14 +296,14 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 ))}
               </motion.div>
               <div className="flex justify-around my-5">
-                {launchpad.ftoPageInfo.value?.pageInfo?.hasNextPage && (
+                {launchpad.ftoPageInfo.pageInfo.hasNextPage && (
                   <Button
                     onClick={() => {
                       launchpad.LoadMoreFtoPage();
                     }}
-                    isDisabled={launchpad.ftoPageInfo.value.ftoPageLoading}
+                    isDisabled={launchpad.ftoPageInfo.isLoading}
                   >
-                    {launchpad.ftoPageInfo.value.ftoPageLoading
+                    {launchpad.ftoPageInfo.isLoading
                       ? "Loading..."
                       : "Load More"}
                   </Button>

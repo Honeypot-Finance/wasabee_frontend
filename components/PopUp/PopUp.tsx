@@ -15,6 +15,8 @@ interface PopUpProps extends React.HTMLProps<HTMLDivElement> {
   info: "success" | "error" | "warning" | "pending" | "normal";
   trigger: JSX.Element;
   contents: JSX.Element;
+  open?: boolean;
+  onClose?: () => void;
 }
 
 export default function PopUp({ info = "normal", ...props }: PopUpProps) {
@@ -36,7 +38,14 @@ export default function PopUp({ info = "normal", ...props }: PopUpProps) {
   };
 
   return (
-    <Popup modal closeOnDocumentClick ref={popupRef} trigger={props.trigger}>
+    <Popup
+      onClose={props.onClose}
+      open={props.open}
+      modal
+      closeOnDocumentClick
+      ref={popupRef}
+      trigger={props.trigger}
+    >
       <div className={cn(styles["pop-up"], styles[info])}>
         <div className={styles["pop-up-container"]}>
           {popUpIcon() && (

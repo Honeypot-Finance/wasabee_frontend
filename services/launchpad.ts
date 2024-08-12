@@ -2,12 +2,17 @@ import dayjs from "dayjs";
 import { wallet } from "./wallet";
 import BigNumber from "bignumber.js";
 import { FtoPairContract } from "./contract/ftopair-contract";
-import { AsyncState, PaginationState, ValueState } from "./utils";
+import {
+  AsyncState,
+  IndexerPaginationState,
+  PageInfo,
+  PaginationState,
+  ValueState,
+} from "./utils";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { createSiweMessage } from "@/lib/siwe";
 import { Address } from "viem";
 import { Token } from "./contract/token";
-import { PageInfo } from "./indexer/indexerTypes";
 import { reset } from "viem/actions";
 import { debounce } from "lodash";
 
@@ -57,33 +62,83 @@ function calculateTimeDifference(timestamp: number): string {
 }
 
 class LaunchPad {
-  ftoPageInfo = new ValueState<{
-    pageInfo: PageInfo;
-    pairFilter: PairFilter;
-    ftoPageInit: boolean;
-    ftoPageLoading: boolean;
-  }>({
-    value: {
-      pageInfo: {
-        hasNextPage: true,
-        hasPreviousPage: false,
-        startCursor: "",
-        endCursor: "",
-      },
-      pairFilter: {
+  ftoPageInfo = new IndexerPaginationState<PairFilter, FtoPairContract>(
+    async (filter, pageRequest) => {
+      const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
+        filter,
+        chainId: String(wallet.currentChainId),
+        pageRequest: pageRequest,
+      });
+
+      if (res.status === "success") {
+        return {
+          items: res.data.pairs.map((pairAddress) => {
+            const pair = new FtoPairContract({
+              address: pairAddress.id,
+            });
+
+            const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
+              ? new Token({
+                  ...pairAddress.token1,
+                  address: pairAddress.token1.id,
+                })
+              : new Token({
+                  address: pairAddress.token0.id,
+                });
+
+            const launchedToken =
+              raisedToken.address.toLowerCase() ===
+              pairAddress.token1.id.toLowerCase()
+                ? new Token({
+                    ...pairAddress.token0,
+                    address: pairAddress.token0.id,
+                  })
+                : new Token({
+                    ...pairAddress.token1,
+                    address: pairAddress.token1.id,
+                  });
+
+            if (!pair.isInit) {
+              pair.init({
+                raisedToken: raisedToken,
+                launchedToken: launchedToken,
+                depositedLaunchedToken: pairAddress.depositedLaunchedToken,
+                depositedRaisedToken: pairAddress.depositedRaisedToken,
+                startTime: pairAddress.createdAt,
+                endTime: pairAddress.endTime,
+                ftoState: Number(pairAddress.status),
+              });
+            }
+
+            return pair;
+          }),
+          pageInfo: res.data.pageInfo,
+        };
+      } else {
+        return {
+          items: [],
+          pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: "",
+            endCursor: "",
+          },
+        };
+      }
+    },
+    {
+      filter: {
         search: "",
         status: "all",
         showNotValidatedPairs: true,
-        limit: 9,
+        limit: pagelimit,
       },
-      ftoPageInit: false,
-      ftoPageLoading: false,
-    },
-  });
+    }
+  );
 
   updateFilter = debounce((filter: Partial<PairFilter>) => {
-    this.ftoPageInfo.value.pairFilter = {
-      ...this.ftoPageInfo.value.pairFilter,
+    this.ftoPageInfo.filter = {
+      ...this.ftoPageInfo.filter,
       ...filter,
     };
 
@@ -97,7 +152,7 @@ class LaunchPad {
   });
 
   resetFtoPageInfo = () => {
-    this.ftoPageInfo.value.pageInfo = {
+    this.ftoPageInfo.pageInfo = {
       hasNextPage: true,
       hasPreviousPage: false,
       startCursor: "",
@@ -186,12 +241,12 @@ class LaunchPad {
   }
 
   reloadFtoPage = async () => {
-    if (this.ftoPageInfo.value.ftoPageLoading) return;
+    if (this.ftoPageInfo.isLoading) return;
 
     this.setFtoPageIsInit(false);
     this.setFtoPageLoading(true);
 
-    if (this.ftoPageInfo.value.pairFilter.showNotValidatedPairs) {
+    if (this.ftoPageInfo.filter.showNotValidatedPairs) {
       this.resetFtoPageInfo();
       await this.LoadMoreFtoPage();
     } else {
@@ -232,16 +287,16 @@ class LaunchPad {
   });
 
   LoadMoreFtoPage = async () => {
-    if (!this.ftoPageInfo.value.pageInfo.hasNextPage) return;
+    if (!this.ftoPageInfo.pageInfo.hasNextPage) return;
 
     this.setFtoPageLoading(true);
     const newPage =
       await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-        filter: this.ftoPageInfo.value.pairFilter,
+        filter: this.ftoPageInfo.filter,
         chainId: String(wallet.currentChainId),
         pageRequest: {
           direction: "next",
-          cursor: this.ftoPageInfo.value.pageInfo.endCursor,
+          cursor: this.ftoPageInfo.pageInfo.endCursor,
         },
       });
 
@@ -339,7 +394,7 @@ class LaunchPad {
   }>(async () => {
     const ftoAddresses =
       await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-        filter: this.ftoPageInfo.value.pairFilter,
+        filter: this.ftoPageInfo.filter,
         chainId: String(wallet.currentChainId),
         provider: wallet.account,
       });
@@ -480,15 +535,15 @@ class LaunchPad {
   }
 
   setCurrentPageInfo = (pageInfo: PageInfo) => {
-    this.ftoPageInfo.value.pageInfo = pageInfo;
+    this.ftoPageInfo.pageInfo = pageInfo;
   };
 
   setFtoPageIsInit = (isInit: boolean) => {
-    this.ftoPageInfo.value.ftoPageInit = isInit;
+    this.ftoPageInfo.isInit = isInit;
   };
 
   setFtoPageLoading = (isLoading: boolean) => {
-    this.ftoPageInfo.value.ftoPageLoading = isLoading;
+    this.ftoPageInfo.isLoading = isLoading;
   };
 }
 

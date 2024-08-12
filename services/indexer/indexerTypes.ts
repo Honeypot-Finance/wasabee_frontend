@@ -1,5 +1,6 @@
 import { GhostIndexer } from "./indexerProviders/ghost";
 import Indexer from "./indexer";
+import { PageInfo } from "../utils";
 
 export type IndexerProvider = GhostIndexer;
 
@@ -10,6 +11,7 @@ export type GhostFtoPairResponse = {
 
 export type GhostPairResponse = {
   pairs: GhostPair[];
+  pageInfo: PageInfo;
 };
 
 export type PairFilter = {
@@ -19,13 +21,6 @@ export type PairFilter = {
 
 export type GhostFtoTokensResponse = {
   items: GhostToken[];
-};
-
-export type PageInfo = {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor: string;
-  endCursor: string;
 };
 
 export type PageRequest = {
