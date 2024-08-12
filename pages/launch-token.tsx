@@ -65,7 +65,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
     }
   };
   return (
-    <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto">
+    <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto mb-[30vh]">
       <Breadcrumbs
         breadcrumbs={[
           {
