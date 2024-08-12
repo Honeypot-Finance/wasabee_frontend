@@ -35,7 +35,10 @@ export class ValueState<T> {
     this._value = value;
   }
 }
-export class AsyncState<T, K extends (...args: any) => Promise<T | null> = () => any> {
+export class AsyncState<
+  T,
+  K extends (...args: any) => Promise<T | null> = () => any
+> {
   loading = false;
   error: Error | null = null;
   value: T | null = null;
@@ -212,7 +215,7 @@ export class PaginationState {
     return this.page * this.limit;
   }
 
-  get totalPage () {
+  get totalPage() {
     return Math.ceil(this.total / this.limit);
   }
   setData(args: Partial<PaginationState>) {
@@ -230,14 +233,11 @@ export class PaginationState {
   }
 }
 
-
 export class PaginationDataState<T> {
   page: number = 1;
   limit: number = 10;
   total: number = 0;
-  data = {
-    
-  } as Record<number, T[]>;
+  data = {} as Record<number, T[]>;
 
   get pageData() {
     return this.data[this.page];
@@ -256,10 +256,10 @@ export class PaginationDataState<T> {
     return this.page * this.limit;
   }
 
-  get totalPage () {
+  get totalPage() {
     return Math.ceil(this.total / this.limit);
   }
-  fetch!:AsyncState<T[]>
+  fetch!: AsyncState<T[]>;
 
   setData(args: Partial<PaginationState>) {
     Object.assign(this, args);
@@ -267,9 +267,9 @@ export class PaginationDataState<T> {
 
   onPageChange = async (page: number) => {
     this.page = page;
-    const [value, error] = await this.fetch.call()
+    const [value, error] = await this.fetch.call();
     if (!error) {
-       this.data[page] = value
+      this.data[page] = value;
     }
   };
   onSizeChange = (limit: number) => {
@@ -293,6 +293,7 @@ export class IndexerPaginationState<FilterT, ItemT> {
   pageItems = new ValueState<ItemT[]>({
     value: [],
   });
+
   LoadNextPageFunction: (
     filter: FilterT,
     pageRequest: PageRequest
@@ -301,7 +302,6 @@ export class IndexerPaginationState<FilterT, ItemT> {
   constructor(
     LoadNextPageFunction: (
       filter: FilterT,
-
       pageRequest: PageRequest
     ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }>,
     args: Partial<IndexerPaginationState<FilterT, ItemT>>
@@ -330,9 +330,10 @@ export class IndexerPaginationState<FilterT, ItemT> {
     this.pageItems.setValue([]);
   };
 
-  reloadPage = () => {
+  reloadPage = async () => {
     this.resetPage();
-    this.loadMore();
+    await this.loadMore();
+    this.isInit = true;
   };
 
   loadMore = async () => {
@@ -412,7 +413,6 @@ export class StorageState<T = any, U = any> {
   }
 }
 
-
 export abstract class BaseState {
   isInit = false;
   isInitLoading = false;
@@ -420,9 +420,7 @@ export abstract class BaseState {
   constructor() {
     makeAutoObservable(this);
   }
-  refresh () {
-
-  }
+  refresh() {}
   init() {
     this.isInit = true;
   }

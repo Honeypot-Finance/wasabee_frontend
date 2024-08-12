@@ -93,7 +93,7 @@ const UpdateProjectModal = observer(({ pair }: { pair: FtoPairContract }) => {
   const FormBody = observer(({ onClose }: any) => (
     <>
       <ModalHeader className="flex flex-col gap-1">
-        Update {pair.launchedToken.displayName}
+        Update {pair.launchedToken?.displayName}
       </ModalHeader>
       <ModalBody>
         <div>
@@ -251,7 +251,7 @@ const SuccessAction = observer(({ pair }: { pair: FtoPairContract }) => {
       )}
 
       <Link
-        href={`/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
+        href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
         className="text-black font-bold"
       >
         <Button className="w-full">
@@ -262,7 +262,7 @@ const SuccessAction = observer(({ pair }: { pair: FtoPairContract }) => {
                 e.preventDefault();
               }}
               className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-              value={`${window.location.origin}/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
+              value={`${window.location.origin}/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
             ></Copy>
           </p>
         </Button>{" "}
@@ -315,49 +315,51 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
     },
   }));
   return (
-    <div className="flex flex-col gap-[16px]">
-      <Input
-        className="bg-[#2F200B] rounded-[10px]"
-        value={state.depositAmount}
-        placeholder="Deposit amount"
-        min={0}
-        type="number"
-        max={pair.raiseToken.balance.toFixed()}
-        onChange={(e) => {
-          state.setDepositAmount(e.target.value);
-        }}
-        defaultValue="0"
-        endContent={
-          <div className="flex items-center">
-            <span className="mr-2">{pair.raiseToken.displayName}</span>
-            <TokenLogo token={pair.raiseToken} />
-          </div>
-        }
-      ></Input>
-      <div className="flex items-center gap-[8px]">
-        <div>Balance: {pair.raiseToken.balance.toFormat()}</div>
-        <div
-          onClick={() => {
-            state.setDepositAmount(pair.raiseToken.balance.toFixed());
+    pair.raiseToken && (
+      <div className="flex flex-col gap-[16px]">
+        <Input
+          className="bg-[#2F200B] rounded-[10px]"
+          value={state.depositAmount}
+          placeholder="Deposit amount"
+          min={0}
+          type="number"
+          max={pair.raiseToken.balance.toFixed()}
+          onChange={(e) => {
+            state.setDepositAmount(e.target.value);
           }}
-          className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline"
-        >
-          Max
+          defaultValue="0"
+          endContent={
+            <div className="flex items-center">
+              <span className="mr-2">{pair.raiseToken.displayName}</span>
+              <TokenLogo token={pair.raiseToken} />
+            </div>
+          }
+        ></Input>
+        <div className="flex items-center gap-[8px]">
+          <div>Balance: {pair.raiseToken.balance.toFormat()}</div>
+          <div
+            onClick={() => {
+              state.setDepositAmount(pair.raiseToken?.balance.toFixed() ?? "0");
+            }}
+            className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline"
+          >
+            Max
+          </div>
         </div>
+        <Button
+          className="w-full"
+          isDisabled={!Number(state.depositAmount)}
+          isLoading={pair.deposit.loading}
+          onClick={() => {
+            pair.deposit.call({
+              amount: state.depositAmount,
+            });
+          }}
+        >
+          Deposit
+        </Button>
       </div>
-      <Button
-        className="w-full"
-        isDisabled={!Number(state.depositAmount)}
-        isLoading={pair.deposit.loading}
-        onClick={() => {
-          pair.deposit.call({
-            amount: state.depositAmount,
-          });
-        }}
-      >
-        Deposit
-      </Button>
-    </div>
+    )
   );
 });
 
@@ -395,8 +397,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
     >(async ({ pairAddress }: { pairAddress: string }) => {
       const pair = new FtoPairContract({ address: pairAddress as string });
       await pair.init();
-      pair.raiseToken.init();
-      pair.launchedToken.init();
+      pair.raiseToken?.init();
+      pair.launchedToken?.init();
       return pair;
     }),
   }));
@@ -468,6 +470,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
     state.pair.value,
     onOpen,
     router.query.edit,
+    router,
   ]);
 
   useEffect(() => {
@@ -510,7 +513,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
             href: "/launch",
           },
           {
-            title: state.pair.value?.launchedToken.displayName || "-",
+            title: state.pair.value?.launchedToken?.displayName || "-",
             href: "/launch-token",
           },
         ]}
@@ -538,7 +541,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 <div>
                   <div>
                     <div className="text-[rgba(255,255,255,0.66)] text-base font-medium leading-[normal]">
-                      {state.pair.value?.launchedToken.displayName}
+                      {state.pair.value?.launchedToken?.displayName}
                     </div>
                     <div className="text-white text-[32px] font-medium leading-[normal]">
                       {state.pair.value?.projectName}
@@ -608,7 +611,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                   })}
                 </div>
               </div>
-              {state.pair.value?.launchedToken.address && (
+              {state.pair.value?.launchedToken?.address && (
                 <span className="flex justify-end flex-row ml-2 absolute right-4 bottom-4">
                   <ShareSocialMedialPopUp
                     shareUrl={window.location.href}
@@ -627,7 +630,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 className=""
                 options={[
                   optionsPresets.copy({
-                    copyText: state.pair?.value?.launchedToken.address ?? "",
+                    copyText: state.pair?.value?.launchedToken?.address ?? "",
                     displayText: "Copy Token address",
                     copysSuccessText: "Token address copied",
                   }),
@@ -693,7 +696,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                   decimals: 0,
                   fixed: 3,
                 })}{" "}
-                {state.pair.value?.raiseToken.displayName}
+                {state.pair.value?.raiseToken?.displayName}
               </div>
             </div>
             {/* // TODO: raised progress */}
@@ -703,7 +706,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 Token address
               </div>
               <div className="mt-[8px] flex  h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px]">
-                {state.pair.value?.launchedToken.address}{" "}
+                {state.pair.value?.launchedToken?.address}{" "}
               </div>
             </div>
 

@@ -63,7 +63,7 @@ export const LaunchCard = observer(
           className="absolute left-[0.5rem] top-[0.5rem] "
           options={[
             optionsPresets.copy({
-              copyText: pair?.launchedToken.address ?? "",
+              copyText: pair?.launchedToken?.address ?? "",
               displayText: "Copy Token address",
               copysSuccessText: "Token address copied",
             }),
@@ -88,7 +88,7 @@ export const LaunchCard = observer(
         </div>
         <h4 className="text-white text-center text-[1rem] font-bold flex items-center h-[1.5em]">
           <div className=" relative">
-            {pair?.launchedToken.name} ({pair?.launchedToken.symbol})
+            {pair?.launchedToken?.name} ({pair?.launchedToken?.symbol})
           </div>{" "}
         </h4>{" "}
         <div
@@ -113,7 +113,7 @@ export const LaunchCard = observer(
                   ? pair?.depositedLaunchedToken?.toFormat(0)
                   : "-"}
                 &nbsp;
-                {pair?.launchedToken.displayName}
+                {pair?.launchedToken?.displayName}
               </span>
             </div>
           </div>
@@ -126,7 +126,7 @@ export const LaunchCard = observer(
                   ? pair.depositedRaisedToken.toFormat(3)
                   : "-"}
                 &nbsp;
-                {pair?.raiseToken.displayName}
+                {pair?.raiseToken?.displayName}
               </span>
             </div>
           </div>
@@ -136,7 +136,7 @@ export const LaunchCard = observer(
               {/* <TokenPriceSvg /> */}
               <span className="font-bold">
                 <AmountFormat amount={pair?.price?.toFixed()}></AmountFormat>{" "}
-                {pair?.raiseToken.displayName}
+                {pair?.raiseToken?.displayName}
               </span>
             </div>
           </div>

@@ -63,7 +63,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
         </Button>
       </div>
 
-      {mostSuccessProjects.length > 0 && (
+      {mostSuccessProjects && mostSuccessProjects.length > 0 && (
         <>
           <h2 className="w-full text-center">Trending Projects</h2>
           <motion.div
@@ -106,8 +106,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
                     </div>
                     <h4 className="text-white text-center text-[1rem] font-bold flex items-center">
                       <div className=" relative">
-                        {pair?.launchedToken.name} <br />(
-                        {pair?.launchedToken.symbol})
+                        {pair?.launchedToken?.name} <br />(
+                        {pair?.launchedToken?.symbol})
                       </div>
                     </h4>{" "}
                     <motion.div className="flex flex-col items-center gap-1">
@@ -119,7 +119,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                             ? pair.depositedRaisedToken.toFormat(0)
                             : "-"}
                           &nbsp;
-                          {pair?.raiseToken.displayName}
+                          {pair?.raiseToken?.displayName}
                         </span>
                       </div>
                     </motion.div>
@@ -180,7 +180,9 @@ const LaunchPage: NextLayoutPage = observer(() => {
               <Observer>
                 {() => (
                   <div className="w-full">
-                    <SpinnerContainer isLoading={!launchpad.ftoPageInfo.isInit}>
+                    <SpinnerContainer
+                      isLoading={launchpad.ftoPageInfo.isLoading}
+                    >
                       <div className="max-h-[300px] grid grid-cols-3 gap-2">
                         <NextButton
                           onClick={() => {
@@ -273,7 +275,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                           </Link>
                           {pair.ftoState === 0 && (
                             <Link
-                              href={`/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
+                              href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
                               className="text-black font-bold w-full px-[8px]"
                             >
                               <Button className="w-full">

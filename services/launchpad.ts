@@ -78,22 +78,22 @@ class LaunchPad {
             });
 
             const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
-              ? new Token({
+              ? Token.getToken({
                   ...pairAddress.token1,
                   address: pairAddress.token1.id,
                 })
-              : new Token({
+              : Token.getToken({
                   address: pairAddress.token0.id,
                 });
 
             const launchedToken =
               raisedToken.address.toLowerCase() ===
               pairAddress.token1.id.toLowerCase()
-                ? new Token({
+                ? Token.getToken({
                     ...pairAddress.token0,
                     address: pairAddress.token0.id,
                   })
-                : new Token({
+                : Token.getToken({
                     ...pairAddress.token1,
                     address: pairAddress.token1.id,
                   });
@@ -201,22 +201,22 @@ class LaunchPad {
         });
 
         const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
-          ? new Token({
+          ? Token.getToken({
               ...pairAddress.token1,
               address: pairAddress.token1.id,
             })
-          : new Token({
+          : Token.getToken({
               address: pairAddress.token0.id,
             });
 
         const launchedToken =
           raisedToken.address.toLowerCase() ===
           pairAddress.token1.id.toLowerCase()
-            ? new Token({
+            ? Token.getToken({
                 ...pairAddress.token0,
                 address: pairAddress.token0.id,
               })
-            : new Token({
+            : Token.getToken({
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
               });
@@ -312,22 +312,22 @@ class LaunchPad {
           (token) =>
             token.address?.toLowerCase() === pairAddress.token1.id.toLowerCase()
         )
-          ? new Token({
+          ? Token.getToken({
               ...pairAddress.token1,
               address: pairAddress.token1.id,
             })
-          : new Token({
+          : Token.getToken({
               address: pairAddress.token0.id,
             });
 
         const launchedToken =
           raisedToken.address.toLowerCase() ===
           pairAddress.token1.id.toLowerCase()
-            ? new Token({
+            ? Token.getToken({
                 ...pairAddress.token0,
                 address: pairAddress.token0.id,
               })
-            : new Token({
+            : Token.getToken({
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
               });
@@ -369,8 +369,8 @@ class LaunchPad {
         const pair = new FtoPairContract({ address: pairAddress as string });
         if (!pair.isInit) {
           await pair.init();
-          pair.raiseToken.init();
-          pair.launchedToken.init();
+          pair.raiseToken?.init();
+          pair.launchedToken?.init();
         }
         return pair;
       })
@@ -411,22 +411,22 @@ class LaunchPad {
           });
 
           const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
-            ? new Token({
+            ? Token.getToken({
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
               })
-            : new Token({
+            : Token.getToken({
                 address: pairAddress.token0.id,
               });
 
           const launchedToken =
             raisedToken.address.toLowerCase() ===
             pairAddress.token1.id.toLowerCase()
-              ? new Token({
+              ? Token.getToken({
                   ...pairAddress.token0,
                   address: pairAddress.token0.id,
                 })
-              : new Token({
+              : Token.getToken({
                   ...pairAddress.token1,
                   address: pairAddress.token1.id,
                 });

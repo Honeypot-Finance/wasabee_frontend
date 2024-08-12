@@ -179,7 +179,7 @@ export class PairContract implements BaseContract {
       try {
         await Promise.all([
           (async () => {
-            this.token = new Token({
+            this.token = Token.getToken({
               address: this.address,
             });
             await this.token.init({

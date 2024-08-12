@@ -28,12 +28,18 @@ class Liquidity {
 
       if (pairs.status === "success") {
         const pariContracts = pairs.data.pairs.map((pair) => {
-          const token0 = new Token({ ...pair.token0, address: pair.token0.id });
-          const token1 = new Token({ ...pair.token1, address: pair.token1.id });
+          const token0 = Token.getToken({
+            ...pair.token0,
+            address: pair.token0.id,
+          });
+          const token1 = Token.getToken({
+            ...pair.token1,
+            address: pair.token1.id,
+          });
           const pairContract = new PairContract({
-            address: pair.id,
             token0,
             token1,
+            address: pair.id,
           });
 
           if (!this.tokensMap[token0.address]) {
@@ -104,17 +110,16 @@ class Liquidity {
         Pick<Token, "address" | "name" | "symbol" | "decimals">
       >
     ) => {
-
-      const res =  Object.values(value).reduce((acc, t) => {
-        const token = new Token({
+      const res = Object.values(value).reduce((acc, t) => {
+        const token = Token.getToken({
           ...t,
-          priority: 3,
         });
+        token.priority = 3;
         acc[token.address] = token;
         return acc;
       }, {} as Record<string, Token>);
-      console.log('deserialize', res)
-      return res
+      console.log("deserialize", res);
+      return res;
     },
     transform(value: Token) {
       this.value![value.address] = value;
@@ -127,9 +132,9 @@ class Liquidity {
   get tokens() {
     const tokens = {
       ...wallet.currentChain.validatedTokensInfo,
-      ...this.localTokensMap.value
-    }
-    
+      ...this.localTokensMap.value,
+    };
+
     const sortedTokens = Object.values(tokens).sort((a, b) => {
       const diff = b.priority - a.priority;
       if (diff === 0) {
@@ -398,12 +403,19 @@ class Liquidity {
 
     if (pairs.status === "success") {
       this.pairs = pairs.data.pairs.map((pair) => {
-        const token0 = new Token({ ...pair.token0, address: pair.token0.id });
-        const token1 = new Token({ ...pair.token1, address: pair.token1.id });
+        const token0 = Token.getToken({
+          ...pair.token0,
+          address: pair.token0.id,
+        });
+        const token1 = Token.getToken({
+          ...pair.token1,
+          address: pair.token1.id,
+        });
         const pairContract = new PairContract({
-          address: pair.id,
           token0,
           token1,
+
+          address: pair.id,
         });
 
         if (!this.tokensMap[token0.address]) {
@@ -439,8 +451,8 @@ class Liquidity {
     if (pair) {
       const pairContract = new PairContract({
         address: pair.address,
-        token0: new Token(pair.token0),
-        token1: new Token(pair.token1),
+        token0: Token.getToken(pair.token0),
+        token1: Token.getToken(pair.token1),
       });
       pairContract.init();
 

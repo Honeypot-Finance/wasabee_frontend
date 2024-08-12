@@ -46,7 +46,7 @@ class Swap {
         }
 
         for (let i = 0; i < toTokenRouterTokens.length; i++) {
-          const RT = new Token({
+          const RT = Token.getToken({
             address: toTokenRouterTokens[i].toLowerCase(),
           });
           if (
@@ -70,7 +70,7 @@ class Swap {
         }
 
         for (let i = 0; i < fromTokenRouterTokens.length; i++) {
-          const RT = new Token({
+          const RT = Token.getToken({
             address: fromTokenRouterTokens[i].toLowerCase(),
           });
           if (
@@ -105,7 +105,7 @@ class Swap {
           rtoken.toLowerCase()
         )
       ) {
-        const RT = new Token({ address: rtoken.toLowerCase() });
+        const RT = Token.getToken({ address: rtoken.toLowerCase() });
         RT.init();
         this.setRouterToken([RT]);
       }
@@ -135,11 +135,11 @@ class Swap {
             toTokenRouterTokens[j].toLowerCase()
           )
         ) {
-          const RT1 = new Token({
+          const RT1 = Token.getToken({
             address: fromTokenRouterTokens[i].toLowerCase(),
           });
           RT1.init();
-          const RT2 = new Token({
+          const RT2 = Token.getToken({
             address: toTokenRouterTokens[j].toLowerCase(),
           });
           RT2.init();
@@ -364,14 +364,17 @@ class Swap {
       .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
       .toFixed(0);
     if (this.fromToken.isNative) {
-      await this.routerV2Contract.swapExactETHForTokens.call([
-        BigInt(minAmountOutDecimals),
-        path,
-        wallet.account as `0x${string}`,
-        BigInt(deadline),
-      ], {
-        value: BigInt(fromAmountDecimals),
-      })
+      await this.routerV2Contract.swapExactETHForTokens.call(
+        [
+          BigInt(minAmountOutDecimals),
+          path,
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ],
+        {
+          value: BigInt(fromAmountDecimals),
+        }
+      );
     } else if (this.toToken.isNative) {
       await this.routerV2Contract.swapExactTokensForETH.call([
         BigInt(fromAmountDecimals),
@@ -379,7 +382,7 @@ class Swap {
         path,
         wallet.account as `0x${string}`,
         BigInt(deadline),
-      ])
+      ]);
     } else {
       await this.routerV2Contract.swapExactTokensForTokens.call([
         BigInt(fromAmountDecimals),
@@ -389,8 +392,6 @@ class Swap {
         BigInt(deadline),
       ]);
     }
-  
-  
 
     this.fromAmount = "";
 

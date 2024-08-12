@@ -249,7 +249,7 @@ export const LPCard = observer(() => {
     outputCurrency: string;
   };
 
-  const isinit = wallet.isInit
+  const isinit = wallet.isInit;
 
   useEffect(() => {
     if (!isinit) {
@@ -257,14 +257,14 @@ export const LPCard = observer(() => {
     }
     if (inputCurrency && isEthAddress(inputCurrency)) {
       liquidity.setToToken(
-        new Token({
+        Token.getToken({
           address: inputCurrency,
         })
       );
     }
     if (outputCurrency && isEthAddress(outputCurrency)) {
       liquidity.setToToken(
-        new Token({
+        Token.getToken({
           address: outputCurrency,
         })
       );

@@ -23,7 +23,7 @@ interface TokenBalanceCardProps {
 export const TokenBalanceCard = observer(
   ({ token, autoSize }: TokenBalanceCardProps) => {
     useEffect(() => {
-     token.init();
+      token.init();
     }, []);
     return (
       <motion.div
@@ -35,21 +35,21 @@ export const TokenBalanceCard = observer(
           <TokenLogo token={token}></TokenLogo>
           <div className="flex-1 flex items-center">
             {token.name} ({token.symbol})
-            <OptionsDropdown
-              className="min-h-0 h-[unset]"
-              options={[
-                optionsPresets.copy({
-                  copyText: token?.address ?? "",
-                  displayText: "Copy Token address",
-                  copysSuccessText: "Token address copied",
-                }),
-                optionsPresets.importTokenToWallet({
-                  token: token,
-                }),
-              ]}
-            />
           </div>
           <div className="">{token.balanceFormatted}</div>
+          <OptionsDropdown
+            className="min-h-0 h-[unset]"
+            options={[
+              optionsPresets.copy({
+                copyText: token?.address ?? "",
+                displayText: "Copy Token address",
+                copysSuccessText: "Token address copied",
+              }),
+              optionsPresets.importTokenToWallet({
+                token: token,
+              }),
+            ]}
+          />
         </CardContianer>
       </motion.div>
     );

@@ -48,7 +48,7 @@ export class NativeFaucetContract implements BaseContract {
     const hpotAdress = await this.contract.read.hpot();
     const minHpotBalance = await this.contract.read.minHpot();
 
-    const hpotContract = new Token({
+    const hpotContract = Token.getToken({
       address: hpotAdress,
     });
     await hpotContract.init();

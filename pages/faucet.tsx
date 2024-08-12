@@ -100,7 +100,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
           </div>
         </div>
       </div>
-      <div className="w-[578px] max-w-[100%] mt-[30px] flex flex-col gap-[24px]">
+      <div className="w-[700px] max-w-[100%] mt-[30px] flex flex-col gap-[24px]">
         {/** Native token faucet */}
         {wallet.currentChain?.officialFaucets?.[0] && (
           <div className="flex items-center flex-col lg:grid lg:grid-cols-[1fr,200px] gap-[0.5rem]">
@@ -129,41 +129,6 @@ const FaucetPage: NextLayoutPage = observer(() => {
                   />
                   {wallet.currentChain?.chain.nativeCurrency.name} (
                   {wallet.currentChain?.chain.nativeCurrency.symbol})
-                  <OptionsDropdown
-                    className="min-h-0 h-[unset]"
-                    options={[
-                      {
-                        icon: <VscHome />,
-                        display: (
-                          <Link
-                            target="_blank"
-                            href={
-                              (wallet.currentChain?.officialFaucets &&
-                                wallet.currentChain?.officialFaucets[0].url) ||
-                              ""
-                            }
-                          >
-                            Official Faucet
-                          </Link>
-                        ),
-                        onClick: () => {
-                          window.open(
-                            (wallet.currentChain?.officialFaucets &&
-                              wallet.currentChain?.officialFaucets[0].url) ||
-                              "",
-                            "_blank"
-                          );
-                        },
-                      },
-                      {
-                        icon: <FaDonate />,
-                        display: "Donate",
-                        onClick: () => {
-                          setIsdonationModalOpen(true);
-                        },
-                      },
-                    ]}
-                  ></OptionsDropdown>
                 </div>
                 <div className="">
                   {amountFormatted(balance.data?.value.toString(), {
@@ -171,7 +136,42 @@ const FaucetPage: NextLayoutPage = observer(() => {
                       wallet.currentChain?.chain.nativeCurrency.decimals,
                     fixed: 3,
                   })}
-                </div>
+                </div>{" "}
+                <OptionsDropdown
+                  className="min-h-0 h-[unset]"
+                  options={[
+                    {
+                      icon: <VscHome />,
+                      display: (
+                        <Link
+                          target="_blank"
+                          href={
+                            (wallet.currentChain?.officialFaucets &&
+                              wallet.currentChain?.officialFaucets[0].url) ||
+                            ""
+                          }
+                        >
+                          Official Faucet
+                        </Link>
+                      ),
+                      onClick: () => {
+                        window.open(
+                          (wallet.currentChain?.officialFaucets &&
+                            wallet.currentChain?.officialFaucets[0].url) ||
+                            "",
+                          "_blank"
+                        );
+                      },
+                    },
+                    {
+                      icon: <FaDonate />,
+                      display: "Donate",
+                      onClick: () => {
+                        setIsdonationModalOpen(true);
+                      },
+                    },
+                  ]}
+                ></OptionsDropdown>
               </CardContianer>
             </motion.div>
             {faucet.nativeFaucet && (

@@ -144,7 +144,7 @@ export const Profile = observer(() => {
                             </Link>
                             {project.ftoState === 0 && (
                               <Link
-                                href={`/swap?inputCurrency=${project.launchedToken.address}&outputCurrency=${project.raiseToken.address}`}
+                                href={`/swap?inputCurrency=${project.launchedToken?.address}&outputCurrency=${project.raiseToken?.address}`}
                                 className="text-black font-bold w-full px-[8px]"
                               >
                                 <Button className="w-full">
@@ -155,7 +155,7 @@ export const Profile = observer(() => {
                                         e.preventDefault();
                                       }}
                                       className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-                                      value={`${window.location.origin}/swap?inputCurrency=${project.launchedToken.address}&outputCurrency=${project.raiseToken.address}`}
+                                      value={`${window.location.origin}/swap?inputCurrency=${project.launchedToken?.address}&outputCurrency=${project.raiseToken?.address}`}
                                     ></Copy>
                                   </p>
                                 </Button>{" "}
@@ -197,7 +197,7 @@ export const Profile = observer(() => {
                               </Link>
                               {project.ftoState === 0 && (
                                 <Link
-                                  href={`/swap?inputCurrency=${project.launchedToken.address}&outputCurrency=${project.raiseToken.address}`}
+                                  href={`/swap?inputCurrency=${project.launchedToken?.address}&outputCurrency=${project.raiseToken?.address}`}
                                   className="text-black font-bold w-full px-[8px]"
                                 >
                                   <Button className="w-full">
@@ -208,7 +208,7 @@ export const Profile = observer(() => {
                                           e.preventDefault();
                                         }}
                                         className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-                                        value={`${window.location.origin}/swap?inputCurrency=${project.launchedToken.address}&outputCurrency=${project.raiseToken.address}`}
+                                        value={`${window.location.origin}/swap?inputCurrency=${project.launchedToken?.address}&outputCurrency=${project.raiseToken?.address}`}
                                       ></Copy>
                                     </p>
                                   </Button>{" "}

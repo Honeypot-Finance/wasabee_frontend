@@ -223,15 +223,17 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                     <label htmlFor="raisedToken">Raised Token</label>
                     <Select
                       required
+                      selectionMode="single"
                       classNames={{
                         trigger:
                           "bg-transparent data-[hover=true]:bg-transparent",
                       }}
-                      {...register("raisedToken", { required: true })}
-                      defaultSelectedKeys={[
-                        wallet.currentChain?.contracts.ftoTokens[0]
+                      defaultSelectedKeys={"all"}
+                      {...register("raisedToken", {
+                        required: true,
+                        value: wallet.currentChain?.contracts.ftoTokens[0]
                           .address as string,
-                      ]}
+                      })}
                       className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
                     >
                       {wallet.currentChain?.contracts.ftoTokens.map(

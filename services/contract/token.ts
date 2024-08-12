@@ -12,14 +12,16 @@ import { toast } from "react-toastify";
 
 export class Token implements BaseContract {
   static tokensMap: Record<string, Token> = {};
-  static getToken ({address, ...args}: {address: string}) {
-    const lowerAddress = address.toLowerCase()
+  static getToken({ address, ...args }: { address: string }) {
+    const lowerAddress = address.toLowerCase();
     if (!Token.tokensMap[lowerAddress]) {
-      Token.tokensMap[lowerAddress] = new Token({address: lowerAddress, ...args})
+      Token.tokensMap[lowerAddress] = new Token({
+        address: lowerAddress,
+        ...args,
+      });
     }
-    Token.tokensMap[lowerAddress].setData(args)
-    return Token.tokensMap[lowerAddress]
-
+    Token.tokensMap[lowerAddress].setData(args);
+    return Token.tokensMap[lowerAddress];
   }
   address: string = "";
   name: string = "";
@@ -83,7 +85,7 @@ export class Token implements BaseContract {
     this._logoURI = logoURI;
   }
 
-  setData ({ balance, logoURI, ...args }: Partial<Token>) {
+  setData({ balance, logoURI, ...args }: Partial<Token>) {
     Object.assign(this, args);
     if (balance) {
       this.balanceWithoutDecimals = new BigNumber(balance);
@@ -102,8 +104,8 @@ export class Token implements BaseContract {
     loadClaimed?: boolean;
     loadLogoURI?: boolean;
   }) {
-    if (this.isInit)  {
-       return
+    if (this.isInit) {
+      return;
     }
     const loadName = options?.loadName ?? true;
     const loadSymbol = options?.loadSymbol ?? true;

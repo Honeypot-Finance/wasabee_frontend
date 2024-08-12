@@ -16,8 +16,8 @@ export class FtoPairContract implements BaseContract {
   address = "";
   name: string = "";
   abi = MUBAI_FTO_PAIR_ABI;
-  raiseToken = new Token({});
-  launchedToken = new Token({});
+  raiseToken: Token | undefined = undefined;
+  launchedToken: Token | undefined = undefined;
   depositedRaisedTokenWithoutDecimals: BigNumber | null = null;
   depositedLaunchedTokenWithoutDecimals: BigNumber | null = null;
   endTime: string = "";
@@ -63,13 +63,22 @@ export class FtoPairContract implements BaseContract {
   }
 
   get depositedRaisedToken() {
+    if (!this.raiseToken) {
+      throw new Error("token is not initialized");
+    }
+
     return this.depositedRaisedTokenWithoutDecimals && this.raiseToken.decimals
       ? this.depositedRaisedTokenWithoutDecimals.div(
           new BigNumber(10).pow(this.raiseToken.decimals)
         )
       : undefined;
   }
+
   get depositedLaunchedToken() {
+    if (!this.launchedToken) {
+      throw new Error("token is not initialized");
+    }
+
     return this.depositedLaunchedTokenWithoutDecimals &&
       this.launchedToken.decimals
       ? this.depositedLaunchedTokenWithoutDecimals.div(
@@ -148,6 +157,10 @@ export class FtoPairContract implements BaseContract {
   }
 
   deposit = new AsyncState(async ({ amount }: { amount: string }) => {
+    if (!this.raiseToken || !this.launchedToken) {
+      throw new Error("token is not initialized");
+    }
+
     amount = new BigNumber(amount)
       .multipliedBy(new BigNumber(10).pow(this.raiseToken.decimals))
       .toFixed();
@@ -174,6 +187,10 @@ export class FtoPairContract implements BaseContract {
   });
 
   claimLP = new AsyncState(async () => {
+    if (!this.raiseToken || !this.launchedToken) {
+      throw new Error("token is not initialized");
+    }
+
     await this.facadeContract.claimLP.call([
       this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
@@ -182,6 +199,10 @@ export class FtoPairContract implements BaseContract {
   });
 
   resume = new AsyncState(async () => {
+    if (!this.raiseToken || !this.launchedToken) {
+      throw new Error("token is not initialized");
+    }
+
     await this.fotFactoryContract.resume.call([
       this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
@@ -190,6 +211,10 @@ export class FtoPairContract implements BaseContract {
   });
 
   pause = new AsyncState(async () => {
+    if (!this.raiseToken || !this.launchedToken) {
+      throw new Error("token is not initialized");
+    }
+
     await this.fotFactoryContract.pause.call([
       this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
@@ -278,7 +303,7 @@ export class FtoPairContract implements BaseContract {
     }
     if (res.logo_url) {
       this.logoUrl = res.logo_url;
-      this.launchedToken.setLogoURI(res.logo_url);
+      this.launchedToken?.setLogoURI(res.logo_url);
     }
   }
 
@@ -353,7 +378,7 @@ export class FtoPairContract implements BaseContract {
       this.raiseToken.init();
     } else {
       const res = (await this.contract.read.raisedToken()) as `0x${string}`;
-      this.raiseToken = new Token({ address: res });
+      this.raiseToken = Token.getToken({ address: res });
       this.raiseToken.init();
     }
   }
@@ -364,7 +389,7 @@ export class FtoPairContract implements BaseContract {
       this.launchedToken.init();
     } else {
       const res = (await this.contract.read.launchedToken()) as `0x${string}`;
-      this.launchedToken = new Token({ address: res });
+      this.launchedToken = Token.getToken({ address: res });
       this.launchedToken.init();
     }
   }
