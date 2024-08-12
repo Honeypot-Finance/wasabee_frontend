@@ -36,25 +36,45 @@ export class Network {
   blacklist?: {
     poolBlacklist: string[];
   };
+  validatedTokens: Token[] = [];
   validatedTokensInfo: Record<
     string,
-    {
-      name: string;
-      symbol: string;
-      decimals: number;
-      logoURI?: string;
-    }
+    Token
   > = {};
   validatedFtoAddresses: string[] = [];
   constructor(
-    args: Omit<Partial<Network>, "faucetTokens" | "nativeTokens"> & {
+    args: Omit<Partial<Network>, "faucetTokens" | "nativeTokens" | "validatedTokensInfo"> & {
       faucetTokens: Partial<Token>[];
       nativeTokens: Partial<Token>[];
+      validatedTokensInfo: Record<
+        string,
+        Partial<Token>>
     }
   ) {
     Object.assign(this, args);
     if (args) {
     }
+  }
+  init () {
+    this.nativeTokens = this.nativeTokens.map((t) => {
+      const token =  Token.getToken(t)
+      token.init()
+      return token
+    });
+    this.faucetTokens = this.faucetTokens.map((t) => {
+      const token =  Token.getToken(t)
+      token.init()
+      return token
+    });
+    Object.entries(this.validatedTokensInfo).forEach(([address, t]) => {
+      const token =  Token.getToken({
+        ...t,
+        address,
+      })
+      token.init()
+      this.validatedTokensInfo[address] = token
+      this.validatedTokens.push(token)
+    })
   }
 }
 
@@ -72,7 +92,7 @@ export const berachainBartioTestnetNetwork = new Network({
     {
       address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
       name: "Bera",
-      symbol: "BERA",
+      symbol: "BERA", 
       decimals: 18,
       isNative: true,
       priority: 1,

@@ -11,6 +11,15 @@ import { watchAsset } from "viem/actions";
 import { toast } from "react-toastify";
 
 export class Token implements BaseContract {
+  static tokensMap: Record<string, Token> = {};
+  static getToken ({address, ...args}: {address: string}) {
+    const lowerAddress = address.toLowerCase()
+    if (!Token.tokensMap[lowerAddress]) {
+      Token.tokensMap[lowerAddress] = new Token({address: lowerAddress, ...args})
+    }
+    return Token.tokensMap[lowerAddress]
+
+  }
   address: string = "";
   name: string = "";
   balanceWithoutDecimals = new BigNumber(0);
@@ -32,7 +41,7 @@ export class Token implements BaseContract {
   get logoURI() {
     return (
       this._logoURI ||
-      wallet.currentChain.validatedTokensInfo[this.address]?.logoURI ||
+      wallet.currentChain.validatedTokensInfo[this.address]?._logoURI ||
       ""
     );
   }
@@ -52,15 +61,8 @@ export class Token implements BaseContract {
     });
   }
 
-  constructor({ balance, logoURI, ...args }: Partial<Token>) {
-    Object.assign(this, args);
-    if (balance) {
-      this.balanceWithoutDecimals = new BigNumber(balance);
-    }
-    if (logoURI) {
-      this._logoURI = logoURI;
-    }
-
+  constructor(args: Partial<Token>) {
+    this.setData(args);
     makeAutoObservable(this);
   }
 
@@ -80,6 +82,16 @@ export class Token implements BaseContract {
     this._logoURI = logoURI;
   }
 
+  setData ({ balance, logoURI, ...args }: Partial<Token>) {
+    Object.assign(this, args);
+    if (balance) {
+      this.balanceWithoutDecimals = new BigNumber(balance);
+    }
+    if (logoURI) {
+      this._logoURI = logoURI;
+    }
+  }
+
   async init(options?: {
     loadName?: boolean;
     loadSymbol?: boolean;
@@ -89,6 +101,9 @@ export class Token implements BaseContract {
     loadClaimed?: boolean;
     loadLogoURI?: boolean;
   }) {
+    if (this.isInit)  {
+       return
+    }
     const loadName = options?.loadName ?? true;
     const loadSymbol = options?.loadSymbol ?? true;
     const loadDecimals = options?.loadDecimals ?? true;

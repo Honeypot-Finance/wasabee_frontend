@@ -48,26 +48,22 @@ export const SwapCard = observer(() => {
     outputCurrency: string;
   };
 
-  useEffect(() => {
-    liquidity.initPool();
-  }, [wallet.isInit]);
 
-  const isinit = wallet.isInit && liquidity.isInit;
-
+  const isinit = wallet.isInit
   useEffect(() => {
     if (!isinit) {
       return;
     }
     if (inputCurrency && isEthAddress(inputCurrency)) {
-      swap.setFromToken(
-        new Token({
+      swap.setToToken(
+        Token.getToken({
           address: inputCurrency,
         })
       );
     }
     if (outputCurrency && isEthAddress(outputCurrency)) {
       swap.setToToken(
-        new Token({
+        Token.getToken({
           address: outputCurrency,
         })
       );

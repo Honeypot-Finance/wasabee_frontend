@@ -249,21 +249,25 @@ export const LPCard = observer(() => {
     outputCurrency: string;
   };
 
-  const isinit = wallet.isInit && liquidity.isInit;
-
-  useEffect(() => {
-    liquidity.initPool();
-  }, [wallet.isInit]);
+  const isinit = wallet.isInit
 
   useEffect(() => {
     if (!isinit) {
       return;
     }
     if (inputCurrency && isEthAddress(inputCurrency)) {
-      liquidity.setFromToken(liquidity.tokensMap[inputCurrency]);
+      liquidity.setToToken(
+        new Token({
+          address: inputCurrency,
+        })
+      );
     }
     if (outputCurrency && isEthAddress(outputCurrency)) {
-      liquidity.setToToken(liquidity.tokensMap[outputCurrency]);
+      liquidity.setToToken(
+        new Token({
+          address: outputCurrency,
+        })
+      );
     }
   }, [inputCurrency, outputCurrency, isinit]);
   return (

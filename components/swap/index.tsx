@@ -31,9 +31,6 @@ export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
     },
   }));
 
-  useEffect(() => {
-    liquidity.initPool();
-  }, []);
 
   return (
     <div className="flex justify-center gap-[44px] flex-wrap">

@@ -8,7 +8,7 @@ import { FtoFacadeContract } from "./contract/ftofacade-contract";
 import { makeAutoObservable } from "mobx";
 import { Token } from "./contract/token";
 import { createPublicClientByChain } from "@/lib/client";
-import { AsyncState } from "./utils";
+import { AsyncState, StorageState } from "./utils";
 
 export class Wallet {
   account: string = "";
@@ -37,11 +37,11 @@ export class Wallet {
   }
 
   constructor(args: Partial<Wallet>) {
-    this.networks = networks;
     makeAutoObservable(this);
   }
 
-  initWallet(walletClient: WalletClient) {
+  async initWallet(walletClient: WalletClient) {
+    this.networks = networks;
     if (
       !walletClient.chain?.id ||
       !this.networksMap[walletClient.chain.id] ||
@@ -51,12 +51,6 @@ export class Wallet {
     }
     this.currentChainId = walletClient.chain.id;
     this.account = walletClient.account.address;
-    this.currentChain.faucetTokens = this.currentChain.faucetTokens.map(
-      (token) => new Token(token)
-    );
-    this.currentChain.nativeTokens = this.currentChain.nativeTokens.map((token) => {
-      return new Token(token)
-    })
     this.contracts = {
       routerV2: new RouterV2Contract({
         address: this.currentChain.contracts.routerV2,
@@ -73,6 +67,8 @@ export class Wallet {
     };
     this.publicClient = createPublicClientByChain(this.currentChain.chain);
     this.walletClient = walletClient;
+    this.currentChain.init()
+    await StorageState.sync()
     this.isInit = true;
   }
 }

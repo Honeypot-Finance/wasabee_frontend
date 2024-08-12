@@ -79,14 +79,15 @@ class Liquidity {
   pairs: PairContract[] = [];
   pairsByToken: Record<string, PairContract> = {};
   tokensMap: Record<string, Token> = {};
+
   slippage = 10;
   localTokensMap = new StorageState<Record<string, Token>>({
-    key: "localTokens",
+    key: "localTokens_v2",
     value: {} as Record<string, Token>,
     serialize: (value) => {
       const val = value
         ? Object.values(value).reduce((acc, token) => {
-            acc[token.address] = {
+            acc[token.address.toLowerCase()] = {
               address: token.address,
               name: token.name,
               symbol: token.symbol,
@@ -103,15 +104,17 @@ class Liquidity {
         Pick<Token, "address" | "name" | "symbol" | "decimals">
       >
     ) => {
-      return Object.values(value).reduce((acc, t) => {
+
+      const res =  Object.values(value).reduce((acc, t) => {
         const token = new Token({
           ...t,
           priority: 3,
         });
-        token.init();
         acc[token.address] = token;
         return acc;
       }, {} as Record<string, Token>);
+      console.log('deserialize', res)
+      return res
     },
     transform(value: Token) {
       this.value![value.address] = value;
@@ -122,14 +125,12 @@ class Liquidity {
   });
 
   get tokens() {
-    const tokens = Object.values(this.localTokensMap.value || {});
-    Object.values(this.tokensMap).forEach((t) => {
-      if (!this.localTokensMap.value?.[t.address]) {
-        tokens.push(t);
-      }
-    });
-
-    const sortedTokens = tokens.sort((a, b) => {
+    const tokens = {
+      ...wallet.currentChain.validatedTokensInfo,
+      ...this.localTokensMap.value
+    }
+    
+    const sortedTokens = Object.values(tokens).sort((a, b) => {
       const diff = b.priority - a.priority;
       if (diff === 0) {
         return a.logoURI ? -1 : b.logoURI ? 1 : 0;
@@ -420,19 +421,6 @@ class Liquidity {
         return pairContract;
       });
     }
-
-    wallet.currentChain.nativeTokens.forEach((token) => {
-      if (
-        !this.tokensMap[token.address] ||
-        this.tokensMap[token.address].isNative === false
-      ) {
-        this.tokensMap[token.address] = token;
-        token.init();
-      }
-    });
-
-    await this.localTokensMap.syncValue();
-
     this.isInit = true;
   }
 

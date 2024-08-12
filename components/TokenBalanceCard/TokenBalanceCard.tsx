@@ -23,7 +23,7 @@ interface TokenBalanceCardProps {
 export const TokenBalanceCard = observer(
   ({ token, autoSize }: TokenBalanceCardProps) => {
     useEffect(() => {
-      token.isInit || token.init();
+     token.init();
     }, []);
     return (
       <motion.div

@@ -60,7 +60,7 @@ export const TokenSelector = observer(
             state.filterLoading = false;
             return;
           }
-          const token = new Token({
+          const token = Token.getToken({
             address: state.search,
           });
           await token.init();
@@ -77,13 +77,9 @@ export const TokenSelector = observer(
       },
       tokens: [] as Token[],
     }));
-
-    useOnce(() => {
-      isConnected && liquidity.tokens.forEach((t) => t.getBalance());
-    }, [liquidity.tokens, isConnected]);
     useEffect(() => {
-      liquidity.isInit && state.filterTokensBySearch();
-    }, [state.search, liquidity.isInit]);
+      state.filterTokensBySearch();
+    }, [state.search]);
     return (
       <div className="flex items-center group">
         {value && (
@@ -129,7 +125,7 @@ export const TokenSelector = observer(
               {() => (
                 <div className="w-full">
                   <SpinnerContainer
-                    isLoading={state.filterLoading || !liquidity.isInit}
+                    isLoading={state.filterLoading}
                   >
                     <Input
                       placeholder="Search token by symbol or address"
