@@ -75,6 +75,8 @@ export const berachainBartioTestnetNetwork = new Network({
       symbol: "BERA",
       decimals: 18,
       isNative: true,
+      priority: 1,
+      logoURI: "/images/icons/tokens/wbera-token-icon.png",
     },
   ],
   nativeFaucet: {

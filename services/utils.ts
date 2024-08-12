@@ -35,7 +35,7 @@ export class ValueState<T> {
     this._value = value;
   }
 }
-export class AsyncState<T, K extends (...args: any) => any = () => {}> {
+export class AsyncState<T, K extends (...args: any) => Promise<T | null> = () => any> {
   loading = false;
   error: Error | null = null;
   value: T | null = null;
@@ -212,10 +212,9 @@ export class PaginationState {
     return this.page * this.limit;
   }
 
-  totalPage = new AsyncState<number, () => Promise<number>>(async () => {
+  get totalPage () {
     return Math.ceil(this.total / this.limit);
-  });
-
+  }
   setData(args: Partial<PaginationState>) {
     Object.assign(this, args);
   }
@@ -228,7 +227,56 @@ export class PaginationState {
   };
   setTotal(total: number) {
     this.total = total;
-    this.totalPage.call();
+  }
+}
+
+
+export class PaginationDataState<T> {
+  page: number = 1;
+  limit: number = 10;
+  total: number = 0;
+  data = {
+    
+  } as Record<number, T[]>;
+
+  get pageData() {
+    return this.data[this.page];
+  }
+
+  constructor(args: Partial<PaginationState>) {
+    Object.assign(this, args);
+    makeAutoObservable(this);
+  }
+
+  get offset() {
+    return (this.page - 1) * this.limit;
+  }
+
+  get end() {
+    return this.page * this.limit;
+  }
+
+  get totalPage () {
+    return Math.ceil(this.total / this.limit);
+  }
+  fetch!:AsyncState<T[]>
+
+  setData(args: Partial<PaginationState>) {
+    Object.assign(this, args);
+  }
+
+  onPageChange = async (page: number) => {
+    this.page = page;
+    const [value, error] = await this.fetch.call()
+    if (!error) {
+       this.data[page] = value
+    }
+  };
+  onSizeChange = (limit: number) => {
+    this.limit = limit;
+  };
+  setTotal(total: number) {
+    this.total = total;
   }
 }
 
@@ -361,5 +409,21 @@ export class StorageState<T = any, U = any> {
       }
       this.isInit = true;
     }
+  }
+}
+
+
+export abstract class BaseState {
+  isInit = false;
+  isInitLoading = false;
+  refreshLoading = false;
+  constructor() {
+    makeAutoObservable(this);
+  }
+  refresh () {
+
+  }
+  init() {
+    this.isInit = true;
   }
 }
