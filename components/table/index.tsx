@@ -111,7 +111,7 @@ function TableBase<T extends Record<string, any>>({
       {state.pagination.total > state.pagination.limit && (
         <Pagination
           className="flex justify-center mt-[12px]"
-          total={state.pagination.totalPage.value ?? 1}
+          total={state.pagination.totalPage ?? 0}
           page={state.pagination.page}
           initialPage={state.pagination.page}
           onChange={(page) => {
