@@ -33,7 +33,7 @@ export class FtoFactoryContract implements BaseContract {
     });
   }
 
-  get allPairsLength(): AsyncState<number> {
+  get allPairsLength(): AsyncState<bigint> {
     return new AsyncState(this.contract.read.allPairsLength);
   }
 
