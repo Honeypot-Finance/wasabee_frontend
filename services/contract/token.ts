@@ -17,6 +17,7 @@ export class Token implements BaseContract {
     if (!Token.tokensMap[lowerAddress]) {
       Token.tokensMap[lowerAddress] = new Token({address: lowerAddress, ...args})
     }
+    Token.tokensMap[lowerAddress].setData(args)
     return Token.tokensMap[lowerAddress]
 
   }
