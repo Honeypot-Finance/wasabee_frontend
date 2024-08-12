@@ -101,6 +101,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         alt="honey"
                         width={100}
                         height={100}
+                        className="object-cover w-full h-full"
                       ></Image>
                     </div>
                     <h4 className="text-white text-center text-[1rem] font-bold flex items-center">

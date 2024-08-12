@@ -77,12 +77,13 @@ export const LaunchCard = observer(
             }),
           ]}
         />
-        <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
+        <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden object-cover">
           <Image
             src={!!pair?.logoUrl ? pair.logoUrl : "/images/project_honey.png"}
             alt="honey"
             width={100}
             height={100}
+            className="object-cover w-full h-full"
           ></Image>
         </div>
         <h4 className="text-white text-center text-[1rem] font-bold flex items-center h-[1.5em]">
