@@ -98,6 +98,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
       <div className="w-[800px] max-w-full relative space-y-4">
         <div className="flex top-0 md:absolute right-0 md:flex-row flex-col md:gap-[16px] gap-[8px]">
           <Input
+            defaultValue={liquidity.pairPage.filter.searchString}
             onChange={(e) => {
               liquidity.pairPage.updateFilter({
                 searchString: e.target.value,
