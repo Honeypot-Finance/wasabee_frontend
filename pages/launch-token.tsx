@@ -167,7 +167,6 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                       })}
                       className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
                       defaultValue={1_000_000}
-                      value={1_000_000}
                     />
                     {errors.tokenAmount && (
                       <span className="text-red-500">
