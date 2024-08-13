@@ -10,7 +10,7 @@ import { Button } from "@/components/button";
 import Link from "next/link";
 import { HTMLAttributes } from "react";
 import { cn } from "@/lib/tailwindcss";
-import TokenStatusDisplay from "../atoms/TokenStatusDisplay/TokenStatusDisplay";
+import ProjectStatusDisplay from "../atoms/TokenStatusDisplay/TokenStatusDisplay";
 import { WatchAsset } from "../atoms/WatchAsset/WatchAsset";
 import Image from "next/image";
 import { SlOptions, SlShare } from "react-icons/sl";
@@ -58,7 +58,7 @@ export const LaunchCard = observer(
         )}
         whileInView="visible"
       >
-        <TokenStatusDisplay pair={pair} />
+        <ProjectStatusDisplay pair={pair} />
         <OptionsDropdown
           className="absolute left-[0.5rem] top-[0.5rem] "
           options={[
