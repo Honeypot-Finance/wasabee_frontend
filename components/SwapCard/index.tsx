@@ -232,35 +232,13 @@ export const SwapCard = observer(() => {
                 {swap.routerToken.map((token) => (
                   <>
                     <div key={token.address}>
-                      <Tooltip
-                        content={
-                          <div className="flex flex-col items-center gap-[8px]">
-                            {token.name} ({token.symbol})
-                          </div>
-                        }
-                        closeDelay={0}
-                      >
-                        <div>
-                          <TokenLogo token={token} />
-                        </div>
-                      </Tooltip>
+                      <TokenLogo token={token} />
                     </div>
                     <FaLongArrowAltRight />
                   </>
                 ))}
                 <div>
-                  <Tooltip
-                    content={
-                      <div className="flex flex-col items-center gap-[8px]">
-                        {swap.toToken?.name} ({swap.toToken?.symbol})
-                      </div>
-                    }
-                    closeDelay={0}
-                  >
-                    <div>
-                      <TokenLogo token={swap.toToken as Token} />
-                    </div>
-                  </Tooltip>
+                  <TokenLogo token={swap.toToken as Token} />
                 </div>
               </div>
             )}
