@@ -38,14 +38,14 @@ const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
     FtoPairContract[]
-  >(launchpad.ftoPageItems.value);
+  >(launchpad.ftoPageInfo.pageItems.value);
 
   useEffect(() => {
     if (!wallet.isInit) {
       return;
     }
     launchpad.showNotValidatedPairs = true;
-    launchpad.reloadFtoPage();
+    launchpad.ftoPageInfo.reloadPage();
 
     //loading most success projects
     launchpad.mostSuccessfulFtos().then((data) => {
@@ -54,7 +54,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col gap-y-4 sm:gap-y-16">
+    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
       <div className="flex w-full justify-end gap-2">
         <Button className="scale-[0.8] sm:scale-100">
           <Link href="/launch-token" className="text-black font-bold">
@@ -65,7 +65,9 @@ const LaunchPage: NextLayoutPage = observer(() => {
 
       {mostSuccessProjects && mostSuccessProjects.length > 0 && (
         <>
-          <h2 className="w-full text-center">Trending Projects</h2>
+          <h2 className="w-full text-center text-[3rem] [font-family:MEME] font-bold">
+            Trending Projects
+          </h2>
           <motion.div
             variants={defaultContainerVariants}
             initial="hidden"
@@ -226,10 +228,10 @@ const LaunchPage: NextLayoutPage = observer(() => {
         </div>
         <Checkbox
           onClick={() => {
-            launchpad.ftoPageInfo.filter.showNotValidatedPairs =
-              !launchpad.ftoPageInfo.filter.showNotValidatedPairs;
-
-            launchpad.reloadFtoPage();
+            launchpad.ftoPageInfo.updateFilter({
+              showNotValidatedPairs:
+                !launchpad.ftoPageInfo.filter.showNotValidatedPairs,
+            });
           }}
           defaultSelected={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
           defaultChecked={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
@@ -261,26 +263,27 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 animate="visible"
                 className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3"
               >
-                {launchpad.ftoPageItems.value.map((pair: FtoPairContract) => (
-                  <motion.div variants={itemPopUpVariants} key={pair.address}>
-                    <LaunchCard
-                      pair={pair}
-                      action={
-                        <div className="flex flex-col gap-[0.5rem] lg:flex-row">
-                          <Link
-                            href={`/launch-detail/${pair.address}`}
-                            className="text-black font-bold w-full px-[8px]"
-                          >
-                            <Button className="w-full">View Token</Button>
-                          </Link>
-                          {pair.ftoState === 0 && (
+                {launchpad.ftoPageInfo.pageItems.value.map(
+                  (pair: FtoPairContract) => (
+                    <motion.div variants={itemPopUpVariants} key={pair.address}>
+                      <LaunchCard
+                        pair={pair}
+                        action={
+                          <div className="flex flex-col gap-[0.5rem] lg:flex-row">
                             <Link
-                              href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
+                              href={`/launch-detail/${pair.address}`}
                               className="text-black font-bold w-full px-[8px]"
                             >
-                              <Button className="w-full">
-                                <p>Swap Token</p>
-                                {/* <p>
+                              <Button className="w-full">View Token</Button>
+                            </Link>
+                            {pair.ftoState === 0 && (
+                              <Link
+                                href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
+                                className="text-black font-bold w-full px-[8px]"
+                              >
+                                <Button className="w-full">
+                                  <p>Swap Token</p>
+                                  {/* <p>
                                   <Copy
                                     onClick={(e) => {
                                       e.preventDefault();
@@ -289,14 +292,15 @@ const LaunchPage: NextLayoutPage = observer(() => {
                                     value={`${window.location.origin}/swap?inputCurrency=${pair.launchedToken.address}&outputCurrency=${pair.raiseToken.address}`}
                                   ></Copy>
                                 </p> */}
-                              </Button>{" "}
-                            </Link>
-                          )}
-                        </div>
-                      }
-                    />
-                  </motion.div>
-                ))}
+                                </Button>{" "}
+                              </Link>
+                            )}
+                          </div>
+                        }
+                      />
+                    </motion.div>
+                  )
+                )}
               </motion.div>
               <div className="flex justify-around my-5">
                 {launchpad.ftoPageInfo.pageInfo.hasNextPage && (

@@ -287,7 +287,7 @@ export class IndexerPaginationState<FilterT, ItemT> {
     startCursor: "",
     endCursor: "",
   };
-  filter: FilterT = {} as FilterT;
+  filter: FilterT;
   isInit: boolean = false;
   isLoading: boolean = false;
   pageItems = new ValueState<ItemT[]>({
@@ -299,19 +299,25 @@ export class IndexerPaginationState<FilterT, ItemT> {
     pageRequest: PageRequest
   ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }>;
 
-  constructor(
+  constructor({
+    filter,
+    LoadNextPageFunction,
+    ...args
+  }: {
+    filter: FilterT;
     LoadNextPageFunction: (
       filter: FilterT,
       pageRequest: PageRequest
-    ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }>,
-    args: Partial<IndexerPaginationState<FilterT, ItemT>>
-  ) {
+    ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }>;
+    args?: Partial<IndexerPaginationState<FilterT, ItemT>>;
+  }) {
     Object.assign(this, args);
+    this.filter = filter;
     this.LoadNextPageFunction = LoadNextPageFunction;
     makeAutoObservable(this);
   }
 
-  updateFilter = debounce((filter: Partial<PairFilter>) => {
+  updateFilter = debounce((filter: Partial<FilterT>) => {
     this.filter = {
       ...this.filter,
       ...filter,
@@ -348,7 +354,8 @@ export class IndexerPaginationState<FilterT, ItemT> {
         direction: "next",
         cursor: this.pageInfo.endCursor,
       });
-      this.pageItems.setValue([...this.pageItems.value, ...items]);
+
+      this.SetPageItems([...this.pageItems.value, ...items]);
       this.pageInfo = pageInfo;
     } catch (error) {
       console.error(error);

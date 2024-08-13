@@ -55,9 +55,15 @@ export const PoolLiquidityCard = observer(
                 <TokenLogo token={pair.token0} />
                 <TokenLogo token={pair.token1} />
               </div>
-              <p className="w-[10rem]">
-                {pair.token0.symbol} / {pair.token1.symbol}
-              </p>
+              <span className="w-[10rem]">
+                <Link
+                  href={`https://bartio.beratrail.io/address/${pair.address}`}
+                  target="_blank"
+                  className=" cursor-pointer hover:underline"
+                >
+                  {pair.token0.symbol} / {pair.token1.symbol}
+                </Link>
+              </span>
             </div>
             <div className="flex-1">
               {showMyLiquidity && (

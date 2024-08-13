@@ -18,8 +18,11 @@ import dayjs from "dayjs";
 import { PageRequest, PairFilter } from "./indexer/indexerTypes";
 
 class Liquidity {
-  pairPage = new IndexerPaginationState<PairFilter, PairContract>(
-    async (filter: PairFilter, pageRequest: PageRequest) => {
+  pairPage = new IndexerPaginationState<PairFilter, PairContract>({
+    LoadNextPageFunction: async (
+      filter: PairFilter,
+      pageRequest: PageRequest
+    ) => {
       const pairs = await trpcClient.indexerFeedRouter.getFilteredPairs.query({
         filter: filter,
         chainId: String(wallet.currentChainId),
@@ -74,13 +77,11 @@ class Liquidity {
         };
       }
     },
-    {
-      filter: {
-        searchString: "",
-        limit: 10,
-      },
-    }
-  );
+    filter: {
+      searchString: "",
+      limit: 10,
+    },
+  });
 
   pairs: PairContract[] = [];
   pairsByToken: Record<string, PairContract> = {};

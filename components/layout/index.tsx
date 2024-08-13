@@ -21,7 +21,7 @@ export const Layout = ({
   const { chainId } = useAccount();
   const currentChain = chainId ? networksMap[chainId] : null;
   return (
-    <div className={cn(" flex flex-col min-h-screen overflow-auto", className)}>
+    <div className={cn("flex flex-col min-h-screen overflow-auto", className)}>
       {router.pathname.startsWith("/launch") ? <LaunchHeader /> : <Header />}
       {currentChain ? (
         <div className=" px-[12px] sm:pt-[72px] pt-[24px] flex-1">

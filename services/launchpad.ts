@@ -14,7 +14,7 @@ import { createSiweMessage } from "@/lib/siwe";
 import { Address } from "viem";
 import { Token } from "./contract/token";
 import { reset } from "viem/actions";
-import { debounce } from "lodash";
+import { debounce, initial } from "lodash";
 
 const pagelimit = 9;
 
@@ -62,115 +62,40 @@ function calculateTimeDifference(timestamp: number): string {
 }
 
 class LaunchPad {
-  ftoPageInfo = new IndexerPaginationState<PairFilter, FtoPairContract>(
-    async (filter, pageRequest) => {
-      const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-        filter,
-        chainId: String(wallet.currentChainId),
-        pageRequest: pageRequest,
-      });
-
-      if (res.status === "success") {
+  ftoPageInfo = new IndexerPaginationState<PairFilter, FtoPairContract>({
+    filter: {
+      search: "",
+      status: "all",
+      showNotValidatedPairs: true,
+      limit: pagelimit,
+    },
+    LoadNextPageFunction: async (filter) => {
+      if (!filter.showNotValidatedPairs) {
         return {
-          items: res.data.pairs.map((pairAddress) => {
-            const pair = new FtoPairContract({
-              address: pairAddress.id,
-            });
-
-            const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
-              ? Token.getToken({
-                  ...pairAddress.token1,
-                  address: pairAddress.token1.id,
-                })
-              : Token.getToken({
-                  address: pairAddress.token0.id,
-                });
-
-            const launchedToken =
-              raisedToken.address.toLowerCase() ===
-              pairAddress.token1.id.toLowerCase()
-                ? Token.getToken({
-                    ...pairAddress.token0,
-                    address: pairAddress.token0.id,
-                  })
-                : Token.getToken({
-                    ...pairAddress.token1,
-                    address: pairAddress.token1.id,
-                  });
-
-            if (!pair.isInit) {
-              pair.init({
-                raisedToken: raisedToken,
-                launchedToken: launchedToken,
-                depositedLaunchedToken: pairAddress.depositedLaunchedToken,
-                depositedRaisedToken: pairAddress.depositedRaisedToken,
-                startTime: pairAddress.createdAt,
-                endTime: pairAddress.endTime,
-                ftoState: Number(pairAddress.status),
-              });
-            }
-
-            return pair;
-          }),
-          pageInfo: res.data.pageInfo,
-        };
-      } else {
-        return {
-          items: [],
+          items: await this.loadVerifiedFTOProjects(),
           pageInfo: {
-            hasNextPage: true,
+            hasNextPage: false,
             hasPreviousPage: false,
             startCursor: "",
             endCursor: "",
           },
         };
+      } else {
+        return await this.LoadMoreFtoPage();
       }
     },
-    {
-      filter: {
-        search: "",
-        status: "all",
-        showNotValidatedPairs: true,
-        limit: pagelimit,
-      },
-    }
-  );
-
-  updateFilter = debounce((filter: Partial<PairFilter>) => {
-    this.ftoPageInfo.filter = {
-      ...this.ftoPageInfo.filter,
-      ...filter,
-    };
-
-    this.reloadFtoPage();
-    this.myFtoPairs.call();
-    this.getMyFtoParticipatedPairs.call();
-  }, 500);
-
-  ftoPageItems = new ValueState<FtoPairContract[]>({
-    value: [],
   });
 
-  resetFtoPageInfo = () => {
-    this.ftoPageInfo.pageInfo = {
-      hasNextPage: true,
-      hasPreviousPage: false,
-      startCursor: "",
-      endCursor: "",
-    };
-    this.ftoPageItems.setValue([]);
-  };
-
   set pairFilterSearch(search: string) {
-    this.updateFilter({ search });
+    this.ftoPageInfo.updateFilter({ search });
   }
 
   set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
-    this.updateFilter({ status });
+    this.ftoPageInfo.updateFilter({ status });
   }
 
   set showNotValidatedPairs(show: boolean) {
-    this.updateFilter({ showNotValidatedPairs: show });
+    this.ftoPageInfo.updateFilter({ showNotValidatedPairs: show });
   }
 
   get ftofactoryContract() {
@@ -240,36 +165,18 @@ class LaunchPad {
     }
   }
 
-  reloadFtoPage = async () => {
-    if (this.ftoPageInfo.isLoading) return;
-
-    this.setFtoPageIsInit(false);
-    this.setFtoPageLoading(true);
-
-    if (this.ftoPageInfo.filter.showNotValidatedPairs) {
-      this.resetFtoPageInfo();
-      await this.LoadMoreFtoPage();
-    } else {
-      await this.loadVerifiedFTOProjects();
-    }
-
-    this.setFtoPageIsInit(true);
-    this.setFtoPageLoading(false);
-  };
-
   loadVerifiedFTOProjects = async () => {
     this.setFtoPageLoading(true);
-    const projects = wallet.currentChain.validatedFtoAddresses.map(
-      (pairAddress) => {
+    const projects = await Promise.all(
+      wallet.currentChain.validatedFtoAddresses.map(async (pairAddress) => {
         const pair = new FtoPairContract({
           address: pairAddress,
         });
-        pair.init();
+        await pair.init();
         return pair;
-      }
+      })
     );
 
-    this.ftoPageItems.setValue(projects);
     this.setFtoPageLoading(false);
     return projects;
   };
@@ -287,72 +194,68 @@ class LaunchPad {
   });
 
   LoadMoreFtoPage = async () => {
-    if (!this.ftoPageInfo.pageInfo.hasNextPage) return;
+    const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
+      filter: this.ftoPageInfo.filter,
+      chainId: String(wallet.currentChainId),
+      pageRequest: {
+        direction: "next",
+        cursor: this.ftoPageInfo.pageInfo.endCursor,
+      },
+    });
 
-    this.setFtoPageLoading(true);
-    const newPage =
-      await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-        filter: this.ftoPageInfo.filter,
-        chainId: String(wallet.currentChainId),
-        pageRequest: {
-          direction: "next",
-          cursor: this.ftoPageInfo.pageInfo.endCursor,
-        },
-      });
+    if (res.status === "success") {
+      const data = {
+        items: res.data.pairs.map((pairAddress) => {
+          const pair = new FtoPairContract({
+            address: pairAddress.id,
+          });
 
-    if (newPage.status === "success") {
-      this.setCurrentPageInfo(newPage.data.pageInfo);
-
-      const newPageToContracts = newPage.data.pairs.map((pairAddress) => {
-        const pair = new FtoPairContract({
-          address: pairAddress.id,
-        });
-
-        const raisedToken = wallet.currentChain.contracts.ftoTokens.find(
-          (token) =>
-            token.address?.toLowerCase() === pairAddress.token1.id.toLowerCase()
-        )
-          ? Token.getToken({
-              ...pairAddress.token1,
-              address: pairAddress.token1.id,
-            })
-          : Token.getToken({
-              address: pairAddress.token0.id,
-            });
-
-        const launchedToken =
-          raisedToken.address.toLowerCase() ===
-          pairAddress.token1.id.toLowerCase()
+          const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
             ? Token.getToken({
-                ...pairAddress.token0,
-                address: pairAddress.token0.id,
-              })
-            : Token.getToken({
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
+              })
+            : Token.getToken({
+                address: pairAddress.token0.id,
               });
 
-        pair.init({
-          raisedToken: raisedToken,
-          launchedToken: launchedToken,
-          depositedLaunchedToken: pairAddress.depositedLaunchedToken,
-          depositedRaisedToken: pairAddress.depositedRaisedToken,
-          startTime: pairAddress.createdAt,
-          endTime: pairAddress.endTime,
-          ftoState: Number(pairAddress.status),
-        });
+          const launchedToken =
+            raisedToken.address.toLowerCase() ===
+            pairAddress.token1.id.toLowerCase()
+              ? Token.getToken({
+                  ...pairAddress.token0,
+                  address: pairAddress.token0.id,
+                })
+              : Token.getToken({
+                  ...pairAddress.token1,
+                  address: pairAddress.token1.id,
+                });
 
-        return pair;
-      });
+          pair.init({
+            raisedToken: raisedToken,
+            launchedToken: launchedToken,
+            depositedLaunchedToken: pairAddress.depositedLaunchedToken,
+            depositedRaisedToken: pairAddress.depositedRaisedToken,
+            startTime: pairAddress.createdAt,
+            endTime: pairAddress.endTime,
+            ftoState: Number(pairAddress.status),
+          });
 
-      this.ftoPageItems.setValue([
-        ...this.ftoPageItems.value,
-        ...newPageToContracts,
-      ]);
-
-      this.setFtoPageLoading(false);
+          return pair;
+        }),
+        pageInfo: res.data.pageInfo,
+      };
+      return data;
     } else {
-      console.error(newPage);
+      return {
+        items: [],
+        pageInfo: {
+          hasNextPage: true,
+          hasPreviousPage: false,
+          startCursor: "",
+          endCursor: "",
+        },
+      };
     }
   };
 
