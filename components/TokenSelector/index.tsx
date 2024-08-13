@@ -113,7 +113,7 @@ export const TokenSelector = observer(
           }}
         >
           <PopoverTrigger>
-            <Button className="inline-flex justify-start w-[124px] h-10 items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]">
+            <Button className="inline-flex max-w-full justify-start w-[124px] h-10 items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]">
               {value && (
                 <TokenLogo
                   addtionalClasses="min-w-[24px]"
@@ -123,11 +123,11 @@ export const TokenSelector = observer(
                 ></TokenLogo>
               )}
               <TruncateMarkup>
-                <span className="w-[3rem] overflow-clip text-ellipsis">
+                <span className="shrink overflow-clip text-ellipsis">
                   {value?.displayName ? value.displayName : "Select Token"}
                 </span>
               </TruncateMarkup>
-              <div className="group-hover:translate-y-1 transition-all">
+              <div className="group-hover:translate-y-1 transition-all min-w-[10px]">
                 <DropdownSvg></DropdownSvg>
               </div>
             </Button>
