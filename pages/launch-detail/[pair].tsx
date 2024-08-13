@@ -325,7 +325,10 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
           type="number"
           max={pair.raiseToken.balance.toFixed()}
           onChange={(e) => {
-            state.setDepositAmount(String(Number(e.target.value)));
+            state.setDepositAmount(e.target.value);
+          }}
+          onBlur={() => {
+            state.setDepositAmount(Number(state.depositAmount).toString());
           }}
           defaultValue="0"
           endContent={
@@ -336,7 +339,7 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
           }
         ></Input>
         <div className="flex items-center gap-[8px]">
-          <div>Balance: {pair.raiseToken.balance.toFormat()}</div>
+          <div>Balance: {pair.raiseToken.balance.toFormat(5)}</div>
           <div
             onClick={() => {
               state.setDepositAmount(pair.raiseToken?.balance.toFixed() ?? "0");
