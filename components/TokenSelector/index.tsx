@@ -26,6 +26,7 @@ import { BiLinkExternal } from "react-icons/bi";
 import { wallet } from "@/services/wallet";
 import Image from "next/image";
 import TokenLogo from "../TokenLogo/TokenLogo";
+import TruncateMarkup from "react-truncate-markup";
 
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
@@ -112,9 +113,20 @@ export const TokenSelector = observer(
           }}
         >
           <PopoverTrigger>
-            <Button className="inline-flex w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]">
-              {value && <TokenLogo token={value}></TokenLogo>}
-              {value?.displayName ? value.displayName : "Select Token"}
+            <Button className="inline-flex justify-start w-[124px] h-10 items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]">
+              {value && (
+                <TokenLogo
+                  addtionalClasses="min-w-[24px]"
+                  disableLink={true}
+                  disableTooltip={true}
+                  token={value}
+                ></TokenLogo>
+              )}
+              <TruncateMarkup>
+                <span className="w-[3rem] overflow-clip text-ellipsis">
+                  {value?.displayName ? value.displayName : "Select Token"}
+                </span>
+              </TruncateMarkup>
               <div className="group-hover:translate-y-1 transition-all">
                 <DropdownSvg></DropdownSvg>
               </div>
@@ -124,9 +136,7 @@ export const TokenSelector = observer(
             <Observer>
               {() => (
                 <div className="w-full">
-                  <SpinnerContainer
-                    isLoading={state.filterLoading}
-                  >
+                  <SpinnerContainer isLoading={state.filterLoading}>
                     <Input
                       placeholder="Search token by symbol or address"
                       // className=" bg-transparent"
@@ -152,7 +162,9 @@ export const TokenSelector = observer(
                               <div
                                 key={token.address}
                                 onClick={() => {
-                                  liquidity.localTokensMap.transformAndSetValue(token);
+                                  liquidity.localTokensMap.transformAndSetValue(
+                                    token
+                                  );
                                   onSelect(token);
                                   onClose();
                                 }}

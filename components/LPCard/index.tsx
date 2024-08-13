@@ -257,7 +257,7 @@ export const LPCard = observer(() => {
     liquidity.initPool();
 
     if (inputCurrency && isEthAddress(inputCurrency)) {
-      liquidity.setToToken(
+      liquidity.setFromToken(
         Token.getToken({
           address: inputCurrency,
         })

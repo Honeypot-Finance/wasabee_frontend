@@ -54,6 +54,7 @@
     "react-scroll-to-top": "^3.0.0",
     "react-scroll-up": "^1.4.0",
     "react-toastify": "^10.0.5",
+    "react-truncate-markup": "^5.1.2",
     "reactjs-popup": "^2.0.6",
     "sass": "^1.77.8",
     "siwe": "^2.3.2",

@@ -48,20 +48,20 @@ export const SwapCard = observer(() => {
     inputCurrency: string;
     outputCurrency: string;
   };
-  console.log("router.query", router.query);
-
   const isinit = wallet.isInit;
   useEffect(() => {
     if (!isinit) {
       return;
     }
+
     if (inputCurrency && isEthAddress(inputCurrency)) {
-      swap.setToToken(
+      swap.setFromToken(
         Token.getToken({
           address: inputCurrency,
         })
       );
     }
+
     if (outputCurrency && isEthAddress(outputCurrency)) {
       swap.setToToken(
         Token.getToken({
