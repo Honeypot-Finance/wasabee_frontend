@@ -182,7 +182,8 @@ export class PairContract implements BaseContract {
             this.token = Token.getToken({
               address: this.address,
             });
-            await this.token.init({
+
+            await this.token.init(false, {
               loadName: false,
               loadSymbol: false,
               loadDecimals: false,

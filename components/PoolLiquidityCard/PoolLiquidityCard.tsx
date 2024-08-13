@@ -11,7 +11,10 @@ import { RemoveLiquidity } from "../LPCard";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import ShareSocialMedialPopUp from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
-import { OptionsDropdown } from "../OptionsDropdown/OptionsDropdown";
+import {
+  OptionsDropdown,
+  optionsPresets,
+} from "../OptionsDropdown/OptionsDropdown";
 import { IoAdd, IoRemove } from "react-icons/io5";
 import { VscArrowSwap } from "react-icons/vsc";
 import { useState } from "react";
@@ -43,9 +46,9 @@ export const PoolLiquidityCard = observer(
             x: 0,
             opacity: 1,
           }}
-          className="flex w-full flex-col lg:flex-row  gap-[0.5rem]"
+          className="flex w-full flex-col md:flex-row gap-[0.5rem]"
         >
-          <div className="flex flex-1 flex-col lg:flex-row justify-between align-middle items-center gap-[0.5rem]">
+          <div className="flex flex-1 flex-col md:flex-row justify-between align-middle items-center gap-[0.5rem]">
             <div className="flex mr-5">
               <div className="flex mr-2 items-center">
                 <TokenLogo token={pair.token0} />
@@ -91,6 +94,9 @@ export const PoolLiquidityCard = observer(
                     window.location.href = `/swap?inputCurrency=${pair.token0.address}&outputCurrency=${pair.token1.address}`;
                   },
                 },
+                optionsPresets.viewOnExplorer({
+                  address: pair.address,
+                }),
               ]}
             />
           </div>{" "}

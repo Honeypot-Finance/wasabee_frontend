@@ -181,6 +181,7 @@ class Liquidity {
   }
 
   get myPairs() {
+    console.log("pairs", this.pairs);
     return this.pairs.filter(
       (pair) => pair.token0LpBalance.gt(0) || pair.token1LpBalance.gt(0)
     );

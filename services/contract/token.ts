@@ -12,7 +12,14 @@ import { toast } from "react-toastify";
 
 export class Token implements BaseContract {
   static tokensMap: Record<string, Token> = {};
-  static getToken({ address, ...args }: { address: string }) {
+  static getToken({
+    address,
+    force,
+    ...args
+  }: {
+    address: string;
+    force?: boolean;
+  }) {
     const lowerAddress = address.toLowerCase();
     if (!Token.tokensMap[lowerAddress]) {
       Token.tokensMap[lowerAddress] = new Token({
@@ -95,16 +102,19 @@ export class Token implements BaseContract {
     }
   }
 
-  async init(options?: {
-    loadName?: boolean;
-    loadSymbol?: boolean;
-    loadDecimals?: boolean;
-    loadBalance?: boolean;
-    loadTotalSupply?: boolean;
-    loadClaimed?: boolean;
-    loadLogoURI?: boolean;
-  }) {
-    if (this.isInit) {
+  async init(
+    force?: boolean,
+    options?: {
+      loadName?: boolean;
+      loadSymbol?: boolean;
+      loadDecimals?: boolean;
+      loadBalance?: boolean;
+      loadTotalSupply?: boolean;
+      loadClaimed?: boolean;
+      loadLogoURI?: boolean;
+    }
+  ) {
+    if (this.isInit && !force) {
       return;
     }
     const loadName = options?.loadName ?? true;
@@ -144,6 +154,8 @@ export class Token implements BaseContract {
       return;
     });
 
+    // fauset tokens
+
     this.isInit = true;
   }
 
@@ -169,6 +181,7 @@ export class Token implements BaseContract {
   }
 
   async getClaimed(): Promise<boolean> {
+    console.log("getClaimed");
     const claimed = await this.faucetContract.read.faucetClaimer([
       wallet.account as `0x${string}`,
     ]);

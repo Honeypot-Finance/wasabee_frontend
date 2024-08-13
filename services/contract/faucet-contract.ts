@@ -51,6 +51,7 @@ export class NativeFaucetContract implements BaseContract {
     const hpotContract = Token.getToken({
       address: hpotAdress,
     });
+
     await hpotContract.init();
 
     const enoughBalance =

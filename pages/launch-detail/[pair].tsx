@@ -643,6 +643,9 @@ const LaunchPage: NextLayoutPage = observer(() => {
                   optionsPresets.importTokenToWallet({
                     token: state.pair?.value?.launchedToken,
                   }),
+                  optionsPresets.viewOnExplorer({
+                    address: state.pair?.value?.address ?? "",
+                  }),
                   {
                     icon: <LuFileEdit />,
                     display: "Update Project",

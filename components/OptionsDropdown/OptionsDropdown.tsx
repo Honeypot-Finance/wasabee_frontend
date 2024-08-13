@@ -7,13 +7,14 @@ import {
   Button,
 } from "@nextui-org/react";
 import { SlOptions, SlShare, SlWallet } from "react-icons/sl";
-import { VscCopy } from "react-icons/vsc";
+import { VscCopy, VscRemoteExplorer } from "react-icons/vsc";
 import { toast } from "react-toastify";
 import * as clipboard from "clipboard-polyfill";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { shareMediaToast } from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { Token } from "@/services/contract/token";
-import { BiWallet } from "react-icons/bi";
+import { BiLogoInternetExplorer, BiWallet } from "react-icons/bi";
+import { FaInternetExplorer } from "react-icons/fa";
 
 type optionItem = {
   icon: JSX.Element;
@@ -109,6 +110,21 @@ export const optionsPresets = {
         }
         await token.init();
         token.watch();
+      },
+    };
+  },
+  viewOnExplorer: ({
+    address,
+    displayText,
+  }: {
+    address: string;
+    displayText?: string;
+  }) => {
+    return {
+      icon: <BiLogoInternetExplorer />,
+      display: displayText ?? "View on explorer",
+      onClick: () => {
+        window.open(`https://bartio.beratrail.io/address/${address}`, "_blank");
       },
     };
   },

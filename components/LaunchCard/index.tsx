@@ -53,7 +53,7 @@ export const LaunchCard = observer(
         initial="hidden"
         animate="visible"
         className={cn(
-          "flex flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative",
+          "flex h-full flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative",
           className
         )}
         whileInView="visible"
@@ -74,6 +74,9 @@ export const LaunchCard = observer(
               shareUrl: `${window.location.origin}/launch-detail/${pair?.address}`,
               displayText: "Share this project",
               shareText: "Checkout this Token: " + pair?.projectName,
+            }),
+            optionsPresets.viewOnExplorer({
+              address: pair?.address ?? "",
             }),
           ]}
         />

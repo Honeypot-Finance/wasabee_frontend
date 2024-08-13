@@ -29,6 +29,7 @@ import { IoOptions } from "react-icons/io5";
 import { SlOptions } from "react-icons/sl";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import TokenLogo from "../TokenLogo/TokenLogo";
+import { Slippage } from "./Slippage";
 
 export const SwapCard = observer(() => {
   const router = useRouter();
@@ -48,8 +49,7 @@ export const SwapCard = observer(() => {
     outputCurrency: string;
   };
 
-
-  const isinit = wallet.isInit
+  const isinit = wallet.isInit;
   useEffect(() => {
     if (!isinit) {
       return;
@@ -77,13 +77,15 @@ export const SwapCard = observer(() => {
       <div className=" flex flex-1 flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
         {(isinit && (
           <>
-            <div
-              onClick={() => {
-                chart.toggleChart();
-              }}
-              className="cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px]"
-            >
-              <ChartData></ChartData>
+            <div className="flex items-center justify-between w-full  text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px]">
+              <span
+                onClick={() => {
+                  chart.toggleChart();
+                }}
+              >
+                <ChartData></ChartData>
+              </span>
+              <Slippage className="flex justify-between items-center w-full"></Slippage>
             </div>
             <div className="flex flex-col lg:flex-row justify-between items-center w-full">
               <SwapAmount

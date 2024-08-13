@@ -31,6 +31,7 @@ export function DonationModal({
   setModalOpen: (open: boolean) => void;
 }) {
   const [amount, setAmount] = useState(0);
+
   return (
     <>
       <ModalHeader>Donate</ModalHeader>
@@ -77,10 +78,12 @@ const FaucetPage: NextLayoutPage = observer(() => {
   useEffect(() => {
     if (!wallet.currentChain) return;
     wallet.currentChain?.faucetTokens?.forEach((token) => {
-      token.init({ loadClaimed: true });
+      token.claimed = true;
+      token.init(true, { loadClaimed: true });
     });
     faucet.init();
   }, [wallet.currentChain?.faucetTokens]);
+
   return (
     <div className="flex flex-col  items-center ">
       <div className="flex items-center relative w-full sm:w-[578px] h-[138px] overflow-hidden">

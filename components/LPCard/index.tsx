@@ -14,11 +14,8 @@ import { Tab, Tabs } from "@nextui-org/react";
 import { Table } from "../table";
 import { ItemSelect, SelectState } from "../ItemSelect";
 import { SelectItem } from "../ItemSelect/index";
-import { MouseEvent } from "react";
 import _ from "lodash";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
-import { trpc, trpcClient } from "@/lib/trpc";
-import { GhostPair } from "@/services/indexer/indexerTypes";
 
 const AddLiquidity = observer(() => {
   return (
@@ -244,6 +241,7 @@ export const RemoveLiquidity = observer(
 
 export const LPCard = observer(() => {
   const router = useRouter();
+
   const { inputCurrency, outputCurrency } = router.query as {
     inputCurrency: string;
     outputCurrency: string;
@@ -255,6 +253,9 @@ export const LPCard = observer(() => {
     if (!isinit) {
       return;
     }
+
+    liquidity.initPool();
+
     if (inputCurrency && isEthAddress(inputCurrency)) {
       liquidity.setToToken(
         Token.getToken({

@@ -48,6 +48,9 @@ export const TokenBalanceCard = observer(
               optionsPresets.importTokenToWallet({
                 token: token,
               }),
+              optionsPresets.viewOnExplorer({
+                address: token?.address ?? "",
+              }),
             ]}
           />
         </CardContianer>
