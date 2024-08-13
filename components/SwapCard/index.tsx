@@ -48,6 +48,7 @@ export const SwapCard = observer(() => {
     inputCurrency: string;
     outputCurrency: string;
   };
+  console.log("router.query", router.query);
 
   const isinit = wallet.isInit;
   useEffect(() => {
@@ -69,6 +70,7 @@ export const SwapCard = observer(() => {
       );
     }
   }, [inputCurrency, outputCurrency, isinit]);
+
   return (
     <SpinnerContainer
       className="flex flex-1 justify-around items-center max-w-[574px]"

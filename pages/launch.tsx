@@ -255,6 +255,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
               tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
             }}
             className="next-tab"
+            onSelectionChange={(key) => {
+              if (key === "my") {
+                launchpad.myFtoPairs.call();
+              }
+            }}
           >
             <Tab key="all" title="All Projects">
               <motion.div
