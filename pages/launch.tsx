@@ -306,7 +306,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 {launchpad.ftoPageInfo.pageInfo.hasNextPage && (
                   <Button
                     onClick={() => {
-                      launchpad.LoadMoreFtoPage();
+                      launchpad.ftoPageInfo.loadMore();
                     }}
                     isDisabled={launchpad.ftoPageInfo.isLoading}
                   >
