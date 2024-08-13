@@ -325,7 +325,7 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
           type="number"
           max={pair.raiseToken.balance.toFixed()}
           onChange={(e) => {
-            state.setDepositAmount(e.target.value);
+            state.setDepositAmount(String(Number(e.target.value)));
           }}
           defaultValue="0"
           endContent={
@@ -340,6 +340,7 @@ const ProcessingAction = observer(({ pair }: { pair: FtoPairContract }) => {
           <div
             onClick={() => {
               state.setDepositAmount(pair.raiseToken?.balance.toFixed() ?? "0");
+              pair.raiseToken?.getBalance();
             }}
             className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline"
           >

@@ -13,7 +13,7 @@ import * as clipboard from "clipboard-polyfill";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { shareMediaToast } from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { Token } from "@/services/contract/token";
-import { BiLogoInternetExplorer, BiWallet } from "react-icons/bi";
+import { BiLink, BiLogoInternetExplorer, BiWallet } from "react-icons/bi";
 import { FaInternetExplorer } from "react-icons/fa";
 
 type optionItem = {
@@ -121,7 +121,7 @@ export const optionsPresets = {
     displayText?: string;
   }) => {
     return {
-      icon: <BiLogoInternetExplorer />,
+      icon: <BiLink />,
       display: displayText ?? "View on explorer",
       onClick: () => {
         window.open(`https://bartio.beratrail.io/address/${address}`, "_blank");

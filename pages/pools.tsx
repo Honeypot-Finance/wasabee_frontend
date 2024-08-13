@@ -135,7 +135,11 @@ const PoolsPage: NextLayoutPage = observer(() => {
               <CardBody className="">
                 {liquidity.pairPage.pageItems.value.map((pair) => (
                   <motion.div variants={itemSlideVariants} key={pair.address}>
-                    <PoolLiquidityCard pair={pair} autoSize></PoolLiquidityCard>
+                    <PoolLiquidityCard
+                      showMyLiquidity={false}
+                      pair={pair}
+                      autoSize
+                    ></PoolLiquidityCard>
                   </motion.div>
                 ))}
                 <div className="flex justify-around my-5">
@@ -171,6 +175,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
                           key={pair.address}
                         >
                           <PoolLiquidityCard
+                            showMyLiquidity={true}
                             pair={pair}
                             autoSize
                           ></PoolLiquidityCard>

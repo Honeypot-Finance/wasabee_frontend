@@ -106,7 +106,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
       <div className="w-[700px] max-w-[100%] mt-[30px] flex flex-col gap-[24px]">
         {/** Native token faucet */}
         {wallet.currentChain?.officialFaucets?.[0] && (
-          <div className="flex items-center flex-col lg:grid lg:grid-cols-[1fr,200px] gap-[0.5rem]">
+          <div className="flex w-full items-center flex-col lg:grid lg:grid-cols-[1fr,200px] gap-[0.5rem]">
             <motion.div
               initial={{
                 x: -100,
@@ -116,6 +116,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
                 x: 0,
                 opacity: 1,
               }}
+              className="w-full"
             >
               <CardContianer>
                 <div className="flex-1 flex items-center">
@@ -220,7 +221,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
                 opacity: 1,
               }}
               key={token.address}
-              className="flex items-center flex-col lg:grid lg:grid-cols-[1fr,200px] gap-[0.5rem]"
+              className="flex w-full items-center flex-col lg:grid lg:grid-cols-[1fr,200px] gap-[0.5rem]"
             >
               <TokenBalanceCard token={token}></TokenBalanceCard>
               <Button

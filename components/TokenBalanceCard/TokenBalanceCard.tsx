@@ -30,6 +30,7 @@ export const TokenBalanceCard = observer(
         variants={itemSlideVariants}
         initial="hidden"
         animate="visible"
+        className="w-full"
       >
         <CardContianer autoSize={autoSize}>
           <TokenLogo token={token}></TokenLogo>

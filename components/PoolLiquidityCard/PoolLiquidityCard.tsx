@@ -22,10 +22,11 @@ import { useState } from "react";
 interface PoolLiquidityCardProps {
   pair: PairContract;
   autoSize?: boolean;
+  showMyLiquidity?: boolean;
 }
 
 export const PoolLiquidityCard = observer(
-  ({ pair, autoSize }: PoolLiquidityCardProps) => {
+  ({ pair, autoSize, showMyLiquidity }: PoolLiquidityCardProps) => {
     const [isRemoveLpPopUpOpen, setIsRemoveLpPopUpOpen] = useState(false);
     console.log("isRemoveLpPopUpOpen", isRemoveLpPopUpOpen);
     return (
@@ -59,12 +60,14 @@ export const PoolLiquidityCard = observer(
               </p>
             </div>
             <div className="flex-1">
+              {showMyLiquidity && (
+                <div>
+                  <span>Your Liquidity: </span>
+                  {pair.myLiquidityDisplay}
+                </div>
+              )}
               <div>
-                <span>Your Liquidity: </span>
-                {pair.myLiquidityDisplay}
-              </div>
-              <div>
-                <span>Total Liquidity: </span>
+                {showMyLiquidity && <span>Total Liquidity: </span>}
                 {pair.liquidityDisplay}
               </div>
             </div>

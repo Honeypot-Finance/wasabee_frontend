@@ -52,12 +52,12 @@ export class PairContract implements BaseContract {
       this.token1.displayName
       ? `${amountFormatted(this.token0LpBalance, {
           decimals: 0,
-          fixed: 3,
+          fixed: 2,
         })} ${this.token0.displayName} - ${amountFormatted(
           this.token1LpBalance,
           {
             decimals: 0,
-            fixed: 3,
+            fixed: 2,
           }
         )} ${this.token1.displayName}`
       : "-";
@@ -70,12 +70,12 @@ export class PairContract implements BaseContract {
       this.token1.displayName
       ? `${amountFormatted(this.reserves?.reserve0, {
           decimals: 0,
-          fixed: 3,
+          fixed: 2,
         })} ${this.token0.displayName} - ${amountFormatted(
           this.reserves?.reserve1,
           {
             decimals: 0,
-            fixed: 3,
+            fixed: 2,
           }
         )} ${this.token1.displayName}`
       : "-";

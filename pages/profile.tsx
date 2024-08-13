@@ -247,6 +247,7 @@ export const Profile = observer(() => {
                           key={pair.address}
                         >
                           <PoolLiquidityCard
+                            showMyLiquidity={true}
                             pair={pair}
                             autoSize
                           ></PoolLiquidityCard>
