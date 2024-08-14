@@ -79,7 +79,10 @@ class Swap {
   }
 
   get isWrapOrUnwrap() {
-    return this.fromToken?.address === this.toToken?.address && this.fromToken?.isNative !== this.toToken?.isNative;
+    return (
+      this.fromToken?.address === this.toToken?.address &&
+      this.fromToken?.isNative !== this.toToken?.isNative
+    );
   }
 
   //whether the sort of from and to token is consistent with the current pair's token0 and token1
@@ -131,7 +134,7 @@ class Swap {
 
   get minToAmount() {
     if (this.isWrapOrUnwrap) {
-      return new BigNumber(this.toAmount || 0)
+      return new BigNumber(this.toAmount || 0);
     }
     return new BigNumber(this.toAmount || 0).minus(
       new BigNumber(this.toAmount || 0).multipliedBy(this.slippage).div(100)
@@ -174,7 +177,7 @@ class Swap {
         }
 
         if (
-          new BigNumber(this.fromAmount ||0).isGreaterThan(0) &&
+          new BigNumber(this.fromAmount || 0).isGreaterThan(0) &&
           this.fromToken &&
           this.toToken
         ) {
@@ -190,7 +193,7 @@ class Swap {
               this.fromAmount,
               this.fromToken as Token
             );
-            console.log(' this.toAmount', toAmount?.toFixed())
+            console.log(" this.toAmount", toAmount?.toFixed());
             this.toAmount = toAmount?.toFixed();
             this.price = new BigNumber(this.toAmount).div(this.fromAmount);
           }
@@ -280,8 +283,6 @@ class Swap {
       }),
     ]);
 
- 
-
     if (this.isWrapOrUnwrap) {
       if (this.isWrap) {
         // @ts-ignore
@@ -293,16 +294,19 @@ class Swap {
         await this.toToken.withdraw.callV2([BigInt(fromAmountDecimals)]);
       }
     } else {
-      const path = this.routerToken!.map((t) => t.address) as `0x${string}`[];
+      const path = this.routerToken
+        ? (this.routerToken.map((t) => t.address) as `0x${string}`[])
+        : ([this.fromToken.address, this.toToken.address] as `0x${string}`[]);
 
-      const finalAmountOut = await this.getFinalAmountOut(
-        path.map((p) => p.toLowerCase())
-      );
-  
+      const finalAmountOut = this.routerToken
+        ? await this.getFinalAmountOut(path.map((p) => p.toLowerCase()))
+        : this.toAmount;
+
       const minAmountOutDecimals = new BigNumber(finalAmountOut)
         .multipliedBy(1 - this.slippage / 100)
         .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
         .toFixed(0);
+
       if (this.fromToken.isNative) {
         await this.routerV2Contract.swapExactETHForTokens.call(
           [
@@ -333,7 +337,6 @@ class Swap {
         ]);
       }
     }
-    
 
     this.fromAmount = "";
 
