@@ -36,8 +36,8 @@ export class ValueState<T> {
   }
 }
 export class AsyncState<
-  T,
-  K extends (...args: any) => Promise<T | null> = () => any
+  K extends (...args: any) => Promise<any> = (...args: any) => Promise<any>,
+  T = Awaited<ReturnType<K>>,
 > {
   loading = false;
   error: Error | null = null;
@@ -137,16 +137,62 @@ export class ContractWrite<T extends (...args: any) => any> {
     return this.action ? `${this.action} Failed` : `Transaction Failed`;
   }
 
-  call = async (
+  async call (
     args: Parameters<T>[0] = [],
     options?: Partial<Parameters<T>[1]>
-  ) => {
+  ) {
     this.setLoading(true);
     try {
       const hash = await this._call(args, {
         account: wallet.account,
         ...options,
       });
+      console.log("hash", hash);
+      const pendingPopup = toast(
+        TransactionPendingToastify({ hash, action: this.action }),
+        {
+          autoClose: false,
+          isLoading: true,
+        } as ToastOptions
+      );
+      const transaction = await wallet.publicClient.waitForTransactionReceipt({
+        confirmations: 2,
+        hash,
+        timeout: 1000 * 60 * 5,
+      });
+      console.log("transaction", transaction);
+      toast.dismiss(pendingPopup);
+      if (!this.silent) {
+        switch (transaction.status) {
+          case "success":
+            toast.success(this.successMsgAgg);
+            break;
+          case "reverted":
+            toast.error(this.failMsgAgg);
+            break;
+          default:
+            throw new Error(`Transaction ${hash} Pending`);
+        }
+      }
+      return transaction;
+    } catch (error: any) {
+      if (error.message.includes("User rejected the request")) {
+        toast.error("User rejected the request");
+      } else {
+        toast.error(this.failMsg || error.message);
+      }
+
+      console.error(error);
+      this.setError(error as Error);
+      throw error;
+    } finally {
+      this.setLoading(false);
+    }
+  }
+  async callV2 (...args: Parameters<T>) {
+    this.setLoading(true);
+    try {
+      const hash = await this._call(...args);
       console.log("hash", hash);
       const pendingPopup = toast(
         TransactionPendingToastify({ hash, action: this.action }),
@@ -259,7 +305,7 @@ export class PaginationDataState<T> {
   get totalPage() {
     return Math.ceil(this.total / this.limit);
   }
-  fetch!: AsyncState<T[]>;
+  fetch!: AsyncState<() => Promise<T[]>>;
 
   setData(args: Partial<PaginationState>) {
     Object.assign(this, args);
@@ -293,7 +339,6 @@ export class IndexerPaginationState<FilterT, ItemT> {
   pageItems = new ValueState<ItemT[]>({
     value: [],
   });
-
   LoadNextPageFunction: (
     filter: FilterT,
     pageRequest: PageRequest
@@ -307,6 +352,7 @@ export class IndexerPaginationState<FilterT, ItemT> {
     filter: FilterT;
     LoadNextPageFunction: (
       filter: FilterT,
+
       pageRequest: PageRequest
     ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }>;
     args?: Partial<IndexerPaginationState<FilterT, ItemT>>;
@@ -336,10 +382,9 @@ export class IndexerPaginationState<FilterT, ItemT> {
     this.pageItems.setValue([]);
   };
 
-  reloadPage = async () => {
+  reloadPage = () => {
     this.resetPage();
-    await this.loadMore();
-    this.isInit = true;
+    this.loadMore();
   };
 
   loadMore = async () => {

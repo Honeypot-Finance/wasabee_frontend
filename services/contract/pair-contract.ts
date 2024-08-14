@@ -4,7 +4,7 @@ import { BaseContract } from ".";
 import { wallet } from "../wallet";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import { makeAutoObservable } from "mobx";
-import { getContract } from "viem";
+import { getContract, zeroAddress } from "viem";
 import { AsyncState } from "../utils";
 import { amountFormatted, formatAmount } from "@/lib/format";
 import dayjs from "dayjs";
@@ -29,6 +29,10 @@ export class PairContract implements BaseContract {
   token1: Token = new Token({}); // fixed
   isInit = false;
   isLoading = false;
+
+  get isNativeWrapPair () {
+    return this.address === zeroAddress
+  }
 
   get token0LpBalance() {
     return !new BigNumber(this.token.totalSupplyWithoutDecimals || 0).eq(0)
@@ -127,6 +131,9 @@ export class PairContract implements BaseContract {
   }
   getAmountOut = new AsyncState(
     async (fromAmount: string, fromToken: Token) => {
+      if (this.isNativeWrapPair) {
+        return new BigNumber(1).multipliedBy(fromAmount);
+      }
       await this.getReserves();
       if (!this.reserves) {
         return new BigNumber(0);
@@ -171,6 +178,10 @@ export class PairContract implements BaseContract {
   );
 
   async init(force = false) {
+    if (this.isNativeWrapPair) {
+      this.isInit = true;
+      return;
+    }
     if (this.isLoading) {
       return;
     }

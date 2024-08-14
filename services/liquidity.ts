@@ -5,7 +5,7 @@ import { Token } from "./contract/token";
 import { PairContract } from "./contract/pair-contract";
 import BigNumber from "bignumber.js";
 import { trpcClient } from "@/lib/trpc";
-import { makeAutoObservable, reaction, when } from "mobx";
+import { makeAutoObservable, reaction, toJS, when } from "mobx";
 import {
   AsyncState,
   IndexerPaginationState,
@@ -93,12 +93,7 @@ class Liquidity {
     serialize: (value) => {
       const val = value
         ? Object.values(value).reduce((acc, token) => {
-            acc[token.address.toLowerCase()] = {
-              address: token.address,
-              name: token.name,
-              symbol: token.symbol,
-              decimals: token.decimals,
-            };
+            acc[token.address.toLowerCase()] = toJS(token);
             return acc;
           }, {} as Record<string, Pick<Token, "address" | "name" | "symbol" | "decimals">>)
         : null;
@@ -130,12 +125,12 @@ class Liquidity {
   });
 
   get tokens() {
-    const tokens = {
+    const tokensMap = {
       ...wallet.currentChain.validatedTokensInfo,
-      ...this.localTokensMap.value,
     };
-
-    const sortedTokens = Object.values(tokens).sort((a, b) => {
+    const tokens = Object.values(tokensMap);
+    tokens.push(wallet.currentChain.nativeToken);
+    const sortedTokens = tokens.sort((a, b) => {
       const diff = b.priority - a.priority;
       if (diff === 0) {
         return a.logoURI ? -1 : b.logoURI ? 1 : 0;
@@ -154,7 +149,7 @@ class Liquidity {
 
   currentRemovePair: PairContract | null = null;
 
-  currentPair = new AsyncState<PairContract | undefined>(async () => {
+  currentPair = new AsyncState(async () => {
     if (this.fromToken && this.toToken) {
       const res = await liquidity.getPairByTokens(
         this.fromToken.address,

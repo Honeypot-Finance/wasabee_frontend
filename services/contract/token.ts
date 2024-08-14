@@ -19,16 +19,20 @@ export class Token implements BaseContract {
   }: {
     address: string;
     force?: boolean;
-  }) {
+  } & Partial<Token>) {
     const lowerAddress = address.toLowerCase();
-    if (!Token.tokensMap[lowerAddress]) {
-      Token.tokensMap[lowerAddress] = new Token({
+    const key = `${lowerAddress}-${args.isNative ? "native" : "erc20"}`;
+    const token = Token.tokensMap[key];
+    if (!token) {
+      Token.tokensMap[key] = new Token({
         address: lowerAddress,
         ...args,
       });
+    } else {
+      Token.tokensMap[key].setData(args);
     }
-    Token.tokensMap[lowerAddress].setData(args);
-    return Token.tokensMap[lowerAddress];
+    return Token.tokensMap[key]
+
   }
   address: string = "";
   name: string = "";
@@ -41,19 +45,11 @@ export class Token implements BaseContract {
   claimed = false;
   isInit = false;
   isNative = false;
-  _logoURI = "";
+  logoURI = "";
   priority = 0; // determines the order of the token in the list
 
   get displayName() {
     return this.symbol || this.name;
-  }
-
-  get logoURI() {
-    return (
-      this._logoURI ||
-      wallet.currentChain.validatedTokensInfo[this.address]?._logoURI ||
-      ""
-    );
   }
 
   get faucetContract() {
@@ -88,17 +84,27 @@ export class Token implements BaseContract {
     });
   }
 
-  setLogoURI(logoURI: string) {
-    this._logoURI = logoURI;
+  get deposit() {
+    return new ContractWrite(this.contract.write?.deposit, {
+      action: "Swap BERA to WBERA",
+    });
   }
 
-  setData({ balance, logoURI, ...args }: Partial<Token>) {
+
+  get withdraw() {
+    return new ContractWrite(this.contract.write?.withdraw, {
+      action: "Swap WBERA to BERA",
+    });
+  }
+
+  setLogoURI(logoURI: string) {
+    this.logoURI = logoURI;
+  }
+
+  setData({ balance, ...args }: Partial<Token>) {
     Object.assign(this, args);
     if (balance) {
       this.balanceWithoutDecimals = new BigNumber(balance);
-    }
-    if (logoURI) {
-      this._logoURI = logoURI;
     }
   }
 

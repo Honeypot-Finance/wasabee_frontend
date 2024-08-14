@@ -20,7 +20,7 @@ export class Network {
     ftoFacade: string;
     ftoTokens: Partial<Token>[];
   };
-  nativeTokens: Token[] = [];
+  nativeToken!: Token;
   faucetTokens: Token[] = [];
   nativeFaucet?: {
     address: string;
@@ -43,9 +43,9 @@ export class Network {
   > = {};
   validatedFtoAddresses: string[] = [];
   constructor(
-    args: Omit<Partial<Network>, "faucetTokens" | "nativeTokens" | "validatedTokensInfo"> & {
+    args: Omit<Partial<Network>, "faucetTokens" | "nativeToken" | "validatedTokensInfo"> & {
       faucetTokens: Partial<Token>[];
-      nativeTokens: Partial<Token>[];
+      nativeToken: Partial<Token>;
       validatedTokensInfo: Record<
         string,
         Partial<Token>>
@@ -56,11 +56,8 @@ export class Network {
     }
   }
   init () {
-    this.nativeTokens = this.nativeTokens.map((t) => {
-      const token =  Token.getToken(t)
-      token.init()
-      return token
-    });
+    this.nativeToken= Token.getToken(this.nativeToken)
+    this.nativeToken.init()
     this.faucetTokens = this.faucetTokens.map((t) => {
       const token =  Token.getToken(t)
       token.init()
@@ -88,17 +85,15 @@ export const berachainBartioTestnetNetwork = new Network({
         "https://res.cloudinary.com/duv0g402y/raw/upload/src/assets/bera.png",
     },
   ],
-  nativeTokens: [
-    {
-      address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
-      name: "Bera",
-      symbol: "BERA", 
-      decimals: 18,
-      isNative: true,
-      priority: 1,
-      logoURI: "/images/icons/tokens/wbera-token-icon.png",
-    },
-  ],
+  nativeToken:  {
+    address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
+    name: "Bera",
+    symbol: "BERA", 
+    decimals: 18,
+    isNative: true,
+    priority: 1,
+    logoURI: "/images/icons/tokens/wbera-token-icon.png",
+  },
   nativeFaucet: {
     address: "0x57E2814Bd03B0b01B46d5112A238687a43E38271",
     name: "Daily Faucet",

@@ -395,10 +395,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
     flag_count: 0,
   });
   const state = useLocalObservable(() => ({
-    pair: new AsyncState<
-      FtoPairContract,
-      ({ pairAddress }: { pairAddress: string }) => Promise<FtoPairContract>
-    >(async ({ pairAddress }: { pairAddress: string }) => {
+    pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
       const pair = new FtoPairContract({ address: pairAddress as string });
       await pair.init();
       pair.raiseToken?.init();

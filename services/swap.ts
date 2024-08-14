@@ -11,6 +11,7 @@ import { AsyncState } from "./utils";
 import { debounce } from "lodash";
 import dayjs from "dayjs";
 import { chart } from "./chart";
+import { zeroAddress } from "viem";
 
 class Swap {
   fromToken: Token | null = null;
@@ -37,16 +38,23 @@ class Swap {
     this.setRouterToken(bestPath.map((t) => Token.getToken({ address: t })));
   };
 
-  currentPair = new AsyncState<PairContract | undefined>(async () => {
+  currentPair = new AsyncState(async () => {
     if (this.fromToken && this.toToken) {
       try {
-        const res = await liquidity.getPairByTokens(
-          this.fromToken.address,
-          this.toToken.address
-        );
-
-        await res?.init();
-        return res;
+        if (this.isWrapOrUnwrap) {
+          return new PairContract({
+            address: zeroAddress,
+            token0: this.fromToken,
+            token1: this.toToken,
+          });
+        } else {
+          const res = await liquidity.getPairByTokens(
+            this.fromToken.address,
+            this.toToken.address
+          );
+          await res?.init();
+          return res;
+        }
       } catch (err) {
         this.getRouterToken();
         console.log(this.routerToken);
@@ -54,6 +62,25 @@ class Swap {
       }
     }
   });
+
+  get isUnwrap() {
+    return (
+      this.fromToken?.address === this.toToken?.address &&
+      this.toToken?.isNative &&
+      !this.fromToken?.isNative
+    );
+  }
+  get isWrap() {
+    return (
+      this.fromToken?.address === this.toToken?.address &&
+      this.fromToken?.isNative &&
+      !this.toToken?.isNative
+    );
+  }
+
+  get isWrapOrUnwrap() {
+    return this.fromToken?.address === this.toToken?.address && this.fromToken?.isNative !== this.toToken?.isNative;
+  }
 
   //whether the sort of from and to token is consistent with the current pair's token0 and token1
   get isTokenPairSortMatch() {
@@ -103,6 +130,9 @@ class Swap {
   }
 
   get minToAmount() {
+    if (this.isWrapOrUnwrap) {
+      return new BigNumber(this.toAmount || 0)
+    }
     return new BigNumber(this.toAmount || 0).minus(
       new BigNumber(this.toAmount || 0).multipliedBy(this.slippage).div(100)
     );
@@ -144,8 +174,7 @@ class Swap {
         }
 
         if (
-          this.fromAmount &&
-          Number(this.fromAmount) > 0 &&
+          new BigNumber(this.fromAmount ||0).isGreaterThan(0) &&
           this.fromToken &&
           this.toToken
         ) {
@@ -161,7 +190,7 @@ class Swap {
               this.fromAmount,
               this.fromToken as Token
             );
-            //@ts-ignore
+            console.log(' this.toAmount', toAmount?.toFixed())
             this.toAmount = toAmount?.toFixed();
             this.price = new BigNumber(this.toAmount).div(this.fromAmount);
           }
@@ -189,8 +218,12 @@ class Swap {
   }
 
   setFromToken(token: Token) {
-    if (this.fromToken?.address !== token?.address) {
-      if (this.toToken?.address === token?.address) {
+    if (this.fromToken?.address !== token?.address || this.isWrapOrUnwrap) {
+      // indicate this is a wrap to native or native to swap
+      if (
+        this.toToken?.address === token?.address &&
+        this.toToken?.isNative === token?.isNative
+      ) {
         this.toToken = this.fromToken;
         this.toAmount = "";
       }
@@ -205,8 +238,12 @@ class Swap {
   }
 
   setToToken(token: Token) {
-    if (this.toToken?.address !== token?.address) {
-      if (this.fromToken?.address === token?.address) {
+    if (this.toToken?.address !== token?.address || this.isWrapOrUnwrap) {
+      // indicate this is a wrap to native or native to swap
+      if (
+        this.fromToken?.address === token?.address &&
+        this.fromToken?.isNative === token?.isNative
+      ) {
         this.fromToken = this.toToken;
         this.fromAmount = "";
       }
@@ -243,45 +280,60 @@ class Swap {
       }),
     ]);
 
-    const path = this.routerToken!.map((t) => t.address) as `0x${string}`[];
+ 
 
-    const finalAmountOut = await this.getFinalAmountOut(
-      path.map((p) => p.toLowerCase())
-    );
+    if (this.isWrapOrUnwrap) {
+      if (this.isWrap) {
+        // @ts-ignore
+        await this.toToken.deposit.callV2({
+          value: BigInt(fromAmountDecimals),
+        });
+      } else if (this.isUnwrap) {
+        // @ts-ignore
+        await this.toToken.withdraw.callV2([BigInt(fromAmountDecimals)]);
+      }
+    } else {
+      const path = this.routerToken!.map((t) => t.address) as `0x${string}`[];
 
-    const minAmountOutDecimals = new BigNumber(finalAmountOut)
-      .multipliedBy(1 - this.slippage / 100)
-      .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
-      .toFixed(0);
-    if (this.fromToken.isNative) {
-      await this.routerV2Contract.swapExactETHForTokens.call(
-        [
+      const finalAmountOut = await this.getFinalAmountOut(
+        path.map((p) => p.toLowerCase())
+      );
+  
+      const minAmountOutDecimals = new BigNumber(finalAmountOut)
+        .multipliedBy(1 - this.slippage / 100)
+        .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
+        .toFixed(0);
+      if (this.fromToken.isNative) {
+        await this.routerV2Contract.swapExactETHForTokens.call(
+          [
+            BigInt(minAmountOutDecimals),
+            path,
+            wallet.account as `0x${string}`,
+            BigInt(deadline),
+          ],
+          {
+            value: BigInt(fromAmountDecimals),
+          }
+        );
+      } else if (this.toToken.isNative) {
+        await this.routerV2Contract.swapExactTokensForETH.call([
+          BigInt(fromAmountDecimals),
           BigInt(minAmountOutDecimals),
           path,
           wallet.account as `0x${string}`,
           BigInt(deadline),
-        ],
-        {
-          value: BigInt(fromAmountDecimals),
-        }
-      );
-    } else if (this.toToken.isNative) {
-      await this.routerV2Contract.swapExactTokensForETH.call([
-        BigInt(fromAmountDecimals),
-        BigInt(minAmountOutDecimals),
-        path,
-        wallet.account as `0x${string}`,
-        BigInt(deadline),
-      ]);
-    } else {
-      await this.routerV2Contract.swapExactTokensForTokens.call([
-        BigInt(fromAmountDecimals),
-        BigInt(minAmountOutDecimals),
-        path,
-        wallet.account as `0x${string}`,
-        BigInt(deadline),
-      ]);
+        ]);
+      } else {
+        await this.routerV2Contract.swapExactTokensForTokens.call([
+          BigInt(fromAmountDecimals),
+          BigInt(minAmountOutDecimals),
+          path,
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]);
+      }
     }
+    
 
     this.fromAmount = "";
 

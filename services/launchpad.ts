@@ -181,7 +181,7 @@ class LaunchPad {
     return projects;
   };
 
-  getMyFtoParticipatedPairs = new AsyncState<FtoPairContract[]>(async () => {
+  getMyFtoParticipatedPairs = new AsyncState(async () => {
     if (!this.myFtoParticipatedPairs.value) {
       await this.myFtoParticipatedPairs.call();
     } else {
@@ -259,10 +259,7 @@ class LaunchPad {
     }
   };
 
-  myFtoParticipatedPairs = new AsyncState<{
-    data: FtoPairContract[];
-    total: number;
-  }>(async () => {
+  myFtoParticipatedPairs = new AsyncState(async () => {
     const projects = await this.ftofactoryContract.events(
       wallet.account as Address
     );
@@ -291,10 +288,7 @@ class LaunchPad {
     };
   });
 
-  myFtoPairs = new AsyncState<{
-    data: FtoPairContract[];
-    total: number;
-  }>(async () => {
+  myFtoPairs = new AsyncState(async () => {
     const ftoAddresses =
       await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
         filter: this.ftoPageInfo.filter,
