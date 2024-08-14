@@ -31,7 +31,7 @@ class Swap {
       return undefined;
     }
 
-    const routerPossiblePaths = this.getRouterTokenByValidatedToken();
+    const routerPossiblePaths = this.getRouterPathsByValidatedToken();
     const bestPath = await this.calculateBestPathFromRouterPaths(
       routerPossiblePaths
     );
@@ -405,7 +405,7 @@ class Swap {
     return finalAmountOut;
   };
 
-  getRouterTokenByValidatedToken = (): string[][] | undefined => {
+  getRouterPathsByValidatedToken = (): string[][] | undefined => {
     if (!this.fromToken || !this.toToken) {
       return undefined;
     }
@@ -538,9 +538,7 @@ class Swap {
         new BigNumber(this.fromAmount.length > 0 ? this.fromAmount : 1)
       );
       return finalAmountOut.div(
-        new BigNumber(
-          new BigNumber(this.fromAmount.length > 0 ? this.fromAmount : 1)
-        )
+        new BigNumber(this.fromAmount.length > 0 ? this.fromAmount : 1)
       );
     });
 
