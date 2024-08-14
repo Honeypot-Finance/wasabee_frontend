@@ -21,7 +21,7 @@ import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { GhostPair } from "@/services/indexer/indexerTypes";
 import { ItemSelect, SelectItem, SelectState } from "../ItemSelect";
-import { Tooltip } from "@nextui-org/react";
+import { Slider, Tooltip } from "@nextui-org/react";
 import Image from "next/image";
 import { delay } from "lodash";
 import { LuOption } from "react-icons/lu";
@@ -136,6 +136,40 @@ export const SwapCard = observer(() => {
                 ></TokenSelector>
               </div>
             </div>
+            {swap.fromToken && (
+              <div className="w-full flex justify-end items-center">
+                <Slider
+                  className="w-[40%]"
+                  size="sm"
+                  maxValue={(swap.fromToken as Token).balance.toNumber()}
+                  minValue={0}
+                  onChange={(value) => {
+                    swap.setFromAmount(value.toString());
+                  }}
+                  value={Number(swap.fromAmount)}
+                  step={0.00001}
+                ></Slider>
+              </div>
+            )}{" "}
+            {swap.fromToken && (
+              <ItemSelect
+                selectState={state.selectState}
+                className="gap-[16px] flex justify-between w-full flex-wrap"
+              >
+                <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
+                  25%
+                </SelectItem>
+                <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
+                  50%
+                </SelectItem>
+                <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
+                  75%
+                </SelectItem>
+                <SelectItem className="rounded-[30px] px-[24px]" value={1}>
+                  100%
+                </SelectItem>
+              </ItemSelect>
+            )}
             <div className="flex w-full items-center gap-[5px]">
               <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
               <ExchangeSvg
@@ -197,25 +231,6 @@ export const SwapCard = observer(() => {
                 </div>
               </div>
             )}{" "}
-            {swap.fromToken && swap.toToken && (
-              <ItemSelect
-                selectState={state.selectState}
-                className="gap-[16px] flex justify-between w-full flex-wrap"
-              >
-                <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
-                  25%
-                </SelectItem>
-                <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
-                  50%
-                </SelectItem>
-                <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
-                  75%
-                </SelectItem>
-                <SelectItem className="rounded-[30px] px-[24px]" value={1}>
-                  100%
-                </SelectItem>
-              </ItemSelect>
-            )}
             {swap.routerToken && swap.routerToken.length > 0 && (
               <div className="w-full p-1 flex justify-between items-center rounded-xl  bg-black/50">
                 <>

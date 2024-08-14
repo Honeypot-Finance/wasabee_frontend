@@ -6,7 +6,7 @@ import BigNumber from "bignumber.js";
 import { wallet } from "./wallet";
 import { liquidity } from "./liquidity";
 import { exec } from "~/lib/contract";
-import { makeAutoObservable, reaction, when } from "mobx";
+import { autorun, makeAutoObservable, reaction, when } from "mobx";
 import { AsyncState } from "./utils";
 import { debounce } from "lodash";
 import dayjs from "dayjs";
@@ -32,33 +32,37 @@ class Swap {
     }
 
     const routerPossiblePaths = this.getRouterPathsByValidatedToken();
+
     const bestPath = await this.calculateBestPathFromRouterPaths(
       routerPossiblePaths
     );
+
     this.setRouterToken(bestPath.map((t) => Token.getToken({ address: t })));
   };
 
   currentPair = new AsyncState(async () => {
     if (this.fromToken && this.toToken) {
-      try {
-        if (this.isWrapOrUnwrap) {
-          return new PairContract({
-            address: zeroAddress,
-            token0: this.fromToken,
-            token1: this.toToken,
-          });
-        } else {
-          const res = await liquidity.getPairByTokens(
-            this.fromToken.address,
-            this.toToken.address
-          );
-          await res?.init();
-          return res;
-        }
-      } catch (err) {
-        this.getRouterToken();
+      if (this.isWrapOrUnwrap) {
+        return new PairContract({
+          address: zeroAddress,
+          token0: this.fromToken,
+          token1: this.toToken,
+        });
+      } else if (
+        liquidity.getMemoryPair(
+          this.fromToken.address.toLowerCase(),
+          this.toToken.address.toLowerCase()
+        )
+      ) {
+        const res = await liquidity.getPairByTokens(
+          this.fromToken.address,
+          this.toToken.address
+        );
+        await res?.init();
+        return res;
+      } else {
+        await this.getRouterToken();
         console.log(this.routerToken);
-        //console.error(err);
       }
     }
   });
@@ -166,6 +170,22 @@ class Swap {
         if (this.fromToken && this.toToken) {
           await this.currentPair.call();
           chart.setChartTarget(this.currentPair.value as PairContract);
+          // if (this.fromAmount.length > 0) {
+          //   this.toAmount = (
+          //     await this.getFinalAmountOut(
+          //       this.routerToken?.map((t) => t.address.toLowerCase()) || [
+          //         this.fromToken.address.toLowerCase(),
+          //         this.toToken.address.toLowerCase(),
+          //       ],
+          //       new BigNumber(this.fromAmount)
+          //     )
+          //   )
+          //     .toNumber()
+          //     .toString();
+          // }
+          if (this.fromAmount.length > 0) {
+            this.fromAmount = "0" + this.fromAmount;
+          }
         }
       }
     );
@@ -175,6 +195,8 @@ class Swap {
         if (!this.currentPair.value && !this.routerToken) {
           return;
         }
+
+        this.fromAmount = String(Number(this.fromAmount));
 
         if (
           new BigNumber(this.fromAmount || 0).isGreaterThan(0) &&
@@ -193,7 +215,7 @@ class Swap {
               this.fromAmount,
               this.fromToken as Token
             );
-            console.log(" this.toAmount", toAmount?.toFixed());
+
             this.toAmount = toAmount?.toFixed();
             this.price = new BigNumber(this.toAmount).div(this.fromAmount);
           }
@@ -214,10 +236,11 @@ class Swap {
 
   switchTokens() {
     const fromToken = this.fromToken;
+    const fromAmount = this.fromAmount;
     this.fromToken = this.toToken;
     this.toToken = fromToken;
-    this.fromAmount = "";
-    this.toAmount = "";
+    this.fromAmount = this.toAmount;
+    this.toAmount = fromAmount;
   }
 
   setFromToken(token: Token) {

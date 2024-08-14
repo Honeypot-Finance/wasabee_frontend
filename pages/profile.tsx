@@ -73,7 +73,7 @@ export const Profile = observer(() => {
                 className="underline p-1"
                 href={`https://bartio.beratrail.io/address/${wallet.account}`}
               >
-                view on beratrail.io
+                View on beratrail.io
               </Link>
             </div>
           </div>

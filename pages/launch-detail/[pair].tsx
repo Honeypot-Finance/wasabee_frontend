@@ -619,7 +619,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                     shareText={
                       "Checkout our Token " + state.pair.value?.projectName
                     }
-                    text="share this project"
+                    text="Share this project"
                   />
                 </span>
               )}

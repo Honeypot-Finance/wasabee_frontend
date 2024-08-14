@@ -104,7 +104,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
             </div>
             <div className="mt-4 opacity-50 w-full sm:w-[409px] text-center mb-4 ">
               Launch your token within three steps.{" "}
-              <span className="underline cursor-pointer">Read more </span>about
+              <span className="underline cursor-pointer">Read more</span> about
               Dreampad.
             </div>
             <form
