@@ -6,7 +6,7 @@ import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import { makeAutoObservable } from "mobx";
 import { getContract } from "viem";
 import { AsyncState } from "../utils";
-import { amountFormatted } from "@/lib/format";
+import { amountFormatted, formatAmount } from "@/lib/format";
 import dayjs from "dayjs";
 
 // const totalSupply = await pairContract.methods.totalSupply().call()

@@ -11,7 +11,6 @@ import { AsyncState } from "./utils";
 import { debounce } from "lodash";
 import dayjs from "dayjs";
 import { chart } from "./chart";
-import { zeroAddress } from "viem";
 
 class Swap {
   fromToken: Token | null = null;
@@ -25,13 +24,17 @@ class Swap {
 
   routerToken: Token[] | undefined = undefined;
 
-  getRouterToken = () => {
+  getRouterToken = async () => {
     this.setRouterToken(undefined);
     if (!this.fromToken || !this.toToken) {
       return undefined;
     }
 
-    this.setRouterToken(this.getRouterTokenByValidatedToken());
+    const routerPossiblePaths = this.getRouterTokenByValidatedToken();
+    const bestPath = await this.calculateBestPathFromRouterPaths(
+      routerPossiblePaths
+    );
+    this.setRouterToken(bestPath.map((t) => Token.getToken({ address: t })));
   };
 
   currentPair = new AsyncState<PairContract | undefined>(async () => {
@@ -139,6 +142,7 @@ class Swap {
         if (!this.currentPair.value && !this.routerToken) {
           return;
         }
+
         if (
           this.fromAmount &&
           Number(this.fromAmount) > 0 &&
@@ -146,7 +150,9 @@ class Swap {
           this.toToken
         ) {
           if (this.routerToken) {
-            const finalAmountOut = await this.getFinalAmountOut();
+            const finalAmountOut = await this.getFinalAmountOut(
+              this.routerToken.map((t) => t.address.toLowerCase())
+            );
 
             this.toAmount = finalAmountOut.toFixed();
             this.price = new BigNumber(this.toAmount).div(this.fromAmount);
@@ -237,9 +243,11 @@ class Swap {
       }),
     ]);
 
-    const path = this.getSwapPath();
+    const path = this.routerToken!.map((t) => t.address) as `0x${string}`[];
 
-    const finalAmountOut = await this.getFinalAmountOut();
+    const finalAmountOut = await this.getFinalAmountOut(
+      path.map((p) => p.toLowerCase())
+    );
 
     const minAmountOutDecimals = new BigNumber(finalAmountOut)
       .multipliedBy(1 - this.slippage / 100)
@@ -288,19 +296,19 @@ class Swap {
     this.routerToken = value;
   }
 
-  getSwapPath = (): readonly `0x${string}`[] => {
-    if (this.routerToken) {
-      if (this.routerToken.length === 1) {
+  getSwapPath = (routerTokenAddress: string[]): readonly `0x${string}`[] => {
+    if (routerTokenAddress.length > 0) {
+      if (routerTokenAddress.length === 1) {
         return [
           this.fromToken!.address,
-          this.routerToken[0].address,
+          routerTokenAddress[0],
           this.toToken!.address,
         ] as readonly `0x${string}`[];
-      } else if (this.routerToken.length === 2) {
+      } else if (routerTokenAddress.length === 2) {
         return [
           this.fromToken!.address,
-          this.routerToken[0].address,
-          this.routerToken[1].address,
+          routerTokenAddress[0],
+          routerTokenAddress[1],
           this.toToken!.address,
         ] as readonly `0x${string}`[];
       }
@@ -312,154 +320,41 @@ class Swap {
     ] as readonly `0x${string}`[];
   };
 
-  getFinalAmountOut = async () => {
-    const path = this.getSwapPath();
+  getFinalAmountOut = async (
+    pathAddress: string[],
+    startingAmount: BigNumber = new BigNumber(this.fromAmount)
+  ): Promise<BigNumber> => {
+    let finalAmountOut = startingAmount;
 
-    let finalAmountOut = new BigNumber(this.fromAmount);
-
-    for (let i = 0; i < path.length - 1; i++) {
+    for (let i = 0; i < pathAddress.length - 1; i++) {
       const pair = liquidity.getMemoryPair(
-        path[i].toLowerCase(),
-        path[i + 1].toLowerCase()
+        pathAddress[i].toLowerCase(),
+        pathAddress[i + 1].toLowerCase()
       );
 
-      await pair?.init();
+      if (!pair) {
+        return new BigNumber(0);
+      }
+
+      await pair.init();
 
       const [toAmount] = await pair.getAmountOut.call(
         finalAmountOut.toFixed(),
-        pair.token0.address === path[i] ? pair.token0 : pair.token1
+        pair.token0.address === pathAddress[i] ? pair.token0 : pair.token1
       );
+      console.log(toAmount);
 
-      finalAmountOut = toAmount as BigNumber;
+      finalAmountOut = toAmount ? (toAmount as BigNumber) : new BigNumber(0);
     }
 
     return finalAmountOut;
   };
 
-  getRouterTokenByRaiseToken = (): Token[] => {
-    if (!this.fromToken || !this.toToken) {
-      return [];
-    }
-
-    //if from or to token is fto token, route them by from -> router token -> to
-    if (
-      liquidity.isValidatedToken(this.fromToken.address.toLowerCase()) ||
-      liquidity.isValidatedToken(this.toToken.address.toLowerCase())
-    ) {
-      if (liquidity.isValidatedToken(this.fromToken.address.toLowerCase())) {
-        const toTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
-          this.toToken.address.toLowerCase()
-        );
-
-        if (toTokenRouterTokens.length === 0) {
-          return [];
-        }
-
-        for (let i = 0; i < toTokenRouterTokens.length; i++) {
-          const RT = Token.getToken({
-            address: toTokenRouterTokens[i].toLowerCase(),
-          });
-          if (
-            liquidity.getMemoryPair(
-              this.fromToken.address.toLowerCase(),
-              RT.address.toLowerCase()
-            )
-          ) {
-            RT.init();
-            return [RT];
-          }
-        }
-      } else {
-        const fromTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
-          this.fromToken.address.toLowerCase()
-        );
-
-        if (fromTokenRouterTokens.length === 0) {
-          return [];
-        }
-
-        for (let i = 0; i < fromTokenRouterTokens.length; i++) {
-          const RT = Token.getToken({
-            address: fromTokenRouterTokens[i].toLowerCase(),
-          });
-          if (
-            liquidity.getMemoryPair(
-              RT.address.toLowerCase(),
-              this.toToken.address.toLowerCase()
-            )
-          ) {
-            RT.init();
-            return [RT];
-          }
-        }
-      }
-    }
-
-    //try to get 1 token in fto tokens for both from and to
-    //route them by from -> router token -> to
-    const fromTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
-      this.fromToken.address.toLowerCase()
-    );
-
-    if (fromTokenRouterTokens.length === 0) {
-      return [];
-    }
-
-    fromTokenRouterTokens.forEach((rtoken) => {
-      if (
-        liquidity.getMemoryPair(
-          this.toToken!.address.toLowerCase(),
-          rtoken.toLowerCase()
-        )
-      ) {
-        const RT = Token.getToken({ address: rtoken.toLowerCase() });
-        RT.init();
-      }
-    });
-
-    if (this.routerToken) {
-      return this.routerToken;
-    }
-
-    // if there is not one token for both,
-    // get fto tokens for from and to separately
-    // and route them by from -> router token 1 -> router token 2 -> to
-    const toTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
-      this.toToken.address.toLowerCase()
-    );
-
-    if (toTokenRouterTokens.length === 0) {
-      return [];
-    }
-
-    for (let i = 0; i < fromTokenRouterTokens.length; i++) {
-      for (let j = 0; j < toTokenRouterTokens.length; j++) {
-        if (
-          liquidity.getMemoryPair(
-            fromTokenRouterTokens[i].toLowerCase(),
-            toTokenRouterTokens[j].toLowerCase()
-          )
-        ) {
-          const RT1 = Token.getToken({
-            address: fromTokenRouterTokens[i].toLowerCase(),
-          });
-          RT1.init();
-          const RT2 = Token.getToken({
-            address: toTokenRouterTokens[j].toLowerCase(),
-          });
-          RT2.init();
-          return [RT1, RT2];
-        }
-      }
-    }
-
-    return [];
-  };
-
-  getRouterTokenByValidatedToken = (): Token[] | undefined => {
+  getRouterTokenByValidatedToken = (): string[][] | undefined => {
     if (!this.fromToken || !this.toToken) {
       return undefined;
     }
+    const paths: Token[][] = [];
 
     //if from or to token is validated token, route them by from -> router token -> to
     if (
@@ -486,7 +381,7 @@ class Swap {
             )
           ) {
             RT.init();
-            return [RT];
+            paths.push([RT]);
           }
         }
       } else {
@@ -509,7 +404,7 @@ class Swap {
             )
           ) {
             RT.init();
-            return [RT];
+            paths.push([RT]);
           }
         }
       }
@@ -534,12 +429,9 @@ class Swap {
       ) {
         const RT = Token.getToken({ address: rtoken.toLowerCase() });
         RT.init();
+        paths.push([RT]);
       }
     });
-
-    if (this.routerToken) {
-      return this.routerToken;
-    }
 
     // if there is not one token for both,
     // get fto tokens for from and to separately
@@ -568,12 +460,40 @@ class Swap {
             address: toTokenRouterTokens[j].toLowerCase(),
           });
           RT2.init();
-          return [RT1, RT2];
+          paths.push([RT1, RT2]);
         }
       }
     }
 
-    return undefined;
+    return paths.length > 0
+      ? (paths.map((path) => {
+          return this.getSwapPath(path.map((t) => t.address.toLowerCase()));
+        }) as string[][])
+      : undefined;
+  };
+
+  calculateBestPathFromRouterPaths = async (path: string[][] | undefined) => {
+    if (!path) {
+      return [];
+    }
+
+    const promises = path.map(async (p) => {
+      const finalAmountOut = await this.getFinalAmountOut(
+        p,
+        new BigNumber(this.fromAmount.length > 0 ? this.fromAmount : 1)
+      );
+      return finalAmountOut.div(
+        new BigNumber(
+          new BigNumber(this.fromAmount.length > 0 ? this.fromAmount : 1)
+        )
+      );
+    });
+
+    const prices = await Promise.all(promises);
+
+    const bestPrice = Math.max(...prices.map((p) => p.toNumber()));
+
+    return path[prices.findIndex((p) => p.toNumber() === bestPrice)];
   };
 }
 

@@ -486,7 +486,6 @@ class Liquidity {
           tokenAddress.toLowerCase(),
           token.toLowerCase()
         );
-        console.log("memoryPair", memoryPair);
 
         if (memoryPair) {
           pairTokens.push(token);

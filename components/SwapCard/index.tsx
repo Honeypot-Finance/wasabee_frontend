@@ -216,7 +216,7 @@ export const SwapCard = observer(() => {
                 </SelectItem>
               </ItemSelect>
             )}
-            {swap.routerToken && (
+            {swap.routerToken && swap.routerToken.length > 0 && (
               <div className="w-full p-1 flex justify-between items-center rounded-xl  bg-black/50">
                 <>
                   <div>
@@ -225,14 +225,18 @@ export const SwapCard = observer(() => {
                   <FaLongArrowAltRight />
                 </>
 
-                {swap.routerToken.map((token) => (
-                  <>
-                    <div key={token.address}>
-                      <TokenLogo token={token} />
-                    </div>
-                    <FaLongArrowAltRight />
-                  </>
-                ))}
+                {swap.routerToken.map((token, idx) => {
+                  if (idx != 0 && idx !== swap.routerToken!.length - 1) {
+                    return (
+                      <>
+                        <div key={token.address}>
+                          <TokenLogo token={token} />
+                        </div>
+                        <FaLongArrowAltRight />
+                      </>
+                    );
+                  }
+                })}
                 <div>
                   <TokenLogo token={swap.toToken as Token} />
                 </div>
