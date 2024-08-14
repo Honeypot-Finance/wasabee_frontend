@@ -37,7 +37,7 @@ export class ValueState<T> {
 }
 export class AsyncState<
   K extends (...args: any) => Promise<any> = (...args: any) => Promise<any>,
-  T = Awaited<ReturnType<K>>,
+  T = Awaited<ReturnType<K>>
 > {
   loading = false;
   error: Error | null = null;
@@ -137,10 +137,7 @@ export class ContractWrite<T extends (...args: any) => any> {
     return this.action ? `${this.action} Failed` : `Transaction Failed`;
   }
 
-  async call (
-    args: Parameters<T>[0] = [],
-    options?: Partial<Parameters<T>[1]>
-  ) {
+  async call(args: Parameters<T>[0] = [], options?: Partial<Parameters<T>[1]>) {
     this.setLoading(true);
     try {
       const hash = await this._call(args, {
@@ -189,7 +186,7 @@ export class ContractWrite<T extends (...args: any) => any> {
       this.setLoading(false);
     }
   }
-  async callV2 (...args: Parameters<T>) {
+  async callV2(...args: Parameters<T>) {
     this.setLoading(true);
     try {
       const hash = await this._call(...args);
@@ -234,7 +231,7 @@ export class ContractWrite<T extends (...args: any) => any> {
     } finally {
       this.setLoading(false);
     }
-  };
+  }
   setLoading(loading: boolean) {
     this.loading = loading;
   }
@@ -385,6 +382,7 @@ export class IndexerPaginationState<FilterT, ItemT> {
   reloadPage = () => {
     this.resetPage();
     this.loadMore();
+    this.isInit = true;
   };
 
   loadMore = async () => {
