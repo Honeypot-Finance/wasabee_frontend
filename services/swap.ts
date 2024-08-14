@@ -397,7 +397,6 @@ class Swap {
         finalAmountOut.toFixed(),
         pair.token0.address === pathAddress[i] ? pair.token0 : pair.token1
       );
-      console.log(toAmount);
 
       finalAmountOut = toAmount ? (toAmount as BigNumber) : new BigNumber(0);
     }

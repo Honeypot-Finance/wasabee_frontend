@@ -114,7 +114,7 @@ const UpdateProjectModal = observer(({ pair }: { pair: FtoPairContract }) => {
               }}
             ></UploadImage>
             <div className="text align opacity-50 text-center">
-              click icon to upload
+              Click icon to upload
             </div>
             <div>Project Name</div>
             <input
@@ -743,11 +743,17 @@ const LaunchPage: NextLayoutPage = observer(() => {
                   ></Image>
                   Start Date
                 </div>
-                <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
+                <div className="text-[#FFCD4D] text-base font-medium leading-[normal] mt-[4px]">
                   {state.pair.value?.startTimeDisplay
                     ? new Date(
                         state.pair.value?.startTimeDisplay
-                      ).toLocaleString()
+                      ).toLocaleDateString()
+                    : "--"}
+                  <br />
+                  {state.pair.value?.startTimeDisplay
+                    ? new Date(
+                        state.pair.value?.startTimeDisplay
+                      ).toLocaleTimeString()
                     : "--"}
                 </div>
               </div>
@@ -765,7 +771,13 @@ const LaunchPage: NextLayoutPage = observer(() => {
                   {state.pair.value?.endTimeDisplay
                     ? new Date(
                         state.pair.value?.endTimeDisplay
-                      ).toLocaleString()
+                      ).toLocaleDateString()
+                    : "--"}
+                  <br />
+                  {state.pair.value?.endTimeDisplay
+                    ? new Date(
+                        state.pair.value?.endTimeDisplay
+                      ).toLocaleTimeString()
                     : "--"}
                 </div>
               </div>
