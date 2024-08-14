@@ -31,126 +31,7 @@ class Swap {
       return undefined;
     }
 
-    //if from or to token is fto token, route them by from -> router token -> to
-    if (
-      liquidity.isFtoRaiseToken(this.fromToken.address.toLowerCase()) ||
-      liquidity.isFtoRaiseToken(this.toToken.address.toLowerCase())
-    ) {
-      if (liquidity.isFtoRaiseToken(this.fromToken.address.toLowerCase())) {
-        const toTokenRouterTokens = liquidity.getTokenFtoPairs(
-          this.toToken.address.toLowerCase()
-        );
-        if (toTokenRouterTokens.length === 0) {
-          this.setRouterToken(undefined);
-          return;
-        }
-
-        for (let i = 0; i < toTokenRouterTokens.length; i++) {
-          const RT = Token.getToken({
-            address: toTokenRouterTokens[i].toLowerCase(),
-          });
-          if (
-            liquidity.getMemoryPair(
-              this.fromToken.address.toLowerCase(),
-              RT.address.toLowerCase()
-            )
-          ) {
-            RT.init();
-            this.setRouterToken([RT]);
-            return [RT];
-          }
-        }
-      } else {
-        const fromTokenRouterTokens = liquidity.getTokenFtoPairs(
-          this.fromToken.address.toLowerCase()
-        );
-        if (fromTokenRouterTokens.length === 0) {
-          this.setRouterToken(undefined);
-          return;
-        }
-
-        for (let i = 0; i < fromTokenRouterTokens.length; i++) {
-          const RT = Token.getToken({
-            address: fromTokenRouterTokens[i].toLowerCase(),
-          });
-          if (
-            liquidity.getMemoryPair(
-              RT.address.toLowerCase(),
-              this.toToken.address.toLowerCase()
-            )
-          ) {
-            RT.init();
-            this.setRouterToken([RT]);
-            return [RT];
-          }
-        }
-      }
-    }
-
-    //try to get 1 token in fto tokens for both from and to
-    //route them by from -> router token -> to
-    const fromTokenRouterTokens = liquidity.getTokenFtoPairs(
-      this.fromToken.address.toLowerCase()
-    );
-
-    if (fromTokenRouterTokens.length === 0) {
-      this.setRouterToken(undefined);
-      return;
-    }
-
-    fromTokenRouterTokens.forEach((rtoken) => {
-      if (
-        liquidity.getMemoryPair(
-          this.toToken!.address.toLowerCase(),
-          rtoken.toLowerCase()
-        )
-      ) {
-        const RT = Token.getToken({ address: rtoken.toLowerCase() });
-        RT.init();
-        this.setRouterToken([RT]);
-      }
-    });
-
-    if (this.routerToken) {
-      return this.routerToken;
-    }
-
-    // if there is not one token for both,
-    // get fto tokens for from and to separately
-    // and route them by from -> router token 1 -> router token 2 -> to
-    const toTokenRouterTokens = liquidity.getTokenFtoPairs(
-      this.toToken.address.toLowerCase()
-    );
-
-    if (toTokenRouterTokens.length === 0) {
-      this.setRouterToken(undefined);
-      return;
-    }
-
-    for (let i = 0; i < fromTokenRouterTokens.length; i++) {
-      for (let j = 0; j < toTokenRouterTokens.length; j++) {
-        if (
-          liquidity.getMemoryPair(
-            fromTokenRouterTokens[i].toLowerCase(),
-            toTokenRouterTokens[j].toLowerCase()
-          )
-        ) {
-          const RT1 = Token.getToken({
-            address: fromTokenRouterTokens[i].toLowerCase(),
-          });
-          RT1.init();
-          const RT2 = Token.getToken({
-            address: toTokenRouterTokens[j].toLowerCase(),
-          });
-          RT2.init();
-          this.setRouterToken([RT1, RT2]);
-          return [RT1, RT2];
-        }
-      }
-    }
-
-    this.setRouterToken(undefined);
-    return undefined;
+    this.setRouterToken(this.getRouterTokenByValidatedToken());
   };
 
   currentPair = new AsyncState<PairContract | undefined>(async () => {
@@ -165,6 +46,7 @@ class Swap {
         return res;
       } catch (err) {
         this.getRouterToken();
+        console.log(this.routerToken);
         //console.error(err);
       }
     }
@@ -441,8 +323,6 @@ class Swap {
         path[i + 1].toLowerCase()
       );
 
-      console.log("pair", pair);
-
       await pair?.init();
 
       const [toAmount] = await pair.getAmountOut.call(
@@ -454,6 +334,246 @@ class Swap {
     }
 
     return finalAmountOut;
+  };
+
+  getRouterTokenByRaiseToken = (): Token[] => {
+    if (!this.fromToken || !this.toToken) {
+      return [];
+    }
+
+    //if from or to token is fto token, route them by from -> router token -> to
+    if (
+      liquidity.isValidatedToken(this.fromToken.address.toLowerCase()) ||
+      liquidity.isValidatedToken(this.toToken.address.toLowerCase())
+    ) {
+      if (liquidity.isValidatedToken(this.fromToken.address.toLowerCase())) {
+        const toTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
+          this.toToken.address.toLowerCase()
+        );
+
+        if (toTokenRouterTokens.length === 0) {
+          return [];
+        }
+
+        for (let i = 0; i < toTokenRouterTokens.length; i++) {
+          const RT = Token.getToken({
+            address: toTokenRouterTokens[i].toLowerCase(),
+          });
+          if (
+            liquidity.getMemoryPair(
+              this.fromToken.address.toLowerCase(),
+              RT.address.toLowerCase()
+            )
+          ) {
+            RT.init();
+            return [RT];
+          }
+        }
+      } else {
+        const fromTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
+          this.fromToken.address.toLowerCase()
+        );
+
+        if (fromTokenRouterTokens.length === 0) {
+          return [];
+        }
+
+        for (let i = 0; i < fromTokenRouterTokens.length; i++) {
+          const RT = Token.getToken({
+            address: fromTokenRouterTokens[i].toLowerCase(),
+          });
+          if (
+            liquidity.getMemoryPair(
+              RT.address.toLowerCase(),
+              this.toToken.address.toLowerCase()
+            )
+          ) {
+            RT.init();
+            return [RT];
+          }
+        }
+      }
+    }
+
+    //try to get 1 token in fto tokens for both from and to
+    //route them by from -> router token -> to
+    const fromTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
+      this.fromToken.address.toLowerCase()
+    );
+
+    if (fromTokenRouterTokens.length === 0) {
+      return [];
+    }
+
+    fromTokenRouterTokens.forEach((rtoken) => {
+      if (
+        liquidity.getMemoryPair(
+          this.toToken!.address.toLowerCase(),
+          rtoken.toLowerCase()
+        )
+      ) {
+        const RT = Token.getToken({ address: rtoken.toLowerCase() });
+        RT.init();
+      }
+    });
+
+    if (this.routerToken) {
+      return this.routerToken;
+    }
+
+    // if there is not one token for both,
+    // get fto tokens for from and to separately
+    // and route them by from -> router token 1 -> router token 2 -> to
+    const toTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
+      this.toToken.address.toLowerCase()
+    );
+
+    if (toTokenRouterTokens.length === 0) {
+      return [];
+    }
+
+    for (let i = 0; i < fromTokenRouterTokens.length; i++) {
+      for (let j = 0; j < toTokenRouterTokens.length; j++) {
+        if (
+          liquidity.getMemoryPair(
+            fromTokenRouterTokens[i].toLowerCase(),
+            toTokenRouterTokens[j].toLowerCase()
+          )
+        ) {
+          const RT1 = Token.getToken({
+            address: fromTokenRouterTokens[i].toLowerCase(),
+          });
+          RT1.init();
+          const RT2 = Token.getToken({
+            address: toTokenRouterTokens[j].toLowerCase(),
+          });
+          RT2.init();
+          return [RT1, RT2];
+        }
+      }
+    }
+
+    return [];
+  };
+
+  getRouterTokenByValidatedToken = (): Token[] | undefined => {
+    if (!this.fromToken || !this.toToken) {
+      return undefined;
+    }
+
+    //if from or to token is validated token, route them by from -> router token -> to
+    if (
+      liquidity.isValidatedToken(this.fromToken.address.toLowerCase()) ||
+      liquidity.isValidatedToken(this.toToken.address.toLowerCase())
+    ) {
+      if (liquidity.isValidatedToken(this.fromToken.address.toLowerCase())) {
+        const toTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
+          this.toToken.address.toLowerCase()
+        );
+
+        if (toTokenRouterTokens.length === 0) {
+          return undefined;
+        }
+
+        for (let i = 0; i < toTokenRouterTokens.length; i++) {
+          const RT = Token.getToken({
+            address: toTokenRouterTokens[i].toLowerCase(),
+          });
+          if (
+            liquidity.getMemoryPair(
+              this.fromToken.address.toLowerCase(),
+              RT.address.toLowerCase()
+            )
+          ) {
+            RT.init();
+            return [RT];
+          }
+        }
+      } else {
+        const fromTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
+          this.fromToken.address.toLowerCase()
+        );
+
+        if (fromTokenRouterTokens.length === 0) {
+          return undefined;
+        }
+
+        for (let i = 0; i < fromTokenRouterTokens.length; i++) {
+          const RT = Token.getToken({
+            address: fromTokenRouterTokens[i].toLowerCase(),
+          });
+          if (
+            liquidity.getMemoryPair(
+              RT.address.toLowerCase(),
+              this.toToken.address.toLowerCase()
+            )
+          ) {
+            RT.init();
+            return [RT];
+          }
+        }
+      }
+    }
+
+    //try to get 1 token in fto tokens for both from and to
+    //route them by from -> router token -> to
+    const fromTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
+      this.fromToken.address.toLowerCase()
+    );
+
+    if (fromTokenRouterTokens.length === 0) {
+      return undefined;
+    }
+
+    fromTokenRouterTokens.forEach((rtoken) => {
+      if (
+        liquidity.getMemoryPair(
+          this.toToken!.address.toLowerCase(),
+          rtoken.toLowerCase()
+        )
+      ) {
+        const RT = Token.getToken({ address: rtoken.toLowerCase() });
+        RT.init();
+      }
+    });
+
+    if (this.routerToken) {
+      return this.routerToken;
+    }
+
+    // if there is not one token for both,
+    // get fto tokens for from and to separately
+    // and route them by from -> router token 1 -> router token 2 -> to
+    const toTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
+      this.toToken.address.toLowerCase()
+    );
+
+    if (toTokenRouterTokens.length === 0) {
+      return undefined;
+    }
+
+    for (let i = 0; i < fromTokenRouterTokens.length; i++) {
+      for (let j = 0; j < toTokenRouterTokens.length; j++) {
+        if (
+          liquidity.getMemoryPair(
+            fromTokenRouterTokens[i].toLowerCase(),
+            toTokenRouterTokens[j].toLowerCase()
+          )
+        ) {
+          const RT1 = Token.getToken({
+            address: fromTokenRouterTokens[i].toLowerCase(),
+          });
+          RT1.init();
+          const RT2 = Token.getToken({
+            address: toTokenRouterTokens[j].toLowerCase(),
+          });
+          RT2.init();
+          return [RT1, RT2];
+        }
+      }
+    }
+
+    return undefined;
   };
 }
 

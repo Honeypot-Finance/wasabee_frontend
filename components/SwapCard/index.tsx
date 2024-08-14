@@ -32,6 +32,7 @@ import TokenLogo from "../TokenLogo/TokenLogo";
 import { Slippage } from "./Slippage";
 
 export const SwapCard = observer(() => {
+  const isinit = wallet.isInit;
   const router = useRouter();
   const state = useLocalObservable(() => ({
     selectState: new SelectState({
@@ -48,7 +49,11 @@ export const SwapCard = observer(() => {
     inputCurrency: string;
     outputCurrency: string;
   };
-  const isinit = wallet.isInit;
+
+  useEffect(() => {
+    liquidity.initPool();
+  }, []);
+
   useEffect(() => {
     if (!isinit) {
       return;
@@ -215,18 +220,7 @@ export const SwapCard = observer(() => {
               <div className="w-full p-1 flex justify-between items-center rounded-xl  bg-black/50">
                 <>
                   <div>
-                    <Tooltip
-                      content={
-                        <div className="flex flex-col items-center gap-[8px]">
-                          {swap.fromToken?.name} ({swap.fromToken?.symbol})
-                        </div>
-                      }
-                      closeDelay={0}
-                    >
-                      <div>
-                        <TokenLogo token={swap.fromToken as Token} />
-                      </div>
-                    </Tooltip>
+                    <TokenLogo token={swap.fromToken as Token} />
                   </div>
                   <FaLongArrowAltRight />
                 </>

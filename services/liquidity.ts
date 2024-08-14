@@ -4,7 +4,6 @@ import { wallet } from "./wallet";
 import { Token } from "./contract/token";
 import { PairContract } from "./contract/pair-contract";
 import BigNumber from "bignumber.js";
-import { exec } from "~/lib/contract";
 import { trpcClient } from "@/lib/trpc";
 import { makeAutoObservable, reaction, when } from "mobx";
 import {
@@ -450,6 +449,7 @@ class Liquidity {
       token0Address,
       token1Address,
     });
+
     if (pair) {
       const pairContract = new PairContract({
         address: pair.address,
@@ -470,7 +470,34 @@ class Liquidity {
     );
   }
 
-  getTokenFtoPairs(tokenAddress: string): string[] {
+  isValidatedToken(tokenAddress: string): boolean {
+    return (
+      wallet.currentChain.validatedTokensInfo[tokenAddress.toLowerCase()] !==
+      undefined
+    );
+  }
+
+  getTokenToValidatedTokenPairs(tokenAddress: string): string[] {
+    const pairTokens: string[] = [];
+
+    Object.keys(wallet.currentChain.validatedTokensInfo).forEach(
+      (token, idx) => {
+        const memoryPair = this.getMemoryPair(
+          tokenAddress.toLowerCase(),
+          token.toLowerCase()
+        );
+        console.log("memoryPair", memoryPair);
+
+        if (memoryPair) {
+          pairTokens.push(token);
+        }
+      }
+    );
+
+    return pairTokens;
+  }
+
+  getTokenToRaisedTokenPairs(tokenAddress: string): string[] {
     const pairTokens: string[] = [];
 
     wallet.currentChain.contracts.ftoTokens.forEach((ftoToken) => {
@@ -483,8 +510,6 @@ class Liquidity {
         pairTokens.push(ftoToken.address!);
       }
     });
-
-    console.log("pairTokens: " + pairTokens.toString());
 
     return pairTokens;
   }

@@ -197,6 +197,9 @@ export class Token implements BaseContract {
           })
         : await this.contract.read.balanceOf([wallet.account as `0x${string}`]);
       this.balanceWithoutDecimals = new BigNumber(balance.toString());
+      if (this.balanceWithoutDecimals.toNumber() > 0 || this.priority < 3) {
+        this.priority = 3;
+      }
       return this.balanceWithoutDecimals;
     } catch (e) {
       console.log(e);
