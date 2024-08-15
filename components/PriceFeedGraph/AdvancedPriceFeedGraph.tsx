@@ -16,16 +16,17 @@ import {
 } from "@/public/static/charting_library/charting_library";
 import { tokenToTicker } from "@/lib/advancedChart.util";
 import { pairQueryOutput } from "@/types/pair";
+import { TVChartContainer } from "../AdvancedChart/TVChartContainer/TVChartContainer";
 
-const TVChartContainer = dynamic(
-  () =>
-    import("@/components/AdvancedChart/TVChartContainer/TVChartContainer").then(
-      (mod) => mod.TVChartContainer
-    ),
-  { ssr: false }
-);
+// const TVChartContainer = dynamic(
+//   () =>
+//     import("@/components/AdvancedChart/TVChartContainer/TVChartContainer").then(
+//       (mod) => mod.TVChartContainer
+//     ),
+//   { ssr: false }
+// );
 
-export default function PriceFeedGraph() {
+export default function AdvancedPriceFeedGraph() {
   const [isScriptReady, setIsScriptReady] = useState(false);
   const { chainId } = useAccount();
   const [pairs, setPairs] = useState<pairQueryOutput>({});

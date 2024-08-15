@@ -50,6 +50,8 @@ import { Token } from "@/services/contract/token";
 import { useAccount } from "wagmi";
 import { useParams } from "next/navigation";
 import { useQueries } from "@tanstack/react-query";
+import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
+import { chart } from "@/services/chart";
 
 const UpdateProjectModal = observer(({ pair }: { pair: FtoPairContract }) => {
   const {
@@ -486,6 +488,13 @@ const LaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit, pairAddress]);
 
   useEffect(() => {
+    if (!state.pair.value) {
+      return;
+    }
+    chart.setChartTarget(state.pair.value?.launchedToken ?? null);
+  }, [state.pair.value]);
+
+  useEffect(() => {
     if (!state.pair.value) return;
     if (router.query.edit == "true" && state.pair.value?.isProvider) {
       onOpen();
@@ -501,7 +510,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
   }
 
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto">
+    <div className="px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
       {state.pair.value && (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
           <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
@@ -815,6 +824,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 );
               })}
             </div>
+            {state.pair.value?.ftoState === 0 && (
+              <SimplePriceFeedGraph
+                priceFeedTarget={chart.chartTarget}
+              ></SimplePriceFeedGraph>
+            )}
           </div>
         </div>
       </div>

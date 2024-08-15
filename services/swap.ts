@@ -170,20 +170,8 @@ class Swap {
         if (this.fromToken && this.toToken) {
           await this.currentPair.call();
           chart.setChartTarget(this.currentPair.value as PairContract);
-          // if (this.fromAmount.length > 0) {
-          //   this.toAmount = (
-          //     await this.getFinalAmountOut(
-          //       this.routerToken?.map((t) => t.address.toLowerCase()) || [
-          //         this.fromToken.address.toLowerCase(),
-          //         this.toToken.address.toLowerCase(),
-          //       ],
-          //       new BigNumber(this.fromAmount)
-          //     )
-          //   )
-          //     .toNumber()
-          //     .toString();
-          // }
           if (this.fromAmount.length > 0) {
+            // if the fromAmount is not empty, recalculate the toAmount
             this.fromAmount = "0" + this.fromAmount;
           }
         }

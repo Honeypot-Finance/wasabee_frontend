@@ -3,6 +3,6 @@ export interface getTokenCurrentPriceTypeDataType {
 }
 
 export interface getTokenCurrentPriceTypeGetTokenPriceType {
-  timestamp: number;
+  timestamp?: number;
   priceUsd: number;
 }

@@ -9,10 +9,19 @@ import { observe, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 
+import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
+import { getBaseUrl, trpcClient } from "@/lib/trpc";
+import { tokenToTicker } from "@/lib/advancedChart.util";
+import { berachainBartioTestnetNetwork, networksMap } from "@/services/chain";
+import { berachainBartioTestnet } from "@/lib/chain";
+import { wallet } from "@/services/wallet";
+import dayjs from "dayjs";
+
 const SwapPage = observer(() => {
   useEffect(() => {
     observe(chart, "chartTarget", () => {});
   }, []);
+
   return (
     <>
       <div className={`lg:grid ${chart.showChart && "grid-cols-2"} `}>
@@ -20,10 +29,14 @@ const SwapPage = observer(() => {
           <SwapCard></SwapCard>
         </div>
         {chart.showChart && (
-          <div className="m-auto w-[90%] h-full min-h-[400px] flex">
-            <SwapPriceFeedGraph
+          <div className="m-auto w-[90%] h-full min-h-[400px] flex flex-col">
+            {/* <SwapPriceFeedGraph
               priceFeedTarget={chart.chartTarget}
-            ></SwapPriceFeedGraph>
+            ></SwapPriceFeedGraph> */}
+
+            <SimplePriceFeedGraph
+              priceFeedTarget={chart.chartTarget}
+            ></SimplePriceFeedGraph>
           </div>
         )}
       </div>

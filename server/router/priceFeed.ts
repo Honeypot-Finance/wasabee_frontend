@@ -59,6 +59,8 @@ export const priceFeedRouter = router({
           z.literal("1D"),
           z.literal("7D"),
         ]),
+        tokenNumber: z.number().optional(),
+        currencyCode: z.enum(["USD", "TOKEN"]).optional(),
       })
     )
     .query(async ({ input }): Promise<ApiResponseType<ChartDataResponse>> => {
@@ -68,6 +70,8 @@ export const priceFeedRouter = router({
         from: input.from,
         to: input.to,
         resolution: input.resolution,
+        tokenNumber: input.tokenNumber,
+        currencyCode: input.currencyCode,
       });
 
       if (res.status === "error") {
@@ -83,4 +87,38 @@ export const priceFeedRouter = router({
         };
       }
     }),
+  getTokenHistoricalPrice: publicProcedure
+    .input(
+      z.object({
+        chainId: z.string(),
+        tokenAddress: z.string(),
+        from: z.number(),
+        to: z.number(),
+      })
+    )
+    .query(
+      async ({
+        input,
+      }): Promise<ApiResponseType<TokenCurrentPriceResponseType[]>> => {
+        const res = await priceFeed.getTokenHistoricalPrice(
+          input.tokenAddress,
+          input.chainId,
+          input.from,
+          input.to
+        );
+
+        if (res.status === "error") {
+          return {
+            status: "error",
+            message: res.message,
+          };
+        } else {
+          return {
+            status: "success",
+            data: res.data,
+            message: "Success",
+          };
+        }
+      }
+    ),
 });

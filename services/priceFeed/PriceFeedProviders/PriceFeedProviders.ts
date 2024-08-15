@@ -3,6 +3,7 @@ import {
   PriceFeedProvider,
   TokenCurrentPriceResponseType,
   getChartDataInputsType,
+  resolutionType,
 } from "./../priceFeedTypes";
 import { getTokenCurrentPriceTypeDataType } from "./defined";
 const DEFINED_API_ENDPOINT = "https://graph.defined.fi/graphql";
@@ -46,16 +47,17 @@ export class DefinedPriceFeed implements PriceFeedProvider {
     address: string,
     networkId: string
   ): Promise<ApiResponseType<TokenCurrentPriceResponseType>> => {
-    const query = ` {
-                      getTokenPrices(
-                        inputs: [
-                          { address: "${address.toString()}", networkId: ${networkId.toString()} }
-                        ]
-                      ) {
-                        priceUsd
-                        timestamp
-                      }
-                    }`;
+    const query = `#graphql
+    {
+      getTokenPrices(
+        inputs: [
+          { address: "${address.toString()}", networkId: ${networkId.toString()} }
+        ]
+      ) {
+        priceUsd
+        timestamp
+      }
+    }`;
 
     const data = await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(
       query
@@ -78,18 +80,67 @@ export class DefinedPriceFeed implements PriceFeedProvider {
     }
   };
 
+  getTokenHistoricalPrice = async (
+    address: string,
+    networkId: string,
+    from: number,
+    to: number
+  ): Promise<ApiResponseType<TokenCurrentPriceResponseType[]>> => {
+    const dataAmount = 100;
+    const resolution = (from - to) / dataAmount;
+
+    const timestamps = [];
+    for (let i = 0; i < dataAmount; i++) {
+      timestamps.push(from - resolution * i);
+    }
+
+    //example query
+    const query = `#graphql
+    {
+      getTokenPrices(
+        inputs: [
+          ${timestamps.map((timestamp) => {
+            return `{ address: "${address.toString()}", networkId: ${networkId.toString()}, timestamp: ${timestamp} }`;
+          })}
+        ]
+      ) {
+        priceUsd
+        timestamp
+      }
+    }
+`;
+
+    const data = await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(
+      query
+    );
+
+    if (!data || data.status === "error") {
+      return {
+        status: "error",
+        message: "Failed to fetch data.",
+      };
+    } else {
+      return {
+        status: "success",
+        data: data.data.getTokenPrices.map((price) => {
+          return { price: price.priceUsd, lastUpdated: price.timestamp };
+        }),
+        message: "Success",
+      };
+    }
+  };
+
   getChartData = async (
     input: getChartDataInputsType
   ): Promise<ApiResponseType<ChartDataResponse>> => {
-    const res = await this.callDefinedApi<ChartDataResponse>(
-      `{
+    const query = `{
         getBars(
           symbol: "${input.address}:${input.networkId}"
-          currencyCode: "USD"
+          currencyCode: "${input.currencyCode}"
           from: ${input.from}
           to: ${input.to}
           resolution: "${input.resolution}"
-          quoteToken: token0
+          quoteToken: token${input.tokenNumber ?? 0}
         ) {
           o
           h
@@ -97,8 +148,9 @@ export class DefinedPriceFeed implements PriceFeedProvider {
           c
           t
         }
-      }`
-    );
+      }`;
+
+    const res = await this.callDefinedApi<ChartDataResponse>(query);
 
     return res;
   };
