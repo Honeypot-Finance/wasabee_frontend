@@ -6,8 +6,10 @@ import { ChartDataResponse } from "./priceFeed/priceFeedTypes";
 import { wallet } from "./wallet";
 import { trpcClient } from "@/lib/trpc";
 import { dayjs } from "@/lib/dayjs";
+import { debounce } from "lodash";
 
 class Chart {
+  isLoading = false;
   showChart = false;
   chartTarget: Token | PairContract | null = null;
   tokenNumber: 0 | 1 = 0;
@@ -24,6 +26,8 @@ class Chart {
       return undefined;
     }
 
+    this.isLoading = true;
+
     const priceDataRequest = await trpcClient.priceFeed.getChartData.query({
       chainId: wallet.currentChainId.toString(),
       tokenAddress: this.chartTarget.address,
@@ -33,6 +37,8 @@ class Chart {
       tokenNumber: this.tokenNumber,
       currencyCode: this.currencyCode,
     });
+
+    this.isLoading = false;
 
     if (priceDataRequest.status === "error") {
       return undefined;

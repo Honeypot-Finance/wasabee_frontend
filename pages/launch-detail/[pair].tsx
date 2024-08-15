@@ -491,6 +491,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
     if (!state.pair.value) {
       return;
     }
+    chart.setCurrencyCode("USD");
+    chart.setTokenNumber(0);
     chart.setChartTarget(state.pair.value?.launchedToken ?? null);
   }, [state.pair.value]);
 

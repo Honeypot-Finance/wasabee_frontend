@@ -13,6 +13,7 @@ import { set } from "lodash";
 import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { FaSpinner } from "react-icons/fa";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   loading: () => <p>Loading...</p>,
@@ -415,10 +416,14 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
   }, [chart.chartTarget, chart.range]);
 
   return (
-    <>
+    <div className="relative w-full h-full">
+      {chart.isLoading && (
+        <FaSpinner className="animate-spin absolute top-1/3 left-1/2 z-50"></FaSpinner>
+      )}
       <Chart options={state.options} series={state.series} type="area" />
       <div className="flex justify-between items-center flex-wrap">
         <Button
+          isDisabled={chart.range === "1D" || chart.isLoading}
           onClick={() => {
             chart.setRange("1D");
           }}
@@ -426,6 +431,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
           1D
         </Button>
         <Button
+          isDisabled={chart.range === "3D" || chart.isLoading}
           onClick={() => {
             chart.setRange("3D");
           }}
@@ -433,6 +439,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
           3D
         </Button>
         <Button
+          isDisabled={chart.range === "7D" || chart.isLoading}
           onClick={() => {
             chart.setRange("7D");
           }}
@@ -440,6 +447,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
           7D
         </Button>
         <Button
+          isDisabled={chart.range === "15D" || chart.isLoading}
           onClick={() => {
             chart.setRange("15D");
           }}
@@ -447,6 +455,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
           15D
         </Button>
         <Button
+          isDisabled={chart.range === "1M" || chart.isLoading}
           onClick={() => {
             chart.setRange("1M");
           }}
@@ -454,6 +463,6 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
           1M
         </Button>
       </div>
-    </>
+    </div>
   );
 });
