@@ -96,7 +96,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
   return (
     <div className="flex flex-col  items-center">
       <div className="w-[800px] max-w-full relative space-y-4">
-        <div className="flex top-0 md:absolute right-0 md:flex-row flex-col md:gap-[16px] gap-[8px]">
+        <div className="flex top-0 md:absolute items-center right-0 md:flex-row flex-col md:gap-[16px] gap-[8px]">
           <Input
             defaultValue={liquidity.pairPage.filter.searchString}
             onChange={(e) => {
@@ -126,6 +126,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
           aria-label="Options"
           classNames={{
             tabList: "bg-transparent",
+            base: "!mt-0",
             tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
           }}
           className="next-tab"
