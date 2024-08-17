@@ -157,10 +157,10 @@ export const TokenSelector = observer(
 
                       <div className="max-h-[300px] overflow-auto">
                         {state.tokens.length ? (
-                          state.tokens.map((token) => {
+                          state.tokens.map((token, idx) => {
                             return (
                               <div
-                                key={token.address}
+                                key={idx}
                                 onClick={() => {
                                   onSelect(token);
                                   onClose();

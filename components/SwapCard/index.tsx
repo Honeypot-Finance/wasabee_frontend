@@ -53,9 +53,7 @@ export const SwapCard = observer(() => {
   };
   useEffect(() => {
     if (!isInit) {
-      if (!liquidity.isInit) {
-        liquidity.initPool();
-      }
+      liquidity.initPool();
       return;
     }
 
@@ -74,7 +72,7 @@ export const SwapCard = observer(() => {
         })
       );
     }
-  }, [inputCurrency, outputCurrency, isInit]);
+  }, [inputCurrency, outputCurrency, liquidity.isInit, wallet.isInit]);
 
   return (
     <SpinnerContainer
