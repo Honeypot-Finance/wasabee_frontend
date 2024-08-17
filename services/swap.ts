@@ -180,7 +180,7 @@ class Swap {
     reaction(
       () => this.fromAmount,
       debounce(async () => {
-        if (!this.currentPair.value && !this.routerToken) {
+        if (!this.currentPair.value && !this.routerToken?.length) {
           return;
         }
 
@@ -191,7 +191,7 @@ class Swap {
           this.fromToken &&
           this.toToken
         ) {
-          if (this.routerToken) {
+          if (this.routerToken?.length) {
             const finalAmountOut = await this.getFinalAmountOut(
               this.routerToken.map((t) => t.address.toLowerCase())
             );
