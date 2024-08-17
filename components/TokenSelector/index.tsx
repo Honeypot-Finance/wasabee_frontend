@@ -162,9 +162,6 @@ export const TokenSelector = observer(
                               <div
                                 key={token.address}
                                 onClick={() => {
-                                  liquidity.localTokensMap.transformAndSetValue(
-                                    token
-                                  );
                                   onSelect(token);
                                   onClose();
                                 }}

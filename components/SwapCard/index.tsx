@@ -17,7 +17,9 @@ import ChartData from "../svg/chartData";
 import SwapPriceFeedGraph from "../PriceFeedGraph/SwapPriceFeedGraph";
 import { liquidity } from "@/services/liquidity";
 import { chart } from "@/services/chart";
-import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
+import LoadingDisplay, {
+  LoadingContainer,
+} from "../LoadingDisplay/LoadingDisplay";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { GhostPair } from "@/services/indexer/indexerTypes";
 import { ItemSelect, SelectItem, SelectState } from "../ItemSelect";
@@ -32,7 +34,7 @@ import TokenLogo from "../TokenLogo/TokenLogo";
 import { Slippage } from "./Slippage";
 
 export const SwapCard = observer(() => {
-  const isinit = wallet.isInit && liquidity.isInit;
+  const isInit = wallet.isInit;
   const router = useRouter();
   const state = useLocalObservable(() => ({
     selectState: new SelectState({
@@ -49,13 +51,8 @@ export const SwapCard = observer(() => {
     inputCurrency: string;
     outputCurrency: string;
   };
-
   useEffect(() => {
-    liquidity.initPool();
-  }, [wallet.isInit]);
-
-  useEffect(() => {
-    if (!isinit) {
+    if (!isInit) {
       return;
     }
 
@@ -74,7 +71,7 @@ export const SwapCard = observer(() => {
         })
       );
     }
-  }, [inputCurrency, outputCurrency, isinit]);
+  }, [inputCurrency, outputCurrency, isInit]);
 
   return (
     <SpinnerContainer
@@ -82,7 +79,7 @@ export const SwapCard = observer(() => {
       isLoading={false}
     >
       <div className=" flex flex-1 flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
-        {(isinit && (
+        <LoadingContainer isLoading={!isInit}>
           <>
             <div className="flex items-center justify-between w-full  text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px]">
               <span
@@ -267,7 +264,7 @@ export const SwapCard = observer(() => {
               {swap.buttonContent}
             </Button>
           </>
-        )) || <LoadingDisplay></LoadingDisplay>}
+        </LoadingContainer>
       </div>
     </SpinnerContainer>
   );

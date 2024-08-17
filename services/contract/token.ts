@@ -220,6 +220,7 @@ export class Token implements BaseContract {
   }
 
   get balance() {
+    // console.log('this.balanceWithoutDecimals', this.balanceWithoutDecimals)
     return this.balanceWithoutDecimals.div(
       new BigNumber(10).pow(this.decimals)
     );

@@ -87,42 +87,43 @@ class Liquidity {
   tokensMap: Record<string, Token> = {};
 
   slippage = 10;
-  localTokensMap = new StorageState<Record<string, Token>>({
-    key: "localTokens_v2",
-    value: {} as Record<string, Token>,
-    serialize: (value) => {
-      const val = value
-        ? Object.values(value).reduce((acc, token) => {
-            acc[token.address.toLowerCase()] = toJS(token);
-            return acc;
-          }, {} as Record<string, Pick<Token, "address" | "name" | "symbol" | "decimals">>)
-        : null;
-      return val;
-    },
-    deserialize: (
-      value: Record<
-        string,
-        Pick<Token, "address" | "name" | "symbol" | "decimals">
-      >
-    ) => {
-      const res = Object.values(value).reduce((acc, t) => {
-        const token = Token.getToken({
-          ...t,
-        });
-        token.priority = 3;
-        acc[token.address] = token;
-        return acc;
-      }, {} as Record<string, Token>);
-      console.log("deserialize", res);
-      return res;
-    },
-    transform(value: Token) {
-      this.value![value.address] = value;
-      return {
-        ...this.value,
-      };
-    },
-  });
+  // localTokensMap = new StorageState<Record<string, Token>>({
+  //   key: "localTokens_v2",
+  //   value: {} as Record<string, Token>,
+  //   serialize: (value) => {
+  //     const val = value
+  //       ? Object.values(value).reduce((acc, token) => {
+  //           acc[token.address.toLowerCase()] = token.serialize();
+  //           return acc;
+  //         }, {} as Record<string, Pick<Token, "address" | "name" | "symbol" | "decimals">>)
+  //       : null;
+  //     return val;
+  //   },
+  //   deserialize: (
+  //     value: Record<
+  //       string,
+  //       Pick<Token, "address" | "name" | "symbol" | "decimals">
+  //     >
+  //   ) => {
+  //     const res = Object.values(value).reduce((acc, t) => {
+  //       const token = Token.getToken({
+  //         ...t,
+  //       })
+  //       console.log('token', token)
+  //       token.priority = 3;
+  //       acc[token.address] = token;
+  //       return acc;
+  //     }, {} as Record<string, Token>);
+  //     console.log("deserialize", res);
+  //     return res;
+  //   },
+  //   transform(value: Token) {
+  //     this.value![value.address] = value;
+  //     return {
+  //       ...this.value,
+  //     };
+  //   },
+  // });
 
   get tokens() {
     const tokensMap = {
