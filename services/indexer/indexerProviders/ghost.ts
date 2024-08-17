@@ -18,7 +18,7 @@ import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 
 const ftoGraphHandle = "3cbba216-c29c-465b-95d4-be5ebeed1f35/ghostgraph";
-const pairGraphHandle = "77979e53-744b-48a4-b3d5-dfa9dbb07efa/ghostgraph";
+const pairGraphHandle = "531ce928-b10c-4f1c-a875-d6ebdddc0228/ghostgraph";
 
 export class GhostIndexer {
   apiKey: string;
