@@ -28,6 +28,7 @@ import PoolLiquidityCard from "@/components/PoolLiquidityCard/PoolLiquidityCard"
 import { defaultContainerVariants, itemSlideVariants } from "@/lib/animation";
 import HoneyStickSvg from "@/components/svg/HoneyStick";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
+import Image from "next/image";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
@@ -94,7 +95,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <div className="flex flex-col  items-center">
+    <div className="flex flex-col items-center">
       <div className="w-[800px] max-w-full relative space-y-4">
         <div className="flex top-0 md:absolute items-center right-0 md:flex-row flex-col md:gap-[16px] gap-[8px]">
           <Input

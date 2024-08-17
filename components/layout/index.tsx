@@ -22,7 +22,12 @@ export const Layout = ({
   const currentChain = chainId ? networksMap[chainId] : null;
   return (
     <div className={cn("flex flex-col min-h-screen overflow-auto", className)}>
-      {router.pathname.startsWith("/launch") ? <LaunchHeader /> : <Header />}
+      {router.pathname.startsWith("/launch") ||
+      router.pathname.startsWith("/pools") ? (
+        <LaunchHeader />
+      ) : (
+        <Header />
+      )}
       {currentChain ? (
         <div className=" px-[12px] sm:pt-[72px] pt-[24px] flex-1">
           {children}
