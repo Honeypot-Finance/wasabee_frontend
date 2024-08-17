@@ -48,21 +48,18 @@ class Swap {
           token0: this.fromToken,
           token1: this.toToken,
         });
-      } else if (
-        liquidity.getMemoryPair(
-          this.fromToken.address.toLowerCase(),
-          this.toToken.address.toLowerCase()
-        )
-      ) {
+      } else {
         const res = await liquidity.getPairByTokens(
           this.fromToken.address,
           this.toToken.address
         );
-        await res?.init();
-        return res;
-      } else {
-        await this.getRouterToken();
-        console.log(this.routerToken);
+        console.log('res', res)
+        if (res) {
+          await res.init();
+          return res;
+        }
+        // await this.getRouterToken();
+        // console.log(this.routerToken);  
       }
     }
   });
