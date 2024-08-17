@@ -34,7 +34,7 @@ import TokenLogo from "../TokenLogo/TokenLogo";
 import { Slippage } from "./Slippage";
 
 export const SwapCard = observer(() => {
-  const isInit = wallet.isInit;
+  const isInit = wallet.isInit && liquidity.isInit;
   const router = useRouter();
   const state = useLocalObservable(() => ({
     selectState: new SelectState({
@@ -53,6 +53,9 @@ export const SwapCard = observer(() => {
   };
   useEffect(() => {
     if (!isInit) {
+      if (!liquidity.isInit) {
+        liquidity.initPool();
+      }
       return;
     }
 

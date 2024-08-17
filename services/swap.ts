@@ -33,9 +33,13 @@ class Swap {
 
     const routerPossiblePaths = this.getRouterPathsByValidatedToken();
 
+    console.log(routerPossiblePaths);
+
     const bestPath = await this.calculateBestPathFromRouterPaths(
       routerPossiblePaths
     );
+
+    console.log(bestPath);
 
     this.setRouterToken(bestPath.map((t) => Token.getToken({ address: t })));
   };
@@ -48,18 +52,30 @@ class Swap {
           token0: this.fromToken,
           token1: this.toToken,
         });
-      } else {
+      } else if (
+        liquidity.getMemoryPair(
+          this.fromToken.address.toLowerCase(),
+          this.toToken.address.toLowerCase()
+        )
+      ) {
+        console.log("pair found");
         const res = await liquidity.getPairByTokens(
           this.fromToken.address,
           this.toToken.address
         );
-        console.log('res', res)
-        if (res) {
-          await res.init();
+        await res?.init();
+
+        if (
+          res?.reserves?.reserve0.isZero() ||
+          res?.reserves?.reserve1.isZero()
+        ) {
+          return;
+        } else {
           return res;
         }
-        // await this.getRouterToken();
-        // console.log(this.routerToken);  
+      } else {
+        console.log("no pair found");
+        await this.getRouterToken();
       }
     }
   });
@@ -100,7 +116,8 @@ class Swap {
       !this.toToken ||
       !this.fromAmount ||
       !this.toAmount ||
-      (!this.currentPair.value && !this.routerToken) ||
+      (!this.currentPair.value &&
+        (!this.routerToken || this.routerToken?.length === 0)) ||
       this.fromToken.balance.toNumber() < Number(this.fromAmount)
     );
   }
@@ -109,19 +126,26 @@ class Swap {
     if (!this.fromToken || !this.toToken) {
       return "Select Tokens";
     }
+
     if (this.currentPair.loading) {
       return "Loading Pair";
     }
 
-    if (!this.currentPair.value && !this.routerToken) {
+    if (
+      !this.currentPair.value &&
+      (!this.routerToken || this.routerToken?.length === 0)
+    ) {
       return "Insufficient Liquidity";
     }
+
     if (!this.fromAmount || !this.toAmount) {
       return "Enter Amount";
     }
+
     if (this.fromToken.balance.toNumber() < Number(this.fromAmount)) {
       return "Insufficient Balance";
     }
+
     return "Swap";
   }
 
@@ -137,6 +161,7 @@ class Swap {
     if (this.isWrapOrUnwrap) {
       return new BigNumber(this.toAmount || 0);
     }
+
     return new BigNumber(this.toAmount || 0).minus(
       new BigNumber(this.toAmount || 0).multipliedBy(this.slippage).div(100)
     );
@@ -177,7 +202,7 @@ class Swap {
     reaction(
       () => this.fromAmount,
       debounce(async () => {
-        if (!this.currentPair.value && !this.routerToken?.length) {
+        if (!this.currentPair.value && !this.routerToken) {
           return;
         }
 
@@ -188,14 +213,7 @@ class Swap {
           this.fromToken &&
           this.toToken
         ) {
-          if (this.routerToken?.length) {
-            const finalAmountOut = await this.getFinalAmountOut(
-              this.routerToken.map((t) => t.address.toLowerCase())
-            );
-
-            this.toAmount = finalAmountOut.toFixed();
-            this.price = new BigNumber(this.toAmount).div(this.fromAmount);
-          } else {
+          if (this.currentPair.value) {
             const [toAmount] = await this.currentPair.value!.getAmountOut.call(
               this.fromAmount,
               this.fromToken as Token
@@ -203,6 +221,15 @@ class Swap {
 
             this.toAmount = toAmount?.toFixed();
             this.price = new BigNumber(this.toAmount).div(this.fromAmount);
+          } else if (this.routerToken && this.routerToken.length > 0) {
+            const finalAmountOut = await this.getFinalAmountOut(
+              this.routerToken.map((t) => t.address.toLowerCase())
+            );
+
+            this.toAmount = finalAmountOut.toFixed();
+            this.price = new BigNumber(this.toAmount).div(this.fromAmount);
+          } else {
+            this.price = new BigNumber(0);
           }
         } else {
           this.toAmount = "";
@@ -387,6 +414,10 @@ class Swap {
     pathAddress: string[],
     startingAmount: BigNumber = new BigNumber(this.fromAmount)
   ): Promise<BigNumber> => {
+    if (!this.currentPair && pathAddress.length === 0) {
+      return new BigNumber(0);
+    }
+
     let finalAmountOut = startingAmount;
 
     for (let i = 0; i < pathAddress.length - 1; i++) {
