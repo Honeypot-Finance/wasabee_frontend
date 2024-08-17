@@ -2,6 +2,7 @@ import { authProcedure, publicProcedure, router } from "../trpc";
 import z from "zod";
 import PQueue from "p-queue";
 import { ftoService } from "../service/fto";
+import { cacheProvider, getCacheKey } from "@/lib/server/cache";
 
 const queue = new PQueue({ concurrency: 10 });
 
@@ -40,11 +41,14 @@ export const ftoRouter = router({
         .or(z.null())
     )
     .query(async ({ input }) => {
-      const info = await ftoService.getProjectInfo({
-        ...input,
-        creator_api_key: api_key,
-      });
-      return info;
+      return cacheProvider.getOrSet(getCacheKey('getProjectInfo', input), async () => {
+        const info = await ftoService.getProjectInfo({
+          ...input,
+          creator_api_key: api_key,
+        });
+        return info;
+      })
+      
     }),
   getProjectsByAccount: publicProcedure
     .input(
@@ -54,7 +58,7 @@ export const ftoRouter = router({
       })
     )
     .query(async ({ input }) => {
-      return ftoService.getFtoProjectsByAccount(input);
+      return cacheProvider.getOrSet(getCacheKey('getProjectsByAccount', input), async () => ftoService.getFtoProjectsByAccount(input));
     }),
   createOrUpdateProjectInfo: authProcedure
     .input(
@@ -117,6 +121,6 @@ export const ftoRouter = router({
       })
     )
     .query(async ({ input }) => {
-      return await ftoService.getProjectVotes(input);
+      return cacheProvider.getOrSet(getCacheKey('getProjectVotes', input), async () => ftoService.getProjectVotes(input));
     }),
 });

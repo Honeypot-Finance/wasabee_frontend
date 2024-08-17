@@ -6,6 +6,7 @@ import {
   ChartDataResponse,
   TokenCurrentPriceResponseType,
 } from "@/services/priceFeed/priceFeedTypes";
+import { cacheProvider, getCacheKey } from "@/lib/server/cache";
 
 const definedApiKey = process.env.DEFINED_API_KEY || "";
 const priceFeed = new TokenPriceDataFeed(new DefinedPriceFeed(definedApiKey));
@@ -22,23 +23,29 @@ export const priceFeedRouter = router({
       async ({
         input,
       }): Promise<ApiResponseType<TokenCurrentPriceResponseType>> => {
-        const res = await priceFeed.getTokenCurrentPrice(
-          input.tokenAddress,
-          input.chainId
+        return cacheProvider.getOrSet(
+          getCacheKey('getSingleTokenPrice', input),
+          async () => {
+            const res = await priceFeed.getTokenCurrentPrice(
+              input.tokenAddress,
+              input.chainId
+            );
+    
+            if (res.status === "error") {
+              return {
+                status: "error",
+                message: res.message,
+              };
+            } else {
+              return {
+                status: "success",
+                data: res.data,
+                message: "Success",
+              };
+            }
+          }
         );
-
-        if (res.status === "error") {
-          return {
-            status: "error",
-            message: res.message,
-          };
-        } else {
-          return {
-            status: "success",
-            data: res.data,
-            message: "Success",
-          };
-        }
+      
       }
     ),
   getChartData: publicProcedure
@@ -64,28 +71,33 @@ export const priceFeedRouter = router({
       })
     )
     .query(async ({ input }): Promise<ApiResponseType<ChartDataResponse>> => {
-      const res = await priceFeed.getChartData({
-        address: input.tokenAddress,
-        networkId: input.chainId,
-        from: input.from,
-        to: input.to,
-        resolution: input.resolution,
-        tokenNumber: input.tokenNumber,
-        currencyCode: input.currencyCode,
-      });
-
-      if (res.status === "error") {
-        return {
-          status: "error",
-          message: res.message,
-        };
-      } else {
-        return {
-          status: "success",
-          data: res.data,
-          message: "Success",
-        };
-      }
+      return cacheProvider.getOrSet(
+        getCacheKey('getChartData', input),
+        async () => {
+          const res = await priceFeed.getChartData({
+            address: input.tokenAddress,
+            networkId: input.chainId,
+            from: input.from,
+            to: input.to,
+            resolution: input.resolution,
+            tokenNumber: input.tokenNumber,
+            currencyCode: input.currencyCode,
+          });
+    
+          if (res.status === "error") {
+            return {
+              status: "error",
+              message: res.message,
+            };
+          } else {
+            return {
+              status: "success",
+              data: res.data,
+              message: "Success",
+            };
+          }
+        })
+      
     }),
   getTokenHistoricalPrice: publicProcedure
     .input(
@@ -100,25 +112,30 @@ export const priceFeedRouter = router({
       async ({
         input,
       }): Promise<ApiResponseType<TokenCurrentPriceResponseType[]>> => {
-        const res = await priceFeed.getTokenHistoricalPrice(
-          input.tokenAddress,
-          input.chainId,
-          input.from,
-          input.to
-        );
-
-        if (res.status === "error") {
-          return {
-            status: "error",
-            message: res.message,
-          };
-        } else {
-          return {
-            status: "success",
-            data: res.data,
-            message: "Success",
-          };
-        }
+        return cacheProvider.getOrSet(
+          getCacheKey('getTokenHistoricalPrice', input),
+          async () => {
+            const res = await priceFeed.getTokenHistoricalPrice(
+              input.tokenAddress,
+              input.chainId,
+              input.from,
+              input.to
+            );
+    
+            if (res.status === "error") {
+              return {
+                status: "error",
+                message: res.message,
+              };
+            } else {
+              return {
+                status: "success",
+                data: res.data,
+                message: "Success",
+              };
+            }
+          })
+    
       }
     ),
 });

@@ -14,6 +14,7 @@ import {
   GhostPairResponse,
   PageRequest,
 } from "@/services/indexer/indexerTypes";
+import { cacheProvider, getCacheKey } from "@/lib/server/cache";
 
 export const indexerFeedRouter = router({
   getFilteredFtoPairs: publicProcedure
@@ -35,25 +36,30 @@ export const indexerFeedRouter = router({
       })
     )
     .query(async ({ input }) => {
-      const res = await indexer.getFilteredFtoPairs(
-        input.filter as PairFilter,
-        input.chainId,
-        input.provider,
-        input.pageRequest as PageRequest
-      );
+      return cacheProvider.getOrSet(
+        getCacheKey("getFilteredFtoPairs", input),
+        async () => {
+          const res = await indexer.getFilteredFtoPairs(
+            input.filter as PairFilter,
+            input.chainId,
+            input.provider,
+            input.pageRequest as PageRequest
+          );
 
-      if (res.status === "error") {
-        return {
-          status: "error",
-          message: res.message,
-        } as const;
-      } else {
-        return {
-          status: "success",
-          data: res.data,
-          message: "Success",
-        } as const;
-      }
+          if (res.status === "error") {
+            return {
+              status: "error",
+              message: res.message,
+            } as const;
+          } else {
+            return {
+              status: "success",
+              data: res.data,
+              message: "Success",
+            } as const;
+          }
+        }
+      );
     }),
   getMostSuccessfulFtos: publicProcedure
     .input(
@@ -63,23 +69,28 @@ export const indexerFeedRouter = router({
       })
     )
     .query(async ({ input }) => {
-      const res = await indexer.getMostSuccessfulFtos(
-        input.chainId,
-        input.limit
-      );
+      return cacheProvider.getOrSet(
+        getCacheKey("getMostSuccessfulFtos", input),
+        async () => {
+          const res = await indexer.getMostSuccessfulFtos(
+            input.chainId,
+            input.limit
+          );
 
-      if (res.status === "error") {
-        return {
-          status: "error",
-          message: res.message,
-        } as const;
-      } else {
-        return {
-          status: "success",
-          data: res.data,
-          message: "Success",
-        } as const;
-      }
+          if (res.status === "error") {
+            return {
+              status: "error",
+              message: res.message,
+            } as const;
+          } else {
+            return {
+              status: "success",
+              data: res.data,
+              message: "Success",
+            } as const;
+          }
+        }
+      );
     }),
   getAllFtoTokens: publicProcedure
     .output(
@@ -97,28 +108,43 @@ export const indexerFeedRouter = router({
       })
     )
     .query(async (): Promise<any> => {
-      const res = await indexer.getAllFtoTokens();
+      return cacheProvider.getOrSet(
+        getCacheKey("getAllFtoTokens"),
+        async () => {
+          const res = await indexer.getAllFtoTokens();
 
-      if (res.status === "error") {
-        return {
-          status: "error",
-          message: res.message,
-        };
-      } else {
-        return {
-          status: "success",
-          data: res.data,
-          message: "Success",
-        };
-      }
+          if (res.status === "error") {
+            return {
+              status: "error",
+              message: res.message,
+            };
+          } else {
+            return {
+              status: "success",
+              data: res.data,
+              message: "Success",
+            };
+          }
+        }
+      );
     }),
   getAllPairs: publicProcedure.query(
     async (): Promise<ApiResponseType<GhostPairResponse>> => {
-      const res = await indexer.dataProvider.getAllPairs();
-      return res;
+      return cacheProvider.getOrSet(
+        getCacheKey("getAllPairs"),
+        async () => {
+          const res = await indexer.dataProvider.getAllPairs();
+          return res;
+        })
+ 
     }
   ),
   getFilteredPairs: publicProcedure
+    .meta({
+      cache: {
+        ttl: 60,
+      },
+    })
     .input(
       z.object({
         filter: z.object({
@@ -136,24 +162,29 @@ export const indexerFeedRouter = router({
       })
     )
     .query(async ({ input }): Promise<ApiResponseType<GhostPairResponse>> => {
-      const res = await indexer.getFilteredPairs(
-        input.filter,
-        input.chainId,
-        input.provider,
-        input.pageRequest
-      );
-
-      if (res.status === "error") {
-        return {
-          status: "error",
-          message: res.message,
-        };
-      } else {
-        return {
-          status: "success",
-          data: res.data,
-          message: "Success",
-        };
-      }
+      return cacheProvider.getOrSet(
+        getCacheKey("getFilteredPairs", input), 
+        async () => {
+          const res = await indexer.getFilteredPairs(
+            input.filter,
+            input.chainId,
+            input.provider,
+            input.pageRequest
+          );
+    
+          if (res.status === "error") {
+            return {
+              status: "error",
+              message: res.message,
+            };
+          } else {
+            return {
+              status: "success",
+              data: res.data,
+              message: "Success",
+            };
+          }
+        })
+  
     }),
 });

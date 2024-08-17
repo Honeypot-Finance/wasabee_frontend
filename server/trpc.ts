@@ -42,14 +42,17 @@ export const createContext = async ({ req }: CreateNextContextOptions) => {
 };
 // You can use any variable name you like.
 // We use t to keep things simple.
-export const t = initTRPC.context<typeof createContext>().create({
+export const t = initTRPC.context<typeof createContext>().meta<{
+  cache: {
+    ttl: number;
+  }
+}>().create({
   transformer: superjson,
 });
 export const router = t.router;
 export const publicProcedure = t.procedure;
 
 export const authProcedure = publicProcedure.use(async ({ ctx, next }) => {
-  console.log("ctx.user", ctx.user);
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
