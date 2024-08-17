@@ -251,10 +251,9 @@ export const LPCard = observer(() => {
 
   useEffect(() => {
     if (!isinit) {
+      liquidity.initPool();
       return;
     }
-
-    liquidity.initPool();
 
     if (inputCurrency && isEthAddress(inputCurrency)) {
       liquidity.setFromToken(
@@ -270,7 +269,7 @@ export const LPCard = observer(() => {
         })
       );
     }
-  }, [inputCurrency, outputCurrency, isinit]);
+  }, [inputCurrency, outputCurrency, wallet.isInit, liquidity.isInit]);
   return (
     <div className="[background:var(--card-color,#271A0C)]   p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
       {(isinit && (

@@ -37,6 +37,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
                 : "",
               isSub ? "pl-[2rem]" : ""
             )}
+            onClick={() => setIsMenuOpen(false)}
           >
             {m.title}
           </NavbarMenuItem>
@@ -53,6 +54,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
             isSub ? "ml-[2rem]" : ""
           )}
           isActive={router.pathname === m.path}
+          onClick={() => setIsMenuOpen(false)}
         >
           <Link className={cn("w-full inline-block")} href={m.path as string}>
             {m.title}
@@ -72,6 +74,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
       style={{
         backdropFilter: "none",
       }}
+      isMenuOpen={isMenuOpen}
     >
       <NavbarContent>
         <NavbarMenuToggle
@@ -146,6 +149,7 @@ function WrapedDropdownItem({
       onMouseLeave={() => setIsMenuOpen(false)}
       onMouseEnter={() => setIsMenuOpen(true)}
       onMouseMove={(e) => checkMouseInside(e.nativeEvent)}
+      closeOnSelect
     >
       <NavbarItem
         className={cn(
@@ -173,9 +177,10 @@ function WrapedDropdownItem({
           </span>
         </DropdownTrigger>
       </NavbarItem>
-      <DropdownMenu>
+      <DropdownMenu closeOnSelect>
         {dropdownMenu.path.map((p) => (
           <DropdownItem
+            closeOnSelect
             key={p.title}
             className={cn(
               "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
@@ -185,6 +190,7 @@ function WrapedDropdownItem({
                   : " [background:#271A0C] border-[color:var(--button-stroke,rgba(247,147,26,0.20))] border rounded-[100px] border-solid"
                 : "hover:opacity-100 opacity-60"
             )}
+            onClick={() => setIsMenuOpen(false)}
           >
             <Link className={cn("w-full inline-block")} href={p.path as string}>
               {p.title}
