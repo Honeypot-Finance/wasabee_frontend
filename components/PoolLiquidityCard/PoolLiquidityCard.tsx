@@ -18,6 +18,8 @@ import {
 import { IoAdd, IoRemove } from "react-icons/io5";
 import { VscArrowSwap } from "react-icons/vsc";
 import { useState } from "react";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/router";
 
 interface PoolLiquidityCardProps {
   pair: PairContract;
@@ -27,6 +29,7 @@ interface PoolLiquidityCardProps {
 
 export const PoolLiquidityCard = observer(
   ({ pair, autoSize, showMyLiquidity }: PoolLiquidityCardProps) => {
+    const router = useRouter();
     const [isRemoveLpPopUpOpen, setIsRemoveLpPopUpOpen] = useState(false);
     console.log("isRemoveLpPopUpOpen", isRemoveLpPopUpOpen);
     return (
@@ -93,14 +96,18 @@ export const PoolLiquidityCard = observer(
                   icon: <IoAdd />,
                   display: "Add LP",
                   onClick: () => {
-                    window.location.href = `/pool?inputCurrency=${pair.token0.address}&outputCurrency=${pair.token1.address}`;
+                    router.push(
+                      `/pool?inputCurrency=${pair.token0.address}&outputCurrency=${pair.token1.address}`
+                    );
                   },
                 },
                 {
                   icon: <VscArrowSwap />,
                   display: "Swap",
                   onClick: () => {
-                    window.location.href = `/swap?inputCurrency=${pair.token0.address}&outputCurrency=${pair.token1.address}`;
+                    router.push(
+                      `/swap?inputCurrency=${pair.token0.address}&outputCurrency=${pair.token1.address}`
+                    );
                   },
                 },
                 optionsPresets.viewOnExplorer({

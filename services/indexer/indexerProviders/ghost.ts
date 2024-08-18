@@ -18,7 +18,7 @@ import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 
 const ftoGraphHandle = "3cbba216-c29c-465b-95d4-be5ebeed1f35/ghostgraph";
-const pairGraphHandle = "531ce928-b10c-4f1c-a875-d6ebdddc0228/ghostgraph";
+const pairGraphHandle = "a7f362c9-8b02-4c80-ac63-adf2af22db0a/ghostgraph";
 
 export class GhostIndexer {
   apiKey: string;
@@ -354,6 +354,80 @@ export class GhostIndexer {
           }
         }
       `;
+
+    const res = await this.callIndexerApi(query, {
+      apiHandle: pairGraphHandle,
+    });
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: {
+          pairs: (res.data as any).pairs?.items as GhostPair[],
+          pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
+        } ?? {
+          pairs: [],
+          pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: "",
+            endCursor: "",
+          },
+        },
+      };
+    }
+  };
+
+  getHoldingPairs = async (
+    walletAddress: string,
+    chainId: string,
+    pageRequest?: PageRequest
+  ) => {
+    const dirCondition = pageRequest?.cursor
+      ? pageRequest?.direction === "next"
+        ? `after:"${pageRequest?.cursor}"`
+        : `before:"${pageRequest?.cursor}"`
+      : "";
+
+    const query = `#graphql
+    {
+      pairs(
+        where: {
+          OR: [
+            { token0Id: "${walletAddress}" }
+            { token1Id: "${walletAddress}" }
+          ]
+        }
+        limit: 10
+        ${dirCondition}
+      ) {
+        items {
+          id
+          token0 {
+            id
+            name
+            symbol
+            decimals
+          }
+          token1 {
+            id
+            name
+            symbol
+            decimals
+          }
+        }
+        pageInfo {
+          hasPreviousPage
+          hasNextPage
+          startCursor
+          endCursor
+        }
+      }
+  }
+  `;
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
