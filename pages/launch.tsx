@@ -48,7 +48,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4 [font-family:MEMEP]">
+    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
       <div className="flex w-full justify-end gap-2">
         <Button className="scale-[0.8] sm:scale-100">
           <Link href="/launch-token" className="text-black font-bold">
