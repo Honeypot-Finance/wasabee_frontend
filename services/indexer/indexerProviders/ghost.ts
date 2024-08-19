@@ -575,7 +575,7 @@ export class GhostIndexer {
     const query = `#graphql
       query {   
         pairs0: pairs(
-        where: {token0Id: "${token0}", token1Id: "${token1}"}
+        where: {OR:[{token0Id: "${token0}", token1Id: "${token1}"},{token0Id: "${token1}", token1Id: "${token0}"}]}
   ) {
     items {
       address: id

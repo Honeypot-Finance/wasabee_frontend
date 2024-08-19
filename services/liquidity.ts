@@ -224,6 +224,7 @@ class Liquidity {
         this.fromToken.address,
         this.toToken.address
       );
+
       return res;
     }
   });
@@ -457,6 +458,50 @@ class Liquidity {
       return;
     }
 
+    //init validated pairs
+    const validatedTokens = wallet.currentChain.validatedTokens;
+
+    for (let i = 0; i < validatedTokens.length; i++) {
+      for (let j = i + 1; j < validatedTokens.length; j++) {
+        const token0 = validatedTokens[i];
+        const token1 = validatedTokens[j];
+        trpcClient.pair.getPairByTokens
+          .query({
+            chainId: wallet.currentChainId,
+            token0Address: token0.address,
+            token1Address: token1.address,
+          })
+          .then((pairQuery) => {
+            if (pairQuery) {
+              const pair = new PairContract({
+                address: pairQuery.address,
+                token0: Token.getToken(pairQuery.token0),
+                token1: Token.getToken(pairQuery.token1),
+              });
+
+              console.log("pair", pair);
+
+              this.pairs.push(pair);
+
+              if (!this.tokensMap[token0.address.toLowerCase()]) {
+                this.tokensMap[token0.address.toLowerCase()] = token0;
+                token0.init();
+              }
+
+              if (!this.tokensMap[token1.address.toLowerCase()]) {
+                this.tokensMap[token1.address.toLowerCase()] = token1;
+                token1.init();
+              }
+
+              this.pairsByToken[
+                `${token0.address.toLowerCase()}-${token1.address.toLowerCase()}`
+              ] = pair;
+            }
+          })
+          .catch((e) => {});
+      }
+    }
+
     this.isInit = true;
   }
 
@@ -480,6 +525,7 @@ class Liquidity {
           token0: Token.getToken(pair.token0),
           token1: Token.getToken(pair.token1),
         });
+
         pairContract.init();
 
         this.pairsByToken[`${token0Address}-${token1Address}`] = pairContract;

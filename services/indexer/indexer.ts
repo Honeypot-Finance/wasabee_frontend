@@ -88,8 +88,6 @@ export default class Indexer<T extends IndexerProvider> {
       pageRequest
     );
 
-    //console.log("res", res);
-
     return res;
   };
 }

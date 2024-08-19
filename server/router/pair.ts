@@ -10,9 +10,9 @@ import PQueue from "p-queue";
 import { networksMap } from "@/services/chain";
 import { kv } from "@/lib/kv";
 import { pairQueryOutput } from "@/types/pair";
-import {indexer} from "@/services/indexer/indexer";
+import { indexer } from "@/services/indexer/indexer";
 import { cacheProvider, getCacheKey } from "@/lib/server/cache";
-import {getCacheKey as getKvCacheKey} from "@/lib/cache";
+import { getCacheKey as getKvCacheKey } from "@/lib/cache";
 
 interface Pair {
   id: string;
@@ -39,37 +39,39 @@ export const pairRouter = router({
         token0Address: z.string(),
         token1Address: z.string(),
       })
-    ).output(z.object({
-      address: z.string(),
-      token0: z.object({
+    )
+    .output(
+      z.object({
         address: z.string(),
-        name: z.string(),
-        symbol: z.string(),
-        decimals: z.number(),
-      }),
-      token1: z.object({
-        address: z.string(),
-        name: z.string(),
-        symbol: z.string(),
-        decimals: z.number(),
-      }),
-      reserve0: z.string(),
-      reserve1: z.string(),
-    }))
+        token0: z.object({
+          address: z.string(),
+          name: z.string(),
+          symbol: z.string(),
+          decimals: z.number(),
+        }),
+        token1: z.object({
+          address: z.string(),
+          name: z.string(),
+          symbol: z.string(),
+          decimals: z.number(),
+        }),
+        reserve0: z.string(),
+        reserve1: z.string(),
+      })
+    )
     .query(async ({ input }) => {
       return cacheProvider.getOrSet(
         getCacheKey("getPairByTokens", input),
         async () => {
           const { token0Address, token1Address } = input;
-          const res = await  indexer.getPairByTokens({
+          const res = await indexer.getPairByTokens({
             token0: token0Address,
             token1: token1Address,
           });
-          console.log('res', res)
-          return res
+          //console.log('res', res)
+          return res;
         }
-      )
-
+      );
     }),
   getPairs: publicProcedure
     .input(
@@ -79,7 +81,7 @@ export const pairRouter = router({
       })
     )
     .query(async ({ input }): Promise<pairQueryOutput> => {
-       return cacheProvider.getOrSet( 
+      return cacheProvider.getOrSet(
         getCacheKey("getPairs", input),
         async () => {
           const { chainId } = input;
@@ -101,8 +103,9 @@ export const pairRouter = router({
           //console.log("total pairs", length);
           // await kv.del(getCacheKey(chainId, 'allPairs'));
           const allPairs =
-            (await kv.get<Record<string, any>>(getKvCacheKey(chainId, "allPairs"))) ||
-            {};
+            (await kv.get<Record<string, any>>(
+              getKvCacheKey(chainId, "allPairs")
+            )) || {};
           // console.log(getCacheKey(chainId, 'allPairs'), allPairs)
           Array.from({ length: Number(length) }).forEach(async (_, index) => {
             await queue.add(async () => {
@@ -112,7 +115,7 @@ export const pairRouter = router({
                   const pairAddress = await factoryContract.read.allPairs([
                     BigInt(index),
                   ]);
-    
+
                   const pairContract = getContract({
                     address: pairAddress as `0x${string}`,
                     abi: IUniswapV2Pair.abi,
@@ -124,7 +127,7 @@ export const pairRouter = router({
                     pairContract.read.token0(),
                     pairContract.read.token1(),
                   ]);
-    
+
                   const tokens = await Promise.all([
                     tokenLoader.load({
                       address: token0 as `0x${string}`,
@@ -140,7 +143,7 @@ export const pairRouter = router({
                     token0: tokens[0],
                     token1: tokens[1],
                   };
-    
+
                   if (
                     input.blackListAddress?.includes(pair.address) ||
                     input.blackListAddress?.includes(pair.token0.address) ||
@@ -148,7 +151,7 @@ export const pairRouter = router({
                   ) {
                     return null;
                   }
-    
+
                   allPairs[index] = pair;
                 } catch (error) {
                   console.error(error);
@@ -159,8 +162,9 @@ export const pairRouter = router({
           });
           await queue.onIdle();
           await kv.set(getKvCacheKey(chainId, "allPairs"), allPairs);
-    
+
           return allPairs;
-        })
+        }
+      );
     }),
 });
