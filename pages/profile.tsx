@@ -134,13 +134,18 @@ export const Profile = observer(() => {
                       </div>
                     </div>
                   ) : (
-                    launchpad.myFtoPairs.value?.data.map((project) => (
-                      <LaunchCard
-                        key={project.address}
-                        pair={project}
-                        action={<></>}
-                      />
-                    ))
+                    launchpad.myFtoPairs.value?.data
+                      .slice()
+                      .sort((a, b) => {
+                        return a.canClaimLP ? 1 : b.canClaimLP ? -1 : 0;
+                      })
+                      .map((project) => (
+                        <LaunchCard
+                          key={project.address}
+                          pair={project}
+                          action={<></>}
+                        />
+                      ))
                   )}
                 </motion.div>
               </CardBody>
