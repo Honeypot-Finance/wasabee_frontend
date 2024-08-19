@@ -36,9 +36,14 @@ const PoolsPage: NextLayoutPage = observer(() => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    liquidity.initPool();
+  }, [wallet.isInit]);
+
+  useEffect(() => {
     if (wallet.isInit && liquidity.isInit) {
       setLoading(false);
       liquidity.pairPage.reloadPage();
+      liquidity.myPairPage.reloadPage();
     }
   }, [wallet.isInit, liquidity.isInit]);
 
@@ -89,10 +94,6 @@ const PoolsPage: NextLayoutPage = observer(() => {
   //     );
   //   },
   // }));
-
-  useEffect(() => {
-    liquidity.initPool();
-  }, [wallet.isInit]);
 
   return (
     <div className="flex flex-col items-center">
@@ -170,8 +171,8 @@ const PoolsPage: NextLayoutPage = observer(() => {
                   animate="visible"
                 >
                   {liquidity.isInit ? (
-                    liquidity.myPairs.length > 0 ? (
-                      liquidity.myPairs.map((pair) => (
+                    liquidity.myPairPage.pageItems.value.length > 0 ? (
+                      liquidity.myPairPage.pageItems.value.map((pair) => (
                         <motion.div
                           variants={itemSlideVariants}
                           key={pair.address}

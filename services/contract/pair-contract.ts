@@ -4,7 +4,7 @@ import { BaseContract } from ".";
 import { wallet } from "../wallet";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import { makeAutoObservable } from "mobx";
-import { getContract, zeroAddress } from "viem";
+import { Address, getContract, zeroAddress } from "viem";
 import { AsyncState } from "../utils";
 import { amountFormatted, formatAmount } from "@/lib/format";
 import dayjs from "dayjs";
@@ -29,9 +29,10 @@ export class PairContract implements BaseContract {
   token1: Token = new Token({}); // fixed
   isInit = false;
   isLoading = false;
+  canClaimLP = false;
 
-  get isNativeWrapPair () {
-    return this.address === zeroAddress
+  get isNativeWrapPair() {
+    return this.address === zeroAddress;
   }
 
   get token0LpBalance() {
@@ -190,6 +191,18 @@ export class PairContract implements BaseContract {
       try {
         await Promise.all([
           (async () => {
+            if (this.token0.address) {
+              this.token0 = Token.getToken({
+                address: (await this.contract.read.token0()) as string,
+              });
+            }
+
+            if (this.token1.address) {
+              this.token1 = Token.getToken({
+                address: (await this.contract.read.token1()) as string,
+              });
+            }
+
             this.token = Token.getToken({
               address: this.address,
             });

@@ -33,11 +33,15 @@ export const Profile = observer(() => {
     if (!wallet.isInit) {
       return;
     }
+    if (!liquidity.isInit) {
+      liquidity.initPool();
+      return;
+    }
     launchpad.showNotValidatedPairs = true;
     launchpad.myFtoPairs.call();
     launchpad.getMyFtoParticipatedPairs.call();
-    liquidity.initPool();
-  }, [wallet.isInit]);
+    liquidity.myPairPage.reloadPage();
+  }, [wallet.isInit, liquidity.isInit]);
 
   return (
     <div className="m-auto flex justify-center items-start flex-col max-w-[800px] gap-2">
@@ -240,8 +244,8 @@ export const Profile = observer(() => {
                   animate="visible"
                 >
                   {liquidity.isInit ? (
-                    liquidity.myPairs.length > 0 ? (
-                      liquidity.myPairs.map((pair) => (
+                    liquidity.myPairPage.pageItems.value.length > 0 ? (
+                      liquidity.myPairPage.pageItems.value.map((pair) => (
                         <motion.div
                           variants={itemSlideVariants}
                           key={pair.address}

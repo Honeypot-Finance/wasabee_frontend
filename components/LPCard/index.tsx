@@ -141,6 +141,7 @@ export const RemoveLiquidity = observer(
         value: 0.25,
       }),
     }));
+
     return liquidity.currentRemovePair ? (
       <div className="flex justify-center">
         <div className="flex flex-col gap-[24px] items-center lg:w-[360px]">
@@ -233,7 +234,7 @@ export const RemoveLiquidity = observer(
             },
           },
         ]}
-        datasource={liquidity.myPairs}
+        datasource={liquidity.myPairPage.pageItems.value}
       ></Table>
     );
   }

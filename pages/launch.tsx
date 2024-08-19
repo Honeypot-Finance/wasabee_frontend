@@ -5,15 +5,11 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/button";
 import launchpad from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
-import { RocketSvg } from "@/components/svg/Rocket";
-import { PeddingSvg } from "@/components/svg/Pedding";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
-import { Copy } from "@/components/copy";
 import { LaunchCard } from "@/components/LaunchCard";
 import Image from "next/image";
 import {
   Input,
-  Pagination,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -23,14 +19,12 @@ import {
   Button as NextButton,
   Checkbox,
 } from "@nextui-org/react";
-import { IoClose, IoSearchOutline } from "react-icons/io5";
+import { IoSearchOutline } from "react-icons/io5";
 import { SpinnerContainer } from "@/components/Spinner";
 import { DropdownSvg } from "@/components/svg/dropdown";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
-import { trpcClient } from "@/lib/trpc";
-import { Token } from "@/services/contract/token";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { FaCrown } from "react-icons/fa";
 
@@ -54,7 +48,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
+    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4 [font-family:MEMEP]">
       <div className="flex w-full justify-end gap-2">
         <Button className="scale-[0.8] sm:scale-100">
           <Link href="/launch-token" className="text-black font-bold">
@@ -65,7 +59,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
 
       {mostSuccessProjects && mostSuccessProjects.length > 0 && (
         <>
-          <h2 className="w-full text-center text-[3rem] [font-family:MEME] font-bold">
+          <h2 className="w-full text-center text-[3rem] [font-family:MEMEH] font-bold">
             Trending Projects
           </h2>
           <motion.div

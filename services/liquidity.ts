@@ -17,7 +17,7 @@ import dayjs from "dayjs";
 import { PageRequest, PairFilter } from "./indexer/indexerTypes";
 
 class Liquidity {
-  pairPage = new IndexerPaginationState<PairFilter, PairContract>({
+  pairPage = new IndexerPaginationState<any, PairContract>({
     LoadNextPageFunction: async (
       filter: PairFilter,
       pageRequest: PageRequest
@@ -38,6 +38,7 @@ class Liquidity {
             ...pair.token1,
             address: pair.token1.id,
           });
+
           const pairContract = new PairContract({
             token0,
             token1,
@@ -80,6 +81,75 @@ class Liquidity {
       searchString: "",
       limit: 10,
     },
+  });
+
+  myPairPage = new IndexerPaginationState<any, PairContract>({
+    LoadNextPageFunction: async (filter, pageRequest: PageRequest) => {
+      const pairs = await trpcClient.indexerFeedRouter.getHoldingsPairs.query({
+        walletAddress: wallet.account,
+        chainId: String(wallet.currentChainId),
+        pageRequest: pageRequest,
+      });
+
+      console.log("myPairPage", pairs);
+
+      if (pairs.status === "success") {
+        const pariContracts = pairs.data.holdingPairs.map((pair) => {
+          const token0 = Token.getToken({
+            address: pair.pair.token0Id,
+            name: pair.pair.token0name,
+            symbol: pair.pair.token0symbol,
+          });
+
+          const token1 = Token.getToken({
+            address: pair.pair.token1Id,
+            name: pair.pair.token1name,
+            symbol: pair.pair.token1symbol,
+          });
+
+          const pairContract = new PairContract({
+            address: pair.pairId,
+            token0,
+            token1,
+          });
+
+          if (!this.tokensMap[token0.address]) {
+            this.tokensMap[token0.address] = token0;
+
+            token0.init();
+          }
+
+          if (!this.tokensMap[token1.address]) {
+            this.tokensMap[token1.address] = token1;
+
+            token1.init();
+          }
+
+          this.pairsByToken[`${token0.address}-${token1.address}`] =
+            pairContract;
+
+          pairContract.init();
+
+          return pairContract;
+        });
+
+        return {
+          items: pariContracts,
+          pageInfo: pairs.data.pageInfo,
+        };
+      } else {
+        return {
+          items: [],
+          pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: "",
+            endCursor: "",
+          },
+        };
+      }
+    },
+    filter: null,
   });
 
   pairs: PairContract[] = [];
@@ -174,13 +244,6 @@ class Liquidity {
 
   get factoryContract() {
     return wallet.contracts.factory;
-  }
-
-  get myPairs() {
-    console.log("pairs", this.pairs);
-    return this.pairs.filter(
-      (pair) => pair.token0LpBalance.gt(0) || pair.token1LpBalance.gt(0)
-    );
   }
 
   get isDisabled() {
@@ -396,40 +459,6 @@ class Liquidity {
       return;
     }
 
-    const pairs = await trpcClient.indexerFeedRouter.getAllPairs.query();
-
-    if (pairs.status === "success") {
-      this.pairs = pairs.data.pairs.map((pair) => {
-        const token0 = Token.getToken({
-          ...pair.token0,
-          address: pair.token0.id,
-        });
-        const token1 = Token.getToken({
-          ...pair.token1,
-          address: pair.token1.id,
-        });
-        const pairContract = new PairContract({
-          token0,
-          token1,
-
-          address: pair.id,
-        });
-
-        if (!this.tokensMap[token0.address]) {
-          this.tokensMap[token0.address] = token0;
-
-          token0.init();
-        }
-        if (!this.tokensMap[token1.address]) {
-          this.tokensMap[token1.address] = token1;
-
-          token1.init();
-        }
-        this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract;
-        pairContract.init();
-        return pairContract;
-      });
-    }
     this.isInit = true;
   }
 

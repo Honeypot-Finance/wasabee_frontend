@@ -13,12 +13,15 @@ import {
   PageRequest,
   GhostToken,
   PairFilter,
+  holdingPairs,
+  GhostHoldingPairsResponse,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
+import { Address } from "viem";
 
 const ftoGraphHandle = "3cbba216-c29c-465b-95d4-be5ebeed1f35/ghostgraph";
-const pairGraphHandle = "a7f362c9-8b02-4c80-ac63-adf2af22db0a/ghostgraph";
+const pairGraphHandle = "42b070fb-e695-4c4e-9b93-0f8183094c20/ghostgraph";
 
 export class GhostIndexer {
   apiKey: string;
@@ -385,7 +388,7 @@ export class GhostIndexer {
     walletAddress: string,
     chainId: string,
     pageRequest?: PageRequest
-  ) => {
+  ): Promise<ApiResponseType<GhostHoldingPairsResponse>> => {
     const dirCondition = pageRequest?.cursor
       ? pageRequest?.direction === "next"
         ? `after:"${pageRequest?.cursor}"`
@@ -394,29 +397,23 @@ export class GhostIndexer {
 
     const query = `#graphql
     {
-      pairs(
-        where: {
-          OR: [
-            { token0Id: "${walletAddress}" }
-            { token1Id: "${walletAddress}" }
-          ]
-        }
-        limit: 10
-        ${dirCondition}
+      holdingPairs(where: {holder: "${walletAddress}"},
+      orderBy: "totalLpAmount",
+      orderDirection: "desc",
+      limit: 10, ${dirCondition}
       ) {
         items {
-          id
-          token0 {
-            id
-            name
-            symbol
-            decimals
-          }
-          token1 {
-            id
-            name
-            symbol
-            decimals
+          pairId
+          totalLpAmount
+          deCreaselpAmount
+          inCreaselpAmount
+          pair{
+            token0Id
+            token1Id
+            token0name
+            token1name
+            token0symbol
+            token1symbol
           }
         }
         pageInfo {
@@ -426,12 +423,16 @@ export class GhostIndexer {
           endCursor
         }
       }
-  }
+    }
   `;
+
+    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
     });
+
+    console.log(res);
 
     if (res.status === "error") {
       return res;
@@ -440,8 +441,8 @@ export class GhostIndexer {
         status: "success",
         message: "Success",
         data: {
-          pairs: (res.data as any).pairs?.items as GhostPair[],
-          pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
+          holdingPairs: (res.data as any).holdingPairs?.items as holdingPairs[],
+          pageInfo: (res.data as any).holdingPairs?.pageInfo as PageInfo,
         } ?? {
           pairs: [],
           pageInfo: {
@@ -476,8 +477,6 @@ export class GhostIndexer {
           provider
         )
       : undefined;
-
-    console.log(filter.searchString);
 
     const query = `#graphql
         {
@@ -539,8 +538,6 @@ export class GhostIndexer {
           }
         }
       `;
-
-    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,

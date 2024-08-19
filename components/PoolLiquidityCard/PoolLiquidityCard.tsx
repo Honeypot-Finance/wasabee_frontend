@@ -31,7 +31,7 @@ export const PoolLiquidityCard = observer(
   ({ pair, autoSize, showMyLiquidity }: PoolLiquidityCardProps) => {
     const router = useRouter();
     const [isRemoveLpPopUpOpen, setIsRemoveLpPopUpOpen] = useState(false);
-    console.log("isRemoveLpPopUpOpen", isRemoveLpPopUpOpen);
+
     return (
       <CardContianer autoSize={autoSize}>
         <PopUp

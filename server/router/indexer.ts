@@ -1,15 +1,7 @@
-import { TokenPriceDataFeed } from "@/services/priceFeed/tokenPriceDataFeed";
 import { publicProcedure, router } from "../trpc";
 import z from "zod";
-import { DefinedPriceFeed } from "@/services/priceFeed/PriceFeedProviders/PriceFeedProviders";
-import {
-  ChartDataResponse,
-  TokenCurrentPriceResponseType,
-} from "@/services/priceFeed/priceFeedTypes";
-import Indexer, { indexer } from "@/services/indexer/indexer";
-import { statusTextToNumber, type PairFilter } from "@/services/launchpad";
-import { filter } from "lodash";
-import { GhostIndexer } from "@/services/indexer/indexerProviders/ghost";
+import { indexer } from "@/services/indexer/indexer";
+import { type PairFilter } from "@/services/launchpad";
 import {
   GhostPairResponse,
   PageRequest,
@@ -46,18 +38,7 @@ export const indexerFeedRouter = router({
             input.pageRequest as PageRequest
           );
 
-          if (res.status === "error") {
-            return {
-              status: "error",
-              message: res.message,
-            } as const;
-          } else {
-            return {
-              status: "success",
-              data: res.data,
-              message: "Success",
-            } as const;
-          }
+          return res;
         }
       );
     }),
@@ -77,18 +58,7 @@ export const indexerFeedRouter = router({
             input.limit
           );
 
-          if (res.status === "error") {
-            return {
-              status: "error",
-              message: res.message,
-            } as const;
-          } else {
-            return {
-              status: "success",
-              data: res.data,
-              message: "Success",
-            } as const;
-          }
+          return res;
         }
       );
     }),
@@ -113,30 +83,16 @@ export const indexerFeedRouter = router({
         async () => {
           const res = await indexer.getAllFtoTokens();
 
-          if (res.status === "error") {
-            return {
-              status: "error",
-              message: res.message,
-            };
-          } else {
-            return {
-              status: "success",
-              data: res.data,
-              message: "Success",
-            };
-          }
+          return res;
         }
       );
     }),
   getAllPairs: publicProcedure.query(
     async (): Promise<ApiResponseType<GhostPairResponse>> => {
-      return cacheProvider.getOrSet(
-        getCacheKey("getAllPairs"),
-        async () => {
-          const res = await indexer.dataProvider.getAllPairs();
-          return res;
-        })
- 
+      return cacheProvider.getOrSet(getCacheKey("getAllPairs"), async () => {
+        const res = await indexer.dataProvider.getAllPairs();
+        return res;
+      });
     }
   ),
   getFilteredPairs: publicProcedure
@@ -163,7 +119,7 @@ export const indexerFeedRouter = router({
     )
     .query(async ({ input }): Promise<ApiResponseType<GhostPairResponse>> => {
       return cacheProvider.getOrSet(
-        getCacheKey("getFilteredPairs", input), 
+        getCacheKey("getFilteredPairs", input),
         async () => {
           const res = await indexer.getFilteredPairs(
             input.filter,
@@ -171,20 +127,39 @@ export const indexerFeedRouter = router({
             input.provider,
             input.pageRequest
           );
-    
-          if (res.status === "error") {
-            return {
-              status: "error",
-              message: res.message,
-            };
-          } else {
-            return {
-              status: "success",
-              data: res.data,
-              message: "Success",
-            };
-          }
-        })
-  
+
+          return res;
+        }
+      );
+    }),
+
+  getHoldingsPairs: publicProcedure
+    .input(
+      z.object({
+        walletAddress: z.string(),
+        chainId: z.string(),
+        pageRequest: z
+          .object({
+            direction: z.string(z.enum(["next", "prev"])),
+            cursor: z.string().optional(),
+          })
+          .optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      return cacheProvider.getOrSet(
+        getCacheKey("getHoldingsPairs", input),
+        async () => {
+          const res = await indexer.getHoldingPairs(
+            input.walletAddress,
+            input.chainId,
+            input.pageRequest as PageRequest
+          );
+
+          //console.log("res", res);
+
+          return res;
+        }
+      );
     }),
 });

@@ -14,10 +14,15 @@
 }
 
 @font-face {
-  font-family: "MEME";
+  font-family: "MEMEH";
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   src: url("/fonts/meme/MemeFont.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "MEMEP";
+  src: url("/fonts/meme/MemeParagraph.ttf") format("truetype");
 }
 
 html,

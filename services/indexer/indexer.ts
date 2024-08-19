@@ -4,6 +4,7 @@ import { GhostIndexer } from "./indexerProviders/ghost";
 import {
   GhostFtoPairResponse,
   GhostFtoTokensResponse,
+  GhostHoldingPairsResponse,
   GhostPairResponse,
   IndexerProvider,
   PageRequest,
@@ -75,6 +76,22 @@ export default class Indexer<T extends IndexerProvider> {
   }) {
     return await this.dataProvider.getPairByTokens({ token0, token1 });
   }
+
+  getHoldingPairs = async (
+    walletAddress: string,
+    chainId: string,
+    pageRequest?: PageRequest
+  ): Promise<ApiResponseType<GhostHoldingPairsResponse>> => {
+    const res = await this.dataProvider.getHoldingPairs(
+      walletAddress,
+      chainId,
+      pageRequest
+    );
+
+    //console.log("res", res);
+
+    return res;
+  };
 }
 
 const ghostIndexer = new GhostIndexer(
