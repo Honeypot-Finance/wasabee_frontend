@@ -20,7 +20,7 @@ import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 import { Address } from "viem";
 
-const ftoGraphHandle = "3cbba216-c29c-465b-95d4-be5ebeed1f35/ghostgraph";
+const ftoGraphHandle = "d27732e1-591f-4a84-bb99-209fe4022b6e/ghostgraph";
 const pairGraphHandle = "42b070fb-e695-4c4e-9b93-0f8183094c20/ghostgraph";
 
 export class GhostIndexer {
