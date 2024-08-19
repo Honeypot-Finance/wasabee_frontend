@@ -27,6 +27,7 @@ import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { FaCrown } from "react-icons/fa";
+import { time } from "console";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -77,15 +78,29 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 }
               >
                 <CardContianer>
-                  {idx === 0 && (
-                    <FaCrown className="absolute top-0 left-2 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[500%] fill-yellow-300" />
-                  )}
-                  {idx === 1 && (
-                    <FaCrown className="absolute top-0 left-1 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[300%] fill-gray-300" />
-                  )}
-                  {idx === 2 && (
-                    <FaCrown className="absolute top-0 left-0 rotate-[-30deg] translate-x-[-30%] translate-y-[-50%] scale-[100%] fill-amber-800" />
-                  )}
+                  <motion.div
+                    className="absolute  top-0 left-0"
+                    initial={{
+                      rotate: 0,
+                    }}
+                    whileHover={{
+                      rotate: [0, -10, 10, -10, 10, -10, 10, -10, 10, 0],
+                    }}
+                    transition={{
+                      times: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+                      duration: 1,
+                    }}
+                  >
+                    {idx === 0 && (
+                      <FaCrown className="absolute top-0 left-2 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[500%] fill-yellow-300" />
+                    )}
+                    {idx === 1 && (
+                      <FaCrown className="absolute top-0 left-1 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[300%] fill-gray-300" />
+                    )}
+                    {idx === 2 && (
+                      <FaCrown className="absolute top-0 left-0 rotate-[-30deg] translate-x-[-30%] translate-y-[-50%] scale-[100%] fill-amber-800" />
+                    )}
+                  </motion.div>
                   <div className="flex flex-col gap-2 justify-center items-center flex-grow-[1] basis-1">
                     <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
                       <Image
