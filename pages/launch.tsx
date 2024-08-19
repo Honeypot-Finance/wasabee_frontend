@@ -266,29 +266,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 {launchpad.ftoPageInfo.pageItems.value.map(
                   (pair: FtoPairContract) => (
                     <motion.div variants={itemPopUpVariants} key={pair.address}>
-                      <LaunchCard
-                        pair={pair}
-                        action={
-                          <div className="flex flex-col gap-[0.5rem] lg:flex-row">
-                            <Link
-                              href={`/launch-detail/${pair.address}`}
-                              className="text-black font-bold w-full px-[8px]"
-                            >
-                              <Button className="w-full">View Token</Button>
-                            </Link>
-                            {pair.ftoState === 0 && (
-                              <Link
-                                href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
-                                className="text-black font-bold w-full px-[8px]"
-                              >
-                                <Button className="w-full">
-                                  <p>Swap Token</p>
-                                </Button>{" "}
-                              </Link>
-                            )}
-                          </div>
-                        }
-                      />
+                      <LaunchCard pair={pair} action={<></>} />
                     </motion.div>
                   )
                 )}
@@ -313,17 +291,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 {launchpad.myFtoPairs.value?.data.map(
                   (pair: FtoPairContract) => (
                     <div key={pair.address}>
-                      <LaunchCard
-                        pair={pair}
-                        action={
-                          <Link
-                            href={`/launch-detail/${pair.address}`}
-                            className="text-black font-bold w-full px-[8px]"
-                          >
-                            <Button className="w-full">View Token</Button>
-                          </Link>
-                        }
-                      />
+                      <LaunchCard pair={pair} action={<></>} />
                     </div>
                   )
                 )}

@@ -144,10 +144,40 @@ export const LaunchCard = observer(
             </div>
           </div>
         </div>
-        {pair?.canClaimLP && (
-          <Button className="w-full mt-[16px]">canClaimLP</Button>
-        )}
-        {action && <div className="w-full mt-[16px]">{action}</div>}
+        <div className="w-full mt-[16px] flex gap-4 flex-col lg:flex-row justify-center items-center *:w-full">
+          {pair?.canClaimLP && (
+            <div>
+              <Button
+                className="w-full"
+                onClick={() => {
+                  pair.claimLP.call();
+                }}
+                style={{
+                  backgroundColor: "green",
+                }}
+              >
+                Claim LP
+              </Button>
+            </div>
+          )}
+          <Link
+            href={`/launch-detail/${pair?.address}`}
+            className="text-black font-bold w-full "
+          >
+            <Button className="w-full">View Token</Button>
+          </Link>
+          {pair?.ftoState === 0 && (
+            <Link
+              href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
+              className="text-black font-bold w-full "
+            >
+              <Button className="w-full">
+                <p>Swap Token</p>
+              </Button>{" "}
+            </Link>
+          )}
+          {action}
+        </div>
       </motion.div>
     );
   }

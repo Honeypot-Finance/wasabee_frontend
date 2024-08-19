@@ -138,35 +138,7 @@ export const Profile = observer(() => {
                       <LaunchCard
                         key={project.address}
                         pair={project}
-                        action={
-                          <div className="flex">
-                            <Link
-                              href={`/launch-detail/${project.address}`}
-                              className="text-black font-bold w-full px-[8px]"
-                            >
-                              <Button className="w-full">View Token</Button>
-                            </Link>
-                            {project.ftoState === 0 && (
-                              <Link
-                                href={`/swap?inputCurrency=${project.launchedToken?.address}&outputCurrency=${project.raiseToken?.address}`}
-                                className="text-black font-bold w-full px-[8px]"
-                              >
-                                <Button className="w-full">
-                                  <p>Swap Token</p>
-                                  <p>
-                                    <Copy
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                      }}
-                                      className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-                                      value={`${window.location.origin}/swap?inputCurrency=${project.launchedToken?.address}&outputCurrency=${project.raiseToken?.address}`}
-                                    ></Copy>
-                                  </p>
-                                </Button>{" "}
-                              </Link>
-                            )}
-                          </div>
-                        }
+                        action={<></>}
                       />
                     ))
                   )}
@@ -191,35 +163,7 @@ export const Profile = observer(() => {
                         <LaunchCard
                           key={project.address}
                           pair={project}
-                          action={
-                            <div className="flex">
-                              <Link
-                                href={`/launch-detail/${project.address}`}
-                                className="text-black font-bold w-full px-[8px]"
-                              >
-                                <Button className="w-full">View Token</Button>
-                              </Link>
-                              {project.ftoState === 0 && (
-                                <Link
-                                  href={`/swap?inputCurrency=${project.launchedToken?.address}&outputCurrency=${project.raiseToken?.address}`}
-                                  className="text-black font-bold w-full px-[8px]"
-                                >
-                                  <Button className="w-full">
-                                    <p>Swap Token</p>
-                                    <p>
-                                      <Copy
-                                        onClick={(e) => {
-                                          e.preventDefault();
-                                        }}
-                                        className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-                                        value={`${window.location.origin}/swap?inputCurrency=${project.launchedToken?.address}&outputCurrency=${project.raiseToken?.address}`}
-                                      ></Copy>
-                                    </p>
-                                  </Button>{" "}
-                                </Link>
-                              )}
-                            </div>
-                          }
+                          action={<></>}
                         />
                       )
                     )
