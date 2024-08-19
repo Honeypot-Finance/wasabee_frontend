@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { isEthAddress } from "@/lib/address";
 import { wallet } from "@/services/wallet";
-import { Tab, Tabs } from "@nextui-org/react";
+import { Slider, Tab, Tabs } from "@nextui-org/react";
 import { Table } from "../table";
 import { ItemSelect, SelectState } from "../ItemSelect";
 import { SelectItem } from "../ItemSelect/index";
@@ -146,6 +146,37 @@ export const RemoveLiquidity = observer(
       <div className="flex justify-center">
         <div className="flex flex-col gap-[24px] items-center lg:w-[400px]">
           <div className="w-full"></div>
+          <Slider
+            value={Number(state.selectState.value)}
+            onChange={(value) => {
+              state.selectState.value = Number(value);
+            }}
+            minValue={0}
+            maxValue={1}
+            step={0.01}
+            marks={[
+              {
+                value: 0,
+                label: "0%",
+              },
+              {
+                value: 0.25,
+                label: "25%",
+              },
+              {
+                value: 0.5,
+                label: "50%",
+              },
+              {
+                value: 0.75,
+                label: "75%",
+              },
+              {
+                value: 1,
+                label: "100%",
+              },
+            ]}
+          />
           <ItemSelect
             selectState={state.selectState}
             className="gap-[16px] justify-around w-full flex flex-wrap"
