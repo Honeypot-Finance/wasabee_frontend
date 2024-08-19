@@ -106,6 +106,11 @@ const PoolsPage: NextLayoutPage = observer(() => {
                 searchString: e.target.value,
               });
             }}
+            onClear={() => {
+              liquidity.pairPage.updateFilter({
+                searchString: "",
+              });
+            }}
             startContent={<IoSearchOutline></IoSearchOutline>}
             placeholder="Search by name, symbol or address"
             classNames={{
@@ -118,7 +123,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
               router.push("/pool");
             }}
             styleMode="plain"
-            className=" md:w-[170px] h-[41px] gap-2.5"
+            className="md:w-[170px] h-[41px] gap-2.5"
           >
             <LuPlus />
             Create Pool
