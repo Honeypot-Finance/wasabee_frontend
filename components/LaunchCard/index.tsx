@@ -47,6 +47,7 @@ export const LaunchCard = observer(
     pair?: FtoPairContract | null;
     action: React.ReactNode;
   } & Partial<HTMLAttributes<any>>) => {
+    console.log("pair", pair?.canClaimLP);
     return (
       <motion.div
         variants={itemPopUpVariants}

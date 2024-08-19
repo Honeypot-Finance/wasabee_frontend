@@ -16,11 +16,9 @@ import { trpc, trpcQueryClient } from "../lib/trpc";
 import { useEffect } from "react";
 import { wallet } from "@/services/wallet";
 import { DM_Sans } from "next/font/google";
-import { Inspector } from 'react-dev-inspector'
+import { Inspector } from "react-dev-inspector";
 import { StorageState } from "@/services/utils";
 
-
-const dmSans = DM_Sans({ subsets: ["latin"], weight: ["400"] });
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
 
@@ -50,8 +48,8 @@ export default function App({
           <RainbowKitProvider>
             <NextUIProvider>
               <Provider>
-                <Inspector keys={['Ctrl', 'Shift', 'Z']}></Inspector>
-                <ComponentLayout className={dmSans.className}>
+                <Inspector keys={["Ctrl", "Shift", "Z"]}></Inspector>
+                <ComponentLayout className={"[font-family:MEMEP]"}>
                   <Component {...pageProps} />
                 </ComponentLayout>
               </Provider>
