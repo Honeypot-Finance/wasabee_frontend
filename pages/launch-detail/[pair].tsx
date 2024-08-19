@@ -52,6 +52,7 @@ import { useParams } from "next/navigation";
 import { useQueries } from "@tanstack/react-query";
 import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
 import { chart } from "@/services/chart";
+import CopyToClipboard from "react-copy-to-clipboard";
 
 const UpdateProjectModal = observer(({ pair }: { pair: FtoPairContract }) => {
   const {
@@ -720,9 +721,17 @@ const LaunchPage: NextLayoutPage = observer(() => {
               <div className="text-[rgba(255,255,255,0.66)] text-sm font-medium leading-[normal]">
                 Token address
               </div>
-              <div className="mt-[8px] flex  h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px]">
-                {state.pair.value?.launchedToken?.address}{" "}
-              </div>
+
+              <Copy
+                className={"w-full"}
+                content="Copy address"
+                value={state.pair.value?.launchedToken?.address ?? ""}
+                displayContent={
+                  <span className="mt-[8px] flex  h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px] cursor-pointer hover:brightness-150 active:brightness-75 select-none">
+                    {state.pair.value?.launchedToken?.address}
+                  </span>
+                }
+              />
             </div>
 
             <div className="grid grid-cols-3">
