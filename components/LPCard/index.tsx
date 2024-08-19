@@ -248,6 +248,18 @@ export const LPCard = observer(() => {
     outputCurrency: string;
   };
 
+  useEffect(() => {
+    if (!wallet.isInit) return;
+    liquidity.initPool();
+  }, [wallet.isInit]);
+
+  useEffect(() => {
+    if (wallet.isInit && liquidity.isInit) {
+      liquidity.pairPage.reloadPage();
+      liquidity.myPairPage.reloadPage();
+    }
+  }, [wallet.isInit, liquidity.isInit]);
+
   const isinit = wallet.isInit;
 
   useEffect(() => {
