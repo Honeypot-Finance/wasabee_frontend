@@ -78,6 +78,7 @@ export const TokenSelector = observer(
       },
       tokens: [] as Token[],
     }));
+
     useEffect(() => {
       state.filterTokensBySearch();
     }, [state.search]);
@@ -112,7 +113,11 @@ export const TokenSelector = observer(
             ],
           }}
         >
-          <PopoverTrigger>
+          <PopoverTrigger
+            onClick={() => {
+              state.setSearch("");
+            }}
+          >
             <Button className="inline-flex max-w-full justify-start w-[124px] h-10 items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]">
               {value && (
                 <TokenLogo
