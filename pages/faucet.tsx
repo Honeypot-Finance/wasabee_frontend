@@ -22,6 +22,7 @@ import { FaDonate } from "react-icons/fa";
 import { sendTransaction } from "viem/actions";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import Countdown from "react-countdown";
 
 export function DonationModal({
   balance,
@@ -190,8 +191,21 @@ const FaucetPage: NextLayoutPage = observer(() => {
               >
                 <ControlledToolTip
                   content={
-                    faucet.nativeFaucet.cantClaimReason ??
-                    "HPOT holders can claim BERA tokens every 24 hours."
+                    faucet.nativeFaucet.nextFaucetTime ? (
+                      <Countdown
+                        date={faucet.nativeFaucet.nextFaucetTime * 1000}
+                        renderer={({ hours, minutes, seconds, completed }) => {
+                          if (completed) {
+                            return "Now!";
+                          } else {
+                            return `Next Claim: ${hours}h ${minutes}m ${seconds}s`;
+                          }
+                        }}
+                      />
+                    ) : (
+                      faucet.nativeFaucet.cantClaimReason ??
+                      "HPOT holders can claim BERA tokens every 24 hours."
+                    )
                   }
                 >
                   <Button

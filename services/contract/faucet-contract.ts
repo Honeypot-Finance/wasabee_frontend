@@ -18,6 +18,7 @@ export class NativeFaucetContract implements BaseContract {
   name: string = "";
   canclaim = false;
   cantClaimReason = "";
+  nextFaucetTime: number | undefined = undefined;
   abi = DailyFaucetABI;
 
   constructor(args: Partial<NativeFaucetContract>) {
@@ -39,8 +40,12 @@ export class NativeFaucetContract implements BaseContract {
       wallet.account as `0x${string}`,
     ]);
 
+    console.log(timeFaucetable);
+
     if (!timeFaucetable) {
       this.canclaim = false;
+      await this.getNextFaucetTime();
+      console.log(this.nextFaucetTime);
       this.cantClaimReason = "Need to wait 24 hours before next claim";
       return false;
     }
@@ -68,6 +73,16 @@ export class NativeFaucetContract implements BaseContract {
 
     this.canclaim = true;
     return this.canclaim;
+  }
+
+  async getNextFaucetTime(): Promise<number> {
+    const res = await this.contract.read?.fauceter([
+      wallet.account as `0x${string}`,
+    ]);
+
+    this.nextFaucetTime = Number(res.toString());
+
+    return this.nextFaucetTime;
   }
 
   get Claim(): ContractWrite<any> {

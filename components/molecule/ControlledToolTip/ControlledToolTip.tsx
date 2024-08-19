@@ -5,7 +5,7 @@ export function ControlledToolTip({
   content,
   children,
 }: {
-  content: string;
+  content: React.ReactNode;
   children: React.ReactNode;
 }) {
   const [isTooltipOpen, setTooltipOpen] = useState(false);
