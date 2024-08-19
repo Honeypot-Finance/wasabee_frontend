@@ -408,6 +408,10 @@ const LaunchPage: NextLayoutPage = observer(() => {
   }));
   const account = useAccount();
 
+  chart.setChartLabel(
+    state.pair.value?.launchedToken?.displayName + "/USD" ?? ""
+  );
+
   // remind provider to edit project details
   useEffect(() => {
     if (

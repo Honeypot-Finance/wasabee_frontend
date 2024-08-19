@@ -27,7 +27,6 @@ import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { FaCrown } from "react-icons/fa";
-import { time } from "console";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();

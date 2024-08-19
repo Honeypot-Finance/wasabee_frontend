@@ -1,6 +1,6 @@
 import { trpcClient } from "@/lib/trpc";
 import { ChartData } from "@/public/static/charting_library/charting_library";
-import { chart } from "@/services/chart";
+import { chart, chartTimeRanges } from "@/services/chart";
 import { PairContract } from "@/services/contract/pair-contract";
 import { Token } from "@/services/contract/token";
 import { liquidity } from "@/services/liquidity";
@@ -14,6 +14,7 @@ import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
+import CardContianer from "../CardContianer/CardContianer";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   loading: () => <p>Loading...</p>,
@@ -316,7 +317,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
               price as number,
             ];
           }) ?? defaultDisplayData,
-        color: "orange",
+        color: chart.chartColors.labelColor,
         name: "price",
       },
     ],
@@ -327,7 +328,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
         zoom: {
           autoScaleYaxis: true,
         },
-        foreColor: "orange",
+        foreColor: chart.chartColors.textColor,
         toolbar: {
           show: false,
           autoSelected: undefined,
@@ -344,17 +345,28 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
         min: chart.timestampsByRange * 1000,
         max: dayjs().unix() * 1000,
         tickAmount: 6,
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
       },
       yaxis: {
         labels: {
           formatter: function (val) {
             return val?.toFixed(5);
           },
+          align: "right",
         },
+        tickAmount: 4,
       },
       tooltip: {
         x: {
-          format: "dd MMM yyyy",
+          format:
+            chart.range === "1D" || chart.range === "1H"
+              ? "dd MMM HH:mm"
+              : "dd MMM yyyy",
         },
         theme: "dark",
         fillSeriesColor: true,
@@ -363,10 +375,30 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
         type: "gradient",
         gradient: {
           shadeIntensity: 1,
-          opacityFrom: 0.7,
-          opacityTo: 0.9,
-          stops: [0, 100],
+          opacityFrom: 1,
+          opacityTo: 0,
+          stops: [],
+          colorStops: [
+            {
+              offset: 0,
+              color: chart.chartColors.labelColor,
+              opacity: 1,
+            },
+            {
+              offset: 70,
+              color: chart.chartColors.labelColor,
+              opacity: 0.5,
+            },
+            {
+              offset: 100,
+              color: chart.chartColors.labelColor,
+              opacity: 0,
+            },
+          ],
         },
+      },
+      grid: {
+        show: false,
       },
     },
   });
@@ -397,7 +429,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
                     price as number,
                   ];
                 }) ?? defaultDisplayData,
-              color: "orange",
+              color: chart.chartColors.labelColor,
               name: "price",
             },
           ],
@@ -409,6 +441,16 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
               max: dayjs().unix() * 1000,
               tickAmount: 6,
             },
+            tooltip: {
+              ...state.options.tooltip,
+              x: {
+                ...state.options.tooltip?.x,
+                format:
+                  chart.range === "1D" || chart.range === "1H"
+                    ? "dd MMM HH:mm"
+                    : "dd MMM yyyy",
+              },
+            },
           },
         });
       });
@@ -417,52 +459,33 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
 
   return (
     <div className="relative w-full h-full">
-      {chart.isLoading && (
-        <FaSpinner className="animate-spin absolute top-1/3 left-1/2 z-50"></FaSpinner>
-      )}
-      <Chart options={state.options} series={state.series} type="area" />
-      <div className="flex justify-between items-center flex-wrap">
-        <Button
-          isDisabled={chart.range === "1D" || chart.isLoading}
-          onClick={() => {
-            chart.setRange("1D");
-          }}
-        >
-          1D
-        </Button>
-        <Button
-          isDisabled={chart.range === "3D" || chart.isLoading}
-          onClick={() => {
-            chart.setRange("3D");
-          }}
-        >
-          3D
-        </Button>
-        <Button
-          isDisabled={chart.range === "7D" || chart.isLoading}
-          onClick={() => {
-            chart.setRange("7D");
-          }}
-        >
-          7D
-        </Button>
-        <Button
-          isDisabled={chart.range === "15D" || chart.isLoading}
-          onClick={() => {
-            chart.setRange("15D");
-          }}
-        >
-          15D
-        </Button>
-        <Button
-          isDisabled={chart.range === "1M" || chart.isLoading}
-          onClick={() => {
-            chart.setRange("1M");
-          }}
-        >
-          1M
-        </Button>
-      </div>
+      <CardContianer autoSize>
+        {chart.isLoading && (
+          <FaSpinner className="animate-spin absolute top-1/3 left-1/2 z-50"></FaSpinner>
+        )}
+        <div className="relative w-full h-full flex-col flex items-center justify-center">
+          <div className="flex justify-between items-center w-full">
+            <span className="pl-4">{chart.chartLabel}</span>
+            <div className="flex justify-between items-center flex-wrap">
+              {Object.values(chartTimeRanges).map((range) => (
+                <Button
+                  className="min-w-[1rem] disabled:border-[red_2px_solid] "
+                  key={range.value}
+                  isDisabled={chart.range === range.label || chart.isLoading}
+                  onClick={() => {
+                    chart.setRange(range.label);
+                  }}
+                >
+                  {range.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+          <div className="w-full">
+            <Chart options={state.options} series={state.series} type="area" />
+          </div>
+        </div>
+      </CardContianer>
     </div>
   );
 });

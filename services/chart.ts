@@ -2,11 +2,52 @@ import { action, makeAutoObservable, reaction } from "mobx";
 import { Token } from "./contract/token";
 import { PairContract } from "./contract/pair-contract";
 import { AsyncState } from "./utils";
-import { ChartDataResponse } from "./priceFeed/priceFeedTypes";
+import { ChartDataResponse, resolutionType } from "./priceFeed/priceFeedTypes";
 import { wallet } from "./wallet";
 import { trpcClient } from "@/lib/trpc";
 import { dayjs } from "@/lib/dayjs";
 import { debounce } from "lodash";
+
+type Range = "1H" | "1D" | "1W" | "1M" | "6M" | "1Y";
+
+export const chartTimeRanges: {
+  [key: string]: {
+    label: Range;
+    value: number;
+    resolution: resolutionType;
+  };
+} = {
+  "1H": {
+    label: "1H",
+    value: dayjs().unix() - 60 * 60,
+    resolution: "1",
+  },
+  "1D": {
+    label: "1D",
+    value: dayjs().unix() - 60 * 60 * 24,
+    resolution: "5",
+  },
+  "1W": {
+    label: "1W",
+    value: dayjs().unix() - 60 * 60 * 24 * 7,
+    resolution: "15",
+  },
+  "1M": {
+    label: "1M",
+    value: dayjs().unix() - 60 * 60 * 24 * 30,
+    resolution: "60",
+  },
+  "6M": {
+    label: "6M",
+    value: dayjs().unix() - 60 * 60 * 24 * 180,
+    resolution: "720",
+  },
+  "1Y": {
+    label: "1Y",
+    value: dayjs().unix() - 60 * 60 * 24 * 365,
+    resolution: "7D",
+  },
+};
 
 class Chart {
   isLoading = false;
@@ -14,9 +55,15 @@ class Chart {
   chartTarget: Token | PairContract | null = null;
   tokenNumber: 0 | 1 = 0;
   currencyCode: "USD" | "TOKEN" = "USD";
-  resolution: "1" | "5" | "15" | "30" | "60" | "240" | "720" | "1D" | "7D" =
-    "30";
-  range: "1D" | "3D" | "7D" | "15D" | "1M" = "1D";
+  range: Range = "1D";
+  chartColors = {
+    textColor: "white",
+    labelColor: "orange",
+    // line: "#FFA500",
+    // area: "#FFA500",
+    // background: "#000000",
+  };
+  chartLabel = "";
 
   chartData = new AsyncState<
     () => Promise<ChartDataResponse | undefined>,
@@ -33,7 +80,7 @@ class Chart {
       tokenAddress: this.chartTarget.address,
       from: this.timestampsByRange,
       to: dayjs().unix(),
-      resolution: this.resolution,
+      resolution: chartTimeRanges[this.range].resolution,
       tokenNumber: this.tokenNumber,
       currencyCode: this.currencyCode,
     });
@@ -48,18 +95,7 @@ class Chart {
   });
 
   get timestampsByRange() {
-    switch (this.range) {
-      case "1D":
-        return dayjs().unix() - 60 * 60 * 24;
-      case "3D":
-        return dayjs().unix() - 60 * 60 * 24 * 3;
-      case "7D":
-        return dayjs().unix() - 60 * 60 * 24 * 7;
-      case "15D":
-        return dayjs().unix() - 60 * 60 * 24 * 15;
-      case "1M":
-        return dayjs().unix() - 60 * 60 * 24 * 30;
-    }
+    return chartTimeRanges[this.range].value;
   }
 
   constructor() {
@@ -79,7 +115,8 @@ class Chart {
   setChartTarget(target: Token | PairContract | null) {
     this.chartTarget = target;
   }
-  setRange(value: "1D" | "3D" | "7D" | "15D" | "1M") {
+
+  setRange(value: "1H" | "1D" | "1W" | "1M" | "6M" | "1Y") {
     this.range = value;
   }
 
@@ -91,10 +128,8 @@ class Chart {
     this.currencyCode = value;
   }
 
-  setResolution(
-    value: "1" | "5" | "15" | "30" | "60" | "240" | "720" | "1D" | "7D"
-  ) {
-    this.resolution = value;
+  setChartLabel(value: string) {
+    this.chartLabel = value;
   }
 }
 

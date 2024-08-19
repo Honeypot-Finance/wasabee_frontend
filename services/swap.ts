@@ -202,6 +202,7 @@ class Swap {
         this.currentPair.setValue(undefined);
         await this.toToken?.init();
         chart.setChartTarget(this.fromToken as Token);
+        this.updateChartData();
         if (this.fromToken && this.toToken) {
           await this.currentPair.call();
           chart.setChartTarget(this.currentPair.value as PairContract);
@@ -215,6 +216,7 @@ class Swap {
         this.currentPair.setValue(undefined);
         await this.toToken?.init();
         chart.setChartTarget(this.toToken);
+        this.updateChartData();
         if (this.fromToken && this.toToken) {
           await this.currentPair.call();
           chart.setChartTarget(this.currentPair.value as PairContract);
@@ -612,6 +614,14 @@ class Swap {
     const bestPrice = Math.max(...prices.map((p) => p.toNumber()));
 
     return path[prices.findIndex((p) => p.toNumber() === bestPrice)];
+  };
+
+  updateChartData = async () => {
+    const label = `${this.fromToken?.symbol}${
+      this.toToken ? "/" + this.toToken.symbol : "/USD"
+    }`;
+
+    chart.setChartLabel(label);
   };
 }
 
