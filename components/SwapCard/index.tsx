@@ -142,7 +142,16 @@ export const SwapCard = observer(() => {
                   maxValue={(swap.fromToken as Token).balance.toNumber()}
                   minValue={0}
                   onChange={(value) => {
-                    swap.setFromAmount(value.toString());
+                    if (
+                      Number(value) >
+                      (swap.fromToken as Token).balance.toNumber()
+                    ) {
+                      swap.setFromAmount(
+                        (swap.fromToken as Token).balance.toFixed()
+                      );
+                    } else {
+                      swap.setFromAmount(Number(value).toString());
+                    }
                   }}
                   value={Number(swap.fromAmount)}
                   step={0.00001}
