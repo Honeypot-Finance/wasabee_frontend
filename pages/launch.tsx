@@ -134,7 +134,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
       )}
 
       <div>
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div id="filter" className="flex flex-col sm:flex-row gap-2">
           <Input
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
@@ -147,6 +147,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
             className=" border [background:var(--card-color,#271A0C)] rounded-2xl border-solid border-[rgba(225,138,32,0.10)]"
           ></Input>{" "}
           <Popover
+            shouldBlockScroll
             isOpen={isOpen}
             onOpenChange={(isOpen) => {
               isOpen ? onOpen() : onClose();
