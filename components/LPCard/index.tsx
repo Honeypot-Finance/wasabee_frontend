@@ -148,7 +148,7 @@ export const RemoveLiquidity = observer(
           <div className="w-full"></div>
           <ItemSelect
             selectState={state.selectState}
-            className="gap-[16px] justify-around w-full flex"
+            className="gap-[16px] justify-around w-full flex flex-wrap"
           >
             <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
               25%
