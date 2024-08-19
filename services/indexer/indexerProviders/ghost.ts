@@ -161,7 +161,7 @@ export class GhostIndexer {
           data: { items: [] },
         };
 
-    const query = `#graphql
+    const query = `
         {
           pairs(
             where: {
@@ -240,6 +240,8 @@ export class GhostIndexer {
         }
       `;
 
+    console.log(query);
+
     const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
 
     if (res.status === "error") {
@@ -294,7 +296,7 @@ export class GhostIndexer {
   getFilteredFtoTokens = async (
     filter: Partial<FtoPairFilter>
   ): Promise<ApiResponseType<GhostFtoTokensResponse>> => {
-    const query = `#graphql
+    const query = `
         {
           erc20s(
             where: {
@@ -395,7 +397,7 @@ export class GhostIndexer {
         : `before:"${pageRequest?.cursor}"`
       : "";
 
-    const query = `#graphql
+    const query = `
     {
       holdingPairs(where: {holder: "${walletAddress}", totalLpAmount_gt: "0"},
       orderBy: "totalLpAmount",
@@ -425,8 +427,6 @@ export class GhostIndexer {
       }
     }
   `;
-
-    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
@@ -478,7 +478,7 @@ export class GhostIndexer {
         )
       : undefined;
 
-    const query = `#graphql
+    const query = `
         {
           pairs(
             where: {
@@ -572,7 +572,7 @@ export class GhostIndexer {
     token0: string;
     token1: string;
   }) {
-    const query = `#graphql
+    const query = `
       query {   
         pairs0: pairs(
         where: {OR:[{token0Id: "${token0}", token1Id: "${token1}"},{token0Id: "${token1}", token1Id: "${token0}"}]}

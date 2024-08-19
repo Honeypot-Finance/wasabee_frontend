@@ -363,10 +363,15 @@ export class FtoPairContract implements BaseContract {
     }
 
     try {
-      const res = await this.contract.read.claimableLP([wallet.account] as [
+      const claimed = await this.contract.read.claimedLp([wallet.account] as [
         `0x${string}`
       ]);
-      this.canClaimLP = res > 0;
+
+      const claimable = await this.contract.read.claimableLP([
+        wallet.account,
+      ] as [`0x${string}`]);
+
+      this.canClaimLP = claimable > claimed;
     } catch (error) {
       this.canClaimLP = false;
     }

@@ -479,8 +479,6 @@ class Liquidity {
                 token1: Token.getToken(pairQuery.token1),
               });
 
-              console.log("pair", pair);
-
               this.pairs.push(pair);
 
               if (!this.tokensMap[token0.address.toLowerCase()]) {

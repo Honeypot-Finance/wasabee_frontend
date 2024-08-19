@@ -252,7 +252,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
             className="next-tab"
             onSelectionChange={(key) => {
               if (key === "my") {
-                console.log("my");
                 launchpad.myFtoPairs.call();
               }
             }}
