@@ -191,18 +191,6 @@ export class PairContract implements BaseContract {
       try {
         await Promise.all([
           (async () => {
-            if (this.token0.address) {
-              this.token0 = Token.getToken({
-                address: (await this.contract.read.token0()) as string,
-              });
-            }
-
-            if (this.token1.address) {
-              this.token1 = Token.getToken({
-                address: (await this.contract.read.token1()) as string,
-              });
-            }
-
             this.token = Token.getToken({
               address: this.address,
             });

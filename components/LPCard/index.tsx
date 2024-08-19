@@ -195,10 +195,11 @@ export const RemoveLiquidity = observer(
             <Button
               className="flex-1"
               isLoading={liquidity.currentRemovePair?.removeLiquidity.loading}
-              onClick={() => {
-                liquidity.currentRemovePair?.removeLiquidity.call(
+              onClick={async () => {
+                await liquidity.currentRemovePair?.removeLiquidity.call(
                   state.selectState.value as number
                 );
+                liquidity.currentRemovePair?.getReserves();
               }}
             >
               Remove

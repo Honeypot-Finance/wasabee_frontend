@@ -47,6 +47,7 @@ class Swap {
   currentPair = new AsyncState(async () => {
     if (this.fromToken && this.toToken) {
       if (this.isWrapOrUnwrap) {
+        console.log("wrap or unwrap");
         return new PairContract({
           address: zeroAddress,
           token0: this.fromToken,
@@ -74,8 +75,33 @@ class Swap {
           return res;
         }
       } else {
-        console.log("no pair found");
-        await this.getRouterToken();
+        const pairContract = await liquidity.getPairByTokens(
+          this.fromToken.address,
+          this.toToken.address
+        );
+        if (pairContract) {
+          console.log("pair contract found");
+          if (!liquidity.tokensMap[this.fromToken.address]) {
+            liquidity.tokensMap[this.fromToken.address] = this.fromToken;
+
+            this.fromToken.init();
+          }
+          if (!liquidity.tokensMap[this.toToken.address]) {
+            liquidity.tokensMap[this.toToken.address] = this.toToken;
+
+            this.toToken.init();
+          }
+          liquidity.pairsByToken[
+            `${this.fromToken.address}-${this.toToken.address}`
+          ] = pairContract!;
+
+          pairContract!.init();
+
+          return pairContract;
+        } else {
+          console.log("pair not found");
+          await this.getRouterToken();
+        }
       }
     }
   });
@@ -242,6 +268,7 @@ class Swap {
   setDeadline(deadline: number) {
     this.deadline = deadline;
   }
+
   setSlippage(slippage: number) {
     this.slippage = slippage;
   }

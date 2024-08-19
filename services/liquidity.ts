@@ -12,7 +12,7 @@ import {
   StorageState,
   ValueState,
 } from "./utils";
-import { add, debounce } from "lodash";
+import { add, debounce, forEach } from "lodash";
 import dayjs from "dayjs";
 import { PageRequest, PairFilter } from "./indexer/indexerTypes";
 
@@ -90,8 +90,6 @@ class Liquidity {
         chainId: String(wallet.currentChainId),
         pageRequest: pageRequest,
       });
-
-      console.log("myPairPage", pairs);
 
       if (pairs.status === "success") {
         const pariContracts = pairs.data.holdingPairs.map((pair) => {
@@ -463,28 +461,33 @@ class Liquidity {
   }
 
   async getPairByTokens(token0Address: string, token1Address: string) {
-    const memoryPair = this.getMemoryPair(token0Address, token1Address);
-    if (memoryPair) {
-      memoryPair.init();
-      return memoryPair;
-    }
+    try {
+      const memoryPair = this.getMemoryPair(token0Address, token1Address);
+      if (memoryPair) {
+        memoryPair.init();
+        return memoryPair;
+      }
 
-    const pair = await trpcClient.pair.getPairByTokens.query({
-      chainId: wallet.currentChainId,
-      token0Address,
-      token1Address,
-    });
-
-    if (pair) {
-      const pairContract = new PairContract({
-        address: pair.address,
-        token0: Token.getToken(pair.token0),
-        token1: Token.getToken(pair.token1),
+      const pair = await trpcClient.pair.getPairByTokens.query({
+        chainId: wallet.currentChainId,
+        token0Address,
+        token1Address,
       });
-      pairContract.init();
 
-      this.pairsByToken[`${token0Address}-${token1Address}`] = pairContract;
-      return pairContract;
+      if (pair) {
+        const pairContract = new PairContract({
+          address: pair.address,
+          token0: Token.getToken(pair.token0),
+          token1: Token.getToken(pair.token1),
+        });
+        pairContract.init();
+
+        this.pairsByToken[`${token0Address}-${token1Address}`] = pairContract;
+        return pairContract;
+      }
+    } catch (e) {
+      console.log(e);
+      return undefined;
     }
   }
 
