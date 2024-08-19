@@ -397,7 +397,7 @@ export class GhostIndexer {
 
     const query = `#graphql
     {
-      holdingPairs(where: {holder: "${walletAddress}"},
+      holdingPairs(where: {holder: "${walletAddress}", totalLpAmount_gt: "0"},
       orderBy: "totalLpAmount",
       orderDirection: "desc",
       limit: 10, ${dirCondition}
