@@ -6,9 +6,24 @@ import { ChartDataResponse, resolutionType } from "./priceFeed/priceFeedTypes";
 import { wallet } from "./wallet";
 import { trpcClient } from "@/lib/trpc";
 import { dayjs } from "@/lib/dayjs";
-import { debounce } from "lodash";
+import { debounce, get } from "lodash";
 
 type Range = "1H" | "1D" | "1W" | "1M" | "6M" | "1Y";
+
+export const chartColorThemes = {
+  default: {
+    textColor: "white",
+    labelColor: "orange",
+  },
+  green: {
+    textColor: "white",
+    labelColor: "#43D9A3",
+  },
+  red: {
+    textColor: "white",
+    labelColor: "red",
+  },
+};
 
 export const chartTimeRanges: {
   [key: string]: {
@@ -56,13 +71,7 @@ class Chart {
   tokenNumber: 0 | 1 = 0;
   currencyCode: "USD" | "TOKEN" = "USD";
   range: Range = "1D";
-  chartColors = {
-    textColor: "white",
-    labelColor: "orange",
-    // line: "#FFA500",
-    // area: "#FFA500",
-    // background: "#000000",
-  };
+  chartColors = chartColorThemes.default;
   chartLabel = "";
 
   chartData = new AsyncState<
@@ -93,6 +102,63 @@ class Chart {
       return priceDataRequest.data;
     }
   });
+
+  get currentPrice() {
+    if (this.chartData.value?.getBars.c) {
+      return this.chartData.value.getBars.c[
+        this.chartData.value.getBars.c.length - 1
+      ];
+    } else {
+      return 0;
+    }
+  }
+
+  get chartPricePercentageChange() {
+    if (this.chartData.value?.getBars.c) {
+      const firstPrice = this.firstValidPrice;
+      const lastPrice = this.lastValidPrice;
+
+      console.log("firstPrice", firstPrice);
+      console.log("lastPrice", lastPrice);
+      return ((lastPrice - firstPrice) / firstPrice) * 100;
+    } else {
+      return 0;
+    }
+  }
+
+  get firstValidPrice() {
+    console.log("this.chartData.value", this.chartData.value);
+    if (this.chartData.value?.getBars.c) {
+      let i = 0;
+      while (
+        this.chartData.value.getBars.c[i] === undefined ||
+        this.chartData.value.getBars.c[i] === null
+      ) {
+        console.log("i", i);
+        i++;
+      }
+
+      return this.chartData.value.getBars.c[i] ?? 0;
+    } else {
+      return 0;
+    }
+  }
+
+  get lastValidPrice() {
+    if (this.chartData.value?.getBars.c) {
+      let i = this.chartData.value.getBars.c.length - 1;
+      while (
+        this.chartData.value.getBars.c[i] === undefined ||
+        this.chartData.value.getBars.c[i] === null
+      ) {
+        i--;
+      }
+
+      return this.chartData.value.getBars.c[i] ?? 0;
+    } else {
+      return 0;
+    }
+  }
 
   get timestampsByRange() {
     return chartTimeRanges[this.range].value;
@@ -130,6 +196,10 @@ class Chart {
 
   setChartLabel(value: string) {
     this.chartLabel = value;
+  }
+
+  setChartColors(value: "default" | "green" | "red") {
+    this.chartColors = chartColorThemes[value];
   }
 }
 

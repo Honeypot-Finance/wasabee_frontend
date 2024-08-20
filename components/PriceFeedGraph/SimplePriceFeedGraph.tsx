@@ -1,20 +1,22 @@
 import { trpcClient } from "@/lib/trpc";
 import { ChartData } from "@/public/static/charting_library/charting_library";
-import { chart, chartTimeRanges } from "@/services/chart";
+import { chart, chartColorThemes, chartTimeRanges } from "@/services/chart";
 import { PairContract } from "@/services/contract/pair-contract";
 import { Token } from "@/services/contract/token";
 import { liquidity } from "@/services/liquidity";
 import { swap } from "@/services/swap";
 import { wallet } from "@/services/wallet";
-import { Button } from "@nextui-org/react";
+import { Button, cn } from "@nextui-org/react";
 import { ApexOptions } from "apexcharts";
 import dayjs from "dayjs";
 import { set } from "lodash";
 import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { FaSpinner } from "react-icons/fa";
+import { FaSortDown, FaSortUp, FaSpinner } from "react-icons/fa";
 import CardContianer from "../CardContianer/CardContianer";
+import { BiDownArrow, BiDownArrowAlt, BiDownvote } from "react-icons/bi";
+import { IoArrowDown, IoCaretDown, IoCaretUp } from "react-icons/io5";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   loading: () => <p>Loading...</p>,
@@ -418,6 +420,10 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
       chart.setCurrencyCode(currencyCode);
 
       chart.chartData.call().then(() => {
+        const chartColor =
+          chart.chartPricePercentageChange >= 0 ? "green" : "red";
+        chart.setChartColors(chartColor);
+
         setState({
           ...state,
           series: [
@@ -451,6 +457,29 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
                     : "dd MMM yyyy",
               },
             },
+            fill: {
+              ...state.options.fill,
+              gradient: {
+                ...state.options.fill?.gradient,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: chart.chartColors.labelColor,
+                    opacity: 1,
+                  },
+                  {
+                    offset: 70,
+                    color: chart.chartColors.labelColor,
+                    opacity: 0.5,
+                  },
+                  {
+                    offset: 100,
+                    color: chart.chartColors.labelColor,
+                    opacity: 0,
+                  },
+                ],
+              },
+            },
           },
         });
       });
@@ -480,6 +509,27 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
                 </Button>
               ))}
             </div>
+          </div>
+          <div className="w-full pl-4">
+            <span className="mr-2 text-[2rem]">
+              {(chart.currentPrice ?? 0) < 0.004 && "<"}
+              {chart.currentPrice?.toFixed(2)}
+            </span>
+            <span
+              className={cn(
+                "inline-flex justify-start",
+                chart.chartPricePercentageChange >= 0
+                  ? "text-green-500"
+                  : "text-red-500"
+              )}
+            >
+              {chart.chartPricePercentageChange >= 0 ? (
+                <IoCaretUp className="inline" />
+              ) : (
+                <IoCaretDown className="inline" />
+              )}
+              {chart.chartPricePercentageChange.toFixed(2)}%
+            </span>
           </div>
           <div className="w-full">
             <Chart options={state.options} series={state.series} type="area" />
