@@ -26,7 +26,7 @@ export const amountFormatted = (
   if (r.isLessThan(minValue)) {
     return prefix + `<${minValue.toFixed()}`;
   }
-  return prefix + new BigNumber(new BigNumber(r.toFixed(fixed)).toFixed()).toFormat();
+  return prefix + new BigNumber(new BigNumber(r.toFixed(fixed, 1)).toFixed()).toFormat();
 };
 
 // truncate middle of string

@@ -233,9 +233,6 @@ class Swap {
         if (!this.currentPair.value && !this.routerToken) {
           return;
         }
-
-        this.fromAmount = String(Number(this.fromAmount));
-
         if (
           new BigNumber(this.fromAmount || 0).isGreaterThan(0) &&
           this.fromToken &&
