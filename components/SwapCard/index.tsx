@@ -79,7 +79,7 @@ export const SwapCard = observer(() => {
       className="flex flex-1 justify-around items-center max-w-[574px]"
       isLoading={false}
     >
-      <div className=" flex flex-1 flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
+      <div className=" flex flex-1 flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-3 border-solid border-[#F7931A]">
         <LoadingContainer isLoading={!isInit}>
           <>
             <div className="flex items-center justify-between w-full  text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px]">
@@ -120,9 +120,14 @@ export const SwapCard = observer(() => {
                           (swap.fromToken as Token).balance.toFixed()
                         );
                       }}
-                      className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline"
+                      className=" pb-2 cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] ml-[8px] font-bold  underline"
                     >
-                      Max
+                      <Image
+                        src={"/images/icons/artisticTexts/MAX.svg"}
+                        alt={""}
+                        width={40}
+                        height={40}
+                      ></Image>
                     </div>
                   </div>
                 )}

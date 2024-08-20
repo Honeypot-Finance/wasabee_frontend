@@ -6,7 +6,6 @@ import { ChartDataResponse, resolutionType } from "./priceFeed/priceFeedTypes";
 import { wallet } from "./wallet";
 import { trpcClient } from "@/lib/trpc";
 import { dayjs } from "@/lib/dayjs";
-import { debounce, get } from "lodash";
 
 type Range = "1H" | "1D" | "1W" | "1M" | "6M" | "1Y";
 
