@@ -66,7 +66,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
   };
   return (
     <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto mb-[30vh]">
-      <Breadcrumbs
+      {/* <Breadcrumbs
         breadcrumbs={[
           {
             title: "Projects",
@@ -77,7 +77,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
             href: "/launch-token",
           },
         ]}
-      ></Breadcrumbs>
+      ></Breadcrumbs> */}
       <div className=" flex items-center justify-center mt-[24px]">
         {launchpad.ftofactoryContract?.createFTO.loading ? (
           <div className="flex h-[566px] w-full sm:w-[583px] justify-center items-center [background:#121212] rounded-[54px]">
@@ -97,12 +97,12 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col w-full sm:w-[580.188px] items-center border-[color:var(--Button-Gradient,#F7931A)] bg-[#291C0A] py-4 px-[5px] rounded-[54px] border-2">
+          <div className="flex flex-col w-full sm:w-[584px] lg:w-[900px] items-center border-[color:var(--Button-Gradient,#F7931A)] bg-[#291C0A] py-4 px-[5px] rounded-[54px] border-2">
             <div className="flex items-center gap-2">
               <DreampadSvg />
               <span>Dreampad</span>
             </div>
-            <div className="mt-4 opacity-50 w-full sm:w-[409px] text-center mb-4 ">
+            <div className="mt-4 opacity-50 w-full sm:w-[409px] lg:w-[800px] text-center mb-4 ">
               Launch your token within three steps.{" "}
               <span className="underline cursor-pointer">Read more</span> about
               Dreampad.
@@ -119,7 +119,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                     type="text"
                     {...register("provider")}
                     defaultValue={wallet.account}
-                    className="outline-none w-full sm:w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
+                    className="outline-none w-full sm:w-[522px] lg:w-[800px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
                   />
                 )}
               </div>
@@ -129,7 +129,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                 <input
                   type="text"
                   {...register("tokenName", { required: true })}
-                  className="outline-none w-full sm:w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
                 />
                 {errors.tokenName && (
                   <span className="text-red-500">Token Name is required</span>
@@ -140,7 +140,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                 <input
                   type="text"
                   {...register("tokenSymbol", { required: true })}
-                  className="outline-none w-full sm:w-[522px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
                 />
                 {errors.tokenSymbol && (
                   <span className="text-red-500">Token Symbol is required</span>

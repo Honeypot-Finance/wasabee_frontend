@@ -117,8 +117,6 @@ class Chart {
       const firstPrice = this.firstValidPrice;
       const lastPrice = this.lastValidPrice;
 
-      console.log("firstPrice", firstPrice);
-      console.log("lastPrice", lastPrice);
       return ((lastPrice - firstPrice) / firstPrice) * 100;
     } else {
       return 0;
@@ -126,14 +124,12 @@ class Chart {
   }
 
   get firstValidPrice() {
-    console.log("this.chartData.value", this.chartData.value);
     if (this.chartData.value?.getBars.c) {
       let i = 0;
       while (
         this.chartData.value.getBars.c[i] === undefined ||
         this.chartData.value.getBars.c[i] === null
       ) {
-        console.log("i", i);
         i++;
       }
 

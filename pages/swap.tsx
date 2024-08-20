@@ -24,7 +24,9 @@ const SwapPage = observer(() => {
 
   return (
     <>
-      <div className={`lg:grid ${chart.showChart && "grid-cols-2"} `}>
+      <div
+        className={`lg:grid ${chart.showChart && "grid-cols-2"}  mb-[20vh] `}
+      >
         <div className="relative w-full flex justify-center content-center items-center">
           <SwapCard></SwapCard>
         </div>
