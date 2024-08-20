@@ -191,21 +191,8 @@ const FaucetPage: NextLayoutPage = observer(() => {
               >
                 <ControlledToolTip
                   content={
-                    faucet.nativeFaucet.nextFaucetTime ? (
-                      <Countdown
-                        date={faucet.nativeFaucet.nextFaucetTime * 1000}
-                        renderer={({ hours, minutes, seconds, completed }) => {
-                          if (completed) {
-                            return "Now!";
-                          } else {
-                            return `Next Claim: ${hours}h ${minutes}m ${seconds}s`;
-                          }
-                        }}
-                      />
-                    ) : (
-                      faucet.nativeFaucet.cantClaimReason ??
-                      "HPOT holders can claim BERA tokens every 24 hours."
-                    )
+                    faucet.nativeFaucet.cantClaimReason ??
+                    "HPOT holders can claim BERA tokens every 24 hours."
                   }
                 >
                   <Button
@@ -218,7 +205,22 @@ const FaucetPage: NextLayoutPage = observer(() => {
                     isDisabled={!faucet.nativeFaucet.canclaim}
                     isLoading={faucet.nativeFaucet.Claim.loading}
                   >
-                    {faucet.nativeFaucet.canclaim ? "Claim" : "Not Available"}
+                    {faucet.nativeFaucet.nextFaucetTime ? (
+                      <Countdown
+                        date={faucet.nativeFaucet.nextFaucetTime * 1000}
+                        renderer={({ hours, minutes, seconds, completed }) => {
+                          if (completed) {
+                            return "Now!";
+                          } else {
+                            return `Next Claim: ${hours}h ${minutes}m ${seconds}s`;
+                          }
+                        }}
+                      />
+                    ) : faucet.nativeFaucet.canclaim ? (
+                      "Claim"
+                    ) : (
+                      "Not Available"
+                    )}
                   </Button>
                 </ControlledToolTip>
               </motion.div>
