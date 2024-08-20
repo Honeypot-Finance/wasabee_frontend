@@ -202,11 +202,11 @@ class Swap {
         this.currentPair.setValue(undefined);
         await this.toToken?.init();
         chart.setChartTarget(this.fromToken as Token);
-        this.updateChartData();
         if (this.fromToken && this.toToken) {
           await this.currentPair.call();
           chart.setChartTarget(this.currentPair.value as PairContract);
         }
+        this.updateChartData();
       }
     );
     reaction(
@@ -216,7 +216,6 @@ class Swap {
         this.currentPair.setValue(undefined);
         await this.toToken?.init();
         chart.setChartTarget(this.toToken);
-        this.updateChartData();
         if (this.fromToken && this.toToken) {
           await this.currentPair.call();
           chart.setChartTarget(this.currentPair.value as PairContract);
@@ -225,6 +224,7 @@ class Swap {
             this.fromAmount = "0" + this.fromAmount;
           }
         }
+        this.updateChartData();
       }
     );
     reaction(
@@ -233,6 +233,8 @@ class Swap {
         if (!this.currentPair.value && !this.routerToken) {
           return;
         }
+        this.fromAmount = String(Number(this.fromAmount));
+
         if (
           new BigNumber(this.fromAmount || 0).isGreaterThan(0) &&
           this.fromToken &&
@@ -614,9 +616,15 @@ class Swap {
   };
 
   updateChartData = async () => {
-    const label = `${this.fromToken?.symbol}${
-      this.toToken ? "/" + this.toToken.symbol : "/USD"
-    }`;
+    let label = "";
+
+    if (!chart.chartTarget) {
+      label = "No chart available";
+    } else {
+      label = `${this.fromToken?.symbol}${
+        this.toToken ? "/" + this.toToken.symbol : "/USD"
+      }`;
+    }
 
     chart.setChartLabel(label);
   };

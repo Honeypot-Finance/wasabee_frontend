@@ -468,8 +468,8 @@ class Liquidity {
         trpcClient.pair.getPairByTokens
           .query({
             chainId: wallet.currentChainId,
-            token0Address: token0.address,
-            token1Address: token1.address,
+            token0Address: token0.address.toLowerCase(),
+            token1Address: token1.address.toLowerCase(),
           })
           .then((pairQuery) => {
             if (pairQuery) {

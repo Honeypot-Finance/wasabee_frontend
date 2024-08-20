@@ -66,7 +66,7 @@ export const chartTimeRanges: {
 class Chart {
   isLoading = false;
   showChart = false;
-  chartTarget: Token | PairContract | null = null;
+  chartTarget: Token | PairContract | undefined = undefined;
   tokenNumber: 0 | 1 = 0;
   currencyCode: "USD" | "TOKEN" = "USD";
   range: Range = "1D";
@@ -173,7 +173,7 @@ class Chart {
     this.showChart = !this.showChart;
   }
 
-  setChartTarget(target: Token | PairContract | null) {
+  setChartTarget(target: Token | PairContract | undefined) {
     this.chartTarget = target;
   }
 

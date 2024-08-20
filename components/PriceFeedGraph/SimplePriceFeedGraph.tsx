@@ -17,6 +17,7 @@ import { FaSortDown, FaSortUp, FaSpinner } from "react-icons/fa";
 import CardContianer from "../CardContianer/CardContianer";
 import { BiDownArrow, BiDownArrowAlt, BiDownvote } from "react-icons/bi";
 import { IoArrowDown, IoCaretDown, IoCaretUp } from "react-icons/io5";
+import HoneyStickSvg from "../svg/HoneyStick";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   loading: () => <p>Loading...</p>,
@@ -24,7 +25,7 @@ const Chart = dynamic(() => import("react-apexcharts"), {
 });
 
 interface Props {
-  priceFeedTarget: Token | PairContract | null;
+  priceFeedTarget: Token | PairContract | undefined;
 }
 
 const defaultDisplayData = [
@@ -510,30 +511,42 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
               ))}
             </div>
           </div>
-          <div className="w-full pl-4">
-            <span className="mr-2 text-[2rem]">
-              {(chart.currentPrice ?? 0) < 0.004 && "<"}
-              {chart.currentPrice?.toFixed(2)}
-            </span>
-            <span
-              className={cn(
-                "inline-flex justify-start",
-                chart.chartPricePercentageChange >= 0
-                  ? "text-green-500"
-                  : "text-red-500"
-              )}
-            >
-              {chart.chartPricePercentageChange >= 0 ? (
-                <IoCaretUp className="inline" />
-              ) : (
-                <IoCaretDown className="inline" />
-              )}
-              {chart.chartPricePercentageChange.toFixed(2)}%
-            </span>
-          </div>
-          <div className="w-full">
-            <Chart options={state.options} series={state.series} type="area" />
-          </div>
+          {props.priceFeedTarget ? (
+            <>
+              <div className="w-full pl-4">
+                <span className="mr-2 text-[2rem]">
+                  {(chart.currentPrice ?? 0) < 0.004 && "<"}
+                  {chart.currentPrice?.toFixed(2)}
+                </span>
+                <span
+                  className={cn(
+                    "inline-flex justify-start",
+                    chart.chartPricePercentageChange >= 0
+                      ? "text-green-500"
+                      : "text-red-500"
+                  )}
+                >
+                  {chart.chartPricePercentageChange >= 0 ? (
+                    <IoCaretUp className="inline" />
+                  ) : (
+                    <IoCaretDown className="inline" />
+                  )}
+                  {chart.chartPricePercentageChange.toFixed(2)}%
+                </span>
+              </div>
+              <div className="w-full">
+                <Chart
+                  options={state.options}
+                  series={state.series}
+                  type="area"
+                />
+              </div>
+            </>
+          ) : (
+            <div className="w-full h-[400px] flex items-center justify-center">
+              <HoneyStickSvg />
+            </div>
+          )}
         </div>
       </CardContianer>
     </div>
