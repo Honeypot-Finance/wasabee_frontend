@@ -201,10 +201,8 @@ class Swap {
         this.setRouterToken(undefined);
         this.currentPair.setValue(undefined);
         await this.toToken?.init();
-        chart.setChartTarget(this.fromToken as Token);
         if (this.fromToken && this.toToken) {
           await this.currentPair.call();
-          chart.setChartTarget(this.currentPair.value as PairContract);
         }
         this.updateChartData();
       }
@@ -215,10 +213,8 @@ class Swap {
         this.setRouterToken(undefined);
         this.currentPair.setValue(undefined);
         await this.toToken?.init();
-        chart.setChartTarget(this.toToken);
         if (this.fromToken && this.toToken) {
           await this.currentPair.call();
-          chart.setChartTarget(this.currentPair.value as PairContract);
           if (this.fromAmount.length > 0) {
             // if the fromAmount is not empty, recalculate the toAmount
             this.fromAmount = "0" + this.fromAmount;
@@ -617,6 +613,14 @@ class Swap {
 
   updateChartData = async () => {
     let label = "";
+
+    if (this.fromToken && this.toToken) {
+      chart.setChartTarget(this.currentPair.value as PairContract);
+    } else if (this.fromToken) {
+      chart.setChartTarget(this.fromToken as Token);
+    } else {
+      chart.setChartTarget(undefined);
+    }
 
     if (!chart.chartTarget) {
       label = "No chart available";
