@@ -14,8 +14,8 @@ import { chart } from "./chart";
 import { zeroAddress } from "viem";
 
 class Swap {
-  fromToken: Token | null = null;
-  toToken: Token | null = null;
+  fromToken: Token | undefined = undefined;
+  toToken: Token | undefined = undefined;
 
   fromAmount: string = "";
   toAmount: string = "";
