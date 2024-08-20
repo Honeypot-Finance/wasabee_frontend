@@ -51,6 +51,7 @@ export const SwapCard = observer(() => {
     inputCurrency: string;
     outputCurrency: string;
   };
+
   useEffect(() => {
     if (!isInit) {
       liquidity.initPool();
@@ -100,8 +101,14 @@ export const SwapCard = observer(() => {
                   disabled: !swap.fromToken,
                   max: swap.fromToken?.balance.toNumber(),
                   min: 0,
+                  isInvalid:
+                    (Number(swap.fromAmount) >
+                      (swap.fromToken as Token)?.balance?.toNumber() ??
+                      0) ||
+                    Number(swap.fromAmount) < 0,
+                  errorMessage: "Insufficient balance",
                   onClear: () => {
-                    swap.setFromAmount("");
+                    swap.setFromAmount("0");
                   },
                   onChange: (e) => {
                     swap.setFromAmount(e.target.value);
