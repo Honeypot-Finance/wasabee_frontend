@@ -840,9 +840,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
               })}
             </div>
             {state.pair.value?.ftoState === 0 && (
-              <SimplePriceFeedGraph
-                priceFeedTarget={chart.chartTarget}
-              ></SimplePriceFeedGraph>
+              <SimplePriceFeedGraph></SimplePriceFeedGraph>
             )}
           </div>
         </div>
