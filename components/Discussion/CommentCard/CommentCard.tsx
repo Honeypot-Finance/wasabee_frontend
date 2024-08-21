@@ -25,7 +25,7 @@ export function CommentCard(props: CommentCardProps) {
           height={50}
           alt="bera"
         ></Image>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 overflow-hidden overflow-ellipsis break-words text-nowrap">
           <div className="text-[#FFCD4D] text-base font-bold leading-[normal]">
             {props.commenterName}
           </div>
