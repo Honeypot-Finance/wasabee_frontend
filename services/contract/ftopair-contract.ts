@@ -13,6 +13,7 @@ import { ZodError } from "zod";
 import { statusTextToNumber } from "../launchpad";
 
 export class FtoPairContract implements BaseContract {
+  databaseId: number | undefined = undefined;
   address = "";
   name: string = "";
   abi = MUBAI_FTO_PAIR_ABI;
@@ -268,6 +269,9 @@ export class FtoPairContract implements BaseContract {
       return;
     }
     this.socials = [];
+    if (res.id) {
+      this.databaseId = res.id;
+    }
     if (res.telegram) {
       this.telegram = res.telegram;
       this.socials.push({

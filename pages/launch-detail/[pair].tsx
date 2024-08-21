@@ -14,11 +14,13 @@ import { amountFormatted } from "@/lib/format";
 import { Copy } from "@/components/copy";
 import { LuFileEdit } from "react-icons/lu";
 import {
+  Button as NextButton,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Textarea,
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
@@ -53,6 +55,9 @@ import { useQueries } from "@tanstack/react-query";
 import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
 import { chart } from "@/services/chart";
 import CopyToClipboard from "react-copy-to-clipboard";
+import CardContianer from "@/components/CardContianer/CardContianer";
+import { CommentCard } from "@/components/Discussion/CommentCard/CommentCard";
+import { DiscussionArea } from "@/components/Discussion/DiscussionArea/DiscussionArea";
 
 const UpdateProjectModal = observer(({ pair }: { pair: FtoPairContract }) => {
   const {
@@ -819,6 +824,14 @@ const LaunchPage: NextLayoutPage = observer(() => {
               <SimplePriceFeedGraph></SimplePriceFeedGraph>
             )}
           </div>
+        </div>
+      </div>
+      {/** Comment section */}
+      <div className="flex justify-center mt-[24px] ">
+        <div className="w-full lg:min-w-[1000px] lg:max-w-[1000px]">
+          {state.pair.value && (
+            <DiscussionArea pair={state.pair.value}></DiscussionArea>
+          )}
         </div>
       </div>
     </div>

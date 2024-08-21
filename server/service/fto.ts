@@ -211,6 +211,7 @@ const updateFtoProject = async (data: {
 const selectFtoProject = async (data: { pair: string; chain_id: number }) => {
   return await pg<
     {
+      id: number;
       twitter: string;
       telegram: string;
       website: string;
@@ -219,7 +220,7 @@ const selectFtoProject = async (data: { pair: string; chain_id: number }) => {
       name: string;
       provider: string;
     }[]
-  >`SELECT twitter,logo_url, telegram, website,description,name, provider  FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
+  >`SELECT id,twitter,logo_url, telegram, website,description,name, provider  FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
     data.chain_id
   }`;
 };
