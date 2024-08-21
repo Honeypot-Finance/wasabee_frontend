@@ -90,6 +90,12 @@ export default class Indexer<T extends IndexerProvider> {
 
     return res;
   };
+
+  getValidatedTokenPairs = async (
+    chainId: string
+  ): Promise<ApiResponseType<GhostPairResponse>> => {
+    return await this.dataProvider.getValidatedTokenPairs(chainId);
+  };
 }
 
 const ghostIndexer = new GhostIndexer(

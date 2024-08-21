@@ -459,46 +459,36 @@ class Liquidity {
     }
 
     //init validated pairs
-    const validatedTokens = wallet.currentChain.validatedTokens;
+    const validatedTokenPairs =
+      await trpcClient.indexerFeedRouter.getValidatedTokenPairs.query({
+        chainId: String(wallet.currentChainId),
+      });
 
-    for (let i = 0; i < validatedTokens.length; i++) {
-      for (let j = i + 1; j < validatedTokens.length; j++) {
-        const token0 = validatedTokens[i];
-        const token1 = validatedTokens[j];
-        trpcClient.pair.getPairByTokens
-          .query({
-            chainId: wallet.currentChainId,
-            token0Address: token0.address.toLowerCase(),
-            token1Address: token1.address.toLowerCase(),
-          })
-          .then((pairQuery) => {
-            if (pairQuery) {
-              const pair = new PairContract({
-                address: pairQuery.address,
-                token0: Token.getToken(pairQuery.token0),
-                token1: Token.getToken(pairQuery.token1),
-              });
+    validatedTokenPairs.status === "success" &&
+      validatedTokenPairs.data.pairs.forEach((pair) => {
+        const token0 = Token.getToken({
+          address: pair.token0.id,
+          name: pair.token0.name,
+          symbol: pair.token0.symbol,
+          decimals: pair.token0.decimals,
+        });
+        const token1 = Token.getToken({
+          address: pair.token1.id,
+          name: pair.token1.name,
+          symbol: pair.token1.symbol,
+          decimals: pair.token1.decimals,
+        });
 
-              this.pairs.push(pair);
+        const pairContract = new PairContract({
+          token0,
+          token1,
+          address: pair.id,
+        });
 
-              if (!this.tokensMap[token0.address.toLowerCase()]) {
-                this.tokensMap[token0.address.toLowerCase()] = token0;
-                token0.init();
-              }
+        pairContract.init();
 
-              if (!this.tokensMap[token1.address.toLowerCase()]) {
-                this.tokensMap[token1.address.toLowerCase()] = token1;
-                token1.init();
-              }
-
-              this.pairsByToken[
-                `${token0.address.toLowerCase()}-${token1.address.toLowerCase()}`
-              ] = pair;
-            }
-          })
-          .catch((e) => {});
-      }
-    }
+        this.pairsByToken[`${token0.address}-${token1.address}`] = pairContract;
+      });
 
     this.isInit = true;
   }

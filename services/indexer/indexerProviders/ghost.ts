@@ -19,6 +19,7 @@ import {
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 import { Address } from "viem";
+import { Token } from "@/services/contract/token";
 
 const ftoGraphHandle = "d27732e1-591f-4a84-bb99-209fe4022b6e/ghostgraph";
 const pairGraphHandle = "42b070fb-e695-4c4e-9b93-0f8183094c20/ghostgraph";
@@ -538,6 +539,81 @@ export class GhostIndexer {
           }
         }
       `;
+
+    const res = await this.callIndexerApi(query, {
+      apiHandle: pairGraphHandle,
+    });
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: {
+          pairs: (res.data as any).pairs?.items as GhostPair[],
+          pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
+        } ?? {
+          pairs: [],
+          pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: "",
+            endCursor: "",
+          },
+        },
+      };
+    }
+  };
+
+  getValidatedTokenPairs = async (
+    chainId: string
+  ): Promise<ApiResponseType<GhostPairResponse>> => {
+    const validatedPairs: {
+      token0: string;
+      token1: string;
+    }[] = [];
+
+    const addresses = Object.keys(networksMap[chainId].validatedTokensInfo);
+
+    addresses.forEach((address0: string) => {
+      addresses.forEach((address1: string) => {
+        if (address0 !== address1) {
+          validatedPairs.push({
+            token0: address0,
+            token1: address1,
+          });
+        }
+      });
+    });
+
+    const query = `
+      query {   
+        pairs(
+        where: {OR:[${validatedPairs.map((pair) => {
+          return `
+                  {token0Id: "${pair.token0}", token1Id: "${pair.token1}"}
+                  {token0Id: "${pair.token1}", token1Id: "${pair.token0}"}
+                  `;
+        })}]}
+      ) {
+        items {
+          id
+          token0{
+            id
+            name
+            symbol
+            decimals
+          }
+          token1{
+            id
+            name
+            symbol
+            decimals
+          }
+        }
+      }
+    }`;
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,

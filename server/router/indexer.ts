@@ -162,4 +162,20 @@ export const indexerFeedRouter = router({
         }
       );
     }),
+  getValidatedTokenPairs: publicProcedure
+    .input(
+      z.object({
+        chainId: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      return cacheProvider.getOrSet(
+        getCacheKey("getValidatedTokenPairs", input),
+        async () => {
+          const res = await indexer.getValidatedTokenPairs(input.chainId);
+
+          return res;
+        }
+      );
+    }),
 });
