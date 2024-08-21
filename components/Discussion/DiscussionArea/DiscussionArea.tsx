@@ -73,6 +73,8 @@ export function DiscussionArea(props: DiscussionAreaProps) {
     }
 
     setTimeout(() => {
+      if (window.location.pathname !== `/launch-detail/${props.pair.address}`)
+        return;
       continueFetchComments(res?.[0]?.id ?? afterId);
     }, 2000);
   };
