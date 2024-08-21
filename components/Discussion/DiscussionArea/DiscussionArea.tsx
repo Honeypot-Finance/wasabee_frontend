@@ -119,6 +119,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
         <h2 className="text-[2rem] font-bold">Discussion Board</h2>
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_200px] w-full min-h-[300px] justify-center items-center">
           <Textarea
+            maxRows={15}
             label="Leave a Comment!"
             classNames={{
               base: "w-full h-full bg-[#2F200B]",
