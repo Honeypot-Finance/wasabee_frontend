@@ -154,6 +154,7 @@ export const berachainBartioTestnetNetwork = new Network({
     poolBlacklist: ["0xfF95cdfC724Ca85b8d96D5a6Ea86333AC6a4799D".toLowerCase()],
   },
   validatedTokensInfo: {
+    //when adding a new token, make sure to add the address as lowercase
     "0x7507c1dc16935b82698e4c63f2746a2fcf994df8": {
       name: "Wrapped Bera",
       symbol: "WBERA",
@@ -226,6 +227,7 @@ export const berachainBartioTestnetNetwork = new Network({
       name: "test Arebmeme",
       symbol: "AREB",
       decimals: 18,
+      supportingFeeOnTransferTokens: false,
     },
   },
   validatedFtoAddresses: [

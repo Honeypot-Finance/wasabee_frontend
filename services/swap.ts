@@ -388,6 +388,27 @@ class Swap {
           wallet.account as `0x${string}`,
           BigInt(deadline),
         ]);
+      } else if (
+        this.toToken.supportingFeeOnTransferTokens ||
+        this.fromToken.supportingFeeOnTransferTokens
+      ) {
+        console.log("supporting fee on transfer tokens");
+        console.log([
+          BigInt(fromAmountDecimals),
+          BigInt(minAmountOutDecimals),
+          path,
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]);
+        await this.routerV2Contract.swapExactTokensForTokensSupportingFeeOnTransferTokens.call(
+          [
+            BigInt(fromAmountDecimals),
+            BigInt(minAmountOutDecimals),
+            path,
+            wallet.account as `0x${string}`,
+            BigInt(deadline),
+          ]
+        );
       } else {
         await this.routerV2Contract.swapExactTokensForTokens.call([
           BigInt(fromAmountDecimals),

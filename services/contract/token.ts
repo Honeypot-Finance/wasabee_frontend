@@ -48,6 +48,7 @@ export class Token implements BaseContract {
   logoURI = "";
   priority = 0; // determines the order of the token in the list
   isRouterToken = false;
+  supportingFeeOnTransferTokens = false;
 
   get displayName() {
     return this.symbol || this.name;
@@ -239,6 +240,14 @@ export class Token implements BaseContract {
         this.address.toLowerCase()
       ]?.isRouterToken;
     return this.isRouterToken;
+  }
+
+  getSupportedFeeOnTransferTokens() {
+    this.supportingFeeOnTransferTokens =
+      networksMap[wallet.currentChainId].validatedTokensInfo[
+        this.address.toLowerCase()
+      ]?.supportingFeeOnTransferTokens;
+    return this.supportingFeeOnTransferTokens;
   }
 
   async watch() {
