@@ -684,30 +684,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
               />
             </div>
             <div>
-              {/* <Button
-                onClick={() => {
-                  fetch("/api/fto/updatefto", {
-                    method: "POST",
-                    body: JSON.stringify({
-                      twitter: "https://twitter.com/123",
-                      telegram: "https://t.me/1234",
-                      website: "https://12345",
-                      description: "description",
-                      projectName: "projectName",
-                      pair: state.pair.value?.address,
-                      chain_id: wallet.currentChainId,
-                      creator_api_key: "7523695c-ba97-43bf-bd0c-5740cfddd532",
-                    }),
-                  }).then((res) => {
-                    console.log(res);
-                    res.json().then((data) => {
-                      console.log(data);
-                    });
-                  });
-                }}
-              >
-                test
-              </Button> */}
               <div className="text-[rgba(255,255,255,0.66)] text-[15.958px] font-bold leading-[normal]">
                 Token Raised
               </div>{" "}

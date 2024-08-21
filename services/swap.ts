@@ -12,6 +12,7 @@ import { debounce } from "lodash";
 import dayjs from "dayjs";
 import { chart } from "./chart";
 import { zeroAddress } from "viem";
+import { networksMap } from "./chain";
 
 class Swap {
   fromToken: Token | undefined = undefined;
@@ -197,6 +198,7 @@ class Swap {
     reaction(
       () => this.fromToken?.address,
       async () => {
+        this.loadTokenRouterPairs(this.fromToken!);
         this.setRouterToken(undefined);
         this.currentPair.setValue(undefined);
         await this.toToken?.init();
@@ -209,6 +211,7 @@ class Swap {
     reaction(
       () => this.toToken?.address,
       async () => {
+        this.loadTokenRouterPairs(this.toToken!);
         this.setRouterToken(undefined);
         this.currentPair.setValue(undefined);
         await this.toToken?.init();
@@ -474,10 +477,10 @@ class Swap {
 
     //if from or to token is validated token, route them by from -> router token -> to
     if (
-      liquidity.isValidatedToken(this.fromToken.address.toLowerCase()) ||
-      liquidity.isValidatedToken(this.toToken.address.toLowerCase())
+      liquidity.isRouterToken(this.fromToken.address.toLowerCase()) ||
+      liquidity.isRouterToken(this.toToken.address.toLowerCase())
     ) {
-      if (liquidity.isValidatedToken(this.fromToken.address.toLowerCase())) {
+      if (liquidity.isRouterToken(this.fromToken.address.toLowerCase())) {
         const toTokenRouterTokens = liquidity.getTokenToValidatedTokenPairs(
           this.toToken.address.toLowerCase()
         );
@@ -608,6 +611,31 @@ class Swap {
     const bestPrice = Math.max(...prices.map((p) => p.toNumber()));
 
     return path[prices.findIndex((p) => p.toNumber() === bestPrice)];
+  };
+
+  loadTokenRouterPairs = async (token: Token) => {
+    const routerTokens = Object.entries(wallet.currentChain.validatedTokensInfo)
+      .filter(([address, token]) => {
+        return token.isRouterToken;
+      })
+      .map(([address, token]) => {
+        return Token.getToken({ address });
+      });
+
+    routerTokens.forEach(async (routerToken) => {
+      if (
+        !liquidity.getMemoryPair(
+          token.address.toLowerCase(),
+          routerToken.address.toLowerCase()
+        )
+      ) {
+        try {
+          await liquidity.getPairByTokens(token.address, routerToken.address);
+        } catch (e) {
+          //console.log(e)
+        }
+      }
+    });
   };
 
   updateChartData = async () => {

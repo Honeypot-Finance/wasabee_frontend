@@ -574,7 +574,11 @@ export class GhostIndexer {
       token1: string;
     }[] = [];
 
-    const addresses = Object.keys(networksMap[chainId].validatedTokensInfo);
+    const addresses = Object.entries(networksMap[chainId].validatedTokensInfo)
+      .filter(([, value]) => value?.isRouterToken ?? false)
+      .map(([key]) => key);
+
+    console.log(addresses);
 
     addresses.forEach((address0: string) => {
       addresses.forEach((address1: string) => {

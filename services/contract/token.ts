@@ -9,6 +9,7 @@ import { ERC20ABI } from "@/lib/abis/erc20";
 import { faucetABI } from "@/lib/abis/faucet";
 import { watchAsset } from "viem/actions";
 import { toast } from "react-toastify";
+import { networksMap } from "../chain";
 
 export class Token implements BaseContract {
   static tokensMap: Record<string, Token> = {};
@@ -31,8 +32,7 @@ export class Token implements BaseContract {
     } else {
       Token.tokensMap[key].setData(args);
     }
-    return Token.tokensMap[key]
-
+    return Token.tokensMap[key];
   }
   address: string = "";
   name: string = "";
@@ -47,6 +47,7 @@ export class Token implements BaseContract {
   isNative = false;
   logoURI = "";
   priority = 0; // determines the order of the token in the list
+  isRouterToken = false;
 
   get displayName() {
     return this.symbol || this.name;
@@ -70,6 +71,7 @@ export class Token implements BaseContract {
   constructor(args: Partial<Token>) {
     this.setData(args);
     makeAutoObservable(this);
+    this.getIsRouterToken();
   }
 
   get faucet() {
@@ -89,7 +91,6 @@ export class Token implements BaseContract {
       action: "Swap BERA to WBERA",
     });
   }
-
 
   get withdraw() {
     return new ContractWrite(this.contract.write?.withdraw, {
@@ -154,7 +155,6 @@ export class Token implements BaseContract {
             this.claimed = claimed;
           })
         : Promise.resolve(),
-      loadLogoURI ? this.logoURI : Promise.resolve(),
     ]).catch((e) => {
       console.log(e);
       return;
@@ -231,6 +231,14 @@ export class Token implements BaseContract {
       decimals: this.decimals,
       fixed: 3,
     });
+  }
+
+  getIsRouterToken() {
+    this.isRouterToken =
+      networksMap[wallet.currentChainId].validatedTokensInfo[
+        this.address.toLowerCase()
+      ]?.isRouterToken;
+    return this.isRouterToken;
   }
 
   async watch() {

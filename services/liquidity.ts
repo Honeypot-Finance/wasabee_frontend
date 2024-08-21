@@ -458,7 +458,7 @@ class Liquidity {
       return;
     }
 
-    //init validated pairs
+    //init router pairs
     const validatedTokenPairs =
       await trpcClient.indexerFeedRouter.getValidatedTokenPairs.query({
         chainId: String(wallet.currentChainId),
@@ -471,12 +471,14 @@ class Liquidity {
           name: pair.token0.name,
           symbol: pair.token0.symbol,
           decimals: pair.token0.decimals,
+          isRouterToken: true,
         });
         const token1 = Token.getToken({
           address: pair.token1.id.toLowerCase(),
           name: pair.token1.name,
           symbol: pair.token1.symbol,
           decimals: pair.token1.decimals,
+          isRouterToken: true,
         });
 
         token0.init();
@@ -532,6 +534,13 @@ class Liquidity {
     return wallet.currentChain.contracts.ftoTokens.some(
       (ftoToken) =>
         ftoToken.address?.toLowerCase() === tokenAddress.toLowerCase()
+    );
+  }
+
+  isRouterToken(tokenAddress: string): boolean {
+    return (
+      wallet.currentChain.validatedTokensInfo[tokenAddress.toLowerCase()]
+        ?.isRouterToken ?? false
     );
   }
 
