@@ -60,13 +60,10 @@ export function DiscussionArea(props: DiscussionAreaProps) {
   };
 
   const continueFetchComments = async (afterId: number) => {
-    console.log("afterId", afterId);
     const res = await trpcClient.discussionRouter.getCommentsByProjectId.query({
       project_id: props.pair.databaseId ?? -1,
       afterId: afterId,
     });
-
-    console.log("res", res);
 
     if (res && res.length > 0) {
       setComments((prev) => {
