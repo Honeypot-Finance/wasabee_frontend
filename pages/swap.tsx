@@ -16,6 +16,9 @@ import { berachainBartioTestnetNetwork, networksMap } from "@/services/chain";
 import { berachainBartioTestnet } from "@/lib/chain";
 import { wallet } from "@/services/wallet";
 import dayjs from "dayjs";
+import { animate, motion } from "framer-motion";
+import React from "react";
+import { itemPopUpVariants } from "@/lib/animation";
 
 const SwapPage = observer(() => {
   useEffect(() => {
@@ -27,20 +30,27 @@ const SwapPage = observer(() => {
       <div
         className={`lg:grid ${chart.showChart && "grid-cols-2"}  mb-[20vh] `}
       >
-        <div className="relative w-full flex justify-center content-center items-center">
-          <SwapCard></SwapCard>
-        </div>
         {chart.showChart && (
-          <div className="m-auto w-[90%] h-full min-h-[400px] flex flex-col">
-            {/* <SwapPriceFeedGraph
-              priceFeedTarget={chart.chartTarget}
-            ></SwapPriceFeedGraph> */}
-
+          <motion.div
+            variants={itemPopUpVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{ duration: 0.5 }}
+            className="m-auto w-[90%] h-full min-h-[400px] flex flex-col lg:p-5"
+          >
             <SimplePriceFeedGraph
               priceFeedTarget={chart.chartTarget}
             ></SimplePriceFeedGraph>
-          </div>
+          </motion.div>
         )}
+        <motion.div
+          variants={itemPopUpVariants}
+          initial="hidden"
+          animate="visible"
+          className="relative w-full flex justify-center content-center items-center"
+        >
+          <SwapCard></SwapCard>
+        </motion.div>
       </div>
     </>
   );

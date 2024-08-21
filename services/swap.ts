@@ -217,7 +217,7 @@ class Swap {
           await this.currentPair.call();
           if (this.fromAmount.length > 0) {
             // if the fromAmount is not empty, recalculate the toAmount
-            this.fromAmount = "0" + this.fromAmount;
+            this.fromAmount = this.fromAmount + " ";
           }
         }
         this.updateChartData();
