@@ -37,41 +37,39 @@ export class Network {
     poolBlacklist: string[];
   };
   validatedTokens: Token[] = [];
-  validatedTokensInfo: Record<
-    string,
-    Token
-  > = {};
+  validatedTokensInfo: Record<string, Token> = {};
   validatedFtoAddresses: string[] = [];
   constructor(
-    args: Omit<Partial<Network>, "faucetTokens" | "nativeToken" | "validatedTokensInfo"> & {
+    args: Omit<
+      Partial<Network>,
+      "faucetTokens" | "nativeToken" | "validatedTokensInfo"
+    > & {
       faucetTokens: Partial<Token>[];
       nativeToken: Partial<Token>;
-      validatedTokensInfo: Record<
-        string,
-        Partial<Token>>
+      validatedTokensInfo: Record<string, Partial<Token>>;
     }
   ) {
     Object.assign(this, args);
     if (args) {
     }
   }
-  init () {
-    this.nativeToken= Token.getToken(this.nativeToken)
-    this.nativeToken.init()
+  init() {
+    this.nativeToken = Token.getToken(this.nativeToken);
+    this.nativeToken.init();
     this.faucetTokens = this.faucetTokens.map((t) => {
-      const token =  Token.getToken(t)
-      token.init()
-      return token
+      const token = Token.getToken(t);
+      token.init();
+      return token;
     });
     Object.entries(this.validatedTokensInfo).forEach(([address, t]) => {
-      const token =  Token.getToken({
+      const token = Token.getToken({
         ...t,
         address,
-      })
-      token.init()
-      this.validatedTokensInfo[address] = token
-      this.validatedTokens.push(token)
-    })
+      });
+      token.init();
+      this.validatedTokensInfo[address] = token;
+      this.validatedTokens.push(token);
+    });
   }
 }
 
@@ -85,10 +83,10 @@ export const berachainBartioTestnetNetwork = new Network({
         "https://res.cloudinary.com/duv0g402y/raw/upload/src/assets/bera.png",
     },
   ],
-  nativeToken:  {
+  nativeToken: {
     address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
     name: "Bera",
-    symbol: "BERA", 
+    symbol: "BERA",
     decimals: 18,
     isNative: true,
     priority: 1,
@@ -192,7 +190,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/usdc-token-icon.png",
     },
-    "0x286f1c3f0323db9c91d1e8f45c8df2d065ab5fae": {
+    "0x2577d24a26f8fa19c1058a8b0106e2c7303454a4": {
       name: "WBTC",
       symbol: "WBTC",
       decimals: 18,
