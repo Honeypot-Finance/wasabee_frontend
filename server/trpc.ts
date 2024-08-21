@@ -38,14 +38,13 @@ export const createContext = async ({ req }: CreateNextContextOptions) => {
   const user = await getUser(req);
   return {
     user,
+    req
   };
 };
 // You can use any variable name you like.
 // We use t to keep things simple.
 export const t = initTRPC.context<typeof createContext>().meta<{
-  cache: {
-    ttl: number;
-  }
+  
 }>().create({
   transformer: superjson,
 });
