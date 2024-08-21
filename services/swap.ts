@@ -59,7 +59,6 @@ class Swap {
           this.toToken.address.toLowerCase()
         )
       ) {
-        console.log("pair found");
         const res = await liquidity.getPairByTokens(
           this.fromToken.address,
           this.toToken.address
@@ -613,13 +612,12 @@ class Swap {
 
   updateChartData = async () => {
     let label = "";
+    chart.setChartTarget(undefined);
 
     if (this.fromToken && this.toToken) {
       chart.setChartTarget(this.currentPair.value as PairContract);
     } else if (this.fromToken) {
       chart.setChartTarget(this.fromToken as Token);
-    } else {
-      chart.setChartTarget(undefined);
     }
 
     if (!chart.chartTarget) {
@@ -629,6 +627,8 @@ class Swap {
         this.toToken ? "/" + this.toToken.symbol : "/USD"
       }`;
     }
+
+    chart.chartData.call();
 
     chart.setChartLabel(label);
   };

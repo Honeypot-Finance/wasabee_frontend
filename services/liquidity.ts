@@ -467,17 +467,20 @@ class Liquidity {
     validatedTokenPairs.status === "success" &&
       validatedTokenPairs.data.pairs.forEach((pair) => {
         const token0 = Token.getToken({
-          address: pair.token0.id,
+          address: pair.token0.id.toLowerCase(),
           name: pair.token0.name,
           symbol: pair.token0.symbol,
           decimals: pair.token0.decimals,
         });
         const token1 = Token.getToken({
-          address: pair.token1.id,
+          address: pair.token1.id.toLowerCase(),
           name: pair.token1.name,
           symbol: pair.token1.symbol,
           decimals: pair.token1.decimals,
         });
+
+        token0.init();
+        token1.init();
 
         const pairContract = new PairContract({
           token0,

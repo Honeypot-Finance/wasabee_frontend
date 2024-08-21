@@ -38,9 +38,7 @@ const SwapPage = observer(() => {
             transition={{ duration: 0.5 }}
             className="m-auto w-[90%] h-full min-h-[400px] flex flex-col lg:p-5"
           >
-            <SimplePriceFeedGraph
-              priceFeedTarget={chart.chartTarget}
-            ></SimplePriceFeedGraph>
+            <SimplePriceFeedGraph></SimplePriceFeedGraph>
           </motion.div>
         )}
         <motion.div
