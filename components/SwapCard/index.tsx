@@ -32,6 +32,7 @@ import { SlOptions } from "react-icons/sl";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import TokenLogo from "../TokenLogo/TokenLogo";
 import { Slippage } from "./Slippage";
+import BigNumber from "bignumber.js";
 
 export const SwapCard = observer(() => {
   const isInit = wallet.isInit && liquidity.isInit;
@@ -151,25 +152,24 @@ export const SwapCard = observer(() => {
                 <Slider
                   className="w-full"
                   size="sm"
-                  maxValue={(swap.fromToken as Token).balance.toNumber()}
+                  maxValue={Math.ceil(
+                    (swap.fromToken as Token).balance.toNumber()
+                  )}
                   minValue={0}
                   onChange={(value) => {
-                    state.selectState.value =
-                      Number(value) /
-                      (swap.fromToken as Token).balance.toNumber();
                     if (
-                      Number(value) >
-                      (swap.fromToken as Token).balance.toNumber()
+                      new BigNumber(String(value)) >
+                      (swap.fromToken as Token).balance
                     ) {
                       swap.setFromAmount(
                         (swap.fromToken as Token).balance.toFixed()
                       );
                     } else {
-                      swap.setFromAmount(Number(value).toString());
+                      swap.setFromAmount(String(value));
                     }
                   }}
                   value={Number(swap.fromAmount)}
-                  step={0.00001}
+                  step={Math.pow(0.1, 18)}
                 ></Slider>
               </div>
             )}{" "}

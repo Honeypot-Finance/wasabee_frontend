@@ -34,13 +34,9 @@ class Swap {
 
     const routerPossiblePaths = this.getRouterPathsByValidatedToken();
 
-    console.log(routerPossiblePaths);
-
     const bestPath = await this.calculateBestPathFromRouterPaths(
       routerPossiblePaths
     );
-
-    console.log(bestPath);
 
     this.setRouterToken(bestPath.map((t) => Token.getToken({ address: t })));
   };
@@ -48,7 +44,6 @@ class Swap {
   currentPair = new AsyncState(async () => {
     if (this.fromToken && this.toToken) {
       if (this.isWrapOrUnwrap) {
-        console.log("wrap or unwrap");
         return new PairContract({
           address: zeroAddress,
           token0: this.fromToken,
@@ -80,7 +75,6 @@ class Swap {
           this.toToken.address
         );
         if (pairContract) {
-          console.log("pair contract found");
           if (!liquidity.tokensMap[this.fromToken.address]) {
             liquidity.tokensMap[this.fromToken.address] = this.fromToken;
 
@@ -99,7 +93,6 @@ class Swap {
 
           return pairContract;
         } else {
-          console.log("pair not found");
           await this.getRouterToken();
         }
       }
@@ -198,7 +191,7 @@ class Swap {
     reaction(
       () => this.fromToken?.address,
       async () => {
-        this.loadTokenRouterPairs(this.fromToken!);
+        this.fromToken && this.loadTokenRouterPairs(this.fromToken!);
         this.setRouterToken(undefined);
         this.currentPair.setValue(undefined);
         await this.toToken?.init();
@@ -211,7 +204,7 @@ class Swap {
     reaction(
       () => this.toToken?.address,
       async () => {
-        this.loadTokenRouterPairs(this.toToken!);
+        this.toToken && this.loadTokenRouterPairs(this.toToken!);
         this.setRouterToken(undefined);
         this.currentPair.setValue(undefined);
         await this.toToken?.init();
@@ -231,7 +224,7 @@ class Swap {
         if (!this.currentPair.value && !this.routerToken) {
           return;
         }
-        this.fromAmount = String(Number(this.fromAmount));
+        this.fromAmount = this.fromAmount.trim();
 
         if (
           new BigNumber(this.fromAmount || 0).isGreaterThan(0) &&
@@ -646,7 +639,7 @@ class Swap {
     routerTokens.forEach(async (routerToken) => {
       if (
         !liquidity.getMemoryPair(
-          token.address.toLowerCase(),
+          token?.address.toLowerCase(),
           routerToken.address.toLowerCase()
         )
       ) {
