@@ -12,6 +12,8 @@ import { ContractWrite } from "../utils";
 import { berachainBartioTestnetNetwork, networksMap } from "../chain";
 import { DailyFaucetABI } from "@/lib/abis/faucet/daily-faucet";
 import { Token } from "./token";
+import { trpcClient } from "@/lib/trpc";
+import { toast } from "react-toastify";
 
 export class NativeFaucetContract implements BaseContract {
   address = "";
@@ -36,43 +38,48 @@ export class NativeFaucetContract implements BaseContract {
 
   async isClaimable(): Promise<boolean> {
     //check time
-    const timeFaucetable = await this.contract.read.faucetable([
-      wallet.account as `0x${string}`,
-    ]);
 
-    console.log(timeFaucetable);
+    const queryNativeFaucet = await trpcClient.token.queryNativeFaucet.query();
+    this, (this.canclaim = queryNativeFaucet.claimable);
+    this.nextFaucetTime = queryNativeFaucet.claimableUntil ?? undefined;
 
-    if (!timeFaucetable) {
-      this.canclaim = false;
-      await this.getNextFaucetTime();
-      console.log(this.nextFaucetTime);
-      this.cantClaimReason = "Need to wait 24 hours before next claim";
-      return false;
-    }
-
-    const hpotAdress = await this.contract.read.hpot();
-    const minHpotBalance = await this.contract.read.minHpot();
-
-    const hpotContract = Token.getToken({
-      address: hpotAdress,
-    });
-
-    await hpotContract.init();
-
-    const enoughBalance =
-      Number(hpotContract.balanceWithoutDecimals.toString()) >=
-      Number(minHpotBalance.toString());
-
-    if (!enoughBalance) {
-      this.canclaim = false;
-      this.cantClaimReason = `Not enough HPOT balance, need at least ${
-        Number(minHpotBalance) / Math.pow(10, hpotContract.decimals)
-      } HPOT`;
-      return false;
-    }
-
-    this.canclaim = true;
     return this.canclaim;
+
+    // const timeFaucetable = await this.contract.read.faucetable([
+    //   wallet.account as `0x${string}`,
+    // ]);
+
+    // if (!timeFaucetable) {
+    //   this.canclaim = false;
+    //   await this.getNextFaucetTime();
+    //   console.log(this.nextFaucetTime);
+    //   this.cantClaimReason = "Need to wait 24 hours before next claim";
+    //   return false;
+    // }
+
+    // const hpotAdress = await this.contract.read.hpot();
+    // const minHpotBalance = await this.contract.read.minHpot();
+
+    // const hpotContract = Token.getToken({
+    //   address: hpotAdress,
+    // });
+
+    // await hpotContract.init();
+
+    // const enoughBalance =
+    //   Number(hpotContract.balanceWithoutDecimals.toString()) >=
+    //   Number(minHpotBalance.toString());
+
+    // if (!enoughBalance) {
+    //   this.canclaim = false;
+    //   this.cantClaimReason = `Not enough HPOT balance, need at least ${
+    //     Number(minHpotBalance) / Math.pow(10, hpotContract.decimals)
+    //   } HPOT`;
+    //   return false;
+    // }
+
+    // this.canclaim = true;
+    // return this.canclaim;
   }
 
   async getNextFaucetTime(): Promise<number> {
@@ -85,10 +92,21 @@ export class NativeFaucetContract implements BaseContract {
     return this.nextFaucetTime;
   }
 
-  get Claim(): ContractWrite<any> {
-    return new ContractWrite(this.contract.write?.faucet, {
-      action: "Get Faucet",
-    });
+  Claim(): void {
+    const applyNativeFaucet = trpcClient.token.applyNativeFaucet
+      .mutate({
+        address: wallet.account,
+      })
+      .then((res) => {
+        toast(res.hash);
+        this.nextFaucetTime = Date.now() + 24 * 60 * 60 * 1000;
+      })
+      .catch((err) => {
+        toast.error(err);
+        this.cantClaimReason = err;
+      });
+
+    this.canclaim = false;
   }
 
   donateToContract = async (amount: string) => {
