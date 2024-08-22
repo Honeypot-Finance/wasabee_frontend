@@ -50,7 +50,7 @@ export const PoolLiquidityCard = observer(
             x: 0,
             opacity: 1,
           }}
-          className="flex w-full flex-col md:flex-row gap-[0.5rem]"
+          className="relative flex w-full flex-col md:flex-row gap-[0.5rem]"
         >
           <div className="flex flex-1 flex-col md:flex-row justify-between align-middle items-center gap-[0.5rem]">
             <div className="flex mr-5">
@@ -81,7 +81,7 @@ export const PoolLiquidityCard = observer(
               </div>
             </div>
           </div>{" "}
-          <div className="flex lg:justify-end ">
+          <div className="absolute top-[-0.5rem] right-[-0.5rem] lg:relative lg:flex lg:justify-end lg:items-center lg:top-[unset] lg:right-[unset]">
             <OptionsDropdown
               options={[
                 {
