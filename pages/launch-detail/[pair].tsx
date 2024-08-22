@@ -247,7 +247,7 @@ const SuccessAction = observer(({ pair }: { pair: FtoPairContract }) => {
     <div className="flex gap-[16px] justify-center items-center flex-col lg:flex-row">
       {wallet.account != pair.provider && (
         <Button
-          className=""
+          className="w-full"
           isLoading={pair.claimLP.loading}
           onClick={() => {
             pair.claimLP.call();
@@ -260,7 +260,7 @@ const SuccessAction = observer(({ pair }: { pair: FtoPairContract }) => {
 
       <Link
         href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
-        className="text-black font-bold"
+        className="text-black font-bold w-full"
       >
         <Button className="w-full">
           <p>Swap Token</p>
@@ -828,7 +828,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
       </div>
       {/** Comment section */}
       <div className="flex justify-center mt-[24px] ">
-        <div className="w-full lg:min-w-[1000px] lg:max-w-[1000px]">
+        <div className="w-[100vw] lg:w-full lg:min-w-[1000px] lg:max-w-[1000px]">
           {state.pair.value && (
             <DiscussionArea pair={state.pair.value}></DiscussionArea>
           )}
