@@ -99,7 +99,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
           <div className="text-[black] text-2xl font-bold leading-7 tracking-[-0.24px] [font-family:MEME]">
             FAUCET
           </div>
-          <div className="w-[309px] text-[black] mt-[8px] text-pretty text-sm sm:text-base font-bold leading-6 opacity-[0.5] [font-family:MEME]">
+          <div className="w-[50%] lg:w-[309px] text-[black] mt-[8px] text-pretty text-sm sm:text-base font-bold leading-6 opacity-[0.5] [font-family:MEME]">
             Claim test tokens to try out the Berachain testnet.
           </div>
         </div>

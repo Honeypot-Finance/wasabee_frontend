@@ -28,7 +28,9 @@ const SwapPage = observer(() => {
   return (
     <>
       <div
-        className={`lg:grid ${chart.showChart && "grid-cols-2"}  mb-[20vh] `}
+        className={`grid ${
+          chart.showChart && "grid-cols-1 lg:grid-cols-2 "
+        }  mb-[20vh] gap-[2rem] lg:gap-[5rem] `}
       >
         {chart.showChart && (
           <motion.div
@@ -36,7 +38,7 @@ const SwapPage = observer(() => {
             initial="hidden"
             animate="visible"
             transition={{ duration: 0.5 }}
-            className="m-auto w-[90%] h-full min-h-[400px] flex flex-col lg:p-5"
+            className="w-full lg:max-w-[574px] flex flex-col self-center place-self-end"
           >
             <SimplePriceFeedGraph></SimplePriceFeedGraph>
           </motion.div>
@@ -45,7 +47,7 @@ const SwapPage = observer(() => {
           variants={itemPopUpVariants}
           initial="hidden"
           animate="visible"
-          className="relative w-full flex justify-center content-center items-center"
+          className="relative w-full  flex "
         >
           <SwapCard></SwapCard>
         </motion.div>

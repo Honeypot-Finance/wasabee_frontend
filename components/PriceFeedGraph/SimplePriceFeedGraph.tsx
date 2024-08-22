@@ -211,12 +211,12 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
     <div className="relative w-full h-full">
       <CardContianer autoSize>
         {chart.isLoading && (
-          <FaSpinner className="animate-spin absolute top-1/3 left-1/2 z-50"></FaSpinner>
+          <FaSpinner className="animate-spin absolute top-1/2 left-1/2 z-50"></FaSpinner>
         )}
         <div className="relative w-full h-full flex-col flex items-center justify-center">
-          <div className="flex justify-between items-center w-full">
-            <span className="pl-4">{chart.chartLabel}</span>
-            <div className="flex justify-between items-center flex-wrap">
+          <div className="flex justify-between items-center w-full gap-5">
+            <span className="lg:pl-4">{chart.chartLabel}</span>
+            <div className="grid w-full gap-2 grid-cols-3 lg:grid-cols-6  items-center flex-wrap">
               {Object.values(chartTimeRanges).map((range) => (
                 <Button
                   className="min-w-[1rem] disabled:border-[red_2px_solid] "

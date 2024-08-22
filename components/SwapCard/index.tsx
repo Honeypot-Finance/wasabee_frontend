@@ -149,11 +149,14 @@ export const SwapCard = observer(() => {
             {swap.fromToken && (
               <div className="w-full flex justify-end items-center">
                 <Slider
-                  className="w-[40%]"
+                  className="w-full"
                   size="sm"
                   maxValue={(swap.fromToken as Token).balance.toNumber()}
                   minValue={0}
                   onChange={(value) => {
+                    state.selectState.value =
+                      Number(value) /
+                      (swap.fromToken as Token).balance.toNumber();
                     if (
                       Number(value) >
                       (swap.fromToken as Token).balance.toNumber()
@@ -173,7 +176,7 @@ export const SwapCard = observer(() => {
             {swap.fromToken && (
               <ItemSelect
                 selectState={state.selectState}
-                className="gap-[16px] flex justify-between w-full flex-wrap"
+                className=" grid grid-cols-2 lg:grid-cols-4 gap-[16px] justify-around w-full"
               >
                 <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
                   25%
