@@ -22,7 +22,7 @@ import { Address } from "viem";
 import { Token } from "@/services/contract/token";
 
 const ftoGraphHandle = "d27732e1-591f-4a84-bb99-209fe4022b6e/ghostgraph";
-const pairGraphHandle = "42b070fb-e695-4c4e-9b93-0f8183094c20/ghostgraph";
+const pairGraphHandle = "7516fb9b-c923-423f-9542-8412b0a4ea37/ghostgraph";
 
 export class GhostIndexer {
   apiKey: string;
@@ -508,6 +508,7 @@ export class GhostIndexer {
                  }
                 {token1name_contains:"${filter.searchString}" }
                 {token1symbol_contains:"${filter.searchString}" }
+                {searchString_contains:"${filter.searchString.toLocaleLowerCase()}" }
               ]`
                   : ""
               }
