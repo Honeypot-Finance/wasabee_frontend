@@ -46,9 +46,27 @@ export class Token implements BaseContract {
   isInit = false;
   isNative = false;
   logoURI = "";
-  priority = 0; // determines the order of the token in the list
   isRouterToken = false;
   supportingFeeOnTransferTokens = false;
+
+  // determines the order of the token in the list
+  get priority() {
+    let score = 0;
+
+    if (this.isNative) {
+      score += 1;
+    }
+
+    if (this.isRouterToken) {
+      score += 1;
+    }
+
+    if (this.balance.toNumber() > 0) {
+      score += 1;
+    }
+
+    return score;
+  }
 
   get displayName() {
     return this.symbol || this.name;
@@ -204,9 +222,6 @@ export class Token implements BaseContract {
           })
         : await this.contract.read.balanceOf([wallet.account as `0x${string}`]);
       this.balanceWithoutDecimals = new BigNumber(balance.toString());
-      if (this.balanceWithoutDecimals.toNumber() > 0 || this.priority < 3) {
-        this.priority = 3;
-      }
       return this.balanceWithoutDecimals;
     } catch (e) {
       console.log(e);
