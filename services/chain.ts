@@ -229,6 +229,18 @@ export const berachainBartioTestnetNetwork = new Network({
       logoURI: "/images/icons/tokens/areb-token-icon.png",
       supportingFeeOnTransferTokens: false,
     },
+    "0xa0525273423537bc76825b4389f3baec1968f83f": {
+      name: "JNKY",
+      symbol: "JNKY",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/jnky-token-icon.jpg",
+    },
+    "0x1740f679325ef3686b2f574e392007a92e4bed41": {
+      name: "YEET",
+      symbol: "YEET",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/yeet-token-icon.jpg",
+    },
   },
   validatedFtoAddresses: [
     "0xe1650d95ab180eb4383093d78c6f0cc164bd55e2".toLowerCase(),
