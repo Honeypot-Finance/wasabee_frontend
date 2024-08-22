@@ -47,7 +47,10 @@ const SwapPage = observer(() => {
           variants={itemPopUpVariants}
           initial="hidden"
           animate="visible"
-          className="relative w-full  flex "
+          className={
+            "relative w-full flex justify-center" +
+            (chart.showChart ? "justify-start" : "")
+          }
         >
           <SwapCard></SwapCard>
         </motion.div>
