@@ -198,12 +198,10 @@ const FaucetPage: NextLayoutPage = observer(() => {
                   <Button
                     className="lg:ml-[13px] w-full"
                     onClick={async () => {
-                      await faucet.nativeFaucet!.Claim.call();
-                      faucet.nativeFaucet!.isClaimable();
+                      await faucet.nativeFaucet!.Claim();
                       balance.refetch();
                     }}
                     isDisabled={!faucet.nativeFaucet.canclaim}
-                    isLoading={faucet.nativeFaucet.Claim.loading}
                   >
                     {faucet.nativeFaucet.nextFaucetTime ? (
                       <Countdown

@@ -92,7 +92,8 @@ export class NativeFaucetContract implements BaseContract {
     return this.nextFaucetTime;
   }
 
-  Claim(): void {
+  async Claim(): Promise<boolean> {
+    this.canclaim = false;
     const applyNativeFaucet = trpcClient.token.applyNativeFaucet
       .mutate({
         address: wallet.account,
@@ -100,13 +101,15 @@ export class NativeFaucetContract implements BaseContract {
       .then((res) => {
         toast(res.hash);
         this.nextFaucetTime = Date.now() + 24 * 60 * 60 * 1000;
+        this.isClaimable();
+        return true;
       })
       .catch((err) => {
         toast.error(err);
         this.cantClaimReason = err;
       });
 
-    this.canclaim = false;
+    return false;
   }
 
   donateToContract = async (amount: string) => {
