@@ -4,6 +4,7 @@ import { priceFeedRouter } from "./router/priceFeed";
 import { indexerFeedRouter } from "./router/indexer";
 import { discussionRouter } from "./router/discussion";
 import { publicProcedure, router, t } from "./trpc";
+import { tokenRouter } from "./router/token";
 
 export const appRouter = router({
   pair: pairRouter,
@@ -11,6 +12,7 @@ export const appRouter = router({
   priceFeed: priceFeedRouter,
   indexerFeedRouter: indexerFeedRouter,
   discussionRouter: discussionRouter,
+  token: tokenRouter
 });
 // Export only the type of a router!
 // This prevents us from importing server code on the client.
