@@ -38,7 +38,7 @@ export default function TokenLogo({
       >
         <Image
           className={cn(
-            "border border-[color:var(--card-stroke,#F7931A)] rounded-[50%] cursor-pointer",
+            "border border-[color:var(--card-stroke,#F7931A)] rounded-[50%] cursor-pointer aspect-square",
             addtionalClasses
           )}
           src={

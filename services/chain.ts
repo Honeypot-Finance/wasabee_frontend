@@ -241,6 +241,12 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/yeet-token-icon.jpg",
     },
+    "0x277aadbd9ea3db8fe9ea40ea6e09f6203724bdae": {
+      name: "DIRAC",
+      symbol: "DIRAC",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/dirac-token-icon.svg",
+    },
   },
   validatedFtoAddresses: [
     "0xe1650d95ab180eb4383093d78c6f0cc164bd55e2".toLowerCase(),
