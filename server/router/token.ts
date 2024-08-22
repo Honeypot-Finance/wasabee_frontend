@@ -27,6 +27,8 @@ const walletClient = createWalletClient({
 
 const ipCache = createCache("ip");
 const requestStatus = {} as Record<string, boolean>;
+const interval = 1000 * 60 * 60 * 24;
+const faucetAmount = 0.5;
 
 export const tokenRouter = router({
   queryNativeFaucet: publicProcedure.query(async ({ input, ctx }) => {
@@ -56,7 +58,7 @@ export const tokenRouter = router({
       const { req } = ctx;
       const ip = requestIp.getClientIp(req);
       const address = input.address;
-      const interval = 1000 * 20;
+
       if (!ip) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -86,7 +88,7 @@ export const tokenRouter = router({
           address: address as `0x${string}`,
         });
         console.log("ethBalance", ethBalance.toString());
-        if (new BigNumber(ethBalance.toString()).lt(0.001 * 10 ** 18)) {
+        if (new BigNumber(ethBalance.toString()).lt(0.01 * 10 ** 18)) {
           requestStatus[JSON.stringify(ip!)] = false;
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -100,7 +102,7 @@ export const tokenRouter = router({
           const preparedReq = await beraPublicClient.prepareTransactionRequest({
             // address: address as `0x${string}`,
             to: address as `0x${string}`,
-            value: BigInt(0.01 * 10 ** 18),
+            value: BigInt(faucetAmount * 10 ** 18),
           });
           hash = await walletClient.sendTransaction(preparedReq);
           console.log("hash", hash);
