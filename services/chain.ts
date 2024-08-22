@@ -227,6 +227,7 @@ export const berachainBartioTestnetNetwork = new Network({
       name: "test Arebmeme",
       symbol: "AREB",
       decimals: 18,
+      logoURI: "/images/icons/tokens/areb-token-icon.png",
       supportingFeeOnTransferTokens: false,
     },
   },
