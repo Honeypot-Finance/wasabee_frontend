@@ -100,18 +100,20 @@ export const Profile = observer(() => {
                   initial="hidden"
                   animate="visible"
                 >
-                  {wallet?.currentChain?.faucetTokens &&
-                    wallet?.currentChain?.faucetTokens?.map((token) => (
-                      <motion.div
-                        variants={itemSlideVariants}
-                        key={token.address}
-                      >
-                        <TokenBalanceCard
-                          token={token}
-                          autoSize
-                        ></TokenBalanceCard>
-                      </motion.div>
-                    ))}
+                  {wallet?.currentChain?.validatedTokens &&
+                    wallet?.currentChain?.validatedTokens
+                      ?.filter((token) => token.balance.toNumber() > 0)
+                      .map((token) => (
+                        <motion.div
+                          variants={itemSlideVariants}
+                          key={token.address}
+                        >
+                          <TokenBalanceCard
+                            token={token}
+                            autoSize
+                          ></TokenBalanceCard>
+                        </motion.div>
+                      ))}
                 </motion.div>
               </CardBody>
             </Card>
