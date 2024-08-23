@@ -1,15 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  async redirects() {
-    return [
-      // {
-      //   source: '/',
-      //   destination: '/swap',
-      //   permanent: false,
-      // },
-    ];
-  },
   images: {
     remotePatterns: [
       {
@@ -39,11 +30,12 @@ const nextConfig = {
       },
     ],
   },
-  async rewrites() {
+  async redirects() {
     return [
       {
         source: '/',
         destination: 'https://honeypotfinance.xyz/',
+        permanent: false
       },
     ]
   },
