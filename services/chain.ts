@@ -220,7 +220,7 @@ export const berachainBartioTestnetNetwork = new Network({
       name: "Grand Conquest Gold",
       symbol: "GCG",
       decimals: 18,
-      logoURI: "/images/icons/tokens/grandconquest-token-icon.svg",
+      logoURI: "/images/icons/tokens/grandconquest-token-icon.png",
     },
     "0x8887be5219f485d6948499b060aef973c51f66dd": {
       name: "test Arebmeme",
