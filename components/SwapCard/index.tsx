@@ -154,7 +154,7 @@ export const SwapCard = observer(() => {
                   size="sm"
                   maxValue={
                     (swap.fromToken as Token).balance.toNumber() +
-                    Math.pow(0.1, 17)
+                    Math.pow(0.1, 15)
                   }
                   minValue={0}
                   onChange={(value) => {
