@@ -189,38 +189,31 @@ const FaucetPage: NextLayoutPage = observer(() => {
                 }}
                 className="w-full"
               >
-                <ControlledToolTip
-                  content={
-                    faucet.nativeFaucet.cantClaimReason ??
-                    "HPOT holders can claim BERA tokens every 24 hours."
-                  }
+                <Button
+                  className="lg:ml-[13px] w-full"
+                  onClick={async () => {
+                    await faucet.nativeFaucet!.Claim();
+                    balance.refetch();
+                  }}
+                  isDisabled={!faucet.nativeFaucet.canclaim}
                 >
-                  <Button
-                    className="lg:ml-[13px] w-full"
-                    onClick={async () => {
-                      await faucet.nativeFaucet!.Claim();
-                      balance.refetch();
-                    }}
-                    isDisabled={!faucet.nativeFaucet.canclaim}
-                  >
-                    {faucet.nativeFaucet.nextFaucetTime ? (
-                      <Countdown
-                        date={faucet.nativeFaucet.nextFaucetTime * 1000}
-                        renderer={({ hours, minutes, seconds, completed }) => {
-                          if (completed) {
-                            return "Now!";
-                          } else {
-                            return `Next Claim: ${hours}h ${minutes}m ${seconds}s`;
-                          }
-                        }}
-                      />
-                    ) : faucet.nativeFaucet.canclaim ? (
-                      "Claim"
-                    ) : (
-                      "Not Available"
-                    )}
-                  </Button>
-                </ControlledToolTip>
+                  {faucet.nativeFaucet.nextFaucetTime ? (
+                    <Countdown
+                      date={faucet.nativeFaucet.nextFaucetTime * 1000}
+                      renderer={({ hours, minutes, seconds, completed }) => {
+                        if (completed) {
+                          return "Claim!";
+                        } else {
+                          return `Next Claim: ${hours}h ${minutes}m ${seconds}s`;
+                        }
+                      }}
+                    />
+                  ) : faucet.nativeFaucet.canclaim ? (
+                    "Claim"
+                  ) : (
+                    "Not Available"
+                  )}
+                </Button>
               </motion.div>
             )}
           </div>
