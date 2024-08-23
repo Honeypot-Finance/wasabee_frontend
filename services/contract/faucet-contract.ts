@@ -94,22 +94,30 @@ export class NativeFaucetContract implements BaseContract {
 
   async Claim(): Promise<boolean> {
     this.canclaim = false;
-    const applyNativeFaucet = trpcClient.token.applyNativeFaucet
+    const loadingToast = toast.info("Claiming faucet...", {
+      autoClose: false,
+      isLoading: true,
+    });
+
+    const applyNativeFaucet = await trpcClient.token.applyNativeFaucet
       .mutate({
         address: wallet.account,
-      })
-      .then((res) => {
-        toast(res.hash);
-        this.nextFaucetTime = Date.now() + 24 * 60 * 60 * 1000;
-        this.isClaimable();
-        return true;
       })
       .catch((err) => {
         toast.error(err);
         this.cantClaimReason = err;
       });
 
-    return false;
+    toast.dismiss(loadingToast);
+
+    if (applyNativeFaucet) {
+      toast(applyNativeFaucet.hash);
+      this.nextFaucetTime = Date.now() + 24 * 60 * 60 * 1000;
+      this.isClaimable();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   donateToContract = async (amount: string) => {
