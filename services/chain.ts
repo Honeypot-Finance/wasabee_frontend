@@ -92,7 +92,7 @@ export const berachainBartioTestnetNetwork = new Network({
     logoURI: "/images/icons/tokens/wbera-token-icon.png",
   },
   nativeFaucet: {
-    address: "0x57E2814Bd03B0b01B46d5112A238687a43E38271",
+    address: "0x1bd43f7f55b700236c92256a0fd90266363119f7",
     name: "Daily Faucet",
     requirements: "You can claim 100 BERA tokens every 24 hours.",
   },
