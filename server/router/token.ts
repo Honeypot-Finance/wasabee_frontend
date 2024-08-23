@@ -6,14 +6,21 @@ import dayjs from "dayjs";
 import { LRUCache } from "lru-cache";
 import { createPublicClientByChain } from "@/lib/client";
 import BigNumber from "bignumber.js";
-import { createWalletClient, http } from "viem";
+import { createWalletClient, defineChain, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { mainnet } from "viem/chains";
+import { defichainEvm, mainnet } from "viem/chains";
 import { berachainBartioTestnet } from "@/lib/chain";
 import { z } from "zod";
 import { tryEach } from "ethcall/lib/call";
 
-const ethPublicClient = createPublicClientByChain(mainnet);
+const ethPublicClient = createPublicClientByChain({
+    ...mainnet,
+    rpcUrls: {
+        default: {
+          http: ['https://cloudflare-eth.com', 'https://eth.llamarpc.com', "https://rpc.ankr.com/eth", "https://eth-pokt.nodies.app", "ttps://eth-mainnet.public.blastapi.io"],
+        },
+      },
+});
 const beraPublicClient = createPublicClientByChain(berachainBartioTestnet);
 const account = privateKeyToAccount(
   process.env.FAUCET_PRIVATE_KEY! as `0x${string}`
