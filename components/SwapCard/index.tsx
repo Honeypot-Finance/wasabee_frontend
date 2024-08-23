@@ -152,9 +152,10 @@ export const SwapCard = observer(() => {
                 <Slider
                   className="w-full"
                   size="sm"
-                  maxValue={Math.ceil(
-                    (swap.fromToken as Token).balance.toNumber()
-                  )}
+                  maxValue={
+                    (swap.fromToken as Token).balance.toNumber() +
+                    Math.pow(0.1, 15)
+                  }
                   minValue={0}
                   onChange={(value) => {
                     if (

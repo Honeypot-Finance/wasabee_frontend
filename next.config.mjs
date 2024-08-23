@@ -39,6 +39,14 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/',
+        destination: 'https://honeypotfinance.xyz/',
+      },
+    ]
+  },
 };
 
 export default nextConfig;
