@@ -199,7 +199,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
                 >
                   {faucet.nativeFaucet.nextFaucetTime ? (
                     <Countdown
-                      date={faucet.nativeFaucet.nextFaucetTime * 1000}
+                      date={faucet.nativeFaucet.nextFaucetTime}
                       renderer={({ hours, minutes, seconds, completed }) => {
                         if (completed) {
                           return "Claim!";
