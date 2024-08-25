@@ -123,8 +123,21 @@ const AddLiquidity = observer(() => {
         <Button
           isDisabled={liquidity.isDisabled}
           isLoading={liquidity.addLiquidity.loading}
-          onClick={() => {
-            liquidity.addLiquidity.call();
+          onClick={async () => {
+            liquidity.addLiquidity.call().then(async () => {
+              liquidity.myPairPage.addSingleItemToStart(
+                liquidity.currentPair.value!
+              );
+
+              await Promise.all([
+                await liquidity.currentPair.value!.token.getBalance(),
+                await liquidity.currentPair.value!.token.getTotalSupply(),
+                await liquidity.currentPair.value!.token0.init(),
+                await liquidity.currentPair.value!.token1.init(),
+              ]);
+
+              liquidity.currentPair.value!.getReserves();
+            });
           }}
         >
           {liquidity.buttonContent}
@@ -230,7 +243,21 @@ export const RemoveLiquidity = observer(
                 await liquidity.currentRemovePair?.removeLiquidity.call(
                   state.selectState.value as number
                 );
-                liquidity.currentRemovePair?.getReserves();
+
+                await Promise.all([
+                  await liquidity.currentRemovePair?.token.getBalance(),
+                  await liquidity.currentRemovePair?.token.getTotalSupply(),
+                  await liquidity.currentRemovePair?.token0.getBalance(),
+                  await liquidity.currentRemovePair?.token1.getBalance(),
+                  await liquidity.currentRemovePair?.getReserves(),
+                ]);
+
+                if (
+                  liquidity.currentRemovePair &&
+                  liquidity.currentRemovePair.token0LpBalance.eq(0)
+                ) {
+                  liquidity.myPairPage.removeItem(liquidity.currentRemovePair);
+                }
               }}
             >
               Remove

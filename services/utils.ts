@@ -410,6 +410,26 @@ export class IndexerPaginationState<FilterT, ItemT> {
   SetPageItems = (items: ItemT[]) => {
     this.pageItems.setValue(items);
   };
+
+  addPageItemsAtEnd = (items: ItemT[]) => {
+    this.pageItems.setValue([...this.pageItems.value, ...items]);
+  };
+
+  addPageItemsToStart = (items: ItemT[]) => {
+    this.pageItems.setValue([...items, ...this.pageItems.value]);
+  };
+
+  addSingleItemToStart = (item: ItemT) => {
+    this.pageItems.setValue([item, ...this.pageItems.value]);
+  };
+
+  addSingleItemToEnd = (item: ItemT) => {
+    this.pageItems.setValue([...this.pageItems.value, item]);
+  };
+
+  removeItem = (item: ItemT) => {
+    this.pageItems.setValue(this.pageItems.value.filter((i) => i !== item));
+  };
 }
 
 export class StorageState<T = any, U = any> {

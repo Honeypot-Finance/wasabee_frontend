@@ -22,7 +22,7 @@ import { Address } from "viem";
 import { Token } from "@/services/contract/token";
 
 const ftoGraphHandle = "d27732e1-591f-4a84-bb99-209fe4022b6e/ghostgraph";
-const pairGraphHandle = "7516fb9b-c923-423f-9542-8412b0a4ea37/ghostgraph";
+const pairGraphHandle = "ca609e38-a070-4806-b4c9-08e96fee8118/ghostgraph";
 
 export class GhostIndexer {
   apiKey: string;
@@ -241,7 +241,7 @@ export class GhostIndexer {
         }
       `;
 
-    console.log(query);
+    query;
 
     const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
 
@@ -429,11 +429,17 @@ export class GhostIndexer {
     }
   `;
 
+    query;
+
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
     });
 
-    console.log(res);
+    res.status === "success" &&
+      res.data.holdingPairs.items.map(
+        (item: holdingPairs) =>
+          `${item.pair.token0symbol}-${item.pair.token1symbol} ${item.totalLpAmount}`
+      );
 
     if (res.status === "error") {
       return res;
@@ -468,16 +474,6 @@ export class GhostIndexer {
         ? `after:"${pageRequest?.cursor}"`
         : `before:"${pageRequest?.cursor}"`
       : "";
-
-    const providerFtos = provider
-      ? this.getFilteredFtoPairs(
-          {
-            limit: 9999,
-          },
-          chainId,
-          provider
-        )
-      : undefined;
 
     const query = `
         {
@@ -578,8 +574,6 @@ export class GhostIndexer {
     const addresses = Object.entries(networksMap[chainId].validatedTokensInfo)
       .filter(([, value]) => value?.isRouterToken ?? false)
       .map(([key]) => key);
-
-    console.log(addresses);
 
     addresses.forEach((address0: string) => {
       addresses.forEach((address1: string) => {

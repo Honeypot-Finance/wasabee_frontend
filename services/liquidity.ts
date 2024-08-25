@@ -131,6 +131,8 @@ class Liquidity {
           return pairContract;
         });
 
+        console.log("myPairPage", pariContracts);
+
         return {
           items: pariContracts,
           pageInfo: pairs.data.pageInfo,
