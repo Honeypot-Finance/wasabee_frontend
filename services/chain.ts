@@ -253,6 +253,12 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/nect-token-icon.png",
     },
+    "0x7629668774f918c00eb4b03adf5c4e2e53d45f0b": {
+      name: "oBERO",
+      symbol: "oBERO",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/obero-token-icon.jpg",
+    },
   },
   validatedFtoAddresses: [
     "0xe1650d95ab180eb4383093d78c6f0cc164bd55e2".toLowerCase(),

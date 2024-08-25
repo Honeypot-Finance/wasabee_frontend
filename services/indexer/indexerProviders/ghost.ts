@@ -494,17 +494,14 @@ export class GhostIndexer {
                      ? `{ token1Id: "${filter.searchString}"  }`
                      : ""
                  }
-                {token0name_contains:"${filter.searchString}" }
-                {token0symbol_contains:"${filter.searchString}" }
                 
                  ${
                    filter.searchString.startsWith("0x")
                      ? `{ token1Id: "${filter.searchString}"  }`
                      : ""
                  }
-                {token1name_contains:"${filter.searchString}" }
-                {token1symbol_contains:"${filter.searchString}" }
-                {searchString_contains:"${filter.searchString.toLocaleLowerCase()}" }
+
+                {searchString_contains:"${filter.searchString.toLowerCase()}" }
               ]`
                   : ""
               }

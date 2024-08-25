@@ -24,13 +24,13 @@ export const priceFeedRouter = router({
         input,
       }): Promise<ApiResponseType<TokenCurrentPriceResponseType>> => {
         return cacheProvider.getOrSet(
-          getCacheKey('getSingleTokenPrice', input),
+          getCacheKey("getSingleTokenPrice", input),
           async () => {
             const res = await priceFeed.getTokenCurrentPrice(
               input.tokenAddress,
               input.chainId
             );
-    
+
             if (res.status === "error") {
               return {
                 status: "error",
@@ -45,7 +45,6 @@ export const priceFeedRouter = router({
             }
           }
         );
-      
       }
     ),
   getChartData: publicProcedure
@@ -71,8 +70,16 @@ export const priceFeedRouter = router({
       })
     )
     .query(async ({ input }): Promise<ApiResponseType<ChartDataResponse>> => {
+      const ttl = () => {
+        if (input.resolution === "1D") return "1d";
+        if (input.resolution === "7D") return "7d";
+        if (input.resolution === "720") return "1h";
+        if (input.resolution === "240") return "1h";
+        if (input.resolution === "60") return "1h";
+        return 5 * 1000;
+      };
       return cacheProvider.getOrSet(
-        getCacheKey('getChartData', input),
+        getCacheKey("getChartData", input),
         async () => {
           const res = await priceFeed.getChartData({
             address: input.tokenAddress,
@@ -83,7 +90,7 @@ export const priceFeedRouter = router({
             tokenNumber: input.tokenNumber,
             currencyCode: input.currencyCode,
           });
-    
+
           if (res.status === "error") {
             return {
               status: "error",
@@ -96,8 +103,11 @@ export const priceFeedRouter = router({
               message: "Success",
             };
           }
-        })
-      
+        },
+        {
+          ttl: ttl(),
+        }
+      );
     }),
   getTokenHistoricalPrice: publicProcedure
     .input(
@@ -113,7 +123,7 @@ export const priceFeedRouter = router({
         input,
       }): Promise<ApiResponseType<TokenCurrentPriceResponseType[]>> => {
         return cacheProvider.getOrSet(
-          getCacheKey('getTokenHistoricalPrice', input),
+          getCacheKey("getTokenHistoricalPrice", input),
           async () => {
             const res = await priceFeed.getTokenHistoricalPrice(
               input.tokenAddress,
@@ -121,7 +131,7 @@ export const priceFeedRouter = router({
               input.from,
               input.to
             );
-    
+
             if (res.status === "error") {
               return {
                 status: "error",
@@ -134,8 +144,8 @@ export const priceFeedRouter = router({
                 message: "Success",
               };
             }
-          })
-    
+          }
+        );
       }
     ),
 });
