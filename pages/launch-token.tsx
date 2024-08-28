@@ -49,6 +49,14 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
     raisingCycle: DateValue;
   }) => {
     try {
+      console.log(
+        "date",
+        Math.floor(
+          (data.raisingCycle.toDate(getLocalTimeZone()).getTime() -
+            Date.now()) /
+            1000
+        )
+      );
       const pairAddress = await launchpad.createFTO({
         ...data,
         // @ts-ignore

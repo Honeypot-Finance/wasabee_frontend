@@ -9,6 +9,7 @@ import { networksMap } from "@/services/chain";
 import LaunchHeader from "./LaunchHeader";
 import { cn } from "@/lib/tailwindcss";
 import NotConnetctedDisplay from "../NotConnetctedDisplay/NotConnetctedDisplay";
+import MemeWarBanner from "../MemeWarBanner/MemeWarBanner";
 
 export const Layout = ({
   children,
@@ -22,6 +23,7 @@ export const Layout = ({
   const currentChain = chainId ? networksMap[chainId] : null;
   return (
     <div className={cn("flex flex-col min-h-screen overflow-auto", className)}>
+      <MemeWarBanner />
       {router.pathname.startsWith("/launch") ||
       router.pathname.startsWith("/pools") ? (
         <LaunchHeader />
