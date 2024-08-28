@@ -48,15 +48,11 @@ export const appPathsList: Menu[] = [
     path: [
       {
         path: "/launch",
-        title: "Project List",
+        title: "Project Launch",
       },
       {
         path: "/meme-launchs",
-        title: "🐻MEME Projects",
-      },
-      {
-        path: "/launch-token",
-        title: "Launch FTO Project",
+        title: "🐻MEME Launches",
       },
     ],
     title: "Launch",

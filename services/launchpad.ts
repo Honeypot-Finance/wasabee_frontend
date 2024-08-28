@@ -13,8 +13,10 @@ import { trpc, trpcClient } from "@/lib/trpc";
 import { createSiweMessage } from "@/lib/siwe";
 import { Address } from "viem";
 import { Token } from "./contract/token";
-import { reset } from "viem/actions";
+import { getTransactionReceipt, reset } from "viem/actions";
 import { debounce, initial } from "lodash";
+import { parseEventLogs } from "viem";
+import { ERC20ABI } from "@/lib/abis/erc20";
 
 const PAGE_LIMIT = 9;
 
@@ -427,13 +429,16 @@ class LaunchPad {
 
     const res = await targetLaunchContractFunc();
 
-    console.log(res);
+    const logs = parseEventLogs({
+      logs: res.logs,
+      abi: ERC20ABI,
+    });
 
     const getPairAddress = () => {
       if (launchType === "fto") {
         return res.logs[res.logs.length - 1]?.address as string;
       } else {
-        return res.logs[0].address as string;
+        return (logs[0].args as any).to;
       }
     };
 
