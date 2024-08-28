@@ -3,7 +3,6 @@ import {
   statusTextToNumber,
 } from "@/services/launchpad";
 import {
-  IndexerProvider,
   GhostFtoPairResponse,
   GhostAPIOpt,
   GhostFtoTokensResponse,
@@ -18,9 +17,8 @@ import {
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
-import { Address } from "viem";
-import { Token } from "@/services/contract/token";
 
+const memeGraphHandle = "6297e13c-dd84-485d-946f-7cc2b997aeb7/ghostgraph";
 const ftoGraphHandle = "d27732e1-591f-4a84-bb99-209fe4022b6e/ghostgraph";
 const pairGraphHandle = "ca609e38-a070-4806-b4c9-08e96fee8118/ghostgraph";
 
@@ -125,7 +123,8 @@ export class GhostIndexer {
     filter: Partial<FtoPairFilter>,
     chainId: string,
     provider?: string,
-    pageRequest?: PageRequest
+    pageRequest?: PageRequest,
+    projectType?: "fto" | "meme"
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
     const statusNum = statusTextToNumber(filter?.status ?? "all");
 
@@ -243,7 +242,9 @@ export class GhostIndexer {
 
     query;
 
-    const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
+    const res = await this.callIndexerApi(query, {
+      apiHandle: projectType === "meme" ? memeGraphHandle : ftoGraphHandle,
+    });
 
     if (res.status === "error") {
       return res;

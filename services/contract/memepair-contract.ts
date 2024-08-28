@@ -3,7 +3,7 @@ import { wallet } from "../wallet";
 import { getContract } from "viem";
 import { AsyncState, ContractWrite } from "../utils";
 import { makeAutoObservable } from "mobx";
-import { MUBAI_FTO_PAIR_ABI } from "@/lib/abis/ftoPair";
+import { MemePairABI } from "@/lib/abis/MemePair";
 import BigNumber from "bignumber.js";
 import { Token } from "./token";
 import { dayjs } from "@/lib/dayjs";
@@ -12,11 +12,11 @@ import { trpcClient } from "@/lib/trpc";
 import { ZodError } from "zod";
 import { statusTextToNumber } from "../launchpad";
 
-export class FtoPairContract implements BaseContract {
+export class MemePairContract implements BaseContract {
   databaseId: number | undefined = undefined;
   address = "";
   name: string = "";
-  abi = MUBAI_FTO_PAIR_ABI;
+  abi = MemePairABI.abi;
   raiseToken: Token | undefined = undefined;
   launchedToken: Token | undefined = undefined;
   depositedRaisedTokenWithoutDecimals: BigNumber | null = null;
@@ -41,7 +41,7 @@ export class FtoPairContract implements BaseContract {
   }[] = [];
   logoUrl = "";
 
-  constructor(args: Partial<FtoPairContract>) {
+  constructor(args: Partial<MemePairContract>) {
     Object.assign(this, args);
     this.getIsValidated();
     makeAutoObservable(this);
@@ -104,11 +104,11 @@ export class FtoPairContract implements BaseContract {
   }
 
   get facadeContract() {
-    return wallet.contracts.ftofacade;
+    return wallet.contracts.memeFacade;
   }
 
-  get fotFactoryContract() {
-    return wallet.contracts.ftofactory;
+  get factoryContract() {
+    return wallet.contracts.memeFactory;
   }
 
   get price() {
@@ -172,14 +172,12 @@ export class FtoPairContract implements BaseContract {
     console.log(
       this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
-      BigInt(amount),
-      BigInt(0)
+      BigInt(amount)
     );
     await this.facadeContract.deposit.call([
       this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
       BigInt(amount),
-      BigInt(0),
     ]);
     await Promise.all([
       this.getDepositedRaisedToken(),
@@ -204,11 +202,12 @@ export class FtoPairContract implements BaseContract {
       throw new Error("token is not initialized");
     }
 
-    await this.fotFactoryContract.resume.call([
+    await this.factoryContract.resume.call([
       this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
     ]);
-    await this.getFTOState();
+
+    await this.getState();
   });
 
   pause = new AsyncState(async () => {
@@ -216,15 +215,16 @@ export class FtoPairContract implements BaseContract {
       throw new Error("token is not initialized");
     }
 
-    await this.fotFactoryContract.pause.call([
+    await this.factoryContract.pause.call([
       this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
     ]);
-    await this.getFTOState();
+
+    await this.getState();
   });
 
   get withdraw() {
-    return new ContractWrite(this.contract.write.withdraw, {
+    return new ContractWrite(this.contract.write.claimLP, {
       action: "Withdraw",
     });
   }
@@ -336,10 +336,8 @@ export class FtoPairContract implements BaseContract {
       this.getRaisedToken(raisedToken),
       this.getLaunchedToken(launchedToken),
       this.getDepositedRaisedToken(depositedRaisedToken),
-      this.getDepositedLaunchedToken(depositedLaunchedToken),
-      this.getStartTime(startTime),
       this.getEndTime(endTime),
-      this.getFTOState(ftoState),
+      this.getState(ftoState),
       this.getLaunchedTokenProvider(),
       this.getProjectInfo(),
       this.getCanClaimLP(),
@@ -367,7 +365,7 @@ export class FtoPairContract implements BaseContract {
     }
 
     try {
-      const claimed = await this.contract.read.claimedLp([wallet.account] as [
+      const claimed = await this.contract.read.claimableLP([wallet.account] as [
         `0x${string}`
       ]);
 
@@ -387,6 +385,7 @@ export class FtoPairContract implements BaseContract {
       this.raiseToken.init();
     } else {
       const res = (await this.contract.read.raisedToken()) as `0x${string}`;
+      console.log("res", res);
       this.raiseToken = Token.getToken({ address: res });
       this.raiseToken.init();
     }
@@ -397,7 +396,7 @@ export class FtoPairContract implements BaseContract {
       this.launchedToken = launchedToken;
       this.launchedToken.init();
     } else {
-      const res = (await this.contract.read.launchedToken()) as `0x${string}`;
+      const res = (await this.contract.read.lpToken()) as `0x${string}`;
       this.launchedToken = Token.getToken({ address: res });
       this.launchedToken.init();
     }
@@ -412,17 +411,6 @@ export class FtoPairContract implements BaseContract {
     }
   }
 
-  async getDepositedLaunchedToken(amount?: string) {
-    if (amount) {
-      this.depositedLaunchedTokenWithoutDecimals = new BigNumber(amount);
-    } else {
-      const res = (await this.contract.read.depositedLaunchedToken()) as bigint;
-      this.depositedLaunchedTokenWithoutDecimals = new BigNumber(
-        res.toString()
-      );
-    }
-  }
-
   async getEndTime(endtime?: string) {
     if (endtime) {
       this.endTime = endtime;
@@ -432,24 +420,16 @@ export class FtoPairContract implements BaseContract {
     }
   }
 
-  async getStartTime(startTime?: string) {
-    if (startTime) {
-      this.startTime = startTime;
-    } else {
-      const res = await this.contract.read.startTime();
-      this.startTime = res.toString();
-    }
-  }
-  async getFTOState(state?: number) {
+  async getState(state?: number) {
     if (state) {
       this.ftoState = state;
     } else {
-      const res = await this.contract.read.FTOState();
+      const res = await this.contract.read.LaunchState();
       this.ftoState = res;
     }
   }
   async getLaunchedTokenProvider() {
-    const res = await this.contract.read.launchedTokenProvider();
+    const res = await this.contract.read.tokenDeployer();
     this.launchedTokenProvider = res;
   }
 }

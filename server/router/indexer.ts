@@ -25,6 +25,7 @@ export const indexerFeedRouter = router({
             cursor: z.string().optional(),
           })
           .optional(),
+        projectType: z.enum(["fto", "meme"]).optional(),
       })
     )
     .query(async ({ input }) => {
@@ -35,7 +36,8 @@ export const indexerFeedRouter = router({
             input.filter as PairFilter,
             input.chainId,
             input.provider,
-            input.pageRequest as PageRequest
+            input.pageRequest as PageRequest,
+            input.projectType
           );
 
           return res;

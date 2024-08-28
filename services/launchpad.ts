@@ -16,7 +16,7 @@ import { Token } from "./contract/token";
 import { reset } from "viem/actions";
 import { debounce, initial } from "lodash";
 
-const pagelimit = 9;
+const PAGE_LIMIT = 9;
 
 export type PairFilter = {
   search: string;
@@ -67,7 +67,7 @@ class LaunchPad {
       search: "",
       status: "all",
       showNotValidatedPairs: true,
-      limit: pagelimit,
+      limit: PAGE_LIMIT,
     },
     LoadNextPageFunction: async (filter) => {
       if (!filter.showNotValidatedPairs) {
@@ -86,6 +86,18 @@ class LaunchPad {
     },
   });
 
+  memePageInfo = new IndexerPaginationState<PairFilter, FtoPairContract>({
+    filter: {
+      search: "",
+      status: "all",
+      showNotValidatedPairs: true,
+      limit: PAGE_LIMIT,
+    },
+    LoadNextPageFunction: async (filter) => {
+      return await this.LoadMoreFtoPage("meme");
+    },
+  });
+
   set pairFilterSearch(search: string) {
     this.ftoPageInfo.updateFilter({ search });
   }
@@ -96,6 +108,14 @@ class LaunchPad {
 
   set showNotValidatedPairs(show: boolean) {
     this.ftoPageInfo.updateFilter({ showNotValidatedPairs: show });
+  }
+
+  get memeFactoryContract() {
+    return wallet.contracts.memeFactory;
+  }
+
+  get memefacadeContract() {
+    return wallet.contracts.memeFacade;
   }
 
   get ftofactoryContract() {
@@ -193,7 +213,7 @@ class LaunchPad {
     return this.myFtoParticipatedPairs.value?.data ?? [];
   });
 
-  LoadMoreFtoPage = async () => {
+  LoadMoreFtoPage = async (projectType: "fto" | "meme" = "fto") => {
     const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
       filter: this.ftoPageInfo.filter,
       chainId: String(wallet.currentChainId),
@@ -201,6 +221,7 @@ class LaunchPad {
         direction: "next",
         cursor: this.ftoPageInfo.pageInfo.endCursor,
       },
+      projectType: projectType,
     });
 
     if (res.status === "success") {
@@ -351,14 +372,15 @@ class LaunchPad {
   });
 
   ftoPairsPagination = new PaginationState({
-    limit: pagelimit,
+    limit: PAGE_LIMIT,
   });
 
   myFtoParticipatedPairsPagination = new PaginationState({
-    limit: pagelimit,
+    limit: PAGE_LIMIT,
   });
 
-  createFTO = async ({
+  createLaunchProject = async ({
+    launchType,
     provider,
     raisedToken,
     tokenName,
@@ -367,6 +389,7 @@ class LaunchPad {
     poolHandler,
     raisingCycle,
   }: {
+    launchType: "fto" | "meme";
     provider: string;
     raisedToken: string;
     tokenName: string;
@@ -375,21 +398,54 @@ class LaunchPad {
     poolHandler: string;
     raisingCycle: number;
   }) => {
-    const res = await this.ftofactoryContract.createFTO.call([
-      provider as `0x${string}`,
-      raisedToken as `0x${string}`,
-      tokenName,
-      tokenSymbol,
-      BigInt(new BigNumber(tokenAmount).multipliedBy(1e18).toFixed()),
-      poolHandler as `0x${string}`,
-      BigInt(raisingCycle),
-    ]);
-    const pairAddress = res.logs.pop()?.address as string;
-    await trpcClient.fto.createProject.mutate({
+    const targetLaunchContractFunc = async () => {
+      if (launchType === "fto") {
+        return this.ftofactoryContract.createFTO.call([
+          provider as `0x${string}`,
+          raisedToken as `0x${string}`,
+          tokenName,
+          tokenSymbol,
+          BigInt(new BigNumber(tokenAmount).multipliedBy(1e18).toFixed()),
+          poolHandler as `0x${string}`,
+          BigInt(raisingCycle),
+        ]);
+      } else {
+        return this.memeFactoryContract.createPair.call([
+          {
+            raisedToken: raisedToken as `0x${string}`,
+            name: tokenName,
+            symbol: tokenSymbol,
+            tokenSupply: BigInt(
+              new BigNumber(tokenAmount).multipliedBy(1e18).toFixed()
+            ),
+            swapHandler: poolHandler as `0x${string}`,
+            launchCycle: BigInt(86400),
+          },
+        ]);
+      }
+    };
+
+    const res = await targetLaunchContractFunc();
+
+    console.log(res);
+
+    const getPairAddress = () => {
+      if (launchType === "fto") {
+        return res.logs[res.logs.length - 1]?.address as string;
+      } else {
+        return res.logs[0].address as string;
+      }
+    };
+
+    const pairAddress = getPairAddress();
+
+    await trpcClient.projects.createProject.mutate({
       pair: pairAddress,
       chain_id: wallet.currentChainId,
       provider: provider,
+      project_type: launchType,
     });
+
     return pairAddress;
   };
 
@@ -408,7 +464,7 @@ class LaunchPad {
         "Sign In With Honeypot",
         wallet.walletClient
       );
-      await trpcClient.fto.createOrUpdateProjectInfo.mutate(data);
+      await trpcClient.projects.createOrUpdateProjectInfo.mutate(data);
     }
   );
 
@@ -420,7 +476,7 @@ class LaunchPad {
         wallet.walletClient
       );
 
-      await trpcClient.fto.updateProjectLogo.mutate(data);
+      await trpcClient.projects.updateProjectLogo.mutate(data);
     }
   );
 

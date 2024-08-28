@@ -30,13 +30,15 @@ export default class Indexer<T extends IndexerProvider> {
     filter: PairFilter,
     chainId: string,
     provider?: string,
-    pageRequest?: PageRequest
+    pageRequest?: PageRequest,
+    projectType?: "fto" | "meme"
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
     return await this.dataProvider.getFilteredFtoPairs(
       filter,
       chainId,
       provider,
-      pageRequest
+      pageRequest,
+      projectType
     );
   };
 

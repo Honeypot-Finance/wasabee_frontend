@@ -11,9 +11,10 @@ import { toast } from "react-toastify";
 import { Row, RowList } from "postgres";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { after, before, set } from "lodash";
+import { MemePairContract } from "@/services/contract/memepair-contract";
 
 interface DiscussionAreaProps {
-  pair: FtoPairContract;
+  pair: FtoPairContract | MemePairContract;
 }
 
 export function DiscussionArea(props: DiscussionAreaProps) {

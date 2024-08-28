@@ -1,11 +1,12 @@
 import { cn } from "@/lib/tailwindcss";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
+import { MemePairContract } from "@/services/contract/memepair-contract";
 import { motion, useMotionValue, useTime } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 
 interface ProjectStatusDisplayProps {
-  pair: FtoPairContract | null | undefined;
+  pair: FtoPairContract | MemePairContract | null | undefined;
 }
 
 export const ProjectStatusDisplay = observer(

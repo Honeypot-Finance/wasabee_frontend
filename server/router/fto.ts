@@ -16,6 +16,7 @@ export const ftoRouter = router({
         chain_id: z.number(),
         pair: z.string(),
         provider: z.string(),
+        project_type: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -39,6 +40,7 @@ export const ftoRouter = router({
           logo_url: z.string().or(z.null()),
           name: z.string().or(z.null()),
           provider: z.string(),
+          project_type: z.string().or(z.null()),
         })
         .or(z.null())
     )
@@ -77,6 +79,7 @@ export const ftoRouter = router({
         projectName: z.string(),
         pair: z.string(),
         chain_id: z.number(),
+        project_type: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
