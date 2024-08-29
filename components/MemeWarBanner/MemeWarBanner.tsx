@@ -1,37 +1,32 @@
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import Countdown from "react-countdown";
-import { IoClose } from "react-icons/io5";
-import { SlCursor } from "react-icons/sl";
+import { useCallback, useEffect, useState } from "react";
 
-const ANIMATION_DURATION = 500; //ms
+const ANIMATION_DURATION = 100; //ms
 
 export default function MemeWarBanner() {
+  const attackDistance = useCallback(() => {
+    //return number based on window size
+    if (typeof window !== "undefined") {
+      return window.innerWidth / 2;
+    }
+  }, []);
+
   const [gameState, setGameState] = useState<{
     showPopBoard: boolean;
     popBoardRender: string;
     player1: {
       health: number;
       attack: number;
-      animationVariants: {
-        idle: { x: number };
-        attack: { x: number };
-        hit: { x: number; opacity: number };
-        die: { x: number; y: number };
-      };
+      animationVariants: Variants;
       currentAnimation: string;
       animationTimeOut: NodeJS.Timeout | undefined;
     };
     player2: {
       health: number;
       attack: number;
-      animationVariants: {
-        idle: { x: number };
-        attack: { x: number };
-        hit: { x: number; opacity: number };
-        die: { x: number; y: number };
-      };
+      animationVariants: Variants;
       currentAnimation: string;
       animationTimeOut: NodeJS.Timeout | undefined;
     };
@@ -42,9 +37,9 @@ export default function MemeWarBanner() {
       health: 50,
       attack: 10,
       animationVariants: {
-        idle: { x: 0 },
-        attack: { x: 10 },
-        hit: { x: -10, opacity: 0.5 },
+        idle: { x: 0, opacity: 1, y: 0 },
+        attack: { x: `${attackDistance()}px` },
+        hit: { x: -10, y: 5, opacity: 0.8 },
         die: { x: 0, y: 100 },
       },
       currentAnimation: "idle",
@@ -54,9 +49,9 @@ export default function MemeWarBanner() {
       health: 50,
       attack: 10,
       animationVariants: {
-        idle: { x: 0 },
-        attack: { x: -10 },
-        hit: { x: 10, opacity: 0.5 },
+        idle: { x: 0, opacity: 1, y: 0 },
+        attack: { x: `-${attackDistance()}px` },
+        hit: { x: 10, y: 5, opacity: 0.8 },
         die: { x: 0, y: 100 },
       },
       currentAnimation: "idle",
@@ -80,10 +75,6 @@ export default function MemeWarBanner() {
     });
   };
 
-  const gameOver = () => {
-    console.log("Game Over");
-  };
-
   const playAnimation = async (
     target: "player1" | "player2",
     animation: string
@@ -92,103 +83,99 @@ export default function MemeWarBanner() {
       gameState.player1.animationTimeOut &&
         clearTimeout(gameState.player1.animationTimeOut);
 
-      setGameState({
-        ...gameState,
-        player1: {
-          ...gameState.player1,
-          currentAnimation: animation,
-          animationTimeOut: setTimeout(() => {
-            setGameState({
-              ...gameState,
-              player1: {
-                ...gameState.player1,
-                currentAnimation: "idle",
-              },
-            });
-          }, ANIMATION_DURATION),
-        },
+      setGameState((prev) => {
+        return {
+          ...prev,
+          player1: {
+            ...prev.player1,
+            currentAnimation: animation,
+            animationTimeOut: setTimeout(() => {
+              setGameState({
+                ...gameState,
+                player1: {
+                  ...gameState.player1,
+                  currentAnimation: "idle",
+                },
+              });
+            }, ANIMATION_DURATION),
+          },
+        };
       });
     } else {
       gameState.player2.animationTimeOut &&
         clearTimeout(gameState.player2.animationTimeOut);
 
-      setGameState({
-        ...gameState,
-        player2: {
-          ...gameState.player2,
-          currentAnimation: animation,
-          animationTimeOut: setTimeout(() => {
-            setGameState({
-              ...gameState,
-              player2: {
-                ...gameState.player2,
-                currentAnimation: "idle",
-              },
-            });
-          }, ANIMATION_DURATION),
-        },
+      setGameState((prev) => {
+        return {
+          ...prev,
+          player2: {
+            ...prev.player2,
+            currentAnimation: animation,
+            animationTimeOut: setTimeout(() => {
+              setGameState({
+                ...gameState,
+                player2: {
+                  ...gameState.player2,
+                  currentAnimation: "idle",
+                },
+              });
+            }, ANIMATION_DURATION),
+          },
+        };
       });
     }
   };
 
   const handleAttack = (target: "player1" | "player2") => {
     if (target === "player1") {
-      setGameState({
-        ...gameState,
-        player1: {
-          ...gameState.player1,
-          health: gameState.player1.health - gameState.player2.attack,
-        },
-      });
-
       playAnimation("player1", "hit");
       playAnimation("player2", "attack");
-
-      if (gameState.player1.health - gameState.player2.attack <= 0) {
-        gameOver();
-      }
     } else {
-      setGameState({
-        ...gameState,
-        player2: {
-          ...gameState.player2,
-          health: gameState.player2.health - gameState.player1.attack,
-        },
-      });
-
       playAnimation("player2", "hit");
       playAnimation("player1", "attack");
-
-      if (gameState.player2.health - gameState.player1.attack <= 0) {
-        gameOver();
-      }
     }
   };
 
   return (
-    <div className="relative grid w-full h-full">
-      <div className="mt-10">
+    <div className="relative grid w-full aspect-video">
+      <Image
+        src="/images/memewar/BG.png"
+        className="absolute w-full h-full"
+        alt=""
+        width={1480}
+        height={1480}
+      />
+      <Image
+        src="/images/memewar/TOP_BANNER.png"
+        alt=""
+        width={200}
+        height={200}
+        className="absolute top-0 left-0 w-full"
+      />
+      <div className="z-10">
         {/** health bar */}
-        <div className="flex w-full items-center justify-between">
-          <div id="player1_hp_bar_contianer " className="w-[100px]">
-            <div
-              className="bg-red-500 h-4 w-full rounded-lg"
-              style={{
-                maxWidth: `${gameState.player1.health * 2}%`,
-              }}
-            ></div>
+        <div className="flex w-full justify-between">
+          <div id="player1_hp_bar_contianer" className="relative w-[40%]">
+            <Image
+              src="/images/memewar/BAR2.png"
+              alt=""
+              width={200}
+              height={50}
+              className="absolute w-full top-0 left-0"
+            ></Image>
           </div>
-          <div id="player2_hp_bar_contianer" className="w-[100px]">
-            <div
-              className="bg-red-500 h-4 w-full rounded-lg"
-              style={{
-                maxWidth: `${gameState.player2.health * 2}%`,
-              }}
-            ></div>
+          <div id="player2_hp_bar_contianer" className="relative w-[40%]">
+            <Image
+              src="/images/memewar/BAR3.png"
+              alt=""
+              width={200}
+              height={50}
+              className="absolute w-full top-0 left-0"
+            ></Image>
           </div>
         </div>
       </div>
-      <div className="relative grow h-full">
+      <div className="relative grow h-fullz-10">
         <motion.div
           initial="idle"
           variants={gameState.player1.animationVariants}
@@ -197,9 +184,14 @@ export default function MemeWarBanner() {
             duration: ANIMATION_DURATION / 1000,
           }}
           onClick={() => handleAttack("player1")}
-          className="absolute bottom-0 w-[50px] h-[50px] bg-red-400 cursor-pointer"
+          className="absolute left-0 bottom-0 w-[80px] sm:w-[150px] md:w-[200px] lg:w-[300px] cursor-pointer"
         >
-          player 1
+          <Image
+            src="/images/memewar/JANIS.png"
+            alt=""
+            width={300}
+            height={300}
+          />
         </motion.div>
 
         <motion.div
@@ -210,13 +202,18 @@ export default function MemeWarBanner() {
             duration: ANIMATION_DURATION / 1000,
           }}
           onClick={() => handleAttack("player2")}
-          className="absolute bottom-0 right-0 w-[50px] h-[50px] bg-blue-400 cursor-pointer"
+          className="absolute w-[80px] sm:w-[150px] md:w-[200px] lg:w-[300px] bottom-0 right-0 cursor-pointer"
         >
-          player 2
+          <Image
+            src="/images/memewar/POTS.png"
+            alt=""
+            width={300}
+            height={300}
+          />
         </motion.div>
       </div>
       {gameState.showPopBoard && (
-        <div className=" absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[50%] text-white">
+        <div className=" absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[50%] text-white z-50">
           {gameState.popBoardRender}
         </div>
       )}

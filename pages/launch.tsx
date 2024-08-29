@@ -50,8 +50,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
 
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
-      <div className="w-full h-[50vh]">
-        <MemeWarBanner></MemeWarBanner>
+      <div className="w-full">
+        <MemeWarBanner />
       </div>
       <div className="flex w-full justify-end gap-2">
         <Button className="scale-[0.8] sm:scale-100">
