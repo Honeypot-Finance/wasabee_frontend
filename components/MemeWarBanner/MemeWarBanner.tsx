@@ -52,7 +52,7 @@ export default function MemeWarBanner() {
       className="absolute w-screen h-[100px] bg-yellow-800/90 z-50 flex flex-col justify-center items-center border-2 border-yellow-950"
     >
       <Link
-        href={"https://x.com/honeypotfinance/status/1828466294229721217"}
+        href={"https://x.com/honeypotfinance/status/1829178971864608776"}
         target="_blank"
         className=" flex justify-center items-center font-[MEMEH] hover:scale-110 transition-all cursor-pointer"
       >
