@@ -20,6 +20,7 @@ export const ftoService = {
     chain_id: number;
     creator_api_key: string;
     project_type?: string;
+    projectName: string;
   }) => {
     if (
       !fto_api_key_list.includes(data.creator_api_key) &&
@@ -34,6 +35,7 @@ export const ftoService = {
       chain_id: data.chain_id,
       creator_api_key: data.creator_api_key,
       project_type: data.project_type ?? "",
+      name: data.projectName,
     })}`;
   },
   getProjectInfo: async (data: {

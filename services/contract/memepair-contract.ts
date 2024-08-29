@@ -396,7 +396,7 @@ export class MemePairContract implements BaseContract {
       this.launchedToken = launchedToken;
       this.launchedToken.init();
     } else {
-      const res = (await this.contract.read.lpToken()) as `0x${string}`;
+      const res = (await this.contract.read.memeToken()) as `0x${string}`;
       this.launchedToken = Token.getToken({ address: res });
       this.launchedToken.init();
     }

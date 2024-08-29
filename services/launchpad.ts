@@ -449,6 +449,7 @@ class LaunchPad {
       chain_id: wallet.currentChainId,
       provider: provider,
       project_type: launchType,
+      projectName: tokenName,
     });
 
     return pairAddress;
