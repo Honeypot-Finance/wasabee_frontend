@@ -46,3 +46,5 @@ export const cacheProvider = bento.namespace(
 export const getCacheKey = (key: string, args?: any) => {
   return `${key}-${JSON.stringify(args)}`;
 };
+
+bento.clearAll();
