@@ -261,10 +261,8 @@ export const berachainBartioTestnetNetwork = new Network({
     },
   },
   validatedFtoAddresses: [
-    "0xe1650d95ab180eb4383093d78c6f0cc164bd55e2".toLowerCase(),
-    "0x458cd7e366480d3e152510cfbe82609f5562bbc2".toLowerCase(),
-    "0xa32f78ace7dad80e4b5d18bd8ab9d76aebaa69bd".toLowerCase(),
-    "0x86905d4054f307fce742a8eb7d5d6012711a3588".toLowerCase(),
+    "0x2c504e661750e03aa9252c67e771dc059a521863".toLowerCase(),
+    "0x93f8beabd145a61067ef2fca38c4c9c31d47ab7e".toLowerCase(),
   ],
 });
 
