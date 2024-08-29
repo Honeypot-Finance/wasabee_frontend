@@ -36,6 +36,8 @@ export class DefinedPriceFeed implements PriceFeedProvider {
 
     const data = await res.json();
 
+    console.log(data);
+
     return {
       status: "success",
       data: data.data,
