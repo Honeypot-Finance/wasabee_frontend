@@ -27,6 +27,7 @@ import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { FaCrown } from "react-icons/fa";
+import MemeWarBanner from "@/components/MemeWarBanner/MemeWarBanner";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -49,6 +50,9 @@ const LaunchPage: NextLayoutPage = observer(() => {
 
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
+      <div className="w-full h-[50vh]">
+        <MemeWarBanner></MemeWarBanner>
+      </div>
       <div className="flex w-full justify-end gap-2">
         <Button className="scale-[0.8] sm:scale-100">
           <Link href="/launch-token" className="text-black font-bold">
@@ -62,6 +66,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
           <h2 className="w-full text-center text-[3rem] [font-family:MEMEH] font-bold">
             Trending Projects
           </h2>
+
           <motion.div
             variants={defaultContainerVariants}
             initial="hidden"
