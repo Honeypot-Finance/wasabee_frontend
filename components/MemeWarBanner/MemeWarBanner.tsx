@@ -66,7 +66,7 @@ export default function MemeWarBanner() {
       </Link>
       <div className="w-full flex justify-center items-center">
         <Countdown
-          date={new Date("2024-08-29T16:20:00").toUTCString()}
+          date={new Date("2024-08-29T16:20:00 UTC")}
           renderer={({ days, hours, minutes, seconds }) =>
             renderer({ days, hours, minutes, seconds })
           }
