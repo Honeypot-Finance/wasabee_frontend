@@ -175,9 +175,17 @@ export default function MemeWarBanner() {
 
   return (
     <>
-      <h2 className="w-full text-center text-5xl font-[MEMEH] mb-2">
-        MEME WAR
-      </h2>
+      <div className="flex justify-between text-center">
+        <h3>
+          JANI SCORE: {state.JANI_pair.value?.depositedRaisedToken?.toFixed(2)}
+        </h3>
+        <h2 className="w-full text-center text-5xl font-[MEMEH] mb-2">
+          MEME WAR
+        </h2>
+        <h3>
+          HPOT SCORE: {state.POTS_pair.value?.depositedRaisedToken?.toFixed(2)}
+        </h3>
+      </div>
       <div className="relative grid w-full aspect-video">
         <Image
           src="/images/memewar/BG.png"
@@ -263,9 +271,14 @@ export default function MemeWarBanner() {
         <div className="flex justify-center items-center gap-2">
           <Button
             onClick={() => {
-              state.JANI_pair.value?.deposit.call({
-                amount: JANI_SUPPORT_AMOUNT,
-              });
+              state.JANI_pair.value?.deposit
+                .call({
+                  amount: JANI_SUPPORT_AMOUNT,
+                })
+                .then(async () => {
+                  await state.JANI_pair.value?.raiseToken?.getBalance();
+                  state.JANI_pair.value?.getDepositedRaisedToken();
+                });
 
               //attack 3 times
               let count = 0;
@@ -293,9 +306,14 @@ export default function MemeWarBanner() {
           />
           <Button
             onClick={() => {
-              state.POTS_pair.value?.deposit.call({
-                amount: POTS_SUPPORT_AMOUNT,
-              });
+              state.POTS_pair.value?.deposit
+                .call({
+                  amount: POTS_SUPPORT_AMOUNT,
+                })
+                .then(async () => {
+                  await state.POTS_pair.value?.raiseToken?.getBalance();
+                  state.POTS_pair.value?.getDepositedRaisedToken();
+                });
 
               //attack 3 times
               let count = 0;
