@@ -1032,14 +1032,11 @@ const MemeView = observer(() => {
         breadcrumbs={[
           {
             title: "Projects",
-            href: "/launch",
+            href: "/meme-launchs",
           },
           {
             title: state.pair.value?.launchedToken?.displayName || "-",
-            href:
-              state.pairInfo.value?.project_type === "meme"
-                ? "meme-launchs"
-                : "/launch-token",
+            href: "",
           },
         ]}
       ></Breadcrumbs>
