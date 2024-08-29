@@ -159,8 +159,8 @@ export default function MemeWarBanner() {
             <Image
               src="/images/memewar/BAR2.png"
               alt=""
-              width={200}
-              height={50}
+              width={300}
+              height={10}
               className="absolute w-full top-0 left-0"
             ></Image>
           </div>
@@ -168,8 +168,8 @@ export default function MemeWarBanner() {
             <Image
               src="/images/memewar/BAR3.png"
               alt=""
-              width={200}
-              height={50}
+              width={300}
+              height={10}
               className="absolute w-full top-0 left-0"
             ></Image>
           </div>
