@@ -5,6 +5,9 @@ import { useCallback, useEffect, useState } from "react";
 
 const ANIMATION_DURATION = 100; //ms
 
+const JANI_FTO_ADDRESS = "0x2c504e661750e03aa9252c67e771dc059a521863";
+const POTS_FTO_ADDRESS = "0x93f8beabd145a61067ef2fca38c4c9c31d47ab7e";
+
 export default function MemeWarBanner() {
   const attackDistance = useCallback(() => {
     //return number based on window size
