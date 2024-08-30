@@ -9,11 +9,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useBalance } from "wagmi";
+import { Token } from "@/services/contract/token";
 
 const ANIMATION_DURATION = 100; //ms
 
 const JANI_FTO_ADDRESS = "0x2c504e661750e03aa9252c67e771dc059a521863";
 const POTS_FTO_ADDRESS = "0x93f8beabd145a61067ef2fca38c4c9c31d47ab7e";
+
+const tHpotAddress = "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E";
 
 export default function MemeWarBanner() {
   const attackDistance = useCallback(() => {
@@ -24,9 +27,6 @@ export default function MemeWarBanner() {
   }, []);
   const [JANI_SUPPORT_AMOUNT, setJANI_SUPPORT_AMOUNT] = useState("");
   const [POTS_SUPPORT_AMOUNT, setPOTS_SUPPORT_AMOUNT] = useState("");
-  const { data, status } = useBalance({
-    address: wallet.account as `0x${string}`,
-  });
 
   const state = useLocalObservable(() => ({
     JANI_pair: new AsyncState(async () => {
@@ -43,6 +43,13 @@ export default function MemeWarBanner() {
       pair.launchedToken?.init();
       return pair;
     }),
+    T_HPOT_TOKEN: new AsyncState(async () => {
+      const token = await Token.getToken({
+        address: tHpotAddress,
+      });
+      await token.init();
+      return token;
+    }),
   }));
 
   useEffect(() => {
@@ -52,6 +59,7 @@ export default function MemeWarBanner() {
 
     state.JANI_pair.call();
     state.POTS_pair.call();
+    state.T_HPOT_TOKEN.call();
   }, [wallet.isInit]);
 
   const [gameState, setGameState] = useState<{
@@ -286,12 +294,14 @@ export default function MemeWarBanner() {
       </div>
       <div className="text-center">
         your tHpot balance:{" "}
-        {status === "success" &&
-          (Math.pow(0.1, 18) * Number(data.value.toString())).toFixed(2)}
+        {state.T_HPOT_TOKEN.value?.balance?.toFixed(2) || "loading..."}
       </div>
       <div className="grid md:grid-cols-2 mt-1 gap-5">
         <div className="flex justify-center items-center gap-2">
           <Button
+            isDisabled={
+              JANI_SUPPORT_AMOUNT == "" || Number(JANI_SUPPORT_AMOUNT) <= 0
+            }
             onClick={() => {
               state.JANI_pair.value?.deposit
                 .call({
@@ -320,6 +330,9 @@ export default function MemeWarBanner() {
             onChange={(e) => setPOTS_SUPPORT_AMOUNT(e.target.value)}
           />
           <Button
+            isDisabled={
+              POTS_SUPPORT_AMOUNT == "" || Number(JANI_SUPPORT_AMOUNT) <= 0
+            }
             onClick={() => {
               state.POTS_pair.value?.deposit
                 .call({
