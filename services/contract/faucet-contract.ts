@@ -104,9 +104,9 @@ export class NativeFaucetContract implements BaseContract {
         address: wallet.account,
       })
       .catch((err) => {
-        console.log('err', err);
-        toast.error(err);
-        this.cantClaimReason = err;
+        console.dir( err);
+        toast.error(err.message);
+        this.cantClaimReason = err.message;
       });
 
     toast.dismiss(loadingToast);
