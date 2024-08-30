@@ -253,7 +253,7 @@ export const MemeWarBanner = observer(() => {
           height={1480}
         />
         <div id="scoreboard" className="w-full h-full z-10">
-          {Object.values(state.pairs).map((pair) => {
+          {/* {Object.values(state.pairs).map((pair) => {
             return (
               <div key={pair.pair.value?.address}>
                 <h3>
@@ -262,7 +262,7 @@ export const MemeWarBanner = observer(() => {
                 </h3>
               </div>
             );
-          })}
+          })} */}
         </div>
         <div className="relative grow h-full z-10">
           <motion.div
