@@ -4,7 +4,7 @@ import { wallet } from "@/services/wallet";
 import { Input } from "@nextui-org/react";
 import { Button } from "../button";
 import { motion, Variants } from "framer-motion";
-import { useLocalObservable } from "mobx-react-lite";
+import { observer, useLocalObservable } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -20,7 +20,7 @@ const IVX_FTO_ADDRESS = "0xa9edde04fc958264b1d6ad6153cffe26b1c79411";
 
 const tHpotAddress = "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E";
 
-export default function MemeWarBanner() {
+export const MemeWarBanner = observer(() => {
   const attackDistance = useCallback(() => {
     //return number based on window size
     if (typeof window !== "undefined") {
@@ -253,7 +253,7 @@ export default function MemeWarBanner() {
           height={1480}
         />
         <div id="scoreboard" className="w-full h-full z-10">
-          {/* {Object.values(state.pairs).map((pair) => {
+          {Object.values(state.pairs).map((pair) => {
             return (
               <div key={pair.pair.value?.address}>
                 <h3>
@@ -262,7 +262,7 @@ export default function MemeWarBanner() {
                 </h3>
               </div>
             );
-          })} */}
+          })}
         </div>
         <div className="relative grow h-full z-10">
           <motion.div
@@ -343,11 +343,11 @@ export default function MemeWarBanner() {
                         .then(async () => {
                           await value.pair.value?.raiseToken?.getBalance();
                           value.pair.value?.getDepositedRaisedToken();
-                          autoAttack("player2", 3);
+                          handleAttackMiddle();
                         });
 
                       //attack 3 times
-                      autoAttack("player2", 3);
+                      handleAttackMiddle();
                     }}
                   >
                     Support {key}
@@ -364,4 +364,6 @@ export default function MemeWarBanner() {
       </div>
     </>
   );
-}
+});
+
+export default MemeWarBanner;
