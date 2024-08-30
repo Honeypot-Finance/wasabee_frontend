@@ -211,7 +211,7 @@ export default function MemeWarBanner() {
           POT SCORE: {state.POTS_pair.value?.depositedRaisedToken?.toFixed(2)}
         </h3>
       </div>
-      <div className="relative grid w-full aspect-video">
+      <div className="relative grid grid-rows-[30%_1fr] w-full aspect-video">
         <Image
           src="/images/memewar/BG.png"
           className="absolute w-full h-full"
@@ -258,13 +258,22 @@ export default function MemeWarBanner() {
               duration: ANIMATION_DURATION / 1000,
             }}
             onClick={() => handleAttack("player1")}
-            className="absolute left-0 bottom-0 w-[80px] sm:w-[150px] md:w-[200px] lg:w-[300px] cursor-pointer"
+            className="absolute left-0 h-full bottom-0 w-[80px] sm:w-[150px] md:w-[200px] lg:w-[300px] cursor-pointer"
           >
             <Image
               src="/images/memewar/JANIS.png"
               alt=""
               width={300}
               height={300}
+              className="absolute w-full h-full object-contain object-bottom"
+            />
+
+            <Image
+              src="/images/memewar/BULLAS.png"
+              alt=""
+              width={300}
+              height={300}
+              className="absolute w-full h-full object-contain object-bottom left-[30%]"
             />
           </motion.div>
 
@@ -276,13 +285,22 @@ export default function MemeWarBanner() {
               duration: ANIMATION_DURATION / 1000,
             }}
             onClick={() => handleAttack("player2")}
-            className="absolute w-[80px] sm:w-[150px] md:w-[200px] lg:w-[300px] bottom-0 right-0 cursor-pointer"
+            className="absolute w-[80px] h-full sm:w-[150px] md:w-[200px] lg:w-[300px] bottom-0 right-0 cursor-pointer"
           >
             <Image
               src="/images/memewar/POTS.png"
               alt=""
               width={300}
               height={300}
+              className="absolute w-full h-full object-contain object-bottom"
+            />
+
+            <Image
+              src="/images/memewar/IVX.png"
+              alt=""
+              width={300}
+              height={300}
+              className="absolute w-full h-full object-contain object-bottom right-[30%]"
             />
           </motion.div>
         </div>
@@ -331,7 +349,7 @@ export default function MemeWarBanner() {
           />
           <Button
             isDisabled={
-              POTS_SUPPORT_AMOUNT == "" || Number(JANI_SUPPORT_AMOUNT) <= 0
+              POTS_SUPPORT_AMOUNT == "" || Number(POTS_SUPPORT_AMOUNT) <= 0
             }
             onClick={() => {
               state.POTS_pair.value?.deposit
