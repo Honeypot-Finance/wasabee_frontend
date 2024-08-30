@@ -422,8 +422,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
     if (
       !state.pair.value ||
       !state.pair.value.isInit ||
-      !state.pair.value.isProvider ||
-      router.query.edit == "true"
+      !state.pair.value.isProvider
     )
       return;
 
@@ -435,7 +434,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
       !state.pair.value.website ||
       !state.pair.value.telegram
     ) {
-      toast.warning(
+     toast.warning(
         <div>
           <ul className="list-disc list-inside">
             {!state.pair.value.logoUrl && (
@@ -461,7 +460,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
             Click{" "}
             <span
               onClick={() => {
-                router.push(`/launch-detail/${pairAddress}?edit=true`);
+                onOpen()
                 toast.dismiss();
               }}
               className="text-blue-500 cursor-pointer"
@@ -475,6 +474,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
           autoClose: false,
         }
       );
+     return () =>  toast.dismiss();
     }
   }, [
     pairAddress,
@@ -482,8 +482,6 @@ const LaunchPage: NextLayoutPage = observer(() => {
     state.pair.value?.isProvider,
     state.pair.value,
     onOpen,
-    router.query.edit,
-    router,
   ]);
 
   useEffect(() => {
@@ -506,12 +504,12 @@ const LaunchPage: NextLayoutPage = observer(() => {
     chart.setChartTarget(state.pair.value?.launchedToken ?? undefined);
   }, [state.pair.value]);
 
-  useEffect(() => {
-    if (!state.pair.value) return;
-    if (router.query.edit == "true" && state.pair.value?.isProvider) {
-      onOpen();
-    }
-  }, [onOpen, router.query, state.pair.value, state.pair.value?.isProvider]);
+  // useEffect(() => {
+  //   if (!state.pair.value) return;
+  //   if (router.query.edit == "true" && state.pair.value?.isProvider) {
+  //     onOpen();
+  //   }
+  // }, [onOpen, router.query, state.pair.value, state.pair.value?.isProvider]);
 
   function refreshVotes() {
     trpcClient.fto.getProjectVotes
