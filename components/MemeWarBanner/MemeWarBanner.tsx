@@ -183,7 +183,7 @@ export default function MemeWarBanner() {
           MEME WAR
         </h2>
         <h3>
-          HPOT SCORE: {state.POTS_pair.value?.depositedRaisedToken?.toFixed(2)}
+          POT SCORE: {state.POTS_pair.value?.depositedRaisedToken?.toFixed(2)}
         </h3>
       </div>
       <div className="relative grid w-full aspect-video">
@@ -327,7 +327,7 @@ export default function MemeWarBanner() {
               }, 200);
             }}
           >
-            Support HPOT
+            Support POT
           </Button>
         </div>
       </div>
