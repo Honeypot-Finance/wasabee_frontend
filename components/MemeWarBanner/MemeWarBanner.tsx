@@ -8,6 +8,7 @@ import { useLocalObservable } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { useBalance } from "wagmi";
 
 const ANIMATION_DURATION = 100; //ms
 
@@ -23,6 +24,11 @@ export default function MemeWarBanner() {
   }, []);
   const [JANI_SUPPORT_AMOUNT, setJANI_SUPPORT_AMOUNT] = useState("");
   const [POTS_SUPPORT_AMOUNT, setPOTS_SUPPORT_AMOUNT] = useState("");
+  const { data, status } = useBalance({
+    address: wallet.account as `0x${string}`,
+  });
+
+  console.log(data?.value);
 
   const state = useLocalObservable(() => ({
     JANI_pair: new AsyncState(async () => {
@@ -192,7 +198,7 @@ export default function MemeWarBanner() {
         <h3>
           JANI SCORE: {state.JANI_pair.value?.depositedRaisedToken?.toFixed(2)}
         </h3>
-        <h2 className="w-full text-center text-5xl font-[MEMEH] mb-2">
+        <h2 className="w-full text-center text-xl md:text-5xl font-[MEMEH] mb-2">
           MEME WAR
         </h2>
         <h3>
@@ -280,7 +286,12 @@ export default function MemeWarBanner() {
           </div>
         )}
       </div>
-      <div className="grid grid-cols-2 mt-1 gap-5">
+      <div className="text-center">
+        your tHpot balance:{" "}
+        {status === "success" &&
+          (Math.pow(0.1, 18) * Number(data.value.toString())).toFixed(2)}
+      </div>
+      <div className="grid md:grid-cols-2 mt-1 gap-5">
         <div className="flex justify-center items-center gap-2">
           <Button
             onClick={() => {
