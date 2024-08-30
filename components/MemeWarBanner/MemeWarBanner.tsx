@@ -15,6 +15,8 @@ const ANIMATION_DURATION = 100; //ms
 
 const JANI_FTO_ADDRESS = "0x2c504e661750e03aa9252c67e771dc059a521863";
 const POTS_FTO_ADDRESS = "0x93f8beabd145a61067ef2fca38c4c9c31d47ab7e";
+const BULLA_FTO_ADDRESS = "0xa8c0dda3dff715dd6093101c585d25addc5046c8";
+const IVX_FTO_ADDRESS = "0xa9edde04fc958264b1d6ad6153cffe26b1c79411";
 
 const tHpotAddress = "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E";
 
@@ -24,25 +26,52 @@ export default function MemeWarBanner() {
     if (typeof window !== "undefined") {
       return window.innerWidth / 2;
     }
+    return 0;
   }, []);
-  const [JANI_SUPPORT_AMOUNT, setJANI_SUPPORT_AMOUNT] = useState("");
-  const [POTS_SUPPORT_AMOUNT, setPOTS_SUPPORT_AMOUNT] = useState("");
+
+  const initPair = useCallback(async (address: string) => {
+    const pair = new FtoPairContract({ address });
+    await pair.init();
+    pair.raiseToken?.init();
+    pair.launchedToken?.init();
+    return pair;
+  }, []);
 
   const state = useLocalObservable(() => ({
-    JANI_pair: new AsyncState(async () => {
-      const pair = new FtoPairContract({ address: JANI_FTO_ADDRESS });
-      await pair.init();
-      pair.raiseToken?.init();
-      pair.launchedToken?.init();
-      return pair;
-    }),
-    POTS_pair: new AsyncState(async () => {
-      const pair = new FtoPairContract({ address: POTS_FTO_ADDRESS });
-      await pair.init();
-      pair.raiseToken?.init();
-      pair.launchedToken?.init();
-      return pair;
-    }),
+    pairs: {
+      JANI: {
+        ADDRESS: JANI_FTO_ADDRESS,
+        SUPPORT_AMOUNT: "",
+        set_SUPPORT_AMOUNT: (amount: string) => {
+          state.pairs.JANI.SUPPORT_AMOUNT = amount;
+        },
+        pair: new AsyncState(async () => initPair(JANI_FTO_ADDRESS)),
+      },
+      POTS: {
+        ADDRESS: POTS_FTO_ADDRESS,
+        SUPPORT_AMOUNT: "",
+        set_SUPPORT_AMOUNT: (amount: string) => {
+          state.pairs.POTS.SUPPORT_AMOUNT = amount;
+        },
+        pair: new AsyncState(async () => initPair(POTS_FTO_ADDRESS)),
+      },
+      BULLA: {
+        ADDRESS: BULLA_FTO_ADDRESS,
+        SUPPORT_AMOUNT: "",
+        set_SUPPORT_AMOUNT: (amount: string) => {
+          state.pairs.BULLA.SUPPORT_AMOUNT = amount;
+        },
+        pair: new AsyncState(async () => initPair(BULLA_FTO_ADDRESS)),
+      },
+      IVX: {
+        ADDRESS: IVX_FTO_ADDRESS,
+        SUPPORT_AMOUNT: "",
+        set_SUPPORT_AMOUNT: (amount: string) => {
+          state.pairs.IVX.SUPPORT_AMOUNT = amount;
+        },
+        pair: new AsyncState(async () => initPair(IVX_FTO_ADDRESS)),
+      },
+    },
     T_HPOT_TOKEN: new AsyncState(async () => {
       const token = await Token.getToken({
         address: tHpotAddress,
@@ -57,8 +86,10 @@ export default function MemeWarBanner() {
       return;
     }
 
-    state.JANI_pair.call();
-    state.POTS_pair.call();
+    Object.values(state.pairs).forEach((pair) => {
+      pair.pair.call();
+    });
+
     state.T_HPOT_TOKEN.call();
   }, [wallet.isInit]);
 
@@ -88,6 +119,7 @@ export default function MemeWarBanner() {
       animationVariants: {
         idle: { x: 0, opacity: 1, y: 0 },
         attack: { x: `${attackDistance()}px` },
+        attackMiddle: { x: `${attackDistance() / 2}px` },
         hit: { x: -10, y: 5, opacity: 0.8 },
         die: { x: 0, y: 100 },
       },
@@ -100,6 +132,7 @@ export default function MemeWarBanner() {
       animationVariants: {
         idle: { x: 0, opacity: 1, y: 0 },
         attack: { x: `-${attackDistance()}px` },
+        attackMiddle: { x: `-${attackDistance() / 2}px` },
         hit: { x: 10, y: 5, opacity: 0.8 },
         die: { x: 0, y: 100 },
       },
@@ -188,6 +221,11 @@ export default function MemeWarBanner() {
     }
   };
 
+  const handleAttackMiddle = () => {
+    playAnimation("player1", "attackMiddle");
+    playAnimation("player2", "attackMiddle");
+  };
+
   const handleAttack = (target: "player1" | "player2") => {
     if (target === "player1") {
       playAnimation("player1", "hit");
@@ -201,16 +239,11 @@ export default function MemeWarBanner() {
   return (
     <>
       <div className="flex justify-between text-center">
-        <h3>
-          JANI SCORE: {state.JANI_pair.value?.depositedRaisedToken?.toFixed(2)}
-        </h3>
         <h2 className="w-full text-center text-xl md:text-5xl font-[MEMEH] mb-2">
           MEME WAR
         </h2>
-        <h3>
-          POT SCORE: {state.POTS_pair.value?.depositedRaisedToken?.toFixed(2)}
-        </h3>
       </div>
+
       <div className="relative grid grid-rows-[30%_1fr] w-full aspect-video">
         <Image
           src="/images/memewar/BG.png"
@@ -219,35 +252,17 @@ export default function MemeWarBanner() {
           width={1480}
           height={1480}
         />
-        <Image
-          src="/images/memewar/TOP_BANNER.png"
-          alt=""
-          width={200}
-          height={200}
-          className="absolute top-0 left-0 w-full"
-        />
-        <div className="z-10">
-          {/** health bar */}
-          <div className="flex w-full justify-between">
-            <div id="player1_hp_bar_contianer" className="relative w-[40%]">
-              <Image
-                src="/images/memewar/BAR2.png"
-                alt=""
-                width={300}
-                height={10}
-                className="absolute w-full top-0 left-0"
-              ></Image>
-            </div>
-            <div id="player2_hp_bar_contianer" className="relative w-[40%]">
-              <Image
-                src="/images/memewar/BAR3.png"
-                alt=""
-                width={300}
-                height={10}
-                className="absolute w-full top-0 left-0"
-              ></Image>
-            </div>
-          </div>
+        <div id="scoreboard" className="w-full h-full z-10">
+          {/* {Object.values(state.pairs).map((pair) => {
+            return (
+              <div key={pair.pair.value?.address}>
+                <h3>
+                  {pair.pair.value?.depositedRaisedToken?.toFixed(2) ||
+                    "loading..."}
+                </h3>
+              </div>
+            );
+          })} */}
         </div>
         <div className="relative grow h-full z-10">
           <motion.div
@@ -267,15 +282,16 @@ export default function MemeWarBanner() {
               height={300}
               className="absolute w-full h-full object-contain object-bottom"
             />
-
-            <Image
-              src="/images/memewar/BULLAS.png"
-              alt=""
-              width={300}
-              height={300}
-              className="absolute w-full h-full object-contain object-bottom left-[30%]"
-            />
           </motion.div>
+
+          <Image
+            onClick={() => handleAttackMiddle()}
+            src="/images/memewar/BULLAS.png"
+            alt=""
+            width={300}
+            height={300}
+            className="absolute w-[80px] sm:w-[150px] md:w-[200px] lg:w-[300px] h-full object-contain object-bottom left-[50%] translate-x-[-50%] cursor-pointer"
+          />
 
           <motion.div
             initial="idle"
@@ -294,14 +310,6 @@ export default function MemeWarBanner() {
               height={300}
               className="absolute w-full h-full object-contain object-bottom"
             />
-
-            <Image
-              src="/images/memewar/IVX.png"
-              alt=""
-              width={300}
-              height={300}
-              className="absolute w-full h-full object-contain object-bottom right-[30%]"
-            />
           </motion.div>
         </div>
         {gameState.showPopBoard && (
@@ -315,60 +323,44 @@ export default function MemeWarBanner() {
         {state.T_HPOT_TOKEN.value?.balance?.toFixed(2) || "loading..."}
       </div>
       <div className="grid md:grid-cols-2 mt-1 gap-5">
-        <div className="flex justify-center items-center gap-2">
-          <Button
-            isDisabled={
-              JANI_SUPPORT_AMOUNT == "" || Number(JANI_SUPPORT_AMOUNT) <= 0
-            }
-            onClick={() => {
-              state.JANI_pair.value?.deposit
-                .call({
-                  amount: JANI_SUPPORT_AMOUNT,
-                })
-                .then(async () => {
-                  await state.JANI_pair.value?.raiseToken?.getBalance();
-                  state.JANI_pair.value?.getDepositedRaisedToken();
-                  autoAttack("player2", 3);
-                });
+        {
+          //render all pairs
+          Object.entries(state.pairs).map(([key, value]) => {
+            return (
+              <div key={key}>
+                <h3>{key}</h3>
+                <div className="flex justify-center items-center gap-2">
+                  <Button
+                    isDisabled={
+                      value.SUPPORT_AMOUNT == "" ||
+                      Number(value.SUPPORT_AMOUNT) <= 0
+                    }
+                    onClick={() => {
+                      value.pair.value?.deposit
+                        .call({
+                          amount: value.SUPPORT_AMOUNT,
+                        })
+                        .then(async () => {
+                          await value.pair.value?.raiseToken?.getBalance();
+                          value.pair.value?.getDepositedRaisedToken();
+                          autoAttack("player2", 3);
+                        });
 
-              //attack 3 times
-              autoAttack("player2", 3);
-            }}
-          >
-            Support JANI
-          </Button>
-          <Input
-            placeholder="Amount"
-            onChange={(e) => setJANI_SUPPORT_AMOUNT(e.target.value)}
-          />
-        </div>
-        <div className="flex justify-center items-center gap-2">
-          <Input
-            placeholder="Amount"
-            onChange={(e) => setPOTS_SUPPORT_AMOUNT(e.target.value)}
-          />
-          <Button
-            isDisabled={
-              POTS_SUPPORT_AMOUNT == "" || Number(POTS_SUPPORT_AMOUNT) <= 0
-            }
-            onClick={() => {
-              state.POTS_pair.value?.deposit
-                .call({
-                  amount: POTS_SUPPORT_AMOUNT,
-                })
-                .then(async () => {
-                  await state.POTS_pair.value?.raiseToken?.getBalance();
-                  state.POTS_pair.value?.getDepositedRaisedToken();
-                  autoAttack("player1", 3);
-                });
-
-              //attack 3 times
-              autoAttack("player1", 3);
-            }}
-          >
-            Support POT
-          </Button>
-        </div>
+                      //attack 3 times
+                      autoAttack("player2", 3);
+                    }}
+                  >
+                    Support {key}
+                  </Button>
+                  <Input
+                    placeholder="Amount"
+                    onChange={(e) => value.set_SUPPORT_AMOUNT(e.target.value)}
+                  />
+                </div>
+              </div>
+            );
+          })
+        }
       </div>
     </>
   );

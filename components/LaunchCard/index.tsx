@@ -89,8 +89,8 @@ export const LaunchCard = observer(
             className="object-cover w-full h-full"
           ></Image>
         </div>
-        <h4 className="text-white text-center text-[1rem] font-bold flex items-center h-[1.5em]">
-          <div className=" relative">
+        <h4 className="text-white text-center text-[1rem] font-bold flex items-start  h-[1.5em] overflow-hidden">
+          <div className=" relative ">
             {pair?.launchedToken?.name} ({pair?.launchedToken?.symbol})
           </div>{" "}
         </h4>{" "}
