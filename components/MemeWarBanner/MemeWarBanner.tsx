@@ -47,11 +47,11 @@ export const MemeWarBanner = observer(() => {
         },
         pair: new AsyncState(async () => initPair(JANI_FTO_ADDRESS)),
       },
-      POTS: {
+      POT: {
         ADDRESS: POTS_FTO_ADDRESS,
         SUPPORT_AMOUNT: "",
         set_SUPPORT_AMOUNT: (amount: string) => {
-          state.pairs.POTS.SUPPORT_AMOUNT = amount;
+          state.pairs.POT.SUPPORT_AMOUNT = amount;
         },
         pair: new AsyncState(async () => initPair(POTS_FTO_ADDRESS)),
       },
