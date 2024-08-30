@@ -79,15 +79,27 @@ export const tokenRouter = router({
         });
       }
       requestStatus[JSON.stringify(ip!)] = true;
-      const cache = await ipCache.get<{
+      const [ipCacheValue, addressCacheValue] = await Promise.all([ipCache.get<{
         claimableUntil: number;
-      }>(JSON.stringify(ip!));
-      if (cache?.claimableUntil) {
+      }>(JSON.stringify(ip!)), ipCache.get<{
+        claimableUntil: number;
+      }>(address)])
+      if (ipCacheValue?.claimableUntil) {
         requestStatus[JSON.stringify(ip!)] = false;
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: `Your IP can claim after ${new Date(
-            cache.claimableUntil
+            ipCacheValue.claimableUntil
+          ).toLocaleString()}`,
+        });
+      } else if (
+        addressCacheValue?.claimableUntil
+      ) {
+        requestStatus[JSON.stringify(ip!)] = false;
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Your address can claim after ${new Date(
+            addressCacheValue.claimableUntil
           ).toLocaleString()}`,
         });
       } else {
@@ -125,15 +137,26 @@ export const tokenRouter = router({
           });
         }
         if (sendRes.status === "success") {
-          await ipCache.set(
-            JSON.stringify(ip!),
-            {
-              claimableUntil: Date.now() + interval,
-            },
-            {
-              px: interval,
-            }
-          );
+          await Promise.all([
+            ipCache.set(
+              JSON.stringify(ip!),
+              {
+                claimableUntil: Date.now() + interval,
+              },
+              {
+                px: interval,
+              }
+            ),
+            ipCache.set(
+              address,
+              {
+                claimableUntil: Date.now() + interval,
+              },
+              {
+                px: interval,
+              }
+            ),
+          ]);
         } else {
           requestStatus[JSON.stringify(ip!)] = false;
           throw new TRPCError({
