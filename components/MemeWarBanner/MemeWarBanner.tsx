@@ -28,8 +28,6 @@ export default function MemeWarBanner() {
     address: wallet.account as `0x${string}`,
   });
 
-  console.log(data?.value);
-
   const state = useLocalObservable(() => ({
     JANI_pair: new AsyncState(async () => {
       const pair = new FtoPairContract({ address: JANI_FTO_ADDRESS });
