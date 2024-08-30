@@ -330,12 +330,7 @@ class Swap {
 
     const deadline = dayjs().unix() + 60 * (this.deadline || 20);
 
-    await Promise.all([
-      this.fromToken.approveIfNoAllowance({
-        amount: fromAmountDecimals,
-        spender: this.routerV2Contract.address,
-      }),
-    ]);
+
 
     if (this.isWrapOrUnwrap) {
       if (this.isWrap) {
@@ -348,6 +343,12 @@ class Swap {
         await this.toToken.withdraw.callV2([BigInt(fromAmountDecimals)]);
       }
     } else {
+      await Promise.all([
+        this.fromToken.approveIfNoAllowance({
+          amount: fromAmountDecimals,
+          spender: this.routerV2Contract.address,
+        }),
+      ]);
       const path = this.routerToken
         ? (this.routerToken.map((t) => t.address) as `0x${string}`[])
         : ([this.fromToken.address, this.toToken.address] as `0x${string}`[]);
