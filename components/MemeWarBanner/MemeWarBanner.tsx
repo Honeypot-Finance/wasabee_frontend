@@ -112,6 +112,19 @@ export default function MemeWarBanner() {
     });
   };
 
+  const autoAttack = async (target: "player1" | "player2", count: number) => {
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i === count) {
+        clearInterval(interval);
+        return;
+      }
+
+      handleAttack(target);
+      i++;
+    }, 200);
+  };
+
   const playAnimation = async (
     target: "player1" | "player2",
     animation: string
@@ -278,18 +291,11 @@ export default function MemeWarBanner() {
                 .then(async () => {
                   await state.JANI_pair.value?.raiseToken?.getBalance();
                   state.JANI_pair.value?.getDepositedRaisedToken();
+                  autoAttack("player2", 3);
                 });
 
               //attack 3 times
-              let count = 0;
-              setInterval(() => {
-                if (count === 3) {
-                  return;
-                }
-                handleAttack("player2");
-
-                count++;
-              }, 200);
+              autoAttack("player2", 3);
             }}
           >
             Support JANI
@@ -313,18 +319,11 @@ export default function MemeWarBanner() {
                 .then(async () => {
                   await state.POTS_pair.value?.raiseToken?.getBalance();
                   state.POTS_pair.value?.getDepositedRaisedToken();
+                  autoAttack("player1", 3);
                 });
 
               //attack 3 times
-              let count = 0;
-              setInterval(() => {
-                if (count === 3) {
-                  return;
-                }
-                handleAttack("player1");
-
-                count++;
-              }, 200);
+              autoAttack("player1", 3);
             }}
           >
             Support POT
