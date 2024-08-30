@@ -39,7 +39,9 @@ export class NativeFaucetContract implements BaseContract {
   async isClaimable(): Promise<boolean> {
     //check time
 
-    const queryNativeFaucet = await trpcClient.token.queryNativeFaucet.query();
+    const queryNativeFaucet = await trpcClient.token.queryNativeFaucet.query({
+      address: wallet.account,
+    });
     this, (this.canclaim = queryNativeFaucet.claimable);
     this.nextFaucetTime = queryNativeFaucet.claimableUntil ?? undefined;
 

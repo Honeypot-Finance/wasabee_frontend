@@ -38,12 +38,16 @@ const interval = 1000 * 60 * 60 * 24;
 const faucetAmount = 0.1;
 
 export const tokenRouter = router({
-  queryNativeFaucet: publicProcedure.query(async ({ input, ctx }) => {
+  queryNativeFaucet: publicProcedure.input(
+    z.object({
+      address: z.string(),
+    })
+  ).query(async ({ input, ctx }) => {
     const { req } = ctx;
-    const ip = requestIp.getClientIp(req);
+    // const ip = requestIp.getClientIp(req);
     const cachedValue = await ipCache.get<{
       claimableUntil: number;
-    }>(JSON.stringify(ip!));
+    }>(input.address);
     if (!cachedValue) {
       return {
         claimable: true,
