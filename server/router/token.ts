@@ -35,7 +35,7 @@ const walletClient = createWalletClient({
 const ipCache = createCache("ip");
 const requestStatus = {} as Record<string, boolean>;
 const interval = 1000 * 60 * 60 * 24;
-const faucetAmount = 0.5;
+const faucetAmount = 0.1;
 
 export const tokenRouter = router({
   queryNativeFaucet: publicProcedure.query(async ({ input, ctx }) => {
