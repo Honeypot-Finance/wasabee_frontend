@@ -259,6 +259,12 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/obero-token-icon.jpg",
     },
+    "0x46efc86f0d7455f135cc9df501673739d513e982": {
+      name: "iBGT",
+      symbol: "iBGT",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/ibgt-token-icon.png",
+    },
   },
   validatedFtoAddresses: [
     "0x2c504e661750e03aa9252c67e771dc059a521863".toLowerCase(),
