@@ -12,6 +12,7 @@ import { useBalance } from "wagmi";
 import { Token } from "@/services/contract/token";
 
 const ANIMATION_DURATION = 100; //ms
+const HP_BAR_URL = "/images/memewar/HP_BAR.png";
 
 const JANI_FTO_ADDRESS = "0x2c504e661750e03aa9252c67e771dc059a521863";
 const POTS_FTO_ADDRESS = "0x93f8beabd145a61067ef2fca38c4c9c31d47ab7e";
@@ -46,6 +47,7 @@ export const MemeWarBanner = observer(() => {
           state.pairs.JANI.SUPPORT_AMOUNT = amount;
         },
         pair: new AsyncState(async () => initPair(JANI_FTO_ADDRESS)),
+        icon: "/images/memewar/JANI_ICON.png",
       },
       POT: {
         ADDRESS: POTS_FTO_ADDRESS,
@@ -54,6 +56,7 @@ export const MemeWarBanner = observer(() => {
           state.pairs.POT.SUPPORT_AMOUNT = amount;
         },
         pair: new AsyncState(async () => initPair(POTS_FTO_ADDRESS)),
+        icon: "/images/memewar/POT_ICON.png",
       },
       BULLA: {
         ADDRESS: BULLA_FTO_ADDRESS,
@@ -62,6 +65,7 @@ export const MemeWarBanner = observer(() => {
           state.pairs.BULLA.SUPPORT_AMOUNT = amount;
         },
         pair: new AsyncState(async () => initPair(BULLA_FTO_ADDRESS)),
+        icon: "/images/memewar/BULLAS_ICON.png",
       },
       IVX: {
         ADDRESS: IVX_FTO_ADDRESS,
@@ -70,6 +74,7 @@ export const MemeWarBanner = observer(() => {
           state.pairs.IVX.SUPPORT_AMOUNT = amount;
         },
         pair: new AsyncState(async () => initPair(IVX_FTO_ADDRESS)),
+        icon: "/images/memewar/IVX_ICON.png",
       },
     },
     T_HPOT_TOKEN: new AsyncState(async () => {
@@ -252,17 +257,46 @@ export const MemeWarBanner = observer(() => {
           width={1480}
           height={1480}
         />
-        <div id="scoreboard" className="w-full h-full z-10">
-          {/* {Object.values(state.pairs).map((pair) => {
+        <div
+          id="scoreboard"
+          className="relative w-full h-full z-10 flex justify-between"
+        >
+          <Image
+            src="/images/memewar/TOP_BANNER_V2.png"
+            alt=""
+            width={2000}
+            height={500}
+            className="absolute w-full h-full object-contain object-top top-0 z-0"
+          />
+          {Object.values(state.pairs).map((pair) => {
             return (
-              <div key={pair.pair.value?.address}>
-                <h3>
-                  {pair.pair.value?.depositedRaisedToken?.toFixed(2) ||
-                    "loading..."}
-                </h3>
+              <div
+                key={pair.pair.value?.address}
+                className="flex flex-col items-center z-10"
+              >
+                <Image
+                  src={pair.icon}
+                  alt=""
+                  width={100}
+                  height={100}
+                  className="w-10 h-10 md:w-20 md:h-20 object-contain"
+                />
+                <div className="relative flex justify-center items-center h-8">
+                  <Image
+                    src={HP_BAR_URL}
+                    alt=""
+                    width={200}
+                    height={50}
+                    className="w-full h-full object-contain"
+                  />
+                  <h3 className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-black">
+                    {pair.pair.value?.depositedRaisedToken?.toFixed(0) ||
+                      "loading..."}
+                  </h3>
+                </div>
               </div>
             );
-          })} */}
+          })}
         </div>
         <div className="relative grow h-full z-10">
           <motion.div
