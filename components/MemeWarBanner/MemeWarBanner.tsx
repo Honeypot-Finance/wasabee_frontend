@@ -11,6 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useBalance } from "wagmi";
 import { Token } from "@/services/contract/token";
 import { DiscussionArea } from "../Discussion/DiscussionArea/DiscussionArea";
+import { swap } from "@/services/swap";
 
 const ANIMATION_DURATION = 100; //ms
 const HP_BAR_URL = "/images/memewar/HP_BAR.png";
@@ -398,15 +399,29 @@ export const MemeWarBanner = observer(() => {
                         Number(value.SUPPORT_AMOUNT) <= 0
                       }
                       onClick={() => {
-                        value.pair.value?.deposit
-                          .call({
-                            amount: value.SUPPORT_AMOUNT,
-                          })
-                          .then(async () => {
-                            await value.pair.value?.raiseToken?.getBalance();
-                            value.pair.value?.getDepositedRaisedToken();
-                            handleAttackMiddle();
-                          });
+                        if (value.pair.value?.ftoState === 3) {
+                          value.pair.value?.deposit
+                            .call({
+                              amount: value.SUPPORT_AMOUNT,
+                            })
+                            .then(async () => {
+                              await value.pair.value?.raiseToken?.getBalance();
+                              value.pair.value?.getDepositedRaisedToken();
+                              handleAttackMiddle();
+                            });
+                        } else {
+                          swap.setFromToken(state.T_HPOT_TOKEN.value!);
+                          swap.setToToken(value.pair.value?.launchedToken!);
+                          swap.setFromAmount(value.SUPPORT_AMOUNT);
+
+                          swap.swapExactTokensForTokens
+                            .call()
+                            .then(async () => {
+                              await value.pair.value?.raiseToken?.getBalance();
+                              value.pair.value?.getDepositedRaisedToken();
+                              handleAttackMiddle();
+                            });
+                        }
 
                         //attack 3 times
                         handleAttackMiddle();
