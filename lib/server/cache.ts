@@ -2,7 +2,7 @@
 import { BentoCache, bentostore } from "bentocache";
 import { memoryDriver } from "bentocache/drivers/memory";
 import { redisDriver } from "bentocache/drivers/redis";
-import pino from 'pino';
+// import pino from 'pino';
 const { REDIS_URL } = process.env;
 const isDev = process.env.NODE_ENV === "development";
 
@@ -10,10 +10,10 @@ const bentoGlobal = global as typeof global & {
   bento?: BentoCache<any>;
 };
 
-const logger = pino({
-  level: 'trace',
-  transport: { target: 'pino-pretty' }
-})
+// const logger = pino({
+//   level: 'trace',
+//   transport: { target: 'pino-pretty' }
+// })
 
 export const bento =
   bentoGlobal.bento ||
@@ -40,7 +40,7 @@ export const bento =
       duration: "24h",
       fallbackDuration: "1m",
     },
-    logger: isDev ? logger : undefined,
+    // logger: isDev ? logger : undefined,
   });
 
 if (!bentoGlobal.bento) {
