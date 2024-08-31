@@ -11,12 +11,16 @@ import { toast } from "react-toastify";
 import { Row, RowList } from "postgres";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { after, before, set } from "lodash";
+import { useRouter } from "next/router";
+import { cn } from "@/lib/tailwindcss";
 
 interface DiscussionAreaProps {
-  pair: FtoPairContract;
+  pairDatabaseId: number;
+  isSide?: boolean;
 }
 
 export function DiscussionArea(props: DiscussionAreaProps) {
+  const router = useRouter();
   const [userComment, setUserComment] = useState("");
   const [comments, setComments] = useState<
     {
@@ -38,13 +42,13 @@ export function DiscussionArea(props: DiscussionAreaProps) {
   });
 
   useEffect(() => {
-    if (!props.pair.databaseId) return;
+    if (!props.pairDatabaseId) return;
     startFetchComments();
-  }, [props.pair.databaseId]);
+  }, [props.pairDatabaseId]);
 
   const startFetchComments = async () => {
     const res = await trpcClient.discussionRouter.getCommentsByProjectId.query({
-      project_id: props.pair.databaseId ?? -1,
+      project_id: props.pairDatabaseId ?? -1,
       limit: 10,
     });
 
@@ -61,7 +65,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
 
   const continueFetchComments = async (afterId: number) => {
     const res = await trpcClient.discussionRouter.getCommentsByProjectId.query({
-      project_id: props.pair.databaseId ?? -1,
+      project_id: props.pairDatabaseId ?? -1,
       afterId: afterId,
     });
 
@@ -73,8 +77,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
     }
 
     setTimeout(() => {
-      if (window.location.pathname !== `/launch-detail/${props.pair.address}`)
-        return;
+      if (window.location.pathname !== router.asPath.toString()) return;
       continueFetchComments(res?.[0]?.id ?? afterId);
     }, 2000);
   };
@@ -86,7 +89,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
       loadingMore: true,
     });
     const res = await trpcClient.discussionRouter.getCommentsByProjectId.query({
-      project_id: props.pair.databaseId ?? -1,
+      project_id: props.pairDatabaseId ?? -1,
       beforeId: comments[comments.length - 1].id,
     });
 
@@ -116,7 +119,12 @@ export function DiscussionArea(props: DiscussionAreaProps) {
     <CardContianer>
       <div className="flex-col w-full">
         <h2 className="text-[2rem] font-bold">Discussion Board</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_200px] w-full min-h-[300px] justify-center items-center">
+        <div
+          className={cn(
+            "grid grid-cols-1 lg:grid-cols-[1fr_200px] w-full min-h-[300px] justify-center items-center",
+            props.isSide && "!grid-cols-1"
+          )}
+        >
           <Textarea
             maxRows={15}
             label="Leave a Comment!"
@@ -133,7 +141,10 @@ export function DiscussionArea(props: DiscussionAreaProps) {
           ></Textarea>
           <div className="flex gap-2 flex-col pl-5 justify-around items-center h-full">
             <Image
-              className="hidden lg:block w-[200px]"
+              className={cn(
+                "hidden lg:block w-[200px]",
+                props.isSide && "!hidden"
+              )}
               src={"/images/bera/smoking_bera.png"}
               width={200}
               height={200}
@@ -160,7 +171,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
 
                 const res =
                   await trpcClient.discussionRouter.createComment.mutate({
-                    project_id: props.pair.databaseId ?? -1,
+                    project_id: props.pairDatabaseId ?? -1,
                     commenter: wallet.account,
                     comment: userComment,
                     is_owner: false,
@@ -189,7 +200,12 @@ export function DiscussionArea(props: DiscussionAreaProps) {
             <LoadingDisplay />
           </div>
         ) : (
-          <div className="w-full my-2">
+          <div
+            className={cn(
+              "w-full my-2",
+              props.isSide && " max-h-[30vh] overflow-y-scroll"
+            )}
+          >
             {/** comment cards */}
             {comments?.map((comment) => (
               <CommentCard

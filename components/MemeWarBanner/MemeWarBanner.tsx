@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useBalance } from "wagmi";
 import { Token } from "@/services/contract/token";
+import { DiscussionArea } from "../Discussion/DiscussionArea/DiscussionArea";
 
 const ANIMATION_DURATION = 100; //ms
 const HP_BAR_URL = "/images/memewar/HP_BAR.png";
@@ -242,161 +243,164 @@ export const MemeWarBanner = observer(() => {
   };
 
   return (
-    <>
-      <div className="flex justify-between text-center">
-        <h2 className="w-full text-center text-xl md:text-5xl font-[MEMEH] mb-2">
-          MEME WAR
-        </h2>
-      </div>
+    <div className="lg:grid lg:grid-cols-[80%_20%] gap-2">
+      <div>
+        <div className="flex justify-between text-center">
+          <h2 className="w-full text-center text-xl md:text-5xl font-[MEMEH] mb-2">
+            MEME WAR
+          </h2>
+        </div>
 
-      <div className="relative grid grid-rows-[30%_1fr] w-full aspect-video">
-        <Image
-          src="/images/memewar/BG.png"
-          className="absolute w-full h-full"
-          alt=""
-          width={1480}
-          height={1480}
-        />
-        <div
-          id="scoreboard"
-          className="relative w-full h-full z-10 flex justify-between"
-        >
+        <div className="relative grid grid-rows-[30%_1fr] w-full aspect-video">
           <Image
-            src="/images/memewar/TOP_BANNER_V2.png"
+            src="/images/memewar/BG.png"
+            className="absolute w-full h-full"
             alt=""
-            width={2000}
-            height={500}
-            className="absolute w-full h-full object-contain object-top top-0 z-0"
+            width={1480}
+            height={1480}
           />
-          {Object.values(state.pairs).map((pair) => {
-            return (
-              <div
-                key={pair.pair.value?.address}
-                className="flex flex-col items-center z-10"
-              >
-                <Image
-                  src={pair.icon}
-                  alt=""
-                  width={100}
-                  height={100}
-                  className="w-10 h-10 md:w-20 md:h-20 object-contain"
-                />
-                <div className="relative flex justify-center items-center h-8">
+          <div
+            id="scoreboard"
+            className="relative w-full h-full z-10 flex justify-between"
+          >
+            <Image
+              src="/images/memewar/TOP_BANNER_V2.png"
+              alt=""
+              width={2000}
+              height={500}
+              className="absolute w-full h-full object-contain object-top top-0 z-0"
+            />
+            {Object.values(state.pairs).map((pair) => {
+              return (
+                <div
+                  key={pair.pair.value?.address}
+                  className="flex flex-col items-center z-10"
+                >
                   <Image
-                    src={HP_BAR_URL}
+                    src={pair.icon}
                     alt=""
-                    width={200}
-                    height={50}
-                    className="w-full h-full object-contain"
+                    width={100}
+                    height={100}
+                    className="w-10 h-10 md:w-20 md:h-20 object-contain"
                   />
-                  <h3 className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-black">
-                    {pair.pair.value?.depositedRaisedToken?.toFixed(0) ||
-                      "loading..."}
-                  </h3>
+                  <div className="relative flex justify-center items-center h-8">
+                    <Image
+                      src={HP_BAR_URL}
+                      alt=""
+                      width={200}
+                      height={50}
+                      className="w-full h-full object-contain"
+                    />
+                    <h3 className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-black">
+                      {pair.pair.value?.depositedRaisedToken?.toFixed(0) ||
+                        "loading..."}
+                    </h3>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-        <div className="relative grow h-full z-10">
-          <motion.div
-            initial="idle"
-            variants={gameState.player1.animationVariants}
-            animate={gameState.player1.currentAnimation}
-            transition={{
-              duration: ANIMATION_DURATION / 1000,
-            }}
-            onClick={() => handleAttack("player1")}
-            className="absolute left-0 h-full bottom-0 w-[80px] sm:w-[150px] md:w-[200px] lg:w-[300px] cursor-pointer"
-          >
-            <Image
-              src="/images/memewar/JANIS.png"
-              alt=""
-              width={300}
-              height={300}
-              className="absolute w-full h-full object-contain object-bottom"
-            />
-          </motion.div>
-
-          <Image
-            onClick={() => handleAttackMiddle()}
-            src="/images/memewar/BULLAS.png"
-            alt=""
-            width={300}
-            height={300}
-            className="absolute w-[80px] sm:w-[150px] md:w-[200px] lg:w-[300px] h-full object-contain object-bottom left-[50%] translate-x-[-50%] cursor-pointer"
-          />
-
-          <motion.div
-            initial="idle"
-            variants={gameState.player2.animationVariants}
-            animate={gameState.player2.currentAnimation}
-            transition={{
-              duration: ANIMATION_DURATION / 1000,
-            }}
-            onClick={() => handleAttack("player2")}
-            className="absolute w-[80px] h-full sm:w-[150px] md:w-[200px] lg:w-[300px] bottom-0 right-0 cursor-pointer"
-          >
-            <Image
-              src="/images/memewar/POTS.png"
-              alt=""
-              width={300}
-              height={300}
-              className="absolute w-full h-full object-contain object-bottom"
-            />
-          </motion.div>
-        </div>
-        {gameState.showPopBoard && (
-          <div className=" absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[50%] text-white z-50">
-            {gameState.popBoardRender}
+              );
+            })}
           </div>
-        )}
-      </div>
-      <div className="text-center">
-        your tHpot balance:{" "}
-        {state.T_HPOT_TOKEN.value?.balance?.toFixed(2) || "loading..."}
-      </div>
-      <div className="grid md:grid-cols-2 mt-1 gap-5">
-        {
-          //render all pairs
-          Object.entries(state.pairs).map(([key, value]) => {
-            return (
-              <div key={key}>
-                <h3>{key}</h3>
-                <div className="flex justify-center items-center gap-2">
-                  <Button
-                    isDisabled={
-                      value.SUPPORT_AMOUNT == "" ||
-                      Number(value.SUPPORT_AMOUNT) <= 0
-                    }
-                    onClick={() => {
-                      value.pair.value?.deposit
-                        .call({
-                          amount: value.SUPPORT_AMOUNT,
-                        })
-                        .then(async () => {
-                          await value.pair.value?.raiseToken?.getBalance();
-                          value.pair.value?.getDepositedRaisedToken();
-                          handleAttackMiddle();
-                        });
+          <div className="relative grow h-full z-10">
+            <motion.div
+              initial="idle"
+              variants={gameState.player1.animationVariants}
+              animate={gameState.player1.currentAnimation}
+              transition={{
+                duration: ANIMATION_DURATION / 1000,
+              }}
+              onClick={() => handleAttack("player1")}
+              className="absolute left-0 h-full bottom-0 w-[80px] sm:w-[150px] md:w-[200px] lg:w-[300px] cursor-pointer"
+            >
+              <Image
+                src="/images/memewar/JANIS.png"
+                alt=""
+                width={300}
+                height={300}
+                className="absolute w-full h-full object-contain object-bottom"
+              />
+            </motion.div>
 
-                      //attack 3 times
-                      handleAttackMiddle();
-                    }}
-                  >
-                    Support {key}
-                  </Button>
-                  <Input
-                    placeholder="Amount"
-                    onChange={(e) => value.set_SUPPORT_AMOUNT(e.target.value)}
-                  />
+            <Image
+              onClick={() => handleAttackMiddle()}
+              src="/images/memewar/BULLAS.png"
+              alt=""
+              width={300}
+              height={300}
+              className="absolute w-[80px] sm:w-[150px] md:w-[200px] lg:w-[300px] h-full object-contain object-bottom left-[50%] translate-x-[-50%] cursor-pointer"
+            />
+
+            <motion.div
+              initial="idle"
+              variants={gameState.player2.animationVariants}
+              animate={gameState.player2.currentAnimation}
+              transition={{
+                duration: ANIMATION_DURATION / 1000,
+              }}
+              onClick={() => handleAttack("player2")}
+              className="absolute w-[80px] h-full sm:w-[150px] md:w-[200px] lg:w-[300px] bottom-0 right-0 cursor-pointer"
+            >
+              <Image
+                src="/images/memewar/POTS.png"
+                alt=""
+                width={300}
+                height={300}
+                className="absolute w-full h-full object-contain object-bottom"
+              />
+            </motion.div>
+          </div>
+          {gameState.showPopBoard && (
+            <div className=" absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[50%] text-white z-50">
+              {gameState.popBoardRender}
+            </div>
+          )}
+        </div>
+        <div className="text-center">
+          your tHpot balance:{" "}
+          {state.T_HPOT_TOKEN.value?.balance?.toFixed(2) || "loading..."}
+        </div>
+        <div className="grid md:grid-cols-2 mt-1 gap-5">
+          {
+            //render all pairs
+            Object.entries(state.pairs).map(([key, value]) => {
+              return (
+                <div key={key}>
+                  <h3>{key}</h3>
+                  <div className="flex justify-center items-center gap-2">
+                    <Button
+                      isDisabled={
+                        value.SUPPORT_AMOUNT == "" ||
+                        Number(value.SUPPORT_AMOUNT) <= 0
+                      }
+                      onClick={() => {
+                        value.pair.value?.deposit
+                          .call({
+                            amount: value.SUPPORT_AMOUNT,
+                          })
+                          .then(async () => {
+                            await value.pair.value?.raiseToken?.getBalance();
+                            value.pair.value?.getDepositedRaisedToken();
+                            handleAttackMiddle();
+                          });
+
+                        //attack 3 times
+                        handleAttackMiddle();
+                      }}
+                    >
+                      Support {key}
+                    </Button>
+                    <Input
+                      placeholder="Amount"
+                      onChange={(e) => value.set_SUPPORT_AMOUNT(e.target.value)}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })
-        }
+              );
+            })
+          }
+        </div>
       </div>
-    </>
+      <DiscussionArea pairDatabaseId={-9999} isSide />
+    </div>
   );
 });
 

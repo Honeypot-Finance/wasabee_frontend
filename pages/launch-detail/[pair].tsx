@@ -434,7 +434,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
       !state.pair.value.website ||
       !state.pair.value.telegram
     ) {
-     toast.warning(
+      toast.warning(
         <div>
           <ul className="list-disc list-inside">
             {!state.pair.value.logoUrl && (
@@ -460,7 +460,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
             Click{" "}
             <span
               onClick={() => {
-                onOpen()
+                onOpen();
                 toast.dismiss();
               }}
               className="text-blue-500 cursor-pointer"
@@ -474,7 +474,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
           autoClose: false,
         }
       );
-     return () =>  toast.dismiss();
+      return () => toast.dismiss();
     }
   }, [
     pairAddress,
@@ -828,7 +828,9 @@ const LaunchPage: NextLayoutPage = observer(() => {
       <div className="flex justify-center mt-[24px] ">
         <div className="w-[100vw] lg:w-full lg:min-w-[1000px] lg:max-w-[1000px]">
           {state.pair.value && (
-            <DiscussionArea pair={state.pair.value}></DiscussionArea>
+            <DiscussionArea
+              pairDatabaseId={state.pair.value.databaseId ?? -1}
+            ></DiscussionArea>
           )}
         </div>
       </div>
