@@ -2,11 +2,18 @@
 import { BentoCache, bentostore } from "bentocache";
 import { memoryDriver } from "bentocache/drivers/memory";
 import { redisDriver } from "bentocache/drivers/redis";
+import pino from 'pino';
 const { REDIS_URL } = process.env;
+const isDev = process.env.NODE_ENV === "development";
 
 const bentoGlobal = global as typeof global & {
   bento?: BentoCache<any>;
 };
+
+const logger = pino({
+  level: 'trace',
+  transport: { target: 'pino-pretty' }
+})
 
 export const bento =
   bentoGlobal.bento ||
@@ -14,7 +21,7 @@ export const bento =
     default: "multitier",
     stores: {
       multitier: bentostore().useL1Layer(
-        memoryDriver({ maxItems: 300, maxSize: 10_000_000 })
+        memoryDriver({ maxItems: 3000, maxSize: 10_000_000 })
       ),
       // .useL2Layer(
       //   redisDriver({
@@ -24,7 +31,7 @@ export const bento =
     },
     timeouts: {
       soft: "100ms",
-      hard: "3s",
+      hard: "10s",
     },
     ttl: 5 * 1000,
     earlyExpiration: 0.8,
@@ -33,6 +40,7 @@ export const bento =
       duration: "24h",
       fallbackDuration: "1m",
     },
+    logger: isDev ? logger : undefined,
   });
 
 if (!bentoGlobal.bento) {
@@ -40,7 +48,7 @@ if (!bentoGlobal.bento) {
 }
 
 export const cacheProvider = bento.namespace(
-  "honeydex-" + process.env.NEXT_PUBLIC_ENV || "PRODUCTION"
+  "honeydex-" + process.env.NODE_ENV
 );
 
 export const getCacheKey = (key: string, args?: any) => {

@@ -173,8 +173,9 @@ export const indexerFeedRouter = router({
         getCacheKey("getValidatedTokenPairs", input),
         async () => {
           const res = await indexer.getValidatedTokenPairs(input.chainId);
-
           return res;
+        }, {
+          ttl: 60 * 1000
         }
       );
     }),
