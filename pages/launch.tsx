@@ -253,7 +253,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
           checked={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
           className="mt-2"
         >
-          Show Not verified Projects
+          Show Unvalidated Projects
         </Checkbox>
       </div>
 
