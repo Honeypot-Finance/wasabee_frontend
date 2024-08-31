@@ -338,7 +338,6 @@ export class MemePairContract implements BaseContract {
       this.getDepositedRaisedToken(depositedRaisedToken),
       this.getDepositedLaunchedToken(depositedLaunchedToken),
       this.getEndTime(endTime),
-      this.getState(ftoState),
       this.getLaunchedTokenProvider(),
       this.getProjectInfo(),
       this.getCanClaimLP(),
@@ -346,6 +345,8 @@ export class MemePairContract implements BaseContract {
       console.error(error, `init-memepair-error-${this.address}`);
       return;
     });
+
+    this.getState(ftoState);
 
     this.isInit = true;
   }
@@ -366,15 +367,13 @@ export class MemePairContract implements BaseContract {
     }
 
     try {
-      const claimed = await this.contract.read.claimableLP([wallet.account] as [
-        `0x${string}`
-      ]);
-
       const claimable = await this.contract.read.claimableLP([
         wallet.account,
       ] as [`0x${string}`]);
 
-      this.canClaimLP = claimable > claimed;
+      console.log("claimable", claimable);
+
+      this.canClaimLP = claimable > 0;
     } catch (error) {
       this.canClaimLP = false;
     }
@@ -433,11 +432,24 @@ export class MemePairContract implements BaseContract {
   }
 
   async getState(state?: number) {
+    if (
+      !this.depositedRaisedToken ||
+      !this.depositedLaunchedToken ||
+      !this.endTime
+    ) {
+      console.error("missing data for getState");
+      return;
+    }
     if (state) {
       this.ftoState = state;
+    }
+
+    if (this.depositedRaisedToken >= this.depositedLaunchedToken) {
+      this.ftoState = 0;
+    } else if (dayjs.unix(Number(this.endTime)).isBefore(dayjs())) {
+      this.ftoState = 1;
     } else {
-      const res = await this.contract.read.LaunchState();
-      this.ftoState = res;
+      this.ftoState = 3;
     }
   }
   async getLaunchedTokenProvider() {

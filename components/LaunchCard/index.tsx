@@ -157,7 +157,7 @@ export const LaunchCard = observer(
                   backgroundColor: "green",
                 }}
               >
-                Claim LP
+                {pair.ftoState === 0 ? "Claim LP" : "Refund LP"}
               </Button>
             </div>
           )}
