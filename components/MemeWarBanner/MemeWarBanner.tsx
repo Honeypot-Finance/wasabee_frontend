@@ -7,7 +7,7 @@ import { motion, Variants } from "framer-motion";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useBalance } from "wagmi";
 import { Token } from "@/services/contract/token";
 import { DiscussionArea } from "../Discussion/DiscussionArea/DiscussionArea";
@@ -23,14 +23,7 @@ const IVX_FTO_ADDRESS = "0xa9edde04fc958264b1d6ad6153cffe26b1c79411";
 const tHpotAddress = "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E";
 
 export const MemeWarBanner = observer(() => {
-  const attackDistance = useCallback(() => {
-    //return number based on window size
-    if (typeof window !== "undefined") {
-      return window.innerWidth / 2;
-    }
-    return 0;
-  }, []);
-
+  const GameScreen = useRef<HTMLDivElement>(null);
   const initPair = useCallback(async (address: string) => {
     const pair = new FtoPairContract({ address });
     await pair.init();
@@ -87,18 +80,6 @@ export const MemeWarBanner = observer(() => {
     }),
   }));
 
-  useEffect(() => {
-    if (!wallet.isInit) {
-      return;
-    }
-
-    Object.values(state.pairs).forEach((pair) => {
-      pair.pair.call();
-    });
-
-    state.T_HPOT_TOKEN.call();
-  }, [wallet.isInit]);
-
   const [gameState, setGameState] = useState<{
     showPopBoard: boolean;
     popBoardRender: string;
@@ -124,8 +105,8 @@ export const MemeWarBanner = observer(() => {
       attack: 10,
       animationVariants: {
         idle: { x: 0, opacity: 1, y: 0 },
-        attack: { x: `${attackDistance()}px` },
-        attackMiddle: { x: `${attackDistance() / 2}px` },
+        attack: { x: `0px` },
+        attackMiddle: { x: `0}px` },
         hit: { x: -10, y: 5, opacity: 0.8 },
         die: { x: 0, y: 100 },
       },
@@ -137,8 +118,8 @@ export const MemeWarBanner = observer(() => {
       attack: 10,
       animationVariants: {
         idle: { x: 0, opacity: 1, y: 0 },
-        attack: { x: `-${attackDistance()}px` },
-        attackMiddle: { x: `-${attackDistance() / 2}px` },
+        attack: { x: `-0px` },
+        attackMiddle: { x: `-0px` },
         hit: { x: 10, y: 5, opacity: 0.8 },
         die: { x: 0, y: 100 },
       },
@@ -146,6 +127,50 @@ export const MemeWarBanner = observer(() => {
       animationTimeOut: undefined,
     },
   });
+
+  useEffect(() => {
+    if (!GameScreen.current) {
+      return;
+    }
+
+    setGameState((prev) => {
+      return {
+        ...prev,
+        player1: {
+          ...prev.player1,
+          animationVariants: {
+            ...prev.player1.animationVariants,
+            attack: { x: `${GameScreen.current!.clientWidth / 2}px` },
+            attackMiddle: {
+              x: `${GameScreen.current!.clientWidth / 4}px`,
+            },
+          },
+        },
+        player2: {
+          ...prev.player2,
+          animationVariants: {
+            ...prev.player2.animationVariants,
+            attack: { x: `-${GameScreen.current!.clientWidth / 2}px` },
+            attackMiddle: {
+              x: `-${GameScreen.current!.clientWidth / 4}px`,
+            },
+          },
+        },
+      };
+    });
+  }, [GameScreen.current?.clientWidth, GameScreen]);
+
+  useEffect(() => {
+    if (!wallet.isInit) {
+      return;
+    }
+
+    Object.values(state.pairs).forEach((pair) => {
+      pair.pair.call();
+    });
+
+    state.T_HPOT_TOKEN.call();
+  }, [wallet.isInit]);
 
   const showPopBoard = (text: string) => {
     setGameState({
@@ -233,6 +258,7 @@ export const MemeWarBanner = observer(() => {
   };
 
   const handleAttack = (target: "player1" | "player2") => {
+    console.log(gameState);
     if (target === "player1") {
       playAnimation("player1", "hit");
       playAnimation("player2", "attack");
@@ -244,7 +270,7 @@ export const MemeWarBanner = observer(() => {
 
   return (
     <div className="lg:grid lg:grid-cols-[80%_20%] gap-2">
-      <div>
+      <div ref={GameScreen}>
         <div className="flex justify-between text-center">
           <h2 className="w-full text-center text-xl md:text-5xl font-[MEMEH] mb-2">
             MEME WAR
