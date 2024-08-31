@@ -459,9 +459,11 @@ export class StorageState<T = any, U = any> {
     StorageState.register(this.key, this);
     makeAutoObservable(this);
   }
+
   async transformAndSetValue(value: any) {
     await this.setValue(this.transform ? this.transform(value) : value);
   }
+
   async setValue(value: T | null) {
     this.value = value;
     await localforage.setItem(

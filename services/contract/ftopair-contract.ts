@@ -440,6 +440,7 @@ export class FtoPairContract implements BaseContract {
       this.startTime = res.toString();
     }
   }
+
   async getFTOState(state?: number) {
     if (state) {
       this.ftoState = state;

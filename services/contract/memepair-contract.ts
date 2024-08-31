@@ -336,13 +336,14 @@ export class MemePairContract implements BaseContract {
       this.getRaisedToken(raisedToken),
       this.getLaunchedToken(launchedToken),
       this.getDepositedRaisedToken(depositedRaisedToken),
+      this.getDepositedLaunchedToken(depositedLaunchedToken),
       this.getEndTime(endTime),
       this.getState(ftoState),
       this.getLaunchedTokenProvider(),
       this.getProjectInfo(),
       this.getCanClaimLP(),
     ]).catch((error) => {
-      console.error(error, `init-${this.address}`);
+      console.error(error, `init-memepair-error-${this.address}`);
       return;
     });
 
@@ -408,6 +409,17 @@ export class MemePairContract implements BaseContract {
     } else {
       const res = (await this.contract.read.depositedRaisedToken()) as bigint;
       this.depositedRaisedTokenWithoutDecimals = new BigNumber(res.toString());
+    }
+  }
+
+  async getDepositedLaunchedToken(amount?: string) {
+    if (amount && Number(amount) !== 0) {
+      this.depositedLaunchedTokenWithoutDecimals = new BigNumber(amount);
+    } else {
+      const res = (await this.contract.read.depositedmemeToken()) as bigint;
+      this.depositedLaunchedTokenWithoutDecimals = new BigNumber(
+        res.toString()
+      );
     }
   }
 

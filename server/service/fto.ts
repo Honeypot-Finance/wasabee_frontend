@@ -1,4 +1,5 @@
 import { MUBAI_FTO_PAIR_ABI } from "@/lib/abis/ftoPair";
+import { MemePairABI } from "@/lib/abis/MemePair";
 import { chains, chainsMap } from "@/lib/chain";
 import { exec } from "@/lib/contract";
 import { pg } from "@/lib/db";
@@ -54,9 +55,7 @@ export const ftoService = {
     output = await selectFtoProject(data);
 
     if (!output || !output[0]) {
-      console.log("data.chain_id", data.chain_id);
-      console.log("chainsMap[data.chain_id]", chainsMap[data.chain_id]);
-      const pairContract = new Contract(
+      const ftoPairContract = new Contract(
         data.pair as `0x${string}`,
         MUBAI_FTO_PAIR_ABI,
         new providers.JsonRpcProvider(
@@ -64,12 +63,14 @@ export const ftoService = {
         )
       );
 
-      const provider = await pairContract.launchedTokenProvider();
+      const provider = await ftoPairContract
+        .launchedTokenProvider()
+        .catch(() => null);
 
       await createFtoProject({
         pair: data.pair,
         chain_id: data.chain_id,
-        provider: provider,
+        provider: provider ?? "",
         creator_api_key: data.creator_api_key,
       });
       output = await selectFtoProject(data);

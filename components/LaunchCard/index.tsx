@@ -32,6 +32,7 @@ import ShareSocialMedialPopUp, {
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { itemPopUpVariants, itemSlideVariants } from "@/lib/animation";
+import { MemePairContract } from "@/services/contract/memepair-contract";
 
 const Actions = () => {};
 
@@ -44,7 +45,7 @@ export const LaunchCard = observer(
     ...props
   }: {
     type?: "list" | "detail";
-    pair?: FtoPairContract | null;
+    pair?: FtoPairContract | MemePairContract | null;
     action: React.ReactNode;
   } & Partial<HTMLAttributes<any>>) => {
     return (

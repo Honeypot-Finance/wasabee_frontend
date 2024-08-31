@@ -151,8 +151,6 @@ export class Token implements BaseContract {
     const loadClaimed = options?.loadClaimed ?? false;
     const loadLogoURI = options?.loadLogoURI ?? true;
 
-    console.log("init token", this.address);
-
     await Promise.all([
       loadName && !this.name
         ? this.contract.read.name().then((name) => {

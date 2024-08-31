@@ -17,6 +17,7 @@ import { getTransactionReceipt, reset } from "viem/actions";
 import { debounce, initial } from "lodash";
 import { parseEventLogs } from "viem";
 import { ERC20ABI } from "@/lib/abis/erc20";
+import { MemePairContract } from "./contract/memepair-contract";
 
 const PAGE_LIMIT = 9;
 
@@ -83,12 +84,15 @@ class LaunchPad {
           },
         };
       } else {
-        return await this.LoadMoreFtoPage();
+        return (await this.LoadMoreFtoPage()) as {
+          items: FtoPairContract[];
+          pageInfo: PageInfo;
+        };
       }
     },
   });
 
-  memePageInfo = new IndexerPaginationState<PairFilter, FtoPairContract>({
+  memePageInfo = new IndexerPaginationState<PairFilter, MemePairContract>({
     filter: {
       search: "",
       status: "all",
@@ -96,7 +100,10 @@ class LaunchPad {
       limit: PAGE_LIMIT,
     },
     LoadNextPageFunction: async (filter) => {
-      return await this.LoadMoreFtoPage("meme");
+      return (await this.LoadMoreFtoPage("meme")) as {
+        items: MemePairContract[];
+        pageInfo: PageInfo;
+      };
     },
   });
 
@@ -229,9 +236,14 @@ class LaunchPad {
     if (res.status === "success") {
       const data = {
         items: res.data.pairs.map((pairAddress) => {
-          const pair = new FtoPairContract({
-            address: pairAddress.id,
-          });
+          const pair =
+            projectType === "fto"
+              ? new FtoPairContract({
+                  address: pairAddress.id,
+                })
+              : new MemePairContract({
+                  address: pairAddress.id,
+                });
 
           const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
             ? Token.getToken({

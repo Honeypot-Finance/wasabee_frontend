@@ -27,11 +27,12 @@ import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { FaCrown } from "react-icons/fa";
+import { MemePairContract } from "@/services/contract/memepair-contract";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
-    FtoPairContract[]
+    MemePairContract[]
   >(launchpad.memePageInfo.pageItems.value);
 
   useEffect(() => {
@@ -42,9 +43,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     launchpad.memePageInfo.reloadPage();
 
     //loading most success projects
-    launchpad.mostSuccessfulFtos().then((data) => {
-      setMostSuccessProjects(data);
-    });
+    // launchpad.mostSuccessfulFtos().then((data) => {
+    //   setMostSuccessProjects(data);
+    // });
   }, [wallet.isInit]);
 
   return (
@@ -68,7 +69,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             animate="visible"
             className="w-full flex flex-col lg:flex-row gap-2 flex-grow-[1]"
           >
-            {mostSuccessProjects.map((pair: FtoPairContract, idx) => (
+            {mostSuccessProjects.map((pair: MemePairContract, idx) => (
               <motion.div
                 variants={itemPopUpVariants}
                 key={pair.address}
@@ -264,7 +265,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3"
               >
                 {launchpad.memePageInfo.pageItems.value.map(
-                  (pair: FtoPairContract) => (
+                  (pair: MemePairContract) => (
                     <motion.div variants={itemPopUpVariants} key={pair.address}>
                       <LaunchCard pair={pair} action={<></>} />
                     </motion.div>
