@@ -263,7 +263,7 @@ const SuccessAction = observer(({ pair }: { pair: FtoPairContract }) => {
         className="text-black font-bold w-full"
       >
         <Button className="w-full">
-          <p>Swap Token</p>
+          <p>BUY Token</p>
           <p>
             <Copy
               onClick={(e) => {

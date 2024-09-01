@@ -187,7 +187,7 @@ export const LaunchCard = observer(
               className="text-black font-bold w-full "
             >
               <Button className="w-full">
-                <p>Swap Token</p>
+                <p>Buy Token</p>
               </Button>{" "}
             </Link>
           )}
