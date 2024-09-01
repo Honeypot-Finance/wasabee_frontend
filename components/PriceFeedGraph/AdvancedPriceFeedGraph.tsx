@@ -29,7 +29,6 @@ import { TVChartContainer } from "../AdvancedChart/TVChartContainer/TVChartConta
 export default function AdvancedPriceFeedGraph() {
   const [isScriptReady, setIsScriptReady] = useState(false);
   const { chainId } = useAccount();
-  const [pairs, setPairs] = useState<pairQueryOutput>({});
   const [currentToken, setCurrentToken] = useState<Token>(
     networksMap[chainId as number].faucetTokens[0]
   );
@@ -59,14 +58,6 @@ export default function AdvancedPriceFeedGraph() {
     });
   }, [chainId, currentToken]);
 
-  useEffect(() => {
-    if (!chainId) return;
-    trpcClient.pair.getPairs
-      .query({ chainId: chainId as number })
-      .then((data) => {
-        setPairs(data);
-      });
-  }, [chainId]);
 
   function changeTokenHandler(token: Token) {
     setCurrentToken(token);

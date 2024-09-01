@@ -18,7 +18,7 @@ import { wallet } from "@/services/wallet";
 import { DM_Sans } from "next/font/google";
 import { Inspector } from "react-dev-inspector";
 import { StorageState } from "@/services/utils";
-
+import { Analytics } from "@vercel/analytics/react"
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
 
@@ -43,6 +43,7 @@ export default function App({
   const ComponentLayout = Component.Layout || Layout;
   return (
     <trpc.Provider client={trpcQueryClient} queryClient={queryClient}>
+      <Analytics></Analytics>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
           <RainbowKitProvider>
