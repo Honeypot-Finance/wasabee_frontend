@@ -139,7 +139,10 @@ export const LaunchCard = observer(
               {/* <TotalRaisedSvg /> */}
               <span className="font-bold">
                 {pair?.userDepositedRaisedToken
-                  ? pair.userDepositedRaisedToken.toFormat(3)
+                  ? (
+                      pair.userDepositedRaisedToken.toNumber() /
+                      Math.pow(10, pair.raiseToken?.decimals ?? 18)
+                    ).toFixed(3)
                   : "-"}
                 &nbsp;
                 {pair?.raiseToken?.displayName}
