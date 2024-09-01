@@ -3,6 +3,7 @@ import { createTRPCNext } from "@trpc/next";
 import type { AppRouter } from "@/server/_app";
 import superjson from "superjson";
 import { createTRPCReact } from "@trpc/react-query";
+import { toast } from "react-toastify";
 
 export function getBaseUrl() {
   if (typeof window !== "undefined")
@@ -52,6 +53,16 @@ export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
       transformer: superjson,
+      // fetch: async (input, init) => {
+      //   const res = await fetch(input,init)
+      //   if (res.ok === false && res.status === 400) {
+      //     const cloned = res.clone()
+      //     const data = await cloned.json()
+      //     toast.error(data[0]?.error.message)
+      //   }
+   
+      //   return res
+      // },
       url: `${getBaseUrl()}/api/trpc`,
       async headers() {
         const headers = {} as Record<string, string>;
