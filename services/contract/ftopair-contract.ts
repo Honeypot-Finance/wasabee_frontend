@@ -25,6 +25,7 @@ export class FtoPairContract implements BaseContract {
   startTime: string = "";
   ftoState: number = -1;
   launchedTokenProvider: string = "";
+  userDepositedRaisedToken: BigNumber | null = null;
   projectName = "";
   description = "";
   telegram = "";
@@ -343,11 +344,11 @@ export class FtoPairContract implements BaseContract {
       this.getLaunchedTokenProvider(),
       this.getProjectInfo(),
       this.getCanClaimLP(),
+      this.getUserDepositeAmount(),
     ]).catch((error) => {
       console.error(error, `init-${this.address}`);
       return;
     });
-
     this.isInit = true;
   }
 
@@ -421,6 +422,14 @@ export class FtoPairContract implements BaseContract {
         res.toString()
       );
     }
+  }
+
+  async getUserDepositeAmount() {
+    const res = await this.contract.read.raisedTokenDeposit([
+      wallet.account as `0x${string}`,
+    ]);
+
+    this.userDepositedRaisedToken = new BigNumber(res.toString());
   }
 
   async getEndTime(endtime?: string) {

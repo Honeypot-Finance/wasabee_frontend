@@ -132,17 +132,29 @@ export const LaunchCard = observer(
                 {pair?.raiseToken?.displayName}
               </span>
             </div>
-          </div>
+          </div>{" "}
           <div className="flex flex-col items-center gap-1">
+            <h6 className="opacity-50 text-xs">Your Deposit</h6>
+            <div className="flex items-center gap-2 text-sm">
+              {/* <TotalRaisedSvg /> */}
+              <span className="font-bold">
+                {pair?.userDepositedRaisedToken
+                  ? pair.userDepositedRaisedToken.toFormat(3)
+                  : "-"}
+                &nbsp;
+                {pair?.raiseToken?.displayName}
+              </span>
+            </div>
+          </div>
+          {/* <div className="flex flex-col items-center gap-1">
             <h6 className="opacity-50 text-xs">Token Price</h6>
             <div className="flex items-center gap-2 text-sm">
-              {/* <TokenPriceSvg /> */}
               <span className="font-bold">
                 <AmountFormat amount={pair?.price?.toFixed()}></AmountFormat>{" "}
                 {pair?.raiseToken?.displayName}
               </span>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="w-full mt-[16px] flex gap-4 flex-col lg:flex-row justify-center items-center *:w-full">
           {pair?.canClaimLP && (

@@ -20,7 +20,6 @@ export class PairContract implements BaseContract {
   abi = IUniswapV2Pair.abi;
   token: Token = new Token({});
   deadline: number = 20;
-
   reserves: {
     reserve0: BigNumber;
     reserve1: BigNumber;
