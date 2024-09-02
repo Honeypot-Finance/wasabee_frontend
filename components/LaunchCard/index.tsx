@@ -182,14 +182,25 @@ export const LaunchCard = observer(
             <Button className="w-full">View Token</Button>
           </Link>
           {pair?.ftoState === 0 && (
-            <Link
-              href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
-              className="text-black font-bold w-full "
-            >
-              <Button className="w-full">
-                <p>Buy Token</p>
-              </Button>{" "}
-            </Link>
+            <>
+              <Link
+                href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
+                className="text-black font-bold w-full "
+              >
+                <Button className="w-full">
+                  <p>Buy Token</p>
+                </Button>{" "}
+              </Link>
+
+              <Link
+                href={`/pool?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
+                className="text-black font-bold w-full "
+              >
+                <Button className="w-full">
+                  <p>Add LP</p>
+                </Button>{" "}
+              </Link>
+            </>
           )}
           {action}
         </div>

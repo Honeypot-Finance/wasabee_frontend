@@ -349,7 +349,6 @@ export const MemeWarBanner = observer(() => {
   };
 
   const handleAttack = (target: "player1" | "player2") => {
-    console.log(gameState);
     if (target === "player1") {
       playAnimation("player1", "hit");
       playAnimation("player2", "attack");
