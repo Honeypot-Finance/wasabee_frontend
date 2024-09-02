@@ -40,70 +40,36 @@ export const MemeWarBanner = observer(() => {
   }, []);
 
   const getSuccessScore = async (address: string) => {
-    const launchTokenRes = await fetch(
-      "https://api.goldsky.com/api/public/project_cm0i8qb6iclav01w76a2x86nk/subgraphs/uniswap/1.0.0/gn",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: `
-          {
-            tokens(
-              where: {
-                id: "${address}" 
-              }
-            ) {
-              id
-              symbol
-              name
-              totalSupply
-              derivedETH
-            }
-          }
-        `,
-        }),
-      }
+    const poolPair = await liquidity.getPairByTokens(
+      address.toLowerCase(),
+      tHpotAddress.toLowerCase()
     );
 
-    const hpotRes = await fetch(
-      "https://api.goldsky.com/api/public/project_cm0i8qb6iclav01w76a2x86nk/subgraphs/uniswap/1.0.0/gn",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: `
-          {
-            tokens(
-              where: {
-                id: "${tHpotAddress}" 
-              }
-            ) {
-              id
-              symbol
-              name
-              totalSupply
-              derivedETH
-            }
-          }
-        `,
-        }),
-      }
-    );
+    await poolPair?.init();
+    await poolPair?.getReserves();
 
-    const launchTokenData = await launchTokenRes.json();
-    const hpotData = await hpotRes.json();
+    console.log("poolPair", poolPair);
 
-    const launchToken = launchTokenData.data.tokens[0];
-    const hpot = hpotData.data.tokens[0];
+    const launchTokenReserve =
+      poolPair?.token0.address.toLowerCase() === address.toLowerCase()
+        ? poolPair?.reserves?.reserve0
+        : poolPair?.reserves?.reserve1;
+    const hpotReserve =
+      poolPair?.token0.address.toLowerCase() === tHpotAddress.toLowerCase()
+        ? poolPair?.reserves?.reserve0
+        : poolPair?.reserves?.reserve1;
+    const launchTokenAmount =
+      poolPair?.token0.address.toLowerCase() === address.toLowerCase()
+        ? await poolPair?.token0.getTotalSupply()
+        : await poolPair?.token1.getTotalSupply();
+
+    if (!launchTokenReserve || !hpotReserve || !launchTokenAmount) {
+      return 0;
+    }
 
     return (
-      ((Number(launchToken.derivedETH) / Number(hpot.derivedETH)) *
-        Number(launchToken.totalSupply)) /
-      Math.pow(10, 18)
+      (hpotReserve.toNumber() / launchTokenReserve.toNumber()) *
+      (launchTokenAmount.toNumber() / Math.pow(10, 18))
     );
   };
 
@@ -414,7 +380,11 @@ export const MemeWarBanner = observer(() => {
                         {pair.pair.value.ftoState != 0
                           ? pair.pair.value?.depositedRaisedToken?.toFixed(0) ||
                             "loading..."
-                          : pair.successScore.value?.toFixed(0) || "loading..."}
+                          : Math.max(
+                              pair.successScore.value ?? 0,
+                              pair.pair.value?.depositedRaisedToken?.toNumber() ??
+                                0
+                            ).toFixed(0)}
                       </h3>
                     </div>
                   </div>

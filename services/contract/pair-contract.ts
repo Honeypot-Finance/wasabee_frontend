@@ -186,8 +186,8 @@ export class PairContract implements BaseContract {
       if (!this.reserves) {
         return new BigNumber(0);
       }
-      const reserve0 =  this.reserves.reserve0
-      const reserve1 =  this.reserves.reserve1
+      const reserve0 = this.reserves.reserve0;
+      const reserve1 = this.reserves.reserve1;
 
       const reserveIn =
         fromToken.address.toLowerCase() === this.token0.address.toLowerCase()
@@ -202,10 +202,9 @@ export class PairContract implements BaseContract {
           ? this.token1
           : this.token0;
       const amountOut = reserveOut.div(reserveIn).multipliedBy(fromAmount);
-      return amountOut
+      return amountOut;
     }
   );
-
 
   async init(force = false) {
     if (this.isNativeWrapPair) {
@@ -232,12 +231,6 @@ export class PairContract implements BaseContract {
             });
           })(),
           await this.getReserves(),
-          console.log("this.token0", this.reserves?.reserve0.toNumber()),
-          console.log("this.token1", this.reserves?.reserve1.toNumber()),
-          console.log(
-            "this.totoalsupply",
-            this.token.totalSupplyWithoutDecimals.toNumber() / 18
-          ),
         ]);
       } catch (error) {
         throw error;
