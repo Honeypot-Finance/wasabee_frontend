@@ -398,7 +398,7 @@ export const MemeWarBanner = observer(() => {
                         value.SUPPORT_AMOUNT == "" ||
                         Number(value.SUPPORT_AMOUNT) <= 0
                       }
-                      onClick={() => {
+                      onClick={async () => {
                         if (value.pair.value?.ftoState === 3) {
                           value.pair.value?.deposit
                             .call({
@@ -413,6 +413,12 @@ export const MemeWarBanner = observer(() => {
                           swap.setFromToken(state.T_HPOT_TOKEN.value!);
                           swap.setToToken(value.pair.value?.launchedToken!);
                           swap.setFromAmount(value.SUPPORT_AMOUNT);
+
+                          await new Promise((resolve) => {
+                            setTimeout(() => {
+                              resolve(undefined);
+                            }, 1000);
+                          });
 
                           swap.swapExactTokensForTokens
                             .call()
@@ -438,6 +444,22 @@ export const MemeWarBanner = observer(() => {
               );
             })
           }
+          <div className=" relative w-full flex justify-around items-center col-span-2 h-[200px] border-4 border-black rounded-[1rem] overflow-hidden">
+            <Image
+              src="/images/memewar/janivspot.webp"
+              alt=""
+              width={300}
+              height={300}
+              className="w-full h-full object-cover object-top absolute brightness-50"
+            />
+            <h3 className="z-10 text-3xl">Complete quest to earn prize</h3>
+            <Link
+              href={"https://www.cubquests.com/quests/jani-vs-pot"}
+              target="_blank"
+            >
+              <Button className="z-10">Explore</Button>
+            </Link>
+          </div>
         </div>
       </div>
       <DiscussionArea pairDatabaseId={-9999} isSide />
