@@ -159,7 +159,7 @@ export const LaunchCard = observer(
             </div>
           </div> */}
         </div>
-        <div className="w-full mt-[16px] flex gap-4 flex-col lg:flex-row justify-center items-center *:w-full">
+        <div className="w-full mt-[16px] flex gap-4 flex-col lg:flex-row justify-center items-center flex-wrap *:basis-1 *:grow-[1]">
           {pair?.canClaimLP && (
             <div>
               <Button
@@ -177,7 +177,7 @@ export const LaunchCard = observer(
           )}
           <Link
             href={`/launch-detail/${pair?.address}`}
-            className="text-black font-bold w-full "
+            className="text-black font-bold  "
           >
             <Button className="w-full">View Token</Button>
           </Link>
@@ -185,7 +185,7 @@ export const LaunchCard = observer(
             <>
               <Link
                 href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
-                className="text-black font-bold w-full "
+                className="text-black font-bold  "
               >
                 <Button className="w-full">
                   <p>Buy Token</p>
@@ -194,7 +194,7 @@ export const LaunchCard = observer(
 
               <Link
                 href={`/pool?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
-                className="text-black font-bold w-full "
+                className="text-black font-bold  "
               >
                 <Button className="w-full">
                   <p>Add LP</p>
