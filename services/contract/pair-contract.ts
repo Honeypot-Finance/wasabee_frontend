@@ -201,7 +201,13 @@ export class PairContract implements BaseContract {
               loadTotalSupply: true,
             });
           })(),
-          this.getReserves(),
+          await this.getReserves(),
+          console.log("this.token0", this.reserves?.reserve0.toNumber()),
+          console.log("this.token1", this.reserves?.reserve1.toNumber()),
+          console.log(
+            "this.totoalsupply",
+            this.token.totalSupplyWithoutDecimals.toNumber() / 18
+          ),
         ]);
       } catch (error) {
         throw error;

@@ -12,6 +12,7 @@ import { useBalance } from "wagmi";
 import { Token } from "@/services/contract/token";
 import { DiscussionArea } from "../Discussion/DiscussionArea/DiscussionArea";
 import { swap } from "@/services/swap";
+import { liquidity } from "@/services/liquidity";
 
 const ANIMATION_DURATION = 100; //ms
 const HP_BAR_URL = "/images/memewar/HP_BAR.png";
@@ -21,7 +22,12 @@ const POTS_FTO_ADDRESS = "0x93f8beabd145a61067ef2fca38c4c9c31d47ab7e";
 const BULLA_FTO_ADDRESS = "0xa8c0dda3dff715dd6093101c585d25addc5046c8";
 const IVX_FTO_ADDRESS = "0xa9edde04fc958264b1d6ad6153cffe26b1c79411";
 
-const tHpotAddress = "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E";
+const JANI_LAUNCH_TOKEN_ADDRESS = "0x180f30908b7c92ff2d65609088ad17bf923b42dc";
+const POTS_LAUNCH_TOKEN_ADDRESS = "0xfad73c80d67d3cb4a929d1c0faf33a820620ae41";
+const BULLA_LAUNCH_TOKEN_ADDRESS = "0x5da73142f3c8d8d749db4459b2fcc9024fad024e";
+const IVX_LAUNCH_TOKEN_ADDRESS = "0x2da7ec28dae827ea513da752bc161e55147b4d66";
+
+const tHpotAddress = "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E".toLowerCase();
 
 export const MemeWarBanner = observer(() => {
   const GameScreen = useRef<HTMLDivElement>(null);
@@ -33,6 +39,74 @@ export const MemeWarBanner = observer(() => {
     return pair;
   }, []);
 
+  const getSuccessScore = async (address: string) => {
+    const launchTokenRes = await fetch(
+      "https://api.goldsky.com/api/public/project_cm0i8qb6iclav01w76a2x86nk/subgraphs/uniswap/1.0.0/gn",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: `
+          {
+            tokens(
+              where: {
+                id: "${address}" 
+              }
+            ) {
+              id
+              symbol
+              name
+              totalSupply
+              derivedETH
+            }
+          }
+        `,
+        }),
+      }
+    );
+
+    const hpotRes = await fetch(
+      "https://api.goldsky.com/api/public/project_cm0i8qb6iclav01w76a2x86nk/subgraphs/uniswap/1.0.0/gn",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: `
+          {
+            tokens(
+              where: {
+                id: "${tHpotAddress}" 
+              }
+            ) {
+              id
+              symbol
+              name
+              totalSupply
+              derivedETH
+            }
+          }
+        `,
+        }),
+      }
+    );
+
+    const launchTokenData = await launchTokenRes.json();
+    const hpotData = await hpotRes.json();
+
+    const launchToken = launchTokenData.data.tokens[0];
+    const hpot = hpotData.data.tokens[0];
+
+    return (
+      ((Number(launchToken.derivedETH) / Number(hpot.derivedETH)) *
+        Number(launchToken.totalSupply)) /
+      Math.pow(10, 18)
+    );
+  };
+
   const state = useLocalObservable(() => ({
     pairs: {
       JANI: {
@@ -42,6 +116,9 @@ export const MemeWarBanner = observer(() => {
           state.pairs.JANI.SUPPORT_AMOUNT = amount;
         },
         pair: new AsyncState(async () => initPair(JANI_FTO_ADDRESS)),
+        successScore: new AsyncState(async () =>
+          getSuccessScore(JANI_LAUNCH_TOKEN_ADDRESS)
+        ),
         icon: "/images/memewar/JANI_ICON.png",
       },
       POT: {
@@ -51,6 +128,9 @@ export const MemeWarBanner = observer(() => {
           state.pairs.POT.SUPPORT_AMOUNT = amount;
         },
         pair: new AsyncState(async () => initPair(POTS_FTO_ADDRESS)),
+        successScore: new AsyncState(async () =>
+          getSuccessScore(POTS_LAUNCH_TOKEN_ADDRESS)
+        ),
         icon: "/images/memewar/POT_ICON.png",
       },
       BULLA: {
@@ -60,6 +140,9 @@ export const MemeWarBanner = observer(() => {
           state.pairs.BULLA.SUPPORT_AMOUNT = amount;
         },
         pair: new AsyncState(async () => initPair(BULLA_FTO_ADDRESS)),
+        successScore: new AsyncState(async () =>
+          getSuccessScore(BULLA_LAUNCH_TOKEN_ADDRESS)
+        ),
         icon: "/images/memewar/BULLAS_ICON.png",
       },
       IVX: {
@@ -69,6 +152,9 @@ export const MemeWarBanner = observer(() => {
           state.pairs.IVX.SUPPORT_AMOUNT = amount;
         },
         pair: new AsyncState(async () => initPair(IVX_FTO_ADDRESS)),
+        successScore: new AsyncState(async () =>
+          getSuccessScore(IVX_LAUNCH_TOKEN_ADDRESS)
+        ),
         icon: "/images/memewar/IVX_ICON.png",
       },
     },
@@ -167,7 +253,11 @@ export const MemeWarBanner = observer(() => {
     }
 
     Object.values(state.pairs).forEach((pair) => {
-      pair.pair.call();
+      pair.pair.call().then(() => {
+        if (pair.pair.value?.ftoState === 0) {
+          pair.successScore.call();
+        }
+      });
     });
 
     state.T_HPOT_TOKEN.call();
@@ -299,31 +389,37 @@ export const MemeWarBanner = observer(() => {
             />
             {Object.values(state.pairs).map((pair) => {
               return (
-                <div
-                  key={pair.pair.value?.address}
-                  className="flex flex-col items-center z-10"
-                >
-                  <Image
-                    src={pair.icon}
-                    alt=""
-                    width={100}
-                    height={100}
-                    className="w-10 h-10 md:w-20 md:h-20 object-contain"
-                  />
-                  <div className="relative flex justify-center items-center h-8">
-                    <Image
-                      src={HP_BAR_URL}
-                      alt=""
-                      width={200}
-                      height={50}
-                      className="w-full h-full object-contain"
-                    />
-                    <h3 className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-black">
-                      {pair.pair.value?.depositedRaisedToken?.toFixed(0) ||
-                        "loading..."}
-                    </h3>
+                pair.pair.value && (
+                  <div
+                    key={pair.pair.value?.address}
+                    className="flex flex-col items-center z-10"
+                  >
+                    <Link href={`/launch-detail/${pair.pair.value?.address}`}>
+                      <Image
+                        src={pair.icon}
+                        alt=""
+                        width={100}
+                        height={100}
+                        className="w-10 h-10 md:w-20 md:h-20 object-contain"
+                      />
+                    </Link>
+                    <div className="relative flex justify-center items-center h-8">
+                      <Image
+                        src={HP_BAR_URL}
+                        alt=""
+                        width={200}
+                        height={50}
+                        className="w-full h-full object-contain"
+                      />
+                      <h3 className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-black">
+                        {pair.pair.value.ftoState != 0
+                          ? pair.pair.value?.depositedRaisedToken?.toFixed(0) ||
+                            "loading..."
+                          : pair.successScore.value?.toFixed(0) || "loading..."}
+                      </h3>
+                    </div>
                   </div>
-                </div>
+                )
               );
             })}
           </div>
