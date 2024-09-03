@@ -157,7 +157,23 @@ export const LaunchCard = observer(
                   backgroundColor: "green",
                 }}
               >
-                {pair.ftoState === 0 ? "Claim LP" : "Refund LP"}
+                Claim LP
+              </Button>
+            </div>
+          )}
+          {pair instanceof MemePairContract && pair.canRefund && (
+            <div>
+              <Button
+                className="w-full"
+                onClick={() => {
+                  pair.refund.call();
+                }}
+                isLoading={pair.refund.loading}
+                style={{
+                  backgroundColor: "green",
+                }}
+              >
+                Refund LP
               </Button>
             </div>
           )}

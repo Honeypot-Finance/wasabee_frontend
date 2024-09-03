@@ -34,6 +34,9 @@ export class MemePairContract implements BaseContract {
   isInit = false;
   provider = "";
   canClaimLP = false;
+  canRefund = false;
+  isRefundable = false;
+  raisedTokenMinCap: BigNumber | undefined = undefined;
   socials: {
     name: string;
     link: string;
@@ -177,6 +180,21 @@ export class MemePairContract implements BaseContract {
     await Promise.all([
       this.getDepositedRaisedToken(),
       this.raiseToken.getBalance(),
+    ]);
+  });
+
+  refund = new AsyncState(async () => {
+    if (!this.raiseToken || !this.launchedToken) {
+      throw new Error("token is not initialized");
+    }
+
+    await new ContractWrite(this.contract.write.refundRaisedToken, {
+      action: "Refund",
+    }).call();
+
+    await Promise.all([
+      this.getDepositedRaisedToken(),
+      this.getDepositedLaunchedToken(),
     ]);
   });
 
@@ -336,14 +354,23 @@ export class MemePairContract implements BaseContract {
       this.getLaunchedTokenProvider(),
       this.getProjectInfo(),
       this.getCanClaimLP(),
+      this.getRaisedTokenMinCap(),
     ]).catch((error) => {
       console.error(error, `init-memepair-error-${this.address}`);
       return;
     });
 
     this.getState();
+    this.getCanRefund();
 
     this.isInit = true;
+  }
+
+  async getRaisedTokenMinCap() {
+    const res = await this.contract.read.raisedTokenMinCap();
+    console.log("raisedTokenMinCap", res);
+
+    this.raisedTokenMinCap = new BigNumber(res.toString());
   }
 
   getIsValidated() {
@@ -354,6 +381,7 @@ export class MemePairContract implements BaseContract {
   async getCanClaimLP() {
     try {
       if (
+        this.ftoState !== 0 ||
         !wallet.account ||
         // provider can't claim LP
         wallet.account.toLowerCase() === this.provider.toLowerCase()
@@ -375,7 +403,7 @@ export class MemePairContract implements BaseContract {
 
       this.canClaimLP = claimable > claimed;
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       this.canClaimLP = false;
     }
   }
@@ -412,18 +440,14 @@ export class MemePairContract implements BaseContract {
   }
 
   async getDepositedLaunchedToken(amount?: string) {
-    // if (amount && Number(amount) !== 0) {
-    //   this.depositedLaunchedTokenWithoutDecimals = new BigNumber(amount);
-    // } else {
-    //   const res = (await this.contract.read.depositedmemeToken()) as bigint;
-    //   this.depositedLaunchedTokenWithoutDecimals = new BigNumber(
-    //     res.toString()
-    //   );
-    // }
-    this.depositedLaunchedTokenWithoutDecimals = new BigNumber(
-      1_000_000 * 10 ** 18
-    );
-    return new BigNumber(1_000_000 * 10 ** 18);
+    if (amount && Number(amount) !== 0) {
+      this.depositedLaunchedTokenWithoutDecimals = new BigNumber(amount);
+    } else {
+      const res = (await this.contract.read.depositedmemeToken()) as bigint;
+      this.depositedLaunchedTokenWithoutDecimals = new BigNumber(
+        res.toString()
+      );
+    }
   }
 
   async getEndTime(endtime?: string) {
@@ -435,11 +459,27 @@ export class MemePairContract implements BaseContract {
     }
   }
 
-  async getState() {
+  getCanRefund() {
+    if (
+      !this.depositedRaisedToken ||
+      !this.raisedTokenMinCap ||
+      (this.ftoState !== 1 && this.ftoState !== 2)
+    ) {
+      this.canRefund = false;
+      return;
+    }
+
+    if (this.depositedRaisedToken < this.raisedTokenMinCap) {
+      this.canRefund = true;
+    }
+  }
+
+  getState() {
     if (
       !this.depositedRaisedToken ||
       !this.depositedLaunchedToken ||
-      !this.endTime
+      !this.endTime ||
+      !this.raisedTokenMinCap
     ) {
       console.error("missing data for getState");
       return;
@@ -447,10 +487,11 @@ export class MemePairContract implements BaseContract {
     console.log(
       "getState",
       this.depositedRaisedToken.toString(),
-      this.depositedLaunchedToken.toString()
+      this.depositedLaunchedToken.toString(),
+      this.raisedTokenMinCap?.toString()
     );
 
-    if (this.depositedRaisedToken >= this.depositedLaunchedToken) {
+    if (this.depositedRaisedToken >= this.raisedTokenMinCap) {
       this.ftoState = 0;
     } else if (dayjs.unix(Number(this.endTime)).isBefore(dayjs())) {
       this.ftoState = 1;

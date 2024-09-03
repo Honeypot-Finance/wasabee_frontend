@@ -296,6 +296,20 @@ const FailAction = observer(
         >
           Provider Withdraw
         </Button>
+        {pair instanceof MemePairContract && pair.canRefund && (
+          <Button
+            className="w-full"
+            onClick={() => {
+              pair.refund.call();
+            }}
+            isLoading={pair.refund.loading}
+            style={{
+              backgroundColor: "green",
+            }}
+          >
+            Refund LP
+          </Button>
+        )}
       </div>
     ) : (
       <></>

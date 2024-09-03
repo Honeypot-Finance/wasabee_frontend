@@ -130,8 +130,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                             ? pair.depositedRaisedToken.toFormat(0)
                             : "-"}{" "}
                           /{" "}
-                          {pair.depositedLaunchedToken &&
-                            pair.depositedLaunchedToken.toNumber()}{" "}
+                          {pair.raisedTokenMinCap &&
+                            pair.raisedTokenMinCap.toNumber() /
+                              Math.pow(10, 18)}{" "}
                           &nbsp;
                           {pair?.raiseToken?.displayName}
                         </span>
@@ -139,11 +140,11 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                       <div className="flex items-center gap-2 text-sm">
                         {/* <TotalRaisedSvg /> */}
                         <span className="font-bold">
-                          {pair?.depositedRaisedToken &&
-                          pair.depositedLaunchedToken
+                          {pair?.depositedRaisedToken && pair.raisedTokenMinCap
                             ? (
                                 (pair.depositedRaisedToken.toNumber() /
-                                  pair.depositedLaunchedToken.toNumber()) *
+                                  (pair.raisedTokenMinCap.toNumber() /
+                                    Math.pow(10, 18))) *
                                 100
                               ).toFixed(2)
                             : "-"}{" "}
