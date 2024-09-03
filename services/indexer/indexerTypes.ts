@@ -14,6 +14,20 @@ export type GhostPairResponse = {
   pageInfo: PageInfo;
 };
 
+export type TrendingMEMEs = {
+  pairs: {
+    items: {
+      id: string;
+      status: string;
+      depositedRaisedToken: string;
+      depositedLaunchedToken: string;
+      endTime: string;
+      token0: GhostToken;
+      token1: GhostToken;
+    }[];
+  };
+};
+
 export type GhostHoldingPairsResponse = {
   holdingPairs: holdingPairs[];
   pageInfo: PageInfo;

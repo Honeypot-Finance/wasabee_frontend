@@ -8,6 +8,7 @@ import {
   GhostPairResponse,
   IndexerProvider,
   PageRequest,
+  TrendingMEMEs,
 } from "./indexerTypes";
 
 export default class Indexer<T extends IndexerProvider> {
@@ -91,6 +92,10 @@ export default class Indexer<T extends IndexerProvider> {
     );
 
     return res;
+  };
+
+  getTrendingMEMEPairs = async (): Promise<ApiResponseType<TrendingMEMEs>> => {
+    return await this.dataProvider.getTrendingMEMEPairs();
   };
 
   getValidatedTokenPairs = async (

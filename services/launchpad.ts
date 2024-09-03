@@ -194,6 +194,55 @@ class LaunchPad {
     }
   }
 
+  async trendingMEMEs(): Promise<MemePairContract[]> {
+    const mostSuccessfulFtos =
+      await trpcClient.indexerFeedRouter.getTrendingMEMEPairs.query();
+
+    if (mostSuccessfulFtos.status === "success") {
+      return mostSuccessfulFtos.data.pairs.items.map((pairAddress) => {
+        const pair = new MemePairContract({
+          address: pairAddress.id,
+        });
+
+        const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
+          ? Token.getToken({
+              ...pairAddress.token1,
+              address: pairAddress.token1.id,
+            })
+          : Token.getToken({
+              address: pairAddress.token0.id,
+            });
+
+        const launchedToken =
+          raisedToken.address.toLowerCase() ===
+          pairAddress.token1.id.toLowerCase()
+            ? Token.getToken({
+                ...pairAddress.token0,
+                address: pairAddress.token0.id,
+              })
+            : Token.getToken({
+                ...pairAddress.token1,
+                address: pairAddress.token1.id,
+              });
+
+        if (!pair.isInit) {
+          pair.init({
+            raisedToken: raisedToken,
+            launchedToken: launchedToken,
+            depositedLaunchedToken: pairAddress.depositedLaunchedToken,
+            depositedRaisedToken: pairAddress.depositedRaisedToken,
+            endTime: pairAddress.endTime,
+            ftoState: Number(pairAddress.status),
+          });
+        }
+
+        return pair;
+      });
+    } else {
+      return [];
+    }
+  }
+
   loadVerifiedFTOProjects = async () => {
     this.setFtoPageLoading(true);
     const projects = await Promise.all(
@@ -429,9 +478,6 @@ class LaunchPad {
             raisedToken: raisedToken as `0x${string}`,
             name: tokenName,
             symbol: tokenSymbol,
-            tokenSupply: BigInt(
-              new BigNumber(tokenAmount).multipliedBy(1e18).toFixed()
-            ),
             swapHandler: poolHandler as `0x${string}`,
             launchCycle: BigInt(86400),
           },

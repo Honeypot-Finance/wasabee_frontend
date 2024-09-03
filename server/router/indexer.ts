@@ -5,6 +5,7 @@ import { type PairFilter } from "@/services/launchpad";
 import {
   GhostPairResponse,
   PageRequest,
+  TrendingMEMEs,
 } from "@/services/indexer/indexerTypes";
 import { cacheProvider, getCacheKey } from "@/lib/server/cache";
 
@@ -180,4 +181,16 @@ export const indexerFeedRouter = router({
         }
       );
     }),
+  getTrendingMEMEPairs: publicProcedure.query(
+    async (): Promise<ApiResponseType<TrendingMEMEs>> => {
+      return cacheProvider.getOrSet(
+        getCacheKey("getTrendingMEMEPairs"),
+        async () => {
+          const res = await indexer.getTrendingMEMEPairs();
+
+          return res;
+        }
+      );
+    }
+  ),
 });

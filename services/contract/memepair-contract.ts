@@ -128,7 +128,6 @@ export class MemePairContract implements BaseContract {
     if (!this.endTime) {
       return "-";
     }
-    //console.log("this.endTime", this.endTime);
     const targetTime = dayjs(
       new BigNumber(this.endTime).multipliedBy(1000).toNumber()
     );
@@ -169,11 +168,7 @@ export class MemePairContract implements BaseContract {
       amount,
       spender: this.facadeContract.address,
     });
-    console.log(
-      this.raiseToken.address as `0x${string}`,
-      this.launchedToken.address as `0x${string}`,
-      BigInt(amount)
-    );
+
     await this.facadeContract.deposit.call([
       this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
@@ -346,7 +341,7 @@ export class MemePairContract implements BaseContract {
       return;
     });
 
-    this.getState(ftoState);
+    this.getState();
 
     this.isInit = true;
   }
@@ -356,25 +351,31 @@ export class MemePairContract implements BaseContract {
       this.address.toLowerCase()
     );
   }
-
   async getCanClaimLP() {
-    if (
-      !wallet.account ||
-      // provider can't claim LP
-      wallet.account.toLowerCase() === this.provider.toLowerCase()
-    ) {
-      return false;
-    }
-
     try {
+      if (
+        !wallet.account ||
+        // provider can't claim LP
+        wallet.account.toLowerCase() === this.provider.toLowerCase()
+      ) {
+        return false;
+      }
+
+      const claimed = await this.contract.read.claimedLp([wallet.account] as [
+        `0x${string}`
+      ]);
+
+      console.log("claimed", claimed);
+
       const claimable = await this.contract.read.claimableLP([
         wallet.account,
       ] as [`0x${string}`]);
 
       console.log("claimable", claimable);
 
-      this.canClaimLP = claimable > 0;
+      this.canClaimLP = claimable > claimed;
     } catch (error) {
+      console.error(error);
       this.canClaimLP = false;
     }
   }
@@ -385,7 +386,6 @@ export class MemePairContract implements BaseContract {
       this.raiseToken.init();
     } else {
       const res = (await this.contract.read.raisedToken()) as `0x${string}`;
-      console.log("res", res);
       this.raiseToken = Token.getToken({ address: res });
       this.raiseToken.init();
     }
@@ -412,14 +412,18 @@ export class MemePairContract implements BaseContract {
   }
 
   async getDepositedLaunchedToken(amount?: string) {
-    if (amount && Number(amount) !== 0) {
-      this.depositedLaunchedTokenWithoutDecimals = new BigNumber(amount);
-    } else {
-      const res = (await this.contract.read.depositedmemeToken()) as bigint;
-      this.depositedLaunchedTokenWithoutDecimals = new BigNumber(
-        res.toString()
-      );
-    }
+    // if (amount && Number(amount) !== 0) {
+    //   this.depositedLaunchedTokenWithoutDecimals = new BigNumber(amount);
+    // } else {
+    //   const res = (await this.contract.read.depositedmemeToken()) as bigint;
+    //   this.depositedLaunchedTokenWithoutDecimals = new BigNumber(
+    //     res.toString()
+    //   );
+    // }
+    this.depositedLaunchedTokenWithoutDecimals = new BigNumber(
+      1_000_000 * 10 ** 18
+    );
+    return new BigNumber(1_000_000 * 10 ** 18);
   }
 
   async getEndTime(endtime?: string) {
@@ -431,7 +435,7 @@ export class MemePairContract implements BaseContract {
     }
   }
 
-  async getState(state?: number) {
+  async getState() {
     if (
       !this.depositedRaisedToken ||
       !this.depositedLaunchedToken ||
@@ -440,9 +444,11 @@ export class MemePairContract implements BaseContract {
       console.error("missing data for getState");
       return;
     }
-    if (state) {
-      this.ftoState = state;
-    }
+    console.log(
+      "getState",
+      this.depositedRaisedToken.toString(),
+      this.depositedLaunchedToken.toString()
+    );
 
     if (this.depositedRaisedToken >= this.depositedLaunchedToken) {
       this.ftoState = 0;
@@ -452,6 +458,7 @@ export class MemePairContract implements BaseContract {
       this.ftoState = 3;
     }
   }
+
   async getLaunchedTokenProvider() {
     const res = await this.contract.read.tokenDeployer();
     this.launchedTokenProvider = res;

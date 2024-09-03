@@ -305,6 +305,9 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
       const pairAddress = await launchpad.createLaunchProject({
         ...data,
         // @ts-ignore
+        tokenAmount: 1_000_000,
+        raisedToken: wallet.currentChain?.contracts.ftoTokens[0]
+          .address as string,
         launchType: "meme",
         raisingCycle: dayjs().unix(),
       });
@@ -384,83 +387,19 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                   <span className="text-red-500">Token Symbol is required</span>
                 )}
               </div>
-
-              <Accordion variant="bordered" keepContentMounted>
-                <AccordionItem
-                  key="advanced"
-                  aria-label="advanced"
-                  title="Advanced Options"
-                >
-                  <div className="flex flex-col gap-4">
-                    <div>Token Amount</div>
-                    <input
-                      type="text"
-                      {...register("tokenAmount", {
-                        required: "Token Amount is required",
-                        pattern: {
-                          value: positiveIntegerPattern,
-                          message: "Token Amount should be a positive integer",
-                        },
-                        value: 1_000_000,
-                      })}
-                      className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
-                      defaultValue={1_000_000}
-                    />
-                    {errors.tokenAmount && (
-                      <span className="text-red-500">
-                        {errors.tokenAmount.message as any}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex-col gap-4 hidden">
-                    <label htmlFor="poolHandler">Pool Handler</label>
-                    {wallet.currentChain?.contracts?.routerV2 && (
-                      <input
-                        defaultValue={wallet.currentChain?.contracts?.routerV2}
-                        value={wallet.currentChain?.contracts?.routerV2}
-                        // defaultValue={'0x1a12as1212'}
-                        type="text"
-                        {...register("poolHandler", {})}
-                        className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
-                      />
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-4">
-                    <label htmlFor="raisedToken">Raised Token</label>
-                    <Select
-                      required
-                      selectionMode="single"
-                      classNames={{
-                        trigger:
-                          "bg-transparent data-[hover=true]:bg-transparent",
-                      }}
-                      defaultSelectedKeys={"all"}
-                      {...register("raisedToken", {
-                        required: true,
-                        value: wallet.currentChain?.contracts.ftoTokens[0]
-                          .address as string,
-                      })}
-                      className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
-                    >
-                      {wallet.currentChain?.contracts.ftoTokens.map(
-                        (token, idx) => (
-                          <SelectItem
-                            key={token.address as string}
-                            value={token.address}
-                          >
-                            {token.symbol}
-                          </SelectItem>
-                        )
-                      )}
-                    </Select>
-                    {errors.raisedToken && (
-                      <span className="text-red-500">
-                        Rasied Token is required
-                      </span>
-                    )}
-                  </div>
-                </AccordionItem>
-              </Accordion>
+              <div className="flex-col gap-4 hidden">
+                <label htmlFor="poolHandler">Pool Handler</label>
+                {wallet.currentChain?.contracts?.routerV2 && (
+                  <input
+                    defaultValue={wallet.currentChain?.contracts?.routerV2}
+                    value={wallet.currentChain?.contracts?.routerV2}
+                    // defaultValue={'0x1a12as1212'}
+                    type="text"
+                    {...register("poolHandler", {})}
+                    className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
+                  />
+                )}
+              </div>
 
               {(state.pairAddress && (
                 <div className="flex items-center">

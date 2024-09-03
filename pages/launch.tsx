@@ -127,7 +127,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         <span className="font-bold">
                           {pair?.depositedRaisedToken
                             ? pair.depositedRaisedToken.toFormat(0)
-                            : "-"}
+                            : "-"}{" "}
                           &nbsp;
                           {pair?.raiseToken?.displayName}
                         </span>

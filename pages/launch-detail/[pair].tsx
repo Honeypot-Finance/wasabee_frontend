@@ -418,16 +418,6 @@ const FtoView = observer(() => {
     flag_count: 0,
   });
   const state = useLocalObservable(() => ({
-    pairInfo: new AsyncState(
-      async ({ pairAddress }: { pairAddress: string }) => {
-        const pairInfo = await trpcClient.projects.getProjectInfo.query({
-          pair: pairAddress,
-          chain_id: wallet.currentChainId,
-        });
-
-        return pairInfo;
-      }
-    ),
     pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
       const pairInfo = await trpcClient.projects.getProjectInfo.query({
         pair: pairAddress,
@@ -448,10 +438,6 @@ const FtoView = observer(() => {
   }));
 
   const account = useAccount();
-
-  chart.setChartLabel(
-    state.pair.value?.launchedToken?.displayName + "/USD" ?? ""
-  );
 
   // remind provider to edit project details
   useEffect(() => {
@@ -540,6 +526,9 @@ const FtoView = observer(() => {
     chart.setCurrencyCode("USD");
     chart.setTokenNumber(0);
     chart.setChartTarget(state.pair.value?.launchedToken ?? undefined);
+    chart.setChartLabel(
+      state.pair.value?.launchedToken?.displayName + "/USD" ?? ""
+    );
   }, [state.pair.value]);
 
   useEffect(() => {
@@ -572,10 +561,7 @@ const FtoView = observer(() => {
           },
           {
             title: state.pair.value?.launchedToken?.displayName || "-",
-            href:
-              state.pairInfo.value?.project_type === "meme"
-                ? "meme-launchs"
-                : "/launch-token",
+            href: "/launch-token",
           },
         ]}
       ></Breadcrumbs>
@@ -888,16 +874,6 @@ const MemeView = observer(() => {
     flag_count: 0,
   });
   const state = useLocalObservable(() => ({
-    pairInfo: new AsyncState(
-      async ({ pairAddress }: { pairAddress: string }) => {
-        const pairInfo = await trpcClient.projects.getProjectInfo.query({
-          pair: pairAddress,
-          chain_id: wallet.currentChainId,
-        });
-
-        return pairInfo;
-      }
-    ),
     pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
       const pair = new MemePairContract({ address: pairAddress as string });
       await pair.init();
@@ -909,10 +885,6 @@ const MemeView = observer(() => {
   }));
 
   const account = useAccount();
-
-  chart.setChartLabel(
-    state.pair.value?.launchedToken?.displayName + "/USD" ?? ""
-  );
 
   // remind provider to edit project details
   useEffect(() => {
@@ -987,9 +959,6 @@ const MemeView = observer(() => {
     if (!wallet.isInit || !pairAddress) {
       return;
     }
-    state.pairInfo.call({
-      pairAddress: pairAddress as string,
-    });
     state.pair.call({
       pairAddress: pairAddress as string,
     });
@@ -1004,6 +973,9 @@ const MemeView = observer(() => {
     chart.setCurrencyCode("USD");
     chart.setTokenNumber(0);
     chart.setChartTarget(state.pair.value?.launchedToken ?? undefined);
+    chart.setChartLabel(
+      state.pair.value?.launchedToken?.displayName + "/USD" ?? ""
+    );
   }, [state.pair.value]);
 
   useEffect(() => {
@@ -1297,7 +1269,7 @@ const MemeView = observer(() => {
                 );
               })}
             </div>
-            {state.pair.value?.ftoState === 0 && (
+            {state.pair.value?.ftoState === 0 && chart.chartTarget && (
               <SimplePriceFeedGraph></SimplePriceFeedGraph>
             )}
           </div>

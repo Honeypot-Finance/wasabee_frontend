@@ -43,9 +43,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     launchpad.memePageInfo.reloadPage();
 
     //loading most success projects
-    // launchpad.mostSuccessfulFtos().then((data) => {
-    //   setMostSuccessProjects(data);
-    // });
+    launchpad.trendingMEMEs().then((data) => {
+      setMostSuccessProjects(data);
+    });
   }, [wallet.isInit]);
 
   return (
@@ -61,7 +61,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
       {mostSuccessProjects && mostSuccessProjects.length > 0 && (
         <>
           <h2 className="w-full text-center text-[3rem] [font-family:MEMEH] font-bold">
-            Trending Projects
+            Trending MEMEs
           </h2>
           <motion.div
             variants={defaultContainerVariants}
@@ -128,9 +128,26 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                         <span className="font-bold">
                           {pair?.depositedRaisedToken
                             ? pair.depositedRaisedToken.toFormat(0)
-                            : "-"}
+                            : "-"}{" "}
+                          /{" "}
+                          {pair.depositedLaunchedToken &&
+                            pair.depositedLaunchedToken.toNumber()}{" "}
                           &nbsp;
                           {pair?.raiseToken?.displayName}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        {/* <TotalRaisedSvg /> */}
+                        <span className="font-bold">
+                          {pair?.depositedRaisedToken &&
+                          pair.depositedLaunchedToken
+                            ? (
+                                (pair.depositedRaisedToken.toNumber() /
+                                  pair.depositedLaunchedToken.toNumber()) *
+                                100
+                              ).toFixed(2)
+                            : "-"}{" "}
+                          %
                         </span>
                       </div>
                     </motion.div>
