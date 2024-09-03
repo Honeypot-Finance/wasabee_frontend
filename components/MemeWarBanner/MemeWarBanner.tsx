@@ -384,7 +384,10 @@ export const MemeWarBanner = observer(() => {
                               pair.successScore.value ?? 0,
                               pair.pair.value?.depositedRaisedToken?.toNumber() ??
                                 0
-                            ).toFixed(0)}
+                            ).toLocaleString("en-US", {
+                              style: "decimal",
+                              maximumFractionDigits: 0,
+                            })}
                       </h3>
                     </div>
                   </div>
