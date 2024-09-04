@@ -121,10 +121,12 @@ export const Profile = observer(() => {
           <Tab key="my-launch" title="My Launch">
             <Card className="next-card">
               <CardBody>
+                {" "}
                 <motion.div
                   variants={defaultContainerVariants}
                   initial="hidden"
                   animate="visible"
+                  className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6"
                 >
                   {launchpad.myPairs.loading ? (
                     <LoadingDisplay />
@@ -156,10 +158,12 @@ export const Profile = observer(() => {
           <Tab key="participated-launch" title="Participated Launch">
             <Card className="next-card">
               <CardBody>
+                {" "}
                 <motion.div
                   variants={defaultContainerVariants}
                   initial="hidden"
                   animate="visible"
+                  className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 "
                 >
                   {launchpad.myPairs.loading ? (
                     <LoadingDisplay />

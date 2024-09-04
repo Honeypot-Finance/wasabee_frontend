@@ -241,8 +241,6 @@ export class GhostIndexer {
         }
       `;
 
-    console.log(query);
-
     const res = await this.callIndexerApi(query, {
       apiHandle: projectType === "meme" ? memeGraphHandle : ftoGraphHandle,
     });

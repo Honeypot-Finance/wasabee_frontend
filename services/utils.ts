@@ -380,6 +380,7 @@ export class IndexerPaginationState<FilterT, ItemT> {
   };
 
   reloadPage = () => {
+    if (this.isLoading) return;
     this.resetPage();
     this.loadMore();
     this.isInit = true;

@@ -103,7 +103,7 @@ class LaunchPad {
       limit: PAGE_LIMIT,
     },
     LoadNextPageFunction: async (filter) => {
-      return (await this.LoadMoreFtoPage("meme")) as {
+      return (await this.LoadMoreFtoPage()) as {
         items: MemePairContract[];
         pageInfo: PageInfo;
       };
@@ -263,18 +263,12 @@ class LaunchPad {
   };
 
   getMyFtoParticipatedPairs = new AsyncState(async () => {
-    if (!this.myFtoParticipatedPairs.value) {
-      await this.myFtoParticipatedPairs.call();
-    } else {
-      this.myFtoParticipatedPairs.value.data.forEach(async (pair) => {
-        if (!pair.isInit) await pair.init();
-      });
-    }
+    await this.myFtoParticipatedPairs.call();
 
     return this.myFtoParticipatedPairs.value?.data ?? [];
   });
 
-  LoadMoreFtoPage = async (projectType: "fto" | "meme" = "fto") => {
+  LoadMoreFtoPage = async () => {
     const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
       filter: this.ftoPageInfo.filter,
       chainId: String(wallet.currentChainId),
@@ -282,14 +276,14 @@ class LaunchPad {
         direction: "next",
         cursor: this.ftoPageInfo.pageInfo.endCursor,
       },
-      projectType: projectType,
+      projectType: this.currentLaunchpadType,
     });
 
     if (res.status === "success") {
       const data = {
         items: res.data.pairs.map((pairAddress) => {
           const pair =
-            projectType === "fto"
+            this.currentLaunchpadType === "fto"
               ? new FtoPairContract({
                   address: pairAddress.id,
                 })
@@ -348,7 +342,7 @@ class LaunchPad {
 
   myFtoParticipatedPairs = new AsyncState(async () => {
     let projects;
-    if ((this.currentLaunchpadType = "fto")) {
+    if (this.currentLaunchpadType == "fto") {
       projects = await this.ftofactoryContract.events(
         wallet.account as Address
       );
@@ -357,10 +351,15 @@ class LaunchPad {
         wallet.account as Address
       );
     }
+    console.log(this.currentLaunchpadType);
+    console.log(projects);
 
     let data = await Promise.all(
       projects.map(async (pairAddress) => {
-        const pair = new FtoPairContract({ address: pairAddress as string });
+        const pair =
+          this.currentLaunchpadType === "fto"
+            ? new FtoPairContract({ address: pairAddress as string })
+            : new MemePairContract({ address: pairAddress as string });
         if (!pair.isInit) {
           await pair.init();
           pair.raiseToken?.init();
