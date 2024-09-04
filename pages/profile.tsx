@@ -18,13 +18,128 @@ import { GhostPair } from "@/services/indexer/indexerTypes";
 import launchpad from "@/services/launchpad";
 import { liquidity } from "@/services/liquidity";
 import { wallet } from "@/services/wallet";
-import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
+import {
+  Card,
+  CardBody,
+  Tab,
+  Tabs,
+  Button as NextButton,
+} from "@nextui-org/react";
 import { motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+
+const MyLaunchTab = observer(() => {
+  return (
+    <Card className="next-card">
+      <CardBody>
+        <div className="flex">
+          <NextButton
+            isDisabled={launchpad.currentLaunchpadType.value === "fto"}
+            onClick={() => {
+              launchpad.setCurrentLaunchpadType("fto");
+              launchpad.myPairs.call();
+            }}
+          >
+            FTO
+          </NextButton>
+          <NextButton
+            isDisabled={launchpad.currentLaunchpadType.value === "meme"}
+            onClick={() => {
+              launchpad.setCurrentLaunchpadType("meme");
+              launchpad.myPairs.call();
+            }}
+          >
+            MEME
+          </NextButton>
+        </div>
+        <motion.div
+          variants={defaultContainerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6"
+        >
+          {launchpad.myPairs.loading ? (
+            <LoadingDisplay />
+          ) : launchpad.myPairs.value?.data.length === 0 ? (
+            <div className="flex flex-col justify-center items-center">
+              <HoneyStickSvg />
+              <div className="text-[#eee369] mt-2  text-[3rem] text-center">
+                List is empty
+              </div>
+            </div>
+          ) : (
+            launchpad.myPairs.value?.data
+              .slice()
+              .sort((a, b) => {
+                return a.canClaimLP ? 1 : b.canClaimLP ? -1 : 0;
+              })
+              .map((project) => (
+                <LaunchCard
+                  key={project.address}
+                  pair={project}
+                  action={<></>}
+                />
+              ))
+          )}
+        </motion.div>
+      </CardBody>
+    </Card>
+  );
+});
+
+const ParticipatedLaunchTab = observer(() => {
+  return (
+    <Card className="next-card">
+      <CardBody>
+        <div className="flex">
+          <NextButton
+            isDisabled={launchpad.currentLaunchpadType.value === "fto"}
+            onClick={() => {
+              launchpad.setCurrentLaunchpadType("fto");
+              launchpad.getMyFtoParticipatedPairs.call();
+            }}
+          >
+            FTO
+          </NextButton>
+          <NextButton
+            isDisabled={launchpad.currentLaunchpadType.value === "meme"}
+            onClick={() => {
+              launchpad.setCurrentLaunchpadType("meme");
+              launchpad.getMyFtoParticipatedPairs.call();
+            }}
+          >
+            MEME
+          </NextButton>
+        </div>
+        <motion.div
+          variants={defaultContainerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 "
+        >
+          {launchpad.getMyFtoParticipatedPairs.loading ? (
+            <LoadingDisplay />
+          ) : launchpad.getMyFtoParticipatedPairs.value?.length ?? 0 > 0 ? (
+            launchpad.getMyFtoParticipatedPairs.value?.map((project) => (
+              <LaunchCard key={project.address} pair={project} action={<></>} />
+            ))
+          ) : (
+            <div className="flex flex-col justify-center items-center">
+              <HoneyStickSvg />
+              <div className="text-[#eee369] mt-2  text-[3rem] text-center">
+                List is empty
+              </div>
+            </div>
+          )}
+        </motion.div>
+      </CardBody>
+    </Card>
+  );
+});
 
 export const Profile = observer(() => {
   const { chainId } = useAccount();
@@ -119,76 +234,10 @@ export const Profile = observer(() => {
             </Card>
           </Tab>
           <Tab key="my-launch" title="My Launch">
-            <Card className="next-card">
-              <CardBody>
-                {" "}
-                <motion.div
-                  variants={defaultContainerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6"
-                >
-                  {launchpad.myPairs.loading ? (
-                    <LoadingDisplay />
-                  ) : launchpad.myPairs.value?.data.length === 0 ? (
-                    <div className="flex flex-col justify-center items-center">
-                      <HoneyStickSvg />
-                      <div className="text-[#eee369] mt-2  text-[3rem] text-center">
-                        List is empty
-                      </div>
-                    </div>
-                  ) : (
-                    launchpad.myPairs.value?.data
-                      .slice()
-                      .sort((a, b) => {
-                        return a.canClaimLP ? 1 : b.canClaimLP ? -1 : 0;
-                      })
-                      .map((project) => (
-                        <LaunchCard
-                          key={project.address}
-                          pair={project}
-                          action={<></>}
-                        />
-                      ))
-                  )}
-                </motion.div>
-              </CardBody>
-            </Card>
+            <MyLaunchTab />
           </Tab>
           <Tab key="participated-launch" title="Participated Launch">
-            <Card className="next-card">
-              <CardBody>
-                {" "}
-                <motion.div
-                  variants={defaultContainerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 "
-                >
-                  {launchpad.myPairs.loading ? (
-                    <LoadingDisplay />
-                  ) : launchpad.getMyFtoParticipatedPairs.value?.length ??
-                    0 > 0 ? (
-                    launchpad.getMyFtoParticipatedPairs.value?.map(
-                      (project) => (
-                        <LaunchCard
-                          key={project.address}
-                          pair={project}
-                          action={<></>}
-                        />
-                      )
-                    )
-                  ) : (
-                    <div className="flex flex-col justify-center items-center">
-                      <HoneyStickSvg />
-                      <div className="text-[#eee369] mt-2  text-[3rem] text-center">
-                        List is empty
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
-              </CardBody>
-            </Card>
+            <ParticipatedLaunchTab />
           </Tab>
           <Tab key="my-pools" title="My Pools">
             <Card className="next-card">

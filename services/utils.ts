@@ -349,7 +349,6 @@ export class IndexerPaginationState<FilterT, ItemT> {
     filter: FilterT;
     LoadNextPageFunction: (
       filter: FilterT,
-
       pageRequest: PageRequest
     ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }>;
     args?: Partial<IndexerPaginationState<FilterT, ItemT>>;

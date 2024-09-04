@@ -67,7 +67,9 @@ function calculateTimeDifference(timestamp: number): string {
 }
 
 class LaunchPad {
-  currentLaunchpadType: launchpadType = "fto";
+  currentLaunchpadType = new ValueState<launchpadType>({
+    value: "fto",
+  });
   ftoPageInfo = new IndexerPaginationState<PairFilter, FtoPairContract>({
     filter: {
       search: "",
@@ -276,14 +278,14 @@ class LaunchPad {
         direction: "next",
         cursor: this.ftoPageInfo.pageInfo.endCursor,
       },
-      projectType: this.currentLaunchpadType,
+      projectType: this.currentLaunchpadType.value,
     });
 
     if (res.status === "success") {
       const data = {
         items: res.data.pairs.map((pairAddress) => {
           const pair =
-            this.currentLaunchpadType === "fto"
+            this.currentLaunchpadType.value === "fto"
               ? new FtoPairContract({
                   address: pairAddress.id,
                 })
@@ -342,7 +344,7 @@ class LaunchPad {
 
   myFtoParticipatedPairs = new AsyncState(async () => {
     let projects;
-    if (this.currentLaunchpadType == "fto") {
+    if (this.currentLaunchpadType.value == "fto") {
       projects = await this.ftofactoryContract.events(
         wallet.account as Address
       );
@@ -357,7 +359,7 @@ class LaunchPad {
     let data = await Promise.all(
       projects.map(async (pairAddress) => {
         const pair =
-          this.currentLaunchpadType === "fto"
+          this.currentLaunchpadType.value === "fto"
             ? new FtoPairContract({ address: pairAddress as string })
             : new MemePairContract({ address: pairAddress as string });
         if (!pair.isInit) {
@@ -387,7 +389,7 @@ class LaunchPad {
         filter: this.ftoPageInfo.filter,
         chainId: String(wallet.currentChainId),
         provider: wallet.account,
-        projectType: this.currentLaunchpadType,
+        projectType: this.currentLaunchpadType.value,
       });
 
     console.log(ftoAddresses);
@@ -576,7 +578,7 @@ class LaunchPad {
   };
 
   setCurrentLaunchpadType = (type: launchpadType) => {
-    this.currentLaunchpadType = type;
+    this.currentLaunchpadType.setValue(type);
   };
 }
 
