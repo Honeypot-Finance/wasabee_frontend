@@ -380,7 +380,6 @@ export class MemePairContract implements BaseContract {
   async getCanClaimLP() {
     try {
       if (
-        this.ftoState !== 0 ||
         !wallet.account ||
         // provider can't claim LP
         wallet.account.toLowerCase() === this.provider.toLowerCase()
@@ -488,7 +487,15 @@ export class MemePairContract implements BaseContract {
       return;
     }
 
-    if (this.depositedRaisedToken >= this.raisedTokenMinCap) {
+    console.log(
+      this.depositedRaisedToken.toNumber(),
+      this.endTime,
+      this.raisedTokenMinCap.div(Math.pow(10, 18)).toNumber()
+    );
+
+    if (
+      this.depositedRaisedToken >= this.raisedTokenMinCap.div(Math.pow(10, 18))
+    ) {
       this.ftoState = 0;
     } else if (dayjs.unix(Number(this.endTime)).isBefore(dayjs())) {
       this.ftoState = 1;
