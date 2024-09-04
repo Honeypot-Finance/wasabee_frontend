@@ -476,10 +476,14 @@ export class MemePairContract implements BaseContract {
   getState() {
     if (
       !this.depositedRaisedToken ||
-      !this.depositedLaunchedToken ||
       !this.endTime ||
       !this.raisedTokenMinCap
     ) {
+      console.error(
+        this.depositedRaisedToken,
+        this.endTime,
+        this.raisedTokenMinCap
+      );
       console.error("missing data for getState");
       return;
     }
