@@ -274,7 +274,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             onSelectionChange={(key) => {
               launchpad.setCurrentLaunchpadType("meme");
               if (key === "all") {
-                launchpad.memePageInfo.reloadPage();
+                //
               } else if (key === "my") {
                 launchpad.myPairs.call();
               } else if (key === "participated-launch") {
@@ -349,6 +349,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 )}
               </motion.div>
             </Tab>
+            <Tab href="/launch" title="To Fto projects->" />
           </Tabs>
         </div>
       )}
