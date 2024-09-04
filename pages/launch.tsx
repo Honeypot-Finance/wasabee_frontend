@@ -38,6 +38,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
     if (!wallet.isInit) {
       return;
     }
+    launchpad.setCurrentLaunchpadType("fto");
     launchpad.showNotValidatedPairs = true;
     launchpad.ftoPageInfo.reloadPage();
 
@@ -266,7 +267,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
             className="next-tab"
             onSelectionChange={(key) => {
               if (key === "my") {
-                launchpad.myFtoPairs.call();
+                launchpad.myPairs.call();
               }
             }}
           >
@@ -302,13 +303,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
             </Tab>
             <Tab key="my" title="My Projects">
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-                {launchpad.myFtoPairs.value?.data.map(
-                  (pair: FtoPairContract) => (
-                    <div key={pair.address}>
-                      <LaunchCard pair={pair} action={<></>} />
-                    </div>
-                  )
-                )}
+                {launchpad.myPairs.value?.data.map((pair: FtoPairContract) => (
+                  <div key={pair.address}>
+                    <LaunchCard pair={pair} action={<></>} />
+                  </div>
+                ))}
               </div>
             </Tab>
           </Tabs>

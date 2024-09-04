@@ -32,13 +32,14 @@ import { MemePairContract } from "@/services/contract/memepair-contract";
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
-    MemePairContract[]
-  >(launchpad.memePageInfo.pageItems.value);
+    MemePairContract[] | null
+  >(null);
 
   useEffect(() => {
     if (!wallet.isInit) {
       return;
     }
+    launchpad.setCurrentLaunchpadType("meme");
     launchpad.showNotValidatedPairs = true;
     launchpad.memePageInfo.reloadPage();
 
@@ -271,7 +272,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             className="next-tab"
             onSelectionChange={(key) => {
               if (key === "my") {
-                launchpad.myFtoPairs.call();
+                launchpad.myPairs.call();
               }
             }}
           >
@@ -307,13 +308,11 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             </Tab>
             <Tab key="my" title="My Projects">
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-                {launchpad.myFtoPairs.value?.data.map(
-                  (pair: FtoPairContract) => (
-                    <div key={pair.address}>
-                      <LaunchCard pair={pair} action={<></>} />
-                    </div>
-                  )
-                )}
+                {launchpad.myPairs.value?.data.map((pair: FtoPairContract) => (
+                  <div key={pair.address}>
+                    <LaunchCard pair={pair} action={<></>} />
+                  </div>
+                ))}
               </div>
             </Tab>
           </Tabs>

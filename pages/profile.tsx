@@ -38,7 +38,7 @@ export const Profile = observer(() => {
       return;
     }
     launchpad.showNotValidatedPairs = true;
-    launchpad.myFtoPairs.call();
+    launchpad.myPairs.call();
     launchpad.getMyFtoParticipatedPairs.call();
     liquidity.myPairPage.reloadPage();
   }, [wallet.isInit, liquidity.isInit]);
@@ -126,9 +126,9 @@ export const Profile = observer(() => {
                   initial="hidden"
                   animate="visible"
                 >
-                  {launchpad.myFtoPairs.loading ? (
+                  {launchpad.myPairs.loading ? (
                     <LoadingDisplay />
-                  ) : launchpad.myFtoPairs.value?.data.length === 0 ? (
+                  ) : launchpad.myPairs.value?.data.length === 0 ? (
                     <div className="flex flex-col justify-center items-center">
                       <HoneyStickSvg />
                       <div className="text-[#eee369] mt-2  text-[3rem] text-center">
@@ -136,7 +136,7 @@ export const Profile = observer(() => {
                       </div>
                     </div>
                   ) : (
-                    launchpad.myFtoPairs.value?.data
+                    launchpad.myPairs.value?.data
                       .slice()
                       .sort((a, b) => {
                         return a.canClaimLP ? 1 : b.canClaimLP ? -1 : 0;
@@ -161,7 +161,7 @@ export const Profile = observer(() => {
                   initial="hidden"
                   animate="visible"
                 >
-                  {launchpad.myFtoPairs.loading ? (
+                  {launchpad.myPairs.loading ? (
                     <LoadingDisplay />
                   ) : launchpad.getMyFtoParticipatedPairs.value?.length ??
                     0 > 0 ? (

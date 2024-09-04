@@ -21,6 +21,8 @@ import { MemePairContract } from "./contract/memepair-contract";
 
 const PAGE_LIMIT = 9;
 
+type launchpadType = "fto" | "meme";
+
 export type PairFilter = {
   search: string;
   status: "all" | "processing" | "success" | "fail";
@@ -65,6 +67,7 @@ function calculateTimeDifference(timestamp: number): string {
 }
 
 class LaunchPad {
+  currentLaunchpadType: launchpadType = "fto";
   ftoPageInfo = new IndexerPaginationState<PairFilter, FtoPairContract>({
     filter: {
       search: "",
@@ -344,9 +347,16 @@ class LaunchPad {
   };
 
   myFtoParticipatedPairs = new AsyncState(async () => {
-    const projects = await this.ftofactoryContract.events(
-      wallet.account as Address
-    );
+    let projects;
+    if ((this.currentLaunchpadType = "fto")) {
+      projects = await this.ftofactoryContract.events(
+        wallet.account as Address
+      );
+    } else {
+      projects = await this.memeFactoryContract.events(
+        wallet.account as Address
+      );
+    }
 
     let data = await Promise.all(
       projects.map(async (pairAddress) => {
@@ -372,13 +382,16 @@ class LaunchPad {
     };
   });
 
-  myFtoPairs = new AsyncState(async () => {
+  myPairs = new AsyncState(async () => {
     const ftoAddresses =
       await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
         filter: this.ftoPageInfo.filter,
         chainId: String(wallet.currentChainId),
         provider: wallet.account,
+        projectType: this.currentLaunchpadType,
       });
+
+    console.log(ftoAddresses);
 
     if (!ftoAddresses || ftoAddresses.status === "error") {
       return { data: [], total: 0 };
@@ -561,6 +574,10 @@ class LaunchPad {
 
   setFtoPageLoading = (isLoading: boolean) => {
     this.ftoPageInfo.isLoading = isLoading;
+  };
+
+  setCurrentLaunchpadType = (type: launchpadType) => {
+    this.currentLaunchpadType = type;
   };
 }
 

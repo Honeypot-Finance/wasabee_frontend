@@ -368,7 +368,6 @@ export class MemePairContract implements BaseContract {
 
   async getRaisedTokenMinCap() {
     const res = await this.contract.read.raisedTokenMinCap();
-    console.log("raisedTokenMinCap", res);
 
     this.raisedTokenMinCap = new BigNumber(res.toString());
   }
@@ -484,12 +483,6 @@ export class MemePairContract implements BaseContract {
       console.error("missing data for getState");
       return;
     }
-    console.log(
-      "getState",
-      this.depositedRaisedToken.toString(),
-      this.depositedLaunchedToken.toString(),
-      this.raisedTokenMinCap?.toString()
-    );
 
     if (this.depositedRaisedToken >= this.raisedTokenMinCap) {
       this.ftoState = 0;
