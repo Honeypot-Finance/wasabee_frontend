@@ -195,8 +195,9 @@ export class MemePairContract implements BaseContract {
     await Promise.all([
       this.getDepositedRaisedToken(),
       this.getDepositedLaunchedToken(),
-      this.getCanRefund(),
     ]);
+
+    this.canRefund = false;
   });
 
   claimLP = new AsyncState(async () => {
