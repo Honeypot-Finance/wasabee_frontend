@@ -195,6 +195,7 @@ export class MemePairContract implements BaseContract {
     await Promise.all([
       this.getDepositedRaisedToken(),
       this.getDepositedLaunchedToken(),
+      this.getCanRefund(),
     ]);
   });
 
@@ -348,7 +349,10 @@ export class MemePairContract implements BaseContract {
     await Promise.all([
       this.getRaisedToken(raisedToken),
       this.getLaunchedToken(launchedToken),
-      this.getDepositedRaisedToken(depositedRaisedToken),
+      this
+        .getDepositedRaisedToken
+        //depositedRaisedToken
+        (),
       this.getDepositedLaunchedToken(depositedLaunchedToken),
       this.getEndTime(endTime),
       this.getLaunchedTokenProvider(),
@@ -467,7 +471,13 @@ export class MemePairContract implements BaseContract {
       return;
     }
 
-    if (this.depositedRaisedToken < this.raisedTokenMinCap) {
+    console.log(
+      `(${this.launchedToken?.name})`,
+      this.depositedRaisedToken?.toNumber(),
+      this.raisedTokenMinCap?.toNumber(),
+      this.ftoState
+    );
+    if (!this.depositedRaisedToken.isZero()) {
       this.canRefund = true;
     }
   }
@@ -486,12 +496,6 @@ export class MemePairContract implements BaseContract {
       console.error("missing data for getState");
       return;
     }
-
-    console.log(
-      this.depositedRaisedToken.toNumber(),
-      this.endTime,
-      this.raisedTokenMinCap.div(Math.pow(10, 18)).toNumber()
-    );
 
     if (
       this.depositedRaisedToken >= this.raisedTokenMinCap.div(Math.pow(10, 18))
