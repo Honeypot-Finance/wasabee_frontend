@@ -305,7 +305,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 {launchpad.memePageInfo.pageItems.value.map(
                   (pair: MemePairContract) => (
                     <motion.div variants={itemPopUpVariants} key={pair.address}>
-                      <LaunchCard pair={pair} action={<></>} />
+                      <LaunchCard variant="meme" pair={pair} action={<></>} />
                     </motion.div>
                   )
                 )}
@@ -329,7 +329,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
                 {launchpad.myPairs.value?.data.map((pair: FtoPairContract) => (
                   <div key={pair.address}>
-                    <LaunchCard pair={pair} action={<></>} />
+                    <LaunchCard variant="meme" pair={pair} action={<></>} />
                   </div>
                 ))}
               </div>
@@ -349,6 +349,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                     <LaunchCard
                       key={project.address}
                       pair={project}
+                      variant="meme"
                       action={<></>}
                     />
                   ))
