@@ -29,6 +29,7 @@ import CardContianer from "@/components/CardContianer/CardContianer";
 import { FaCrown } from "react-icons/fa";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import HoneyStickSvg from "@/components/svg/HoneyStick";
+import { ProgressBar } from "@/components/atoms/ProgressBar/ProgressBar";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -81,7 +82,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               >
                 <CardContianer>
                   <motion.div
-                    className="absolute  top-0 left-0"
+                    className="absolute  top-0 left-0 "
                     initial={{
                       rotate: 0,
                     }}
@@ -152,6 +153,18 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                             : "-"}{" "}
                           %
                         </span>
+                      </div>{" "}
+                      <div className="flex items-center gap-2 text-sm w-full">
+                        <ProgressBar
+                          value={
+                            pair?.depositedRaisedToken && pair.raisedTokenMinCap
+                              ? (pair.depositedRaisedToken.toNumber() /
+                                  (pair.raisedTokenMinCap.toNumber() /
+                                    Math.pow(10, 18))) *
+                                100
+                              : 0
+                          }
+                        />
                       </div>
                     </motion.div>
                     <Link

@@ -19,7 +19,7 @@ import {
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 
-const memeGraphHandle = "0e4bf7b3-0d03-4931-8934-700a566ba352/ghostgraph";
+const memeGraphHandle = "d6cb1f30-ebf4-4fbf-bfdc-fd820788b6ec/ghostgraph";
 const ftoGraphHandle = "d27732e1-591f-4a84-bb99-209fe4022b6e/ghostgraph";
 const pairGraphHandle = "ca609e38-a070-4806-b4c9-08e96fee8118/ghostgraph";
 
