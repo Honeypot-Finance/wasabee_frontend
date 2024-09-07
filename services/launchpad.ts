@@ -70,6 +70,7 @@ class LaunchPad {
   currentLaunchpadType = new ValueState<launchpadType>({
     value: "fto",
   });
+
   ftoPageInfo = new IndexerPaginationState<PairFilter, FtoPairContract>({
     filter: {
       search: "",
@@ -105,6 +106,24 @@ class LaunchPad {
       limit: PAGE_LIMIT,
     },
     LoadNextPageFunction: async (filter) => {
+      return (await this.LoadMoreFtoPage()) as {
+        items: MemePairContract[];
+        pageInfo: PageInfo;
+      };
+    },
+  });
+
+  memeParticipatedPairs = new IndexerPaginationState<
+    PairFilter,
+    MemePairContract
+  >({
+    filter: {
+      search: "",
+      status: "all",
+      showNotValidatedPairs: true,
+      limit: PAGE_LIMIT,
+    },
+    LoadNextPageFunction: async (filter, pageRequest) => {
       return (await this.LoadMoreFtoPage()) as {
         items: MemePairContract[];
         pageInfo: PageInfo;
@@ -322,6 +341,80 @@ class LaunchPad {
             startTime: pairAddress.createdAt,
             endTime: pairAddress.endTime,
             ftoState: Number(pairAddress.status),
+          });
+
+          return pair;
+        }),
+        pageInfo: res.data.pageInfo,
+      };
+      return data;
+    } else {
+      return {
+        items: [],
+        pageInfo: {
+          hasNextPage: true,
+          hasPreviousPage: false,
+          startCursor: "",
+          endCursor: "",
+        },
+      };
+    }
+  };
+
+  LoadMoreParticipatedPage = async () => {
+    const res =
+      await trpcClient.indexerFeedRouter.getParticipatedProjects.query({
+        filter: this.ftoPageInfo.filter,
+        chainId: String(wallet.currentChainId),
+        pageRequest: {
+          direction: "next",
+          cursor: this.ftoPageInfo.pageInfo.endCursor,
+        },
+        type: this.currentLaunchpadType.value,
+        walletAddress: wallet.account,
+      });
+
+    if (res.status === "success") {
+      const data = {
+        items: res.data.items.map((pairAddress) => {
+          const pair =
+            this.currentLaunchpadType.value === "fto"
+              ? new FtoPairContract({
+                  address: pairAddress.id,
+                })
+              : new MemePairContract({
+                  address: pairAddress.id,
+                });
+
+          const raisedToken = this.isFtoRaiseToken(pairAddress.pair.token1.id)
+            ? Token.getToken({
+                ...pairAddress.pair.token1,
+                address: pairAddress.pair.token1.id,
+              })
+            : Token.getToken({
+                address: pairAddress.pair.token0.id,
+              });
+
+          const launchedToken =
+            raisedToken.address.toLowerCase() ===
+            pairAddress.pair.token1.id.toLowerCase()
+              ? Token.getToken({
+                  ...pairAddress.pair.token0,
+                  address: pairAddress.pair.token0.id,
+                })
+              : Token.getToken({
+                  ...pairAddress.pair.token1,
+                  address: pairAddress.pair.token1.id,
+                });
+
+          pair.init({
+            raisedToken: raisedToken,
+            launchedToken: launchedToken,
+            depositedLaunchedToken: pairAddress.pair.depositedLaunchedToken,
+            depositedRaisedToken: pairAddress.pair.depositedRaisedToken,
+            startTime: pairAddress.pair.createdAt,
+            endTime: pairAddress.pair.endTime,
+            ftoState: Number(pairAddress.pair.status),
           });
 
           return pair;

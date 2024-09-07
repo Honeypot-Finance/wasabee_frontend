@@ -498,12 +498,6 @@ export class MemePairContract implements BaseContract {
       return;
     }
 
-    console.log(
-      this.depositedRaisedToken.toNumber(),
-      this.endTime,
-      this.raisedTokenMinCap.div(Math.pow(10, 18)).toNumber()
-    );
-
     if (
       this.depositedRaisedToken.toNumber() >=
       this.raisedTokenMinCap.div(Math.pow(10, 18)).toNumber()

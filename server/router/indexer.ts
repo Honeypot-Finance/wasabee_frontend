@@ -4,6 +4,7 @@ import { indexer } from "@/services/indexer/indexer";
 import { type PairFilter } from "@/services/launchpad";
 import {
   GhostPairResponse,
+  GhostParticipatedProjectsResponse,
   PageRequest,
   TrendingMEMEs,
 } from "@/services/indexer/indexerTypes";
@@ -193,4 +194,40 @@ export const indexerFeedRouter = router({
       );
     }
   ),
+  getParticipatedProjects: publicProcedure
+    .input(
+      z.object({
+        walletAddress: z.string(),
+        chainId: z.string(),
+        pageRequest: z.object({
+          direction: z.string(z.enum(["next", "prev"])),
+          cursor: z.string().optional(),
+        }),
+        type: z.enum(["fto", "meme"]),
+        filter: z.object({
+          searchString: z.string().optional(),
+          limit: z.number(),
+        }),
+      })
+    )
+    .query(
+      async ({
+        input,
+      }): Promise<ApiResponseType<GhostParticipatedProjectsResponse>> => {
+        return cacheProvider.getOrSet(
+          getCacheKey("getParticipatedProjects", input),
+          async () => {
+            const res = await indexer.getParticipatedProjects(
+              input.walletAddress,
+              input.chainId,
+              input.pageRequest as PageRequest,
+              input.type,
+              input.filter
+            );
+
+            return res;
+          }
+        );
+      }
+    ),
 });

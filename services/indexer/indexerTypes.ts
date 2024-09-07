@@ -33,6 +33,18 @@ export type GhostHoldingPairsResponse = {
   pageInfo: PageInfo;
 };
 
+export type GhostParticipatedProjectsResponse = {
+  items: ParticipatedProjects[];
+  pageInfo: PageInfo;
+};
+
+export type ParticipatedProjects = {
+  id: string;
+  depositer: Address;
+  pairId: Address;
+  pair: GhostFTOPair;
+};
+
 export type holdingPairs = {
   pairId: Address;
   totalLpAmount: string;

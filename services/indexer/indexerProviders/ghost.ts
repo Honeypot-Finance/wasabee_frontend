@@ -15,11 +15,12 @@ import {
   holdingPairs,
   GhostHoldingPairsResponse,
   TrendingMEMEs,
+  GhostParticipatedProjectsResponse,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 
-const memeGraphHandle = "d6cb1f30-ebf4-4fbf-bfdc-fd820788b6ec/ghostgraph";
+const memeGraphHandle = "044f9f15-cac1-4c79-92dc-8d787a479e4f/ghostgraph";
 const ftoGraphHandle = "d27732e1-591f-4a84-bb99-209fe4022b6e/ghostgraph";
 const pairGraphHandle = "ca609e38-a070-4806-b4c9-08e96fee8118/ghostgraph";
 
@@ -451,6 +452,100 @@ export class GhostIndexer {
           holdingPairs: (res.data as any).holdingPairs?.items as holdingPairs[],
           pageInfo: (res.data as any).holdingPairs?.pageInfo as PageInfo,
         } ?? {
+          pairs: [],
+          pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: "",
+            endCursor: "",
+          },
+        },
+      };
+    }
+  };
+
+  getParticipatedProjects = async (
+    walletAddress: string,
+    chainId: string,
+    pageRequest: PageRequest,
+    type: "fto" | "meme",
+    filter: Partial<FtoPairFilter>
+  ): Promise<ApiResponseType<GhostParticipatedProjectsResponse>> => {
+    const dirCondition = pageRequest?.cursor
+      ? pageRequest?.direction === "next"
+        ? `after:"${pageRequest?.cursor}"`
+        : `before:"${pageRequest?.cursor}"`
+      : "";
+
+    const limit = filter.limit ?? 9;
+
+    const query = ` {
+                      participateds(
+                        where:{
+                          depositer:"${walletAddress}"
+                          OR:[  
+                            ${
+                              filter.search && filter.search.startsWith("0x")
+                                ? `{PairId: "${filter.search}"}`
+                                : ""
+                            }
+                          ]
+                        }
+                        limite: ${limit}
+                        ${dirCondition}
+                      ){
+                        items{
+                          id
+                          depositer
+                          PairId
+                          Pair {
+                            id
+                            token0Id
+                            token1Id
+                            token0name;
+                            token1name;
+                            token0symbol;
+                            token1symbol;
+                            depositedRaisedToken
+                            depositedLaunchedToken
+                            createdAt
+                            endTime
+                            status
+                            launchedTokenProvider
+                            token0 {
+                              id
+                              name
+                              symbol
+                              decimals
+                            }
+                            token1 {
+                              id
+                              name
+                              symbol
+                              decimals
+                            }
+                          }
+                        }
+                        pageInfo {
+                          hasPreviousPage
+                          hasNextPage
+                          startCursor
+                          endCursor
+                        }
+                      }
+                    }`;
+
+    const res = await this.callIndexerApi(query, {
+      apiHandle: type === "meme" ? memeGraphHandle : ftoGraphHandle,
+    });
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: res.data ?? {
           pairs: [],
           pageInfo: {
             hasNextPage: true,

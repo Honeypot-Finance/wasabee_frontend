@@ -6,6 +6,7 @@ import {
   GhostFtoTokensResponse,
   GhostHoldingPairsResponse,
   GhostPairResponse,
+  GhostParticipatedProjectsResponse,
   IndexerProvider,
   PageRequest,
   TrendingMEMEs,
@@ -102,6 +103,22 @@ export default class Indexer<T extends IndexerProvider> {
     chainId: string
   ): Promise<ApiResponseType<GhostPairResponse>> => {
     return await this.dataProvider.getValidatedTokenPairs(chainId);
+  };
+
+  getParticipatedProjects = async (
+    walletAddress: string,
+    chainId: string,
+    pageRequest: PageRequest,
+    type: "fto" | "meme" = "fto",
+    filter: Partial<PairFilter>
+  ): Promise<ApiResponseType<GhostParticipatedProjectsResponse>> => {
+    return await this.dataProvider.getParticipatedProjects(
+      walletAddress,
+      chainId,
+      pageRequest,
+      type,
+      filter
+    );
   };
 }
 
