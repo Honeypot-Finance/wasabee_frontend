@@ -435,7 +435,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
     },
     {
       key: "meme",
-      label: "MEME Launch",
+      label: "Pot2pump launch",
     },
   ];
 
