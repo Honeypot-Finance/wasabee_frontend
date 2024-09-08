@@ -37,6 +37,7 @@ export class MemePairContract implements BaseContract {
   canRefund = false;
   isRefundable = false;
   raisedTokenMinCap: BigNumber | undefined = undefined;
+  userParticipated = false;
   socials: {
     name: string;
     link: string;
@@ -360,6 +361,7 @@ export class MemePairContract implements BaseContract {
       this.getProjectInfo(),
       this.getCanClaimLP(),
       this.getRaisedTokenMinCap(),
+      this.getUserParticipated(),
     ]).catch((error) => {
       console.error(error, `init-memepair-error-${this.address}`);
       return;
@@ -464,6 +466,7 @@ export class MemePairContract implements BaseContract {
 
   getCanRefund() {
     if (
+      !this.userParticipated ||
       !this.depositedRaisedToken ||
       !this.raisedTokenMinCap ||
       (this.ftoState !== 1 && this.ftoState !== 2)
@@ -472,15 +475,23 @@ export class MemePairContract implements BaseContract {
       return;
     }
 
-    console.log(
-      `(${this.launchedToken?.name})`,
-      this.depositedRaisedToken?.toNumber(),
-      this.raisedTokenMinCap?.toNumber(),
-      this.ftoState
-    );
     if (!this.depositedRaisedToken.isZero()) {
       this.canRefund = true;
     }
+  }
+
+  async getUserParticipated() {
+    if (!wallet.account) {
+      return;
+    }
+
+    const res = await this.contract.read.raisedTokenDeposit([
+      wallet.account,
+    ] as [`0x${string}`]);
+
+    // console.log("userParticipated", res);
+
+    this.userParticipated = res > 0;
   }
 
   getState() {
