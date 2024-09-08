@@ -34,8 +34,10 @@ export type GhostHoldingPairsResponse = {
 };
 
 export type GhostParticipatedProjectsResponse = {
-  items: ParticipatedProjects[];
-  pageInfo: PageInfo;
+  participateds: {
+    items: ParticipatedProjects[];
+    pageInfo: PageInfo;
+  };
 };
 
 export type ParticipatedProjects = {

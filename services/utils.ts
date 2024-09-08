@@ -378,10 +378,10 @@ export class IndexerPaginationState<FilterT, ItemT> {
     this.pageItems.setValue([]);
   };
 
-  reloadPage = () => {
+  reloadPage = async () => {
     if (this.isLoading) return;
     this.resetPage();
-    this.loadMore();
+    await this.loadMore();
     this.isInit = true;
   };
 
@@ -389,7 +389,7 @@ export class IndexerPaginationState<FilterT, ItemT> {
     if (this.isLoading || !this.pageInfo.hasNextPage) {
       return;
     }
-
+    console.log("loadMore");
     this.isLoading = true;
 
     try {

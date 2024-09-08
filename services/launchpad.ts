@@ -18,6 +18,7 @@ import { debounce, initial } from "lodash";
 import { parseEventLogs } from "viem";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { MemePairContract } from "./contract/memepair-contract";
+import { PageRequest } from "./indexer/indexerTypes";
 
 const PAGE_LIMIT = 9;
 
@@ -78,7 +79,7 @@ class LaunchPad {
       showNotValidatedPairs: true,
       limit: PAGE_LIMIT,
     },
-    LoadNextPageFunction: async (filter) => {
+    LoadNextPageFunction: async (filter, pageRequest) => {
       if (!filter.showNotValidatedPairs) {
         return {
           items: await this.loadVerifiedFTOProjects(),
@@ -90,7 +91,7 @@ class LaunchPad {
           },
         };
       } else {
-        return (await this.LoadMoreFtoPage()) as {
+        return (await this.LoadMoreFtoPage(pageRequest)) as {
           items: FtoPairContract[];
           pageInfo: PageInfo;
         };
@@ -105,8 +106,8 @@ class LaunchPad {
       showNotValidatedPairs: true,
       limit: PAGE_LIMIT,
     },
-    LoadNextPageFunction: async (filter) => {
-      return (await this.LoadMoreFtoPage()) as {
+    LoadNextPageFunction: async (filter, pageRequest) => {
+      return (await this.LoadMoreFtoPage(pageRequest)) as {
         items: MemePairContract[];
         pageInfo: PageInfo;
       };
@@ -124,7 +125,7 @@ class LaunchPad {
       limit: PAGE_LIMIT,
     },
     LoadNextPageFunction: async (filter, pageRequest) => {
-      return (await this.LoadMoreFtoPage()) as {
+      return (await this.LoadMoreParticipatedPage(pageRequest)) as {
         items: MemePairContract[];
         pageInfo: PageInfo;
       };
@@ -289,14 +290,11 @@ class LaunchPad {
     return this.myFtoParticipatedPairs.value?.data ?? [];
   });
 
-  LoadMoreFtoPage = async () => {
+  LoadMoreFtoPage = async (pageRequest: PageRequest) => {
     const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
       filter: this.ftoPageInfo.filter,
       chainId: String(wallet.currentChainId),
-      pageRequest: {
-        direction: "next",
-        cursor: this.ftoPageInfo.pageInfo.endCursor,
-      },
+      pageRequest: pageRequest,
       projectType: this.currentLaunchpadType.value,
     });
 
@@ -361,29 +359,28 @@ class LaunchPad {
     }
   };
 
-  LoadMoreParticipatedPage = async () => {
+  LoadMoreParticipatedPage = async (pageRequest: PageRequest) => {
     const res =
       await trpcClient.indexerFeedRouter.getParticipatedProjects.query({
         filter: this.ftoPageInfo.filter,
         chainId: String(wallet.currentChainId),
-        pageRequest: {
-          direction: "next",
-          cursor: this.ftoPageInfo.pageInfo.endCursor,
-        },
+        pageRequest: pageRequest,
         type: this.currentLaunchpadType.value,
         walletAddress: wallet.account,
       });
 
+    console.log(res);
+
     if (res.status === "success") {
       const data = {
-        items: res.data.items.map((pairAddress) => {
+        items: res.data.participateds.items.map((pairAddress) => {
           const pair =
             this.currentLaunchpadType.value === "fto"
               ? new FtoPairContract({
-                  address: pairAddress.id,
+                  address: pairAddress.pairId,
                 })
               : new MemePairContract({
-                  address: pairAddress.id,
+                  address: pairAddress.pairId,
                 });
 
           const raisedToken = this.isFtoRaiseToken(pairAddress.pair.token1.id)
@@ -419,7 +416,7 @@ class LaunchPad {
 
           return pair;
         }),
-        pageInfo: res.data.pageInfo,
+        pageInfo: res.data.participateds.pageInfo,
       };
       return data;
     } else {

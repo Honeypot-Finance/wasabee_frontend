@@ -482,30 +482,23 @@ export class GhostIndexer {
     const query = ` {
                       participateds(
                         where:{
-                          depositer:"${walletAddress}"
-                          OR:[  
-                            ${
-                              filter.search && filter.search.startsWith("0x")
-                                ? `{PairId: "${filter.search}"}`
-                                : ""
-                            }
-                          ]
+                          depositer:"${walletAddress.toLowerCase()}"
                         }
-                        limite: ${limit}
+                        limit: ${limit}
                         ${dirCondition}
                       ){
                         items{
                           id
                           depositer
-                          PairId
-                          Pair {
+                          pairId
+                          pair {
                             id
                             token0Id
                             token1Id
-                            token0name;
-                            token1name;
-                            token0symbol;
-                            token1symbol;
+                            token0name
+                            token1name
+                            token0symbol
+                            token1symbol
                             depositedRaisedToken
                             depositedLaunchedToken
                             createdAt
@@ -535,9 +528,13 @@ export class GhostIndexer {
                       }
                     }`;
 
+    console.log(query);
+
     const res = await this.callIndexerApi(query, {
       apiHandle: type === "meme" ? memeGraphHandle : ftoGraphHandle,
     });
+
+    console.log(res);
 
     if (res.status === "error") {
       return res;

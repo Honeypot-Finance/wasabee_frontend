@@ -44,6 +44,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     launchpad.setCurrentLaunchpadType("meme");
     launchpad.showNotValidatedPairs = true;
     launchpad.memePageInfo.reloadPage();
+    launchpad.memeParticipatedPairs.reloadPage();
 
     //loading most success projects
     launchpad.trendingMEMEs().then((data) => {
@@ -291,7 +292,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               } else if (key === "my") {
                 launchpad.myPairs.call();
               } else if (key === "participated-launch") {
-                launchpad.getMyFtoParticipatedPairs.call();
+                launchpad.memeParticipatedPairs.reloadPage();
               }
             }}
           >
@@ -341,18 +342,20 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 animate="visible"
                 className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3"
               >
-                {launchpad.getMyFtoParticipatedPairs.loading ? (
+                {!launchpad.memeParticipatedPairs.isInit ? (
                   <LoadingDisplay />
-                ) : launchpad.getMyFtoParticipatedPairs.value?.length ??
+                ) : launchpad.memeParticipatedPairs.pageItems.value.length ??
                   0 > 0 ? (
-                  launchpad.getMyFtoParticipatedPairs.value?.map((project) => (
-                    <LaunchCard
-                      key={project.address}
-                      pair={project}
-                      variant="meme"
-                      action={<></>}
-                    />
-                  ))
+                  launchpad.memeParticipatedPairs.pageItems.value?.map(
+                    (project) => (
+                      <LaunchCard
+                        key={project.address}
+                        pair={project}
+                        action={<></>}
+                        variant="meme"
+                      />
+                    )
+                  )
                 ) : (
                   <div className="flex flex-col justify-center items-center">
                     <HoneyStickSvg />
