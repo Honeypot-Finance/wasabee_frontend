@@ -583,7 +583,7 @@ class LaunchPad {
             name: tokenName,
             symbol: tokenSymbol,
             swapHandler: poolHandler as `0x${string}`,
-            launchCycle: BigInt(86400),
+            launchCycle: BigInt(86400 / 24 / 12),
           },
         ]);
       }
