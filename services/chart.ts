@@ -124,11 +124,15 @@ class Chart {
   }
 
   get firstValidPrice() {
-    if (this.chartData.value?.getBars.c) {
+    if (
+      this.chartData.value?.getBars.c &&
+      this.chartData.value.getBars.c.length > 0
+    ) {
       let i = 0;
       while (
-        this.chartData.value.getBars.c[i] === undefined ||
-        this.chartData.value.getBars.c[i] === null
+        (this.chartData.value.getBars.c[i] === undefined ||
+          this.chartData.value.getBars.c[i] === null) &&
+        i < this.chartData.value.getBars.c.length
       ) {
         i++;
       }
@@ -143,8 +147,9 @@ class Chart {
     if (this.chartData.value?.getBars.c) {
       let i = this.chartData.value.getBars.c.length - 1;
       while (
-        this.chartData.value.getBars.c[i] === undefined ||
-        this.chartData.value.getBars.c[i] === null
+        (this.chartData.value.getBars.c[i] === undefined ||
+          this.chartData.value.getBars.c[i] === null) &&
+        i > 0
       ) {
         i--;
       }
