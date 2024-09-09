@@ -30,7 +30,11 @@ const IVX_LAUNCH_TOKEN_ADDRESS = "0x2da7ec28dae827ea513da752bc161e55147b4d66";
 
 const tHpotAddress = "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E".toLowerCase();
 
-export const MemeWarBanner = observer(() => {
+export interface Props {
+  isEnd?: boolean;
+}
+
+export const MemeWarBanner = observer((props: Props) => {
   const GameScreen = useRef<HTMLDivElement>(null);
   const initPair = useCallback(async (address: string) => {
     const pair = new FtoPairContract({ address });
@@ -325,7 +329,67 @@ export const MemeWarBanner = observer(() => {
     }
   };
 
-  return (
+  return props.isEnd ? (
+    <div className="w-full">
+      {" "}
+      <h2 className="w-full text-center text-xl md:text-5xl font-[MEMEH] mb-2">
+        preparing for the next round <br /> will be back thoon!
+      </h2>
+      <div
+        id="scoreboard"
+        className="relative w-full h-full z-10 flex justify-between"
+      >
+        <Image
+          src="/images/memewar/TOP_BANNER_V2.png"
+          alt=""
+          width={2000}
+          height={500}
+          className="absolute w-full h-full object-contain object-top top-0 z-0"
+        />
+        {Object.values(state.pairs).map((pair) => {
+          return (
+            pair.pair.value && (
+              <div
+                key={pair.pair.value?.address}
+                className="flex flex-col items-center z-10"
+              >
+                <Link href={`/launch-detail/${pair.pair.value?.address}`}>
+                  <Image
+                    src={pair.icon}
+                    alt=""
+                    width={100}
+                    height={100}
+                    className="w-10 h-10 md:w-20 md:h-20 object-contain"
+                  />
+                </Link>
+                <div className="relative flex justify-center items-center h-8">
+                  <Image
+                    src={HP_BAR_URL}
+                    alt=""
+                    width={200}
+                    height={50}
+                    className="w-full h-full object-contain"
+                  />
+                  <h3 className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-black">
+                    {pair.pair.value.ftoState != 0
+                      ? pair.pair.value?.depositedRaisedToken?.toFixed(0) ||
+                        "loading..."
+                      : Math.max(
+                          pair.successScore.value ?? 0,
+                          pair.pair.value?.depositedRaisedToken?.toNumber() ?? 0
+                        ).toLocaleString("en-US", {
+                          style: "decimal",
+                          maximumFractionDigits: 0,
+                        })}
+                  </h3>
+                </div>
+              </div>
+            )
+          );
+        })}
+      </div>
+    </div>
+  ) : (
     <div className="lg:grid lg:grid-cols-[80%_20%] gap-2">
       <div ref={GameScreen}>
         <div className="flex justify-between text-center">

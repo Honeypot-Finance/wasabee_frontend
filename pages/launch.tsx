@@ -51,7 +51,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
       <div className="w-full">
-        <MemeWarBanner />
+        <MemeWarBanner isEnd />
       </div>
 
       {mostSuccessProjects && mostSuccessProjects.length > 0 && (
@@ -241,20 +241,37 @@ const LaunchPage: NextLayoutPage = observer(() => {
             </PopoverContent>
           </Popover>
         </div>
-        <Checkbox
-          onClick={() => {
-            launchpad.ftoPageInfo.updateFilter({
-              showNotValidatedPairs:
-                !launchpad.ftoPageInfo.filter.showNotValidatedPairs,
-            });
-          }}
-          defaultSelected={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
-          defaultChecked={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
-          checked={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
-          className="mt-2"
-        >
-          Show Unvalidated Projects
-        </Checkbox>
+        <div className="flex justify-between items-center">
+          <Checkbox
+            onClick={() => {
+              launchpad.ftoPageInfo.updateFilter({
+                showNotValidatedPairs:
+                  !launchpad.ftoPageInfo.filter.showNotValidatedPairs,
+              });
+            }}
+            defaultSelected={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
+            defaultChecked={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
+            checked={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
+            className="mt-2"
+          >
+            Show Unvalidated Projects
+          </Checkbox>
+          <div className="flex justify-end">
+            <Link
+              href={"https://tryghost.xyz/log"}
+              target="_blank"
+              className="flex p-2 gap-2 items-center"
+            >
+              <Image
+                className="h-4"
+                src="/images/partners/powered_by_ghost_light.png"
+                alt=""
+                width={100}
+                height={100}
+              />
+            </Link>
+          </div>
+        </div>
       </div>
 
       {!launchpad.ftoPageInfo.isInit ? (

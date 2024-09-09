@@ -37,7 +37,7 @@ export const Layout = ({
       ) : (
         <NotConnetctedDisplay />
       )}
-      <Footer></Footer>
+      {/* <Footer></Footer> */}
     </div>
   );
 };
