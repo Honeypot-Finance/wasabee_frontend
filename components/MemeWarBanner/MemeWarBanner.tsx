@@ -91,6 +91,7 @@ export const MemeWarBanner = observer((props: Props) => {
           getSuccessScore(JANI_LAUNCH_TOKEN_ADDRESS)
         ),
         icon: "/images/memewar/JANI_ICON.png",
+        finalScore: 16_883_055,
       },
       POT: {
         ADDRESS: POTS_FTO_ADDRESS,
@@ -103,6 +104,8 @@ export const MemeWarBanner = observer((props: Props) => {
           getSuccessScore(POTS_LAUNCH_TOKEN_ADDRESS)
         ),
         icon: "/images/memewar/POT_ICON.png",
+
+        finalScore: 85_906_400,
       },
       BULLA: {
         ADDRESS: BULLA_FTO_ADDRESS,
@@ -115,6 +118,7 @@ export const MemeWarBanner = observer((props: Props) => {
           getSuccessScore(BULLA_LAUNCH_TOKEN_ADDRESS)
         ),
         icon: "/images/memewar/BULLAS_ICON.png",
+        finalScore: 28_600_103,
       },
       IVX: {
         ADDRESS: IVX_FTO_ADDRESS,
@@ -127,6 +131,7 @@ export const MemeWarBanner = observer((props: Props) => {
           getSuccessScore(IVX_LAUNCH_TOKEN_ADDRESS)
         ),
         icon: "/images/memewar/IVX_ICON.png",
+        finalScore: 695_585,
       },
     },
     T_HPOT_TOKEN: new AsyncState(async () => {
@@ -371,16 +376,10 @@ export const MemeWarBanner = observer((props: Props) => {
                     className="w-full h-full object-contain"
                   />
                   <h3 className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-black">
-                    {pair.pair.value.ftoState != 0
-                      ? pair.pair.value?.depositedRaisedToken?.toFixed(0) ||
-                        "loading..."
-                      : Math.max(
-                          pair.successScore.value ?? 0,
-                          pair.pair.value?.depositedRaisedToken?.toNumber() ?? 0
-                        ).toLocaleString("en-US", {
-                          style: "decimal",
-                          maximumFractionDigits: 0,
-                        })}
+                    {pair.finalScore.toLocaleString("en-US", {
+                      style: "decimal",
+                      maximumFractionDigits: 0,
+                    })}
                   </h3>
                 </div>
               </div>
