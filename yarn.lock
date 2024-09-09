@@ -4275,6 +4275,11 @@
   resolved "https://registry.yarnpkg.com/@types/trusted-types/-/trusted-types-2.0.7.tgz#baccb07a970b91707df3a3e8ba6896c57ead2d11"
   integrity sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==
 
+"@types/tween-functions@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@types/tween-functions/-/tween-functions-1.2.2.tgz#65fedcdfc691669cdd09913eaff9e49c0d511e80"
+  integrity sha512-R8MG9rSHoQOZ1kN0hl3ZmFMXrqvRL/594e0yF5iEfbgUOkYB418biyjlvqeCQTiyFcezj9o7n/b3ErhvpC+jZQ==
+
 "@types/unist@^2":
   version "2.0.10"
   resolved "https://registry.yarnpkg.com/@types/unist/-/unist-2.0.10.tgz#04ffa7f406ab628f7f7e97ca23e290cd8ab15efc"
@@ -9594,6 +9599,13 @@ react-apexcharts@^1.4.1:
   dependencies:
     prop-types "^15.8.1"
 
+react-confetti@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/react-confetti/-/react-confetti-6.1.0.tgz#03dc4340d955acd10b174dbf301f374a06e29ce6"
+  integrity sha512-7Ypx4vz0+g8ECVxr88W9zhcQpbeujJAVqL14ZnXJ3I23mOI9/oBVTQ3dkJhUmB0D6XOtCZEM6N0Gm9PMngkORw==
+  dependencies:
+    tween-functions "^1.2.0"
+
 react-copy-to-clipboard@5.1.0, react-copy-to-clipboard@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/react-copy-to-clipboard/-/react-copy-to-clipboard-5.1.0.tgz#09aae5ec4c62750ccb2e6421a58725eabc41255c"
@@ -11073,7 +11085,7 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
-tween-functions@^1.1.0:
+tween-functions@^1.1.0, tween-functions@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/tween-functions/-/tween-functions-1.2.0.tgz#1ae3a50e7c60bb3def774eac707acbca73bbc3ff"
   integrity sha512-PZBtLYcCLtEcjL14Fzb1gSxPBeL7nWvGhO5ZFPGqziCcr8uvHp0NDmdjBchp6KHL+tExcg0m3NISmKxhU394dA==
