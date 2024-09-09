@@ -13,6 +13,7 @@ import { Token } from "@/services/contract/token";
 import { DiscussionArea } from "../Discussion/DiscussionArea/DiscussionArea";
 import { swap } from "@/services/swap";
 import { liquidity } from "@/services/liquidity";
+import { amountFormatted } from "@/lib/format";
 
 const ANIMATION_DURATION = 100; //ms
 const HP_BAR_URL = "/images/memewar/HP_BAR.png";
@@ -451,7 +452,11 @@ export const MemeWarBanner = observer(() => {
         </div>
         <div className="text-center">
           your tHpot balance:{" "}
-          {state.T_HPOT_TOKEN.value?.balance?.toFixed(2) || "loading..."}
+          {amountFormatted(state.T_HPOT_TOKEN.value?.balance, {
+            fixed: 2,
+            decimals: 0,
+            symbol: " tHPOT",
+          }) || "loading..."}
         </div>
         <div className="grid md:grid-cols-2 mt-1 gap-5">
           {

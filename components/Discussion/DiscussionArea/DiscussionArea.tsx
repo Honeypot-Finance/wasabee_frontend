@@ -13,6 +13,7 @@ import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { after, before, set } from "lodash";
 import { useRouter } from "next/router";
 import { cn } from "@/lib/tailwindcss";
+import dayjs from "dayjs";
 
 interface DiscussionAreaProps {
   pairDatabaseId: number;
@@ -30,8 +31,8 @@ export function DiscussionArea(props: DiscussionAreaProps) {
       comment: string;
       is_owner: boolean;
       parent_comment_id: number | null;
-      created_at: Date;
-      updated_at: Date;
+      created_at_unix: number;
+      updated_at_unix: number;
     }[]
   >([]);
   const [state, setState] = useState({
@@ -212,7 +213,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
                 key={comment.id}
                 commenterImageURL="/images/bera/smoking_bera.png"
                 commenterName={comment.commenter}
-                commentDate={new Date(comment.created_at)}
+                commentDate={dayjs.unix(comment.created_at_unix).toDate()}
                 comment={comment.comment}
               />
             ))}

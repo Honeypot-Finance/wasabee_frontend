@@ -31,8 +31,8 @@ export const discussionService = {
         comment: string;
         is_owner: boolean;
         parent_comment_id: number | null;
-        created_at: Date;
-        updated_at: Date;
+        created_at_unix: number;
+        updated_at_unix: number;
       }[]
     >`
       SELECT * 
