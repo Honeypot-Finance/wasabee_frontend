@@ -271,7 +271,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           </Popover>
         </div>
       </div>
-
       {!launchpad.memePageInfo.isInit ? (
         <div className="flex h-80 sm:h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
           <LoadingDisplay />

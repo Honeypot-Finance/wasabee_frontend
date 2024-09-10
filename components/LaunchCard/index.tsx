@@ -51,11 +51,7 @@ export const LaunchCard = observer(
     variant?: "default" | "meme";
     action: React.ReactNode;
   } & Partial<HTMLAttributes<any>>) => {
-    console.log(
-      "LaunchCard",
-      pair instanceof MemePairContract && pair?.depositedRaisedToken,
-      pair instanceof MemePairContract && pair?.raisedTokenMinCap
-    );
+    const projectType = pair instanceof MemePairContract ? "meme" : "fto";
     return (
       <motion.div
         variants={itemPopUpVariants}
@@ -82,7 +78,11 @@ export const LaunchCard = observer(
             optionsPresets.share({
               shareUrl: `${window.location.origin}/launch-detail/${pair?.address}`,
               displayText: "Share this project",
-              shareText: "Checkout this Token: " + pair?.projectName,
+              shareText:
+                projectType === "meme"
+                  ? "My Meme FTO eats bonding burves for breakfast. Inflate & innovation with Boneypot. Den moon 🌙: " +
+                    pair?.projectName
+                  : "Checkout this Token: " + pair?.projectName,
             }),
             optionsPresets.viewOnExplorer({
               address: pair?.address ?? "",

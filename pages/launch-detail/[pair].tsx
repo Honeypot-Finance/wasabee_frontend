@@ -1124,7 +1124,8 @@ const MemeView = observer(() => {
                   <ShareSocialMedialPopUp
                     shareUrl={window.location.href}
                     shareText={
-                      "Checkout our Token " + state.pair.value?.projectName
+                      "My Meme FTO eats bonding burves for breakfast. Inflate & innovation with Boneypot. Den moon 🌙: " +
+                      state.pair?.value?.projectName
                     }
                     text="Share this project"
                   />
@@ -1146,7 +1147,8 @@ const MemeView = observer(() => {
                     shareUrl: `${window.location.origin}/launch-detail/${state.pair?.value?.address}`,
                     displayText: "Share this project",
                     shareText:
-                      "Checkout this Token: " + state.pair?.value?.projectName,
+                      "My Meme FTO eats bonding burves for breakfast. Inflate and innovation with Boneypot. Den moon 🌙: " +
+                      state.pair?.value?.projectName,
                   }),
                   optionsPresets.importTokenToWallet({
                     token: state.pair?.value?.launchedToken,
