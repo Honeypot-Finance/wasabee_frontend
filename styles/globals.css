@@ -65,6 +65,10 @@ body {
   @apply [background:#1D1407] rounded-[20px];
 }
 
+section[role="dialog"] {
+  @apply [background:#271A0C];
+}
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
