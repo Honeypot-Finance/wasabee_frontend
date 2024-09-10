@@ -285,17 +285,19 @@ const SuccessAction = observer(
 );
 const FailAction = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    return pair.isProvider ? (
+    return (
       <div className="flex flex-col gap-[16px]">
-        <Button
-          className="w-full"
-          isLoading={pair.withdraw.loading}
-          onClick={() => {
-            pair.withdraw.call();
-          }}
-        >
-          Provider Withdraw
-        </Button>
+        {pair instanceof FtoPairContract && pair.isProvider && (
+          <Button
+            className="w-full"
+            isLoading={pair.withdraw.loading}
+            onClick={() => {
+              pair.withdraw.call();
+            }}
+          >
+            Provider Withdraw
+          </Button>
+        )}
         {pair instanceof MemePairContract && pair.canRefund && (
           <Button
             className="w-full"
@@ -311,8 +313,6 @@ const FailAction = observer(
           </Button>
         )}
       </div>
-    ) : (
-      <></>
     );
   }
 );
