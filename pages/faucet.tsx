@@ -88,12 +88,11 @@ const FaucetPage: NextLayoutPage = observer(() => {
   return (
     <div className="flex flex-col  items-center ">
       <div className="flex items-center relative w-full sm:w-[700px] h-[138px] overflow-hidden">
-        <Image src="/images/faucet_bg_v2.png" alt="faucet" fill></Image>
         <Image
-          src="/images/bera/honeybera.svg"
+          src="/images/bera/honeybera.png"
           alt=""
           fill
-          className="scale-90 translate-x-[25%]"
+          // className="scale-90 translate-x-[25%]"
         ></Image>
         <div className="relative z-1 ml-[25px]">
           <div className="text-[black] text-2xl font-bold leading-7 tracking-[-0.24px] [font-family:MEME]">

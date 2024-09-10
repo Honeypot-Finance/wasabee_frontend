@@ -152,9 +152,13 @@ export class FtoPairContract implements BaseContract {
     }
 
     const diffMinutes = targetTime.diff(now, "minutes");
-    return `${Math.abs(diffMinutes)} ${
-      diffMinutes > 0 ? "minutes later" : "minutes ago"
-    }`;
+    if (Math.abs(diffMinutes) >= 1) {
+      return `${Math.abs(diffMinutes)} ${
+        diffMinutes > 0 ? "minutes later" : "minutes ago"
+      }`;
+    }
+
+    return "Ends in a minute";
   }
 
   deposit = new AsyncState(async ({ amount }: { amount: string }) => {

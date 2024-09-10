@@ -25,7 +25,7 @@ const LaunchHeader: React.FC = () => {
       {router.pathname === "/pools" ? (
         <div>
           <Image
-            src="/images/pool-banner.svg"
+            src="/images/pool-banner.png"
             alt="pool-banner"
             width={1920}
             height={450}

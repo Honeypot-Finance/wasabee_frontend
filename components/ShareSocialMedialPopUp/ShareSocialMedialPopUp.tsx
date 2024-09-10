@@ -16,6 +16,7 @@ interface IShareSocialMedialPopUpProps
 }
 
 export function shareMediaToast(props: IShareSocialMedialPopUpProps) {
+  console.log("shareMediaToast", props);
   toast.success(
     <div>
       <div className="m-2 text-right text-gray-800">
