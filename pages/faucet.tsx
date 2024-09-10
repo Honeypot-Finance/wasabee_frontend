@@ -106,6 +106,12 @@ const FaucetPage: NextLayoutPage = observer(() => {
       </div>
       <div className="w-[700px] max-w-[100%] mt-[30px] flex flex-col gap-[24px]">
         {/** Native token faucet */}
+        <div className="flex w-full items-center flex-col lg:grid lg:grid-cols-[1fr,200px] gap-[0.5rem]">
+          <div className="flex w-full justify-between text-[#FAFAFC]">
+            <h2 className="ml-[3rem] opacity-65">Token</h2>
+            <h2 className="mr-[5rem] opacity-65">Balance</h2>
+          </div>
+        </div>
         {wallet.currentChain?.officialFaucets?.[0] && (
           <div className="flex w-full items-center flex-col lg:grid lg:grid-cols-[1fr,200px] gap-[0.5rem]">
             <motion.div
@@ -236,8 +242,11 @@ const FaucetPage: NextLayoutPage = observer(() => {
                 isLoading={token.faucet.loading}
                 className="lg:ml-[13px] w-full"
                 onClick={async () => {
-                  token.claimed = true;
-                  await token.faucet.call();
+                  await token.faucet.call().then((tx) => {
+                    if (tx.status === "success") {
+                      token.claimed = true;
+                    }
+                  });
                   await token.getBalance();
                   await token.getClaimed();
                 }}

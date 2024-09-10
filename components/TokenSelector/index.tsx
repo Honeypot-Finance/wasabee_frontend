@@ -27,6 +27,7 @@ import { wallet } from "@/services/wallet";
 import Image from "next/image";
 import TokenLogo from "../TokenLogo/TokenLogo";
 import TruncateMarkup from "react-truncate-markup";
+import { motion } from "framer-motion";
 
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
@@ -77,13 +78,30 @@ export const TokenSelector = observer(
         state.filterLoading = false;
       },
       tokens: [] as Token[],
+      currentAnimationVariant: "initial",
     }));
+    const animationVariants = {
+      dropDownIcon: {
+        initial: { y: 0 },
+        hover: {
+          y: [0, 5, 0],
+        },
+      },
+    };
 
     useEffect(() => {
       state.filterTokensBySearch();
     }, [state.search]);
     return (
-      <div className="flex items-center group">
+      <motion.div
+        className="flex items-center group"
+        onHoverStart={() => {
+          state.currentAnimationVariant = "hover";
+        }}
+        onHoverEnd={() => {
+          state.currentAnimationVariant = "initial";
+        }}
+      >
         {value && (
           <>
             <Link
@@ -118,7 +136,7 @@ export const TokenSelector = observer(
               state.setSearch("");
             }}
           >
-            <Button className="inline-flex max-w-full justify-start w-[124px] h-10 items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]">
+            <Button className="inline-flex max-w-full justify-between w-[124px] h-10 items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]">
               {value && (
                 <TokenLogo
                   addtionalClasses="min-w-[24px]"
@@ -128,13 +146,17 @@ export const TokenSelector = observer(
                 ></TokenLogo>
               )}
               <TruncateMarkup>
-                <span className="shrink overflow-clip text-ellipsis">
+                <span className="shrink overflow-clip text-ellipsis h-4">
                   {value?.displayName ? value.displayName : "Select Token"}
                 </span>
               </TruncateMarkup>
-              <div className="group-hover:translate-y-1 transition-all min-w-[10px]">
+              <motion.div
+                variants={animationVariants.dropDownIcon}
+                initial={animationVariants.dropDownIcon.initial}
+                animate={state.currentAnimationVariant}
+              >
                 <DropdownSvg></DropdownSvg>
-              </div>
+              </motion.div>
             </Button>
           </PopoverTrigger>
           <PopoverContent className="flex w-full lg:w-[350px] flex-col items-center gap-4 border border-[color:var(--card-stroke,#F7931A)] [background:var(--card-color,#271A0C)] rounded-xl border-solid">
@@ -197,7 +219,7 @@ export const TokenSelector = observer(
             </Observer>
           </PopoverContent>
         </Popover>
-      </div>
+      </motion.div>
     );
   }
 );
