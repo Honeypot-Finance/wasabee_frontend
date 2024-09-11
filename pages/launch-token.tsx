@@ -9,7 +9,6 @@ import { NextLayoutPage } from "@/types/nextjs";
 import { RocketSvg } from "@/components/svg/Rocket";
 import { PeddingSvg } from "@/components/svg/Pedding";
 import { DreampadSvg } from "@/components/svg/Dreampad";
-import { Select, SelectItem } from "@nextui-org/select";
 import { now, getLocalTimeZone, fromDate } from "@internationalized/date";
 // import { DatePicker } from "@/components/DatePicker";
 import { dayjs } from "@/lib/dayjs";
@@ -22,13 +21,22 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Select,
+  SelectItem,
+  Modal,
+  ModalBody,
+  ModalContent,
 } from "@nextui-org/react";
 import { DatePicker } from "@nextui-org/date-picker";
 import { useRouter } from "next/router";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Copy } from "@/components/copy";
 import { trpcClient } from "@/lib/trpc";
-import { BiSolidDownArrow } from "react-icons/bi";
+import { BiQuestionMark, BiSolidDownArrow } from "react-icons/bi";
+import { WarppedNextSelect } from "@/components/wrappedNextUI/Select/Select";
+import { WrappedNextDatePicker } from "@/components/wrappedNextUI/DatePicker/DatePicker";
+import Image from "next/image";
+import { FaQuestionCircle } from "react-icons/fa";
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
 const minimumTimePattern = /^(6[1-9]|[7-9][0-9]|[1-9][0-9]{2,})$/;
@@ -97,12 +105,12 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
           <div className="flex flex-col w-full sm:w-[584px] lg:w-[900px] items-center border-[color:var(--Button-Gradient,#F7931A)] bg-[#291C0A] py-4 px-[5px] rounded-[54px] border-2">
             <div className="flex items-center gap-2">
               <DreampadSvg />
-              <span>Dreampad</span>
+              <span>Dreampad - FTO Launch</span>
             </div>
             <div className="mt-4 opacity-50 w-full sm:w-[409px] lg:w-[800px] text-center mb-4 ">
               Launch your token within three steps.{" "}
-              <span className="underline cursor-pointer">Read more</span> about
-              Dreampad.
+              {/* <span className="underline cursor-pointer">Read more</span> about
+              Dreampad. */}
             </div>
             <form
               //@ts-ignore
@@ -195,17 +203,14 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                       )}
                       render={({ field: { onChange, onBlur, value, ref } }) => {
                         return (
-                          <DatePicker
+                          <WrappedNextDatePicker
                             ref={ref}
-                            classNames={{
-                              inputWrapper: "bg-transparent",
-                            }}
                             hideTimeZone
-                            showMonthAndYearPickers
                             onChange={onChange} // send value to hook form
                             minValue={now(getLocalTimeZone())}
                             onBlur={onBlur} // notify when input is touched/blur
                             value={value}
+                            variant="bordered"
                           />
                         );
                       }}
@@ -218,32 +223,34 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                   </div>{" "}
                   <div className="flex flex-col gap-4">
                     <label htmlFor="raisedToken">Raised Token</label>
-                    <Select
-                      required
-                      selectionMode="single"
-                      classNames={{
-                        trigger:
-                          "bg-transparent data-[hover=true]:bg-transparent",
-                      }}
-                      defaultSelectedKeys={"all"}
-                      {...register("raisedToken", {
-                        required: true,
-                        value: wallet.currentChain?.contracts.ftoTokens[0]
-                          .address as string,
-                      })}
-                      className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
-                    >
-                      {wallet.currentChain?.contracts.ftoTokens.map(
-                        (token, idx) => (
-                          <SelectItem
-                            key={token.address as string}
-                            value={token.address}
-                          >
-                            {token.symbol}
-                          </SelectItem>
-                        )
-                      )}
-                    </Select>
+                    {wallet.currentChain?.contracts.ftoTokens && (
+                      <WarppedNextSelect
+                        required
+                        selectionMode="single"
+                        classNames={{
+                          trigger:
+                            "bg-transparent data-[hover=true]:bg-transparent",
+                        }}
+                        defaultSelectedKeys={"all"}
+                        {...register("raisedToken", {
+                          required: true,
+                          value: wallet.currentChain?.contracts.ftoTokens[0]
+                            .address as string,
+                        })}
+                        className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                      >
+                        {wallet.currentChain?.contracts.ftoTokens.map(
+                          (token, idx) => (
+                            <SelectItem
+                              key={token.address as string}
+                              value={token.address}
+                            >
+                              {token.symbol}
+                            </SelectItem>
+                          )
+                        )}
+                      </WarppedNextSelect>
+                    )}
                     {errors.raisedToken && (
                       <span className="text-red-500">
                         Rasied Token is required
@@ -317,8 +324,33 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
       console.error(error);
     }
   };
+  const [isInstructionModalOpen, setIsInstructionModalOpen] = useState(false);
+
+  const MEME_Instruction_Modal = () => {
+    return (
+      <Modal
+        isOpen={isInstructionModalOpen}
+        onClose={() => setIsInstructionModalOpen(false)}
+      >
+        <ModalContent className="w-full max-w-full md:max-w-[700px]">
+          <ModalBody className="flex flex-col gap-4">
+            <div>
+              <Image
+                src="/images/pot2fpump.png"
+                width={1024}
+                height={1800}
+                alt=""
+              />
+            </div>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    );
+  };
+
   return (
     <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto mb-[30vh]">
+      <MEME_Instruction_Modal />
       <div className=" flex items-center justify-center mt-[24px]">
         {launchpad.ftofactoryContract?.createFTO.loading ? (
           <div className="flex h-[566px] w-full sm:w-[583px] justify-center items-center [background:#121212] rounded-[54px]">
@@ -341,12 +373,13 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
           <div className="flex flex-col w-full sm:w-[584px] lg:w-[900px] items-center border-[color:var(--Button-Gradient,#F7931A)] bg-[#291C0A] py-4 px-[5px] rounded-[54px] border-2">
             <div className="flex items-center gap-2">
               <DreampadSvg />
-              <span>Dreampad</span>
-            </div>
-            <div className="mt-4 opacity-50 w-full sm:w-[409px] lg:w-[800px] text-center mb-4 ">
-              Launch your token within three steps.{" "}
-              <span className="underline cursor-pointer">Read more</span> about
-              Dreampad.
+              <span>
+                Dreampad <br className="md:hidden" /> - MEME Launch
+              </span>{" "}
+              <FaQuestionCircle
+                onClick={() => setIsInstructionModalOpen(true)}
+                className="cursor-pointer hover:scale-150 transition-all"
+              />
             </div>
             <form
               //@ts-ignore

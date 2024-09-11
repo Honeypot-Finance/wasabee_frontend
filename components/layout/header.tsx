@@ -187,7 +187,7 @@ function WrapedDropdownItem({
             closeOnSelect
             key={p.title}
             className={cn(
-              "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
+              "flex items-center justify-center text-base font-normal leading-[normal] border-0",
               router.pathname === p.path
                 ? router.pathname === "/launch"
                   ? "font-bold"
