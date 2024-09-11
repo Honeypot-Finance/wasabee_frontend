@@ -13,22 +13,13 @@ import { cn } from "@/lib/tailwindcss";
 import ProjectStatusDisplay from "../atoms/TokenStatusDisplay/TokenStatusDisplay";
 import { WatchAsset } from "../atoms/WatchAsset/WatchAsset";
 import Image from "next/image";
-import { SlOptions, SlShare } from "react-icons/sl";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@nextui-org/react";
 import {
   OptionsDropdown,
   optionsPresets,
 } from "../OptionsDropdown/OptionsDropdown";
 import { WalletSvg } from "../svg/wallet";
 import { BiWallet } from "react-icons/bi";
-import ShareSocialMedialPopUp, {
-  shareMediaToast,
-} from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import ShareSocialMedialPopUp from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { itemPopUpVariants, itemSlideVariants } from "@/lib/animation";
@@ -175,11 +166,8 @@ export const LaunchCard = observer(
             <div className="flex items-center gap-2 text-sm">
               {/* <TotalRaisedSvg /> */}
               <span className="font-bold">
-                {pair?.userDepositedRaisedToken
-                  ? (
-                      pair.userDepositedRaisedToken.toNumber() /
-                      Math.pow(10, pair.raiseToken?.decimals ?? 18)
-                    ).toFixed(3)
+                {pair?.depositedRaisedToken
+                  ? pair.depositedRaisedToken.toFormat(3)
                   : "-"}
                 &nbsp;
                 {pair?.raiseToken?.displayName}

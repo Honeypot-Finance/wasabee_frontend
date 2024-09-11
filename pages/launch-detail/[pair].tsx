@@ -1293,7 +1293,9 @@ const MemeView = observer(() => {
       <div className="flex justify-center mt-[24px] ">
         <div className="w-[100vw] lg:w-full lg:min-w-[1000px] lg:max-w-[1000px]">
           {state.pair.value && (
-            <DiscussionArea pair={state.pair.value}></DiscussionArea>
+            <DiscussionArea
+              pairDatabaseId={state.pair.value.databaseId ?? -1}
+            ></DiscussionArea>
           )}
         </div>
       </div>
