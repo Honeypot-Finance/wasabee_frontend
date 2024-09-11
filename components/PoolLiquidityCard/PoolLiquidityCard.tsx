@@ -20,6 +20,7 @@ import { VscArrowSwap } from "react-icons/vsc";
 import { useState } from "react";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
+import { popmodal } from "@/services/popmodal";
 
 interface PoolLiquidityCardProps {
   pair: PairContract;
@@ -30,17 +31,9 @@ interface PoolLiquidityCardProps {
 export const PoolLiquidityCard = observer(
   ({ pair, autoSize, showMyLiquidity }: PoolLiquidityCardProps) => {
     const router = useRouter();
-    const [isRemoveLpPopUpOpen, setIsRemoveLpPopUpOpen] = useState(false);
 
     return (
       <CardContianer autoSize={autoSize}>
-        <PopUp
-          open={isRemoveLpPopUpOpen}
-          info="normal"
-          onClose={() => setIsRemoveLpPopUpOpen(false)}
-          trigger={<></>}
-          contents={<RemoveLiquidity noCancelButton></RemoveLiquidity>}
-        />{" "}
         <motion.div
           initial={{
             x: -100,
@@ -89,7 +82,9 @@ export const PoolLiquidityCard = observer(
                   display: "Remove LP",
                   onClick: () => {
                     liquidity.setCurrentRemovePair(pair);
-                    setIsRemoveLpPopUpOpen(true);
+                    popmodal.openModal({
+                      content: <RemoveLiquidity noCancelButton />,
+                    });
                   },
                 },
                 {

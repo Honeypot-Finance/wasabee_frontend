@@ -5,16 +5,24 @@ import {
   DropdownMenu,
   DropdownItem,
   Button,
+  Link,
 } from "@nextui-org/react";
 import { SlOptions, SlShare, SlWallet } from "react-icons/sl";
 import { VscCopy, VscRemoteExplorer } from "react-icons/vsc";
 import { toast } from "react-toastify";
 import * as clipboard from "clipboard-polyfill";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { shareMediaToast } from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import { ShareMediaDisplay } from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { Token } from "@/services/contract/token";
-import { BiLink, BiLogoInternetExplorer, BiWallet } from "react-icons/bi";
+import {
+  BiLink,
+  BiLinkExternal,
+  BiLogoInternetExplorer,
+  BiWallet,
+} from "react-icons/bi";
 import { FaInternetExplorer } from "react-icons/fa";
+import { popmodal } from "@/services/popmodal";
+import Image from "next/image";
 
 type optionItem = {
   icon: JSX.Element;
@@ -90,12 +98,13 @@ export const optionsPresets = {
     return {
       icon: <SlShare />,
       display: displayText ?? "Share",
-      onClick: () =>
-        shareMediaToast({
-          shareUrl: shareUrl,
-          shareText: shareText,
-          text: "Share this project",
-        }),
+      onClick: () => {
+        popmodal.openModal({
+          content: (
+            <ShareMediaDisplay shareText={shareText} shareUrl={shareUrl} />
+          ),
+        });
+      },
     };
   },
   importTokenToWallet: ({ token }: { token?: Token }) => {

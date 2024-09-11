@@ -7,6 +7,7 @@ import { PopupActions } from "reactjs-popup/dist/types";
 import { text } from "stream/consumers";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import { popmodal } from "@/services/popmodal";
 
 interface IShareSocialMedialPopUpProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -15,11 +16,10 @@ interface IShareSocialMedialPopUpProps
   text?: string;
 }
 
-export function shareMediaToast(props: IShareSocialMedialPopUpProps) {
-  console.log("shareMediaToast", props);
-  toast.success(
+export function ShareMediaDisplay(props: IShareSocialMedialPopUpProps) {
+  return (
     <div>
-      <div className="m-2 text-right text-gray-800">
+      <div className="m-2 text-right text-white">
         {" "}
         <Link
           className="cursor-pointer flex items-center gap-2 hover:text-primary"
@@ -47,11 +47,7 @@ export function shareMediaToast(props: IShareSocialMedialPopUpProps) {
           <BiLinkExternal />
         </Link>
       </div>
-    </div>,
-    {
-      autoClose: false,
-      icon: false,
-    }
+    </div>
   );
 }
 
@@ -62,8 +58,14 @@ export default function ShareSocialMedialPopUp(
     <div
       onClick={(e) => {
         e.preventDefault();
-        navigator.clipboard.writeText(props.shareUrl);
-        shareMediaToast(props);
+        popmodal.openModal({
+          content: (
+            <ShareMediaDisplay
+              shareText={props.shareText}
+              shareUrl={props.shareUrl}
+            />
+          ),
+        });
       }}
       className="flex items-center gap-2 cursor-pointer hover:text-primary"
     >

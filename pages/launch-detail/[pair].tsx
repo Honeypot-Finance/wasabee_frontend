@@ -34,9 +34,7 @@ import { BiLinkExternal, BiWallet } from "react-icons/bi";
 import { PopupActions } from "reactjs-popup/dist/types";
 import PopUp from "@/components/PopUp/PopUp";
 import { info } from "console";
-import ShareSocialMedialPopUp, {
-  shareMediaToast,
-} from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { trpcClient } from "@/lib/trpc";
 import ProjectStatusDisplay from "@/components/atoms/TokenStatusDisplay/TokenStatusDisplay";
 import { Provider } from "ethcall";
