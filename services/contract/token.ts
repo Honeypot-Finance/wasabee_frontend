@@ -154,16 +154,19 @@ export class Token implements BaseContract {
     await Promise.all([
       loadName && !this.name
         ? this.contract.read.name().then((name) => {
+            console.log("name", name);
             this.name = name;
           })
         : Promise.resolve(),
       loadSymbol && !this.symbol
         ? this.contract.read.symbol().then((symbol) => {
+            console.log("symbol", symbol);
             this.symbol = symbol;
           })
         : Promise.resolve(),
       loadDecimals && !this.decimals
         ? this.contract.read.decimals().then((decimals) => {
+            console.log("decimals", decimals);
             this.decimals = decimals;
           })
         : Promise.resolve(),

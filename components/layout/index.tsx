@@ -10,6 +10,7 @@ import LaunchHeader from "./LaunchHeader";
 import { cn } from "@/lib/tailwindcss";
 import NotConnetctedDisplay from "../NotConnetctedDisplay/NotConnetctedDisplay";
 import ConfettiComponent from "../atoms/Confetti/Confetti";
+import PopOverModal from "../PopOverModal/PopOverModal";
 
 export const Layout = ({
   children,
@@ -24,6 +25,7 @@ export const Layout = ({
   return (
     <div className={cn("flex flex-col min-h-screen overflow-auto", className)}>
       <ConfettiComponent />
+      <PopOverModal />
       {router.pathname.startsWith("/launch") ||
       router.pathname.startsWith("/pools") ? (
         <LaunchHeader />

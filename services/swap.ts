@@ -17,12 +17,12 @@ import { networksMap } from "./chain";
 class Swap {
   fromToken: Token | undefined = undefined;
   toToken: Token | undefined = undefined;
-
   fromAmount: string = "";
   toAmount: string = "";
   slippage: number = 1;
   deadline: number = 20;
   price: BigNumber | null = null;
+  needApprove: boolean = false;
 
   routerToken: Token[] | undefined = undefined;
 
@@ -165,6 +165,10 @@ class Swap {
       return "Insufficient Balance";
     }
 
+    if (this.needApprove) {
+      return "Approve";
+    }
+
     return "Swap";
   }
 
@@ -191,6 +195,7 @@ class Swap {
     reaction(
       () => this.fromToken?.address,
       async () => {
+        this.getNeedApprove();
         this.fromToken && this.loadTokenRouterPairs(this.fromToken!);
         this.setRouterToken(undefined);
         this.currentPair.setValue(undefined);
@@ -221,6 +226,7 @@ class Swap {
     reaction(
       () => this.fromAmount,
       debounce(async () => {
+        this.getNeedApprove();
         if (!this.currentPair.value && !this.routerToken) {
           return;
         }
@@ -329,6 +335,17 @@ class Swap {
       .toFixed(0);
 
     const deadline = dayjs().unix() + 60 * (this.deadline || 20);
+
+    await Promise.all([
+      this.fromToken
+        .approveIfNoAllowance({
+          amount: fromAmountDecimals,
+          spender: this.routerV2Contract.address,
+        })
+        .then(() => {
+          this.getNeedApprove();
+        }),
+    ]);
 
     if (this.isWrapOrUnwrap) {
       if (this.isWrap) {
@@ -662,6 +679,25 @@ class Swap {
     chart.chartData.call();
 
     chart.setChartLabel(label);
+  };
+
+  getNeedApprove = async () => {
+    if (!this.fromToken || !this.fromAmount) {
+      return;
+    }
+
+    const fromAmountDecimals = new BigNumber(this.fromAmount)
+      .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
+      .toFixed(0);
+
+    const allowance = await this.fromToken.contract.read.allowance([
+      wallet.account,
+      this.routerV2Contract.address,
+    ] as [`0x${string}`, `0x${string}`]);
+
+    this.needApprove = new BigNumber(allowance.toString()).isLessThan(
+      fromAmountDecimals
+    );
   };
 }
 

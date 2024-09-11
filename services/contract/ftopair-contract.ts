@@ -153,9 +153,13 @@ export class FtoPairContract implements BaseContract {
     }
 
     const diffMinutes = targetTime.diff(now, "minutes");
-    return `${Math.abs(diffMinutes)} ${
-      diffMinutes > 0 ? "minutes later" : "minutes ago"
-    }`;
+    if (Math.abs(diffMinutes) >= 1) {
+      return `${Math.abs(diffMinutes)} ${
+        diffMinutes > 0 ? "minutes later" : "minutes ago"
+      }`;
+    }
+
+    return "Ends in a minute";
   }
 
   deposit = new AsyncState(async ({ amount }: { amount: string }) => {
@@ -262,7 +266,7 @@ export class FtoPairContract implements BaseContract {
   }
 
   async getProjectInfo() {
-    const res = await trpcClient.fto.getProjectInfo.query({
+    const res = await trpcClient.projects.getProjectInfo.query({
       chain_id: wallet.currentChainId,
       pair: this.address,
     });
@@ -449,6 +453,7 @@ export class FtoPairContract implements BaseContract {
       this.startTime = res.toString();
     }
   }
+
   async getFTOState(state?: number) {
     if (state) {
       this.ftoState = state;

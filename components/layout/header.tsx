@@ -19,6 +19,10 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { cn } from "@/lib/tailwindcss";
 import { Menu, appPathsList as menuList } from "@/data/allAppPath";
+import {
+  WarppedNextDropdownMenu,
+  WarppedNextDropdown,
+} from "../wrappedNextUI/Dropdown/Dropdown";
 
 export const Header = (props: HtmlHTMLAttributes<any>) => {
   const router = useRouter();
@@ -142,7 +146,7 @@ function WrapedDropdownItem({
     }
   }
   return (
-    <Dropdown
+    <WarppedNextDropdown
       ref={dp}
       isOpen={isMenuOpen}
       onOpenChange={setIsMenuOpen}
@@ -177,13 +181,13 @@ function WrapedDropdownItem({
           </span>
         </DropdownTrigger>
       </NavbarItem>
-      <DropdownMenu closeOnSelect>
+      <WarppedNextDropdownMenu closeOnSelect>
         {dropdownMenu.path.map((p) => (
           <DropdownItem
             closeOnSelect
             key={p.title}
             className={cn(
-              "flex items-center justify-center  px-5 py-2.5 text-base font-normal leading-[normal]",
+              "flex items-center justify-center text-base font-normal leading-[normal] border-0",
               router.pathname === p.path
                 ? router.pathname === "/launch"
                   ? "font-bold"
@@ -197,8 +201,8 @@ function WrapedDropdownItem({
             </Link>
           </DropdownItem>
         ))}
-      </DropdownMenu>
-    </Dropdown>
+      </WarppedNextDropdownMenu>
+    </WarppedNextDropdown>
   );
 }
 function ListToElement({ list }: { list: Menu[] }) {

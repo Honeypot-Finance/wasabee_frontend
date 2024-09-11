@@ -88,12 +88,11 @@ const FaucetPage: NextLayoutPage = observer(() => {
   return (
     <div className="flex flex-col  items-center ">
       <div className="flex items-center relative w-full sm:w-[700px] h-[138px] overflow-hidden">
-        <Image src="/images/faucet_bg_v2.png" alt="faucet" fill></Image>
         <Image
-          src="/images/bera/honeybera.svg"
+          src="/images/bera/honeybera.png"
           alt=""
           fill
-          className="scale-90 translate-x-[25%]"
+          // className="scale-90 translate-x-[25%]"
         ></Image>
         <div className="relative z-1 ml-[25px]">
           <div className="text-[black] text-2xl font-bold leading-7 tracking-[-0.24px] [font-family:MEME]">
@@ -106,6 +105,12 @@ const FaucetPage: NextLayoutPage = observer(() => {
       </div>
       <div className="w-[700px] max-w-[100%] mt-[30px] flex flex-col gap-[24px]">
         {/** Native token faucet */}
+        <div className="flex w-full items-center flex-col lg:grid lg:grid-cols-[1fr,200px] gap-[0.5rem]">
+          <div className="flex w-full justify-between text-[#FAFAFC]">
+            <h2 className="ml-[3rem] opacity-65">Token</h2>
+            <h2 className="mr-[5rem] opacity-65">Balance</h2>
+          </div>
+        </div>
         {wallet.currentChain?.officialFaucets?.[0] && (
           <div className="flex w-full items-center flex-col lg:grid lg:grid-cols-[1fr,200px] gap-[0.5rem]">
             <motion.div
@@ -236,8 +241,11 @@ const FaucetPage: NextLayoutPage = observer(() => {
                 isLoading={token.faucet.loading}
                 className="lg:ml-[13px] w-full"
                 onClick={async () => {
-                  token.claimed = true;
-                  await token.faucet.call();
+                  await token.faucet.call().then((tx) => {
+                    if (tx.status === "success") {
+                      token.claimed = true;
+                    }
+                  });
                   await token.getBalance();
                   await token.getClaimed();
                 }}

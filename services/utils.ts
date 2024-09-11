@@ -351,7 +351,6 @@ export class IndexerPaginationState<FilterT, ItemT> {
     filter: FilterT;
     LoadNextPageFunction: (
       filter: FilterT,
-
       pageRequest: PageRequest
     ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }>;
     args?: Partial<IndexerPaginationState<FilterT, ItemT>>;
@@ -381,9 +380,10 @@ export class IndexerPaginationState<FilterT, ItemT> {
     this.pageItems.setValue([]);
   };
 
-  reloadPage = () => {
+  reloadPage = async () => {
+    if (this.isLoading) return;
     this.resetPage();
-    this.loadMore();
+    await this.loadMore();
     this.isInit = true;
   };
 
@@ -391,7 +391,7 @@ export class IndexerPaginationState<FilterT, ItemT> {
     if (this.isLoading || !this.pageInfo.hasNextPage) {
       return;
     }
-
+    console.log("loadMore");
     this.isLoading = true;
 
     try {
@@ -461,9 +461,11 @@ export class StorageState<T = any, U = any> {
     StorageState.register(this.key, this);
     makeAutoObservable(this);
   }
+
   async transformAndSetValue(value: any) {
     await this.setValue(this.transform ? this.transform(value) : value);
   }
+
   async setValue(value: T | null) {
     this.value = value;
     await localforage.setItem(

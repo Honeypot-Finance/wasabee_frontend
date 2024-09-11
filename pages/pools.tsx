@@ -125,7 +125,6 @@ const PoolsPage: NextLayoutPage = observer(() => {
             styleMode="plain"
             className="md:w-[170px] h-[41px] gap-2.5"
           >
-            <LuPlus />
             Create Pool
           </Button>
         </div>

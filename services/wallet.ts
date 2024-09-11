@@ -5,10 +5,13 @@ import { RouterV2Contract } from "./contract/routerv2-contract";
 import { FactoryContract } from "./contract/factory-contract";
 import { FtoFactoryContract } from "./contract/ftofactory-contract";
 import { FtoFacadeContract } from "./contract/ftofacade-contract";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { Token } from "./contract/token";
 import { createPublicClientByChain } from "@/lib/client";
 import { AsyncState, StorageState } from "./utils";
+import { MemeFactoryContract } from "./contract/memefactory-contract";
+import { MEMEFacadeContract } from "./contract/memefacade-contract";
+import { init } from "next/dist/compiled/webpack/webpack";
 
 export class Wallet {
   account: string = "";
@@ -22,6 +25,8 @@ export class Wallet {
     factory: FactoryContract;
     ftofactory: FtoFactoryContract;
     ftofacade: FtoFacadeContract;
+    memeFactory: MemeFactoryContract;
+    memeFacade: MEMEFacadeContract;
   } = {} as any;
   publicClient!: PublicClient;
   isInit = false;
@@ -38,6 +43,12 @@ export class Wallet {
 
   constructor(args: Partial<Wallet>) {
     makeAutoObservable(this);
+    reaction(
+      () => this.walletClient?.account,
+      () => {
+        this.initWallet(this.walletClient);
+      }
+    );
   }
 
   async initWallet(walletClient: WalletClient) {
@@ -64,11 +75,17 @@ export class Wallet {
       ftofacade: new FtoFacadeContract({
         address: this.currentChain.contracts.ftoFacade,
       }),
+      memeFactory: new MemeFactoryContract({
+        address: this.currentChain.contracts.memeFactory,
+      }),
+      memeFacade: new MEMEFacadeContract({
+        address: this.currentChain.contracts.memeFacade,
+      }),
     };
     this.publicClient = createPublicClientByChain(this.currentChain.chain);
     this.walletClient = walletClient;
-    this.currentChain.init()
-    await StorageState.sync()
+    this.currentChain.init();
+    await StorageState.sync();
     this.isInit = true;
   }
 }

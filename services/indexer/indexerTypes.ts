@@ -14,9 +14,37 @@ export type GhostPairResponse = {
   pageInfo: PageInfo;
 };
 
+export type TrendingMEMEs = {
+  pairs: {
+    items: {
+      id: string;
+      status: string;
+      depositedRaisedToken: string;
+      depositedLaunchedToken: string;
+      endTime: string;
+      token0: GhostToken;
+      token1: GhostToken;
+    }[];
+  };
+};
+
 export type GhostHoldingPairsResponse = {
   holdingPairs: holdingPairs[];
   pageInfo: PageInfo;
+};
+
+export type GhostParticipatedProjectsResponse = {
+  participateds: {
+    items: ParticipatedProjects[];
+    pageInfo: PageInfo;
+  };
+};
+
+export type ParticipatedProjects = {
+  id: string;
+  depositer: Address;
+  pairId: Address;
+  pair: GhostFTOPair;
 };
 
 export type holdingPairs = {

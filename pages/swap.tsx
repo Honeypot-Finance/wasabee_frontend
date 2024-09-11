@@ -19,6 +19,7 @@ import dayjs from "dayjs";
 import { animate, motion } from "framer-motion";
 import React from "react";
 import { itemPopUpVariants } from "@/lib/animation";
+import { popmodal } from "@/services/popmodal";
 
 const SwapPage = observer(() => {
   useEffect(() => {

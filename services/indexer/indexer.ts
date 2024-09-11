@@ -6,8 +6,10 @@ import {
   GhostFtoTokensResponse,
   GhostHoldingPairsResponse,
   GhostPairResponse,
+  GhostParticipatedProjectsResponse,
   IndexerProvider,
   PageRequest,
+  TrendingMEMEs,
 } from "./indexerTypes";
 
 export default class Indexer<T extends IndexerProvider> {
@@ -30,13 +32,15 @@ export default class Indexer<T extends IndexerProvider> {
     filter: PairFilter,
     chainId: string,
     provider?: string,
-    pageRequest?: PageRequest
+    pageRequest?: PageRequest,
+    projectType?: "fto" | "meme"
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
     return await this.dataProvider.getFilteredFtoPairs(
       filter,
       chainId,
       provider,
-      pageRequest
+      pageRequest,
+      projectType
     );
   };
 
@@ -91,10 +95,30 @@ export default class Indexer<T extends IndexerProvider> {
     return res;
   };
 
+  getTrendingMEMEPairs = async (): Promise<ApiResponseType<TrendingMEMEs>> => {
+    return await this.dataProvider.getTrendingMEMEPairs();
+  };
+
   getValidatedTokenPairs = async (
     chainId: string
   ): Promise<ApiResponseType<GhostPairResponse>> => {
     return await this.dataProvider.getValidatedTokenPairs(chainId);
+  };
+
+  getParticipatedProjects = async (
+    walletAddress: string,
+    chainId: string,
+    pageRequest: PageRequest,
+    type: "fto" | "meme" = "fto",
+    filter: Partial<PairFilter>
+  ): Promise<ApiResponseType<GhostParticipatedProjectsResponse>> => {
+    return await this.dataProvider.getParticipatedProjects(
+      walletAddress,
+      chainId,
+      pageRequest,
+      type,
+      filter
+    );
   };
 }
 

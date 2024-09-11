@@ -8,11 +8,11 @@ import { tokenRouter } from "./router/token";
 
 export const appRouter = router({
   pair: pairRouter,
-  fto: ftoRouter,
+  projects: ftoRouter,
   priceFeed: priceFeedRouter,
   indexerFeedRouter: indexerFeedRouter,
   discussionRouter: discussionRouter,
-  token: tokenRouter
+  token: tokenRouter,
 });
 // Export only the type of a router!
 // This prevents us from importing server code on the client.

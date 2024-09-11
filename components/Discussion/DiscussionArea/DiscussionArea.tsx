@@ -11,13 +11,15 @@ import { toast } from "react-toastify";
 import { Row, RowList } from "postgres";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { after, before, set } from "lodash";
+import { MemePairContract } from "@/services/contract/memepair-contract";
+
 import { useRouter } from "next/router";
 import { cn } from "@/lib/tailwindcss";
 import dayjs from "dayjs";
 
 interface DiscussionAreaProps {
   pairDatabaseId: number;
-  isSide?: boolean;
+  isSide?: boolean
 }
 
 export function DiscussionArea(props: DiscussionAreaProps) {

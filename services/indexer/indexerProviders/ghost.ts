@@ -3,7 +3,6 @@ import {
   statusTextToNumber,
 } from "@/services/launchpad";
 import {
-  IndexerProvider,
   GhostFtoPairResponse,
   GhostAPIOpt,
   GhostFtoTokensResponse,
@@ -15,12 +14,13 @@ import {
   PairFilter,
   holdingPairs,
   GhostHoldingPairsResponse,
+  TrendingMEMEs,
+  GhostParticipatedProjectsResponse,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
-import { Address } from "viem";
-import { Token } from "@/services/contract/token";
 
+const memeGraphHandle = "ad48a06c-2772-486e-8f4d-f75edb08835c/ghostgraph";
 const ftoGraphHandle = "d27732e1-591f-4a84-bb99-209fe4022b6e/ghostgraph";
 const pairGraphHandle = "ca609e38-a070-4806-b4c9-08e96fee8118/ghostgraph";
 
@@ -125,7 +125,8 @@ export class GhostIndexer {
     filter: Partial<FtoPairFilter>,
     chainId: string,
     provider?: string,
-    pageRequest?: PageRequest
+    pageRequest?: PageRequest,
+    projectType?: "fto" | "meme"
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
     const statusNum = statusTextToNumber(filter?.status ?? "all");
 
@@ -241,9 +242,9 @@ export class GhostIndexer {
         }
       `;
 
-    query;
-
-    const res = await this.callIndexerApi(query, { apiHandle: ftoGraphHandle });
+    const res = await this.callIndexerApi(query, {
+      apiHandle: projectType === "meme" ? memeGraphHandle : ftoGraphHandle,
+    });
 
     if (res.status === "error") {
       return res;
@@ -463,6 +464,97 @@ export class GhostIndexer {
     }
   };
 
+  getParticipatedProjects = async (
+    walletAddress: string,
+    chainId: string,
+    pageRequest: PageRequest,
+    type: "fto" | "meme",
+    filter: Partial<FtoPairFilter>
+  ): Promise<ApiResponseType<GhostParticipatedProjectsResponse>> => {
+    const dirCondition = pageRequest?.cursor
+      ? pageRequest?.direction === "next"
+        ? `after:"${pageRequest?.cursor}"`
+        : `before:"${pageRequest?.cursor}"`
+      : "";
+
+    const limit = filter.limit ?? 9;
+
+    const query = ` {
+                      participateds(
+                        where:{
+                          depositer:"${walletAddress.toLowerCase()}"
+                        }
+                        limit: ${limit}
+                        ${dirCondition}
+                      ){
+                        items{
+                          id
+                          depositer
+                          pairId
+                          pair {
+                            id
+                            token0Id
+                            token1Id
+                            token0name
+                            token1name
+                            token0symbol
+                            token1symbol
+                            depositedRaisedToken
+                            depositedLaunchedToken
+                            createdAt
+                            endTime
+                            status
+                            launchedTokenProvider
+                            token0 {
+                              id
+                              name
+                              symbol
+                              decimals
+                            }
+                            token1 {
+                              id
+                              name
+                              symbol
+                              decimals
+                            }
+                          }
+                        }
+                        pageInfo {
+                          hasPreviousPage
+                          hasNextPage
+                          startCursor
+                          endCursor
+                        }
+                      }
+                    }`;
+
+    console.log(query);
+
+    const res = await this.callIndexerApi(query, {
+      apiHandle: type === "meme" ? memeGraphHandle : ftoGraphHandle,
+    });
+
+    console.log(res);
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: res.data ?? {
+          pairs: [],
+          pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: "",
+            endCursor: "",
+          },
+        },
+      };
+    }
+  };
+
   getFilteredPairs = async (
     filter: Partial<PairFilter>,
     chainId: string,
@@ -636,6 +728,50 @@ export class GhostIndexer {
       };
     }
   };
+
+  async getTrendingMEMEPairs(): Promise<ApiResponseType<TrendingMEMEs>> {
+    const query = `{
+        pairs(
+          where: {status: "3"}
+          limit: 5
+          orderBy: "depositedRaisedToken"
+          orderDirection: "desc"
+        ) {
+          items {
+            id
+            status
+            depositedRaisedToken
+            depositedLaunchedToken
+            token0 {
+              id
+              name
+              symbol
+              decimals
+            }
+            token1 {
+              id
+              name
+              symbol
+              decimals
+            }
+          }
+        }
+      }
+  `;
+    const res = await this.callIndexerApi(query, {
+      apiHandle: memeGraphHandle,
+    });
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: res.data,
+      };
+    }
+  }
 
   async getPairByTokens({
     token0,

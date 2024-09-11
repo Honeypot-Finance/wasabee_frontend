@@ -249,7 +249,12 @@ class Liquidity {
 
   get isDisabled() {
     return (
-      !this.fromToken || !this.toToken || !this.fromAmount || !this.toAmount
+      !this.fromToken ||
+      !this.toToken ||
+      !this.fromAmount ||
+      !this.toAmount ||
+      Number(this.toAmount) > this.toToken.balance.toNumber() ||
+      Number(this.fromAmount) > this.fromToken.balance.toNumber()
     );
   }
 
@@ -263,6 +268,13 @@ class Liquidity {
     if (!this.fromAmount || !this.toAmount) {
       return "Enter Amount";
     }
+    if (
+      Number(this.toAmount) > this.toToken.balance.toNumber() ||
+      Number(this.fromAmount) > this.fromToken.balance.toNumber()
+    ) {
+      return "Insufficient Balance";
+    }
+
     return "Add LP";
   }
 

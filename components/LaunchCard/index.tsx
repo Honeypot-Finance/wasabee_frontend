@@ -32,6 +32,8 @@ import ShareSocialMedialPopUp, {
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { itemPopUpVariants, itemSlideVariants } from "@/lib/animation";
+import { MemePairContract } from "@/services/contract/memepair-contract";
+import ProgressBar from "../atoms/ProgressBar/ProgressBar";
 
 const Actions = () => {};
 
@@ -41,12 +43,15 @@ export const LaunchCard = observer(
     action,
     type,
     className,
+    variant,
     ...props
   }: {
     type?: "list" | "detail";
-    pair?: FtoPairContract | null;
+    pair?: FtoPairContract | MemePairContract | null;
+    variant?: "default" | "meme";
     action: React.ReactNode;
   } & Partial<HTMLAttributes<any>>) => {
+    const projectType = pair instanceof MemePairContract ? "meme" : "fto";
     return (
       <motion.div
         variants={itemPopUpVariants}
@@ -73,7 +78,11 @@ export const LaunchCard = observer(
             optionsPresets.share({
               shareUrl: `${window.location.origin}/launch-detail/${pair?.address}`,
               displayText: "Share this project",
-              shareText: "Checkout this Token: " + pair?.projectName,
+              shareText:
+                projectType === "meme"
+                  ? "My Meme FTO eats bonding burves for breakfast. Inflate & innovation with Boneypot. Den moon 🌙: " +
+                    pair?.projectName
+                  : "Checkout this Token: " + pair?.projectName,
             }),
             optionsPresets.viewOnExplorer({
               address: pair?.address ?? "",
@@ -107,19 +116,47 @@ export const LaunchCard = observer(
               <span className="font-bold">{pair?.remainTime}</span>
             </div>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <h6 className="opacity-50 text-xs">Total launched</h6>
-            <div className="flex items-center gap-2 text-sm">
-              {/* <TotalRaisedSvg /> */}
-              <span className="font-bold">
-                {pair?.depositedLaunchedToken
-                  ? pair?.depositedLaunchedToken?.toFormat(0)
-                  : "-"}
-                &nbsp;
-                {pair?.launchedToken?.displayName}
-              </span>
+          {variant === "meme" ? (
+            pair instanceof MemePairContract &&
+            pair.depositedRaisedToken &&
+            pair.raisedTokenMinCap && (
+              <div className="flex flex-col items-center gap-1">
+                <h6 className="opacity-50 text-xs">Progress</h6>
+                <div className="flex items-center gap-2 text-sm w-[80%]">
+                  <ProgressBar
+                    label={
+                      (
+                        (pair.depositedRaisedToken.toNumber() /
+                          (pair.raisedTokenMinCap.toNumber() /
+                            Math.pow(10, 18))) *
+                        100
+                      ).toFixed(2) + "%"
+                    }
+                    value={
+                      (pair.depositedRaisedToken.toNumber() /
+                        (pair.raisedTokenMinCap.toNumber() /
+                          Math.pow(10, 18))) *
+                      100
+                    }
+                  />
+                </div>
+              </div>
+            )
+          ) : (
+            <div className="flex flex-col items-center gap-1">
+              <h6 className="opacity-50 text-xs">Total launched</h6>
+              <div className="flex items-center gap-2 text-sm">
+                {/* <TotalRaisedSvg /> */}
+                <span className="font-bold">
+                  {pair?.depositedLaunchedToken
+                    ? pair?.depositedLaunchedToken?.toFormat(0)
+                    : "-"}
+                  &nbsp;
+                  {pair?.launchedToken?.displayName}
+                </span>
+              </div>
             </div>
-          </div>
+          )}
           <div className="flex flex-col items-center gap-1">
             <h6 className="opacity-50 text-xs">Total raised</h6>
             <div className="flex items-center gap-2 text-sm">
@@ -172,6 +209,22 @@ export const LaunchCard = observer(
                 }}
               >
                 Claim LP
+              </Button>
+            </div>
+          )}
+          {pair instanceof MemePairContract && pair.canRefund && (
+            <div>
+              <Button
+                className="w-full"
+                onClick={() => {
+                  pair.refund.call();
+                }}
+                isLoading={pair.refund.loading}
+                style={{
+                  backgroundColor: "green",
+                }}
+              >
+                Refund LP
               </Button>
             </div>
           )}

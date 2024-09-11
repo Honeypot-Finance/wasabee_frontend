@@ -32,6 +32,12 @@ const AddLiquidity = observer(() => {
               disabled: !liquidity.fromToken,
               max: liquidity.fromToken?.balance.toNumber(),
               min: 0,
+              isInvalid:
+                (Number(liquidity.fromAmount) >
+                  (liquidity.fromToken as Token)?.balance?.toNumber() ??
+                  0) ||
+                Number(liquidity.fromAmount) < 0,
+              errorMessage: "Insufficient balance",
               onClear: () => {
                 liquidity.setFromAmount("");
               },
@@ -82,6 +88,12 @@ const AddLiquidity = observer(() => {
               disabled: !liquidity.toToken,
               max: liquidity.toToken?.balance.toNumber(),
               min: 0,
+              isInvalid:
+                (Number(liquidity.toAmount) >
+                  (liquidity.toToken as Token)?.balance?.toNumber() ??
+                  0) ||
+                Number(liquidity.toAmount) < 0,
+              errorMessage: "Insufficient balance",
               onClear: () => {
                 liquidity.setToAmount("");
               },

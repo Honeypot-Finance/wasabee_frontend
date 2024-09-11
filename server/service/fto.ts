@@ -1,4 +1,5 @@
 import { MUBAI_FTO_PAIR_ABI } from "@/lib/abis/ftoPair";
+import { MemePairABI } from "@/lib/abis/MemePair";
 import { chains, chainsMap } from "@/lib/chain";
 import { exec } from "@/lib/contract";
 import { pg } from "@/lib/db";
@@ -19,6 +20,8 @@ export const ftoService = {
     provider: string;
     chain_id: number;
     creator_api_key: string;
+    project_type?: string;
+    projectName: string;
   }) => {
     if (
       !fto_api_key_list.includes(data.creator_api_key) &&
@@ -32,6 +35,8 @@ export const ftoService = {
       provider: data.provider.toLowerCase(),
       chain_id: data.chain_id,
       creator_api_key: data.creator_api_key,
+      project_type: data.project_type ?? "",
+      name: data.projectName,
     })}`;
   },
   getProjectInfo: async (data: {
@@ -50,7 +55,7 @@ export const ftoService = {
     output = await selectFtoProject(data);
 
     if (!output || !output[0]) {
-      const pairContract = new Contract(
+      const ftoPairContract = new Contract(
         data.pair as `0x${string}`,
         MUBAI_FTO_PAIR_ABI,
         new providers.JsonRpcProvider(
@@ -58,12 +63,14 @@ export const ftoService = {
         )
       );
 
-      const provider = await pairContract.launchedTokenProvider();
+      const provider = await ftoPairContract
+        .launchedTokenProvider()
+        .catch(() => null);
 
       await createFtoProject({
         pair: data.pair,
         chain_id: data.chain_id,
-        provider: provider,
+        provider: provider ?? "",
         creator_api_key: data.creator_api_key,
       });
       output = await selectFtoProject(data);
@@ -179,6 +186,7 @@ const updateFtoProject = async (data: {
   pair: string;
   chain_id: number;
   creator_api_key: string;
+  project_type?: string;
 }) => {
   try {
     await pg`INSERT INTO fto_project ${pg({
@@ -190,6 +198,7 @@ const updateFtoProject = async (data: {
       pair: data.pair.toLowerCase(),
       chain_id: data.chain_id,
       creator_api_key: data.creator_api_key,
+      project_type: data.project_type ?? "",
     })}
    ON CONFLICT (pair, chain_id) DO UPDATE SET twitter = ${
      data.twitter ?? ""
@@ -219,8 +228,9 @@ const selectFtoProject = async (data: { pair: string; chain_id: number }) => {
       logo_url: string;
       name: string;
       provider: string;
+      project_type: string;
     }[]
-  >`SELECT id,twitter,logo_url, telegram, website,description,name, provider  FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
+  >`SELECT id,twitter,logo_url, telegram, website,description,name, provider, project_type  FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
     data.chain_id
   }`;
 };
