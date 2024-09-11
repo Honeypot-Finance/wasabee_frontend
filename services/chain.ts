@@ -263,12 +263,46 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/obero-token-icon.jpg",
     },
+    "0x46efc86f0d7455f135cc9df501673739d513e982": {
+      name: "iBGT",
+      symbol: "iBGT",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/ibgt-token-icon.png",
+    },
+    "0x86056cdb2bf09c540b63f5a0bc054c840cb0de6c": {
+      name: "LORE",
+      symbol: "LORE",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/lore-token-icon.jpg",
+    },
+    "0xfad73c80d67d3cb4a929d1c0faf33a820620ae41": {
+      name: "POT The Bera",
+      symbol: "POT",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/pot-the-bera-token-icon.webp",
+    },
+    "0x180f30908b7c92ff2d65609088ad17bf923b42dc": {
+      name: "Janitooor",
+      symbol: "JANI",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/janitooor-token-icon.webp",
+    },
+    "0x5da73142f3c8d8d749db4459b2fcc9024fad024e": {
+      name: "Whippor",
+      symbol: "$BULL",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/whippor-token-icon.webp",
+    },
+    "0x2da7ec28dae827ea513da752bc161e55147b4d66": {
+      name: "B-Vol",
+      symbol: "IVX",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/ivx-token-icon.webp",
+    },
   },
   validatedFtoAddresses: [
-    "0xe1650d95ab180eb4383093d78c6f0cc164bd55e2".toLowerCase(),
-    "0x458cd7e366480d3e152510cfbe82609f5562bbc2".toLowerCase(),
-    "0xa32f78ace7dad80e4b5d18bd8ab9d76aebaa69bd".toLowerCase(),
-    "0x86905d4054f307fce742a8eb7d5d6012711a3588".toLowerCase(),
+    "0x2c504e661750e03aa9252c67e771dc059a521863".toLowerCase(),
+    "0x93f8beabd145a61067ef2fca38c4c9c31d47ab7e".toLowerCase(),
   ],
 });
 

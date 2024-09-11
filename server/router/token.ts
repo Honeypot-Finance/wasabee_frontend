@@ -35,15 +35,19 @@ const walletClient = createWalletClient({
 const ipCache = createCache("ip");
 const requestStatus = {} as Record<string, boolean>;
 const interval = 1000 * 60 * 60 * 24;
-const faucetAmount = 0.5;
+const faucetAmount = 0.1;
 
 export const tokenRouter = router({
-  queryNativeFaucet: publicProcedure.query(async ({ input, ctx }) => {
+  queryNativeFaucet: publicProcedure.input(
+    z.object({
+      address: z.string(),
+    })
+  ).query(async ({ input, ctx }) => {
     const { req } = ctx;
-    const ip = requestIp.getClientIp(req);
+    // const ip = requestIp.getClientIp(req);
     const cachedValue = await ipCache.get<{
       claimableUntil: number;
-    }>(JSON.stringify(ip!));
+    }>(input.address);
     if (!cachedValue) {
       return {
         claimable: true,
@@ -79,15 +83,27 @@ export const tokenRouter = router({
         });
       }
       requestStatus[JSON.stringify(ip!)] = true;
-      const cache = await ipCache.get<{
+      const [ipCacheValue, addressCacheValue] = await Promise.all([ipCache.get<{
         claimableUntil: number;
-      }>(JSON.stringify(ip!));
-      if (cache?.claimableUntil) {
+      }>(JSON.stringify(ip!)), ipCache.get<{
+        claimableUntil: number;
+      }>(address)])
+      if (ipCacheValue?.claimableUntil) {
         requestStatus[JSON.stringify(ip!)] = false;
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: `Your IP can claim after ${new Date(
-            cache.claimableUntil
+            ipCacheValue.claimableUntil
+          ).toLocaleString()}`,
+        });
+      } else if (
+        addressCacheValue?.claimableUntil
+      ) {
+        requestStatus[JSON.stringify(ip!)] = false;
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Your address can claim after ${new Date(
+            addressCacheValue.claimableUntil
           ).toLocaleString()}`,
         });
       } else {
@@ -125,15 +141,26 @@ export const tokenRouter = router({
           });
         }
         if (sendRes.status === "success") {
-          await ipCache.set(
-            JSON.stringify(ip!),
-            {
-              claimableUntil: Date.now() + interval,
-            },
-            {
-              px: interval,
-            }
-          );
+          await Promise.all([
+            ipCache.set(
+              JSON.stringify(ip!),
+              {
+                claimableUntil: Date.now() + interval,
+              },
+              {
+                px: interval,
+              }
+            ),
+            ipCache.set(
+              address,
+              {
+                claimableUntil: Date.now() + interval,
+              },
+              {
+                px: interval,
+              }
+            ),
+          ]);
         } else {
           requestStatus[JSON.stringify(ip!)] = false;
           throw new TRPCError({

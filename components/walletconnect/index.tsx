@@ -95,7 +95,7 @@ export const WalletConnect = () => {
                       </DropdownMenu>
                     </Dropdown>
                   )} */}
-                  <Balance className="hidden md:flex">
+                  <Balance className="hidden md:flex min-w-[126px]">
                     <>
                       <BalanceSvg></BalanceSvg>{" "}
                       <div className=" text-nowrap">

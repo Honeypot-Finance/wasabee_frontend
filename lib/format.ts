@@ -6,10 +6,12 @@ export const amountFormatted = (
     decimals,
     fixed,
     prefix,
+    symbol
   }: {
     decimals?: number;
     fixed?: number;
     prefix?: string;
+    symbol?: string;
   } = {}
 ) => {
   if (!amount) {
@@ -18,15 +20,15 @@ export const amountFormatted = (
   prefix = prefix ?? "";
   const bigAmount = new BigNumber(amount);
   if (bigAmount.eq(0)) {
-    return prefix + "0";
+    return prefix + "0" + (symbol ?? "");
   }
   fixed = fixed ?? 6;
   const r = bigAmount.div(new BigNumber(10).pow(decimals ?? 18));
   const minValue = new BigNumber(1).div(new BigNumber(10).pow(fixed));
   if (r.isLessThan(minValue)) {
-    return prefix + `<${minValue.toFixed()}`;
+    return prefix + `<${minValue.toFixed()}${symbol ?? ""}`;
   }
-  return prefix + new BigNumber(new BigNumber(r.toFixed(fixed, 1)).toFixed()).toFormat();
+  return prefix + new BigNumber(new BigNumber(r.toFixed(fixed, 1)).toFixed()).toFormat() + (symbol ?? "");
 };
 
 // truncate middle of string

@@ -98,8 +98,8 @@ export const LaunchCard = observer(
             className="object-cover w-full h-full"
           ></Image>
         </div>
-        <h4 className="text-white text-center text-[1rem] font-bold flex items-center h-[1.5em]">
-          <div className=" relative">
+        <h4 className="text-white text-center text-[1rem] font-bold flex items-start  h-[1.5em] overflow-hidden">
+          <div className=" relative ">
             {pair?.launchedToken?.name} ({pair?.launchedToken?.symbol})
           </div>{" "}
         </h4>{" "}
@@ -169,19 +169,34 @@ export const LaunchCard = observer(
                 {pair?.raiseToken?.displayName}
               </span>
             </div>
-          </div>
+          </div>{" "}
           <div className="flex flex-col items-center gap-1">
+            <h6 className="opacity-50 text-xs">Your Deposit</h6>
+            <div className="flex items-center gap-2 text-sm">
+              {/* <TotalRaisedSvg /> */}
+              <span className="font-bold">
+                {pair?.userDepositedRaisedToken
+                  ? (
+                      pair.userDepositedRaisedToken.toNumber() /
+                      Math.pow(10, pair.raiseToken?.decimals ?? 18)
+                    ).toFixed(3)
+                  : "-"}
+                &nbsp;
+                {pair?.raiseToken?.displayName}
+              </span>
+            </div>
+          </div>
+          {/* <div className="flex flex-col items-center gap-1">
             <h6 className="opacity-50 text-xs">Token Price</h6>
             <div className="flex items-center gap-2 text-sm">
-              {/* <TokenPriceSvg /> */}
               <span className="font-bold">
                 <AmountFormat amount={pair?.price?.toFixed()}></AmountFormat>{" "}
                 {pair?.raiseToken?.displayName}
               </span>
             </div>
-          </div>
+          </div> */}
         </div>
-        <div className="w-full mt-[16px] flex gap-4 flex-col lg:flex-row justify-center items-center *:w-full">
+        <div className="w-full mt-[16px] flex gap-4 flex-col lg:flex-row justify-center items-center flex-wrap *:basis-1 *:grow-[1]">
           {pair?.canClaimLP && (
             <div>
               <Button
@@ -215,19 +230,30 @@ export const LaunchCard = observer(
           )}
           <Link
             href={`/launch-detail/${pair?.address}`}
-            className="text-black font-bold w-full "
+            className="text-black font-bold  "
           >
             <Button className="w-full">View Token</Button>
           </Link>
           {pair?.ftoState === 0 && (
-            <Link
-              href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
-              className="text-black font-bold w-full "
-            >
-              <Button className="w-full">
-                <p>Swap Token</p>
-              </Button>{" "}
-            </Link>
+            <>
+              <Link
+                href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
+                className="text-black font-bold  "
+              >
+                <Button className="w-full">
+                  <p>Buy Token</p>
+                </Button>{" "}
+              </Link>
+
+              <Link
+                href={`/pool?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
+                className="text-black font-bold  "
+              >
+                <Button className="w-full">
+                  <p>Add LP</p>
+                </Button>{" "}
+              </Link>
+            </>
           )}
           {action}
         </div>

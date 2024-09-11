@@ -265,7 +265,7 @@ const SuccessAction = observer(
           className="text-black font-bold w-full"
         >
           <Button className="w-full">
-            <p>Swap Token</p>
+            <p>BUY Token</p>
             <p>
               <Copy
                 onClick={(e) => {
@@ -456,8 +456,7 @@ const FtoView = observer(() => {
     if (
       !state.pair.value ||
       !state.pair.value.isInit ||
-      !state.pair.value.isProvider ||
-      router.query.edit == "true"
+      !state.pair.value.isProvider
     )
       return;
 
@@ -495,7 +494,7 @@ const FtoView = observer(() => {
             Click{" "}
             <span
               onClick={() => {
-                router.push(`/launch-detail/${pairAddress}?edit=true`);
+                onOpen();
                 toast.dismiss();
               }}
               className="text-blue-500 cursor-pointer"
@@ -509,6 +508,7 @@ const FtoView = observer(() => {
           autoClose: false,
         }
       );
+      return () => toast.dismiss();
     }
   }, [
     pairAddress,
@@ -516,8 +516,6 @@ const FtoView = observer(() => {
     state.pair.value?.isProvider,
     state.pair.value,
     onOpen,
-    router.query.edit,
-    router,
   ]);
 
   useEffect(() => {
@@ -543,12 +541,12 @@ const FtoView = observer(() => {
     );
   }, [state.pair.value]);
 
-  useEffect(() => {
-    if (!state.pair.value) return;
-    if (router.query.edit == "true" && state.pair.value?.isProvider) {
-      onOpen();
-    }
-  }, [onOpen, router.query, state.pair.value, state.pair.value?.isProvider]);
+  // useEffect(() => {
+  //   if (!state.pair.value) return;
+  //   if (router.query.edit == "true" && state.pair.value?.isProvider) {
+  //     onOpen();
+  //   }
+  // }, [onOpen, router.query, state.pair.value, state.pair.value?.isProvider]);
 
   function refreshVotes() {
     trpcClient.projects.getProjectVotes
@@ -867,7 +865,9 @@ const FtoView = observer(() => {
       <div className="flex justify-center mt-[24px] ">
         <div className="w-[100vw] lg:w-full lg:min-w-[1000px] lg:max-w-[1000px]">
           {state.pair.value && (
-            <DiscussionArea pair={state.pair.value}></DiscussionArea>
+            <DiscussionArea
+              pairDatabaseId={state.pair.value.databaseId ?? -1}
+            ></DiscussionArea>
           )}
         </div>
       </div>

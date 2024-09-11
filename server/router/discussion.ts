@@ -1,9 +1,12 @@
-import { authProcedure, publicProcedure, router } from "../trpc";
+import { authProcedure, publicProcedure, rateLimitMiddleware, router } from "../trpc";
 import z from "zod";
 import { discussionService } from "../service/discussion";
 
 export const discussionRouter = router({
   createComment: publicProcedure
+  // .use(rateLimitMiddleware({
+  //   limit: 10,
+  // }))
     .input(
       z.object({
         project_id: z.number(),

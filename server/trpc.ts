@@ -7,6 +7,10 @@ import type {
 import { helper } from "@/lib/helper";
 import { SiweMessage } from "siwe";
 import { userService } from "./service/user";
+import requestIp from 'request-ip';
+import { createCache } from "@/lib/kv";
+
+const ipCache = createCache("ip-limit");
 
 export const getUser = async (req: NextApiRequest) => {
   if (req.headers.message && req.headers.signature) {
@@ -34,11 +38,12 @@ export const getUser = async (req: NextApiRequest) => {
   }
 };
 
-export const createContext = async ({ req }: CreateNextContextOptions) => {
+export const createContext = async ({ req, res }: CreateNextContextOptions) => {
   const user = await getUser(req);
   return {
     user,
-    req
+    req,
+    res
   };
 };
 // You can use any variable name you like.
@@ -51,6 +56,7 @@ export const t = initTRPC.context<typeof createContext>().meta<{
 export const router = t.router;
 export const publicProcedure = t.procedure;
 
+
 export const authProcedure = publicProcedure.use(async ({ ctx, next }) => {
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -59,3 +65,31 @@ export const authProcedure = publicProcedure.use(async ({ ctx, next }) => {
     ctx,
   });
 });
+
+export const rateLimitMiddleware = ({limit, duration}: {limit?: number; duration?: number} = {}) => async ({ ctx, next }: any) => {
+  const { req, res } = ctx;
+  const ip = JSON.stringify(requestIp.getClientIp(req));
+  limit =  limit || 60
+  duration = duration || 1000 * 60
+  const cache =  await ipCache.get<{
+    usage: number;
+    expires: number;
+  }>(ip)
+  const currentUsage = (cache?.usage || 0) + 1
+  const isRateLimited = currentUsage > limit
+  res.setHeader("X-RateLimit-Limit", limit)
+  res.setHeader("X-RateLimit-Remaining", isRateLimited ? 0 : limit - currentUsage)
+  console.log("currentUsage", currentUsage, limit)
+  if (currentUsage > limit) {
+    throw new TRPCError({ code: "BAD_REQUEST", message: "Rate limit exceeded" });
+  } else {
+    const expires = cache?.expires ? cache.expires : Date.now() + duration
+    await ipCache.set(ip, {
+      usage: currentUsage,
+      expires
+    }, { px:  expires})
+  }
+  return next({
+    ctx,
+  });
+}

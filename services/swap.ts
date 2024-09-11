@@ -358,6 +358,12 @@ class Swap {
         await this.toToken.withdraw.callV2([BigInt(fromAmountDecimals)]);
       }
     } else {
+      await Promise.all([
+        this.fromToken.approveIfNoAllowance({
+          amount: fromAmountDecimals,
+          spender: this.routerV2Contract.address,
+        }),
+      ]);
       const path = this.routerToken
         ? (this.routerToken.map((t) => t.address) as `0x${string}`[])
         : ([this.fromToken.address, this.toToken.address] as `0x${string}`[]);
@@ -468,29 +474,19 @@ class Swap {
       return new BigNumber(0);
     }
 
-    let finalAmountOut = startingAmount;
+    let finalAmountOut =
+      await wallet.contracts.routerV2.contract.read.getAmountsOut([
+        BigInt(
+          new BigNumber(startingAmount)
+            .multipliedBy(new BigNumber(10).pow(this.fromToken!.decimals))
+            .toFixed(0)
+        ),
+        pathAddress as `0x${string}`[],
+      ]);
 
-    for (let i = 0; i < pathAddress.length - 1; i++) {
-      const pair = liquidity.getMemoryPair(
-        pathAddress[i].toLowerCase(),
-        pathAddress[i + 1].toLowerCase()
-      );
-
-      if (!pair) {
-        return new BigNumber(0);
-      }
-
-      await pair.init();
-
-      const [toAmount] = await pair.getAmountOut.call(
-        finalAmountOut.toFixed(),
-        pair.token0.address === pathAddress[i] ? pair.token0 : pair.token1
-      );
-
-      finalAmountOut = toAmount ? (toAmount as BigNumber) : new BigNumber(0);
-    }
-
-    return finalAmountOut;
+    return new BigNumber(
+      finalAmountOut[finalAmountOut.length - 1].toString()
+    ).div(new BigNumber(10).pow(this.toToken!.decimals));
   };
 
   getRouterPathsByValidatedToken = (): string[][] | undefined => {

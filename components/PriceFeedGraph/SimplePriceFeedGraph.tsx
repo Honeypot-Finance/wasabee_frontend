@@ -18,6 +18,8 @@ import CardContianer from "../CardContianer/CardContianer";
 import { BiDownArrow, BiDownArrowAlt, BiDownvote } from "react-icons/bi";
 import { IoArrowDown, IoCaretDown, IoCaretUp } from "react-icons/io5";
 import HoneyStickSvg from "../svg/HoneyStick";
+import Link from "next/link";
+import Image from "next/image";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   loading: () => <p>Loading...</p>,
@@ -269,6 +271,22 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
           )}
         </div>
       </CardContianer>
+      <div className="flex justify-end">
+        <Link
+          href={"https://www.codex.io/"}
+          target="_blank"
+          className="flex p-2 gap-2 items-center"
+        >
+          <div>Price feed powered by </div>{" "}
+          <Image
+            className="h-4"
+            src="/images/partners/codex_white.png"
+            alt=""
+            width={100}
+            height={20}
+          />
+        </Link>
+      </div>
     </div>
   );
 });

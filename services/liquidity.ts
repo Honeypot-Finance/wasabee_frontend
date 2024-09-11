@@ -305,7 +305,7 @@ class Liquidity {
       return;
     }
     if (this.fromAmount) {
-      const [toAmount] = await this.currentPair.value.getAmountOut.call(
+      const [toAmount] = await this.currentPair.value.getLiquidityAmountOut.call(
         this.fromAmount,
         this.fromToken as Token
       );
@@ -321,7 +321,7 @@ class Liquidity {
       return;
     }
     if (this.toAmount) {
-      const [fromAmount] = await this.currentPair.value.getAmountOut.call(
+      const [fromAmount] = await this.currentPair.value.getLiquidityAmountOut.call(
         this.toAmount,
         this.toToken as Token
       );
@@ -389,10 +389,8 @@ class Liquidity {
     const token1AmountWithDec = new BigNumber(this.toAmount)
       .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
       .toFixed(0);
-    // const token1MinAmountWithDec = new BigNumber(token1AmountWithDec).multipliedBy(1 - this.slippage / 100).toFixed(0);
-    const token1MinAmountWithDec = 0;
-    // const token0MinAmountWithDec = new BigNumber(token0AmountWithDec).multipliedBy(1 - this.slippage / 100).toFixed(0);
-    const token0MinAmountWithDec = 0;
+    const token1MinAmountWithDec = new BigNumber(token1AmountWithDec).multipliedBy(1 - this.slippage / 100).toFixed(0);
+    const token0MinAmountWithDec = new BigNumber(token0AmountWithDec).multipliedBy(1 - this.slippage / 100).toFixed(0);
     const deadline = dayjs().unix() + 60 * (this.deadline || 20);
     console.log("liqidity agrs", [
       this.fromToken.address as `0x${string}`,
@@ -455,8 +453,8 @@ class Liquidity {
         this.toToken.address as `0x${string}`,
         BigInt(token0AmountWithDec),
         BigInt(token1AmountWithDec),
-        BigInt(0),
-        BigInt(0),
+        BigInt(token0MinAmountWithDec),
+        BigInt(token1MinAmountWithDec),
         wallet.account as `0x${string}`,
         BigInt(deadline),
       ]);

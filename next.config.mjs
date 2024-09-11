@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+
+const isDev = process.env.NODE_ENV === "development";
 const nextConfig = {
   reactStrictMode: false,
   images: {
@@ -31,7 +33,13 @@ const nextConfig = {
     ],
   },
   async redirects() {
-    return [
+    return isDev ? [
+      {
+        source: '/',
+        destination: '/swap',
+        permanent: false
+      }
+    ] : [
       {
         source: '/',
         destination: 'https://honeypotfinance.xyz/',

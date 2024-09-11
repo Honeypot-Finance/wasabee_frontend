@@ -20,7 +20,6 @@ export class PairContract implements BaseContract {
   abi = IUniswapV2Pair.abi;
   token: Token = new Token({});
   deadline: number = 20;
-
   reserves: {
     reserve0: BigNumber;
     reserve1: BigNumber;
@@ -178,6 +177,35 @@ export class PairContract implements BaseContract {
     }
   );
 
+  getLiquidityAmountOut = new AsyncState(
+    async (fromAmount: string, fromToken: Token) => {
+      if (this.isNativeWrapPair) {
+        return new BigNumber(1).multipliedBy(fromAmount);
+      }
+      await this.getReserves();
+      if (!this.reserves) {
+        return new BigNumber(0);
+      }
+      const reserve0 = this.reserves.reserve0;
+      const reserve1 = this.reserves.reserve1;
+
+      const reserveIn =
+        fromToken.address.toLowerCase() === this.token0.address.toLowerCase()
+          ? reserve0
+          : reserve1;
+      const reserveOut =
+        fromToken.address.toLowerCase() === this.token0.address.toLowerCase()
+          ? reserve1
+          : reserve0;
+      const toToken =
+        fromToken.address.toLowerCase() === this.token0.address.toLowerCase()
+          ? this.token1
+          : this.token0;
+      const amountOut = reserveOut.div(reserveIn).multipliedBy(fromAmount);
+      return amountOut;
+    }
+  );
+
   async init(force = false) {
     if (this.isNativeWrapPair) {
       this.isInit = true;
@@ -202,7 +230,7 @@ export class PairContract implements BaseContract {
               loadTotalSupply: true,
             });
           })(),
-          this.getReserves(),
+          await this.getReserves(),
         ]);
       } catch (error) {
         throw error;

@@ -7,6 +7,7 @@ import { LRUCache } from "lru-cache";
 import { cache } from "../lib/cache";
 import { debounce, max } from "lodash";
 import { PageRequest, PairFilter } from "./indexer/indexerTypes";
+import { visualEffects } from "./visualeffects";
 
 export type PageInfo = {
   hasNextPage: boolean;
@@ -163,6 +164,7 @@ export class ContractWrite<T extends (...args: any) => any> {
         switch (transaction.status) {
           case "success":
             toast.success(this.successMsgAgg);
+            visualEffects.startConfetti();
             break;
           case "reverted":
             toast.error(this.failMsgAgg);
