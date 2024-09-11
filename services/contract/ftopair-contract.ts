@@ -282,7 +282,7 @@ export class FtoPairContract implements BaseContract {
       this.socials.push({
         name: "telegram",
         link: res.telegram,
-        icon: "/images/telegram.png",
+        icon: "/images/telegram.svg",
       });
     }
     if (res.twitter) {
@@ -290,7 +290,7 @@ export class FtoPairContract implements BaseContract {
       this.socials.push({
         name: "twitter",
         link: res.twitter,
-        icon: "/images/twitter.png",
+        icon: "/images/twitter.svg",
       });
     }
     if (res.website) {
@@ -298,7 +298,7 @@ export class FtoPairContract implements BaseContract {
       this.socials.push({
         name: "website",
         link: res.website,
-        icon: "/images/website.png",
+        icon: "/images/website.svg",
       });
     }
     if (res.description) {

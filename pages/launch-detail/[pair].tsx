@@ -522,9 +522,13 @@ const FtoView = observer(() => {
     if (!wallet.isInit || !pairAddress) {
       return;
     }
-    state.pair.call({
-      pairAddress: pairAddress as string,
-    });
+    state.pair
+      .call({
+        pairAddress: pairAddress as string,
+      })
+      .then(() => {
+        console.log("social: ", state.pair.value?.socials);
+      });
 
     refreshVotes();
   }, [wallet.isInit, pairAddress]);
@@ -1322,19 +1326,15 @@ const LaunchPage: NextLayoutPage = observer(() => {
     if (!pairAddress || !wallet.isInit) {
       return;
     }
-    console.log(pairAddress);
     trpcClient.projects.getProjectInfo
       .query({
         pair: pairAddress as string,
         chain_id: wallet.currentChainId,
       })
       .then((data) => {
-        console.log(data);
         setProjectInfo(data);
       });
   }, [pairAddress, wallet.isInit]);
-
-  console.log(projectInfo);
 
   return (
     <div>
