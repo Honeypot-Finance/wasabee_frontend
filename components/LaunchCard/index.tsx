@@ -159,11 +159,9 @@ export const LaunchCard = observer(
             <div className="flex items-center gap-2 text-sm">
               {/* <TotalRaisedSvg /> */}
               <span className="font-bold">
-                {
-                  //@ts-ignore
+                {pair instanceof FtoPairContract &&
                 pair?.userDepositedRaisedToken
                   ? (
-                            //@ts-ignore
                       pair.userDepositedRaisedToken.toNumber() /
                       Math.pow(10, pair.raiseToken?.decimals ?? 18)
                     ).toFixed(3)

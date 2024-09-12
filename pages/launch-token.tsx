@@ -273,7 +273,11 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                   <Copy className="ml-[8px]" value={state.pairAddress}></Copy>
                 </div>
               )) || (
-                <Button type="submit" isLoading={launchpad.createLaunchProject.loading} className="text-black font-bold">
+                <Button
+                  type="submit"
+                  isLoading={launchpad.createLaunchProject.loading}
+                  className="text-black font-bold"
+                >
                   Launch Token
                 </Button>
               )}
@@ -447,7 +451,11 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                   <Copy className="ml-[8px]" value={state.pairAddress}></Copy>
                 </div>
               )) || (
-                <Button type="submit" isLoading={launchpad.createLaunchProject.loading} className="text-black font-bold">
+                <Button
+                  type="submit"
+                  isLoading={launchpad.createLaunchProject.loading}
+                  className="text-black font-bold"
+                >
                   Launch Token
                 </Button>
               )}
@@ -459,11 +467,11 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
   );
 });
 
-export type LaunchType = "fto" | "meme"
+export type LaunchType = "fto" | "meme";
 
 const LaunchTokenPage: NextLayoutPage = observer(() => {
-  const router = useRouter()
-  const { launchType } = router.query || {}
+  const router = useRouter();
+  const { launchType } = router.query || {};
   const [selectedLaunch, setSelectedLaunch] = useState<LaunchType>("fto");
   const launchs = [
     {
@@ -477,9 +485,9 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
   ];
   useEffect(() => {
     if (launchType) {
-      setSelectedLaunch(launchType as LaunchType)
+      setSelectedLaunch(launchType as LaunchType);
     }
-  }, [launchType])
+  }, [launchType]);
 
   return (
     <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto mb-[30vh]">

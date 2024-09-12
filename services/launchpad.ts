@@ -489,76 +489,78 @@ class LaunchPad {
     };
   });
 
-  createLaunchProject = async ({
-    launchType,
-    provider,
-    raisedToken,
-    tokenName,
-    tokenSymbol,
-    tokenAmount,
-    poolHandler,
-    raisingCycle,
-  }: {
-    launchType: "fto" | "meme";
-    provider: string;
-    raisedToken: string;
-    tokenName: string;
-    tokenSymbol: string;
-    tokenAmount: number;
-    poolHandler: string;
-    raisingCycle: number;
-  }) => {
-    const targetLaunchContractFunc = async () => {
-      if (launchType === "fto") {
-        return this.ftofactoryContract.createFTO.call([
-          provider as `0x${string}`,
-          raisedToken as `0x${string}`,
-          tokenName,
-          tokenSymbol,
-          BigInt(new BigNumber(tokenAmount).multipliedBy(1e18).toFixed()),
-          poolHandler as `0x${string}`,
-          BigInt(raisingCycle),
-        ]);
-      } else {
-        return this.memeFactoryContract.createPair.call([
-          {
-            raisedToken: raisedToken as `0x${string}`,
-            name: tokenName,
-            symbol: tokenSymbol,
-            swapHandler: poolHandler as `0x${string}`,
-            launchCycle: BigInt(86400 / 24 / 12),
-          },
-        ]);
-      }
-    };
+  createLaunchProject = new AsyncState<({}: any) => Promise<string>>(
+    async ({
+      launchType,
+      provider,
+      raisedToken,
+      tokenName,
+      tokenSymbol,
+      tokenAmount,
+      poolHandler,
+      raisingCycle,
+    }: {
+      launchType: "fto" | "meme";
+      provider: string;
+      raisedToken: string;
+      tokenName: string;
+      tokenSymbol: string;
+      tokenAmount: number;
+      poolHandler: string;
+      raisingCycle: number;
+    }): Promise<string> => {
+      const targetLaunchContractFunc = async () => {
+        if (launchType === "fto") {
+          return this.ftofactoryContract.createFTO.call([
+            provider as `0x${string}`,
+            raisedToken as `0x${string}`,
+            tokenName,
+            tokenSymbol,
+            BigInt(new BigNumber(tokenAmount).multipliedBy(1e18).toFixed()),
+            poolHandler as `0x${string}`,
+            BigInt(raisingCycle),
+          ]);
+        } else {
+          return this.memeFactoryContract.createPair.call([
+            {
+              raisedToken: raisedToken as `0x${string}`,
+              name: tokenName,
+              symbol: tokenSymbol,
+              swapHandler: poolHandler as `0x${string}`,
+              launchCycle: BigInt(86400 / 24 / 12),
+            },
+          ]);
+        }
+      };
 
-    const res = await targetLaunchContractFunc();
+      const res = await targetLaunchContractFunc();
 
-    const logs = parseEventLogs({
-      logs: res.logs,
-      abi: ERC20ABI,
-    });
+      const logs = parseEventLogs({
+        logs: res.logs,
+        abi: ERC20ABI,
+      });
 
-    const getPairAddress = () => {
-      if (launchType === "fto") {
-        return res.logs[res.logs.length - 1]?.address as string;
-      } else {
-        return (logs[0].args as any).to;
-      }
-    };
+      const getPairAddress = () => {
+        if (launchType === "fto") {
+          return res.logs[res.logs.length - 1]?.address as string;
+        } else {
+          return (logs[0].args as any).to;
+        }
+      };
 
-    const pairAddress = getPairAddress();
+      const pairAddress = getPairAddress();
 
-    await trpcClient.projects.createProject.mutate({
-      pair: pairAddress,
-      chain_id: wallet.currentChainId,
-      provider: provider,
-      project_type: launchType,
-      projectName: tokenName,
-    });
+      await trpcClient.projects.createProject.mutate({
+        pair: pairAddress,
+        chain_id: wallet.currentChainId,
+        provider: provider,
+        project_type: launchType,
+        projectName: tokenName,
+      });
 
-    return pairAddress;
-  })
+      return pairAddress as string;
+    }
+  );
 
   updateFtoProject = new AsyncState(
     async (data: {
