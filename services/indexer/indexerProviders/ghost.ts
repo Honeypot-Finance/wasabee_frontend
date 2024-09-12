@@ -19,9 +19,10 @@ import {
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
+import dayjs from "dayjs";
 
-const memeGraphHandle = "4b7ad33b-9ed9-4e69-9793-35905ab4f93e/ghostgraph";
-const ftoGraphHandle = "26a76fd3-64fc-44d2-aad5-75bfa32b5929/ghostgraph";
+const memeGraphHandle = "fadb27cf-2d02-46e6-b381-7afd8e14c448/ghostgraph";
+const ftoGraphHandle = "e68123d7-3006-46a7-aaf1-e13059aae6c3/ghostgraph";
 const pairGraphHandle = "ca609e38-a070-4806-b4c9-08e96fee8118/ghostgraph";
 
 export class GhostIndexer {
@@ -128,7 +129,6 @@ export class GhostIndexer {
     pageRequest?: PageRequest,
     projectType?: "fto" | "meme"
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
-    console.log(filter);
     const statusNum = statusTextToNumber(filter?.status ?? "all");
 
     const dirCondition = pageRequest?.cursor
@@ -224,8 +224,6 @@ export class GhostIndexer {
           }
         }
       `;
-
-    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: projectType === "meme" ? memeGraphHandle : ftoGraphHandle,
@@ -469,6 +467,8 @@ export class GhostIndexer {
                         where:{
                           depositer:"${walletAddress.toLowerCase()}"
                         }
+                        orderBy:"createdAt"
+                        orderDirection: "desc"
                         limit: ${limit}
                         ${dirCondition}
                       ){
@@ -476,6 +476,7 @@ export class GhostIndexer {
                           id
                           depositer
                           pairId
+                          createdAt
                           pair {
                             id
                             token0Id
@@ -513,13 +514,9 @@ export class GhostIndexer {
                       }
                     }`;
 
-    console.log(query);
-
     const res = await this.callIndexerApi(query, {
       apiHandle: type === "meme" ? memeGraphHandle : ftoGraphHandle,
     });
-
-    console.log(res);
 
     if (res.status === "error") {
       return res;
@@ -717,7 +714,9 @@ export class GhostIndexer {
   async getTrendingMEMEPairs(): Promise<ApiResponseType<TrendingMEMEs>> {
     const query = `{
         pairs(
-          where: {status: "3"}
+          where:{
+            endTime_gt:"${dayjs().unix()}"
+          }
           limit: 5
           orderBy: "depositedRaisedToken"
           orderDirection: "desc"
@@ -743,6 +742,8 @@ export class GhostIndexer {
         }
       }
   `;
+
+    console.log(query);
     const res = await this.callIndexerApi(query, {
       apiHandle: memeGraphHandle,
     });

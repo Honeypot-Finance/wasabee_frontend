@@ -44,7 +44,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     launchpad.setCurrentLaunchpadType("meme");
     launchpad.showNotValidatedPairs = true;
     launchpad.memePageInfo.reloadPage();
-    launchpad.memeParticipatedPairs.reloadPage();
+    launchpad.participatedPairs.reloadPage();
 
     //loading most success projects
     launchpad.trendingMEMEs().then((data) => {
@@ -291,7 +291,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               } else if (key === "my") {
                 launchpad.myPairs.call();
               } else if (key === "participated-launch") {
-                launchpad.memeParticipatedPairs.reloadPage();
+                launchpad.participatedPairs.reloadPage();
               }
             }}
           >
@@ -341,11 +341,11 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 animate="visible"
                 className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3"
               >
-                {!launchpad.memeParticipatedPairs.isInit ? (
+                {!launchpad.participatedPairs.isInit ? (
                   <LoadingDisplay />
-                ) : launchpad.memeParticipatedPairs.pageItems.value.length ??
+                ) : launchpad.participatedPairs.pageItems.value.length ??
                   0 > 0 ? (
-                  launchpad.memeParticipatedPairs.pageItems.value?.map(
+                  launchpad.participatedPairs.pageItems.value?.map(
                     (project) => (
                       <LaunchCard
                         key={project.address}
@@ -364,6 +364,20 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                   </div>
                 )}
               </motion.div>
+              <div className="flex justify-around my-5">
+                {launchpad.participatedPairs.pageInfo.hasNextPage && (
+                  <Button
+                    onClick={() => {
+                      launchpad.participatedPairs.loadMore();
+                    }}
+                    isDisabled={launchpad.memePageInfo.isLoading}
+                  >
+                    {launchpad.participatedPairs.isLoading
+                      ? "Loading..."
+                      : "Load More"}
+                  </Button>
+                )}
+              </div>
             </Tab>
             <Tab href="/launch" title="To Fto projects->" />
           </Tabs>

@@ -114,10 +114,7 @@ class LaunchPad {
     },
   });
 
-  memeParticipatedPairs = new IndexerPaginationState<
-    PairFilter,
-    MemePairContract
-  >({
+  participatedPairs = new IndexerPaginationState<PairFilter, MemePairContract>({
     filter: {
       search: "",
       status: "all",
@@ -287,12 +284,6 @@ class LaunchPad {
     return projects;
   };
 
-  getMyFtoParticipatedPairs = new AsyncState(async () => {
-    await this.myFtoParticipatedPairs.call();
-
-    return this.myFtoParticipatedPairs.value?.data ?? [];
-  });
-
   LoadMoreFtoPage = async (pageRequest: PageRequest) => {
     const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
       filter: this.ftoPageInfo.filter,
@@ -435,47 +426,6 @@ class LaunchPad {
     }
   };
 
-  myFtoParticipatedPairs = new AsyncState(async () => {
-    let projects;
-    if (this.currentLaunchpadType.value == "fto") {
-      projects = await this.ftofactoryContract.events(
-        wallet.account as Address
-      );
-    } else {
-      projects = await this.memeFactoryContract.events(
-        wallet.account as Address
-      );
-    }
-    console.log(this.currentLaunchpadType);
-    console.log(projects);
-
-    let data = await Promise.all(
-      projects.map(async (pairAddress) => {
-        const pair =
-          this.currentLaunchpadType.value === "fto"
-            ? new FtoPairContract({ address: pairAddress as string })
-            : new MemePairContract({ address: pairAddress as string });
-        if (!pair.isInit) {
-          await pair.init();
-          pair.raiseToken?.init();
-          pair.launchedToken?.init();
-        }
-        return pair;
-      })
-    );
-
-    data.sort((a, b) => {
-      return Number(b.startTime) - Number(a.startTime);
-    });
-
-    this.myFtoParticipatedPairsPagination.setTotal(data.length);
-
-    return {
-      data,
-      total: data.length,
-    };
-  });
-
   myPairs = new AsyncState(async () => {
     const ftoAddresses =
       await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
@@ -484,8 +434,6 @@ class LaunchPad {
         provider: wallet.account,
         projectType: this.currentLaunchpadType.value,
       });
-
-    console.log(ftoAddresses);
 
     if (!ftoAddresses || ftoAddresses.status === "error") {
       return { data: [], total: 0 };
@@ -539,14 +487,6 @@ class LaunchPad {
       data,
       total: 999,
     };
-  });
-
-  ftoPairsPagination = new PaginationState({
-    limit: PAGE_LIMIT,
-  });
-
-  myFtoParticipatedPairsPagination = new PaginationState({
-    limit: PAGE_LIMIT,
   });
 
   createLaunchProject = async ({

@@ -43,6 +43,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
     launchpad.setCurrentLaunchpadType("fto");
     launchpad.showNotValidatedPairs = true;
     launchpad.ftoPageInfo.reloadPage();
+    launchpad.participatedPairs.reloadPage();
 
     //loading most success projects
     launchpad.mostSuccessfulFtos().then((data) => {
@@ -296,7 +297,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
               } else if (key === "my") {
                 launchpad.myPairs.call();
               } else if (key === "participated-launch") {
-                launchpad.getMyFtoParticipatedPairs.call();
+                launchpad.participatedPairs.reloadPage();
               }
             }}
           >
@@ -346,17 +347,19 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 animate="visible"
                 className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3"
               >
-                {launchpad.getMyFtoParticipatedPairs.loading ? (
+                {!launchpad.participatedPairs.isInit ? (
                   <LoadingDisplay />
-                ) : launchpad.getMyFtoParticipatedPairs.value?.length ??
+                ) : launchpad.participatedPairs.pageItems.value?.length ??
                   0 > 0 ? (
-                  launchpad.getMyFtoParticipatedPairs.value?.map((project) => (
-                    <LaunchCard
-                      key={project.address}
-                      pair={project}
-                      action={<></>}
-                    />
-                  ))
+                  launchpad.participatedPairs.pageItems.value?.map(
+                    (project) => (
+                      <LaunchCard
+                        key={project.address}
+                        pair={project}
+                        action={<></>}
+                      />
+                    )
+                  )
                 ) : (
                   <div className="flex flex-col justify-center items-center">
                     <HoneyStickSvg />
@@ -365,7 +368,21 @@ const LaunchPage: NextLayoutPage = observer(() => {
                     </div>
                   </div>
                 )}
-              </motion.div>
+              </motion.div>{" "}
+              <div className="flex justify-around my-5">
+                {launchpad.participatedPairs.pageInfo.hasNextPage && (
+                  <Button
+                    onClick={() => {
+                      launchpad.participatedPairs.loadMore();
+                    }}
+                    isDisabled={launchpad.memePageInfo.isLoading}
+                  >
+                    {launchpad.participatedPairs.isLoading
+                      ? "Loading..."
+                      : "Load More"}
+                  </Button>
+                )}
+              </div>
             </Tab>
             <Tab href="/meme-launchs" title="To MEME projects->" />
           </Tabs>
