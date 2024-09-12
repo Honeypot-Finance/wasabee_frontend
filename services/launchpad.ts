@@ -546,7 +546,7 @@ class LaunchPad {
     limit: PAGE_LIMIT,
   });
 
-  createLaunchProject = async ({
+  createLaunchProject = new AsyncState(async ({
     launchType,
     provider,
     raisedToken,
@@ -615,7 +615,7 @@ class LaunchPad {
     });
 
     return pairAddress;
-  };
+  })
 
   updateFtoProject = new AsyncState(
     async (data: {

@@ -903,8 +903,7 @@ const MemeView = observer(() => {
     if (
       !state.pair.value ||
       !state.pair.value.isInit ||
-      !state.pair.value.isProvider ||
-      router.query.edit == "true"
+      !state.pair.value.isProvider
     )
       return;
 
@@ -942,7 +941,7 @@ const MemeView = observer(() => {
             Click{" "}
             <span
               onClick={() => {
-                router.push(`/launch-detail/${pairAddress}?edit=true`);
+                onOpen()
                 toast.dismiss();
               }}
               className="text-blue-500 cursor-pointer"
@@ -956,6 +955,7 @@ const MemeView = observer(() => {
           autoClose: false,
         }
       );
+      return () => toast.dismiss();
     }
   }, [
     pairAddress,
@@ -990,12 +990,6 @@ const MemeView = observer(() => {
     );
   }, [state.pair.value]);
 
-  useEffect(() => {
-    if (!state.pair.value) return;
-    if (router.query.edit == "true" && state.pair.value?.isProvider) {
-      onOpen();
-    }
-  }, [onOpen, router.query, state.pair.value, state.pair.value?.isProvider]);
 
   function refreshVotes() {
     trpcClient.projects.getProjectVotes

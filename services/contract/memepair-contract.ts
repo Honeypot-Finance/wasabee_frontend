@@ -81,7 +81,7 @@ export class MemePairContract implements BaseContract {
 
   get depositedLaunchedToken() {
     if (!this.launchedToken) {
-      throw new Error("token is not initialized");
+      return undefined
     }
 
     return this.depositedLaunchedTokenWithoutDecimals &&
