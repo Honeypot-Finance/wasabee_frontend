@@ -10,7 +10,7 @@ import { dayjs } from "@/lib/dayjs";
 import { cn } from "@/lib/tailwindcss";
 import { trpcClient } from "@/lib/trpc";
 import { ZodError } from "zod";
-import { statusTextToNumber } from "../launchpad";
+import launchpad, { statusTextToNumber } from "../launchpad";
 
 export class FtoPairContract implements BaseContract {
   databaseId: number | undefined = undefined;
@@ -78,7 +78,9 @@ export class FtoPairContract implements BaseContract {
 
   get depositedLaunchedToken() {
     if (!this.launchedToken) {
+      console.log("token is not initialized");
       return undefined
+      return;
     }
 
     return this.depositedLaunchedTokenWithoutDecimals &&
@@ -136,6 +138,7 @@ export class FtoPairContract implements BaseContract {
     if (!targetTime.isValid()) {
       return "Invalid Date";
     }
+
     const diffDays = targetTime.diff(now, "days");
 
     if (Math.abs(diffDays) >= 1) {
@@ -201,6 +204,7 @@ export class FtoPairContract implements BaseContract {
       this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
     ]);
+
     this.canClaimLP = false;
   });
 
@@ -213,6 +217,7 @@ export class FtoPairContract implements BaseContract {
       this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
     ]);
+
     await this.getFTOState();
   });
 
@@ -225,6 +230,7 @@ export class FtoPairContract implements BaseContract {
       this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
     ]);
+
     await this.getFTOState();
   });
 
@@ -282,7 +288,7 @@ export class FtoPairContract implements BaseContract {
       this.socials.push({
         name: "telegram",
         link: res.telegram,
-        icon: "/images/telegram.png",
+        icon: "/images/telegram.svg",
       });
     }
     if (res.twitter) {
@@ -290,7 +296,7 @@ export class FtoPairContract implements BaseContract {
       this.socials.push({
         name: "twitter",
         link: res.twitter,
-        icon: "/images/twitter.png",
+        icon: "/images/twitter.svg",
       });
     }
     if (res.website) {
@@ -298,7 +304,7 @@ export class FtoPairContract implements BaseContract {
       this.socials.push({
         name: "website",
         link: res.website,
-        icon: "/images/website.png",
+        icon: "/images/website.svg",
       });
     }
     if (res.description) {
@@ -463,7 +469,13 @@ export class FtoPairContract implements BaseContract {
     }
   }
   async getLaunchedTokenProvider() {
-    const res = await this.contract.read.launchedTokenProvider();
-    this.launchedTokenProvider = res;
+    if (this.provider) {
+      this.launchedTokenProvider = this.provider;
+      return;
+    } else {
+      const res = await this.contract.read.launchedTokenProvider();
+      this.launchedTokenProvider = res;
+      this.provider = res;
+    }
   }
 }

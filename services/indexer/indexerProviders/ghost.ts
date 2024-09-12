@@ -19,9 +19,10 @@ import {
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
+import dayjs from "dayjs";
 
-const memeGraphHandle = "ad48a06c-2772-486e-8f4d-f75edb08835c/ghostgraph";
-const ftoGraphHandle = "d27732e1-591f-4a84-bb99-209fe4022b6e/ghostgraph";
+const memeGraphHandle = "fadb27cf-2d02-46e6-b381-7afd8e14c448/ghostgraph";
+const ftoGraphHandle = "e68123d7-3006-46a7-aaf1-e13059aae6c3/ghostgraph";
 const pairGraphHandle = "ca609e38-a070-4806-b4c9-08e96fee8118/ghostgraph";
 
 export class GhostIndexer {
@@ -156,52 +157,34 @@ export class GhostIndexer {
       ? `launchedTokenProvider: "${provider}",`
       : "";
 
-    const filteredTokens = filter.search
-      ? await this.getFilteredFtoTokens(filter)
-      : {
-          status: "success",
-          data: { items: [] },
-        };
+    const searchStringCondition = filter?.search
+      ? `searchString_contains:"${filter.search.toLowerCase()}",`
+      : "";
 
     const query = `
         {
           pairs(
             where: {
+                    ${providerCondition}
+                    ${statusCondition}
               OR:[
+                {
+                  ${searchStringCondition}
+                }
                 ${
                   (statusCondition || searchIdCondition || !filter.search) &&
                   (!filter.search || filter.search.startsWith("0x"))
                     ? `{
-                    ${statusCondition}
                     ${searchIdCondition}
-                    ${providerCondition}
                   }
                   {
-                    ${statusCondition}
                     ${searchToken0IdCondition}
-                    ${providerCondition}
                   }
                   {
-                    ${statusCondition}
                     ${searchToken1IdCondition}
-                    ${providerCondition}
-                  }`
+                  } 
+                  `
                     : ""
-                }
-                ${
-                  filteredTokens.status === "success" &&
-                  filteredTokens.data!.items.map((token: GhostToken) => {
-                    return `
-                    {token0Id: "${token.id}"
-                    ${statusCondition}
-                    ${searchIdCondition}
-                    ${providerCondition}}
-                    {token1Id: "${token.id}"
-                    ${statusCondition}
-                    ${searchIdCondition}
-                    ${providerCondition}}
-                    `;
-                  })
                 }
               ]
             }
@@ -484,6 +467,8 @@ export class GhostIndexer {
                         where:{
                           depositer:"${walletAddress.toLowerCase()}"
                         }
+                        orderBy:"createdAt"
+                        orderDirection: "desc"
                         limit: ${limit}
                         ${dirCondition}
                       ){
@@ -491,6 +476,7 @@ export class GhostIndexer {
                           id
                           depositer
                           pairId
+                          createdAt
                           pair {
                             id
                             token0Id
@@ -528,13 +514,9 @@ export class GhostIndexer {
                       }
                     }`;
 
-    console.log(query);
-
     const res = await this.callIndexerApi(query, {
       apiHandle: type === "meme" ? memeGraphHandle : ftoGraphHandle,
     });
-
-    console.log(res);
 
     if (res.status === "error") {
       return res;
@@ -732,7 +714,9 @@ export class GhostIndexer {
   async getTrendingMEMEPairs(): Promise<ApiResponseType<TrendingMEMEs>> {
     const query = `{
         pairs(
-          where: {status: "3"}
+          where:{
+            endTime_gt:"${dayjs().unix()}"
+          }
           limit: 5
           orderBy: "depositedRaisedToken"
           orderDirection: "desc"
@@ -758,6 +742,8 @@ export class GhostIndexer {
         }
       }
   `;
+
+    console.log(query);
     const res = await this.callIndexerApi(query, {
       apiHandle: memeGraphHandle,
     });

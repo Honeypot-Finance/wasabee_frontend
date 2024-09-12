@@ -21,6 +21,7 @@ import { useState } from "react";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
 import { popmodal } from "@/services/popmodal";
+import { Tooltip } from "@nextui-org/react";
 
 interface PoolLiquidityCardProps {
   pair: PairContract;
@@ -47,18 +48,26 @@ export const PoolLiquidityCard = observer(
         >
           <div className="flex flex-1 flex-col md:flex-row justify-between align-middle items-center gap-[0.5rem]">
             <div className="flex mr-5">
-              <div className="flex mr-2 items-center">
+              <div className="flex mr-2 items-center w-[3rem]">
                 <TokenLogo token={pair.token0} />
                 <TokenLogo token={pair.token1} />
               </div>
               <span className="w-[10rem]">
-                <Link
-                  href={`https://bartio.beratrail.io/address/${pair.address}`}
-                  target="_blank"
-                  className=" cursor-pointer hover:underline"
-                >
-                  {pair.token0.symbol} / {pair.token1.symbol}
-                </Link>
+                <Tooltip content="View pool on explore">
+                  <Link
+                    href={`https://bartio.beratrail.io/address/${pair.address}`}
+                    target="_blank"
+                    className=" cursor-pointer hover:text-primary "
+                  >
+                    <span className="inline-flex max-w-[4rem] overflow-ellipsis overflow-hidden">
+                      {pair.token0.symbol}
+                    </span>{" "}
+                    /{" "}
+                    <span className="inline-flex max-w-[4rem] overflow-ellipsis overflow-hidden">
+                      {pair.token1.symbol}
+                    </span>
+                  </Link>
+                </Tooltip>
               </span>
             </div>
             <div className="flex-1">

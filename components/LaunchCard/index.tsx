@@ -10,6 +10,10 @@ import {
   OptionsDropdown,
   optionsPresets,
 } from "../OptionsDropdown/OptionsDropdown";
+import { WalletSvg } from "../svg/wallet";
+import { BiWallet } from "react-icons/bi";
+import ShareSocialMedialPopUp from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { itemPopUpVariants } from "@/lib/animation";
 import { MemePairContract } from "@/services/contract/memepair-contract";

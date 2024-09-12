@@ -29,9 +29,12 @@ export const CopyTrigger = observer(
     Partial<HTMLAttributes<any>>) => {
     return (
       <Tooltip
-        color="primary"
         isOpen={state.isTooltipOpen}
         content={state.copied ? copiedContent ?? "Copied" : content ?? "Copy"}
+        classNames={{
+          base: "",
+          content: "bg-[#6B4311]",
+        }}
       >
         <span
           onMouseEnter={() => {

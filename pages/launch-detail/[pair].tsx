@@ -522,9 +522,13 @@ const FtoView = observer(() => {
     if (!wallet.isInit || !pairAddress) {
       return;
     }
-    state.pair.call({
-      pairAddress: pairAddress as string,
-    });
+    state.pair
+      .call({
+        pairAddress: pairAddress as string,
+      })
+      .then(() => {
+        console.log("social: ", state.pair.value?.socials);
+      });
 
     refreshVotes();
   }, [wallet.isInit, pairAddress]);
@@ -1116,7 +1120,7 @@ const MemeView = observer(() => {
                   <ShareSocialMedialPopUp
                     shareUrl={window.location.href}
                     shareText={
-                      "My Meme FTO eats bonding burves for breakfast. Inflate & innovation with Boneypot. Den moon 🌙: " +
+                      "My Meme FTO eats bonding burves for breakfast. Inflate and innovation with Boneypot. Den moon 🌙: " +
                       state.pair?.value?.projectName
                     }
                     text="Share this project"
@@ -1287,8 +1291,9 @@ const MemeView = observer(() => {
       <div className="flex justify-center mt-[24px] ">
         <div className="w-[100vw] lg:w-full lg:min-w-[1000px] lg:max-w-[1000px]">
           {state.pair.value && (
-            //@ts-ignore
-            <DiscussionArea pair={state.pair.value}></DiscussionArea>
+            <DiscussionArea
+              pairDatabaseId={state.pair.value.databaseId ?? -1}
+            ></DiscussionArea>
           )}
         </div>
       </div>
@@ -1315,19 +1320,15 @@ const LaunchPage: NextLayoutPage = observer(() => {
     if (!pairAddress || !wallet.isInit) {
       return;
     }
-    console.log(pairAddress);
     trpcClient.projects.getProjectInfo
       .query({
         pair: pairAddress as string,
         chain_id: wallet.currentChainId,
       })
       .then((data) => {
-        console.log(data);
         setProjectInfo(data);
       });
   }, [pairAddress, wallet.isInit]);
-
-  console.log(projectInfo);
 
   return (
     <div>
