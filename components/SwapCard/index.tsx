@@ -33,6 +33,7 @@ import { FaLongArrowAltRight } from "react-icons/fa";
 import TokenLogo from "../TokenLogo/TokenLogo";
 import { Slippage } from "./Slippage";
 import BigNumber from "bignumber.js";
+import { useInterval } from "@/lib/hooks";
 
 export const SwapCard = observer(() => {
   const isInit = wallet.isInit && liquidity.isInit;
@@ -75,6 +76,10 @@ export const SwapCard = observer(() => {
       );
     }
   }, [inputCurrency, outputCurrency, liquidity.isInit, wallet.isInit]);
+
+  useInterval(() => {
+    swap.onFromAmountChange();
+  }, 3000)
 
   return (
     <SpinnerContainer

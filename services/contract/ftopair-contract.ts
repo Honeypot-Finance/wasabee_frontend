@@ -79,6 +79,7 @@ export class FtoPairContract implements BaseContract {
   get depositedLaunchedToken() {
     if (!this.launchedToken) {
       console.log("token is not initialized");
+      return undefined
       return;
     }
 

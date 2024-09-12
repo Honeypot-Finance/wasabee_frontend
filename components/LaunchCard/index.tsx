@@ -1,17 +1,10 @@
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { observer } from "mobx-react-lite";
-import { Logo } from "../svg/logo";
-import { Copy } from "@/components/copy";
-import { TimelineSvg } from "@/components/svg/Timeline";
-import { TotalRaisedSvg } from "@/components/svg/TotalRaised";
-import { TokenPriceSvg } from "@/components/svg/TokenPrice";
-import { AmountFormat } from "@/components/AmountFormat";
 import { Button } from "@/components/button";
 import Link from "next/link";
 import { HTMLAttributes } from "react";
 import { cn } from "@/lib/tailwindcss";
 import ProjectStatusDisplay from "../atoms/TokenStatusDisplay/TokenStatusDisplay";
-import { WatchAsset } from "../atoms/WatchAsset/WatchAsset";
 import Image from "next/image";
 import {
   OptionsDropdown,
@@ -22,7 +15,7 @@ import { BiWallet } from "react-icons/bi";
 import ShareSocialMedialPopUp from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
-import { itemPopUpVariants, itemSlideVariants } from "@/lib/animation";
+import { itemPopUpVariants } from "@/lib/animation";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import ProgressBar from "../atoms/ProgressBar/ProgressBar";
 
@@ -166,8 +159,14 @@ export const LaunchCard = observer(
             <div className="flex items-center gap-2 text-sm">
               {/* <TotalRaisedSvg /> */}
               <span className="font-bold">
-                {pair?.depositedRaisedToken
-                  ? pair.depositedRaisedToken.toFormat(3)
+                {
+                  //@ts-ignore
+                pair?.userDepositedRaisedToken
+                  ? (
+                            //@ts-ignore
+                      pair.userDepositedRaisedToken.toNumber() /
+                      Math.pow(10, pair.raiseToken?.decimals ?? 18)
+                    ).toFixed(3)
                   : "-"}
                 &nbsp;
                 {pair?.raiseToken?.displayName}

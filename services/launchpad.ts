@@ -558,7 +558,7 @@ class LaunchPad {
     });
 
     return pairAddress;
-  };
+  })
 
   updateFtoProject = new AsyncState(
     async (data: {

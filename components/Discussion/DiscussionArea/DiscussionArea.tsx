@@ -38,7 +38,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
     }[]
   >([]);
   const [state, setState] = useState({
-    loadingComments: true,
+    loadingComments: false,
     commenting: false,
     noMoreToLoad: false,
     loadingMore: false,
@@ -50,6 +50,10 @@ export function DiscussionArea(props: DiscussionAreaProps) {
   }, [props.pairDatabaseId]);
 
   const startFetchComments = async () => {
+    setState({
+      ...state,
+      loadingComments: true,
+    })
     const res = await trpcClient.discussionRouter.getCommentsByProjectId.query({
       project_id: props.pairDatabaseId ?? -1,
       limit: 10,
