@@ -23,7 +23,7 @@ import dayjs from "dayjs";
 
 const memeGraphHandle = "fadb27cf-2d02-46e6-b381-7afd8e14c448/ghostgraph";
 const ftoGraphHandle = "e68123d7-3006-46a7-aaf1-e13059aae6c3/ghostgraph";
-const pairGraphHandle = "ca609e38-a070-4806-b4c9-08e96fee8118/ghostgraph";
+const pairGraphHandle = "3a9fbaf8-1421-44d5-91f3-5dff76ad4879/ghostgraph";
 
 export class GhostIndexer {
   apiKey: string;
@@ -814,9 +814,13 @@ export class GhostIndexer {
 
   }`;
 
+    console.log(query);
+
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
     });
+
+    console.log(res);
     if (res.status === "success") {
       return res.data.pairs0.items[0] || res.data.pairs1.items[0];
     }

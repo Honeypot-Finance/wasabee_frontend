@@ -79,7 +79,7 @@ export class FtoPairContract implements BaseContract {
   get depositedLaunchedToken() {
     if (!this.launchedToken) {
       console.log("token is not initialized");
-      return undefined
+      return undefined;
       return;
     }
 
@@ -438,6 +438,8 @@ export class FtoPairContract implements BaseContract {
     const res = await this.contract.read.raisedTokenDeposit([
       wallet.account as `0x${string}`,
     ]);
+
+    console.log("userDepositedRaisedToken", res.toString());
 
     this.userDepositedRaisedToken = new BigNumber(res.toString());
   }
