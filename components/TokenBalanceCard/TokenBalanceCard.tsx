@@ -1,17 +1,12 @@
 import { Token } from "@/services/contract/token";
 import TokenLogo from "../TokenLogo/TokenLogo";
-import { Copy } from "../copy";
 import { observer } from "mobx-react-lite";
 import CardContianer from "../CardContianer/CardContianer";
 import { useEffect } from "react";
-import { Button } from "@nextui-org/react";
-import { WatchAsset } from "../atoms/WatchAsset/WatchAsset";
-import { BiWallet } from "react-icons/bi";
 import {
   OptionsDropdown,
   optionsPresets,
 } from "../OptionsDropdown/OptionsDropdown";
-import { shareMediaToast } from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { motion } from "framer-motion";
 import { itemSlideVariants } from "@/lib/animation";
 
