@@ -225,43 +225,47 @@ class Swap {
     );
     reaction(
       () => this.fromAmount,
-      debounce(async () => {
-        this.getNeedApprove();
-        if (!this.currentPair.value && !this.routerToken) {
-          return;
-        }
-        this.fromAmount = this.fromAmount.trim();
-
-        if (
-          new BigNumber(this.fromAmount || 0).isGreaterThan(0) &&
-          this.fromToken &&
-          this.toToken
-        ) {
-          if (this.currentPair.value) {
-            const [toAmount] = await this.currentPair.value!.getAmountOut.call(
-              this.fromAmount,
-              this.fromToken as Token
-            );
-
-            this.toAmount = toAmount?.toFixed();
-            this.price = new BigNumber(this.toAmount).div(this.fromAmount);
-          } else if (this.routerToken && this.routerToken.length > 0) {
-            const finalAmountOut = await this.getFinalAmountOut(
-              this.routerToken.map((t) => t.address.toLowerCase())
-            );
-
-            this.toAmount = finalAmountOut.toFixed();
-            this.price = new BigNumber(this.toAmount).div(this.fromAmount);
-          } else {
-            this.price = new BigNumber(0);
-          }
-        } else {
-          this.toAmount = "";
-          this.price = null;
-        }
-      }, 300)
+      () => {
+        this.onFromAmountChange();
+      }
     );
   }
+
+  onFromAmountChange =  debounce(async () => {
+    this.getNeedApprove();
+    if (!this.currentPair.value && !this.routerToken) {
+      return;
+    }
+    this.fromAmount = this.fromAmount.trim();
+
+    if (
+      new BigNumber(this.fromAmount || 0).isGreaterThan(0) &&
+      this.fromToken &&
+      this.toToken
+    ) {
+      if (this.currentPair.value) {
+        const [toAmount] = await this.currentPair.value!.getAmountOut.call(
+          this.fromAmount,
+          this.fromToken as Token
+        );
+
+        this.toAmount = toAmount?.toFixed();
+        this.price = new BigNumber(this.toAmount).div(this.fromAmount);
+      } else if (this.routerToken && this.routerToken.length > 0) {
+        const finalAmountOut = await this.getFinalAmountOut(
+          this.routerToken.map((t) => t.address.toLowerCase())
+        );
+
+        this.toAmount = finalAmountOut.toFixed();
+        this.price = new BigNumber(this.toAmount).div(this.fromAmount);
+      } else {
+        this.price = new BigNumber(0);
+      }
+    } else {
+      this.toAmount = "";
+      this.price = null;
+    }
+  }, 300)
 
   setDeadline(deadline: number) {
     this.deadline = deadline;

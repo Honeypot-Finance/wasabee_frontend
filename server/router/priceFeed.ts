@@ -68,7 +68,7 @@ export const priceFeedRouter = router({
         tokenNumber: z.number().optional(),
         currencyCode: z.enum(["USD", "TOKEN"]).optional(),
       })
-    )
+    ).output(z.any())
     .query(async ({ input }): Promise<ApiResponseType<ChartDataResponse>> => {
       const ttl = () => {
         if (input.resolution === "1D") return "1d";

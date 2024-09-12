@@ -57,7 +57,7 @@ export const pairRouter = router({
         }),
         reserve0: z.string(),
         reserve1: z.string(),
-      })
+      }).optional()
     )
     .query(async ({ input }) => {
       return cacheProvider.getOrSet(
@@ -67,8 +67,7 @@ export const pairRouter = router({
           const res = await indexer.getPairByTokens({
             token0: token0Address,
             token1: token1Address,
-          });
-          //console.log('res', res)
+          })
           return res;
         }
       );
