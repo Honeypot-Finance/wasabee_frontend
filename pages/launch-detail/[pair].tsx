@@ -1126,7 +1126,7 @@ const MemeView = observer(() => {
                   <ShareSocialMedialPopUp
                     shareUrl={window.location.href}
                     shareText={
-                      "My Meme FTO eats bonding burves for breakfast. Inflate & innovation with Boneypot. Den moon 🌙: " +
+                      "My Meme FTO eats bonding burves for breakfast. Inflate and innovation with Boneypot. Den moon 🌙: " +
                       state.pair?.value?.projectName
                     }
                     text="Share this project"
