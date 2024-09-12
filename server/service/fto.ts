@@ -56,8 +56,6 @@ export const ftoService = {
 
     output = await selectFtoProject(data);
 
-    console.log(output);
-
     if (!output || !output[0]) {
       let provider = "";
       let project_type = "fto";
@@ -128,13 +126,10 @@ export const ftoService = {
           project_type = "meme";
         });
 
-        console.log("1", provider);
-
         if (!provider) {
           provider = await memePairContract.tokenDeployer().catch(() => {
             project_type = "";
           });
-          console.log("2", provider);
         }
       }
 
@@ -147,7 +142,7 @@ export const ftoService = {
           provider: provider,
           project_type: project_type,
         };
-        console.log(updateData);
+
         await updateFtoProject(updateData);
 
         output = await selectFtoProject(data);

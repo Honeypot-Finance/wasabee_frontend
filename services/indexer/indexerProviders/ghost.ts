@@ -20,8 +20,8 @@ import {
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 
-const memeGraphHandle = "ad48a06c-2772-486e-8f4d-f75edb08835c/ghostgraph";
-const ftoGraphHandle = "d27732e1-591f-4a84-bb99-209fe4022b6e/ghostgraph";
+const memeGraphHandle = "4b7ad33b-9ed9-4e69-9793-35905ab4f93e/ghostgraph";
+const ftoGraphHandle = "26a76fd3-64fc-44d2-aad5-75bfa32b5929/ghostgraph";
 const pairGraphHandle = "ca609e38-a070-4806-b4c9-08e96fee8118/ghostgraph";
 
 export class GhostIndexer {
@@ -128,6 +128,7 @@ export class GhostIndexer {
     pageRequest?: PageRequest,
     projectType?: "fto" | "meme"
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
+    console.log(filter);
     const statusNum = statusTextToNumber(filter?.status ?? "all");
 
     const dirCondition = pageRequest?.cursor
@@ -156,52 +157,34 @@ export class GhostIndexer {
       ? `launchedTokenProvider: "${provider}",`
       : "";
 
-    const filteredTokens = filter.search
-      ? await this.getFilteredFtoTokens(filter)
-      : {
-          status: "success",
-          data: { items: [] },
-        };
+    const searchStringCondition = filter?.search
+      ? `searchString_contains:"${filter.search.toLowerCase()}",`
+      : "";
 
     const query = `
         {
           pairs(
             where: {
+                    ${providerCondition}
+                    ${statusCondition}
               OR:[
+                {
+                  ${searchStringCondition}
+                }
                 ${
                   (statusCondition || searchIdCondition || !filter.search) &&
                   (!filter.search || filter.search.startsWith("0x"))
                     ? `{
-                    ${statusCondition}
                     ${searchIdCondition}
-                    ${providerCondition}
                   }
                   {
-                    ${statusCondition}
                     ${searchToken0IdCondition}
-                    ${providerCondition}
                   }
                   {
-                    ${statusCondition}
                     ${searchToken1IdCondition}
-                    ${providerCondition}
-                  }`
+                  } 
+                  `
                     : ""
-                }
-                ${
-                  filteredTokens.status === "success" &&
-                  filteredTokens.data!.items.map((token: GhostToken) => {
-                    return `
-                    {token0Id: "${token.id}"
-                    ${statusCondition}
-                    ${searchIdCondition}
-                    ${providerCondition}}
-                    {token1Id: "${token.id}"
-                    ${statusCondition}
-                    ${searchIdCondition}
-                    ${providerCondition}}
-                    `;
-                  })
                 }
               ]
             }
@@ -241,6 +224,8 @@ export class GhostIndexer {
           }
         }
       `;
+
+    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: projectType === "meme" ? memeGraphHandle : ftoGraphHandle,

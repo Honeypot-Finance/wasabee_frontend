@@ -134,14 +134,17 @@ class LaunchPad {
 
   set pairFilterSearch(search: string) {
     this.ftoPageInfo.updateFilter({ search });
+    this.memePageInfo.updateFilter({ search });
   }
 
   set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
     this.ftoPageInfo.updateFilter({ status });
+    this.memePageInfo.updateFilter({ status });
   }
 
   set showNotValidatedPairs(show: boolean) {
     this.ftoPageInfo.updateFilter({ showNotValidatedPairs: show });
+    this.memePageInfo.updateFilter({ showNotValidatedPairs: show });
   }
 
   get memeFactoryContract() {
