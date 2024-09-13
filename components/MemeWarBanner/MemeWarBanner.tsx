@@ -344,13 +344,6 @@ export const MemeWarBanner = observer((props: Props) => {
         id="scoreboard"
         className="relative w-full h-full z-10 flex justify-between"
       >
-        <Image
-          src="/images/memewar/TOP_BANNER_V2.png"
-          alt=""
-          width={2000}
-          height={500}
-          className="absolute w-full h-full object-contain object-top top-0 z-0"
-        />
         {Object.values(state.pairs).map((pair) => {
           return (
             pair.pair.value && (
