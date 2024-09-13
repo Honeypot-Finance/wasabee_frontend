@@ -10,16 +10,268 @@ import {
   OptionsDropdown,
   optionsPresets,
 } from "../OptionsDropdown/OptionsDropdown";
-import { WalletSvg } from "../svg/wallet";
-import { BiWallet } from "react-icons/bi";
-import ShareSocialMedialPopUp from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
-import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { itemPopUpVariants } from "@/lib/animation";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import ProgressBar from "../atoms/ProgressBar/ProgressBar";
+import { AmountFormat } from "../AmountFormat";
 
-const Actions = () => {};
+const TimeLineComponent = observer(
+  ({ pair }: { pair: MemePairContract | FtoPairContract }) => {
+    return (
+      <div className="flex flex-col items-center gap-1">
+        <h6 className="opacity-50 text-xs">Timeline</h6>
+        <div className="flex items-center gap-2 text-sm">
+          {/* <TimelineSvg /> */}
+          <span className="font-bold">{pair?.remainTime}</span>
+        </div>
+      </div>
+    );
+  }
+);
+
+const LaunchProgress = observer(({ pair }: { pair: MemePairContract }) => {
+  return (
+    <>
+      {pair.depositedRaisedToken && pair.raisedTokenMinCap && (
+        <div className="flex flex-col items-center gap-1">
+          <h6 className="opacity-50 text-xs">Progress</h6>
+          <div className="flex items-center gap-2 text-sm w-[80%]">
+            <ProgressBar
+              label={
+                (
+                  (pair.depositedRaisedToken.toNumber() /
+                    (pair.raisedTokenMinCap.toNumber() / Math.pow(10, 18))) *
+                  100
+                ).toFixed(2) + "%"
+              }
+              value={
+                (pair.depositedRaisedToken.toNumber() /
+                  (pair.raisedTokenMinCap.toNumber() / Math.pow(10, 18))) *
+                100
+              }
+            />
+          </div>
+        </div>
+      )}
+    </>
+  );
+});
+
+const TotalLaunched = observer(
+  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+    return (
+      <div className="flex flex-col items-center gap-1">
+        <h6 className="opacity-50 text-xs">Total launched</h6>
+        <div className="flex items-center gap-2 text-sm">
+          {/* <TotalRaisedSvg /> */}
+          <span className="font-bold">
+            {pair?.depositedLaunchedToken
+              ? pair?.depositedLaunchedToken?.toFormat(0)
+              : "-"}
+            &nbsp;
+            {pair?.launchedToken?.displayName}
+          </span>
+        </div>
+      </div>
+    );
+  }
+);
+
+const TotalRaised = observer(
+  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+    return (
+      <div className="flex flex-col items-center gap-1">
+        <h6 className="opacity-50 text-xs">Total raised</h6>
+        <div className="flex items-center gap-2 text-sm">
+          {/* <TotalRaisedSvg /> */}
+          <span className="font-bold">
+            {pair?.depositedRaisedToken
+              ? pair.depositedRaisedToken.toFormat(3)
+              : "-"}
+            &nbsp;
+            {pair?.raiseToken?.displayName}
+          </span>
+        </div>
+      </div>
+    );
+  }
+);
+
+const TokenPrice = observer(
+  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+    return (
+      <div className="flex flex-col items-center gap-1">
+        <h6 className="opacity-50 text-xs">Token Price</h6>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="font-bold">
+            <AmountFormat amount={pair?.price?.toFixed()}></AmountFormat>{" "}
+            {pair?.raiseToken?.displayName}
+          </span>
+        </div>
+      </div>
+    );
+  }
+);
+
+const UserDeposited = observer(({ pair }: { pair: FtoPairContract }) => {
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <h6 className="opacity-50 text-xs">Your Deposit</h6>
+      <div className="flex items-center gap-2 text-sm">
+        {/* <TotalRaisedSvg /> */}
+        <span className="font-bold">
+          {pair?.userDepositedRaisedToken
+            ? (
+                pair.userDepositedRaisedToken.toNumber() /
+                Math.pow(10, pair.raiseToken?.decimals ?? 18)
+              ).toFixed(3)
+            : "-"}
+          &nbsp;
+          {pair?.raiseToken?.displayName}
+        </span>
+      </div>
+    </div>
+  );
+});
+
+const ClaimAction = observer(
+  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+    return (
+      <>
+        {pair.canClaimLP && (
+          <div>
+            <Button
+              className="w-full"
+              onClick={() => {
+                pair.claimLP.call();
+              }}
+              style={{
+                backgroundColor: "green",
+              }}
+            >
+              Claim LP
+            </Button>
+          </div>
+        )}
+      </>
+    );
+  }
+);
+
+const RefundAction = observer(({ pair }: { pair: MemePairContract }) => {
+  return (
+    <>
+      {pair.canRefund && (
+        <div>
+          <Button
+            className="w-full"
+            onClick={() => {
+              pair.refund.call();
+            }}
+            style={{
+              backgroundColor: "green",
+            }}
+          >
+            Refund LP
+          </Button>
+        </div>
+      )}
+    </>
+  );
+});
+
+const ToTokenDetailsPage = observer(
+  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+    return (
+      <Link href={`/launch-detail/${pair?.address}`}>
+        <Button className="w-full">View Token</Button>
+      </Link>
+    );
+  }
+);
+
+const BuyToken = observer(
+  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+    return (
+      <>
+        {pair.ftoState === 0 && (
+          <Link
+            href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
+          >
+            <Button className="w-full">Buy Token</Button>
+          </Link>
+        )}
+      </>
+    );
+  }
+);
+
+const AddLP = observer(
+  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+    return (
+      <>
+        {pair.ftoState === 0 && (
+          <Link
+            href={`/pool?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
+          >
+            <Button className="w-full">Add LP</Button>
+          </Link>
+        )}
+      </>
+    );
+  }
+);
+
+const MemeProjectDetails = observer(({ pair }: { pair: MemePairContract }) => {
+  console.log("pair.ftoState", pair.ftoState);
+  return (
+    <>
+      <TimeLineComponent pair={pair} />
+      {pair.ftoState === 3 && (
+        <>
+          <LaunchProgress pair={pair} />
+          <TotalRaised pair={pair} />
+          <TokenPrice pair={pair} />
+        </>
+      )}
+    </>
+  );
+});
+
+const FtoProjectDetails = observer(({ pair }: { pair: FtoPairContract }) => {
+  return (
+    <>
+      <TimeLineComponent pair={pair} />
+      <TotalLaunched pair={pair} />
+      <TotalRaised pair={pair} />
+      <UserDeposited pair={pair} />
+    </>
+  );
+});
+
+const MemeProjectActions = observer(({ pair }: { pair: MemePairContract }) => {
+  return (
+    <>
+      <ClaimAction pair={pair} />
+      <RefundAction pair={pair} />
+      <ToTokenDetailsPage pair={pair} />
+      <BuyToken pair={pair} />
+      <AddLP pair={pair} />
+    </>
+  );
+});
+
+const FtoProjectActions = ({ pair }: { pair: FtoPairContract }) => {
+  return (
+    <>
+      <ClaimAction pair={pair} />
+      <ToTokenDetailsPage pair={pair} />
+      <BuyToken pair={pair} />
+      <AddLP pair={pair} />
+    </>
+  );
+};
 
 export const LaunchCard = observer(
   ({
@@ -47,201 +299,74 @@ export const LaunchCard = observer(
         )}
         whileInView="visible"
       >
-        <ProjectStatusDisplay pair={pair} />
-        <OptionsDropdown
-          className="absolute left-[0.5rem] top-[0.5rem] "
-          options={[
-            optionsPresets.copy({
-              copyText: pair?.launchedToken?.address ?? "",
-              displayText: "Copy Token address",
-              copysSuccessText: "Token address copied",
-            }),
-            optionsPresets.importTokenToWallet({
-              token: pair?.launchedToken,
-            }),
-            optionsPresets.share({
-              shareUrl: `${window.location.origin}/launch-detail/${pair?.address}`,
-              displayText: "Share this project",
-              shareText:
-                projectType === "meme"
-                  ? "My Meme FTO eats bonding burves for breakfast. Inflate & innovation with Boneypot. Den moon 🌙: " +
-                    pair?.projectName
-                  : "Checkout this Token: " + pair?.projectName,
-            }),
-            optionsPresets.viewOnExplorer({
-              address: pair?.address ?? "",
-            }),
-          ]}
-        />
-        <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden object-cover">
-          <Image
-            src={!!pair?.logoUrl ? pair.logoUrl : "/images/project_honey.png"}
-            alt="honey"
-            width={100}
-            height={100}
-            className="object-cover w-full h-full"
-          ></Image>
-        </div>
-        <h4 className="text-white text-center text-[1rem] font-bold flex items-start  h-[1.5em] overflow-hidden">
-          <div className=" relative ">
-            {pair?.launchedToken?.name} ({pair?.launchedToken?.symbol})
-          </div>{" "}
-        </h4>{" "}
-        <div
-          className={cn(
-            "grid  items-start gap-6 text-white mt-2 justify-between w-full break-all ",
-            type === "detail" ? "sm:grid-cols-4 grid-cols-2" : " grid-cols-2"
-          )}
-        >
-          <div className="flex flex-col items-center gap-1">
-            <h6 className="opacity-50 text-xs">Timeline</h6>
-            <div className="flex items-center gap-2 text-sm">
-              {/* <TimelineSvg /> */}
-              <span className="font-bold">{pair?.remainTime}</span>
+        {pair && (
+          <>
+            <ProjectStatusDisplay pair={pair} />
+            <OptionsDropdown
+              className="absolute left-[0.5rem] top-[0.5rem] "
+              options={[
+                optionsPresets.copy({
+                  copyText: pair?.launchedToken?.address ?? "",
+                  displayText: "Copy Token address",
+                  copysSuccessText: "Token address copied",
+                }),
+                optionsPresets.importTokenToWallet({
+                  token: pair?.launchedToken,
+                }),
+                optionsPresets.share({
+                  shareUrl: `${window.location.origin}/launch-detail/${pair?.address}`,
+                  displayText: "Share this project",
+                  shareText:
+                    projectType === "meme"
+                      ? "My Meme FTO eats bonding burves for breakfast. Inflate & innovation with Boneypot. Den moon 🌙: " +
+                        pair?.projectName
+                      : "Checkout this Token: " + pair?.projectName,
+                }),
+                optionsPresets.viewOnExplorer({
+                  address: pair?.address ?? "",
+                }),
+              ]}
+            />
+            <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden object-cover">
+              <Image
+                src={
+                  !!pair?.logoUrl ? pair.logoUrl : "/images/project_honey.png"
+                }
+                alt="honey"
+                width={100}
+                height={100}
+                className="object-cover w-full h-full"
+              ></Image>
             </div>
-          </div>
-          {variant === "meme" ? (
-            pair instanceof MemePairContract &&
-            pair.depositedRaisedToken &&
-            pair.raisedTokenMinCap && (
-              <div className="flex flex-col items-center gap-1">
-                <h6 className="opacity-50 text-xs">Progress</h6>
-                <div className="flex items-center gap-2 text-sm w-[80%]">
-                  <ProgressBar
-                    label={
-                      (
-                        (pair.depositedRaisedToken.toNumber() /
-                          (pair.raisedTokenMinCap.toNumber() /
-                            Math.pow(10, 18))) *
-                        100
-                      ).toFixed(2) + "%"
-                    }
-                    value={
-                      (pair.depositedRaisedToken.toNumber() /
-                        (pair.raisedTokenMinCap.toNumber() /
-                          Math.pow(10, 18))) *
-                      100
-                    }
-                  />
-                </div>
-              </div>
-            )
-          ) : (
-            <div className="flex flex-col items-center gap-1">
-              <h6 className="opacity-50 text-xs">Total launched</h6>
-              <div className="flex items-center gap-2 text-sm">
-                {/* <TotalRaisedSvg /> */}
-                <span className="font-bold">
-                  {pair?.depositedLaunchedToken
-                    ? pair?.depositedLaunchedToken?.toFormat(0)
-                    : "-"}
-                  &nbsp;
-                  {pair?.launchedToken?.displayName}
-                </span>
-              </div>
+            <h4 className="text-white text-center text-[1rem] font-bold flex items-start  h-[1.5em] overflow-hidden">
+              <div className=" relative ">
+                {pair?.launchedToken?.name} ({pair?.launchedToken?.symbol})
+              </div>{" "}
+            </h4>{" "}
+            <div
+              className={cn(
+                "grid  items-start gap-6 text-white mt-2 justify-between w-full break-all ",
+                type === "detail"
+                  ? "sm:grid-cols-4 grid-cols-2"
+                  : " grid-cols-2"
+              )}
+            >
+              {projectType === "meme" ? (
+                <MemeProjectDetails pair={pair as MemePairContract} />
+              ) : (
+                <FtoProjectDetails pair={pair as FtoPairContract} />
+              )}
             </div>
-          )}
-          <div className="flex flex-col items-center gap-1">
-            <h6 className="opacity-50 text-xs">Total raised</h6>
-            <div className="flex items-center gap-2 text-sm">
-              {/* <TotalRaisedSvg /> */}
-              <span className="font-bold">
-                {pair?.depositedRaisedToken
-                  ? pair.depositedRaisedToken.toFormat(3)
-                  : "-"}
-                &nbsp;
-                {pair?.raiseToken?.displayName}
-              </span>
+            <div className="w-full mt-[16px] flex gap-4 flex-col lg:flex-row justify-center items-end flex-wrap *:basis-1 grow-[1] *:grow-[1]">
+              {projectType === "meme" ? (
+                <MemeProjectActions pair={pair as MemePairContract} />
+              ) : (
+                <FtoProjectActions pair={pair as FtoPairContract} />
+              )}
+              {action}
             </div>
-          </div>{" "}
-          <div className="flex flex-col items-center gap-1">
-            <h6 className="opacity-50 text-xs">Your Deposit</h6>
-            <div className="flex items-center gap-2 text-sm">
-              {/* <TotalRaisedSvg /> */}
-              <span className="font-bold">
-                {pair instanceof FtoPairContract &&
-                pair?.userDepositedRaisedToken
-                  ? (
-                      pair.userDepositedRaisedToken.toNumber() /
-                      Math.pow(10, pair.raiseToken?.decimals ?? 18)
-                    ).toFixed(3)
-                  : "-"}
-                &nbsp;
-                {pair?.raiseToken?.displayName}
-              </span>
-            </div>
-          </div>
-          {/* <div className="flex flex-col items-center gap-1">
-            <h6 className="opacity-50 text-xs">Token Price</h6>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="font-bold">
-                <AmountFormat amount={pair?.price?.toFixed()}></AmountFormat>{" "}
-                {pair?.raiseToken?.displayName}
-              </span>
-            </div>
-          </div> */}
-        </div>
-        <div className="w-full mt-[16px] flex gap-4 flex-col lg:flex-row justify-center items-center flex-wrap *:basis-1 *:grow-[1]">
-          {pair?.canClaimLP && (
-            <div>
-              <Button
-                className="w-full"
-                onClick={() => {
-                  pair.claimLP.call();
-                }}
-                style={{
-                  backgroundColor: "green",
-                }}
-              >
-                Claim LP
-              </Button>
-            </div>
-          )}
-          {pair instanceof MemePairContract && pair.canRefund && (
-            <div>
-              <Button
-                className="w-full"
-                onClick={() => {
-                  pair.refund.call();
-                }}
-                isLoading={pair.refund.loading}
-                style={{
-                  backgroundColor: "green",
-                }}
-              >
-                Refund LP
-              </Button>
-            </div>
-          )}
-          <Link
-            href={`/launch-detail/${pair?.address}`}
-            className="text-black font-bold  "
-          >
-            <Button className="w-full">View Token</Button>
-          </Link>
-          {pair?.ftoState === 0 && (
-            <>
-              <Link
-                href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
-                className="text-black font-bold  "
-              >
-                <Button className="w-full">
-                  <p>Buy Token</p>
-                </Button>{" "}
-              </Link>
-
-              <Link
-                href={`/pool?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
-                className="text-black font-bold  "
-              >
-                <Button className="w-full">
-                  <p>Add LP</p>
-                </Button>{" "}
-              </Link>
-            </>
-          )}
-          {action}
-        </div>
+          </>
+        )}
       </motion.div>
     );
   }
