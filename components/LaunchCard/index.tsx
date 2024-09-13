@@ -357,7 +357,7 @@ export const LaunchCard = observer(
                 <FtoProjectDetails pair={pair as FtoPairContract} />
               )}
             </div>
-            <div className="w-full mt-[16px] flex gap-4 flex-col lg:flex-row justify-center items-end flex-wrap *:basis-1 grow-[1] *:grow-[1]">
+            <div className="w-full mt-[16px] flex gap-4 flex-col sm:flex-row justify-center sm:items-end flex-wrap *:basis-1 grow-[1] *:grow-[1]">
               {projectType === "meme" ? (
                 <MemeProjectActions pair={pair as MemePairContract} />
               ) : (
