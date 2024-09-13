@@ -37,6 +37,7 @@ import { WarppedNextSelect } from "@/components/wrappedNextUI/Select/Select";
 import { WrappedNextDatePicker } from "@/components/wrappedNextUI/DatePicker/DatePicker";
 import Image from "next/image";
 import { FaQuestionCircle } from "react-icons/fa";
+import { popmodal } from "@/services/popmodal";
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
 const minimumTimePattern = /^(6[1-9]|[7-9][0-9]|[1-9][0-9]{2,})$/;
@@ -328,33 +329,27 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
       console.error(error);
     }
   };
-  const [isInstructionModalOpen, setIsInstructionModalOpen] = useState(false);
+  useEffect(() => {
+    openInstructionModal();
+  }, []);
 
-  const MEME_Instruction_Modal = () => {
-    return (
-      <Modal
-        isOpen={isInstructionModalOpen}
-        onClose={() => setIsInstructionModalOpen(false)}
-      >
-        <ModalContent className="w-full max-w-full md:max-w-[700px]">
-          <ModalBody className="flex flex-col gap-4">
-            <div>
-              <Image
-                src="/images/pot2fpump.png"
-                width={1024}
-                height={1800}
-                alt=""
-              />
-            </div>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    );
+  const openInstructionModal = () => {
+    popmodal.openModal({
+      content: (
+        <div>
+          <Image
+            src="/images/pot2fpump.png"
+            width={1024}
+            height={1800}
+            alt=""
+          />
+        </div>
+      ),
+    });
   };
 
   return (
     <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto mb-[30vh]">
-      <MEME_Instruction_Modal />
       <div className=" flex items-center justify-center mt-[24px]">
         {launchpad.ftofactoryContract?.createFTO.loading ? (
           <div className="flex h-[566px] w-full sm:w-[583px] justify-center items-center [background:#121212] rounded-[54px]">
@@ -381,7 +376,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 Dreampad <br className="md:hidden" /> - MEME Launch
               </span>{" "}
               <FaQuestionCircle
-                onClick={() => setIsInstructionModalOpen(true)}
+                onClick={() => openInstructionModal()}
                 className="cursor-pointer hover:scale-150 transition-all"
               />
             </div>
