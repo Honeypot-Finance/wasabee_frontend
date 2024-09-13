@@ -150,7 +150,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
 
       <div className="flex w-full justify-end gap-2">
         <Button className="scale-[0.8] sm:scale-100">
-          <Link href="/launch-token?launchType=meme" className="text-black font-bold">
+          <Link href="/launch-token" className="text-black font-bold">
             Launch Token
           </Link>
         </Button>
