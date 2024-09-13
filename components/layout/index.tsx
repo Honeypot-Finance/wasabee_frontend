@@ -29,19 +29,21 @@ export const Layout = ({
 
   useEffect(() => {
     trpcClient.metadata.getServerMetadata.query().then((res) => {
-      if (res.version === metadata.version) return;
+      if (res.latest_version === metadata.version || process.env.NODE_ENV === 'development' ) return;
       popmodal.openModal({
         content: (
-          <div>
-            <h1>this version is outdated, check our newest link: </h1>
-            <h2>
-              <a
-                className="hover:text-orange-500 transition-all"
-                href={res.target_url}
+          <div className="min-h-[300px] line-[24px]">
+            <p className="text-center  font-bold text-[30px]">Announcement</p>
+            <h1 className="mt-[24px]">This version is outdated, please check our newest link:&nbsp;    <a
+                className="hover:text-orange-500 transition-all underline"
+                href={res.latest_site}
               >
-                {res.target_url}
-              </a>
-            </h2>
+                {res.latest_site}.
+              </a></h1>
+              <p>
+                Meanwhile, please migrate your assets to our new version
+              </p>
+
           </div>
         ),
       });
