@@ -193,10 +193,7 @@ export class MemePairContract implements BaseContract {
       action: "Refund",
     }).call();
 
-    await Promise.all([
-      this.getDepositedRaisedToken(),
-      this.getDepositedLaunchedToken(),
-    ]);
+    await this.raiseToken?.getBalance();
 
     this.canRefund = false;
   });

@@ -16,10 +16,12 @@ import { MemePairContract } from "@/services/contract/memepair-contract";
 import ProgressBar from "../atoms/ProgressBar/ProgressBar";
 import { AmountFormat } from "../AmountFormat";
 
+type projectType = "fto" | "meme";
+
 const TimeLineComponent = observer(
   ({ pair }: { pair: MemePairContract | FtoPairContract }) => {
     return (
-      <div className="flex flex-col items-center gap-1">
+      <div className="flex flex-col items-center gap-1  odd:last:col-span-2">
         <h6 className="opacity-50 text-xs">Timeline</h6>
         <div className="flex items-center gap-2 text-sm">
           {/* <TimelineSvg /> */}
@@ -34,7 +36,7 @@ const LaunchProgress = observer(({ pair }: { pair: MemePairContract }) => {
   return (
     <>
       {pair.depositedRaisedToken && pair.raisedTokenMinCap && (
-        <div className="flex flex-col items-center gap-1">
+        <div className="flex flex-col items-center gap-1 odd:last:col-span-2">
           <h6 className="opacity-50 text-xs">Progress</h6>
           <div className="flex items-center gap-2 text-sm w-[80%]">
             <ProgressBar
@@ -61,7 +63,7 @@ const LaunchProgress = observer(({ pair }: { pair: MemePairContract }) => {
 const TotalLaunched = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
-      <div className="flex flex-col items-center gap-1">
+      <div className="flex flex-col items-center gap-1 odd:last:col-span-2">
         <h6 className="opacity-50 text-xs">Total launched</h6>
         <div className="flex items-center gap-2 text-sm">
           {/* <TotalRaisedSvg /> */}
@@ -81,7 +83,7 @@ const TotalLaunched = observer(
 const TotalRaised = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
-      <div className="flex flex-col items-center gap-1">
+      <div className="flex flex-col items-center gap-1 odd:last:col-span-2">
         <h6 className="opacity-50 text-xs">Total raised</h6>
         <div className="flex items-center gap-2 text-sm">
           {/* <TotalRaisedSvg /> */}
@@ -101,7 +103,7 @@ const TotalRaised = observer(
 const TokenPrice = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
-      <div className="flex flex-col items-center gap-1">
+      <div className="flex flex-col items-center gap-1  odd:last:col-span-2">
         <h6 className="opacity-50 text-xs">Token Price</h6>
         <div className="flex items-center gap-2 text-sm">
           <span className="font-bold">
@@ -116,7 +118,7 @@ const TokenPrice = observer(
 
 const UserDeposited = observer(({ pair }: { pair: FtoPairContract }) => {
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div className="flex flex-col items-center gap-1 odd:last:col-span-2">
       <h6 className="opacity-50 text-xs">Your Deposit</h6>
       <div className="flex items-center gap-2 text-sm">
         {/* <TotalRaisedSvg /> */}
@@ -273,21 +275,56 @@ const FtoProjectActions = ({ pair }: { pair: FtoPairContract }) => {
   );
 };
 
+const ProjectDetail = ({
+  projectType,
+  pair,
+}: {
+  projectType: projectType;
+  pair: FtoPairContract | MemePairContract;
+}) => {
+  if (projectType === "meme") {
+    return (
+      <MemeProjectDetails pair={pair as MemePairContract}></MemeProjectDetails>
+    );
+  } else {
+    return (
+      <FtoProjectDetails pair={pair as FtoPairContract}></FtoProjectDetails>
+    );
+  }
+};
+
+const ProjectActions = ({
+  projectType,
+  pair,
+}: {
+  projectType: projectType;
+  pair: FtoPairContract | MemePairContract;
+}) => {
+  if (projectType === "meme") {
+    return (
+      <MemeProjectActions pair={pair as MemePairContract}></MemeProjectActions>
+    );
+  } else {
+    return (
+      <FtoProjectActions pair={pair as FtoPairContract}></FtoProjectActions>
+    );
+  }
+};
+
 export const LaunchCard = observer(
   ({
     pair,
     action,
     type,
     className,
-    variant,
-    ...props
   }: {
     type?: "list" | "detail";
     pair?: FtoPairContract | MemePairContract | null;
-    variant?: "default" | "meme";
     action: React.ReactNode;
   } & Partial<HTMLAttributes<any>>) => {
-    const projectType = pair instanceof MemePairContract ? "meme" : "fto";
+    const projectType: projectType =
+      pair instanceof MemePairContract ? "meme" : "fto";
+
     return (
       <motion.div
         variants={itemPopUpVariants}
@@ -345,24 +382,16 @@ export const LaunchCard = observer(
             </h4>{" "}
             <div
               className={cn(
-                "grid  items-start gap-6 text-white mt-2 justify-between w-full break-all ",
+                "grid items-start gap-6 text-white mt-2 justify-between w-full break-all",
                 type === "detail"
                   ? "sm:grid-cols-4 grid-cols-2"
                   : " grid-cols-2"
               )}
             >
-              {projectType === "meme" ? (
-                <MemeProjectDetails pair={pair as MemePairContract} />
-              ) : (
-                <FtoProjectDetails pair={pair as FtoPairContract} />
-              )}
+              <ProjectDetail projectType={projectType} pair={pair} />
             </div>
             <div className="w-full mt-[16px] flex gap-4 flex-col sm:flex-row justify-center sm:items-end flex-wrap *:basis-1 grow-[1] *:grow-[1]">
-              {projectType === "meme" ? (
-                <MemeProjectActions pair={pair as MemePairContract} />
-              ) : (
-                <FtoProjectActions pair={pair as FtoPairContract} />
-              )}
+              <ProjectActions projectType={projectType} pair={pair} />
               {action}
             </div>
           </>
