@@ -81,7 +81,7 @@ export class MemePairContract implements BaseContract {
 
   get depositedLaunchedToken() {
     if (!this.launchedToken) {
-      return undefined
+      return undefined;
     }
 
     return this.depositedLaunchedTokenWithoutDecimals &&
@@ -351,10 +351,8 @@ export class MemePairContract implements BaseContract {
     await Promise.all([
       this.getRaisedToken(raisedToken),
       this.getLaunchedToken(launchedToken),
-      this
-        .getDepositedRaisedToken
-        //depositedRaisedToken
-        (),
+      this.getDepositedRaisedToken(),
+      //depositedRaisedToken
       this.getDepositedLaunchedToken(depositedLaunchedToken),
       this.getEndTime(endTime),
       this.getLaunchedTokenProvider(),

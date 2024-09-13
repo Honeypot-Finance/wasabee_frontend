@@ -716,6 +716,7 @@ export class GhostIndexer {
         pairs(
           where:{
             endTime_gt:"${dayjs().unix()}"
+            status: "3"
           }
           limit: 5
           orderBy: "depositedRaisedToken"
