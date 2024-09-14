@@ -29,12 +29,14 @@ import CardContianer from "@/components/CardContianer/CardContianer";
 import { FaCrown } from "react-icons/fa";
 import MemeWarBanner from "@/components/MemeWarBanner/MemeWarBanner";
 import HoneyStickSvg from "@/components/svg/HoneyStick";
+import { set } from "lodash";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
     FtoPairContract[]
   >([]);
+  const [showValidationCheck, setShowValidationCheck] = useState(true);
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -246,22 +248,26 @@ const LaunchPage: NextLayoutPage = observer(() => {
           </Popover>
         </div>
         <div className="flex justify-between items-center">
-          <Checkbox
-            onClick={() => {
-              launchpad.projectsPage.updateFilter({
-                showNotValidatedPairs:
-                  !launchpad.projectsPage.filter.showNotValidatedPairs,
-              });
-            }}
-            defaultSelected={
-              launchpad.projectsPage.filter.showNotValidatedPairs
-            }
-            defaultChecked={launchpad.projectsPage.filter.showNotValidatedPairs}
-            checked={launchpad.projectsPage.filter.showNotValidatedPairs}
-            className="mt-2"
-          >
-            Show Unvalidated Projects
-          </Checkbox>
+          {showValidationCheck && (
+            <Checkbox
+              onClick={() => {
+                launchpad.projectsPage.updateFilter({
+                  showNotValidatedPairs:
+                    !launchpad.projectsPage.filter.showNotValidatedPairs,
+                });
+              }}
+              defaultSelected={
+                launchpad.projectsPage.filter.showNotValidatedPairs
+              }
+              defaultChecked={
+                launchpad.projectsPage.filter.showNotValidatedPairs
+              }
+              checked={launchpad.projectsPage.filter.showNotValidatedPairs}
+              className="mt-2"
+            >
+              Show Unvalidated Projects
+            </Checkbox>
+          )}
           <div className="flex justify-end">
             <Link
               href={"https://tryghost.xyz/log"}
@@ -296,10 +302,15 @@ const LaunchPage: NextLayoutPage = observer(() => {
             onSelectionChange={(key) => {
               launchpad.setCurrentLaunchpadType("fto");
               if (key === "all") {
-                //
+                setShowValidationCheck(true);
+                launchpad.showNotValidatedPairs = true;
               } else if (key === "my") {
+                setShowValidationCheck(false);
+                launchpad.showNotValidatedPairs = true;
                 launchpad.myLaunches.reloadPage();
               } else if (key === "participated-launch") {
+                setShowValidationCheck(false);
+                launchpad.showNotValidatedPairs = true;
                 launchpad.participatedPairs.reloadPage();
               }
             }}
