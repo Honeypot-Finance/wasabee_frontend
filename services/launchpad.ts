@@ -380,9 +380,10 @@ class LaunchPad {
   };
 
   LoadMoreParticipatedPage = async (pageRequest: PageRequest) => {
+    console.log(this.participatedPairs.filter);
     const res =
       await trpcClient.indexerFeedRouter.getParticipatedProjects.query({
-        filter: this.projectsPage.filter,
+        filter: this.participatedPairs.filter,
         chainId: String(wallet.currentChainId),
         pageRequest: pageRequest,
         type: this.currentLaunchpadType.value,

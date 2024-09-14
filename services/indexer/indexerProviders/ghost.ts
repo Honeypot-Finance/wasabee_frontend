@@ -454,6 +454,33 @@ export class GhostIndexer {
     type: "fto" | "meme",
     filter: Partial<FtoPairFilter>
   ): Promise<ApiResponseType<GhostParticipatedProjectsResponse>> => {
+    const statusNum = statusTextToNumber(filter?.status ?? "all");
+
+    const statusCondition =
+      statusNum != -1
+        ? `pair_:{
+        status: "${statusNum}",
+      }`
+        : "";
+    const searchIdCondition =
+      filter?.search && filter.search.startsWith("0x")
+        ? `{
+            pair_:{
+              id: "${filter.search}"
+            }
+          },
+          {
+            pair_:{
+              token0Id: "${filter.search}"
+            }
+          },
+          {
+            pair_:{
+              token1Id: "${filter.search}"
+            }
+          },`
+        : "";
+
     const dirCondition = pageRequest?.cursor
       ? pageRequest?.direction === "next"
         ? `after:"${pageRequest?.cursor}"`
@@ -464,17 +491,20 @@ export class GhostIndexer {
       ? `searchString_contains:"${filter.search.toLowerCase()}",`
       : "";
 
+    console.log("filter", filter);
+
     const limit = filter.limit ?? 9;
 
     const query = ` {
                       participateds(
                         where:{
-                          depositer:"${walletAddress.toLowerCase()}"
-                          
+                          depositer:"${walletAddress.toLowerCase()}",
+                          ${statusCondition}
                           OR:[
                             {
                               ${searchStringCondition}
-                            }
+                            },
+                            ${searchIdCondition}
                           ]
                         }
                         orderBy:"createdAt"
@@ -523,6 +553,8 @@ export class GhostIndexer {
                         }
                       }
                     }`;
+
+    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: type === "meme" ? memeGraphHandle : ftoGraphHandle,
@@ -754,7 +786,6 @@ export class GhostIndexer {
       }
   `;
 
-    console.log(query);
     const res = await this.callIndexerApi(query, {
       apiHandle: memeGraphHandle,
     });
@@ -825,13 +856,10 @@ export class GhostIndexer {
 
   }`;
 
-    console.log(query);
-
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
     });
 
-    console.log(res);
     if (res.status === "success") {
       return res.data.pairs0.items[0] || res.data.pairs1.items[0];
     }

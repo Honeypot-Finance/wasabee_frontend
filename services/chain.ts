@@ -7,8 +7,6 @@ import {
   polygonMumbaiChain,
   //sepolia,
 } from "@/lib/chain";
-import { NativeFaucetContract } from "./contract/faucet-contract";
-
 export class Network {
   get chainId() {
     return this.chain.id;

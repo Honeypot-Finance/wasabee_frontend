@@ -178,8 +178,9 @@ export const indexerFeedRouter = router({
         async () => {
           const res = await indexer.getValidatedTokenPairs(input.chainId);
           return res;
-        }, {
-          ttl: 60 * 1000
+        },
+        {
+          ttl: 60 * 1000,
         }
       );
     }),
@@ -206,8 +207,9 @@ export const indexerFeedRouter = router({
         }),
         type: z.enum(["fto", "meme"]),
         filter: z.object({
-          searchString: z.string().optional(),
+          search: z.string().optional(),
           limit: z.number(),
+          status: z.enum(["success", "fail", "all", "processing"]).optional(),
         }),
       })
     )
