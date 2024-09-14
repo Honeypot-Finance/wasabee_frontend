@@ -21,7 +21,7 @@ import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 import dayjs from "dayjs";
 
-const memeGraphHandle = "fadb27cf-2d02-46e6-b381-7afd8e14c448/ghostgraph";
+const memeGraphHandle = "85c281b3-7aab-4296-90d3-e0aad37543f6/ghostgraph";
 const ftoGraphHandle = "e68123d7-3006-46a7-aaf1-e13059aae6c3/ghostgraph";
 const pairGraphHandle = "3a9fbaf8-1421-44d5-91f3-5dff76ad4879/ghostgraph";
 

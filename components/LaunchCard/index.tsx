@@ -15,14 +15,14 @@ import { itemPopUpVariants } from "@/lib/animation";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import ProgressBar from "../atoms/ProgressBar/ProgressBar";
 import { AmountFormat } from "../AmountFormat";
+import { LaunchType as projectType } from "@/pages/launch-token";
 
-type projectType = "fto" | "meme";
-
+//-------------------------------------Detail Components-------------------------------------//
 const TimeLineComponent = observer(
   ({ pair }: { pair: MemePairContract | FtoPairContract }) => {
     return (
       <div className="flex flex-col items-center gap-1  odd:last:col-span-2">
-        <h6 className="opacity-50 text-xs">Timeline</h6>
+        <h6 className="opacity-50 text-xs">End Time</h6>
         <div className="flex items-center gap-2 text-sm">
           {/* <TimelineSvg /> */}
           <span className="font-bold">{pair?.remainTime}</span>
@@ -137,6 +137,7 @@ const UserDeposited = observer(({ pair }: { pair: FtoPairContract }) => {
   );
 });
 
+//-------------------------------------Action Components-------------------------------------//
 const ClaimAction = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
@@ -225,6 +226,7 @@ const AddLP = observer(
   }
 );
 
+//-------------------------------------Launch Card-------------------------------------//
 const MemeProjectDetails = observer(({ pair }: { pair: MemePairContract }) => {
   console.log("pair.ftoState", pair.ftoState);
   return (
