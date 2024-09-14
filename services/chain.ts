@@ -41,6 +41,7 @@ export class Network {
   validatedTokens: Token[] = [];
   validatedTokensInfo: Record<string, Token> = {};
   validatedFtoAddresses: string[] = [];
+  validatedMemeAddresses: string[] = [];
   constructor(
     args: Omit<
       Partial<Network>,
@@ -304,6 +305,7 @@ export const berachainBartioTestnetNetwork = new Network({
     "0x2c504e661750e03aa9252c67e771dc059a521863".toLowerCase(),
     "0x93f8beabd145a61067ef2fca38c4c9c31d47ab7e".toLowerCase(),
   ],
+  validatedMemeAddresses: [],
 });
 
 export const networks = [

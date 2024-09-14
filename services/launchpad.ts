@@ -85,7 +85,7 @@ class LaunchPad {
     LoadNextPageFunction: async (filter, pageRequest) => {
       if (!filter.showNotValidatedPairs) {
         return {
-          items: await this.loadVerifiedFTOProjects(),
+          items: await this.loadVerifiedProjects(),
           pageInfo: {
             hasNextPage: false,
             hasPreviousPage: false,
@@ -186,7 +186,7 @@ class LaunchPad {
           address: pairAddress.id,
         });
 
-        const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
+        const raisedToken = this.isRaiseToken(pairAddress.token1.id)
           ? Token.getToken({
               ...pairAddress.token1,
               address: pairAddress.token1.id,
@@ -236,7 +236,7 @@ class LaunchPad {
           address: pairAddress.id,
         });
 
-        const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
+        const raisedToken = this.isRaiseToken(pairAddress.token1.id)
           ? Token.getToken({
               ...pairAddress.token1,
               address: pairAddress.token1.id,
@@ -275,17 +275,30 @@ class LaunchPad {
     }
   }
 
-  loadVerifiedFTOProjects = async () => {
+  loadVerifiedProjects = async () => {
     this.setFtoPageLoading(true);
-    const projects = await Promise.all(
-      wallet.currentChain.validatedFtoAddresses.map(async (pairAddress) => {
-        const pair = new FtoPairContract({
-          address: pairAddress,
-        });
-        await pair.init();
-        return pair;
-      })
-    );
+    let projects = [];
+    if (this.currentLaunchpadType.value === "meme") {
+      projects = await Promise.all(
+        wallet.currentChain.validatedMemeAddresses.map(async (pairAddress) => {
+          const pair = new MemePairContract({
+            address: pairAddress,
+          });
+          await pair.init();
+          return pair;
+        })
+      );
+    } else {
+      projects = await Promise.all(
+        wallet.currentChain.validatedFtoAddresses.map(async (pairAddress) => {
+          const pair = new FtoPairContract({
+            address: pairAddress,
+          });
+          await pair.init();
+          return pair;
+        })
+      );
+    }
 
     this.setFtoPageLoading(false);
     return projects;
@@ -311,7 +324,7 @@ class LaunchPad {
                   address: pairAddress.id,
                 });
 
-          const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
+          const raisedToken = this.isRaiseToken(pairAddress.token1.id)
             ? Token.getToken({
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
@@ -384,7 +397,7 @@ class LaunchPad {
                   address: pairAddress.pairId,
                 });
 
-          const raisedToken = this.isFtoRaiseToken(pairAddress.pair.token1.id)
+          const raisedToken = this.isRaiseToken(pairAddress.pair.token1.id)
             ? Token.getToken({
                 ...pairAddress.pair.token1,
                 address: pairAddress.pair.token1.id,
@@ -455,7 +468,7 @@ class LaunchPad {
                   address: pairAddress.id,
                 });
 
-          const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
+          const raisedToken = this.isRaiseToken(pairAddress.token1.id)
             ? Token.getToken({
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
@@ -542,7 +555,7 @@ class LaunchPad {
               name: tokenName,
               symbol: tokenSymbol,
               swapHandler: poolHandler as `0x${string}`,
-              launchCycle: BigInt(86400 / 24 / 12),
+              launchCycle: BigInt(86400),
             },
           ]);
         }
@@ -565,19 +578,25 @@ class LaunchPad {
 
       const pairAddress = getPairAddress();
 
+      // use random default project logo
+      const ICON_COUNT = 5;
+      const randomIcon = Math.floor(Math.random() * ICON_COUNT) + 1;
+      const url = `/images/default-project-icons/${randomIcon}.png`;
+
       await trpcClient.projects.createProject.mutate({
         pair: pairAddress,
         chain_id: wallet.currentChainId,
         provider: provider,
         project_type: launchType,
         projectName: tokenName,
+        project_logo: url,
       });
 
       return pairAddress as string;
     }
   );
 
-  updateFtoProject = new AsyncState(
+  updateProject = new AsyncState(
     async (data: {
       pair: string;
       chain_id: number;
@@ -608,7 +627,7 @@ class LaunchPad {
     }
   );
 
-  isFtoRaiseToken(tokenAddress: string): boolean {
+  isRaiseToken(tokenAddress: string): boolean {
     return wallet.currentChain.contracts.ftoTokens.some(
       (ftoToken) =>
         ftoToken.address?.toLowerCase() === tokenAddress.toLowerCase()

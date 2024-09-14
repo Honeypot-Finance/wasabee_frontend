@@ -207,11 +207,11 @@ const UpdateProjectModal = observer(
             Close
           </Button>
           <Button
-            isLoading={launchpad.updateFtoProject.loading}
+            isLoading={launchpad.updateProject.loading}
             color="primary"
             onPress={async () => {
               handleSubmit(async (data) => {
-                await launchpad.updateFtoProject.call({
+                await launchpad.updateProject.call({
                   pair: pair.address,
                   chain_id: wallet.currentChainId,
                   projectName: data.projectName,
@@ -220,7 +220,7 @@ const UpdateProjectModal = observer(
                   website: data.website || "",
                   telegram: data.telegram || "",
                 });
-                if (launchpad.updateFtoProject.error) {
+                if (launchpad.updateProject.error) {
                   toast.error("Update failed");
                   return;
                 }
@@ -945,7 +945,7 @@ const MemeView = observer(() => {
             Click{" "}
             <span
               onClick={() => {
-                onOpen()
+                onOpen();
                 toast.dismiss();
               }}
               className="text-blue-500 cursor-pointer"
@@ -993,7 +993,6 @@ const MemeView = observer(() => {
       state.pair.value?.launchedToken?.displayName + "/USD" ?? ""
     );
   }, [state.pair.value]);
-
 
   function refreshVotes() {
     trpcClient.projects.getProjectVotes

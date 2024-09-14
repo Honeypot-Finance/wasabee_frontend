@@ -76,6 +76,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
             1000
         ),
       });
+
       state.setPairAddress(pairAddress);
       router.push(`/launch-detail/${pairAddress}`);
     } catch (error) {
@@ -323,6 +324,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
         launchType: "meme",
         raisingCycle: dayjs().unix(),
       });
+
       state.setPairAddress(pairAddress);
       router.push(`/launch-detail/${pairAddress}`);
     } catch (error) {

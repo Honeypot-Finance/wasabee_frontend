@@ -18,6 +18,7 @@ export const ftoRouter = router({
         provider: z.string(),
         project_type: z.string().optional(),
         projectName: z.string(),
+        project_logo: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
