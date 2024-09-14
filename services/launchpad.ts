@@ -72,7 +72,10 @@ class LaunchPad {
     value: "fto",
   });
 
-  ftoPageInfo = new IndexerPaginationState<PairFilter, FtoPairContract>({
+  projectsPage = new IndexerPaginationState<
+    PairFilter,
+    FtoPairContract | MemePairContract
+  >({
     filter: {
       search: "",
       status: "all",
@@ -91,15 +94,22 @@ class LaunchPad {
           },
         };
       } else {
-        return (await this.LoadMoreFtoPage(pageRequest)) as {
-          items: FtoPairContract[];
-          pageInfo: PageInfo;
-        };
+        if (this.currentLaunchpadType.value === "meme") {
+          return (await this.LoadMoreProjectPage(pageRequest)) as {
+            items: MemePairContract[];
+            pageInfo: PageInfo;
+          };
+        } else {
+          return (await this.LoadMoreProjectPage(pageRequest)) as {
+            items: FtoPairContract[];
+            pageInfo: PageInfo;
+          };
+        }
       }
     },
   });
 
-  memePageInfo = new IndexerPaginationState<PairFilter, MemePairContract>({
+  myLaunches = new IndexerPaginationState<PairFilter, FtoPairContract>({
     filter: {
       search: "",
       status: "all",
@@ -107,8 +117,8 @@ class LaunchPad {
       limit: PAGE_LIMIT,
     },
     LoadNextPageFunction: async (filter, pageRequest) => {
-      return (await this.LoadMoreFtoPage(pageRequest)) as {
-        items: MemePairContract[];
+      return (await this.LoadMoreMyProjectsPage(pageRequest)) as {
+        items: FtoPairContract[];
         pageInfo: PageInfo;
       };
     },
@@ -130,18 +140,15 @@ class LaunchPad {
   });
 
   set pairFilterSearch(search: string) {
-    this.ftoPageInfo.updateFilter({ search });
-    this.memePageInfo.updateFilter({ search });
+    this.projectsPage.updateFilter({ search });
   }
 
   set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
-    this.ftoPageInfo.updateFilter({ status });
-    this.memePageInfo.updateFilter({ status });
+    this.projectsPage.updateFilter({ status });
   }
 
   set showNotValidatedPairs(show: boolean) {
-    this.ftoPageInfo.updateFilter({ showNotValidatedPairs: show });
-    this.memePageInfo.updateFilter({ showNotValidatedPairs: show });
+    this.projectsPage.updateFilter({ showNotValidatedPairs: show });
   }
 
   get memeFactoryContract() {
@@ -284,9 +291,9 @@ class LaunchPad {
     return projects;
   };
 
-  LoadMoreFtoPage = async (pageRequest: PageRequest) => {
+  LoadMoreProjectPage = async (pageRequest: PageRequest) => {
     const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-      filter: this.ftoPageInfo.filter,
+      filter: this.projectsPage.filter,
       chainId: String(wallet.currentChainId),
       pageRequest: pageRequest,
       projectType: this.currentLaunchpadType.value,
@@ -356,7 +363,7 @@ class LaunchPad {
   LoadMoreParticipatedPage = async (pageRequest: PageRequest) => {
     const res =
       await trpcClient.indexerFeedRouter.getParticipatedProjects.query({
-        filter: this.ftoPageInfo.filter,
+        filter: this.projectsPage.filter,
         chainId: String(wallet.currentChainId),
         pageRequest: pageRequest,
         type: this.currentLaunchpadType.value,
@@ -426,25 +433,27 @@ class LaunchPad {
     }
   };
 
-  myPairs = new AsyncState(async () => {
-    const ftoAddresses =
-      await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-        filter: this.ftoPageInfo.filter,
-        chainId: String(wallet.currentChainId),
-        provider: wallet.account,
-        projectType: this.currentLaunchpadType.value,
-      });
+  LoadMoreMyProjectsPage = async (pageRequest: PageRequest) => {
+    const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
+      filter: this.projectsPage.filter,
+      chainId: String(wallet.currentChainId),
+      provider: wallet.account,
+      projectType: this.currentLaunchpadType.value,
+    });
 
-    if (!ftoAddresses || ftoAddresses.status === "error") {
-      return { data: [], total: 0 };
-    }
+    console.log(res);
 
-    const data: Array<FtoPairContract> = (
-      await Promise.all(
-        ftoAddresses.data.pairs.map(async (pairAddress, idx) => {
-          const pair = new FtoPairContract({
-            address: pairAddress.id,
-          });
+    if (res.status === "success") {
+      const data = {
+        items: res.data.pairs.map((pairAddress) => {
+          const pair =
+            this.currentLaunchpadType.value === "fto"
+              ? new FtoPairContract({
+                  address: pairAddress.id,
+                })
+              : new MemePairContract({
+                  address: pairAddress.id,
+                });
 
           const raisedToken = this.isFtoRaiseToken(pairAddress.token1.id)
             ? Token.getToken({
@@ -467,27 +476,33 @@ class LaunchPad {
                   address: pairAddress.token1.id,
                 });
 
-          if (!pair.isInit) {
-            pair.init({
-              raisedToken: raisedToken,
-              launchedToken: launchedToken,
-              depositedLaunchedToken: pairAddress.depositedLaunchedToken,
-              depositedRaisedToken: pairAddress.depositedRaisedToken,
-              startTime: pairAddress.createdAt,
-              endTime: pairAddress.endTime,
-              ftoState: Number(pairAddress.status),
-            });
-          }
-          return pair;
-        })
-      )
-    ).filter((pair) => pair !== undefined) as FtoPairContract[];
+          pair.init({
+            raisedToken: raisedToken,
+            launchedToken: launchedToken,
+            depositedLaunchedToken: pairAddress.depositedLaunchedToken,
+            depositedRaisedToken: pairAddress.depositedRaisedToken,
+            startTime: pairAddress.createdAt,
+            endTime: pairAddress.endTime,
+            ftoState: Number(pairAddress.status),
+          });
 
-    return {
-      data,
-      total: 999,
-    };
-  });
+          return pair;
+        }),
+        pageInfo: res.data.pageInfo,
+      };
+      return data;
+    } else {
+      return {
+        items: [],
+        pageInfo: {
+          hasNextPage: true,
+          hasPreviousPage: false,
+          startCursor: "",
+          endCursor: "",
+        },
+      };
+    }
+  };
 
   createLaunchProject = new AsyncState<({}: any) => Promise<string>>(
     async ({
@@ -601,15 +616,15 @@ class LaunchPad {
   }
 
   setCurrentPageInfo = (pageInfo: PageInfo) => {
-    this.ftoPageInfo.pageInfo = pageInfo;
+    this.projectsPage.pageInfo = pageInfo;
   };
 
   setFtoPageIsInit = (isInit: boolean) => {
-    this.ftoPageInfo.isInit = isInit;
+    this.projectsPage.isInit = isInit;
   };
 
   setFtoPageLoading = (isLoading: boolean) => {
-    this.ftoPageInfo.isLoading = isLoading;
+    this.projectsPage.isLoading = isLoading;
   };
 
   setCurrentLaunchpadType = (type: launchpadType) => {

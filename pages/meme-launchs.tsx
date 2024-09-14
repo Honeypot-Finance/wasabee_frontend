@@ -43,7 +43,8 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     }
     launchpad.setCurrentLaunchpadType("meme");
     launchpad.showNotValidatedPairs = true;
-    launchpad.memePageInfo.reloadPage();
+    launchpad.myLaunches.reloadPage();
+    launchpad.projectsPage.reloadPage();
     launchpad.participatedPairs.reloadPage();
 
     //loading most success projects
@@ -220,7 +221,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             <PopoverTrigger>
               <NextButton className="inline-flex w-full sm:w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)] text-white text-center">
                 <span className="flex-1">
-                  {launchpad.memePageInfo.filter.status.toUpperCase()}
+                  {launchpad.projectsPage.filter.status.toUpperCase()}
                 </span>
                 <DropdownSvg></DropdownSvg>
               </NextButton>
@@ -230,7 +231,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 {() => (
                   <div className="w-full">
                     <SpinnerContainer
-                      isLoading={launchpad.memePageInfo.isLoading}
+                      isLoading={launchpad.projectsPage.isLoading}
                     >
                       <div className="max-h-[300px] grid grid-cols-3 gap-2">
                         <NextButton
@@ -274,7 +275,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           </Popover>
         </div>
       </div>
-      {!launchpad.memePageInfo.isInit ? (
+      {!launchpad.projectsPage.isInit ? (
         <div className="flex h-80 sm:h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
           <LoadingDisplay />
         </div>
@@ -292,7 +293,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               if (key === "all") {
                 //
               } else if (key === "my") {
-                launchpad.myPairs.call();
+                launchpad.myLaunches.reloadPage();
               } else if (key === "participated-launch") {
                 launchpad.participatedPairs.reloadPage();
               }
@@ -305,23 +306,21 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 animate="visible"
                 className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3"
               >
-                {launchpad.memePageInfo.pageItems.value.map(
-                  (pair: MemePairContract) => (
-                    <motion.div variants={itemPopUpVariants} key={pair.address}>
-                      <LaunchCard pair={pair} action={<></>} />
-                    </motion.div>
-                  )
-                )}
+                {launchpad.projectsPage.pageItems.value.map((pair) => (
+                  <motion.div variants={itemPopUpVariants} key={pair.address}>
+                    <LaunchCard pair={pair} action={<></>} />
+                  </motion.div>
+                ))}
               </motion.div>
               <div className="flex justify-around my-5">
-                {launchpad.memePageInfo.pageInfo.hasNextPage && (
+                {launchpad.projectsPage.pageInfo.hasNextPage && (
                   <Button
                     onClick={() => {
-                      launchpad.memePageInfo.loadMore();
+                      launchpad.projectsPage.loadMore();
                     }}
-                    isDisabled={launchpad.memePageInfo.isLoading}
+                    isDisabled={launchpad.projectsPage.isLoading}
                   >
-                    {launchpad.memePageInfo.isLoading
+                    {launchpad.projectsPage.isLoading
                       ? "Loading..."
                       : "Load More"}
                   </Button>
@@ -330,11 +329,13 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             </Tab>
             <Tab key="my" title="My Projects">
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-                {launchpad.myPairs.value?.data.map((pair: FtoPairContract) => (
-                  <div key={pair.address}>
-                    <LaunchCard pair={pair} action={<></>} />
-                  </div>
-                ))}
+                {launchpad.myLaunches.pageItems.value?.map(
+                  (pair: FtoPairContract) => (
+                    <div key={pair.address}>
+                      <LaunchCard pair={pair} action={<></>} />
+                    </div>
+                  )
+                )}
               </div>
             </Tab>{" "}
             <Tab key="participated-launch" title="Participated Launch">
@@ -372,7 +373,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                     onClick={() => {
                       launchpad.participatedPairs.loadMore();
                     }}
-                    isDisabled={launchpad.memePageInfo.isLoading}
+                    isDisabled={launchpad.projectsPage.isLoading}
                   >
                     {launchpad.participatedPairs.isLoading
                       ? "Loading..."

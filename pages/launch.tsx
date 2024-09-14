@@ -34,7 +34,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
     FtoPairContract[]
-  >(launchpad.ftoPageInfo.pageItems.value);
+  >([]);
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -42,7 +42,8 @@ const LaunchPage: NextLayoutPage = observer(() => {
     }
     launchpad.setCurrentLaunchpadType("fto");
     launchpad.showNotValidatedPairs = true;
-    launchpad.ftoPageInfo.reloadPage();
+    launchpad.myLaunches.reloadPage();
+    launchpad.projectsPage.reloadPage();
     launchpad.participatedPairs.reloadPage();
 
     //loading most success projects
@@ -191,7 +192,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
             <PopoverTrigger>
               <NextButton className="inline-flex w-full sm:w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)] text-white text-center">
                 <span className="flex-1">
-                  {launchpad.ftoPageInfo.filter.status.toUpperCase()}
+                  {launchpad.projectsPage.filter.status.toUpperCase()}
                 </span>
                 <DropdownSvg></DropdownSvg>
               </NextButton>
@@ -201,7 +202,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 {() => (
                   <div className="w-full">
                     <SpinnerContainer
-                      isLoading={launchpad.ftoPageInfo.isLoading}
+                      isLoading={launchpad.projectsPage.isLoading}
                     >
                       <div className="max-h-[300px] grid grid-cols-3 gap-2">
                         <NextButton
@@ -247,14 +248,16 @@ const LaunchPage: NextLayoutPage = observer(() => {
         <div className="flex justify-between items-center">
           <Checkbox
             onClick={() => {
-              launchpad.ftoPageInfo.updateFilter({
+              launchpad.projectsPage.updateFilter({
                 showNotValidatedPairs:
-                  !launchpad.ftoPageInfo.filter.showNotValidatedPairs,
+                  !launchpad.projectsPage.filter.showNotValidatedPairs,
               });
             }}
-            defaultSelected={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
-            defaultChecked={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
-            checked={launchpad.ftoPageInfo.filter.showNotValidatedPairs}
+            defaultSelected={
+              launchpad.projectsPage.filter.showNotValidatedPairs
+            }
+            defaultChecked={launchpad.projectsPage.filter.showNotValidatedPairs}
+            checked={launchpad.projectsPage.filter.showNotValidatedPairs}
             className="mt-2"
           >
             Show Unvalidated Projects
@@ -277,7 +280,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
         </div>
       </div>
 
-      {!launchpad.ftoPageInfo.isInit ? (
+      {!launchpad.projectsPage.isInit ? (
         <div className="flex h-80 sm:h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
           <LoadingDisplay />
         </div>
@@ -295,7 +298,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
               if (key === "all") {
                 //
               } else if (key === "my") {
-                launchpad.myPairs.call();
+                launchpad.myLaunches.reloadPage();
               } else if (key === "participated-launch") {
                 launchpad.participatedPairs.reloadPage();
               }
@@ -308,23 +311,21 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 animate="visible"
                 className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3"
               >
-                {launchpad.ftoPageInfo.pageItems.value.map(
-                  (pair: FtoPairContract) => (
-                    <motion.div variants={itemPopUpVariants} key={pair.address}>
-                      <LaunchCard pair={pair} action={<></>} />
-                    </motion.div>
-                  )
-                )}
+                {launchpad.projectsPage.pageItems.value.map((pair) => (
+                  <motion.div variants={itemPopUpVariants} key={pair.address}>
+                    <LaunchCard pair={pair} action={<></>} />
+                  </motion.div>
+                ))}
               </motion.div>
               <div className="flex justify-around my-5">
-                {launchpad.ftoPageInfo.pageInfo.hasNextPage && (
+                {launchpad.projectsPage.pageInfo.hasNextPage && (
                   <Button
                     onClick={() => {
-                      launchpad.ftoPageInfo.loadMore();
+                      launchpad.projectsPage.loadMore();
                     }}
-                    isDisabled={launchpad.ftoPageInfo.isLoading}
+                    isDisabled={launchpad.projectsPage.isLoading}
                   >
-                    {launchpad.ftoPageInfo.isLoading
+                    {launchpad.projectsPage.isLoading
                       ? "Loading..."
                       : "Load More"}
                   </Button>
@@ -333,11 +334,13 @@ const LaunchPage: NextLayoutPage = observer(() => {
             </Tab>
             <Tab key="my" title="My Projects">
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-                {launchpad.myPairs.value?.data.map((pair: FtoPairContract) => (
-                  <div key={pair.address}>
-                    <LaunchCard pair={pair} action={<></>} />
-                  </div>
-                ))}
+                {launchpad.myLaunches.pageItems.value.map(
+                  (pair: FtoPairContract) => (
+                    <div key={pair.address}>
+                      <LaunchCard pair={pair} action={<></>} />
+                    </div>
+                  )
+                )}
               </div>
             </Tab>{" "}
             <Tab key="participated-launch" title="Participated Launch">
@@ -375,7 +378,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                     onClick={() => {
                       launchpad.participatedPairs.loadMore();
                     }}
-                    isDisabled={launchpad.memePageInfo.isLoading}
+                    isDisabled={launchpad.myLaunches.isLoading}
                   >
                     {launchpad.participatedPairs.isLoading
                       ? "Loading..."
