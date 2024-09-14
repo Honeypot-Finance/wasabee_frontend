@@ -141,14 +141,20 @@ class LaunchPad {
 
   set pairFilterSearch(search: string) {
     this.projectsPage.updateFilter({ search });
+    this.myLaunches.updateFilter({ search });
+    this.participatedPairs.updateFilter({ search });
   }
 
   set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
     this.projectsPage.updateFilter({ status });
+    this.myLaunches.updateFilter({ status });
+    this.participatedPairs.updateFilter({ status });
   }
 
   set showNotValidatedPairs(show: boolean) {
     this.projectsPage.updateFilter({ showNotValidatedPairs: show });
+    this.myLaunches.updateFilter({ showNotValidatedPairs: show });
+    this.participatedPairs.updateFilter({ showNotValidatedPairs: show });
   }
 
   get memeFactoryContract() {
