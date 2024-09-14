@@ -21,8 +21,8 @@ import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 import dayjs from "dayjs";
 
-const memeGraphHandle = "85c281b3-7aab-4296-90d3-e0aad37543f6/ghostgraph";
-const ftoGraphHandle = "e68123d7-3006-46a7-aaf1-e13059aae6c3/ghostgraph";
+const memeGraphHandle = "a4357046-6f1a-4ceb-a888-8f90f60bd553/ghostgraph";
+const ftoGraphHandle = "59eb35ba-6a83-4bb6-b00c-af0f103db519/ghostgraph";
 const pairGraphHandle = "3a9fbaf8-1421-44d5-91f3-5dff76ad4879/ghostgraph";
 
 export class GhostIndexer {
@@ -460,12 +460,22 @@ export class GhostIndexer {
         : `before:"${pageRequest?.cursor}"`
       : "";
 
+    const searchStringCondition = filter?.search
+      ? `searchString_contains:"${filter.search.toLowerCase()}",`
+      : "";
+
     const limit = filter.limit ?? 9;
 
     const query = ` {
                       participateds(
                         where:{
                           depositer:"${walletAddress.toLowerCase()}"
+                          
+                          OR:[
+                            {
+                              ${searchStringCondition}
+                            }
+                          ]
                         }
                         orderBy:"createdAt"
                         orderDirection: "desc"
