@@ -300,6 +300,12 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/ivx-token-icon.webp",
     },
+    "0xb5a27c33ba2adecee8cdbe94cef5576e2f364a8f": {
+      name: "BERO",
+      symbol: "BERO",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/bero-token-icon.webp",
+    },
   },
   validatedFtoAddresses: [
     "0x2c504e661750e03aa9252c67e771dc059a521863".toLowerCase(),
