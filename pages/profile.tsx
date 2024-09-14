@@ -41,7 +41,7 @@ const MyLaunchTab = observer(() => {
             isDisabled={launchpad.currentLaunchpadType.value === "fto"}
             onClick={() => {
               launchpad.setCurrentLaunchpadType("fto");
-              launchpad.myPairs.call();
+              launchpad.myLaunches.reloadPage();
             }}
           >
             FTO
@@ -50,7 +50,7 @@ const MyLaunchTab = observer(() => {
             isDisabled={launchpad.currentLaunchpadType.value === "meme"}
             onClick={() => {
               launchpad.setCurrentLaunchpadType("meme");
-              launchpad.myPairs.call();
+              launchpad.myLaunches.reloadPage();
             }}
           >
             MEME
@@ -62,9 +62,9 @@ const MyLaunchTab = observer(() => {
           animate="visible"
           className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6"
         >
-          {launchpad.myPairs.loading ? (
+          {!launchpad.myLaunches.isInit ? (
             <LoadingDisplay />
-          ) : launchpad.myPairs.value?.data.length === 0 ? (
+          ) : launchpad.myLaunches.pageItems.value.length === 0 ? (
             <div className="flex flex-col justify-center items-center">
               <HoneyStickSvg />
               <div className="text-[#eee369] mt-2  text-[3rem] text-center">
@@ -72,7 +72,7 @@ const MyLaunchTab = observer(() => {
               </div>
             </div>
           ) : (
-            launchpad.myPairs.value?.data
+            launchpad.myLaunches.pageItems.value
               .slice()
               .sort((a, b) => {
                 return a.canClaimLP ? 1 : b.canClaimLP ? -1 : 0;
@@ -143,7 +143,7 @@ const ParticipatedLaunchTab = observer(() => {
               onClick={() => {
                 launchpad.participatedPairs.loadMore();
               }}
-              isDisabled={launchpad.memePageInfo.isLoading}
+              isDisabled={launchpad.myLaunches.isLoading}
             >
               {launchpad.participatedPairs.isLoading
                 ? "Loading..."
@@ -168,7 +168,7 @@ export const Profile = observer(() => {
       return;
     }
     launchpad.showNotValidatedPairs = true;
-    launchpad.myPairs.call();
+    launchpad.myLaunches.reloadPage();
     launchpad.participatedPairs.reloadPage();
     liquidity.myPairPage.reloadPage();
   }, [wallet.isInit, liquidity.isInit]);
