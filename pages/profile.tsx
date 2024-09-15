@@ -158,6 +158,29 @@ const PoolsTab = observer(() => {
   );
 });
 
+const PortfolioTab = observer(() => {
+  return (
+    <Card className="next-card">
+      <CardBody>
+        <motion.div
+          variants={defaultContainerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {wallet?.currentChain?.validatedTokens &&
+            wallet?.currentChain?.validatedTokens
+              ?.filter((token) => token.balance.toNumber() > 0)
+              .map((token) => (
+                <motion.div variants={itemSlideVariants} key={token.address}>
+                  <TokenBalanceCard token={token} autoSize></TokenBalanceCard>
+                </motion.div>
+              ))}
+        </motion.div>
+      </CardBody>
+    </Card>
+  );
+});
+
 export const Profile = observer(() => {
   const { chainId } = useAccount();
 
@@ -225,30 +248,7 @@ export const Profile = observer(() => {
           className="next-tab"
         >
           <Tab key="portfolio" title="Portfolio">
-            <Card className="next-card">
-              <CardBody className="">
-                <motion.div
-                  variants={defaultContainerVariants}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  {wallet?.currentChain?.validatedTokens &&
-                    wallet?.currentChain?.validatedTokens
-                      ?.filter((token) => token.balance.toNumber() > 0)
-                      .map((token) => (
-                        <motion.div
-                          variants={itemSlideVariants}
-                          key={token.address}
-                        >
-                          <TokenBalanceCard
-                            token={token}
-                            autoSize
-                          ></TokenBalanceCard>
-                        </motion.div>
-                      ))}
-                </motion.div>
-              </CardBody>
-            </Card>
+            <PortfolioTab />
           </Tab>
           <Tab key="my-launch" title="My Launch">
             <MyLaunchTab />
