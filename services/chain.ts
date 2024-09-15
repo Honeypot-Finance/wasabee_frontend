@@ -98,8 +98,8 @@ export const berachainBartioTestnetNetwork = new Network({
     requirements: "You can claim 100 BERA tokens every 24 hours.",
   },
   contracts: {
-    routerV2: "0x2261Fe72B6B686EAb2a3D6427107553677B4AB46",
-    factory: "0x0CEFeEc4e53DD019B27AbAc2f86E858ef8353208",
+    routerV2: "0x8aBc3a7bAC442Ae449B07fd0C2152364C230DA9A",
+    factory: "0x7A962f6E45100b8cC560C7d2c248ec704623fb53",
     ftoFactory: "0x7E0CCe2C9Ff537f8301dd40c652A03479B18dAef",
     ftoFacade: "0x0264D933F13eE993270591668CfF87b8D35Dd3b4",
     memeFactory: "0xc906E2bA6AA4F6Dd8340487DD8CDeBcA65e56A8D",
