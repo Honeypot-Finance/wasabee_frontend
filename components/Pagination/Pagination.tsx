@@ -1,43 +1,54 @@
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
-import launchpad from "@/services/launchpad";
-import { Button } from "@nextui-org/react";
+import { Button } from "../button";
 import { motion } from "framer-motion";
-import { LaunchCard } from "../LaunchCard";
 import { IndexerPaginationState } from "@/services/utils";
+import { observer } from "mobx-react-lite";
 
 type PaginationProps<FilterT, ItemT> = {
   paginationState: IndexerPaginationState<FilterT, ItemT>;
+  render: (item: ItemT) => React.ReactNode;
+  classNames?: {
+    base?: string;
+    itemsContainer?: string;
+    item?: string;
+  };
 };
 
-export default function Pagination<FilterT, ItemT>(props: {
-  paginationState: IndexerPaginationState<FilterT, ItemT>;
-}) {
-  return (
-    <div>
-      <motion.div
-        variants={defaultContainerVariants}
-        initial="hidden"
-        animate="visible"
-        className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3"
-      >
-        {launchpad.projectsPage.pageItems.value.map((pair) => (
-          <motion.div variants={itemPopUpVariants} key={pair.address}>
-            <LaunchCard pair={pair} action={<></>} />
-          </motion.div>
-        ))}
-      </motion.div>
-      <div className="flex justify-around my-5">
-        {launchpad.projectsPage.pageInfo.hasNextPage && (
-          <Button
-            onClick={() => {
-              launchpad.projectsPage.loadMore();
-            }}
-            isDisabled={launchpad.projectsPage.isLoading}
-          >
-            {launchpad.projectsPage.isLoading ? "Loading..." : "Load More"}
-          </Button>
-        )}
+export const Pagination = observer(
+  <FilterT, ItemT>(props: PaginationProps<FilterT, ItemT>) => {
+    return (
+      <div className={props.classNames?.base ?? ""}>
+        <motion.div
+          variants={defaultContainerVariants}
+          initial="hidden"
+          animate="visible"
+          className={props.classNames?.itemsContainer ?? ""}
+        >
+          {props.paginationState.pageItems.value.map((pair, idx) => (
+            <motion.div
+              variants={itemPopUpVariants}
+              key={idx}
+              className={props.classNames?.item ?? ""}
+            >
+              {props.render(pair)}
+            </motion.div>
+          ))}
+        </motion.div>
+        <div className="flex justify-around my-5">
+          {props.paginationState.pageInfo.hasNextPage && (
+            <Button
+              onClick={() => {
+                props.paginationState.loadMore();
+              }}
+              isDisabled={props.paginationState.isLoading}
+            >
+              {props.paginationState.isLoading ? "Loading..." : "Load More"}
+            </Button>
+          )}
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+);
+
+export default Pagination;

@@ -30,6 +30,7 @@ import { FaCrown } from "react-icons/fa";
 import MemeWarBanner from "@/components/MemeWarBanner/MemeWarBanner";
 import HoneyStickSvg from "@/components/svg/HoneyStick";
 import { set } from "lodash";
+import Pagination from "@/components/Pagination/Pagination";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -316,87 +317,34 @@ const LaunchPage: NextLayoutPage = observer(() => {
             }}
           >
             <Tab key="all" title="All Projects">
-              <motion.div
-                variants={defaultContainerVariants}
-                initial="hidden"
-                animate="visible"
-                className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3"
-              >
-                {launchpad.projectsPage.pageItems.value.map((pair) => (
-                  <motion.div variants={itemPopUpVariants} key={pair.address}>
-                    <LaunchCard pair={pair} action={<></>} />
-                  </motion.div>
-                ))}
-              </motion.div>
-              <div className="flex justify-around my-5">
-                {launchpad.projectsPage.pageInfo.hasNextPage && (
-                  <Button
-                    onClick={() => {
-                      launchpad.projectsPage.loadMore();
-                    }}
-                    isDisabled={launchpad.projectsPage.isLoading}
-                  >
-                    {launchpad.projectsPage.isLoading
-                      ? "Loading..."
-                      : "Load More"}
-                  </Button>
-                )}
-              </div>
+              <Pagination
+                paginationState={launchpad.projectsPage}
+                render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+                classNames={{
+                  itemsContainer:
+                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
+                }}
+              />
             </Tab>
             <Tab key="my" title="My Projects">
-              <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3">
-                {launchpad.myLaunches.pageItems.value.map(
-                  (pair: FtoPairContract) => (
-                    <div key={pair.address}>
-                      <LaunchCard pair={pair} action={<></>} />
-                    </div>
-                  )
-                )}
-              </div>
+              <Pagination
+                paginationState={launchpad.myLaunches}
+                render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+                classNames={{
+                  itemsContainer:
+                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
+                }}
+              />
             </Tab>{" "}
             <Tab key="participated-launch" title="Participated Launch">
-              <motion.div
-                variants={defaultContainerVariants}
-                initial="hidden"
-                animate="visible"
-                className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3"
-              >
-                {!launchpad.participatedPairs.isInit ? (
-                  <LoadingDisplay />
-                ) : launchpad.participatedPairs.pageItems.value?.length ??
-                  0 > 0 ? (
-                  launchpad.participatedPairs.pageItems.value?.map(
-                    (project) => (
-                      <LaunchCard
-                        key={project.address}
-                        pair={project}
-                        action={<></>}
-                      />
-                    )
-                  )
-                ) : (
-                  <div className="flex flex-col justify-center items-center">
-                    <HoneyStickSvg />
-                    <div className="text-[#eee369] mt-2  text-[3rem] text-center">
-                      List is empty
-                    </div>
-                  </div>
-                )}
-              </motion.div>{" "}
-              <div className="flex justify-around my-5">
-                {launchpad.participatedPairs.pageInfo.hasNextPage && (
-                  <Button
-                    onClick={() => {
-                      launchpad.participatedPairs.loadMore();
-                    }}
-                    isDisabled={launchpad.myLaunches.isLoading}
-                  >
-                    {launchpad.participatedPairs.isLoading
-                      ? "Loading..."
-                      : "Load More"}
-                  </Button>
-                )}
-              </div>
+              <Pagination
+                paginationState={launchpad.participatedPairs}
+                render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+                classNames={{
+                  itemsContainer:
+                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
+                }}
+              />
             </Tab>
             <Tab href="/meme-launchs" title="To MEME projects->" />
           </Tabs>

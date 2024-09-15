@@ -1,6 +1,7 @@
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { LaunchCard } from "@/components/LaunchCard";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
+import Pagination from "@/components/Pagination/Pagination";
 import PoolLiquidityCard from "@/components/PoolLiquidityCard/PoolLiquidityCard";
 import TokenBalanceCard from "@/components/TokenBalanceCard/TokenBalanceCard";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
@@ -56,36 +57,17 @@ const MyLaunchTab = observer(() => {
             MEME
           </NextButton>
         </div>
-        <motion.div
-          variants={defaultContainerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6"
-        >
-          {!launchpad.myLaunches.isInit ? (
-            <LoadingDisplay />
-          ) : launchpad.myLaunches.pageItems.value.length === 0 ? (
-            <div className="flex flex-col justify-center items-center">
-              <HoneyStickSvg />
-              <div className="text-[#eee369] mt-2  text-[3rem] text-center">
-                List is empty
-              </div>
-            </div>
-          ) : (
-            launchpad.myLaunches.pageItems.value
-              .slice()
-              .sort((a, b) => {
-                return a.canClaimLP ? 1 : b.canClaimLP ? -1 : 0;
-              })
-              .map((project) => (
-                <LaunchCard
-                  key={project.address}
-                  pair={project}
-                  action={<></>}
-                />
-              ))
+        <Pagination
+          paginationState={launchpad.myLaunches}
+          render={(project) => (
+            <LaunchCard key={project.address} pair={project} action={<></>} />
           )}
-        </motion.div>
+          classNames={{
+            base: "",
+            itemsContainer: "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6",
+            item: "",
+          }}
+        />
       </CardBody>
     </Card>
   );
@@ -115,42 +97,62 @@ const ParticipatedLaunchTab = observer(() => {
             MEME
           </NextButton>
         </div>
-        <motion.div
-          variants={defaultContainerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 "
-        >
-          {launchpad.participatedPairs.isLoading ? (
-            <LoadingDisplay />
-          ) : launchpad.participatedPairs.pageItems.value?.length ?? 0 > 0 ? (
-            launchpad.participatedPairs.pageItems.value?.map((project) => (
-              <LaunchCard key={project.address} pair={project} action={<></>} />
-            ))
-          ) : (
-            <div className="flex flex-col justify-center items-center">
-              <HoneyStickSvg />
-              <div className="text-[#eee369] mt-2  text-[3rem] text-center">
-                List is empty
-              </div>
-            </div>
+        <Pagination
+          paginationState={launchpad.participatedPairs}
+          render={(project) => (
+            <LaunchCard key={project.address} pair={project} action={<></>} />
           )}
-        </motion.div>
+          classNames={{
+            base: "",
+            itemsContainer: "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6",
+            item: "",
+          }}
+        />
+      </CardBody>
+    </Card>
+  );
+});
 
-        <div className="flex justify-around my-5">
-          {launchpad.participatedPairs.pageInfo.hasNextPage && (
-            <Button
-              onClick={() => {
-                launchpad.participatedPairs.loadMore();
-              }}
-              isDisabled={launchpad.myLaunches.isLoading}
+const PoolsTab = observer(() => {
+  return (
+    <Card className="next-card">
+      <CardBody>
+        <div className="flex w-full items-center">
+          <div className="flex w-full justify-start text-[#FAFAFC]">
+            <h2 className="ml-[3rem] opacity-65 w-[13rem] mr-2">Pool</h2>
+            <h2 className="ml-[1rem] opacity-65">Reserves</h2>
+          </div>
+          <div className="flex justify-end">
+            <Link
+              href={"https://tryghost.xyz/log"}
+              target="_blank"
+              className="flex p-2 gap-2 items-center"
             >
-              {launchpad.participatedPairs.isLoading
-                ? "Loading..."
-                : "Load More"}
-            </Button>
-          )}
+              <Image
+                className="h-4"
+                src="/images/partners/powered_by_ghost_light.png"
+                alt=""
+                width={100}
+                height={100}
+              />
+            </Link>
+          </div>
         </div>
+        <Pagination
+          paginationState={liquidity.myPairPage}
+          render={(pair) => (
+            <PoolLiquidityCard
+              showMyLiquidity={false}
+              pair={pair}
+              autoSize
+            ></PoolLiquidityCard>
+          )}
+          classNames={{
+            base: "",
+            itemsContainer: "",
+            item: "",
+          }}
+        />
       </CardBody>
     </Card>
   );
@@ -255,41 +257,7 @@ export const Profile = observer(() => {
             <ParticipatedLaunchTab />
           </Tab>
           <Tab key="my-pools" title="My Pools">
-            <Card className="next-card">
-              <CardBody>
-                <motion.div
-                  variants={defaultContainerVariants}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  {liquidity.isInit ? (
-                    liquidity.myPairPage.pageItems.value.length > 0 ? (
-                      liquidity.myPairPage.pageItems.value.map((pair) => (
-                        <motion.div
-                          variants={itemSlideVariants}
-                          key={pair.address}
-                        >
-                          <PoolLiquidityCard
-                            showMyLiquidity={true}
-                            pair={pair}
-                            autoSize
-                          ></PoolLiquidityCard>
-                        </motion.div>
-                      ))
-                    ) : (
-                      <div className="flex flex-col justify-center items-center">
-                        <HoneyStickSvg />
-                        <div className="text-[#eee369] mt-2  text-[3rem] text-center">
-                          List is empty
-                        </div>
-                      </div>
-                    )
-                  ) : (
-                    <LoadingDisplay />
-                  )}
-                </motion.div>
-              </CardBody>
-            </Card>
+            <PoolsTab />
           </Tab>
         </Tabs>
       </div>

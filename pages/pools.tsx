@@ -29,6 +29,7 @@ import { defaultContainerVariants, itemSlideVariants } from "@/lib/animation";
 import HoneyStickSvg from "@/components/svg/HoneyStick";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import Image from "next/image";
+import Pagination from "@/components/Pagination/Pagination";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
@@ -163,29 +164,21 @@ const PoolsPage: NextLayoutPage = observer(() => {
             </div>
             <Card className="[background:#1D1407] rounded-[20px]">
               <CardBody className="">
-                {liquidity.pairPage.pageItems.value.map((pair) => (
-                  <motion.div variants={itemSlideVariants} key={pair.address}>
+                <Pagination
+                  paginationState={liquidity.pairPage}
+                  render={(pair) => (
                     <PoolLiquidityCard
                       showMyLiquidity={false}
                       pair={pair}
                       autoSize
                     ></PoolLiquidityCard>
-                  </motion.div>
-                ))}
-                <div className="flex justify-around my-5">
-                  {liquidity.pairPage.pageInfo.hasNextPage && (
-                    <Button
-                      onClick={() => {
-                        liquidity.pairPage.loadMore();
-                      }}
-                      isDisabled={liquidity.pairPage.isLoading}
-                    >
-                      {liquidity.pairPage.isLoading
-                        ? "Loading..."
-                        : "Load More"}
-                    </Button>
                   )}
-                </div>
+                  classNames={{
+                    base: "",
+                    itemsContainer: "",
+                    item: "",
+                  }}
+                />
               </CardBody>
             </Card>
           </Tab>
@@ -218,31 +211,21 @@ const PoolsPage: NextLayoutPage = observer(() => {
                   initial="hidden"
                   animate="visible"
                 >
-                  {liquidity.isInit ? (
-                    liquidity.myPairPage.pageItems.value.length > 0 ? (
-                      liquidity.myPairPage.pageItems.value.map((pair) => (
-                        <motion.div
-                          variants={itemSlideVariants}
-                          key={pair.address}
-                        >
-                          <PoolLiquidityCard
-                            showMyLiquidity={true}
-                            pair={pair}
-                            autoSize
-                          ></PoolLiquidityCard>
-                        </motion.div>
-                      ))
-                    ) : (
-                      <div className="flex flex-col justify-center items-center">
-                        <HoneyStickSvg />
-                        <div className="text-[#eee369] mt-2  text-[3rem] text-center">
-                          List is empty
-                        </div>
-                      </div>
-                    )
-                  ) : (
-                    <LoadingDisplay />
-                  )}
+                  <Pagination
+                    paginationState={liquidity.myPairPage}
+                    render={(pair) => (
+                      <PoolLiquidityCard
+                        showMyLiquidity={true}
+                        pair={pair}
+                        autoSize
+                      ></PoolLiquidityCard>
+                    )}
+                    classNames={{
+                      base: "",
+                      itemsContainer: "",
+                      item: "",
+                    }}
+                  />
                 </motion.div>
               </CardBody>
             </Card>
