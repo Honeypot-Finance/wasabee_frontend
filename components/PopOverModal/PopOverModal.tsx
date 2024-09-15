@@ -6,6 +6,8 @@ import {
 } from "../wrappedNextUI/Modal/Modal";
 
 import { popmodal } from "@/services/popmodal";
+import { ModalFooter } from "@nextui-org/react";
+import { Button } from "../button";
 
 export const PopOverModal = observer(() => {
   return (
@@ -17,6 +19,15 @@ export const PopOverModal = observer(() => {
     >
       <WrappedNextModalContent>
         <WrappedNextModalBody>{popmodal.modalContent}</WrappedNextModalBody>
+        {!!popmodal.actions?.length && (
+          <ModalFooter>
+            {popmodal.actions.map((action) => (
+              <Button key={action.label} onPress={action.onPress}>
+                {action.label}
+              </Button>
+            ))}
+          </ModalFooter>
+        )}
       </WrappedNextModalContent>
     </WrappedNextModal>
   );

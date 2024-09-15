@@ -38,6 +38,7 @@ import { WrappedNextDatePicker } from "@/components/wrappedNextUI/DatePicker/Dat
 import Image from "next/image";
 import { FaQuestionCircle } from "react-icons/fa";
 import { popmodal } from "@/services/popmodal";
+import store from 'store2'
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
 const minimumTimePattern = /^(6[1-9]|[7-9][0-9]|[1-9][0-9]{2,})$/;
@@ -332,7 +333,10 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     }
   };
   useEffect(() => {
-    openInstructionModal();
+    const notice_read = store.get('pot2pump_notice_read')
+    if (!notice_read) {
+      openInstructionModal();
+    }
   }, []);
 
   const openInstructionModal = () => {
@@ -347,6 +351,13 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
           />
         </div>
       ),
+      actions: [{
+        label: 'Confirm',
+        onPress: () => {
+          popmodal.closeModal();
+          store.set('pot2pump_notice_read', true)
+        }
+      }]
     });
   };
 

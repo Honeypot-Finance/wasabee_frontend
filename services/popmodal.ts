@@ -3,15 +3,20 @@ import { makeAutoObservable } from "mobx";
 class PopModal {
   open: boolean = false;
   modalContent: React.ReactNode = "This is a PopOver Modal";
+  actions: {
+    label: string;
+    onPress: () => void;
+  } [] = []
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  openModal({ content }: { content: React.ReactNode }) {
+  openModal({ content, actions }: { content: React.ReactNode; actions?: PopModal['actions'] }) {
     if (content) {
       this.setModalContent(content);
     }
+    this.actions = actions || []
     this.open = true;
   }
 
