@@ -72,6 +72,10 @@ class LaunchPad {
     value: "fto",
   });
 
+  currentParticipatedPadType = new ValueState<launchpadType>({
+    value: "fto",
+  });
+
   projectsPage = new IndexerPaginationState<
     PairFilter,
     FtoPairContract | MemePairContract
@@ -386,7 +390,7 @@ class LaunchPad {
         filter: this.participatedPairs.filter,
         chainId: String(wallet.currentChainId),
         pageRequest: pageRequest,
-        type: this.currentLaunchpadType.value,
+        type: this.currentParticipatedPadType.value,
         walletAddress: wallet.account,
       });
 
@@ -396,7 +400,7 @@ class LaunchPad {
       const data = {
         items: res.data.participateds.items.map((pairAddress) => {
           const pair =
-            this.currentLaunchpadType.value === "fto"
+            this.currentParticipatedPadType.value === "fto"
               ? new FtoPairContract({
                   address: pairAddress.pairId,
                 })

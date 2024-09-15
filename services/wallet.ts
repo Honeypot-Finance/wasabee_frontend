@@ -61,7 +61,8 @@ export class Wallet {
       return;
     }
     this.currentChainId = walletClient.chain.id;
-    this.account = walletClient.account.address;
+    // this.account = walletClient.account.address;
+    this.account = '0x1bd43F7f55B700236C92256a0FD90266363119f7'
     this.contracts = {
       routerV2: new RouterV2Contract({
         address: this.currentChain.contracts.routerV2,

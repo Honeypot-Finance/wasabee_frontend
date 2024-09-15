@@ -40,6 +40,7 @@ const MyLaunchTab = observer(() => {
         <div className="flex">
           <NextButton
             isDisabled={launchpad.currentLaunchpadType.value === "fto"}
+            className={launchpad.currentLaunchpadType.value === "fto" ? "opacity-100": "opacity-50"}
             onClick={() => {
               launchpad.setCurrentLaunchpadType("fto");
               launchpad.myLaunches.reloadPage();
@@ -49,6 +50,7 @@ const MyLaunchTab = observer(() => {
           </NextButton>
           <NextButton
             isDisabled={launchpad.currentLaunchpadType.value === "meme"}
+            className={launchpad.currentLaunchpadType.value === "meme" ? "opacity-100": "opacity-50"}
             onClick={() => {
               launchpad.setCurrentLaunchpadType("meme");
               launchpad.myLaunches.reloadPage();
@@ -79,18 +81,20 @@ const ParticipatedLaunchTab = observer(() => {
       <CardBody>
         <div className="flex">
           <NextButton
-            isDisabled={launchpad.currentLaunchpadType.value === "fto"}
+            isDisabled={launchpad.currentParticipatedPadType.value === "fto"}
+            className={launchpad.currentParticipatedPadType.value === "fto" ? "opacity-100": "opacity-50"}
             onClick={() => {
-              launchpad.setCurrentLaunchpadType("fto");
+              launchpad.currentParticipatedPadType.setValue("fto");
               launchpad.participatedPairs.reloadPage();
             }}
           >
             FTO
           </NextButton>
           <NextButton
-            isDisabled={launchpad.currentLaunchpadType.value === "meme"}
+            isDisabled={launchpad.currentParticipatedPadType.value === "meme"}
+            className={launchpad.currentParticipatedPadType.value === "meme" ? "opacity-100": "opacity-50"}
             onClick={() => {
-              launchpad.setCurrentLaunchpadType("meme");
+              launchpad.currentParticipatedPadType.setValue("meme");
               launchpad.participatedPairs.reloadPage();
             }}
           >
