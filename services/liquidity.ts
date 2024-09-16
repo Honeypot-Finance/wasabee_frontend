@@ -157,6 +157,7 @@ class Liquidity {
   tokensMap: Record<string, Token> = {};
 
   slippage = 10;
+  singleSide = false;
   // localTokensMap = new StorageState<Record<string, Token>>({
   //   key: "localTokens_v2",
   //   value: {} as Record<string, Token>,
@@ -248,14 +249,23 @@ class Liquidity {
   }
 
   get isDisabled() {
-    return (
-      !this.fromToken ||
-      !this.toToken ||
-      !this.fromAmount ||
-      !this.toAmount ||
-      Number(this.toAmount) > this.toToken.balance.toNumber() ||
-      Number(this.fromAmount) > this.fromToken.balance.toNumber()
-    );
+    if (this.singleSide) {
+      return (
+        !this.fromToken ||
+        !this.toToken ||
+        !this.fromAmount ||
+        Number(this.fromAmount) > this.fromToken.balance.toNumber()
+      );
+    } else {
+      return (
+        !this.fromToken ||
+        !this.toToken ||
+        !this.fromAmount ||
+        !this.toAmount ||
+        Number(this.toAmount) > this.toToken.balance.toNumber() ||
+        Number(this.fromAmount) > this.fromToken.balance.toNumber()
+      );
+    }
   }
 
   get buttonContent() {
@@ -304,11 +314,12 @@ class Liquidity {
     if (!this.currentPair.value) {
       return;
     }
-    if (this.fromAmount) {
-      const [toAmount] = await this.currentPair.value.getLiquidityAmountOut.call(
-        this.fromAmount,
-        this.fromToken as Token
-      );
+    if (!this.singleSide && this.fromAmount) {
+      const [toAmount] =
+        await this.currentPair.value.getLiquidityAmountOut.call(
+          this.fromAmount,
+          this.fromToken as Token
+        );
       //@ts-ignore
       this.toAmount = toAmount?.toFixed();
     } else {
@@ -320,11 +331,12 @@ class Liquidity {
     if (!this.currentPair.value) {
       return;
     }
-    if (this.toAmount) {
-      const [fromAmount] = await this.currentPair.value.getLiquidityAmountOut.call(
-        this.toAmount,
-        this.toToken as Token
-      );
+    if (!this.singleSide && this.toAmount) {
+      const [fromAmount] =
+        await this.currentPair.value.getLiquidityAmountOut.call(
+          this.toAmount,
+          this.toToken as Token
+        );
       //@ts-ignore
       this.fromAmount = fromAmount.toFixed();
     } else {
@@ -375,22 +387,34 @@ class Liquidity {
   }
 
   addLiquidity = new AsyncState(async () => {
-    if (
-      !this.fromToken ||
-      !this.toToken ||
-      !this.fromAmount ||
-      !this.toAmount
-    ) {
-      return;
+    if (this.singleSide) {
+      if (!this.fromToken || !this.toToken || !this.fromAmount) {
+        return;
+      }
+    } else {
+      if (
+        !this.fromToken ||
+        !this.toToken ||
+        !this.fromAmount ||
+        !this.toAmount
+      ) {
+        return;
+      }
     }
     const token0AmountWithDec = new BigNumber(this.fromAmount)
       .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
       .toFixed(0);
-    const token1AmountWithDec = new BigNumber(this.toAmount)
-      .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
+    const token1AmountWithDec = this.singleSide
+      ? "0"
+      : new BigNumber(this.toAmount)
+          .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
+          .toFixed(0);
+    const token1MinAmountWithDec = new BigNumber(token1AmountWithDec)
+      .multipliedBy(1 - this.slippage / 100)
       .toFixed(0);
-    const token1MinAmountWithDec = new BigNumber(token1AmountWithDec).multipliedBy(1 - this.slippage / 100).toFixed(0);
-    const token0MinAmountWithDec = new BigNumber(token0AmountWithDec).multipliedBy(1 - this.slippage / 100).toFixed(0);
+    const token0MinAmountWithDec = new BigNumber(token0AmountWithDec)
+      .multipliedBy(1 - this.slippage / 100)
+      .toFixed(0);
     const deadline = dayjs().unix() + 60 * (this.deadline || 20);
     console.log("liqidity agrs", [
       this.fromToken.address as `0x${string}`,
@@ -604,6 +628,10 @@ class Liquidity {
       this.pairsByToken[`${token0}-${token1}`] ||
       this.pairsByToken[`${token1}-${token0}`]
     );
+  }
+
+  setIsExactIn(isExactIn: boolean) {
+    this.singleSide = isExactIn;
   }
 }
 

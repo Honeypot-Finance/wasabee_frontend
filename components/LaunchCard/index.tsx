@@ -249,7 +249,16 @@ const FtoProjectDetails = observer(({ pair }: { pair: FtoPairContract }) => {
       <TimeLineComponent pair={pair} />
       <TotalLaunched pair={pair} />
       <TotalRaised pair={pair} />
-      <UserDeposited pair={pair} />
+      {pair.ftoState === 3 && (
+        <>
+          <UserDeposited pair={pair} />
+        </>
+      )}
+      {pair.ftoState === 0 && (
+        <>
+          <TokenPrice pair={pair} />
+        </>
+      )}
     </>
   );
 });
