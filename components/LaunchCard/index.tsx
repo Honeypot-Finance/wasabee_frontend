@@ -16,6 +16,7 @@ import { MemePairContract } from "@/services/contract/memepair-contract";
 import ProgressBar from "../atoms/ProgressBar/ProgressBar";
 import { AmountFormat } from "../AmountFormat";
 import { LaunchType as projectType } from "@/pages/launch-token";
+import Countdown from "react-countdown";
 
 //-------------------------------------Detail Components-------------------------------------//
 const TimeLineComponent = observer(
@@ -24,8 +25,30 @@ const TimeLineComponent = observer(
       <div className="flex flex-col items-center gap-1  odd:last:col-span-2">
         <h6 className="opacity-50 text-xs">End Time</h6>
         <div className="flex items-center gap-2 text-sm">
-          {/* <TimelineSvg /> */}
-          <span className="font-bold">{pair?.remainTime}</span>
+          <span className="font-bold">
+            {
+              //pair?.remainTime
+            }
+            {pair?.endTime && (
+              <Countdown
+                date={Number(pair?.endTime) * 1000}
+                renderer={({ days, hours, minutes, seconds, completed }) => {
+                  if (completed) {
+                    return <span>Ended!</span>;
+                  } else {
+                    return (
+                      <span>
+                        {days ? `${days}d ` : ""}
+                        {hours ? `${hours}h ` : ""}
+                        {minutes ? `${minutes}m ` : ""}
+                        {seconds ? `${seconds}s ` : ""}
+                      </span>
+                    );
+                  }
+                }}
+              />
+            )}
+          </span>
         </div>
       </div>
     );
