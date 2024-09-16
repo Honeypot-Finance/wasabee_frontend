@@ -23,7 +23,7 @@ export class MemePairContract implements BaseContract {
   depositedLaunchedTokenWithoutDecimals: BigNumber | null = null;
   endTime: string = "";
   startTime: string = "";
-  ftoState: number = -1;
+  ftoState: number = 3;
   launchedTokenProvider: string = "";
   projectName = "";
   description = "";

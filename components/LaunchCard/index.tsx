@@ -21,6 +21,8 @@ import Countdown from "react-countdown";
 //-------------------------------------Detail Components-------------------------------------//
 const TimeLineComponent = observer(
   ({ pair }: { pair: MemePairContract | FtoPairContract }) => {
+    const endedDisplay = <span>Ended!</span>;
+
     return (
       <div className="flex flex-col items-center gap-1  odd:last:col-span-2">
         <h6 className="opacity-50 text-xs">End Time</h6>
@@ -33,8 +35,8 @@ const TimeLineComponent = observer(
               <Countdown
                 date={Number(pair?.endTime) * 1000}
                 renderer={({ days, hours, minutes, seconds, completed }) => {
-                  if (completed) {
-                    return <span>Ended!</span>;
+                  if (completed || pair.ftoState !== 3) {
+                    return endedDisplay;
                   } else {
                     return (
                       <span>
