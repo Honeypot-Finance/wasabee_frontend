@@ -18,13 +18,32 @@ import { AmountFormat } from "../AmountFormat";
 import { LaunchType as projectType } from "@/pages/launch-token";
 import Countdown from "react-countdown";
 
+const ComponentComtainer = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={cn(
+        "flex flex-col items-center gap-1 odd:last:col-span-2",
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+
 //-------------------------------------Detail Components-------------------------------------//
 const TimeLineComponent = observer(
   ({ pair }: { pair: MemePairContract | FtoPairContract }) => {
     const endedDisplay = <span>Ended!</span>;
 
     return (
-      <div className="flex flex-col items-center gap-1  odd:last:col-span-2">
+      <ComponentComtainer>
         <h6 className="opacity-50 text-xs">End Time</h6>
         <div className="flex items-center gap-2 text-sm">
           <span className="font-bold">
@@ -52,7 +71,7 @@ const TimeLineComponent = observer(
             )}
           </span>
         </div>
-      </div>
+      </ComponentComtainer>
     );
   }
 );
@@ -61,7 +80,7 @@ const LaunchProgress = observer(({ pair }: { pair: MemePairContract }) => {
   return (
     <>
       {pair.depositedRaisedToken && pair.raisedTokenMinCap && (
-        <div className="flex flex-col items-center gap-1 odd:last:col-span-2">
+        <ComponentComtainer>
           <h6 className="opacity-50 text-xs">Progress</h6>
           <div className="flex items-center gap-2 text-sm w-[80%]">
             <ProgressBar
@@ -79,7 +98,7 @@ const LaunchProgress = observer(({ pair }: { pair: MemePairContract }) => {
               }
             />
           </div>
-        </div>
+        </ComponentComtainer>
       )}
     </>
   );
@@ -88,7 +107,7 @@ const LaunchProgress = observer(({ pair }: { pair: MemePairContract }) => {
 const TotalLaunched = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
-      <div className="flex flex-col items-center gap-1 odd:last:col-span-2">
+      <ComponentComtainer>
         <h6 className="opacity-50 text-xs">Total launched</h6>
         <div className="flex items-center gap-2 text-sm">
           {/* <TotalRaisedSvg /> */}
@@ -100,7 +119,7 @@ const TotalLaunched = observer(
             {pair?.launchedToken?.displayName}
           </span>
         </div>
-      </div>
+      </ComponentComtainer>
     );
   }
 );
@@ -108,7 +127,7 @@ const TotalLaunched = observer(
 const TotalRaised = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
-      <div className="flex flex-col items-center gap-1 odd:last:col-span-2">
+      <ComponentComtainer>
         <h6 className="opacity-50 text-xs">Total raised</h6>
         <div className="flex items-center gap-2 text-sm">
           {/* <TotalRaisedSvg /> */}
@@ -120,7 +139,7 @@ const TotalRaised = observer(
             {pair?.raiseToken?.displayName}
           </span>
         </div>
-      </div>
+      </ComponentComtainer>
     );
   }
 );
@@ -143,7 +162,7 @@ const TokenPrice = observer(
 
 const UserDeposited = observer(({ pair }: { pair: FtoPairContract }) => {
   return (
-    <div className="flex flex-col items-center gap-1 odd:last:col-span-2">
+    <ComponentComtainer>
       <h6 className="opacity-50 text-xs">Your Deposit</h6>
       <div className="flex items-center gap-2 text-sm">
         {/* <TotalRaisedSvg /> */}
@@ -158,7 +177,7 @@ const UserDeposited = observer(({ pair }: { pair: FtoPairContract }) => {
           {pair?.raiseToken?.displayName}
         </span>
       </div>
-    </div>
+    </ComponentComtainer>
   );
 });
 
