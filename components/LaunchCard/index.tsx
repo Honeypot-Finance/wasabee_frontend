@@ -176,7 +176,7 @@ const RefundAction = observer(({ pair }: { pair: MemePairContract }) => {
               backgroundColor: "green",
             }}
           >
-            Refund LP
+            Refund
           </Button>
         </div>
       )}
