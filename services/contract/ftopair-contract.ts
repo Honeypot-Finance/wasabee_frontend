@@ -439,8 +439,6 @@ export class FtoPairContract implements BaseContract {
       wallet.account as `0x${string}`,
     ]);
 
-    console.log("userDepositedRaisedToken", res.toString());
-
     this.userDepositedRaisedToken = new BigNumber(res.toString());
   }
 
