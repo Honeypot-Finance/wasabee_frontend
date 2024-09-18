@@ -394,20 +394,34 @@ export class GhostIndexer {
   getHoldingPairs = async (
     walletAddress: string,
     chainId: string,
+    filter?: Partial<PairFilter>,
     pageRequest?: PageRequest
   ): Promise<ApiResponseType<GhostHoldingPairsResponse>> => {
+    console.log("filter", filter);
     const dirCondition = pageRequest?.cursor
       ? pageRequest?.direction === "next"
         ? `after:"${pageRequest?.cursor}"`
         : `before:"${pageRequest?.cursor}"`
       : "";
 
+    const searchStringCondition = filter?.searchString
+      ? `pair_:{
+            searchString_contains:"${filter.searchString.toLowerCase()}"
+          },`
+      : ``;
+
     const query = `
     {
-      holdingPairs(where: {holder: "${walletAddress}", totalLpAmount_gt: "0"},
-      orderBy: "totalLpAmount",
-      orderDirection: "desc",
-      limit: 10, ${dirCondition}
+      holdingPairs(
+        where: {
+            holder: "${walletAddress}",
+            totalLpAmount_gt: "0",
+            ${searchStringCondition}
+          },
+        orderBy: "totalLpAmount",
+        orderDirection: "desc",
+        limit: ${filter?.limit ?? 10}, 
+        ${dirCondition}
       ) {
         items {
           pairId
@@ -433,7 +447,7 @@ export class GhostIndexer {
     }
   `;
 
-    query;
+    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,

@@ -142,6 +142,12 @@ export const indexerFeedRouter = router({
       z.object({
         walletAddress: z.string(),
         chainId: z.string(),
+        filter: z
+          .object({
+            searchString: z.string().optional(),
+            limit: z.number(),
+          })
+          .optional(),
         pageRequest: z
           .object({
             direction: z.string(z.enum(["next", "prev"])),
@@ -157,10 +163,9 @@ export const indexerFeedRouter = router({
           const res = await indexer.getHoldingPairs(
             input.walletAddress,
             input.chainId,
+            input.filter,
             input.pageRequest as PageRequest
           );
-
-          //console.log("res", res);
 
           return res;
         }

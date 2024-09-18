@@ -83,11 +83,13 @@ export default class Indexer<T extends IndexerProvider> {
   getHoldingPairs = async (
     walletAddress: string,
     chainId: string,
+    filter?: Partial<PairFilter>,
     pageRequest?: PageRequest
   ): Promise<ApiResponseType<GhostHoldingPairsResponse>> => {
     const res = await this.dataProvider.getHoldingPairs(
       walletAddress,
       chainId,
+      filter,
       pageRequest
     );
 

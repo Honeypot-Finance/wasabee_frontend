@@ -3,7 +3,7 @@ import { NextLayoutPage } from "@/types/nextjs";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import { Table } from "@/components/table/index";
 import { trpc, trpcClient } from "@/lib/trpc";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 import { useAccount } from "wagmi";
 import { PaginationState } from "@/services/utils";
@@ -35,8 +35,12 @@ const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [currentTab, setCurrentTab] = useState<"all" | "my">("all");
 
   useEffect(() => {
+    if (!wallet.isInit) {
+      return;
+    }
     liquidity.initPool();
   }, [wallet.isInit]);
 
@@ -47,6 +51,43 @@ const PoolsPage: NextLayoutPage = observer(() => {
       liquidity.myPairPage.reloadPage();
     }
   }, [wallet.isInit, liquidity.isInit]);
+
+  const searchStringChangeHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (currentTab === "all") {
+        liquidity.pairPage.updateFilter({
+          searchString: e.target.value,
+        });
+      } else {
+        liquidity.myPairPage.updateFilter({
+          searchString: e.target.value,
+        });
+      }
+    },
+    [currentTab]
+  );
+
+  const clearSearchString = useCallback(() => {
+    if (currentTab === "all") {
+      liquidity.pairPage.updateFilter({
+        searchString: "",
+      });
+    } else {
+      liquidity.myPairPage.updateFilter({
+        searchString: "",
+      });
+    }
+  }, [currentTab]);
+
+  const tabChangeHandler = (key: string) => {
+    if (key === "all") {
+      setCurrentTab("all");
+      clearSearchString();
+    } else {
+      setCurrentTab("my");
+      clearSearchString();
+    }
+  };
 
   // const state = useLocalObservable(() => ({
   //   columns: [
@@ -103,14 +144,10 @@ const PoolsPage: NextLayoutPage = observer(() => {
           <Input
             defaultValue={liquidity.pairPage.filter.searchString}
             onChange={(e) => {
-              liquidity.pairPage.updateFilter({
-                searchString: e.target.value,
-              });
+              searchStringChangeHandler(e);
             }}
             onClear={() => {
-              liquidity.pairPage.updateFilter({
-                searchString: "",
-              });
+              clearSearchString();
             }}
             startContent={<IoSearchOutline></IoSearchOutline>}
             placeholder="Search by name, symbol or address"
@@ -138,6 +175,9 @@ const PoolsPage: NextLayoutPage = observer(() => {
             tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
           }}
           className="next-tab"
+          onSelectionChange={(key) => {
+            tabChangeHandler(String(key));
+          }}
         >
           <Tab key="all" title="All Pools">
             {" "}

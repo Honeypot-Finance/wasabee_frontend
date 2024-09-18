@@ -88,6 +88,7 @@ class Liquidity {
       const pairs = await trpcClient.indexerFeedRouter.getHoldingsPairs.query({
         walletAddress: wallet.account,
         chainId: String(wallet.currentChainId),
+        filter: filter,
         pageRequest: pageRequest,
       });
 
@@ -149,7 +150,10 @@ class Liquidity {
         };
       }
     },
-    filter: null,
+    filter: {
+      searchString: "",
+      limit: 10,
+    },
   });
 
   pairs: PairContract[] = [];
