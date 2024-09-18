@@ -157,7 +157,7 @@ class Liquidity {
   tokensMap: Record<string, Token> = {};
 
   slippage = 10;
-  singleSide = false;
+  balanced = true;
   // localTokensMap = new StorageState<Record<string, Token>>({
   //   key: "localTokens_v2",
   //   value: {} as Record<string, Token>,
@@ -249,7 +249,7 @@ class Liquidity {
   }
 
   get isDisabled() {
-    if (this.singleSide) {
+    if (!this.balanced) {
       return (
         !this.fromToken ||
         !this.toToken ||
@@ -314,7 +314,7 @@ class Liquidity {
     if (!this.currentPair.value) {
       return;
     }
-    if (!this.singleSide) {
+    if (this.balanced) {
       if (this.fromAmount) {
         const [toAmount] =
           await this.currentPair.value.getLiquidityAmountOut.call(
@@ -334,8 +334,8 @@ class Liquidity {
       return;
     }
 
-    if (!this.singleSide) {
-      if (!this.singleSide && this.toAmount) {
+    if (this.balanced) {
+      if (this.toAmount) {
         const [fromAmount] =
           await this.currentPair.value.getLiquidityAmountOut.call(
             this.toAmount,
@@ -392,7 +392,7 @@ class Liquidity {
   }
 
   addLiquidity = new AsyncState(async () => {
-    if (this.singleSide) {
+    if (!this.balanced) {
       if (
         !this.fromToken ||
         !this.toToken ||
@@ -456,17 +456,52 @@ class Liquidity {
         }),
     ]);
 
-    if (this.singleSide) {
-      console.log("addLiquidityUnbalanced");
-      await this.routerV2Contract.addLiquidityUnbalanced.call([
-        this.fromToken.address as `0x${string}`,
-        this.toToken.address as `0x${string}`,
-        BigInt(token0AmountWithDec),
-        BigInt(token1AmountWithDec),
-        BigInt(0),
-        wallet.account as `0x${string}`,
-        BigInt(deadline),
-      ]);
+    if (!this.balanced) {
+      if (this.fromToken.isNative) {
+        if (token0AmountWithDec && token0AmountWithDec !== "0") {
+          // @ts-ignore
+          await wallet.currentChain.nativeToken.deposit.callV2({
+            value: BigInt(token0AmountWithDec),
+          });
+        }
+
+        await this.routerV2Contract.addLiquidityUnbalanced.call([
+          this.fromToken.address as `0x${string}`,
+          this.toToken.address as `0x${string}`,
+          BigInt(token0AmountWithDec),
+          BigInt(token1AmountWithDec),
+          BigInt(0),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]);
+      } else if (this.toToken.isNative) {
+        if (token1AmountWithDec && token1AmountWithDec !== "0") {
+          // @ts-ignore
+          await wallet.currentChain.nativeToken.deposit.callV2({
+            value: BigInt(token1AmountWithDec),
+          });
+        }
+
+        await this.routerV2Contract.addLiquidityUnbalanced.call([
+          this.fromToken.address as `0x${string}`,
+          this.toToken.address as `0x${string}`,
+          BigInt(token0AmountWithDec),
+          BigInt(token1AmountWithDec),
+          BigInt(0),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]);
+      } else {
+        await this.routerV2Contract.addLiquidityUnbalanced.call([
+          this.fromToken.address as `0x${string}`,
+          this.toToken.address as `0x${string}`,
+          BigInt(token0AmountWithDec),
+          BigInt(token1AmountWithDec),
+          BigInt(0),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]);
+      }
     } else {
       if (this.fromToken.isNative) {
         console.log("addLiquidityETH", [
@@ -664,7 +699,7 @@ class Liquidity {
   }
 
   setIsExactIn(isExactIn: boolean) {
-    this.singleSide = isExactIn;
+    this.balanced = isExactIn;
   }
 }
 

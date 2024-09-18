@@ -134,14 +134,14 @@ const AddLiquidity = observer(() => {
         </div>
         <div>
           <Checkbox
-            defaultSelected={liquidity.singleSide}
-            checked={liquidity.singleSide}
+            defaultSelected={liquidity.balanced}
+            checked={liquidity.balanced}
             onChange={(e) => {
               liquidity.setIsExactIn(e.target.checked);
               liquidity.onFromAmountInputChange();
             }}
           >
-            Single side
+            Balanced
           </Checkbox>
         </div>
         <Button
