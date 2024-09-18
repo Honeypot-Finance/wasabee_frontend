@@ -45,6 +45,11 @@ const nextConfig = {
         destination: 'https://honeypotfinance.xyz/',
         permanent: false
       },
+      {
+        source: '/launch',
+        destination: '/meme-launchs',
+        permanent: false
+      },
     ]
   },
 };

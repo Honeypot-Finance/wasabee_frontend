@@ -23,6 +23,12 @@ import { PageRequest } from "./indexer/indexerTypes";
 const PAGE_LIMIT = 9;
 
 type launchpadType = "fto" | "meme";
+export enum ProjectStatus {
+  All = "all",
+  Processing = "processing",
+  Success = "success",
+  Fail = "fail"
+}
 
 export type PairFilter = {
   search: string;
@@ -33,11 +39,11 @@ export type PairFilter = {
 
 export const statusTextToNumber = (status: string) => {
   switch (status) {
-    case "processing":
+    case ProjectStatus.Processing:
       return 3;
-    case "success":
+    case ProjectStatus.Success:
       return 0;
-    case "fail":
+    case ProjectStatus.Fail:
       return 1;
     default:
       return -1;

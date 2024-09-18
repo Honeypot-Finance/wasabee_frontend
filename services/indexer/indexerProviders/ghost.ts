@@ -1,5 +1,6 @@
 import {
   PairFilter as FtoPairFilter,
+  ProjectStatus,
   statusTextToNumber,
 } from "@/services/launchpad";
 import {
@@ -129,15 +130,35 @@ export class GhostIndexer {
     pageRequest?: PageRequest,
     projectType?: "fto" | "meme"
   ): Promise<ApiResponseType<GhostFtoPairResponse>> => {
-    const statusNum = statusTextToNumber(filter?.status ?? "all");
-
+    const getMemeStatusQuery = (status: string) => {
+      switch (status) {
+        case ProjectStatus.Success:
+          return `status: "0"`;
+        case ProjectStatus.Fail:
+          return `status_not: "0"  endTime_lt:"${dayjs().unix()}"`;
+        case ProjectStatus.Processing:
+          return `endTime_gt:"${dayjs().unix()}"
+        status: "3"`;
+        default:
+          return ``;
+      }
+    };
+    const getFtoStatusQuery = (status: string) => {
+      const statusNum = statusTextToNumber(filter?.status ?? "all");
+      const statusCondition = statusNum != -1 ? `status: "${statusNum}",` : "";
+      return statusCondition;
+    };
+    const status = filter?.status ?? ProjectStatus.All;
+    const statusCondition =
+      projectType === "meme"
+        ? getMemeStatusQuery(status)
+        : getFtoStatusQuery(status);
     const dirCondition = pageRequest?.cursor
       ? pageRequest?.direction === "next"
         ? `after:"${pageRequest?.cursor}"`
         : `before:"${pageRequest?.cursor}"`
       : "";
 
-    const statusCondition = statusNum != -1 ? `status: "${statusNum}",` : "";
     const searchIdCondition =
       filter?.search && filter.search.startsWith("0x")
         ? `id: "${filter.search}",`
@@ -224,7 +245,6 @@ export class GhostIndexer {
           }
         }
       `;
-
     const res = await this.callIndexerApi(query, {
       apiHandle: projectType === "meme" ? memeGraphHandle : ftoGraphHandle,
     });
@@ -454,14 +474,33 @@ export class GhostIndexer {
     type: "fto" | "meme",
     filter: Partial<FtoPairFilter>
   ): Promise<ApiResponseType<GhostParticipatedProjectsResponse>> => {
-    const statusNum = statusTextToNumber(filter?.status ?? "all");
+    const getMemeStatusQuery = (status: string) => {
+      switch (status) {
+        case ProjectStatus.Success:
+          return `pair_:{status: "0"}`;
+        case ProjectStatus.Fail:
+          return `pair_:{status_not: "0"  endTime_lt:"${dayjs().unix()}}`;
+        case ProjectStatus.Processing:
+          return `pair_:{endTime_gt:"${dayjs().unix()}"
+        status: "3"}`;
+        default:
+          return ``;
+      }
+    };
+    const getFtoStatusQuery = (status: string) => {
+      const statusNum = statusTextToNumber(filter?.status ?? "all");
 
-    const statusCondition =
-      statusNum != -1
-        ? `pair_:{
+      const statusCondition =
+        statusNum != -1
+          ? `pair_:{
         status: "${statusNum}",
       }`
-        : "";
+          : "";
+      return statusCondition;
+    };
+    const status = filter?.status ?? ProjectStatus.All;
+    const statusCondition =
+      type === "meme" ? getMemeStatusQuery(status) : getFtoStatusQuery(status);
     const searchIdCondition =
       filter?.search && filter.search.startsWith("0x")
         ? `{
