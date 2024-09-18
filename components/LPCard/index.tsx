@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { isEthAddress } from "@/lib/address";
 import { wallet } from "@/services/wallet";
-import { Slider, Tab, Tabs } from "@nextui-org/react";
+import { Checkbox, Slider, Tab, Tabs } from "@nextui-org/react";
 import { Table } from "../table";
 import { ItemSelect, SelectState } from "../ItemSelect";
 import { SelectItem } from "../ItemSelect/index";
@@ -131,6 +131,18 @@ const AddLiquidity = observer(() => {
               }}
             ></TokenSelector>
           </div>
+        </div>
+        <div>
+          <Checkbox
+            defaultSelected={liquidity.balanced}
+            checked={liquidity.balanced}
+            onChange={(e) => {
+              liquidity.setIsExactIn(e.target.checked);
+              liquidity.onFromAmountInputChange();
+            }}
+          >
+            Balanced
+          </Checkbox>
         </div>
         <Button
           isDisabled={liquidity.isDisabled}
@@ -354,6 +366,7 @@ export const LPCard = observer(() => {
       );
     }
   }, [inputCurrency, outputCurrency, wallet.isInit, liquidity.isInit]);
+
   return (
     <div className="[background:var(--card-color,#271A0C)]   p-[20px] rounded-[20px] border-2 border-solid border-[rgba(247,147,26,0.10)]">
       {(isinit && (

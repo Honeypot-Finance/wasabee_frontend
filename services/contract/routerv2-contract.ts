@@ -23,6 +23,12 @@ export class RouterV2Contract implements BaseContract {
     Object.assign(this, args);
   }
 
+  get addLiquidityUnbalanced() {
+    return new ContractWrite(this.contract.write.addLiquidityUnbalance, {
+      action: "Add Liquidity",
+    });
+  }
+
   get addLiquidity() {
     return new ContractWrite(this.contract.write.addLiquidity, {
       action: "Add Liquidity",

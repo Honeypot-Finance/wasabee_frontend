@@ -157,6 +157,7 @@ class Liquidity {
   tokensMap: Record<string, Token> = {};
 
   slippage = 10;
+  balanced = true;
   // localTokensMap = new StorageState<Record<string, Token>>({
   //   key: "localTokens_v2",
   //   value: {} as Record<string, Token>,
@@ -248,14 +249,23 @@ class Liquidity {
   }
 
   get isDisabled() {
-    return (
-      !this.fromToken ||
-      !this.toToken ||
-      !this.fromAmount ||
-      !this.toAmount ||
-      Number(this.toAmount) > this.toToken.balance.toNumber() ||
-      Number(this.fromAmount) > this.fromToken.balance.toNumber()
-    );
+    if (!this.balanced) {
+      return (
+        !this.fromToken ||
+        !this.toToken ||
+        (!this.fromAmount && !this.toAmount) ||
+        Number(this.fromAmount) > this.fromToken.balance.toNumber()
+      );
+    } else {
+      return (
+        !this.fromToken ||
+        !this.toToken ||
+        !this.fromAmount ||
+        !this.toAmount ||
+        Number(this.toAmount) > this.toToken.balance.toNumber() ||
+        Number(this.fromAmount) > this.fromToken.balance.toNumber()
+      );
+    }
   }
 
   get buttonContent() {
@@ -304,15 +314,18 @@ class Liquidity {
     if (!this.currentPair.value) {
       return;
     }
-    if (this.fromAmount) {
-      const [toAmount] = await this.currentPair.value.getLiquidityAmountOut.call(
-        this.fromAmount,
-        this.fromToken as Token
-      );
-      //@ts-ignore
-      this.toAmount = toAmount?.toFixed();
-    } else {
-      this.toAmount = "";
+    if (this.balanced) {
+      if (this.fromAmount) {
+        const [toAmount] =
+          await this.currentPair.value.getLiquidityAmountOut.call(
+            this.fromAmount,
+            this.fromToken as Token
+          );
+        //@ts-ignore
+        this.toAmount = toAmount?.toFixed();
+      } else {
+        this.toAmount = "";
+      }
     }
   }, 300);
 
@@ -320,15 +333,19 @@ class Liquidity {
     if (!this.currentPair.value) {
       return;
     }
-    if (this.toAmount) {
-      const [fromAmount] = await this.currentPair.value.getLiquidityAmountOut.call(
-        this.toAmount,
-        this.toToken as Token
-      );
-      //@ts-ignore
-      this.fromAmount = fromAmount.toFixed();
-    } else {
-      this.fromAmount = "";
+
+    if (this.balanced) {
+      if (this.toAmount) {
+        const [fromAmount] =
+          await this.currentPair.value.getLiquidityAmountOut.call(
+            this.toAmount,
+            this.toToken as Token
+          );
+        //@ts-ignore
+        this.fromAmount = fromAmount.toFixed();
+      } else {
+        this.fromAmount = "";
+      }
     }
   }, 300);
 
@@ -375,89 +392,164 @@ class Liquidity {
   }
 
   addLiquidity = new AsyncState(async () => {
-    if (
-      !this.fromToken ||
-      !this.toToken ||
-      !this.fromAmount ||
-      !this.toAmount
-    ) {
-      return;
+    if (!this.balanced) {
+      if (
+        !this.fromToken ||
+        !this.toToken ||
+        (!this.fromAmount && !this.toAmount)
+      ) {
+        return;
+      }
+    } else {
+      if (
+        !this.fromToken ||
+        !this.toToken ||
+        !this.fromAmount ||
+        !this.toAmount
+      ) {
+        return;
+      }
     }
-    const token0AmountWithDec = new BigNumber(this.fromAmount)
-      .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
-      .toFixed(0);
-    const token1AmountWithDec = new BigNumber(this.toAmount)
-      .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
-      .toFixed(0);
-    const token1MinAmountWithDec = new BigNumber(token1AmountWithDec).multipliedBy(1 - this.slippage / 100).toFixed(0);
-    const token0MinAmountWithDec = new BigNumber(token0AmountWithDec).multipliedBy(1 - this.slippage / 100).toFixed(0);
+    const token0AmountWithDec = !!this.fromAmount
+      ? new BigNumber(this.fromAmount)
+          .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
+          .toFixed(0)
+      : 0;
+    const token1AmountWithDec = !!this.toAmount
+      ? new BigNumber(this.toAmount)
+          .multipliedBy(new BigNumber(10).pow(this.toToken.decimals))
+          .toFixed(0)
+      : 0;
+    const token1MinAmountWithDec = !!token1AmountWithDec
+      ? new BigNumber(token1AmountWithDec)
+          .multipliedBy(1 - this.slippage / 100)
+          .toFixed(0)
+      : 0;
+    const token0MinAmountWithDec = !!token0AmountWithDec
+      ? new BigNumber(token0AmountWithDec)
+          .multipliedBy(1 - this.slippage / 100)
+          .toFixed(0)
+      : 0;
     const deadline = dayjs().unix() + 60 * (this.deadline || 20);
+
     console.log("liqidity agrs", [
       this.fromToken.address as `0x${string}`,
       this.toToken.address as `0x${string}`,
       token0AmountWithDec,
       token1AmountWithDec,
-      0,
-      0,
+      token0MinAmountWithDec,
+      token1MinAmountWithDec,
       wallet.account as `0x${string}`,
       deadline,
     ]);
 
     await Promise.all([
-      this.fromToken.approveIfNoAllowance({
-        amount: token0AmountWithDec,
-        spender: this.routerV2Contract.address,
-      }),
-      this.toToken.approveIfNoAllowance({
-        amount: token1AmountWithDec,
-        spender: this.routerV2Contract.address,
-      }),
+      !!token0AmountWithDec &&
+        this.fromToken.approveIfNoAllowance({
+          amount: token0AmountWithDec,
+          spender: this.routerV2Contract.address,
+        }),
+      !!token1AmountWithDec &&
+        this.toToken.approveIfNoAllowance({
+          amount: token1AmountWithDec,
+          spender: this.routerV2Contract.address,
+        }),
     ]);
-    if (this.fromToken.isNative) {
-      console.log("addLiquidityETH", [
-        this.toToken.address as `0x${string}`,
-        BigInt(token1AmountWithDec),
-        BigInt(token1MinAmountWithDec),
-        BigInt(token0MinAmountWithDec),
-        wallet.account as `0x${string}`,
-        BigInt(deadline),
-      ]);
-      await this.routerV2Contract.addLiquidityETH.call(
-        [
+
+    if (!this.balanced) {
+      if (this.fromToken.isNative) {
+        if (token0AmountWithDec && token0AmountWithDec !== "0") {
+          // @ts-ignore
+          await wallet.currentChain.nativeToken.deposit.callV2({
+            value: BigInt(token0AmountWithDec),
+          });
+        }
+
+        await this.routerV2Contract.addLiquidityUnbalanced.call([
+          this.fromToken.address as `0x${string}`,
+          this.toToken.address as `0x${string}`,
+          BigInt(token0AmountWithDec),
+          BigInt(token1AmountWithDec),
+          BigInt(0),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]);
+      } else if (this.toToken.isNative) {
+        if (token1AmountWithDec && token1AmountWithDec !== "0") {
+          // @ts-ignore
+          await wallet.currentChain.nativeToken.deposit.callV2({
+            value: BigInt(token1AmountWithDec),
+          });
+        }
+
+        await this.routerV2Contract.addLiquidityUnbalanced.call([
+          this.fromToken.address as `0x${string}`,
+          this.toToken.address as `0x${string}`,
+          BigInt(token0AmountWithDec),
+          BigInt(token1AmountWithDec),
+          BigInt(0),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]);
+      } else {
+        await this.routerV2Contract.addLiquidityUnbalanced.call([
+          this.fromToken.address as `0x${string}`,
+          this.toToken.address as `0x${string}`,
+          BigInt(token0AmountWithDec),
+          BigInt(token1AmountWithDec),
+          BigInt(0),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]);
+      }
+    } else {
+      if (this.fromToken.isNative) {
+        console.log("addLiquidityETH", [
           this.toToken.address as `0x${string}`,
           BigInt(token1AmountWithDec),
           BigInt(token1MinAmountWithDec),
           BigInt(token0MinAmountWithDec),
           wallet.account as `0x${string}`,
           BigInt(deadline),
-        ],
-        {
-          value: BigInt(token0AmountWithDec),
-        }
-      );
-    } else if (this.toToken.isNative) {
-      await this.routerV2Contract.addLiquidityETH.call([
-        this.fromToken.address as `0x${string}`,
-        BigInt(token0AmountWithDec),
-        BigInt(token0MinAmountWithDec),
-        BigInt(token1MinAmountWithDec),
-        wallet.account as `0x${string}`,
-        BigInt(deadline),
-      ]),
-        {
-          value: BigInt(token1AmountWithDec),
-        };
-    } else {
-      await this.routerV2Contract.addLiquidity.call([
-        this.fromToken.address as `0x${string}`,
-        this.toToken.address as `0x${string}`,
-        BigInt(token0AmountWithDec),
-        BigInt(token1AmountWithDec),
-        BigInt(token0MinAmountWithDec),
-        BigInt(token1MinAmountWithDec),
-        wallet.account as `0x${string}`,
-        BigInt(deadline),
-      ]);
+        ]);
+
+        await this.routerV2Contract.addLiquidityETH.call(
+          [
+            this.toToken.address as `0x${string}`,
+            BigInt(token1AmountWithDec),
+            BigInt(token1MinAmountWithDec),
+            BigInt(token0MinAmountWithDec),
+            wallet.account as `0x${string}`,
+            BigInt(deadline),
+          ],
+          {
+            value: BigInt(token0AmountWithDec),
+          }
+        );
+      } else if (this.toToken.isNative) {
+        await this.routerV2Contract.addLiquidityETH.call([
+          this.fromToken.address as `0x${string}`,
+          BigInt(token0AmountWithDec),
+          BigInt(token0MinAmountWithDec),
+          BigInt(token1MinAmountWithDec),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]),
+          {
+            value: BigInt(token1AmountWithDec),
+          };
+      } else {
+        await this.routerV2Contract.addLiquidity.call([
+          this.fromToken.address as `0x${string}`,
+          this.toToken.address as `0x${string}`,
+          BigInt(token0AmountWithDec),
+          BigInt(token1AmountWithDec),
+          BigInt(token0MinAmountWithDec),
+          BigInt(token1MinAmountWithDec),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]);
+      }
     }
 
     this.fromAmount = "";
@@ -604,6 +696,10 @@ class Liquidity {
       this.pairsByToken[`${token0}-${token1}`] ||
       this.pairsByToken[`${token1}-${token0}`]
     );
+  }
+
+  setIsExactIn(isExactIn: boolean) {
+    this.balanced = isExactIn;
   }
 }
 
