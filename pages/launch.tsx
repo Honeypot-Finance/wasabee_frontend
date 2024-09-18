@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Observer, observer } from "mobx-react-lite";
+import { Observer, observer, useLocalObservable } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/button";

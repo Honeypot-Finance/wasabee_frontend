@@ -5,7 +5,7 @@ import TransactionPendingToastify from "@/components/CustomToastify/TransactionP
 import { localforage } from "@/lib/storage";
 import { LRUCache } from "lru-cache";
 import { cache } from "../lib/cache";
-import { debounce, max } from "lodash";
+import { debounce, max, initial } from 'lodash';
 import { PageRequest, PairFilter } from "./indexer/indexerTypes";
 import { visualEffects } from "./visualeffects";
 
@@ -40,6 +40,8 @@ export class AsyncState<
   K extends (...args: any) => Promise<any> = (...args: any) => Promise<any>,
   T = Awaited<ReturnType<K>>
 > {
+  initialValue: T | null = null;
+  isInit = false;
   loading = false;
   error: Error | null = null;
   value: T | null = null;
@@ -48,13 +50,18 @@ export class AsyncState<
   constructor(
     func: K,
     options?: {
+      initialValue?: T;
       loading?: boolean;
       cache: LRUCache.Options<string, any, any> | boolean;
     }
   ) {
     this._call = func;
     if (options) {
-      const { cache, ...restOptions } = options;
+      const { cache,initialValue, ...restOptions } = options;
+      if (initialValue !== undefined) {
+        this.initialValue = initialValue;
+        this.value = initialValue;
+      }
       this.handleCacheConfig(cache);
       Object.assign(this, restOptions);
     }
@@ -93,6 +100,9 @@ export class AsyncState<
       this.setError(error as Error);
     }
     this.setLoading(false);
+    if (!this.isInit) {
+      this.isInit = true;
+    }
     return [this.value, this.error] as [T, Error | null];
   }
   setLoading(loading: boolean) {
@@ -103,6 +113,10 @@ export class AsyncState<
   }
   setValue(data: T | null) {
     this.value = data;
+  }
+  reset() {
+    this.value = this.initialValue;
+    this.error = null;
   }
 }
 

@@ -239,7 +239,6 @@ class LaunchPad {
   async trendingMEMEs(): Promise<MemePairContract[]> {
     const mostSuccessfulFtos =
       await trpcClient.indexerFeedRouter.getTrendingMEMEPairs.query();
-
     if (mostSuccessfulFtos.status === "success") {
       return mostSuccessfulFtos.data.pairs.items.map((pairAddress) => {
         const pair = new MemePairContract({
