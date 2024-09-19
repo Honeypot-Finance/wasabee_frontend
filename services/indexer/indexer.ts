@@ -110,7 +110,7 @@ export default class Indexer<T extends IndexerProvider> {
     walletAddress: string,
     chainId: string,
     pageRequest: PageRequest,
-    type: "fto" | "meme" = "fto",
+    type: "fto" | "meme",
     filter: Partial<PairFilter>
   ): Promise<ApiResponseType<GhostParticipatedProjectsResponse>> => {
     return await this.dataProvider.getParticipatedProjects(

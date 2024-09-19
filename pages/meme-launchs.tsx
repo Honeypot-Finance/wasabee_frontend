@@ -3,7 +3,7 @@ import { Observer, observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/button";
-import launchpad from "@/services/launchpad";
+import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { LaunchCard } from "@/components/LaunchCard";
@@ -292,11 +292,12 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             onSelectionChange={(key) => {
               launchpad.setCurrentLaunchpadType("meme");
               if (key === "all") {
-                //
+                launchpad.pairFilterStatus = defaultPairFilters.all.status;
               } else if (key === "my") {
-                launchpad.myLaunches.reloadPage();
+                launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
               } else if (key === "participated-launch") {
-                launchpad.participatedPairs.reloadPage();
+                launchpad.pairFilterStatus =
+                  defaultPairFilters.participatedPairs.status;
               }
             }}
           >
@@ -330,7 +331,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 }}
               />
             </Tab>
-            <Tab href="/launch" title="To Fto projects->" />
+            {/* <Tab href="/launch" title="To Fto projects->" /> */}
           </Tabs>
         </div>
       )}

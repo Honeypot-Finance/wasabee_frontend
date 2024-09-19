@@ -40,7 +40,11 @@ const MyLaunchTab = observer(() => {
         <div className="flex">
           <NextButton
             isDisabled={launchpad.currentLaunchpadType.value === "fto"}
-            className={launchpad.currentLaunchpadType.value === "fto" ? "opacity-100": "opacity-50"}
+            className={
+              launchpad.currentLaunchpadType.value === "fto"
+                ? "opacity-100"
+                : "opacity-50"
+            }
             onClick={() => {
               launchpad.setCurrentLaunchpadType("fto");
               launchpad.myLaunches.reloadPage();
@@ -50,7 +54,11 @@ const MyLaunchTab = observer(() => {
           </NextButton>
           <NextButton
             isDisabled={launchpad.currentLaunchpadType.value === "meme"}
-            className={launchpad.currentLaunchpadType.value === "meme" ? "opacity-100": "opacity-50"}
+            className={
+              launchpad.currentLaunchpadType.value === "meme"
+                ? "opacity-100"
+                : "opacity-50"
+            }
             onClick={() => {
               launchpad.setCurrentLaunchpadType("meme");
               launchpad.myLaunches.reloadPage();
@@ -81,20 +89,28 @@ const ParticipatedLaunchTab = observer(() => {
       <CardBody>
         <div className="flex">
           <NextButton
-            isDisabled={launchpad.currentParticipatedPadType.value === "fto"}
-            className={launchpad.currentParticipatedPadType.value === "fto" ? "opacity-100": "opacity-50"}
+            isDisabled={launchpad.currentLaunchpadType.value === "fto"}
+            className={
+              launchpad.currentLaunchpadType.value === "fto"
+                ? "opacity-100"
+                : "opacity-50"
+            }
             onClick={() => {
-              launchpad.currentParticipatedPadType.setValue("fto");
+              launchpad.currentLaunchpadType.setValue("fto");
               launchpad.participatedPairs.reloadPage();
             }}
           >
             FTO
           </NextButton>
           <NextButton
-            isDisabled={launchpad.currentParticipatedPadType.value === "meme"}
-            className={launchpad.currentParticipatedPadType.value === "meme" ? "opacity-100": "opacity-50"}
+            isDisabled={launchpad.currentLaunchpadType.value === "meme"}
+            className={
+              launchpad.currentLaunchpadType.value === "meme"
+                ? "opacity-100"
+                : "opacity-50"
+            }
             onClick={() => {
-              launchpad.currentParticipatedPadType.setValue("meme");
+              launchpad.currentLaunchpadType.setValue("meme");
               launchpad.participatedPairs.reloadPage();
             }}
           >
@@ -196,6 +212,7 @@ export const Profile = observer(() => {
       liquidity.initPool();
       return;
     }
+    launchpad.setCurrentLaunchpadType("fto");
     launchpad.showNotValidatedPairs = true;
     launchpad.myLaunches.reloadPage();
     launchpad.participatedPairs.reloadPage();
@@ -250,6 +267,13 @@ export const Profile = observer(() => {
             tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
           }}
           className="next-tab"
+          onSelectionChange={(key) => {
+            if (key === "my-launch") {
+              launchpad.myLaunches.reloadPage();
+            } else if (key === "participated-launch") {
+              launchpad.participatedPairs.reloadPage();
+            }
+          }}
         >
           <Tab key="portfolio" title="Portfolio">
             <PortfolioTab />

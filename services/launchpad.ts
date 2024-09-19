@@ -23,6 +23,7 @@ import { PageRequest } from "./indexer/indexerTypes";
 const PAGE_LIMIT = 9;
 
 type launchpadType = "fto" | "meme";
+
 export enum ProjectStatus {
   All = "all",
   Processing = "processing",
@@ -36,6 +37,31 @@ export type PairFilter = {
   showNotValidatedPairs: boolean;
   limit: number;
 };
+
+export const defaultPairFilters: {
+  all: PairFilter;
+  myPairs: PairFilter;
+  participatedPairs: PairFilter;
+} = {
+  all: {
+    search: "",
+    status: "processing",
+    showNotValidatedPairs: true,
+    limit: PAGE_LIMIT,
+  },
+  myPairs: {
+    search: "",
+    status: "all",
+    showNotValidatedPairs: true,
+    limit: PAGE_LIMIT,
+  },
+  participatedPairs: {
+    search: "",
+    status: "all",
+    showNotValidatedPairs: true,
+    limit: PAGE_LIMIT,
+  },
+} as const;
 
 export const statusTextToNumber = (status: string) => {
   switch (status) {
@@ -78,20 +104,11 @@ class LaunchPad {
     value: "fto",
   });
 
-  currentParticipatedPadType = new ValueState<launchpadType>({
-    value: "fto",
-  });
-
   projectsPage = new IndexerPaginationState<
     PairFilter,
     FtoPairContract | MemePairContract
   >({
-    filter: {
-      search: "",
-      status: "processing",
-      showNotValidatedPairs: true,
-      limit: PAGE_LIMIT,
-    },
+    filter: defaultPairFilters.all,
     LoadNextPageFunction: async (filter, pageRequest) => {
       if (!filter.showNotValidatedPairs) {
         return {
@@ -120,12 +137,7 @@ class LaunchPad {
   });
 
   myLaunches = new IndexerPaginationState<PairFilter, FtoPairContract>({
-    filter: {
-      search: "",
-      status: "all",
-      showNotValidatedPairs: true,
-      limit: PAGE_LIMIT,
-    },
+    filter: defaultPairFilters.myPairs,
     LoadNextPageFunction: async (filter, pageRequest) => {
       return (await this.LoadMoreMyProjectsPage(pageRequest)) as {
         items: FtoPairContract[];
@@ -135,12 +147,7 @@ class LaunchPad {
   });
 
   participatedPairs = new IndexerPaginationState<PairFilter, MemePairContract>({
-    filter: {
-      search: "",
-      status: "all",
-      showNotValidatedPairs: true,
-      limit: PAGE_LIMIT,
-    },
+    filter: defaultPairFilters.participatedPairs,
     LoadNextPageFunction: async (filter, pageRequest) => {
       return (await this.LoadMoreParticipatedPage(pageRequest)) as {
         items: MemePairContract[];
@@ -395,7 +402,7 @@ class LaunchPad {
         filter: this.participatedPairs.filter,
         chainId: String(wallet.currentChainId),
         pageRequest: pageRequest,
-        type: this.currentParticipatedPadType.value,
+        type: this.currentLaunchpadType.value,
         walletAddress: wallet.account,
       });
 
@@ -405,7 +412,7 @@ class LaunchPad {
       const data = {
         items: res.data.participateds.items.map((pairAddress) => {
           const pair =
-            this.currentParticipatedPadType.value === "fto"
+            this.currentLaunchpadType.value === "fto"
               ? new FtoPairContract({
                   address: pairAddress.pairId,
                 })
@@ -464,13 +471,12 @@ class LaunchPad {
 
   LoadMoreMyProjectsPage = async (pageRequest: PageRequest) => {
     const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-      filter: this.projectsPage.filter,
+      filter: this.myLaunches.filter,
       chainId: String(wallet.currentChainId),
       provider: wallet.account,
       projectType: this.currentLaunchpadType.value,
+      pageRequest: pageRequest,
     });
-
-    console.log(res);
 
     if (res.status === "success") {
       const data = {

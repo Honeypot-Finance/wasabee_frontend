@@ -488,6 +488,7 @@ export class GhostIndexer {
     type: "fto" | "meme",
     filter: Partial<FtoPairFilter>
   ): Promise<ApiResponseType<GhostParticipatedProjectsResponse>> => {
+    console.log("type", type);
     const getMemeStatusQuery = (status: string) => {
       switch (status) {
         case ProjectStatus.Success:

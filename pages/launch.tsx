@@ -3,7 +3,7 @@ import { Observer, observer, useLocalObservable } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/button";
-import launchpad from "@/services/launchpad";
+import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { LaunchCard } from "@/components/LaunchCard";
@@ -305,14 +305,16 @@ const LaunchPage: NextLayoutPage = observer(() => {
               if (key === "all") {
                 setShowValidationCheck(true);
                 launchpad.showNotValidatedPairs = true;
+                launchpad.pairFilterStatus = defaultPairFilters.all.status;
               } else if (key === "my") {
                 setShowValidationCheck(false);
                 launchpad.showNotValidatedPairs = true;
-                launchpad.myLaunches.reloadPage();
+                launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
               } else if (key === "participated-launch") {
                 setShowValidationCheck(false);
                 launchpad.showNotValidatedPairs = true;
-                launchpad.participatedPairs.reloadPage();
+                launchpad.pairFilterStatus =
+                  defaultPairFilters.participatedPairs.status;
               }
             }}
           >
