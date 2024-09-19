@@ -48,6 +48,7 @@ export class Token implements BaseContract {
   logoURI = "";
   isRouterToken = false;
   supportingFeeOnTransferTokens = false;
+  isPopular = false;
 
   // determines the order of the token in the list
   get priority() {

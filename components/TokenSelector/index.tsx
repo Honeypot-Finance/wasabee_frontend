@@ -180,9 +180,47 @@ export const TokenSelector = observer(
                     />
                     <Divider className="my-4" />
                     <div>
-                      <div></div>
-
                       <div className="max-h-[300px] overflow-auto">
+                        <div>
+                          <h2 className=" opacity-50 font-normal font-sans">
+                            Most Popular
+                          </h2>
+                          <div className="flex *:grow w-full flex-wrap gap-2">
+                            {state.tokens.length ? (
+                              state.tokens
+                                .slice()
+                                .filter((token) => token.isPopular)
+                                .sort((a, b) => b.priority - a.priority)
+                                .map((token, idx) => {
+                                  return (
+                                    <Button
+                                      key={idx}
+                                      onClick={() => {
+                                        onSelect(token);
+                                        onClose();
+                                      }}
+                                      className="min-w-[2rem] hover:bg-amber-600 flex  justify-center items-center"
+                                    >
+                                      <TokenLogo
+                                        addtionalClasses="w-[15px] h-[15px]"
+                                        token={token}
+                                        disableLink
+                                        disableTooltip
+                                      ></TokenLogo>
+                                      <p className="text-[rgba(255,255,255)] [font-kerning:none] [font-feature-settings:'calt'_off] [font-family:Inter] text-xs font-normal leading-[14px]">
+                                        {token.symbol}
+                                      </p>
+                                    </Button>
+                                  );
+                                })
+                            ) : (
+                              <NoData></NoData>
+                            )}
+                          </div>
+                        </div>
+                        <h2 className=" opacity-50 font-normal font-sans">
+                          Validated
+                        </h2>
                         {state.tokens.length ? (
                           state.tokens
                             .slice()
@@ -211,6 +249,12 @@ export const TokenSelector = observer(
                         ) : (
                           <NoData></NoData>
                         )}
+                        <div className="w-full justify-center text-center opacity-50">
+                          <h3>
+                            not seeing the token you want? search address for
+                            specific token...
+                          </h3>
+                        </div>
                       </div>
                     </div>
                   </SpinnerContainer>

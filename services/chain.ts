@@ -163,6 +163,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/wbera-token-icon.png",
       isRouterToken: true,
+      isPopular: true,
     },
     "0x2c2fc71339acdd913734a4cae9dd95d9d2b1438d": {
       name: "Bera the Pooh",
@@ -184,6 +185,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/thpot-token-icon.jpg",
       isRouterToken: true,
+      isPopular: true,
     },
     "0x05d0dd5135e3ef3ade32a9ef9cb06e8d37a6795d": {
       name: "USDT",
@@ -191,6 +193,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/usdt-token-icon.png",
       isRouterToken: true,
+      isPopular: true,
     },
     "0xd6d83af58a19cd14ef3cf6fe848c9a4d21e5727c": {
       name: "USDC",
@@ -198,6 +201,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/usdc-token-icon.png",
       isRouterToken: true,
+      isPopular: true,
     },
     "0x2577d24a26f8fa19c1058a8b0106e2c7303454a4": {
       name: "WBTC",
@@ -212,6 +216,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/weth-token-icon.png",
       isRouterToken: true,
+      isPopular: true,
     },
     "0x806ef538b228844c73e8e692adcfa8eb2fcf729c": {
       name: "DAI",
