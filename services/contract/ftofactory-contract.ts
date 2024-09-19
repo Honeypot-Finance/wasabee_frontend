@@ -30,6 +30,7 @@ export class FtoFactoryContract implements BaseContract {
   get createFTO() {
     return new ContractWrite(this.contract.write.createFTO, {
       action: "Create FTO Project",
+      isSuccessEffect: true,
     });
   }
 

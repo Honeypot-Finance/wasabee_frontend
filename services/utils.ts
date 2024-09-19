@@ -5,7 +5,7 @@ import TransactionPendingToastify from "@/components/CustomToastify/TransactionP
 import { localforage } from "@/lib/storage";
 import { LRUCache } from "lru-cache";
 import { cache } from "../lib/cache";
-import { debounce, max, initial } from 'lodash';
+import { debounce, max, initial } from "lodash";
 import { PageRequest, PairFilter } from "./indexer/indexerTypes";
 import { visualEffects } from "./visualeffects";
 
@@ -57,7 +57,7 @@ export class AsyncState<
   ) {
     this._call = func;
     if (options) {
-      const { cache,initialValue, ...restOptions } = options;
+      const { cache, initialValue, ...restOptions } = options;
       if (initialValue !== undefined) {
         this.initialValue = initialValue;
         this.value = initialValue;
@@ -128,6 +128,7 @@ export class ContractWrite<T extends (...args: any) => any> {
   successMsg: string = "";
   failMsg: string = "";
   silent: boolean = false;
+  isSuccessEffect: boolean = false;
   private _call: (...args: any) => any;
   constructor(func: T, options?: Partial<ContractWrite<T>>) {
     this._call = func;
@@ -178,7 +179,9 @@ export class ContractWrite<T extends (...args: any) => any> {
         switch (transaction.status) {
           case "success":
             toast.success(this.successMsgAgg);
-            visualEffects.startConfetti();
+            if (this.isSuccessEffect) {
+              visualEffects.startConfetti();
+            }
             break;
           case "reverted":
             toast.error(this.failMsgAgg);

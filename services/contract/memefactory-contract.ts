@@ -29,6 +29,7 @@ export class MemeFactoryContract implements BaseContract {
   get createPair() {
     return new ContractWrite(this.contract.write.createPair, {
       action: "Create MEME Project",
+      isSuccessEffect: true,
     });
   }
 

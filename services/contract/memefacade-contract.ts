@@ -26,12 +26,14 @@ export class MEMEFacadeContract implements BaseContract {
   get deposit() {
     return new ContractWrite(this.contract.write?.deposit, {
       action: "Deposit",
+      isSuccessEffect: true,
     });
   }
 
   get claimLP() {
     return new ContractWrite(this.contract.write?.claimLP, {
       action: "Claim Liquidity Pool",
+      isSuccessEffect: true,
     });
   }
 }
