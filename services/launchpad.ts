@@ -27,7 +27,7 @@ export enum ProjectStatus {
   All = "all",
   Processing = "processing",
   Success = "success",
-  Fail = "fail"
+  Fail = "fail",
 }
 
 export type PairFilter = {
@@ -88,7 +88,7 @@ class LaunchPad {
   >({
     filter: {
       search: "",
-      status: "all",
+      status: "processing",
       showNotValidatedPairs: true,
       limit: PAGE_LIMIT,
     },
