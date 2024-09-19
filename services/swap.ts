@@ -231,7 +231,7 @@ class Swap {
     );
   }
 
-  onFromAmountChange =  debounce(async () => {
+  onFromAmountChange = debounce(async () => {
     this.getNeedApprove();
     if (!this.currentPair.value && !this.routerToken) {
       return;
@@ -265,7 +265,7 @@ class Swap {
       this.toAmount = "";
       this.price = null;
     }
-  }, 300)
+  }, 300);
 
   setDeadline(deadline: number) {
     this.deadline = deadline;
@@ -285,7 +285,13 @@ class Swap {
   }
 
   setFromToken(token: Token) {
-    if (this.fromToken?.address !== token?.address || this.isWrapOrUnwrap) {
+    console.log("From Token", this.fromToken);
+    console.log("Token", token);
+    if (
+      this.fromToken?.address !== token?.address ||
+      this.isWrapOrUnwrap ||
+      token.address === wallet.currentChain.nativeToken.address
+    ) {
       // indicate this is a wrap to native or native to swap
       if (
         this.toToken?.address === token?.address &&
@@ -305,7 +311,11 @@ class Swap {
   }
 
   setToToken(token: Token) {
-    if (this.toToken?.address !== token?.address || this.isWrapOrUnwrap) {
+    if (
+      this.toToken?.address !== token?.address ||
+      this.isWrapOrUnwrap ||
+      token.address === wallet.currentChain.nativeToken.address
+    ) {
       // indicate this is a wrap to native or native to swap
       if (
         this.fromToken?.address === token?.address &&
