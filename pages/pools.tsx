@@ -203,7 +203,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
               </div>
             </div>
             <Card className="[background:#1D1407] rounded-[20px]">
-              <CardBody className="">
+              <CardBody className=" overflow-hidden">
                 <Pagination
                   paginationState={liquidity.pairPage}
                   render={(pair) => (
@@ -245,7 +245,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
               </div>
             </div>
             <Card className="[background:#1D1407] rounded-[20px]">
-              <CardBody>
+              <CardBody className="overflow-hidden">
                 <motion.div
                   variants={defaultContainerVariants}
                   initial="hidden"
