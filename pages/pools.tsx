@@ -245,7 +245,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
               </div>
             </div>
             <Card className="[background:#1D1407] rounded-[20px]">
-              <CardBody className="overflow-hidden">
+              <CardBody>
                 <motion.div
                   variants={defaultContainerVariants}
                   initial="hidden"

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { IndexerPaginationState } from "@/services/utils";
 import { observer } from "mobx-react-lite";
 import HoneyStickSvg from "../svg/HoneyStick";
+import { cn } from "@nextui-org/react";
 
 type PaginationProps<FilterT, ItemT> = {
   paginationState: IndexerPaginationState<FilterT, ItemT>;
@@ -18,7 +19,7 @@ type PaginationProps<FilterT, ItemT> = {
 export const Pagination = observer(
   <FilterT, ItemT>(props: PaginationProps<FilterT, ItemT>) => {
     return (
-      <div className={props.classNames?.base ?? ""}>
+      <div className={cn("overflow-hidden", props.classNames?.base)}>
         {props.paginationState.pageItems.value.length > 0 ? (
           <div>
             <motion.div
