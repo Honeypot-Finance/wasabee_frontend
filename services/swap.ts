@@ -289,8 +289,7 @@ class Swap {
     console.log("Token", token);
     if (
       this.fromToken?.address !== token?.address ||
-      this.isWrapOrUnwrap ||
-      token.address === wallet.currentChain.nativeToken.address
+      this.fromToken.isNative !== token.isNative
     ) {
       // indicate this is a wrap to native or native to swap
       if (
@@ -313,8 +312,7 @@ class Swap {
   setToToken(token: Token) {
     if (
       this.toToken?.address !== token?.address ||
-      this.isWrapOrUnwrap ||
-      token.address === wallet.currentChain.nativeToken.address
+      token.isNative !== this.toToken.isNative
     ) {
       // indicate this is a wrap to native or native to swap
       if (
