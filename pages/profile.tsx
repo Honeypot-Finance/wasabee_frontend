@@ -38,7 +38,7 @@ const MyLaunchTab = observer(() => {
     <Card className="next-card">
       <CardBody>
         <div className="flex">
-          <NextButton
+          {/* <NextButton
             isDisabled={launchpad.currentLaunchpadType.value === "fto"}
             className={
               launchpad.currentLaunchpadType.value === "fto"
@@ -51,7 +51,7 @@ const MyLaunchTab = observer(() => {
             }}
           >
             FTO
-          </NextButton>
+          </NextButton> */}
           <NextButton
             isDisabled={launchpad.currentLaunchpadType.value === "meme"}
             className={
@@ -88,7 +88,7 @@ const ParticipatedLaunchTab = observer(() => {
     <Card className="next-card">
       <CardBody>
         <div className="flex">
-          <NextButton
+          {/* <NextButton
             isDisabled={launchpad.currentLaunchpadType.value === "fto"}
             className={
               launchpad.currentLaunchpadType.value === "fto"
@@ -101,7 +101,7 @@ const ParticipatedLaunchTab = observer(() => {
             }}
           >
             FTO
-          </NextButton>
+          </NextButton> */}
           <NextButton
             isDisabled={launchpad.currentLaunchpadType.value === "meme"}
             className={
@@ -212,7 +212,7 @@ export const Profile = observer(() => {
       liquidity.initPool();
       return;
     }
-    launchpad.setCurrentLaunchpadType("fto");
+    launchpad.setCurrentLaunchpadType("meme");
     launchpad.showNotValidatedPairs = true;
     launchpad.myLaunches.reloadPage();
     launchpad.participatedPairs.reloadPage();
