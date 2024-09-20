@@ -59,7 +59,12 @@ export const Layout = ({
   }, []);
 
   return (
-    <div className={cn("flex flex-col min-h-screen overflow-auto", className)}>
+    <div
+      className={cn(
+        "flex flex-col min-h-screen overflow-auto bg-[url('/images/icons/bg-honey.png')]",
+        className
+      )}
+    >
       <ConfettiComponent />
       <PopOverModal />
       {router.pathname.startsWith("/launch") ||
