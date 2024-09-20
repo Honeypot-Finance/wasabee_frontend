@@ -23,6 +23,7 @@ import {
 import { FaInternetExplorer } from "react-icons/fa";
 import { popmodal } from "@/services/popmodal";
 import Image from "next/image";
+import { WrappedToastify } from "@/lib/wrappedToastify";
 
 type optionItem = {
   icon: JSX.Element;
@@ -53,7 +54,9 @@ export const optionsPresets = {
           window.navigator.clipboard
             .writeText(copyText)
             .then(() => {
-              toast.success(copysSuccessText ?? "Copied");
+              WrappedToastify.success({
+                message: copysSuccessText ?? "Copied",
+              });
             })
             .catch((error) => {
               console.error("Copy failed", error);
@@ -61,24 +64,28 @@ export const optionsPresets = {
         } else {
           clipboard.writeText(copyText).then(
             () => {
-              toast.success(copysSuccessText ?? "Copied");
+              WrappedToastify.success({
+                message: copysSuccessText ?? "Copied",
+              });
             },
             (error: Error) => {
-              toast.error(
-                <div>
-                  <h3>
-                    Copy failed, please do it manually, click this message to
-                    open prompt:
-                  </h3>
-                  <p>{copyText}</p>
-                </div>,
-                {
+              WrappedToastify.error({
+                message: (
+                  <div>
+                    <h3>
+                      Copy failed, please do it manually, click this message to
+                      open prompt:
+                    </h3>
+                    <p>{copyText}</p>
+                  </div>
+                ),
+                options: {
                   autoClose: false,
                   onClick: () => {
                     window.prompt("Copy to clipboard: Ctrl+C, Enter", copyText);
                   },
-                }
-              );
+                },
+              });
               console.error("Copy failed", error);
             }
           );
@@ -114,7 +121,9 @@ export const optionsPresets = {
       onClick: async () => {
         console.log("importTokenToWallet", token);
         if (!token) {
-          toast.error("Token not found or not initialized");
+          WrappedToastify.error({
+            message: "Token not found or not initialized",
+          });
           return;
         }
         await token.init();

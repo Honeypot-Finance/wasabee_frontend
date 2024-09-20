@@ -1,6 +1,7 @@
-export const RocketSvg = () => {
+export const RocketSvg = ({ className }: { className?: string }) => {
   return (
     <svg
+      className={className}
       width="53"
       height="61"
       fill="none"

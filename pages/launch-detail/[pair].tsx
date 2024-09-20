@@ -57,6 +57,8 @@ import CardContianer from "@/components/CardContianer/CardContianer";
 import { CommentCard } from "@/components/Discussion/CommentCard/CommentCard";
 import { DiscussionArea } from "@/components/Discussion/DiscussionArea/DiscussionArea";
 import { MemePairContract } from "@/services/contract/memepair-contract";
+import { WrappedToastify } from "@/lib/wrappedToastify";
+import { title } from "process";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -221,11 +223,17 @@ const UpdateProjectModal = observer(
                   telegram: data.telegram || "",
                 });
                 if (launchpad.updateProject.error) {
-                  toast.error("Update failed");
+                  WrappedToastify.error({
+                    message: "Update failed",
+                    title: "Update Project Detail",
+                  });
                   return;
                 }
                 await pair.getProjectInfo();
-                toast.success("Update success");
+                WrappedToastify.success({
+                  message: "Update success",
+                  title: "Update Project Detail",
+                });
                 onClose();
               })();
             }}
@@ -468,46 +476,48 @@ const FtoView = observer(() => {
       !state.pair.value.website ||
       !state.pair.value.telegram
     ) {
-      toast.warning(
-        <div>
-          <ul className="list-disc list-inside">
-            {!state.pair.value.logoUrl && (
-              <li className="text-orange-400">no icon</li>
-            )}
-            {!state.pair.value.projectName && (
-              <li className="text-orange-400">no project name</li>
-            )}
-            {!state.pair.value.description && (
-              <li className="text-orange-400">no description</li>
-            )}
-            {!state.pair.value.twitter && (
-              <li className="text-orange-400">no twitter link</li>
-            )}
-            {!state.pair.value.website && (
-              <li className="text-orange-400">no website link</li>
-            )}
-            {!state.pair.value.telegram && (
-              <li className="text-orange-400">no telegram link</li>
-            )}
-          </ul>
-          <p>
-            Click{" "}
-            <span
-              onClick={() => {
-                onOpen();
-                toast.dismiss();
-              }}
-              className="text-blue-500 cursor-pointer"
-            >
-              here
-            </span>{" "}
-            to update the project
-          </p>
-        </div>,
-        {
+      WrappedToastify.warn({
+        message: (
+          <div>
+            <ul className="list-disc list-inside">
+              {!state.pair.value.logoUrl && (
+                <li className="text-orange-400">no icon</li>
+              )}
+              {!state.pair.value.projectName && (
+                <li className="text-orange-400">no project name</li>
+              )}
+              {!state.pair.value.description && (
+                <li className="text-orange-400">no description</li>
+              )}
+              {!state.pair.value.twitter && (
+                <li className="text-orange-400">no twitter link</li>
+              )}
+              {!state.pair.value.website && (
+                <li className="text-orange-400">no website link</li>
+              )}
+              {!state.pair.value.telegram && (
+                <li className="text-orange-400">no telegram link</li>
+              )}
+            </ul>
+            <p>
+              Click{" "}
+              <span
+                onClick={() => {
+                  onOpen();
+                  toast.dismiss();
+                }}
+                className="text-blue-500 cursor-pointer"
+              >
+                here
+              </span>{" "}
+              to update the project
+            </p>
+          </div>
+        ),
+        options: {
           autoClose: false,
-        }
-      );
+        },
+      });
       return () => toast.dismiss();
     }
   }, [
@@ -717,7 +727,9 @@ const FtoView = observer(() => {
                         state.pair.value.provider.toLowerCase() !==
                         wallet.account.toLowerCase()
                       ) {
-                        toast.warning("You are not the owner of this project");
+                        WrappedToastify.warn({
+                          message: "You are not the owner of this project",
+                        });
                         return;
                       }
 
@@ -919,46 +931,48 @@ const MemeView = observer(() => {
       !state.pair.value.website ||
       !state.pair.value.telegram
     ) {
-      toast.warning(
-        <div>
-          <ul className="list-disc list-inside">
-            {!state.pair.value.logoUrl && (
-              <li className="text-orange-400">no icon</li>
-            )}
-            {!state.pair.value.projectName && (
-              <li className="text-orange-400">no project name</li>
-            )}
-            {!state.pair.value.description && (
-              <li className="text-orange-400">no description</li>
-            )}
-            {!state.pair.value.twitter && (
-              <li className="text-orange-400">no twitter link</li>
-            )}
-            {!state.pair.value.website && (
-              <li className="text-orange-400">no website link</li>
-            )}
-            {!state.pair.value.telegram && (
-              <li className="text-orange-400">no telegram link</li>
-            )}
-          </ul>
-          <p>
-            Click{" "}
-            <span
-              onClick={() => {
-                onOpen();
-                toast.dismiss();
-              }}
-              className="text-blue-500 cursor-pointer"
-            >
-              here
-            </span>{" "}
-            to update the project
-          </p>
-        </div>,
-        {
+      WrappedToastify.warn({
+        message: (
+          <div>
+            <ul className="list-disc list-inside">
+              {!state.pair.value.logoUrl && (
+                <li className="text-orange-400">no icon</li>
+              )}
+              {!state.pair.value.projectName && (
+                <li className="text-orange-400">no project name</li>
+              )}
+              {!state.pair.value.description && (
+                <li className="text-orange-400">no description</li>
+              )}
+              {!state.pair.value.twitter && (
+                <li className="text-orange-400">no twitter link</li>
+              )}
+              {!state.pair.value.website && (
+                <li className="text-orange-400">no website link</li>
+              )}
+              {!state.pair.value.telegram && (
+                <li className="text-orange-400">no telegram link</li>
+              )}
+            </ul>
+            <p>
+              Click{" "}
+              <span
+                onClick={() => {
+                  onOpen();
+                  toast.dismiss();
+                }}
+                className="text-blue-500 cursor-pointer"
+              >
+                here
+              </span>{" "}
+              to update the project
+            </p>
+          </div>
+        ),
+        options: {
           autoClose: false,
-        }
-      );
+        },
+      });
       return () => toast.dismiss();
     }
   }, [
@@ -1161,7 +1175,10 @@ const MemeView = observer(() => {
                         state.pair.value.provider.toLowerCase() !==
                         wallet.account.toLowerCase()
                       ) {
-                        toast.warning("You are not the owner of this project");
+                        WrappedToastify.warn({
+                          message: "You are not the owner of this project",
+                        });
+
                         return;
                       }
 

@@ -23,6 +23,7 @@ import { sendTransaction } from "viem/actions";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import Countdown from "react-countdown";
+import { WrappedToastify } from "@/lib/wrappedToastify";
 
 export function DonationModal({
   balance,
@@ -55,7 +56,9 @@ export function DonationModal({
                 onClick={async () => {
                   await faucet.nativeFaucet?.donateToContract(String(amount));
                   await balance.refetch();
-                  toast.success("Thank you for your donation!");
+                  WrappedToastify.success({
+                    message: "Thank you for your donation!",
+                  });
                   setModalOpen(false);
                 }}
               >

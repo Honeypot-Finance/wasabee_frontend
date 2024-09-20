@@ -10,6 +10,7 @@ import { faucetABI } from "@/lib/abis/faucet";
 import { watchAsset } from "viem/actions";
 import { toast } from "react-toastify";
 import { networksMap } from "../chain";
+import { WrappedToastify } from "@/lib/wrappedToastify";
 
 export class Token implements BaseContract {
   static tokensMap: Record<string, Token> = {};
@@ -281,10 +282,16 @@ export class Token implements BaseContract {
       },
     })
       .then(() => {
-        toast.success("Token added to wallet");
+        WrappedToastify.success({
+          title: this.symbol,
+          message: "Token added to wallet",
+        });
       })
       .catch((e) => {
-        toast.error("Failed to add token to wallet");
+        WrappedToastify.error({
+          title: this.symbol,
+          message: "Failed to add token to wallet",
+        });
       });
   }
 }

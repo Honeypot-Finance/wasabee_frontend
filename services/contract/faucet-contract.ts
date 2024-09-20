@@ -14,6 +14,7 @@ import { DailyFaucetABI } from "@/lib/abis/faucet/daily-faucet";
 import { Token } from "./token";
 import { trpcClient } from "@/lib/trpc";
 import { toast } from "react-toastify";
+import { WrappedToastify } from "@/lib/wrappedToastify";
 
 export class NativeFaucetContract implements BaseContract {
   address = "";
@@ -96,9 +97,9 @@ export class NativeFaucetContract implements BaseContract {
 
   async Claim(): Promise<boolean> {
     this.canclaim = false;
-    const loadingToast = toast.info("Claiming faucet...", {
-      autoClose: false,
-      isLoading: true,
+    const loadingToast = WrappedToastify.info({
+      message: "Claiming faucet...",
+      options: { autoClose: false, isLoading: true },
     });
 
     const applyNativeFaucet = await trpcClient.token.applyNativeFaucet
@@ -106,15 +107,18 @@ export class NativeFaucetContract implements BaseContract {
         address: wallet.account,
       })
       .catch((err) => {
-        console.dir( err);
-        toast.error(err.message);
+        console.dir(err);
+        WrappedToastify.error(err.message);
         this.cantClaimReason = err.message;
       });
 
     toast.dismiss(loadingToast);
 
     if (applyNativeFaucet) {
-      toast(applyNativeFaucet.hash);
+      WrappedToastify.success({
+        title: "Faucet claimed successfully",
+        message: `Transaction hash: ${applyNativeFaucet.hash}`,
+      });
       this.nextFaucetTime = Date.now() + 24 * 60 * 60 * 1000;
       this.isClaimable();
       return true;

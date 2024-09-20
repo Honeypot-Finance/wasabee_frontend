@@ -1,7 +1,9 @@
-export const PeddingSvg = () => {
+import { cn } from "@/lib/tailwindcss";
+
+export const PeddingSvg = ({ className }: { className?: string }) => {
   return (
     <svg
-      className="animate-spin"
+      className={cn("animate-spin", className)}
       width="100"
       height="100"
       fill="none"

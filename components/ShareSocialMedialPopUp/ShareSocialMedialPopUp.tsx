@@ -5,7 +5,6 @@ import PopUp from "../PopUp/PopUp";
 import { useRef } from "react";
 import { PopupActions } from "reactjs-popup/dist/types";
 import { text } from "stream/consumers";
-import { toast } from "react-toastify";
 import Image from "next/image";
 import { popmodal } from "@/services/popmodal";
 

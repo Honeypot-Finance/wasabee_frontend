@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import "@/styles/overrides/reactjs-popup.css";
+import "@/styles/overrides/toastify.css";
 //@ts-ignore
 import type { AppProps } from "next/app";
 import { Layout } from "@/components/layout";
@@ -18,7 +19,7 @@ import { wallet } from "@/services/wallet";
 import { DM_Sans } from "next/font/google";
 import { Inspector } from "react-dev-inspector";
 import { StorageState } from "@/services/utils";
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/react";
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
 

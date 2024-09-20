@@ -7,8 +7,6 @@ import { trpcClient } from "@/lib/trpc";
 import { wallet } from "@/services/wallet";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import { Row, RowList } from "postgres";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { after, before, set } from "lodash";
 import { MemePairContract } from "@/services/contract/memepair-contract";
@@ -16,10 +14,11 @@ import { MemePairContract } from "@/services/contract/memepair-contract";
 import { useRouter } from "next/router";
 import { cn } from "@/lib/tailwindcss";
 import dayjs from "dayjs";
+import { WrappedToastify } from "@/lib/wrappedToastify";
 
 interface DiscussionAreaProps {
   pairDatabaseId: number;
-  isSide?: boolean
+  isSide?: boolean;
 }
 
 export function DiscussionArea(props: DiscussionAreaProps) {
@@ -53,7 +52,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
     setState({
       ...state,
       loadingComments: true,
-    })
+    });
     const res = await trpcClient.discussionRouter.getCommentsByProjectId.query({
       project_id: props.pairDatabaseId ?? -1,
       limit: 10,
@@ -162,12 +161,14 @@ export function DiscussionArea(props: DiscussionAreaProps) {
               isLoading={state.commenting}
               onClick={async () => {
                 if (!wallet.account) {
-                  toast.warn("Please connect your wallet");
+                  WrappedToastify.warn({
+                    message: "Please connect your wallet",
+                  });
                   return;
                 }
 
                 if (userComment.length === 0) {
-                  toast.warn("Comment can not be empty");
+                  WrappedToastify.warn({ message: "Comment can not be empty" });
                   return;
                 }
 
@@ -187,9 +188,9 @@ export function DiscussionArea(props: DiscussionAreaProps) {
 
                 if (res) {
                   setUserComment("");
-                  toast.success("Comment successfully");
+                  WrappedToastify.success({ message: "Comment successfully" });
                 } else {
-                  toast.error("Failed to comment");
+                  WrappedToastify.error({ message: "Failed to comment" });
                 }
 
                 setState({

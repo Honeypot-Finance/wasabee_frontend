@@ -2,13 +2,19 @@ import Link from "next/link";
 import { wallet } from "@/services/wallet";
 import { ViewSvg } from "@/components/svg/View";
 
-export default function TransactionPendingToastify({hash, action}: {hash: string, action?: string}) {
+export default function TransactionPendingToastify({
+  hash,
+  action,
+}: {
+  hash: string;
+  action?: string;
+}) {
   return (
     <div>
-      <div>{action || 'Transaction'} Pending</div>
-      <div className="m-2 text-right text-gray-800">
+      <div>{action || "Transaction"} Pending</div>
+      <div className="m-2 text-right">
         <Link
-          className="flex justify-end text-right items-center gap-2"
+          className="flex justify-end text-right items-center gap-2 text-white"
           href={
             wallet?.currentChain?.chain?.blockExplorers?.default.url +
             "tx/" +

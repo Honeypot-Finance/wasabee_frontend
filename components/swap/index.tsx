@@ -9,13 +9,7 @@ import { SwapCard } from "@/components/SwapCard";
 import { LPCard } from "@/components/LPCard";
 import { Slippage } from "@/components/SwapCard/Slippage";
 import { observer, useLocalObservable } from "mobx-react-lite";
-import { useRouter } from "next/router";
-import { getHash } from "@/lib/url";
 import Link from "next/link";
-import TransactionPendingToastify from "../CustomToastify/TransactionPendingToastify/TransactionPendingToastify";
-import { toast } from "react-toastify";
-import { wallet } from "@/services/wallet";
-import { GhostPair, GhostPairResponse } from "@/services/indexer/indexerTypes";
 
 export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
   const state = useLocalObservable(() => ({
@@ -30,7 +24,6 @@ export const Swap = observer(({ activeTab }: { activeTab?: "swap" | "lp" }) => {
       this.activeTab = tab;
     },
   }));
-
 
   return (
     <div className="flex justify-center gap-[44px] flex-wrap">

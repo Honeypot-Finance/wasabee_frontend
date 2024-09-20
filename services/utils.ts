@@ -8,6 +8,7 @@ import { cache } from "../lib/cache";
 import { debounce, max, initial } from "lodash";
 import { PageRequest, PairFilter } from "./indexer/indexerTypes";
 import { visualEffects } from "./visualeffects";
+import { WrappedToastify } from "@/lib/wrappedToastify";
 
 export type PageInfo = {
   hasNextPage: boolean;
@@ -161,13 +162,14 @@ export class ContractWrite<T extends (...args: any) => any> {
         ...options,
       });
       console.log("hash", hash);
-      const pendingPopup = toast(
-        TransactionPendingToastify({ hash, action: this.action }),
-        {
+      const pendingPopup = WrappedToastify.pending({
+        message: TransactionPendingToastify({ hash, action: this.action }),
+        title: this.action,
+        options: {
           autoClose: false,
           isLoading: true,
-        } as ToastOptions
-      );
+        } as ToastOptions,
+      });
       const transaction = await wallet.publicClient.waitForTransactionReceipt({
         confirmations: 2,
         hash,
@@ -178,13 +180,19 @@ export class ContractWrite<T extends (...args: any) => any> {
       if (!this.silent) {
         switch (transaction.status) {
           case "success":
-            toast.success(this.successMsgAgg);
+            WrappedToastify.success({
+              message: this.successMsgAgg,
+              title: this.action,
+            });
             if (this.isSuccessEffect) {
               visualEffects.startConfetti();
             }
             break;
           case "reverted":
-            toast.error(this.failMsgAgg);
+            WrappedToastify.error({
+              message: this.failMsgAgg,
+              title: this.action,
+            });
             break;
           default:
             throw new Error(`Transaction ${hash} Pending`);
@@ -193,9 +201,9 @@ export class ContractWrite<T extends (...args: any) => any> {
       return transaction;
     } catch (error: any) {
       if (error.message.includes("User rejected the request")) {
-        toast.error("User rejected the request");
+        WrappedToastify.error({ message: "User rejected the request" });
       } else {
-        toast.error(this.failMsg || error.message);
+        WrappedToastify.error({ message: this.failMsg || error.message });
       }
 
       console.error(error);
@@ -210,13 +218,14 @@ export class ContractWrite<T extends (...args: any) => any> {
     try {
       const hash = await this._call(...args);
       console.log("hash", hash);
-      const pendingPopup = toast(
-        TransactionPendingToastify({ hash, action: this.action }),
-        {
+      const pendingPopup = WrappedToastify.pending({
+        message: TransactionPendingToastify({ hash, action: this.action }),
+        title: this.action,
+        options: {
           autoClose: false,
           isLoading: true,
-        } as ToastOptions
-      );
+        } as ToastOptions,
+      });
       const transaction = await wallet.publicClient.waitForTransactionReceipt({
         confirmations: 2,
         hash,
@@ -227,10 +236,16 @@ export class ContractWrite<T extends (...args: any) => any> {
       if (!this.silent) {
         switch (transaction.status) {
           case "success":
-            toast.success(this.successMsgAgg);
+            WrappedToastify.success({
+              message: this.successMsgAgg,
+              title: this.action,
+            });
             break;
           case "reverted":
-            toast.error(this.failMsgAgg);
+            WrappedToastify.error({
+              message: this.failMsgAgg,
+              title: this.action,
+            });
             break;
           default:
             throw new Error(`Transaction ${hash} Pending`);
@@ -239,9 +254,9 @@ export class ContractWrite<T extends (...args: any) => any> {
       return transaction;
     } catch (error: any) {
       if (error.message.includes("User rejected the request")) {
-        toast.error("User rejected the request");
+        WrappedToastify.error({ message: "User rejected the request" });
       } else {
-        toast.error(this.failMsg || error.message);
+        WrappedToastify.error({ message: this.failMsg || error.message });
       }
 
       console.error(error);
