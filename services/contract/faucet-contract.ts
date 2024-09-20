@@ -108,7 +108,7 @@ export class NativeFaucetContract implements BaseContract {
       })
       .catch((err) => {
         console.dir(err);
-        WrappedToastify.error(err.message);
+        WrappedToastify.error({ message: err.message });
         this.cantClaimReason = err.message;
       });
 
