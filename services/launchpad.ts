@@ -649,6 +649,18 @@ class LaunchPad {
     }
   );
 
+  updateProjectBanner = new AsyncState(
+    async (data: { banner_url: string; pair: string; chain_id: number }) => {
+      await createSiweMessage(
+        wallet.account,
+        "Sign In With Honeypot",
+        wallet.walletClient
+      );
+
+      await trpcClient.projects.updateProjectBanner.mutate(data);
+    }
+  );
+
   isRaiseToken(tokenAddress: string): boolean {
     return wallet.currentChain.contracts.ftoTokens.some(
       (ftoToken) =>

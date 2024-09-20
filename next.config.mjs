@@ -13,6 +13,11 @@ const nextConfig = {
       {
         protocol: "https",
         port: "",
+        hostname: "upload.wikimedia.org",
+      },
+      {
+        protocol: "https",
+        port: "",
         hostname: "vphdxociarqnaxj6.public.blob.vercel-storage.com",
       },
       {
@@ -33,24 +38,26 @@ const nextConfig = {
     ],
   },
   async redirects() {
-    return isDev ? [
-      {
-        source: '/',
-        destination: '/swap',
-        permanent: false
-      }
-    ] : [
-      {
-        source: '/',
-        destination: 'https://honeypotfinance.xyz/',
-        permanent: false
-      },
-      {
-        source: '/launch',
-        destination: '/meme-launchs',
-        permanent: false
-      },
-    ]
+    return isDev
+      ? [
+          {
+            source: "/",
+            destination: "/swap",
+            permanent: false,
+          },
+        ]
+      : [
+          {
+            source: "/",
+            destination: "https://honeypotfinance.xyz/",
+            permanent: false,
+          },
+          {
+            source: "/launch",
+            destination: "/meme-launchs",
+            permanent: false,
+          },
+        ];
   },
 };
 

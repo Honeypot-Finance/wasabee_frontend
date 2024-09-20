@@ -11,8 +11,9 @@ import { cn } from "@/lib/tailwindcss";
 import { trpcClient } from "@/lib/trpc";
 import { ZodError } from "zod";
 import { statusTextToNumber } from "../launchpad";
+import { BaseLaunchContract } from "./base-launch-contract";
 
-export class MemePairContract implements BaseContract {
+export class MemePairContract implements BaseLaunchContract {
   databaseId: number | undefined = undefined;
   address = "";
   name: string = "";
@@ -44,6 +45,7 @@ export class MemePairContract implements BaseContract {
     icon: string;
   }[] = [];
   logoUrl = "";
+  bannerUrl = "";
 
   constructor(args: Partial<MemePairContract>) {
     Object.assign(this, args);
@@ -321,6 +323,9 @@ export class MemePairContract implements BaseContract {
     if (res.logo_url) {
       this.logoUrl = res.logo_url;
       this.launchedToken?.setLogoURI(res.logo_url);
+    }
+    if (res.banner_url) {
+      this.bannerUrl = res.banner_url;
     }
   }
 

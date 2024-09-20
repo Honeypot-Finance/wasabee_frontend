@@ -11,8 +11,9 @@ import { cn } from "@/lib/tailwindcss";
 import { trpcClient } from "@/lib/trpc";
 import { ZodError } from "zod";
 import launchpad, { statusTextToNumber } from "../launchpad";
+import { BaseLaunchContract } from "./base-launch-contract";
 
-export class FtoPairContract implements BaseContract {
+export class FtoPairContract implements BaseLaunchContract {
   databaseId: number | undefined = undefined;
   address = "";
   name: string = "";
@@ -41,6 +42,7 @@ export class FtoPairContract implements BaseContract {
     icon: string;
   }[] = [];
   logoUrl = "";
+  bannerUrl = "";
 
   constructor(args: Partial<FtoPairContract>) {
     Object.assign(this, args);
@@ -319,6 +321,9 @@ export class FtoPairContract implements BaseContract {
     if (res.logo_url) {
       this.logoUrl = res.logo_url;
       this.launchedToken?.setLogoURI(res.logo_url);
+    }
+    if (res.banner_url) {
+      this.bannerUrl = res.banner_url;
     }
   }
 

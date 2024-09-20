@@ -44,7 +44,7 @@ const TimeLineComponent = observer(
 
     return (
       <ComponentComtainer>
-        <h6 className="opacity-50 text-xs">End Time</h6>
+        <h6 className="text-xs">End Time</h6>
         <div className="flex items-center gap-2 text-sm">
           <span className="font-bold">
             {
@@ -81,7 +81,7 @@ const LaunchProgress = observer(({ pair }: { pair: MemePairContract }) => {
     <>
       {pair.depositedRaisedToken && pair.raisedTokenMinCap && (
         <ComponentComtainer>
-          <h6 className="opacity-50 text-xs">Progress</h6>
+          <h6 className="text-xs">Progress</h6>
           <div className="flex items-center gap-2 text-sm w-[80%]">
             <ProgressBar
               label={
@@ -108,7 +108,7 @@ const TotalLaunched = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
       <ComponentComtainer>
-        <h6 className="opacity-50 text-xs">Total launched</h6>
+        <h6 className="text-xs">Total launched</h6>
         <div className="flex items-center gap-2 text-sm">
           {/* <TotalRaisedSvg /> */}
           <span className="font-bold">
@@ -128,7 +128,7 @@ const TotalRaised = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
       <ComponentComtainer>
-        <h6 className="opacity-50 text-xs">Total raised</h6>
+        <h6 className="text-xs">Total raised</h6>
         <div className="flex items-center gap-2 text-sm">
           {/* <TotalRaisedSvg /> */}
           <span className="font-bold">
@@ -148,7 +148,7 @@ const TokenPrice = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
       <div className="flex flex-col items-center gap-1  odd:last:col-span-2">
-        <h6 className="opacity-50 text-xs">Token Price</h6>
+        <h6 className="text-xs">Token Price</h6>
         <div className="flex items-center gap-2 text-sm">
           <span className="font-bold">
             <AmountFormat amount={pair?.price?.toFixed()}></AmountFormat>{" "}
@@ -163,7 +163,7 @@ const TokenPrice = observer(
 const UserDeposited = observer(({ pair }: { pair: FtoPairContract }) => {
   return (
     <ComponentComtainer>
-      <h6 className="opacity-50 text-xs">Your Deposit</h6>
+      <h6 className="text-xs">Your Deposit</h6>
       <div className="flex items-center gap-2 text-sm">
         {/* <TotalRaisedSvg /> */}
         <span className="font-bold">
@@ -386,13 +386,22 @@ export const LaunchCard = observer(
         initial="hidden"
         animate="visible"
         className={cn(
-          "flex h-full flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative",
+          "flex h-full flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative overflow-hidden",
           className
         )}
         whileInView="visible"
       >
         {pair && (
           <>
+            {pair.bannerUrl && (
+              <Image
+                className="opacity-[0.5] z-[-1]"
+                src={pair.bannerUrl}
+                alt="banner"
+                layout="fill"
+                objectFit="cover"
+              ></Image>
+            )}
             <ProjectStatusDisplay pair={pair} />
             <OptionsDropdown
               className="absolute left-[0.5rem] top-[0.5rem] "

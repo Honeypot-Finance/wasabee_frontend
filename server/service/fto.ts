@@ -24,6 +24,7 @@ export const ftoService = {
     project_type?: string;
     projectName: string;
     project_logo?: string;
+    banner_url?: string;
   }) => {
     if (
       !fto_api_key_list.includes(data.creator_api_key) &&
@@ -40,6 +41,7 @@ export const ftoService = {
       project_type: data.project_type ?? "",
       name: data.projectName,
       logo_url: data.project_logo ?? "",
+      banner_url: data.banner_url ?? "",
     })}`;
   },
   getProjectInfo: async (data: {
@@ -57,6 +59,7 @@ export const ftoService = {
     let output;
 
     output = await selectFtoProject(data);
+    console.log(output);
 
     if (!output || !output[0]) {
       let provider = "";
@@ -193,7 +196,27 @@ export const ftoService = {
       data.vote
     }`;
   },
+  updateProjectBanner: async (data: {
+    banner_url: string;
+    pair: string;
+    chain_id: number;
+    creator_api_key: string;
+  }) => {
+    if (
+      !fto_api_key_list.includes(data.creator_api_key) &&
+      data.creator_api_key.toLowerCase() != super_api_key.toLowerCase()
+    ) {
+      return;
+    }
 
+    await pg`INSERT INTO fto_project ${pg({
+      pair: data.pair.toLowerCase(),
+      chain_id: data.chain_id,
+      banner_url: data.banner_url,
+    })} ON CONFLICT (pair, chain_id) DO UPDATE SET banner_url = ${
+      data.banner_url
+    }`;
+  },
   updateFtoLogo: async (data: {
     logo_url: string;
     pair: string;
@@ -311,8 +334,9 @@ const selectFtoProject = async (data: { pair: string; chain_id: number }) => {
       name: string;
       provider: string;
       project_type: string;
+      banner_url: string;
     }[]
-  >`SELECT id,twitter,logo_url, telegram, website,description,name, provider, project_type  FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
+  >`SELECT id,twitter,logo_url, telegram, website,description,name, provider, project_type,banner_url  FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
     data.chain_id
   }`;
 };

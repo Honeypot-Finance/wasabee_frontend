@@ -107,12 +107,31 @@ const UpdateProjectModal = observer(
         </ModalHeader>
         <ModalBody>
           <div>
+            <div className="relative w-full h-[5rem] border-dashed border-amber-950 hover:border-amber-500 border-3 rounded-2xl mb-5  transition-all text-white hover:text-amber-500">
+              <UploadImage
+                imagePath={pair.bannerUrl}
+                blobName={pair.address + "_banner"}
+                onUpload={async (url) => {
+                  console.log(url);
+                  await launchpad.updateProjectBanner.call({
+                    banner_url: url,
+                    pair: pair.address,
+                    chain_id: wallet.currentChainId,
+                  });
+                  pair.bannerUrl = url;
+                }}
+                variant="banner"
+              ></UploadImage>{" "}
+              <h3 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold pointer-events-none">
+                Upload Banner
+              </h3>
+            </div>
             <div className="flex flex-col gap-4">
               <UploadImage
                 imagePath={
                   !!pair.logoUrl ? pair.logoUrl : "/images/project_honey.png"
                 }
-                blobName={pair.address}
+                blobName={pair.address + "_logo"}
                 onUpload={async (url) => {
                   console.log(url);
                   await launchpad.updateProjectLogo.call({
@@ -124,7 +143,7 @@ const UpdateProjectModal = observer(
                 }}
               ></UploadImage>
               <div className="text align opacity-50 text-center">
-                Click icon to upload
+                Click icon to upload new token icon
               </div>
               <div>Project Name</div>
               <input
@@ -573,7 +592,13 @@ const FtoView = observer(() => {
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
       {state.pair.value && (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+          classNames={{
+            base: "max-h-[70vh] overflow-y-scroll",
+          }}
+        >
           <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
         </Modal>
       )}
@@ -592,7 +617,16 @@ const FtoView = observer(() => {
       <div className="flex justify-center mt-[24px]">
         <div className="flex gap-[20px] flex-wrap min-h-[425px]">
           <div className="flex-1 flex basis-full sm:basis-0 w-full sm:min-w-[500px] flex-col items-center  shrink-0 [background:#271B0C] rounded-2xl">
-            <div className="flex h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px]"></div>
+            <div className="relative flex h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px] overflow-hidden">
+              {state.pair.value?.bannerUrl && (
+                <Image
+                  src={state.pair.value?.bannerUrl}
+                  alt="banner"
+                  layout="fill"
+                  objectFit="cover"
+                ></Image>
+              )}
+            </div>
             <div className="relative flex-1 w-full h-full px-[29px] pb-[26px]">
               <ProjectStatusDisplay pair={state.pair.value} />
               <div className=" relative translate-y-[-50%] w-[65px] h-[65px] [background:#271B0C] rounded-[11.712px] overflow-hidden">
@@ -1019,7 +1053,13 @@ const MemeView = observer(() => {
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
       {state.pair.value && (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+          classNames={{
+            base: "max-h-[70vh] overflow-y-scroll",
+          }}
+        >
           <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
         </Modal>
       )}
@@ -1038,7 +1078,16 @@ const MemeView = observer(() => {
       <div className="flex justify-center mt-[24px]">
         <div className="flex gap-[20px] flex-wrap min-h-[425px]">
           <div className="flex-1 flex basis-full sm:basis-0 w-full sm:min-w-[500px] flex-col items-center  shrink-0 [background:#271B0C] rounded-2xl">
-            <div className="flex h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px]"></div>
+            <div className="relative flex h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px] overflow-hidden">
+              {state.pair.value?.bannerUrl && (
+                <Image
+                  src={state.pair.value?.bannerUrl}
+                  alt="banner"
+                  layout="fill"
+                  objectFit="cover"
+                ></Image>
+              )}
+            </div>
             <div className="relative flex-1 w-full h-full px-[29px] pb-[26px]">
               <ProjectStatusDisplay pair={state.pair.value} />
               <div className=" relative translate-y-[-50%] w-[65px] h-[65px] [background:#271B0C] rounded-[11.712px] overflow-hidden">
@@ -1330,6 +1379,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
     telegram: string | null;
     website: string | null;
     logo_url: string | null;
+    banner_url: string | null;
   } | null>(null);
 
   useEffect(() => {
