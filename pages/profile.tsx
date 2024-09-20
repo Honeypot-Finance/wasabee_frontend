@@ -16,7 +16,7 @@ import { trpc, trpcClient } from "@/lib/trpc";
 import { networksMap } from "@/services/chain";
 import { PairContract } from "@/services/contract/pair-contract";
 import { GhostPair } from "@/services/indexer/indexerTypes";
-import launchpad from "@/services/launchpad";
+import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { liquidity } from "@/services/liquidity";
 import { wallet } from "@/services/wallet";
 import {
@@ -269,9 +269,10 @@ export const Profile = observer(() => {
           className="next-tab"
           onSelectionChange={(key) => {
             if (key === "my-launch") {
-              launchpad.myLaunches.reloadPage();
+              launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
             } else if (key === "participated-launch") {
-              launchpad.participatedPairs.reloadPage();
+              launchpad.pairFilterStatus =
+                defaultPairFilters.participatedPairs.status;
             }
           }}
         >
