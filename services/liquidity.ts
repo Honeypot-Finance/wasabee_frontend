@@ -358,7 +358,7 @@ class Liquidity {
   }
 
   setFromToken(token: Token) {
-    if (this.fromToken?.address !== token.address) {
+    if (this.fromToken?.address !== token.address || this.fromToken.isNative !== token.isNative) {
       if (this.toToken?.address === token.address) {
         this.toToken = this.fromToken;
         this.toAmount = "";
@@ -374,7 +374,7 @@ class Liquidity {
   }
 
   setToToken(token: Token) {
-    if (this.toToken?.address !== token.address) {
+    if (this.toToken?.address !== token.address || this.toToken.isNative !== token.isNative) {
       if (this.fromToken?.address === token.address) {
         this.fromToken = this.toToken;
         this.fromAmount = "";
