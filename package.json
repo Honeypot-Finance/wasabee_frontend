@@ -57,6 +57,7 @@
     "react-countdown": "^2.3.6",
     "react-dev-inspector": "^2.0.1",
     "react-dom": "^18",
+    "react-drag-drop-files": "^2.3.10",
     "react-draggable": "^4.4.6",
     "react-hook-form": "^7.51.4",
     "react-icons": "^5.0.1",

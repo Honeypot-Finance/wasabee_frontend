@@ -190,7 +190,7 @@ export const berachainBartioTestnetNetwork = new Network({
     "0x05d0dd5135e3ef3ade32a9ef9cb06e8d37a6795d": {
       name: "USDT",
       symbol: "USDT",
-      decimals: 18,
+      decimals: 6,
       logoURI: "/images/icons/tokens/usdt-token-icon.png",
       isRouterToken: true,
       isPopular: true,
@@ -198,7 +198,7 @@ export const berachainBartioTestnetNetwork = new Network({
     "0xd6d83af58a19cd14ef3cf6fe848c9a4d21e5727c": {
       name: "USDC",
       symbol: "USDC",
-      decimals: 18,
+      decimals: 6,
       logoURI: "/images/icons/tokens/usdc-token-icon.png",
       isRouterToken: true,
       isPopular: true,
