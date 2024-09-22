@@ -435,7 +435,7 @@ export const LaunchCard = observer(
                 }
                 alt="honey"
                 fill
-                className="object-cover w-full h-full aspect-square"
+                className="object-cover w-full h-full aspect-square bg-[#ECC94E] "
               ></Image>
             </div>
             <h4 className="text-white text-center text-[1rem] font-bold flex items-start  h-[1.5em] overflow-hidden">
