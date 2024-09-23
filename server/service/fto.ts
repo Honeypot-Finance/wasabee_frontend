@@ -6,6 +6,7 @@ import { pg } from "@/lib/db";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { wallet } from "@/services/wallet";
 import { Contract, ethers, providers } from "ethers";
+import { key } from "localforage";
 import { getContract } from "viem";
 import { record } from "zod";
 
@@ -59,9 +60,10 @@ export const ftoService = {
     let output;
 
     output = await selectFtoProject(data);
-    console.log(output);
+    console.log("getProjectInfo output:", output);
 
     if (!output || !output[0]) {
+      console.log("no output");
       let provider = "";
       let project_type = "fto";
 
@@ -143,7 +145,7 @@ export const ftoService = {
           pair: data.pair,
           chain_id: data.chain_id,
           creator_api_key: data.creator_api_key,
-          projectName: output[0].name,
+          name: output[0].name,
           provider: provider,
           project_type: project_type,
         };
@@ -181,7 +183,16 @@ export const ftoService = {
     ) {
       return false;
     }
-    return await updateFtoProject(data);
+    return await updateFtoProject({
+      twitter: data.twitter ?? "",
+      telegram: data.telegram ?? "",
+      website: data.website ?? "",
+      description: data.description ?? "",
+      name: data.projectName ?? "",
+      pair: data.pair,
+      chain_id: data.chain_id,
+      creator_api_key: data.creator_api_key,
+    });
   },
   createOrUpdateProjectVotes: async (data: {
     project_pair: string;
@@ -283,7 +294,7 @@ const updateFtoProject = async (data: {
   telegram?: string;
   website?: string;
   description?: string;
-  projectName?: string;
+  name?: string;
   pair: string;
   chain_id: number;
   creator_api_key: string;
@@ -291,39 +302,36 @@ const updateFtoProject = async (data: {
   provider?: string;
 }) => {
   try {
-    await pg`INSERT INTO fto_project ${pg({
-      twitter: data.twitter ?? "",
-      telegram: data.telegram ?? "",
-      website: data.website ?? "",
-      description: data.description ?? "",
-      name: data.projectName ?? "",
-      pair: data.pair.toLowerCase(),
-      chain_id: data.chain_id,
-      creator_api_key: data.creator_api_key,
-      project_type: data.project_type ?? "",
-      provider: data.provider ?? "",
-    })}
-   ON CONFLICT (pair, chain_id) DO UPDATE SET twitter = ${
-     data.twitter ?? ""
-   }, telegram = ${data.telegram ?? ""}, website = ${
-      data.website ?? ""
-    }, description = ${data.description ?? ""}, name = ${
-      data.projectName ?? "Unknown"
-    }, provider = ${data.provider ?? ""}, project_type = ${
-      data.project_type ?? ""
-    }
-  WHERE fto_project.creator_api_key = EXCLUDED.creator_api_key OR EXCLUDED.creator_api_key = ${super_api_key};
- `;
+    console.log("data: ", data);
+
+    const fieldsToUpdate = Object.entries(data)
+      .filter(([key, value]) => {
+        if (key === "creator_api_key" || key === "pair" || key === "chain_id") {
+          return false;
+        }
+        return !!value;
+      }) // Only include valid values
+      .map(([key, value]) => `${key}`);
+
+    console.log("fieldsToUpdate: ", fieldsToUpdate);
+
+    await pg`
+    UPDATE fto_project 
+    SET ${pg(data, fieldsToUpdate as any)} 
+    WHERE pair = ${data.pair.toLowerCase()} 
+      AND chain_id = ${data.chain_id} 
+      AND creator_api_key = ${data.creator_api_key ?? super_api_key};
+  `;
 
     return true;
   } catch (e) {
-    console.log(e);
+    console.log("updateFtoProject error: ", e);
     return false;
   }
 };
 
 const selectFtoProject = async (data: { pair: string; chain_id: number }) => {
-  return await pg<
+  const res = await pg<
     {
       id: number;
       twitter: string;
@@ -339,4 +347,6 @@ const selectFtoProject = async (data: { pair: string; chain_id: number }) => {
   >`SELECT id,twitter,logo_url, telegram, website,description,name, provider, project_type,banner_url  FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
     data.chain_id
   }`;
+  console.log("res: ", res);
+  return res;
 };
