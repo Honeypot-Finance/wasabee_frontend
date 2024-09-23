@@ -20,6 +20,7 @@ import { IoArrowDown, IoCaretDown, IoCaretUp } from "react-icons/io5";
 import HoneyStickSvg from "../svg/HoneyStick";
 import Link from "next/link";
 import Image from "next/image";
+import TokenLogo from "../TokenLogo/TokenLogo";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   loading: () => <p>Loading...</p>,
@@ -217,7 +218,14 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
         )}
         <div className="relative w-full h-full flex-col flex items-center justify-center">
           <div className="flex justify-between items-center w-full gap-5">
-            <span className="lg:pl-4">{chart.chartLabel}</span>
+            <span className="lg:pl-4">
+              <div className="flex">
+                {chart.TargetLogoDisplay.map((logo) => (
+                  <TokenLogo key={logo.address} token={logo} />
+                ))}
+              </div>
+              {chart.chartLabel}
+            </span>
             <div className="grid w-full gap-2 grid-cols-3 lg:grid-cols-6  items-center flex-wrap">
               {Object.values(chartTimeRanges).map((range) => (
                 <Button

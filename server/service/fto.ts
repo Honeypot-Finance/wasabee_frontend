@@ -302,7 +302,7 @@ const updateFtoProject = async (data: {
   provider?: string;
 }) => {
   try {
-    console.log("data: ", data);
+    //console.log("data: ", data);
 
     const fieldsToUpdate = Object.entries(data)
       .filter(([key, value]) => {
@@ -313,7 +313,7 @@ const updateFtoProject = async (data: {
       }) // Only include valid values
       .map(([key, value]) => `${key}`);
 
-    console.log("fieldsToUpdate: ", fieldsToUpdate);
+    //console.log("fieldsToUpdate: ", fieldsToUpdate);
 
     await pg`
     UPDATE fto_project 

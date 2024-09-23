@@ -123,6 +123,16 @@ class Chart {
     }
   }
 
+  get TargetLogoDisplay(): Token[] {
+    if (this.chartTarget instanceof Token) {
+      return [this.chartTarget];
+    } else if (this.chartTarget instanceof PairContract) {
+      return [this.chartTarget.token0, this.chartTarget.token1];
+    } else {
+      return [];
+    }
+  }
+
   get firstValidPrice() {
     if (
       this.chartData.value?.getBars.c &&
