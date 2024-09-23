@@ -505,10 +505,10 @@ const TrendingLaunchCard = observer(
       <>
         {pair && (
           <>
-            {pair.bannerUrl && (
+            {(pair.bannerUrl || pair.logoUrl) && (
               <Image
                 className="opacity-[0.5] z-[-1]"
-                src={pair.bannerUrl}
+                src={pair.bannerUrl || pair.logoUrl}
                 alt="banner"
                 layout="fill"
                 objectFit="cover"
@@ -547,7 +547,7 @@ const TrendingLaunchCard = observer(
                 }
                 alt="honey"
                 fill
-                className="object-cover w-full h-full aspect-square"
+                className="object-cover w-full h-full aspect-square bg-[#ECC94E] "
               ></Image>
             </div>
             <h4 className="text-white text-center text-[1rem] font-bold flex items-start  h-[1.5em] overflow-hidden">
