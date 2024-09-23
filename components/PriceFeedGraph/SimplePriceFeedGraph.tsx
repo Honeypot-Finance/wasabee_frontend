@@ -61,7 +61,13 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
         },
       },
       dataLabels: {
-        enabled: false,
+        enabled: true,
+        textAnchor: "end",
+        formatter: function (val, opts) {
+          if (opts.dataPointIndex === opts.w.config.series[0].data.length - 1) {
+            return (val as any)?.toFixed(5);
+          }
+        },
       },
       markers: {
         size: 0,
@@ -88,6 +94,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
         tickAmount: 4,
       },
       tooltip: {
+        enabled: true,
         x: {
           format:
             chart.range === "1D" || chart.range === "1H"
@@ -96,6 +103,10 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
         },
         theme: "dark",
         fillSeriesColor: true,
+        fixed: {
+          enabled: true,
+          position: "topRight",
+        },
       },
       fill: {
         type: "gradient",
