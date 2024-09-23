@@ -364,10 +364,10 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
   };
 
   return (
-    <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto mb-[30vh]">
-      <div className=" flex items-center justify-center mt-[24px]">
+    <div className="md:p-6 w-full mx-auto md:max-w-full xl:max-w-[1200px]  mb-[30vh]">
+      <div className=" flex w-full items-center justify-center mt-[24px]">
         {launchpad.ftofactoryContract?.createFTO.loading ? (
-          <div className="flex h-[566px] w-full sm:w-[583px] justify-center items-center [background:#121212] rounded-[54px]">
+          <div className="flex h-[566px] w-full md:w-[583px] justify-center items-center [background:#121212] rounded-[54px]">
             <div className="flex flex-col items-center">
               <div className="relative">
                 <PeddingSvg />
