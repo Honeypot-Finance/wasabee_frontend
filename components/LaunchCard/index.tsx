@@ -246,7 +246,7 @@ const BuyToken = observer(
       <>
         {pair.ftoState === 0 && (
           <Link
-            href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
+            href={`/swap?inputCurrency=${pair.raiseToken?.address}&outputCurrency=${pair.launchedToken?.address}`}
           >
             <Button className="w-full">Buy Token</Button>
           </Link>

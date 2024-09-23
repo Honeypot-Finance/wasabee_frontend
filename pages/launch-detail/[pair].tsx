@@ -299,7 +299,7 @@ const SuccessAction = observer(
                   e.preventDefault();
                 }}
                 className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-                value={`${window.location.origin}/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
+                value={`${window.location.origin}/swap?inputCurrency=${pair.raiseToken?.address}&outputCurrency=${pair.launchedToken?.address}`}
               ></Copy>
             </p>
           </Button>{" "}
