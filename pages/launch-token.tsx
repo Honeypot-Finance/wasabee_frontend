@@ -340,9 +340,16 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
   }, []);
 
   const MemePadInstruction = () => {
+    const InstructionMarker = () => (
+      <div className="w-9 h-9 bg-[#271A0C] absolute left-[-3rem] top-[50%] translate-y-[-50%] rounded-[50%] flex justify-center items-center">
+        <div className="w-6 h-6 bg-[#FFCD4D10]  rounded-[50%] flex justify-center items-center">
+          <div className="w-3 h-3 bg-[#FFCD4D] rounded-[50%]"></div>
+        </div>
+      </div>
+    );
     return (
       <div className="p-5 flex flex-col gap-5">
-        <p>
+        <p className="text-xl">
           Pot2Pump mode stops rugs by ensuring all tokens are safe and integrate
           perfectly with PoL
         </p>
@@ -352,26 +359,39 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
           interests.
         </p>
         <h2 className="text-2xl">How it works</h2>
-        <ul
-          className="
-        list-disc flex flex-col gap-2 pl-5 text-lg font-sans font-light
-        *:bg-[#3e2a0f] *:p-2 *:rounded-lg *:marker:text-2xl *:marker:border-[#F7931A] *:marker:border-2 *:marker:text-[#FFCD4D]
-        "
-        >
-          <li>Pick a coin that you like 💖</li>
-          <li>
-            Deposit your coin to create your LP position in the AMM pool 💸
-          </li>
-          <li>Withdraw anytime with no gains or losses🚪</li>
-          <li>
-            Once $20k market cap is reached, Liquidity is locked & burned on
-            HenloDEX 🔥 + distrubute deployer rewards!
-          </li>
-          <li>
-            claim your LP position and earn txn fee, BGT, and other protocol
-            interest
-          </li>
-        </ul>
+        <div className="relative">
+          <div className="absolute w-[2px] h-[90%] bg-[#FFCD4D] left-[21px] top-[50%] translate-y-[-50%]"></div>
+          <ul
+            className="
+              list-disc flex flex-col gap-4 pl-5 text-lg font-sans font-light  
+              *:bg-[#3e2a0f] *:px-5 *:py-2 *:ml-8 *:rounded-[2rem] *:line-clamp-2 *:relative *:overflow-visible
+              *:marker:text-2xl *:marker:border-[#F7931A] *:marker:border-2 *:marker:text-[#FFCD4D]
+            "
+          >
+            <li>
+              <InstructionMarker />
+              Pick a coin that you like 💖
+            </li>
+            <li>
+              <InstructionMarker />
+              Deposit your coin to create your LP position in the AMM pool 💸
+            </li>
+            <li>
+              <InstructionMarker />
+              Withdraw anytime with no gains or losses🚪
+            </li>
+            <li>
+              <InstructionMarker />
+              Once $20k market cap is reached, Liquidity is locked & burned on
+              HenloDEX 🔥 + distrubute deployer rewards!
+            </li>
+            <li>
+              <InstructionMarker />
+              claim your LP position and earn txn fee, BGT, and other protocol
+              interest
+            </li>
+          </ul>
+        </div>
         <Button
           className="w-full mt-4"
           onClick={() => {
