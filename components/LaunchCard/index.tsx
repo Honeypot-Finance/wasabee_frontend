@@ -413,10 +413,10 @@ const DetailLaunchCard = observer(
       <>
         {pair && (
           <>
-            {pair.bannerUrl && (
+            {(pair.bannerUrl || pair.logoUrl) && (
               <Image
                 className="opacity-[0.5] z-[-1]"
-                src={pair.bannerUrl}
+                src={!!pair.bannerUrl ? pair.bannerUrl : pair.logoUrl}
                 alt="banner"
                 layout="fill"
                 objectFit="cover"
