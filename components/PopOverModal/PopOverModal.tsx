@@ -17,8 +17,10 @@ export const PopOverModal = observer(() => {
         popmodal.closeModal();
       }}
     >
-      <WrappedNextModalContent>
-        <WrappedNextModalBody>{popmodal.modalContent}</WrappedNextModalBody>
+      <WrappedNextModalContent className="md:max-w-[min(1024px,80vw)] max-h-[80vh] overflow-y-auto">
+        <WrappedNextModalBody className="max-h-[80vh]">
+          {popmodal.modalContent}
+        </WrappedNextModalBody>
         {!!popmodal.actions?.length && (
           <ModalFooter>
             {popmodal.actions.map((action) => (

@@ -339,27 +339,64 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     }
   }, []);
 
-  const openInstructionModal = () => {
-    popmodal.openModal({
-      content: (
-        <div>
-          <Image
-            src="/images/pot2fpump.png"
-            width={1024}
-            height={1800}
-            alt=""
-          />
-        </div>
-      ),
-      actions: [
-        {
-          label: "Confirm",
-          onPress: () => {
+  const MemePadInstruction = () => {
+    return (
+      <div className="p-5 flex flex-col gap-5">
+        <p>
+          Pot2Pump mode stops rugs by ensuring all tokens are safe and integrate
+          perfectly with PoL
+        </p>
+        <p className=" font-sans font-light">
+          Every token created with Pot2Pump mode is a fair-launch—no presales,
+          no team allocations with a chance to mine BGT and other protocol
+          interests.
+        </p>
+        <h2 className="text-2xl">How it works</h2>
+        <ul
+          className="
+        list-disc flex flex-col gap-2 pl-5 text-lg font-sans font-light
+        *:bg-[#3e2a0f] *:p-2 *:rounded-lg *:marker:text-2xl *:marker:border-[#F7931A] *:marker:border-2 *:marker:text-[#FFCD4D]
+        "
+        >
+          <li>Pick a coin that you like 💖</li>
+          <li>
+            Deposit your coin to create your LP position in the AMM pool 💸
+          </li>
+          <li>Withdraw anytime with no gains or losses🚪</li>
+          <li>
+            Once $20k market cap is reached, Liquidity is locked & burned on
+            HenloDEX 🔥 + distrubute deployer rewards!
+          </li>
+          <li>
+            claim your LP position and earn txn fee, BGT, and other protocol
+            interest
+          </li>
+        </ul>
+        <Button
+          className="w-full mt-4"
+          onClick={() => {
             popmodal.closeModal();
             store.set("pot2pump_notice_read", true);
-          },
-        },
-      ],
+          }}
+        >
+          I&apos;m ready to pump
+        </Button>
+      </div>
+    );
+  };
+
+  const openInstructionModal = () => {
+    popmodal.openModal({
+      content: <MemePadInstruction />,
+      // actions: [
+      //   {
+      //     label: "Confirm",
+      //     onPress: () => {
+      //       popmodal.closeModal();
+      //       store.set("pot2pump_notice_read", true);
+      //     },
+      //   },
+      // ],
     });
   };
 
