@@ -512,14 +512,15 @@ const TrendingLaunchCard = observer(
             objectFit="cover"
           ></Image>
         )}
-        <div className="flex flex-col gap-2 justify-center items-center flex-grow-[1] basis-1">
+        <div className="flex w-full flex-col gap-2 justify-center items-center flex-grow-[1] basis-1">
           <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
             <Image
               src={!!pair?.logoUrl ? pair.logoUrl : "/images/project_honey.png"}
               alt="honey"
+              // fill
               width={100}
               height={100}
-              className="object-cover w-full h-full"
+              // className="object-cover w-full h-full"
             ></Image>
           </div>
           <h4 className="text-white text-center text-[1rem] font-bold flex items-center">
@@ -657,7 +658,7 @@ export const LaunchCard = observer(
         initial="hidden"
         animate="visible"
         className={cn(
-          "flex h-full flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative overflow-hidden",
+          "flex w-full h-full flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative overflow-hidden",
           className
         )}
         whileInView="visible"
