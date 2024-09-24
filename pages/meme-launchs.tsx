@@ -76,7 +76,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             variants={defaultContainerVariants}
             initial="hidden"
             animate="visible"
-            className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 "
+            className="w-full flex flex-col lg:flex-row gap-2 flex-grow-[1]"
           >
             {mostSuccessProjects.map((pair: MemePairContract, idx) => (
               <motion.div
