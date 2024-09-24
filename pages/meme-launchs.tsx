@@ -76,14 +76,14 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             variants={defaultContainerVariants}
             initial="hidden"
             animate="visible"
-            className="w-full flex flex-col lg:flex-row gap-2 flex-grow-[1]"
+            className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 "
           >
             {mostSuccessProjects.map((pair: MemePairContract, idx) => (
               <motion.div
                 variants={itemPopUpVariants}
                 key={pair.address}
                 className={
-                  "flex-grow relative " + (idx !== 0 && "hidden lg:flex")
+                  "relative flex-grow " + (idx !== 0 && "hidden lg:block")
                 }
               >
                 <motion.div
