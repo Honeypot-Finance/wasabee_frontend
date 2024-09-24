@@ -86,101 +86,35 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                   "flex-grow relative " + (idx !== 0 && "hidden lg:flex")
                 }
               >
-                <CardContianer>
-                  <motion.div
-                    className="absolute  top-0 left-0 "
-                    initial={{
-                      rotate: 0,
-                    }}
-                    whileHover={{
-                      rotate: [0, -10, 10, -10, 10, -10, 10, -10, 10, 0],
-                    }}
-                    transition={{
-                      times: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
-                      duration: 1,
-                    }}
-                  >
-                    {idx === 0 && (
-                      <FaCrown className="absolute top-0 left-2 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[500%] fill-yellow-300" />
-                    )}
-                    {idx === 1 && (
-                      <FaCrown className="absolute top-0 left-1 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[300%] fill-gray-300" />
-                    )}
-                    {idx === 2 && (
-                      <FaCrown className="absolute top-0 left-0 rotate-[-30deg] translate-x-[-30%] translate-y-[-50%] scale-[100%] fill-amber-800" />
-                    )}
-                  </motion.div>
-                  <div className="flex flex-col gap-2 justify-center items-center flex-grow-[1] basis-1">
-                    <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
-                      <Image
-                        src={
-                          !!pair?.logoUrl
-                            ? pair.logoUrl
-                            : "/images/project_honey.png"
-                        }
-                        alt="honey"
-                        width={100}
-                        height={100}
-                        className="object-cover w-full h-full"
-                      ></Image>
-                    </div>
-                    <h4 className="text-white text-center text-[1rem] font-bold flex items-center">
-                      <div className=" relative">
-                        {pair?.launchedToken?.name} <br />(
-                        {pair?.launchedToken?.symbol})
-                      </div>
-                    </h4>{" "}
-                    <motion.div className="flex flex-col items-center gap-1">
-                      <h6 className="opacity-50 text-xs">Total raised</h6>
-                      <div className="flex items-center gap-2 text-sm">
-                        {/* <TotalRaisedSvg /> */}
-                        <span className="font-bold">
-                          {pair?.depositedRaisedToken
-                            ? pair.depositedRaisedToken.toFormat(0)
-                            : "-"}{" "}
-                          /{" "}
-                          {pair.raisedTokenMinCap &&
-                            pair.raisedTokenMinCap.toNumber() /
-                              Math.pow(10, 18)}{" "}
-                          &nbsp;
-                          {pair?.raiseToken?.displayName}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        {/* <TotalRaisedSvg /> */}
-                        <span className="font-bold">
-                          {pair?.depositedRaisedToken && pair.raisedTokenMinCap
-                            ? (
-                                (pair.depositedRaisedToken.toNumber() /
-                                  (pair.raisedTokenMinCap.toNumber() /
-                                    Math.pow(10, 18))) *
-                                100
-                              ).toFixed(2)
-                            : "-"}{" "}
-                          %
-                        </span>
-                      </div>{" "}
-                      <div className="flex items-center gap-2 text-sm w-full">
-                        <ProgressBar
-                          value={
-                            pair?.depositedRaisedToken && pair.raisedTokenMinCap
-                              ? (pair.depositedRaisedToken.toNumber() /
-                                  (pair.raisedTokenMinCap.toNumber() /
-                                    Math.pow(10, 18))) *
-                                100
-                              : 0
-                          }
-                        />
-                      </div>
-                    </motion.div>
-                    <Link
-                      href={`/launch-detail/${pair.address}`}
-                      className="text-black font-bold px-[8px]"
-                    >
-                      <Button className="">View Token</Button>
-                    </Link>
-                  </div>
-                </CardContianer>
+                <motion.div
+                  className="absolute  top-0 left-0 z-10"
+                  initial={{
+                    rotate: 0,
+                  }}
+                  whileHover={{
+                    rotate: [0, -10, 10, -10, 10, -10, 10, -10, 10, 0],
+                  }}
+                  transition={{
+                    times: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+                    duration: 1,
+                  }}
+                >
+                  {idx === 0 && (
+                    <FaCrown className="absolute top-0 left-2 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[500%] fill-yellow-300" />
+                  )}
+                  {idx === 1 && (
+                    <FaCrown className="absolute top-0 left-1 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[300%] fill-gray-300" />
+                  )}
+                  {idx === 2 && (
+                    <FaCrown className="absolute top-0 left-0 rotate-[-30deg] translate-x-[-30%] translate-y-[-50%] scale-[100%] fill-amber-800" />
+                  )}
+                </motion.div>
+                <LaunchCard
+                  pair={pair}
+                  action={<></>}
+                  type="trending"
+                  className="p-0"
+                />
               </motion.div>
             ))}
           </motion.div>
