@@ -29,3 +29,31 @@ export default function TransactionPendingToastify({
     </div>
   );
 }
+
+export function TransactionSuccessToastify({
+  hash,
+  action,
+}: {
+  hash: string;
+  action?: string;
+}) {
+  return (
+    <div>
+      <div>{action || "Transaction"} Success!</div>
+      <div className="m-2 text-right">
+        <Link
+          className="flex justify-end text-right items-center gap-2 text-white"
+          href={
+            wallet?.currentChain?.chain?.blockExplorers?.default.url +
+            "tx/" +
+            hash
+          }
+          target="_blank"
+        >
+          View Txn
+          <ViewSvg />
+        </Link>
+      </div>
+    </div>
+  );
+}

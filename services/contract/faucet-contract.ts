@@ -15,6 +15,7 @@ import { Token } from "./token";
 import { trpcClient } from "@/lib/trpc";
 import { toast } from "react-toastify";
 import { WrappedToastify } from "@/lib/wrappedToastify";
+import { TransactionSuccessToastify } from "@/components/CustomToastify/TransactionPendingToastify/TransactionPendingToastify";
 
 export class NativeFaucetContract implements BaseContract {
   address = "";
@@ -97,7 +98,8 @@ export class NativeFaucetContract implements BaseContract {
 
   async Claim(): Promise<boolean> {
     this.canclaim = false;
-    const loadingToast = WrappedToastify.info({
+    const loadingToast = WrappedToastify.pending({
+      title: "Claim Faucet",
       message: "Claiming faucet...",
       options: { autoClose: false, isLoading: true },
     });
@@ -116,8 +118,11 @@ export class NativeFaucetContract implements BaseContract {
 
     if (applyNativeFaucet) {
       WrappedToastify.success({
-        title: "Faucet claimed successfully",
-        message: `Transaction hash: ${applyNativeFaucet.hash}`,
+        title: "Claim Faucet",
+        message: TransactionSuccessToastify({
+          hash: applyNativeFaucet.hash,
+          action: "Claim Faucet",
+        }),
       });
       this.nextFaucetTime = Date.now() + 24 * 60 * 60 * 1000;
       this.isClaimable();
