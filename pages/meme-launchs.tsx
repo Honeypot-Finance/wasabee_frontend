@@ -227,7 +227,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             }
           }}
         >
-          <Tab key="all" title="All Projects">
+          <Tab key="all" title="All MEMEs">
             <Pagination
               paginationState={launchpad.projectsPage}
               render={(pair) => <LaunchCard pair={pair} action={<></>} />}
@@ -237,7 +237,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               }}
             />
           </Tab>
-          <Tab key="my" title="My Projects">
+          <Tab key="my" title="My MEMEs">
             <Pagination
               paginationState={launchpad.myLaunches}
               render={(pair) => <LaunchCard pair={pair} action={<></>} />}
@@ -247,7 +247,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               }}
             />
           </Tab>
-          <Tab key="participated-launch" title="Participated Launch">
+          <Tab key="participated-launch" title="Participated MEMEs">
             <Pagination
               paginationState={launchpad.participatedPairs}
               render={(pair) => <LaunchCard pair={pair} action={<></>} />}
