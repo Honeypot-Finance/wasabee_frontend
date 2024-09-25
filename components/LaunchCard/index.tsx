@@ -520,7 +520,7 @@ const TrendingLaunchCard = observer(
               // fill
               width={100}
               height={100}
-              // className="object-cover w-full h-full"
+              className="object-cover w-full h-full"
             ></Image>
           </div>
           <h4 className="text-white text-center text-[1rem] font-bold flex items-center">
