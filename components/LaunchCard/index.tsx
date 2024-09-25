@@ -19,6 +19,7 @@ import { LaunchType as projectType } from "@/pages/launch-token";
 import Countdown from "react-countdown";
 import CardContianer from "../CardContianer/CardContianer";
 import { FaCrown } from "react-icons/fa";
+import BigNumber from "bignumber.js";
 
 type launchCardVariants = "list" | "detail" | "trending";
 
@@ -549,17 +550,15 @@ const TrendingLaunchCard = observer(
               <span className="font-bold">
                 {(pair as MemePairContract)?.depositedRaisedToken &&
                 (pair as MemePairContract).raisedTokenMinCap
-                  ? (
-                      (((
-                        pair as MemePairContract
-                      ).depositedRaisedToken?.toNumber() ?? 0) /
-                        ((
-                          pair as MemePairContract
-                        ).raisedTokenMinCap?.toNumber() ??
-                          0 / Math.pow(10, 18))) *
-                      100
-                    ).toFixed(2)
-                  : "-"}{" "}
+                  ? 
+                  new BigNumber((
+                    pair as MemePairContract
+                  ).depositedRaisedToken?.toNumber() ?? 0).div(new BigNumber((
+                    pair as MemePairContract
+                  ).raisedTokenMinCap?.toNumber() ??
+                    0).div(Math.pow(10, 18))).times(100).toFixed(2)
+                  : 
+                  "-"}{" "}
                 %
               </span>
             </div>{" "}
@@ -569,10 +568,10 @@ const TrendingLaunchCard = observer(
                   pair?.depositedRaisedToken &&
                   (pair as MemePairContract).raisedTokenMinCap
                     ? (pair.depositedRaisedToken.toNumber() /
-                        ((
+                        (((
                           pair as MemePairContract
                         ).raisedTokenMinCap?.toNumber() ??
-                          0 / Math.pow(10, 18))) *
+                          0) / Math.pow(10, 18))) *
                       100
                     : 0
                 }
