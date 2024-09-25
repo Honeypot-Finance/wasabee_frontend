@@ -414,6 +414,7 @@ export class IndexerPaginationState<FilterT, ItemT> {
 
   reloadPage = async () => {
     if (this.isLoading) return;
+    this.isInit = false;
     this.resetPage();
     await this.loadMore();
     this.isInit = true;
@@ -464,6 +465,10 @@ export class IndexerPaginationState<FilterT, ItemT> {
   removeItem = (item: ItemT) => {
     this.pageItems.setValue(this.pageItems.value.filter((i) => i !== item));
   };
+
+  setIsInit(isInit: boolean) {
+    this.isInit = isInit;
+  }
 }
 
 export class StorageState<T = any, U = any> {

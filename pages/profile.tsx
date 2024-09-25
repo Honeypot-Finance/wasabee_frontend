@@ -67,17 +67,21 @@ const MyLaunchTab = observer(() => {
             MEME
           </NextButton>
         </div>
-        <Pagination
-          paginationState={launchpad.myLaunches}
-          render={(project) => (
-            <LaunchCard key={project.address} pair={project} action={<></>} />
-          )}
-          classNames={{
-            base: "",
-            itemsContainer: "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6",
-            item: "",
-          }}
-        />
+        {!launchpad.myLaunches.isInit ? (
+          <LoadingDisplay />
+        ) : (
+          <Pagination
+            paginationState={launchpad.myLaunches}
+            render={(project) => (
+              <LaunchCard key={project.address} pair={project} action={<></>} />
+            )}
+            classNames={{
+              base: "",
+              itemsContainer: "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6",
+              item: "",
+            }}
+          />
+        )}
       </CardBody>
     </Card>
   );
@@ -117,17 +121,21 @@ const ParticipatedLaunchTab = observer(() => {
             MEME
           </NextButton>
         </div>
-        <Pagination
-          paginationState={launchpad.participatedPairs}
-          render={(project) => (
-            <LaunchCard key={project.address} pair={project} action={<></>} />
-          )}
-          classNames={{
-            base: "",
-            itemsContainer: "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6",
-            item: "",
-          }}
-        />
+        {!launchpad.participatedPairs.isInit ? (
+          <LoadingDisplay />
+        ) : (
+          <Pagination
+            paginationState={launchpad.participatedPairs}
+            render={(project) => (
+              <LaunchCard key={project.address} pair={project} action={<></>} />
+            )}
+            classNames={{
+              base: "",
+              itemsContainer: "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6",
+              item: "",
+            }}
+          />
+        )}
       </CardBody>
     </Card>
   );
@@ -269,8 +277,10 @@ export const Profile = observer(() => {
           className="next-tab"
           onSelectionChange={(key) => {
             if (key === "my-launch") {
+              launchpad.myLaunches.setIsInit(false);
               launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
             } else if (key === "participated-launch") {
+              launchpad.participatedPairs.setIsInit(false);
               launchpad.pairFilterStatus =
                 defaultPairFilters.participatedPairs.status;
             }

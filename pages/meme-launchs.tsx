@@ -210,32 +210,35 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           </Popover>
         </div>
       </div>
-      {!launchpad.projectsPage.isInit ? (
-        <div className="flex h-80 sm:h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
-          <LoadingDisplay />
-        </div>
-      ) : (
-        <div>
-          <Tabs
-            aria-label="Options"
-            classNames={{
-              tabList: "bg-transparent",
-              tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
-            }}
-            className="next-tab"
-            onSelectionChange={(key) => {
-              launchpad.setCurrentLaunchpadType("meme");
-              if (key === "all") {
-                launchpad.pairFilterStatus = defaultPairFilters.all.status;
-              } else if (key === "my") {
-                launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
-              } else if (key === "participated-launch") {
-                launchpad.pairFilterStatus =
-                  defaultPairFilters.participatedPairs.status;
-              }
-            }}
-          >
-            <Tab key="all" title="All Projects">
+      <div>
+        <Tabs
+          aria-label="Options"
+          classNames={{
+            tabList: "bg-transparent",
+            tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
+          }}
+          className="next-tab"
+          onSelectionChange={(key) => {
+            launchpad.setCurrentLaunchpadType("meme");
+            if (key === "all") {
+              launchpad.projectsPage.setIsInit(false);
+              launchpad.pairFilterStatus = defaultPairFilters.all.status;
+            } else if (key === "my") {
+              launchpad.myLaunches.setIsInit(false);
+              launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
+            } else if (key === "participated-launch") {
+              launchpad.participatedPairs.setIsInit(false);
+              launchpad.pairFilterStatus =
+                defaultPairFilters.participatedPairs.status;
+            }
+          }}
+        >
+          <Tab key="all" title="All Projects">
+            {!launchpad.projectsPage.isInit ? (
+              <div className="flex h-80 sm:h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
+                <LoadingDisplay />
+              </div>
+            ) : (
               <Pagination
                 paginationState={launchpad.projectsPage}
                 render={(pair) => <LaunchCard pair={pair} action={<></>} />}
@@ -244,8 +247,14 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                     "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
                 }}
               />
-            </Tab>
-            <Tab key="my" title="My Projects">
+            )}
+          </Tab>
+          <Tab key="my" title="My Projects">
+            {!launchpad.myLaunches.isInit ? (
+              <div className="flex h-80 sm:h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
+                <LoadingDisplay />
+              </div>
+            ) : (
               <Pagination
                 paginationState={launchpad.myLaunches}
                 render={(pair) => <LaunchCard pair={pair} action={<></>} />}
@@ -254,8 +263,14 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                     "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
                 }}
               />
-            </Tab>{" "}
-            <Tab key="participated-launch" title="Participated Launch">
+            )}
+          </Tab>{" "}
+          <Tab key="participated-launch" title="Participated Launch">
+            {!launchpad.participatedPairs.isInit ? (
+              <div className="flex h-80 sm:h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
+                <LoadingDisplay />
+              </div>
+            ) : (
               <Pagination
                 paginationState={launchpad.participatedPairs}
                 render={(pair) => <LaunchCard pair={pair} action={<></>} />}
@@ -264,11 +279,11 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                     "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
                 }}
               />
-            </Tab>
-            {/* <Tab href="/launch" title="To Fto projects->" /> */}
-          </Tabs>
-        </div>
-      )}
+            )}
+          </Tab>
+          {/* <Tab href="/launch" title="To Fto projects->" /> */}
+        </Tabs>
+      </div>
     </div>
   );
 });
