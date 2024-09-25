@@ -1,21 +1,11 @@
-import CardContianer from "@/components/CardContianer/CardContianer";
 import { LaunchCard } from "@/components/LaunchCard";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import Pagination from "@/components/Pagination/Pagination";
 import PoolLiquidityCard from "@/components/PoolLiquidityCard/PoolLiquidityCard";
 import TokenBalanceCard from "@/components/TokenBalanceCard/TokenBalanceCard";
-import TokenLogo from "@/components/TokenLogo/TokenLogo";
-import { Button } from "@/components/button";
 import { Copy } from "@/components/copy";
-import HoneyStickSvg from "@/components/svg/HoneyStick";
-import { PeddingSvg } from "@/components/svg/Pedding";
-import { RocketSvg } from "@/components/svg/Rocket";
 import { defaultContainerVariants, itemSlideVariants } from "@/lib/animation";
 import { truncate } from "@/lib/format";
-import { trpc, trpcClient } from "@/lib/trpc";
-import { networksMap } from "@/services/chain";
-import { PairContract } from "@/services/contract/pair-contract";
-import { GhostPair } from "@/services/indexer/indexerTypes";
 import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { liquidity } from "@/services/liquidity";
 import { wallet } from "@/services/wallet";
@@ -30,7 +20,7 @@ import { motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAccount } from "wagmi";
 
 const MyLaunchTab = observer(() => {
@@ -277,10 +267,8 @@ export const Profile = observer(() => {
           className="next-tab"
           onSelectionChange={(key) => {
             if (key === "my-launch") {
-              launchpad.myLaunches.setIsInit(false);
               launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
             } else if (key === "participated-launch") {
-              launchpad.participatedPairs.setIsInit(false);
               launchpad.pairFilterStatus =
                 defaultPairFilters.participatedPairs.status;
             }

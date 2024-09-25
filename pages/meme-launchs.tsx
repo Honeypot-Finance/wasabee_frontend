@@ -5,9 +5,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/button";
 import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
-import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { LaunchCard } from "@/components/LaunchCard";
-import Image from "next/image";
 import {
   Input,
   Popover,
@@ -17,19 +15,14 @@ import {
   Tabs,
   useDisclosure,
   Button as NextButton,
-  Checkbox,
 } from "@nextui-org/react";
 import { IoSearchOutline } from "react-icons/io5";
 import { SpinnerContainer } from "@/components/Spinner";
 import { DropdownSvg } from "@/components/svg/dropdown";
-import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
-import CardContianer from "@/components/CardContianer/CardContianer";
 import { FaCrown } from "react-icons/fa";
 import { MemePairContract } from "@/services/contract/memepair-contract";
-import HoneyStickSvg from "@/components/svg/HoneyStick";
-import { ProgressBar } from "@/components/atoms/ProgressBar/ProgressBar";
 import Pagination from "@/components/Pagination/Pagination";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
@@ -45,8 +38,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     launchpad.setCurrentLaunchpadType("meme");
     launchpad.showNotValidatedPairs = true;
     launchpad.myLaunches.reloadPage();
-    launchpad.projectsPage.reloadPage();
-    launchpad.participatedPairs.reloadPage();
+
+    // launchpad.projectsPage.reloadPage();
+    // launchpad.participatedPairs.reloadPage();
 
     //loading most success projects
     launchpad.trendingMEMEs().then((data) => {
@@ -195,6 +189,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                         </NextButton>
                         <NextButton
                           onClick={() => {
+                            console.log("processing");
                             launchpad.pairFilterStatus = "processing";
                           }}
                           className="w-[100px]"
@@ -210,8 +205,10 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           </Popover>
         </div>
       </div>
+
       <div>
         <Tabs
+          // destroyInactiveTabPanel={false}
           aria-label="Options"
           classNames={{
             tabList: "bg-transparent",
@@ -221,65 +218,44 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           onSelectionChange={(key) => {
             launchpad.setCurrentLaunchpadType("meme");
             if (key === "all") {
-              launchpad.projectsPage.setIsInit(false);
               launchpad.pairFilterStatus = defaultPairFilters.all.status;
             } else if (key === "my") {
-              launchpad.myLaunches.setIsInit(false);
               launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
             } else if (key === "participated-launch") {
-              launchpad.participatedPairs.setIsInit(false);
               launchpad.pairFilterStatus =
                 defaultPairFilters.participatedPairs.status;
             }
           }}
         >
           <Tab key="all" title="All Projects">
-            {!launchpad.projectsPage.isInit ? (
-              <div className="flex h-80 sm:h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
-                <LoadingDisplay />
-              </div>
-            ) : (
-              <Pagination
-                paginationState={launchpad.projectsPage}
-                render={(pair) => <LaunchCard pair={pair} action={<></>} />}
-                classNames={{
-                  itemsContainer:
-                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-                }}
-              />
-            )}
+            <Pagination
+              paginationState={launchpad.projectsPage}
+              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+              classNames={{
+                itemsContainer:
+                  "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
+              }}
+            />
           </Tab>
           <Tab key="my" title="My Projects">
-            {!launchpad.myLaunches.isInit ? (
-              <div className="flex h-80 sm:h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
-                <LoadingDisplay />
-              </div>
-            ) : (
-              <Pagination
-                paginationState={launchpad.myLaunches}
-                render={(pair) => <LaunchCard pair={pair} action={<></>} />}
-                classNames={{
-                  itemsContainer:
-                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-                }}
-              />
-            )}
-          </Tab>{" "}
+            <Pagination
+              paginationState={launchpad.myLaunches}
+              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+              classNames={{
+                itemsContainer:
+                  "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
+              }}
+            />
+          </Tab>
           <Tab key="participated-launch" title="Participated Launch">
-            {!launchpad.participatedPairs.isInit ? (
-              <div className="flex h-80 sm:h-[566px] max-w-full w-[583px] justify-center items-center [background:#121212] rounded-[54px]  mx-auto">
-                <LoadingDisplay />
-              </div>
-            ) : (
-              <Pagination
-                paginationState={launchpad.participatedPairs}
-                render={(pair) => <LaunchCard pair={pair} action={<></>} />}
-                classNames={{
-                  itemsContainer:
-                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-                }}
-              />
-            )}
+            <Pagination
+              paginationState={launchpad.participatedPairs}
+              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+              classNames={{
+                itemsContainer:
+                  "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
+              }}
+            />
           </Tab>
           {/* <Tab href="/launch" title="To Fto projects->" /> */}
         </Tabs>

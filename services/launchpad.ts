@@ -101,13 +101,14 @@ function calculateTimeDifference(timestamp: number): string {
 
 class LaunchPad {
   currentLaunchpadType = new ValueState<launchpadType>({
-    value: "fto",
+    value: "meme",
   });
 
   projectsPage = new IndexerPaginationState<
     PairFilter,
     FtoPairContract | MemePairContract
   >({
+    namespace: "projectsPage",
     filter: defaultPairFilters.all,
     LoadNextPageFunction: async (filter, pageRequest) => {
       if (!filter.showNotValidatedPairs) {
@@ -163,6 +164,7 @@ class LaunchPad {
   }
 
   set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
+    
     this.projectsPage.updateFilter({ status });
     this.myLaunches.updateFilter({ status });
     this.participatedPairs.updateFilter({ status });

@@ -198,6 +198,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
                         </NextButton>
                         <NextButton
                           onClick={() => {
+                            console.log("processing");
                             launchpad.pairFilterStatus = "processing";
                           }}
                           className="w-[100px]"

@@ -5,8 +5,9 @@ import { IndexerPaginationState } from "@/services/utils";
 import { observer } from "mobx-react-lite";
 import HoneyStickSvg from "../svg/HoneyStick";
 import { cn } from "@nextui-org/react";
+import { DataContainer, DataContainerProps } from "../DataContainer";
 
-type PaginationProps<FilterT, ItemT> = {
+type PaginationProps<FilterT extends Record<string, any>, ItemT> = {
   paginationState: IndexerPaginationState<FilterT, ItemT>;
   render: (item: ItemT) => React.ReactNode;
   classNames?: {
@@ -17,10 +18,14 @@ type PaginationProps<FilterT, ItemT> = {
 };
 
 export const Pagination = observer(
-  <FilterT, ItemT>(props: PaginationProps<FilterT, ItemT>) => {
+  <FilterT extends Record<string, any>, ItemT>(props: PaginationProps<FilterT, ItemT> & Omit<DataContainerProps, 'children'>) => {
     return (
       <div className={cn("overflow-hidden", props.classNames?.base)}>
-        {props.paginationState.pageItems.value.length > 0 ? (
+        <DataContainer
+          isLoading={props.paginationState.isLoading}
+          isInit={props.paginationState.isInit}
+          hasData={!!props.paginationState.pageItems.value.length}
+        >    
           <div>
             <motion.div
               variants={defaultContainerVariants}
@@ -51,12 +56,7 @@ export const Pagination = observer(
               )}
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col justify-center items-center min-h-[200px]  pt-5">
-            <HoneyStickSvg />
-            <p className="text-[#FAFAFC] text-5xl pt-5">No Data</p>
-          </div>
-        )}
+        </DataContainer>
       </div>
     );
   }
