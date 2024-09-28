@@ -539,8 +539,10 @@ const TrendingLaunchCard = observer(
                   : "-"}{" "}
                 /{" "}
                 {(pair as MemePairContract).raisedTokenMinCap &&
-                  ((pair as MemePairContract).raisedTokenMinCap?.toNumber() ??
-                    0) / Math.pow(10, 18)}{" "}
+                  ((pair as MemePairContract).raisedTokenMinCap
+                    ?.div(Math.pow(10, 18))
+                    .toFixed(0) ??
+                    0)}
                 &nbsp;
                 {pair?.raiseToken?.displayName}
               </span>
@@ -550,15 +552,21 @@ const TrendingLaunchCard = observer(
               <span className="font-bold">
                 {(pair as MemePairContract)?.depositedRaisedToken &&
                 (pair as MemePairContract).raisedTokenMinCap
-                  ? 
-                  new BigNumber((
-                    pair as MemePairContract
-                  ).depositedRaisedToken?.toNumber() ?? 0).div(new BigNumber((
-                    pair as MemePairContract
-                  ).raisedTokenMinCap?.toNumber() ??
-                    0).div(Math.pow(10, 18))).times(100).toFixed(2)
-                  : 
-                  "-"}{" "}
+                  ? new BigNumber(
+                      (
+                        pair as MemePairContract
+                      ).depositedRaisedToken?.toNumber() ?? 0
+                    )
+                      .div(
+                        new BigNumber(
+                          (
+                            pair as MemePairContract
+                          ).raisedTokenMinCap?.toNumber() ?? 0
+                        ).div(Math.pow(10, 18))
+                      )
+                      .times(100)
+                      .toFixed(2)
+                  : "-"}{" "}
                 %
               </span>
             </div>{" "}
@@ -570,8 +578,8 @@ const TrendingLaunchCard = observer(
                     ? (pair.depositedRaisedToken.toNumber() /
                         (((
                           pair as MemePairContract
-                        ).raisedTokenMinCap?.toNumber() ??
-                          0) / Math.pow(10, 18))) *
+                        ).raisedTokenMinCap?.toNumber() ?? 0) /
+                          Math.pow(10, 18))) *
                       100
                     : 0
                 }
