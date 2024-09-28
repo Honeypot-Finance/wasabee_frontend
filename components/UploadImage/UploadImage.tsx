@@ -65,7 +65,7 @@ export function UploadImage(props: UploadImageProps): JSX.Element {
                       : "https://upload.wikimedia.org/wikipedia/commons/5/59/Empty.png"
                   }
                   alt="banner"
-                  className="rounded-[11.712px] bg-[#ECC94E] w-[3rem] h-[3rem] self-center cursor-pointer object-cover"
+                  className="rounded-[11.712px] hover:bg-[#ECC94E20] w-[3rem] h-[3rem] self-center cursor-pointer object-cover"
                   fill
                   onClick={() => fileIn.current?.click()}
                 ></Image>
@@ -77,7 +77,7 @@ export function UploadImage(props: UploadImageProps): JSX.Element {
                       : "https://upload.wikimedia.org/wikipedia/commons/5/59/Empty.png"
                   }
                   alt="icon"
-                  className="rounded-[11.712px] bg-[#ECC94E] w-[3rem] h-[3rem] self-center cursor-pointer"
+                  className="rounded-[11.712px] hover:bg-[#ECC94E20] w-[3rem] h-[3rem] self-center cursor-pointer"
                   width={36}
                   height={36}
                   onClick={() => fileIn.current?.click()}

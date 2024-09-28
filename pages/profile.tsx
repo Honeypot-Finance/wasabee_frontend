@@ -160,7 +160,7 @@ const PoolsTab = observer(() => {
           paginationState={liquidity.myPairPage}
           render={(pair) => (
             <PoolLiquidityCard
-              showMyLiquidity={false}
+              showMyLiquidity={true}
               pair={pair}
               autoSize
             ></PoolLiquidityCard>
