@@ -136,11 +136,18 @@ const PoolsTab = observer(() => {
     <Card className="next-card">
       <CardBody>
         <div className="flex w-full items-center">
-          <div className="flex w-full justify-start text-[#FAFAFC]">
-            <h2 className="ml-[3rem] opacity-65 w-[13rem] mr-2">Pool</h2>
-            <h2 className="ml-[1rem] opacity-65">Reserves</h2>
+          <div className="hidden md:flex w-full justify-between text-[#FAFAFC] gap-[0.5rem]">
+            <div className="w-full">
+              <h2 className="ml-[1rem] opacity-65 ">Pool</h2>
+            </div>
+            <div className="w-full flex">
+              <h2 className=" opacity-65">Reserves</h2>
+            </div>
+            <div className="w-full flex ">
+              <h2 className=" opacity-65">Total Market Value (ETH)</h2>
+            </div>
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end w-[8rem]">
             <Link
               href={"https://tryghost.xyz/log"}
               target="_blank"
@@ -160,7 +167,7 @@ const PoolsTab = observer(() => {
           paginationState={liquidity.myPairPage}
           render={(pair) => (
             <PoolLiquidityCard
-              showMyLiquidity={false}
+              showMyLiquidity={true}
               pair={pair}
               autoSize
             ></PoolLiquidityCard>

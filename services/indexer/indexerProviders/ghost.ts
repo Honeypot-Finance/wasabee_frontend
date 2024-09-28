@@ -7,8 +7,7 @@ import {
   GhostFtoPairResponse,
   GhostAPIOpt,
   GhostFtoTokensResponse,
-  GhostPair,
-  GhostPairResponse,
+  GhostLaunchPair,
   GhostFTOPair,
   PageRequest,
   GhostToken,
@@ -17,6 +16,8 @@ import {
   GhostHoldingPairsResponse,
   TrendingMEMEs,
   GhostParticipatedProjectsResponse,
+  GhostPoolPair,
+  GhostPoolPairResponse,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
@@ -24,7 +25,7 @@ import dayjs from "dayjs";
 
 const memeGraphHandle = "a4357046-6f1a-4ceb-a888-8f90f60bd553/ghostgraph";
 const ftoGraphHandle = "59eb35ba-6a83-4bb6-b00c-af0f103db519/ghostgraph";
-const pairGraphHandle = "43791f34-6b9f-4fc7-99bc-3883fe155151/ghostgraph";
+const pairGraphHandle = "cbaf2e17-d784-4bd4-8b6a-5e9458a945c0/ghostgraph";
 
 export class GhostIndexer {
   apiKey: string;
@@ -256,7 +257,7 @@ export class GhostIndexer {
       let pageInfo = (res.data as any)?.pairs?.pageInfo as PageInfo;
 
       if (filter && !filter.showNotValidatedPairs) {
-        pairs = pairs?.filter((pair: GhostPair) => {
+        pairs = pairs?.filter((pair: GhostLaunchPair) => {
           return networksMap[chainId].validatedFtoAddresses.includes(pair.id);
         });
       }
@@ -308,7 +309,7 @@ export class GhostIndexer {
               OR: [
                 { name_contains: "${filter.search}" },
                 { symbol_contains: "${filter.search}" }
-              ]
+               ]
             }
           ) {
             items {
@@ -334,7 +335,7 @@ export class GhostIndexer {
     }
   };
 
-  getAllPairs = async (): Promise<ApiResponseType<GhostPairResponse>> => {
+  getAllPairs = async (): Promise<ApiResponseType<GhostPoolPairResponse>> => {
     const query = `#graphql
         {
           pairs (
@@ -342,6 +343,7 @@ export class GhostIndexer {
           ){
             items {
               id
+              trackedReserveETH
               token0 {
                 id
                 name
@@ -376,7 +378,7 @@ export class GhostIndexer {
         status: "success",
         message: "Success",
         data: {
-          pairs: (res.data as any).pairs?.items as GhostPair[],
+          pairs: (res.data as any).pairs?.items as GhostPoolPair[],
           pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
         } ?? {
           pairs: [],
@@ -429,6 +431,7 @@ export class GhostIndexer {
           deCreaselpAmount
           inCreaselpAmount
           pair{
+            trackedReserveETH
             token0Id
             token1Id
             token0name
@@ -638,7 +641,7 @@ export class GhostIndexer {
     chainId: string,
     provider?: string,
     pageRequest?: PageRequest
-  ): Promise<ApiResponseType<GhostPairResponse>> => {
+  ): Promise<ApiResponseType<GhostPoolPairResponse>> => {
     const dirCondition = pageRequest?.cursor
       ? pageRequest?.direction === "next"
         ? `after:"${pageRequest?.cursor}"`
@@ -648,6 +651,12 @@ export class GhostIndexer {
     const query = `
         {
           pairs(
+            ${filter.sortingTarget ? `orderBy: "${filter.sortingTarget}",` : ""}
+            ${
+              filter.sortingDirection
+                ? `orderDirection: "${filter.sortingDirection}",`
+                : ""
+            }
             where: {
               ${
                 filter.searchString
@@ -681,6 +690,7 @@ export class GhostIndexer {
           ) {
             items {
               id
+              trackedReserveETH
               token0 {
                 id
                 name
@@ -704,6 +714,8 @@ export class GhostIndexer {
         }
       `;
 
+    console.log(query);
+
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
     });
@@ -715,7 +727,7 @@ export class GhostIndexer {
         status: "success",
         message: "Success",
         data: {
-          pairs: (res.data as any).pairs?.items as GhostPair[],
+          pairs: (res.data as any).pairs?.items as GhostPoolPair[],
           pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
         } ?? {
           pairs: [],
@@ -732,7 +744,7 @@ export class GhostIndexer {
 
   getValidatedTokenPairs = async (
     chainId: string
-  ): Promise<ApiResponseType<GhostPairResponse>> => {
+  ): Promise<ApiResponseType<GhostPoolPairResponse>> => {
     const validatedPairs: {
       token0: string;
       token1: string;
@@ -792,7 +804,7 @@ export class GhostIndexer {
         status: "success",
         message: "Success",
         data: {
-          pairs: (res.data as any).pairs?.items as GhostPair[],
+          pairs: (res.data as any).pairs?.items as GhostPoolPair[],
           pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
         } ?? {
           pairs: [],

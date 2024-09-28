@@ -9,8 +9,8 @@ export type GhostFtoPairResponse = {
   pageInfo: PageInfo;
 };
 
-export type GhostPairResponse = {
-  pairs: GhostPair[];
+export type GhostPoolPairResponse = {
+  pairs: GhostPoolPair[];
   pageInfo: PageInfo;
 };
 
@@ -53,6 +53,7 @@ export type holdingPairs = {
   deCreaselpAmount: string;
   inCreaselpAmount: string;
   pair: {
+    trackedReserveETH: string;
     token0Id: Address;
     token1Id: Address;
     token0name: string;
@@ -65,6 +66,8 @@ export type holdingPairs = {
 export type PairFilter = {
   searchString: string;
   limit: number;
+  sortingTarget?: "trackedReserveETH";
+  sortingDirection?: "asc" | "desc";
 };
 
 export type GhostFtoTokensResponse = {
@@ -83,7 +86,14 @@ export type GhostToken = {
   decimals: number;
 };
 
-export type GhostPair = {
+export type GhostPoolPair = {
+  id: string;
+  trackedReserveETH: string;
+  token0: GhostToken;
+  token1: GhostToken;
+};
+
+export type GhostLaunchPair = {
   id: string;
   token0: GhostToken;
   token1: GhostToken;

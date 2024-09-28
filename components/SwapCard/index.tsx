@@ -21,7 +21,7 @@ import LoadingDisplay, {
   LoadingContainer,
 } from "../LoadingDisplay/LoadingDisplay";
 import { trpc, trpcClient } from "@/lib/trpc";
-import { GhostPair } from "@/services/indexer/indexerTypes";
+import { GhostLaunchPair } from "@/services/indexer/indexerTypes";
 import { ItemSelect, SelectItem, SelectState } from "../ItemSelect";
 import { Slider, Tooltip } from "@nextui-org/react";
 import Image from "next/image";
@@ -79,7 +79,7 @@ export const SwapCard = observer(() => {
 
   useInterval(() => {
     swap.onFromAmountChange();
-  }, 3000)
+  }, 3000);
 
   return (
     <SpinnerContainer

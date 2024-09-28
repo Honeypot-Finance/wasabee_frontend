@@ -3,7 +3,7 @@ import z from "zod";
 import { indexer } from "@/services/indexer/indexer";
 import { type PairFilter } from "@/services/launchpad";
 import {
-  GhostPairResponse,
+  GhostPoolPairResponse,
   GhostParticipatedProjectsResponse,
   PageRequest,
   TrendingMEMEs,
@@ -92,7 +92,7 @@ export const indexerFeedRouter = router({
       );
     }),
   getAllPairs: publicProcedure.query(
-    async (): Promise<ApiResponseType<GhostPairResponse>> => {
+    async (): Promise<ApiResponseType<GhostPoolPairResponse>> => {
       return cacheProvider.getOrSet(getCacheKey("getAllPairs"), async () => {
         const res = await indexer.dataProvider.getAllPairs();
         return res;
@@ -110,6 +110,8 @@ export const indexerFeedRouter = router({
         filter: z.object({
           searchString: z.string().optional(),
           limit: z.number().optional(),
+          sortingTarget: z.string().optional(),
+          sortingDirection: z.string().optional(),
         }),
         chainId: z.string(),
         provider: z.string().optional(),
@@ -121,21 +123,23 @@ export const indexerFeedRouter = router({
           .optional(),
       })
     )
-    .query(async ({ input }): Promise<ApiResponseType<GhostPairResponse>> => {
-      return cacheProvider.getOrSet(
-        getCacheKey("getFilteredPairs", input),
-        async () => {
-          const res = await indexer.getFilteredPairs(
-            input.filter,
-            input.chainId,
-            input.provider,
-            input.pageRequest
-          );
+    .query(
+      async ({ input }): Promise<ApiResponseType<GhostPoolPairResponse>> => {
+        return cacheProvider.getOrSet(
+          getCacheKey("getFilteredPairs", input),
+          async () => {
+            const res = await indexer.getFilteredPairs(
+              input.filter,
+              input.chainId,
+              input.provider,
+              input.pageRequest
+            );
 
-          return res;
-        }
-      );
-    }),
+            return res;
+          }
+        );
+      }
+    ),
 
   getHoldingsPairs: publicProcedure
     .input(

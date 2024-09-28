@@ -5,8 +5,8 @@ import {
   GhostFtoPairResponse,
   GhostFtoTokensResponse,
   GhostHoldingPairsResponse,
-  GhostPairResponse,
   GhostParticipatedProjectsResponse,
+  GhostPoolPairResponse,
   IndexerProvider,
   PageRequest,
   TrendingMEMEs,
@@ -61,7 +61,7 @@ export default class Indexer<T extends IndexerProvider> {
     chainId: string,
     provider?: string,
     pageRequest?: PageRequest
-  ): Promise<ApiResponseType<GhostPairResponse>> => {
+  ): Promise<ApiResponseType<GhostPoolPairResponse>> => {
     return await this.dataProvider.getFilteredPairs(
       filter,
       chainId,
@@ -102,7 +102,7 @@ export default class Indexer<T extends IndexerProvider> {
 
   getValidatedTokenPairs = async (
     chainId: string
-  ): Promise<ApiResponseType<GhostPairResponse>> => {
+  ): Promise<ApiResponseType<GhostPoolPairResponse>> => {
     return await this.dataProvider.getValidatedTokenPairs(chainId);
   };
 

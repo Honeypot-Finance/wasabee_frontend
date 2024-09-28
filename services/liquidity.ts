@@ -17,7 +17,7 @@ import dayjs from "dayjs";
 import { PageRequest, PairFilter } from "./indexer/indexerTypes";
 
 class Liquidity {
-  pairPage = new IndexerPaginationState<any, PairContract>({
+  pairPage = new IndexerPaginationState<PairFilter, PairContract>({
     LoadNextPageFunction: async (
       filter: PairFilter,
       pageRequest: PageRequest
@@ -43,6 +43,7 @@ class Liquidity {
             token0,
             token1,
             address: pair.id,
+            trackedReserveETH: new BigNumber(pair.trackedReserveETH),
           });
 
           if (!this.tokensMap[token0.address]) {
@@ -80,10 +81,12 @@ class Liquidity {
     filter: {
       searchString: "",
       limit: 10,
+      sortingTarget: "trackedReserveETH",
+      sortingDirection: "desc",
     },
   });
 
-  myPairPage = new IndexerPaginationState<any, PairContract>({
+  myPairPage = new IndexerPaginationState<PairFilter, PairContract>({
     LoadNextPageFunction: async (filter, pageRequest: PageRequest) => {
       const pairs = await trpcClient.indexerFeedRouter.getHoldingsPairs.query({
         walletAddress: wallet.account,
@@ -108,6 +111,7 @@ class Liquidity {
 
           const pairContract = new PairContract({
             address: pair.pairId,
+            trackedReserveETH: new BigNumber(pair.pair.trackedReserveETH),
             token0,
             token1,
           });
@@ -153,6 +157,8 @@ class Liquidity {
     filter: {
       searchString: "",
       limit: 10,
+      sortingTarget: "trackedReserveETH",
+      sortingDirection: "desc",
     },
   });
 
@@ -358,7 +364,10 @@ class Liquidity {
   }
 
   setFromToken(token: Token) {
-    if (this.fromToken?.address !== token.address || this.fromToken.isNative !== token.isNative) {
+    if (
+      this.fromToken?.address !== token.address ||
+      this.fromToken.isNative !== token.isNative
+    ) {
       if (this.toToken?.address === token.address) {
         this.toToken = this.fromToken;
         this.toAmount = "";
@@ -374,7 +383,10 @@ class Liquidity {
   }
 
   setToToken(token: Token) {
-    if (this.toToken?.address !== token.address || this.toToken.isNative !== token.isNative) {
+    if (
+      this.toToken?.address !== token.address ||
+      this.toToken.isNative !== token.isNative
+    ) {
       if (this.fromToken?.address === token.address) {
         this.fromToken = this.toToken;
         this.fromAmount = "";

@@ -47,12 +47,12 @@ export const PoolLiquidityCard = observer(
           className="relative flex w-full flex-col md:flex-row gap-[0.5rem]"
         >
           <div className="flex flex-1 flex-col md:flex-row justify-between align-middle items-center gap-[0.5rem]">
-            <div className="flex mr-5">
-              <div className="flex mr-2 items-center w-[3rem]">
+            <div className="flex flex-1  items-center gap-2">
+              <div className="flex items-center  w-[3rem]">
                 <TokenLogo token={pair.token0} />
                 <TokenLogo token={pair.token1} />
               </div>
-              <span className="w-[10rem]">
+              <span className="">
                 <Tooltip content="View pool on explore">
                   <Link
                     href={`https://bartio.beratrail.io/address/${pair.address}`}
@@ -71,19 +71,25 @@ export const PoolLiquidityCard = observer(
               </span>
             </div>
             <div className="flex-1">
-              {showMyLiquidity && (
+              {showMyLiquidity ? (
                 <div>
-                  <span>Your Liquidity: </span>
+                  <div>Your Liquidity: </div>
                   {pair.myLiquidityDisplay}
                 </div>
+              ) : (
+                <div>
+                  {showMyLiquidity && <div>Total Liquidity: </div>}
+                  {pair.liquidityDisplay}
+                </div>
               )}
-              <div>
-                {showMyLiquidity && <span>Total Liquidity: </span>}
-                {pair.liquidityDisplay}
-              </div>
+            </div>{" "}
+            <div className="flex-1 justify-center">
+              <span className="pl-5">
+                {pair.trackedReserveETH.div(10 ** 18).toFixed(5)} (ETH)
+              </span>
             </div>
           </div>{" "}
-          <div className="absolute top-[-0.5rem] right-[-0.5rem] lg:relative lg:flex lg:justify-end lg:items-center lg:top-[unset] lg:right-[unset]">
+          <div className="absolute w-[8rem] top-[-0.5rem] left-[-0.5rem] md:relative md:flex md:justify-end md:items-center md:top-[unset] md:right-[unset]">
             <OptionsDropdown
               options={[
                 {
