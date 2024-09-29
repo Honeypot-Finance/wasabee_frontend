@@ -60,6 +60,8 @@ export type holdingPairs = {
     token1name: string;
     token0symbol: string;
     token1symbol: string;
+    token0: GhostToken;
+    token1: GhostToken;
   };
 };
 
@@ -84,6 +86,7 @@ export type GhostToken = {
   name: string;
   symbol: string;
   decimals: number;
+  derivedETH?: string;
 };
 
 export type GhostPoolPair = {

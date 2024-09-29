@@ -101,12 +101,14 @@ class Liquidity {
             address: pair.pair.token0Id,
             name: pair.pair.token0name,
             symbol: pair.pair.token0symbol,
+            derivedETH: pair.pair.token0.derivedETH,
           });
 
           const token1 = Token.getToken({
             address: pair.pair.token1Id,
             name: pair.pair.token1name,
             symbol: pair.pair.token1symbol,
+            derivedETH: pair.pair.token1.derivedETH,
           });
 
           const pairContract = new PairContract({

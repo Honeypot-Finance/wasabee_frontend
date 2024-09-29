@@ -50,6 +50,7 @@ export class Token implements BaseContract {
   isRouterToken = false;
   supportingFeeOnTransferTokens = false;
   isPopular = false;
+  derivedETH = "";
 
   // determines the order of the token in the list
   get priority() {

@@ -30,7 +30,11 @@ interface PoolLiquidityCardProps {
 }
 
 export const PoolLiquidityCard = observer(
-  ({ pair, autoSize, showMyLiquidity }: PoolLiquidityCardProps) => {
+  ({
+    pair,
+    autoSize,
+    showMyLiquidity: isMyLiquidity,
+  }: PoolLiquidityCardProps) => {
     const router = useRouter();
 
     return (
@@ -70,24 +74,29 @@ export const PoolLiquidityCard = observer(
                 </Tooltip>
               </span>
             </div>
-            <div className="flex-1">
-              {showMyLiquidity ? (
-                <div>
-                  <div>Your Liquidity: </div>
-                  {pair.myLiquidityDisplay}
+            {isMyLiquidity ? (
+              <>
+                <div className="flex-1">
+                  <div>{pair.myLiquidityDisplay}</div>
                 </div>
-              ) : (
-                <div>
-                  {showMyLiquidity && <div>Total Liquidity: </div>}
-                  {pair.liquidityDisplay}
+                <div className="flex-1 justify-center">
+                  <span className="pl-5">
+                    {pair.userMarketValue.toFixed(5)} (BERA)
+                  </span>
                 </div>
-              )}
-            </div>{" "}
-            <div className="flex-1 justify-center">
-              <span className="pl-5">
-                {pair.trackedReserveETH.div(10 ** 18).toFixed(5)} (ETH)
-              </span>
-            </div>
+              </>
+            ) : (
+              <>
+                <div className="flex-1">
+                  <div>{pair.liquidityDisplay}</div>
+                </div>
+                <div className="flex-1 justify-center">
+                  <span className="pl-5">
+                    {pair.trackedReserveETH.div(10 ** 18).toFixed(5)} (BERA)
+                  </span>
+                </div>
+              </>
+            )}
           </div>{" "}
           <div className="absolute w-[8rem] top-[-0.5rem] left-[-0.5rem] md:relative md:flex md:justify-end md:items-center md:top-[unset] md:right-[unset]">
             <OptionsDropdown

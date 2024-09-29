@@ -31,6 +31,25 @@ export class PairContract implements BaseContract {
   isLoading = false;
   canClaimLP = false;
 
+  get userMarketValue() {
+    if (!this.reserves?.reserve0 || !this.reserves?.reserve1) {
+      return new BigNumber(0);
+    }
+
+    const token0Value = this.reserves.reserve0.multipliedBy(
+      this.token0.derivedETH
+    );
+    const token1Value = this.reserves.reserve1.multipliedBy(
+      this.token1.derivedETH
+    );
+    console.log("reserve0", this.reserves.reserve0.toString());
+    console.log("derivedETH0", this.token0.derivedETH);
+    console.log("token0Value", token0Value.toString());
+    console.log("token0Value.plus(token1Value)", token0Value.plus(token1Value));
+
+    return token1Value.plus(token0Value);
+  }
+
   get isNativeWrapPair() {
     return this.address === zeroAddress;
   }
@@ -58,13 +77,12 @@ export class PairContract implements BaseContract {
       ? `${amountFormatted(this.token0LpBalance, {
           decimals: 0,
           fixed: 2,
-        })} ${this.token0.displayName} - ${amountFormatted(
-          this.token1LpBalance,
-          {
-            decimals: 0,
-            fixed: 2,
-          }
-        )} ${this.token1.displayName}`
+        })} ${this.token0.displayName} - 
+        
+        ${amountFormatted(this.token1LpBalance, {
+          decimals: 0,
+          fixed: 2,
+        })} ${this.token1.displayName}`
       : "-";
   }
 

@@ -144,7 +144,7 @@ const PoolsTab = observer(() => {
               <h2 className=" opacity-65">Reserves</h2>
             </div>
             <div className="w-full flex ">
-              <h2 className=" opacity-65">Total Market Value (ETH)</h2>
+              <h2 className=" opacity-65">Total Market Value (BERA)</h2>
             </div>
           </div>
           <div className="flex justify-end w-[8rem]">

@@ -399,7 +399,6 @@ export class GhostIndexer {
     filter?: Partial<PairFilter>,
     pageRequest?: PageRequest
   ): Promise<ApiResponseType<GhostHoldingPairsResponse>> => {
-    console.log("filter", filter);
     const dirCondition = pageRequest?.cursor
       ? pageRequest?.direction === "next"
         ? `after:"${pageRequest?.cursor}"`
@@ -438,6 +437,20 @@ export class GhostIndexer {
             token1name
             token0symbol
             token1symbol
+            token0 {
+                id
+                name
+                symbol
+                decimals
+                derivedETH
+              }
+              token1 {
+                id
+                name
+                symbol
+                decimals
+                derivedETH
+              }
           }
         }
         pageInfo {
@@ -449,8 +462,6 @@ export class GhostIndexer {
       }
     }
   `;
-
-    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
@@ -491,7 +502,6 @@ export class GhostIndexer {
     type: "fto" | "meme",
     filter: Partial<FtoPairFilter>
   ): Promise<ApiResponseType<GhostParticipatedProjectsResponse>> => {
-    console.log("type", type);
     const getMemeStatusQuery = (status: string) => {
       switch (status) {
         case ProjectStatus.Success:
@@ -547,8 +557,6 @@ export class GhostIndexer {
     const searchStringCondition = filter?.search
       ? `searchString_contains:"${filter.search.toLowerCase()}",`
       : "";
-
-    console.log("filter", filter);
 
     const limit = filter.limit ?? 9;
 
@@ -610,8 +618,6 @@ export class GhostIndexer {
                         }
                       }
                     }`;
-
-    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: type === "meme" ? memeGraphHandle : ftoGraphHandle,
@@ -696,12 +702,14 @@ export class GhostIndexer {
                 name
                 symbol
                 decimals
+                derivedETH
               }
               token1 {
                 id
                 name
                 symbol
                 decimals
+                derivedETH
               }
             }
             pageInfo {
@@ -713,8 +721,6 @@ export class GhostIndexer {
           }
         }
       `;
-
-    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
@@ -782,12 +788,14 @@ export class GhostIndexer {
             name
             symbol
             decimals
+            derivedETH
           }
           token1{
             id
             name
             symbol
             decimals
+            derivedETH
           }
         }
       }
@@ -840,18 +848,19 @@ export class GhostIndexer {
               name
               symbol
               decimals
+              derivedETH
             }
             token1 {
               id
               name
               symbol
               decimals
+              derivedETH
             }
           }
         }
       }
   `;
-
     const res = await this.callIndexerApi(query, {
       apiHandle: memeGraphHandle,
     });
@@ -886,12 +895,14 @@ export class GhostIndexer {
         name
         symbol
         decimals
+        derivedETH
       }
       token1{
         address: id
         name
         symbol
         decimals
+        derivedETH
       }
       reserve0
       reserve1
@@ -908,12 +919,14 @@ export class GhostIndexer {
         name
         symbol
         decimals
+        derivedETH
       }
       token1{
         address: id
         name
         symbol
         decimals
+        derivedETH
       }
       reserve0
       reserve1
