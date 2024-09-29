@@ -380,6 +380,7 @@ const ProcessingAction = observer(
             placeholder="Deposit amount"
             min={0}
             type="number"
+            isClearable={false}
             max={pair.raiseToken.balance.toFixed()}
             onChange={(e) => {
               state.setDepositAmount(e.target.value);

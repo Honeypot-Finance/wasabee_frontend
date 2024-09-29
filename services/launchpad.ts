@@ -206,7 +206,7 @@ class LaunchPad {
       });
 
     if (mostSuccessfulFtos.status === "success") {
-      return mostSuccessfulFtos.data.pairs.map((pairAddress) => {
+      return mostSuccessfulFtos.data?.pairs.map((pairAddress) => {
         const pair = new FtoPairContract({
           address: pairAddress.id,
         });
@@ -255,7 +255,7 @@ class LaunchPad {
     const mostSuccessfulFtos =
       await trpcClient.indexerFeedRouter.getTrendingMEMEPairs.query();
     if (mostSuccessfulFtos.status === "success") {
-      return mostSuccessfulFtos.data.pairs.items.map((pairAddress) => {
+      return mostSuccessfulFtos.data?.pairs.items.map((pairAddress) => {
         const pair = new MemePairContract({
           address: pairAddress.id,
         });
