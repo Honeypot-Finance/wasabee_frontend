@@ -199,7 +199,6 @@ export const indexerFeedRouter = router({
         getCacheKey("getTrendingMEMEPairs"),
         async () => {
           const res = await indexer.getTrendingMEMEPairs();
-
           return res;
         }
       );

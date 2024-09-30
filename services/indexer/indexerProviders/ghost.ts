@@ -58,6 +58,9 @@ export class GhostIndexer {
 
     if (res.status === 200) {
       const data = await res.json();
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       return {
         status: "success",
         data: data.data,
@@ -848,14 +851,12 @@ export class GhostIndexer {
               name
               symbol
               decimals
-              derivedETH
             }
             token1 {
               id
               name
               symbol
               decimals
-              derivedETH
             }
           }
         }
