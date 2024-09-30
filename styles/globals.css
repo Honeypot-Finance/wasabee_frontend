@@ -44,6 +44,11 @@ body {
   @apply bg-default text-default;
 }
 
+
+[aria-label="clear input"] {
+  @apply right-0;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

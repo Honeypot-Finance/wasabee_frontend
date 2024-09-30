@@ -23,7 +23,7 @@ import LoadingDisplay, {
 import { trpc, trpcClient } from "@/lib/trpc";
 import { GhostLaunchPair } from "@/services/indexer/indexerTypes";
 import { ItemSelect, SelectItem, SelectState } from "../ItemSelect";
-import { Slider, Tooltip } from "@nextui-org/react";
+import { Input, Slider, Tooltip } from "@nextui-org/react";
 import Image from "next/image";
 import { delay } from "lodash";
 import { LuOption } from "react-icons/lu";
