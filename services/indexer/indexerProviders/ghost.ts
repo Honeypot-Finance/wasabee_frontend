@@ -25,7 +25,7 @@ import dayjs from "dayjs";
 
 const memeGraphHandle = "a4357046-6f1a-4ceb-a888-8f90f60bd553/ghostgraph";
 const ftoGraphHandle = "59eb35ba-6a83-4bb6-b00c-af0f103db519/ghostgraph";
-const pairGraphHandle = "cbaf2e17-d784-4bd4-8b6a-5e9458a945c0/ghostgraph";
+const pairGraphHandle = "ffb9b255-4ca5-4ea6-ad30-0bb4a125913c/ghostgraph";
 
 export class GhostIndexer {
   apiKey: string;
