@@ -22,7 +22,7 @@ import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
 import { popmodal } from "@/services/popmodal";
 import { Tooltip } from "@nextui-org/react";
-import { toCompactLocaleString } from "@/services/utils";
+import { toCompactLocaleString } from "@/lib/utils";
 
 interface PoolLiquidityCardProps {
   pair: PairContract;
