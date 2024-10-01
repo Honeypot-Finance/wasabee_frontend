@@ -9,6 +9,7 @@ import { debounce, max, initial } from "lodash";
 import { PageRequest, PairFilter } from "./indexer/indexerTypes";
 import { visualEffects } from "./visualeffects";
 import { WrappedToastify } from "@/lib/wrappedToastify";
+import BigNumber from "bignumber.js";
 
 export type PageInfo = {
   hasNextPage: boolean;
@@ -357,7 +358,10 @@ export class PaginationDataState<T> {
   }
 }
 
-export class IndexerPaginationState<FilterT extends Record<string, any> = {}, ItemT extends any = any> {
+export class IndexerPaginationState<
+  FilterT extends Record<string, any> = {},
+  ItemT extends any = any
+> {
   namespace: string = "";
   pageInfo: PageInfo = {
     hasNextPage: true,
@@ -374,9 +378,10 @@ export class IndexerPaginationState<FilterT extends Record<string, any> = {}, It
   LoadNextPageFunction: (
     filter: FilterT,
     pageRequest: PageRequest
-  ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }> = async () => Promise.resolve({ items: [], pageInfo: this.pageInfo });
+  ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }> = async () =>
+    Promise.resolve({ items: [], pageInfo: this.pageInfo });
 
-  constructor(args: Partial<IndexerPaginationState<FilterT, ItemT>> ) {
+  constructor(args: Partial<IndexerPaginationState<FilterT, ItemT>>) {
     Object.assign(this, args);
     makeAutoObservable(this);
   }
@@ -524,4 +529,21 @@ export abstract class BaseState {
   init() {
     this.isInit = true;
   }
+}
+
+export function toCompactLocaleString(
+  value: number | string | BigNumber,
+  options?: Intl.NumberFormatOptions
+) {
+  return Number(value) >= 0.01
+    ? Number(value).toLocaleString("en-US", {
+        // add suffixes for thousands, millions, and billions
+        // the maximum number of decimal places to use
+        maximumFractionDigits: 2,
+        // specify the abbreviations to use for the suffixes
+        notation: "compact",
+        compactDisplay: "short",
+        ...options,
+      })
+    : "< 0.01";
 }

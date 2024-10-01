@@ -25,7 +25,7 @@ import dayjs from "dayjs";
 
 const memeGraphHandle = "a4357046-6f1a-4ceb-a888-8f90f60bd553/ghostgraph";
 const ftoGraphHandle = "59eb35ba-6a83-4bb6-b00c-af0f103db519/ghostgraph";
-const pairGraphHandle = "ffb9b255-4ca5-4ea6-ad30-0bb4a125913c/ghostgraph";
+const pairGraphHandle = "d44b3bab-d41c-4be8-b186-0f3566fa8a23/ghostgraph";
 
 export class GhostIndexer {
   apiKey: string;
@@ -347,6 +347,7 @@ export class GhostIndexer {
             items {
               id
               trackedReserveETH
+              trackedReserveUSD
               token0 {
                 id
                 name
@@ -434,6 +435,7 @@ export class GhostIndexer {
           inCreaselpAmount
           pair{
             trackedReserveETH
+            trackedReserveUSD
             token0Id
             token1Id
             token0name
@@ -446,6 +448,7 @@ export class GhostIndexer {
                 symbol
                 decimals
                 derivedETH
+                derivedUSD
               }
               token1 {
                 id
@@ -453,6 +456,7 @@ export class GhostIndexer {
                 symbol
                 decimals
                 derivedETH
+                derivedUSD
               }
           }
         }
@@ -700,12 +704,14 @@ export class GhostIndexer {
             items {
               id
               trackedReserveETH
+              trackedReserveUSD
               token0 {
                 id
                 name
                 symbol
                 decimals
                 derivedETH
+                derivedUSD
               }
               token1 {
                 id
@@ -713,6 +719,7 @@ export class GhostIndexer {
                 symbol
                 decimals
                 derivedETH
+                derivedUSD
               }
             }
             pageInfo {
@@ -792,6 +799,7 @@ export class GhostIndexer {
             symbol
             decimals
             derivedETH
+            derivedUSD
           }
           token1{
             id
@@ -799,6 +807,7 @@ export class GhostIndexer {
             symbol
             decimals
             derivedETH
+            derivedUSD
           }
         }
       }
@@ -897,6 +906,7 @@ export class GhostIndexer {
         symbol
         decimals
         derivedETH
+        derivedUSD
       }
       token1{
         address: id
@@ -904,6 +914,7 @@ export class GhostIndexer {
         symbol
         decimals
         derivedETH
+        derivedUSD
       }
       reserve0
       reserve1
@@ -921,6 +932,7 @@ export class GhostIndexer {
         symbol
         decimals
         derivedETH
+        derivedUSD
       }
       token1{
         address: id
@@ -928,6 +940,7 @@ export class GhostIndexer {
         symbol
         decimals
         derivedETH
+        derivedUSD
       }
       reserve0
       reserve1

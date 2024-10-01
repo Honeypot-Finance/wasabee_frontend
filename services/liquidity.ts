@@ -44,6 +44,7 @@ class Liquidity {
             token1,
             address: pair.id,
             trackedReserveETH: new BigNumber(pair.trackedReserveETH),
+            trackedReserveUSD: new BigNumber(pair.trackedReserveUSD),
           });
 
           if (!this.tokensMap[token0.address]) {
@@ -81,7 +82,7 @@ class Liquidity {
     filter: {
       searchString: "",
       limit: 10,
-      sortingTarget: "trackedReserveETH",
+      sortingTarget: "trackedReserveUSD",
       sortingDirection: "desc",
     },
   });
@@ -102,6 +103,7 @@ class Liquidity {
             name: pair.pair.token0name,
             symbol: pair.pair.token0symbol,
             derivedETH: pair.pair.token0.derivedETH,
+            derivedUSD: pair.pair.token1.derivedUSD,
           });
 
           const token1 = Token.getToken({
@@ -109,11 +111,13 @@ class Liquidity {
             name: pair.pair.token1name,
             symbol: pair.pair.token1symbol,
             derivedETH: pair.pair.token1.derivedETH,
+            derivedUSD: pair.pair.token1.derivedUSD,
           });
 
           const pairContract = new PairContract({
             address: pair.pairId,
             trackedReserveETH: new BigNumber(pair.pair.trackedReserveETH),
+            trackedReserveUSD: new BigNumber(pair.pair.trackedReserveUSD),
             token0,
             token1,
           });

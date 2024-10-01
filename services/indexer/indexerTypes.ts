@@ -54,6 +54,7 @@ export type holdingPairs = {
   inCreaselpAmount: string;
   pair: {
     trackedReserveETH: string;
+    trackedReserveUSD: string;
     token0Id: Address;
     token1Id: Address;
     token0name: string;
@@ -68,7 +69,7 @@ export type holdingPairs = {
 export type PairFilter = {
   searchString: string;
   limit: number;
-  sortingTarget?: "trackedReserveETH";
+  sortingTarget?: "trackedReserveETH" | "trackedReserveUSD";
   sortingDirection?: "asc" | "desc";
 };
 
@@ -87,11 +88,13 @@ export type GhostToken = {
   symbol: string;
   decimals: number;
   derivedETH?: string;
+  derivedUSD?: string;
 };
 
 export type GhostPoolPair = {
   id: string;
   trackedReserveETH: string;
+  trackedReserveUSD: string;
   token0: GhostToken;
   token1: GhostToken;
 };

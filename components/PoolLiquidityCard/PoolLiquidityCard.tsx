@@ -22,6 +22,7 @@ import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
 import { popmodal } from "@/services/popmodal";
 import { Tooltip } from "@nextui-org/react";
+import { toCompactLocaleString } from "@/services/utils";
 
 interface PoolLiquidityCardProps {
   pair: PairContract;
@@ -77,22 +78,33 @@ export const PoolLiquidityCard = observer(
             {isMyLiquidity ? (
               <>
                 <div className="flex-1">
-                  <div>{pair.myLiquidityDisplay}</div>
+                  <div className="flex flex-col">
+                    <div>{pair.myLiquidityDisplay.reserve0}</div>
+                    <div>{pair.myLiquidityDisplay.reserve1}</div>
+                  </div>
                 </div>
                 <div className="flex-1 justify-center">
                   <span className="pl-5">
-                    {pair.userMarketValue.toFixed(5)} (BERA)
+                    $ {toCompactLocaleString(pair.userMarketValue)}
                   </span>
                 </div>
               </>
             ) : (
               <>
                 <div className="flex-1">
-                  <div>{pair.liquidityDisplay}</div>
+                  {/* <div>{pair.liquidityDisplay}</div> */}
+
+                  <div className="flex flex-col">
+                    <div>{pair.liquidityDisplay.reserve0}</div>
+                    <div>{pair.liquidityDisplay.reserve1}</div>
+                  </div>
                 </div>
                 <div className="flex-1 justify-center">
                   <span className="pl-5">
-                    {pair.trackedReserveETH.div(10 ** 18).toFixed(5)} (BERA)
+                    ${" "}
+                    {toCompactLocaleString(
+                      pair.trackedReserveUSD.toNumber() / 10 ** 18
+                    )}{" "}
                   </span>
                 </div>
               </>

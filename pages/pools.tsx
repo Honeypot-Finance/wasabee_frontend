@@ -190,7 +190,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
                   <h2 className=" opacity-65">Reserves</h2>
                 </div>
                 <div className="w-full flex ">
-                  <h2 className=" opacity-65">Total Market Value (BERA)</h2>
+                  <h2 className=" opacity-65">Total Market Value</h2>
                 </div>
               </div>
               <div className="flex justify-end w-[8rem]">
@@ -236,10 +236,10 @@ const PoolsPage: NextLayoutPage = observer(() => {
                   <h2 className="ml-[1rem] opacity-65 ">Pool</h2>
                 </div>
                 <div className="w-full flex">
-                  <h2 className=" opacity-65">Reserves</h2>
+                  <h2 className=" opacity-65">Your Reserves</h2>
                 </div>
                 <div className="w-full flex ">
-                  <h2 className=" opacity-65">Total Market Value (BERA)</h2>
+                  <h2 className=" opacity-65">Asset Market Value</h2>
                 </div>
               </div>
               <div className="flex justify-end w-[8rem]">

@@ -5,7 +5,7 @@ import { wallet } from "../wallet";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import { makeAutoObservable } from "mobx";
 import { Address, getContract, zeroAddress } from "viem";
-import { AsyncState } from "../utils";
+import { AsyncState, toCompactLocaleString } from "../utils";
 import { amountFormatted, formatAmount } from "@/lib/format";
 import dayjs from "dayjs";
 
@@ -25,6 +25,7 @@ export class PairContract implements BaseContract {
     reserve1: BigNumber;
   } | null = null;
   trackedReserveETH: BigNumber = new BigNumber(0);
+  trackedReserveUSD: BigNumber = new BigNumber(0);
   token0: Token = new Token({}); // fixed
   token1: Token = new Token({}); // fixed
   isInit = false;
@@ -37,15 +38,15 @@ export class PairContract implements BaseContract {
     }
 
     const token0Value = this.reserves.reserve0.multipliedBy(
-      this.token0.derivedETH
+      this.token0.derivedUSD
     );
     const token1Value = this.reserves.reserve1.multipliedBy(
-      this.token1.derivedETH
+      this.token1.derivedUSD
     );
-    console.log("reserve0", this.reserves.reserve0.toString());
-    console.log("derivedETH0", this.token0.derivedETH);
-    console.log("token0Value", token0Value.toString());
-    console.log("token0Value.plus(token1Value)", token0Value.plus(token1Value));
+    // console.log("reserve0", this.reserves.reserve0.toString());
+    // console.log("derivedETH0", this.token0.derivedETH);
+    // console.log("token0Value", token0Value.toString());
+    // console.log("token0Value.plus(token1Value)", token0Value.plus(token1Value));
 
     return token1Value.plus(token0Value);
   }
@@ -74,16 +75,18 @@ export class PairContract implements BaseContract {
       this.token0.displayName &&
       this.token1LpBalance &&
       this.token1.displayName
-      ? `${amountFormatted(this.token0LpBalance, {
-          decimals: 0,
-          fixed: 2,
-        })} ${this.token0.displayName} - 
-        
-        ${amountFormatted(this.token1LpBalance, {
-          decimals: 0,
-          fixed: 2,
-        })} ${this.token1.displayName}`
-      : "-";
+      ? {
+          reserve0: `${toCompactLocaleString(this.token0LpBalance)} ${
+            this.token0.displayName
+          }`,
+          reserve1: `${toCompactLocaleString(this.token1LpBalance)} ${
+            this.token1.displayName
+          }`,
+        }
+      : {
+          reserve0: "-",
+          reserve1: "-",
+        };
   }
 
   get liquidityDisplay() {
@@ -91,17 +94,29 @@ export class PairContract implements BaseContract {
       this.token0.displayName &&
       this.reserves?.reserve1 &&
       this.token1.displayName
-      ? `${amountFormatted(this.reserves?.reserve0, {
-          decimals: 0,
-          fixed: 2,
-        })} ${this.token0.displayName} - ${amountFormatted(
-          this.reserves?.reserve1,
-          {
-            decimals: 0,
-            fixed: 2,
-          }
-        )} ${this.token1.displayName}`
-      : "-";
+      ? // ? `${amountFormatted(this.reserves?.reserve0, {
+        //     decimals: 0,
+        //     fixed: 2,
+        //   })} ${this.token0.displayName} - ${amountFormatted(
+        //     this.reserves?.reserve1,
+        //     {
+        //       decimals: 0,
+        //       fixed: 2,
+        //     }
+        //   )} ${this.token1.displayName}`
+        // : "-";
+        {
+          reserve0: `${toCompactLocaleString(this.reserves?.reserve0)} ${
+            this.token0.displayName
+          }`,
+          reserve1: `${toCompactLocaleString(this.reserves?.reserve1)} ${
+            this.token1.displayName
+          }`,
+        }
+      : {
+          reserve0: "-",
+          reserve1: "-",
+        };
   }
 
   get poolName() {

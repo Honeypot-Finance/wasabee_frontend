@@ -51,6 +51,7 @@ export class Token implements BaseContract {
   supportingFeeOnTransferTokens = false;
   isPopular = false;
   derivedETH = "";
+  derivedUSD = "";
 
   // determines the order of the token in the list
   get priority() {
