@@ -19,6 +19,7 @@ export class RouterV2Contract implements BaseContract {
       },
     });
   }
+
   constructor(args: Partial<RouterV2Contract>) {
     Object.assign(this, args);
   }

@@ -7,6 +7,7 @@ import {
   GhostParticipatedProjectsResponse,
   PageRequest,
   TrendingMEMEs,
+  GhostBundleResponse,
 } from "@/services/indexer/indexerTypes";
 import { cacheProvider, getCacheKey } from "@/lib/server/cache";
 
@@ -204,6 +205,21 @@ export const indexerFeedRouter = router({
       );
     }
   ),
+  getBundle: publicProcedure
+    .input(
+      z.object({
+        chainId: z.string(),
+      })
+    )
+    .query(async ({ input }): Promise<ApiResponseType<GhostBundleResponse>> => {
+      return cacheProvider.getOrSet(
+        getCacheKey("getBundle", input),
+        async () => {
+          const res = await indexer.getBundle(input.chainId);
+          return res;
+        }
+      );
+    }),
   getParticipatedProjects: publicProcedure
     .input(
       z.object({

@@ -2,6 +2,7 @@ import { providers } from "ethers";
 import { PairFilter } from "../launchpad";
 import { GhostIndexer } from "./indexerProviders/ghost";
 import {
+  GhostBundleResponse,
   GhostFtoPairResponse,
   GhostFtoTokensResponse,
   GhostHoldingPairsResponse,
@@ -120,6 +121,12 @@ export default class Indexer<T extends IndexerProvider> {
       type,
       filter
     );
+  };
+
+  getBundle = async (
+    chainId: string
+  ): Promise<ApiResponseType<GhostBundleResponse>> => {
+    return await this.dataProvider.getBundle(chainId);
   };
 }
 

@@ -44,7 +44,6 @@ class Liquidity {
             token1,
             address: pair.id,
             trackedReserveETH: new BigNumber(pair.trackedReserveETH),
-            trackedReserveUSD: new BigNumber(pair.trackedReserveUSD),
           });
 
           if (!this.tokensMap[token0.address]) {
@@ -82,7 +81,7 @@ class Liquidity {
     filter: {
       searchString: "",
       limit: 10,
-      sortingTarget: "trackedReserveUSD",
+      sortingTarget: "trackedReserveETH",
       sortingDirection: "desc",
     },
   });
@@ -117,7 +116,6 @@ class Liquidity {
           const pairContract = new PairContract({
             address: pair.pairId,
             trackedReserveETH: new BigNumber(pair.pair.trackedReserveETH),
-            trackedReserveUSD: new BigNumber(pair.pair.trackedReserveUSD),
             token0,
             token1,
           });
@@ -171,9 +169,10 @@ class Liquidity {
   pairs: PairContract[] = [];
   pairsByToken: Record<string, PairContract> = {};
   tokensMap: Record<string, Token> = {};
-
+  bundlePrice = 0;
   slippage = 10;
   balanced = true;
+
   // localTokensMap = new StorageState<Record<string, Token>>({
   //   key: "localTokens_v2",
   //   value: {} as Record<string, Token>,
@@ -306,6 +305,9 @@ class Liquidity {
 
   constructor() {
     makeAutoObservable(this);
+    this.getBundlePrice().then(() => {
+      console.log("bundlePrice", this.bundlePrice);
+    });
     reaction(
       () => this.fromToken?.address,
       () => {
@@ -622,6 +624,17 @@ class Liquidity {
       });
 
     this.isInit = true;
+  }
+
+  async getBundlePrice() {
+    const res = await trpcClient.indexerFeedRouter.getBundle.query({
+      chainId: String(wallet.currentChainId),
+    });
+
+    console.log("bundlePrice", res);
+
+    res.status === "success" &&
+      (this.bundlePrice = Number(res.data.bundle.price));
   }
 
   async getPairByTokens(token0Address: string, token1Address: string) {

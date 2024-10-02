@@ -121,3 +121,12 @@ export type GhostFTOPair = {
 export type GhostAPIOpt = {
   apiHandle: string;
 };
+
+export type GhostBundleResponse = {
+  bundle: {
+    id: string;
+    price: string;
+    totalETH: string;
+    totalUSD: string;
+  };
+};

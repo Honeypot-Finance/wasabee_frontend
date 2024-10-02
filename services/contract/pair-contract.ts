@@ -9,6 +9,7 @@ import { AsyncState } from "../utils";
 import { toCompactLocaleString } from "@/lib/utils";
 import { amountFormatted, formatAmount } from "@/lib/format";
 import dayjs from "dayjs";
+import { liquidity } from "../liquidity";
 
 // const totalSupply = await pairContract.methods.totalSupply().call()
 // const LPTokenBalance = await this.balanceOf(pairAddress)
@@ -26,24 +27,27 @@ export class PairContract implements BaseContract {
     reserve1: BigNumber;
   } | null = null;
   trackedReserveETH: BigNumber = new BigNumber(0);
-  trackedReserveUSD: BigNumber = new BigNumber(0);
   token0: Token = new Token({}); // fixed
   token1: Token = new Token({}); // fixed
   isInit = false;
   isLoading = false;
   canClaimLP = false;
 
+  get trackedReserveUSD() {
+    return this.trackedReserveETH.multipliedBy(liquidity.bundlePrice);
+  }
+
   get userMarketValue() {
     if (!this.reserves?.reserve0 || !this.reserves?.reserve1) {
       return new BigNumber(0);
     }
 
-    const token0Value = this.reserves.reserve0.multipliedBy(
-      this.token0.derivedUSD
-    );
-    const token1Value = this.reserves.reserve1.multipliedBy(
-      this.token1.derivedUSD
-    );
+    const token0Value = this.reserves.reserve0
+      .multipliedBy(this.token0.derivedETH)
+      .multipliedBy(liquidity.bundlePrice);
+    const token1Value = this.reserves.reserve1
+      .multipliedBy(this.token1.derivedETH)
+      .multipliedBy(liquidity.bundlePrice);
     // console.log("reserve0", this.reserves.reserve0.toString());
     // console.log("derivedETH0", this.token0.derivedETH);
     // console.log("token0Value", token0Value.toString());

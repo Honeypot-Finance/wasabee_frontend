@@ -18,6 +18,7 @@ import {
   GhostParticipatedProjectsResponse,
   GhostPoolPair,
   GhostPoolPairResponse,
+  GhostBundleResponse,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
@@ -393,6 +394,37 @@ export class GhostIndexer {
             endCursor: "",
           },
         },
+      };
+    }
+  };
+
+  getBundle = async (
+    chainId: string
+  ): Promise<ApiResponseType<GhostBundleResponse>> => {
+    const query = `
+      {
+        bundle(
+          id:"1"
+        ){
+            id
+            price
+            totalETH
+            totalUSD
+        }
+      }
+    `;
+
+    const res = await this.callIndexerApi(query, {
+      apiHandle: pairGraphHandle,
+    });
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: res.data,
       };
     }
   };
