@@ -418,7 +418,7 @@ export class IndexerPaginationState<
     if (this.isLoading || !this.pageInfo.hasNextPage) {
       return;
     }
-    console.log("loadMore");
+
     this.isLoading = true;
 
     try {
@@ -462,6 +462,10 @@ export class IndexerPaginationState<
 
   setIsInit(isInit: boolean) {
     this.isInit = isInit;
+  }
+
+  setIsLoading(isLoading: boolean) {
+    this.isLoading = isLoading;
   }
 }
 

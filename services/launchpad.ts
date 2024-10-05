@@ -164,7 +164,6 @@ class LaunchPad {
   }
 
   set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
-    
     this.projectsPage.updateFilter({ status });
     this.myLaunches.updateFilter({ status });
     this.participatedPairs.updateFilter({ status });
