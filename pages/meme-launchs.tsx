@@ -21,9 +21,10 @@ import { SpinnerContainer } from "@/components/Spinner";
 import { DropdownSvg } from "@/components/svg/dropdown";
 import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
-import { FaCrown } from "react-icons/fa";
+import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import Pagination from "@/components/Pagination/Pagination";
+import Image from "next/image";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -212,7 +213,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           aria-label="Options"
           classNames={{
             tabList: "bg-transparent",
-            tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
+            tab: "flex flex-col items-center gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
           }}
           className="next-tab"
           onSelectionChange={(key) => {
@@ -258,6 +259,24 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             />
           </Tab>
           {/* <Tab href="/launch" title="To Fto projects->" /> */}
+          <Tab
+            href="https://bartio.bonds.yeetit.xyz/"
+            target="_blank"
+            title={
+              <div className="flex items-center text-yellow-400">
+                <Image
+                  className="h-4"
+                  src="/images/partners/yeet_icon.png"
+                  alt=""
+                  width={100}
+                  height={100}
+                />
+                <span className="flex items-center justify-center gap-2">
+                  Try Yeet Bond <FaExternalLinkAlt className="inline-block" />
+                </span>
+              </div>
+            }
+          />
         </Tabs>
       </div>
     </div>

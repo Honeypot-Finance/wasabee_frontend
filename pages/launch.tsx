@@ -26,7 +26,7 @@ import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 import CardContianer from "@/components/CardContianer/CardContianer";
-import { FaCrown } from "react-icons/fa";
+import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import MemeWarBanner from "@/components/MemeWarBanner/MemeWarBanner";
 import HoneyStickSvg from "@/components/svg/HoneyStick";
 import { set } from "lodash";
@@ -330,6 +330,24 @@ const LaunchPage: NextLayoutPage = observer(() => {
             )}
           </Tab>
           <Tab href="/meme-launchs" title="To MEME projects->" />
+          <Tab
+            href="https://bartio.bonds.yeetit.xyz/"
+            target="_blank"
+            title={
+              <div className="flex items-center text-yellow-400">
+                <Image
+                  className="h-4"
+                  src="/images/partners/yeet_icon.png"
+                  alt=""
+                  width={100}
+                  height={100}
+                />
+                <span className="flex items-center justify-center gap-2">
+                  Try Yeet Bond <FaExternalLinkAlt className="inline-block" />
+                </span>
+              </div>
+            }
+          />
         </Tabs>
       </div>
     </div>
