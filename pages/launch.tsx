@@ -31,6 +31,7 @@ import MemeWarBanner from "@/components/MemeWarBanner/MemeWarBanner";
 import HoneyStickSvg from "@/components/svg/HoneyStick";
 import { set } from "lodash";
 import Pagination from "@/components/Pagination/Pagination";
+import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -126,17 +127,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
 
       <div>
         <div id="filter" className="flex flex-col sm:flex-row gap-2">
-          <Input
+          <WarppedNextInputSearchBar
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
             }}
-            startContent={<IoSearchOutline></IoSearchOutline>}
-            placeholder="Search by name, symbol or address"
-            classNames={{
-              innerWrapper: "w-[369px] h-[32px]",
-            }}
-            className=" border [background:var(--card-color,#271A0C)] rounded-2xl border-solid border-[rgba(225,138,32,0.10)]"
-          ></Input>{" "}
+          />
           <Popover
             shouldBlockScroll
             isOpen={isOpen}

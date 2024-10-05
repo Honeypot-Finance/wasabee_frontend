@@ -25,6 +25,7 @@ import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import Pagination from "@/components/Pagination/Pagination";
 import Image from "next/image";
+import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -118,17 +119,11 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
       <div>
         <div id="filter" className="flex flex-col sm:flex-row gap-2">
-          <Input
+          <WarppedNextInputSearchBar
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
             }}
-            startContent={<IoSearchOutline></IoSearchOutline>}
-            placeholder="Search by name, symbol or address"
-            classNames={{
-              innerWrapper: "w-[369px] h-[32px]",
-            }}
-            className=" border [background:var(--card-color,#271A0C)] rounded-2xl border-solid border-[rgba(225,138,32,0.10)]"
-          ></Input>{" "}
+          />
           <Popover
             shouldBlockScroll
             isOpen={isOpen}
