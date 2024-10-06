@@ -1085,7 +1085,7 @@ const MemeView = observer(() => {
                   src={state.pair.value?.bannerUrl}
                   alt="banner"
                   layout="fill"
-                  objectFit="cover"
+                  objectFit="fill"
                 ></Image>
               )}
             </div>
