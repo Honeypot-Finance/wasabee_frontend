@@ -39,6 +39,7 @@ import Image from "next/image";
 import { FaQuestionCircle } from "react-icons/fa";
 import { popmodal } from "@/services/popmodal";
 import store from "store2";
+import { cn } from "@/lib/tailwindcss";
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
 const minimumTimePattern = /^(6[1-9]|[7-9][0-9]|[1-9][0-9]{2,})$/;
@@ -292,6 +293,84 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
   );
 });
 
+const MemePadInstruction = () => {
+  const InstructionMarker = ({ className }: { className?: string }) => (
+    <div
+      className={cn(
+        "w-9 h-9 bg-[#271A0C] rounded-[50%] flex justify-center items-center",
+        className
+      )}
+    >
+      <div className="w-6 h-6 bg-[#FFCD4D10]  rounded-[50%] flex justify-center items-center">
+        <div className="w-3 h-3 bg-[#FFCD4D] rounded-[50%]"></div>
+      </div>
+    </div>
+  );
+  const steps = [
+    {
+      content: "Pick a coin that you like 💖",
+    },
+    {
+      content:
+        "Deposit your coin to create your LP position in the AMM pool 💸",
+    },
+    {
+      content: "Withdraw anytime with no gains or losses🚪",
+    },
+    {
+      content:
+        "Once $20k market cap is reached, Liquidity is locked & burned on HenloDEX 🔥 + distrubute deployer rewards!",
+    },
+    {
+      content:
+        "claim your LP position and earn txn fee, BGT, and other protocol interest",
+    },
+  ];
+  return (
+    <div className="p-5 flex flex-col gap-5">
+      <p className="text-xl">
+        Pot2Pump mode stops rugs by ensuring all tokens are safe and integrate
+        perfectly with PoL
+      </p>
+      <p className=" font-sans font-light">
+        Every token created with Pot2Pump mode is a fair-launch—no presales, no
+        team allocations with a chance to mine BGT and other protocol interests.
+      </p>
+      <h2 className="text-2xl">How it works</h2>
+      <div className="relative">
+        {/* <div className="absolute w-[2px] h-[90%] bg-[#FFCD4D] left-[21px] top-[50%] translate-y-[-50%]"></div> */}
+        <ul
+          className=" flex flex-col pl-5 text-lg font-sans font-light            
+            list-none
+          "
+        >
+          {steps.map((step, idx) => (
+            <li key={idx} className="flex relative">
+              <div className="flex flex-col items-center ">
+                {idx !== 0 && <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>}
+                <InstructionMarker />
+                {idx !== steps.length - 1 && <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>}
+              </div>
+              <div className={cn("bg-[#3e2a0f]   px-5 py-2 ml-8 rounded-[2rem] relative overflow-visible", (idx !== 0 && idx !== steps.length - 1) ? 'my-2' : (idx === 0 ? 'mb-2' : 'mt-2'))}>
+                {step.content}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <Button
+        className="w-full mt-4"
+        onClick={() => {
+          popmodal.closeModal();
+          store.set("pot2pump_notice_read", true);
+        }}
+      >
+        I&apos;m ready to pump
+      </Button>
+    </div>
+  );
+};
+
 const MEMELaunchModal: NextLayoutPage = observer(() => {
   const {
     register,
@@ -338,72 +417,6 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
       openInstructionModal();
     }
   }, []);
-
-  const MemePadInstruction = () => {
-    const InstructionMarker = () => (
-      <div className="w-9 h-9 bg-[#271A0C] absolute left-[-3rem] top-[50%] translate-y-[-50%] rounded-[50%] flex justify-center items-center">
-        <div className="w-6 h-6 bg-[#FFCD4D10]  rounded-[50%] flex justify-center items-center">
-          <div className="w-3 h-3 bg-[#FFCD4D] rounded-[50%]"></div>
-        </div>
-      </div>
-    );
-    return (
-      <div className="p-5 flex flex-col gap-5">
-        <p className="text-xl">
-          Pot2Pump mode stops rugs by ensuring all tokens are safe and integrate
-          perfectly with PoL
-        </p>
-        <p className=" font-sans font-light">
-          Every token created with Pot2Pump mode is a fair-launch—no presales,
-          no team allocations with a chance to mine BGT and other protocol
-          interests.
-        </p>
-        <h2 className="text-2xl">How it works</h2>
-        <div className="relative">
-          <div className="absolute w-[2px] h-[90%] bg-[#FFCD4D] left-[21px] top-[50%] translate-y-[-50%]"></div>
-          <ul
-            className="
-              list-disc flex flex-col gap-4 pl-5 text-lg font-sans font-light  
-              *:bg-[#3e2a0f] *:px-5 *:py-2 *:ml-8 *:rounded-[2rem] *:line-clamp-2 *:relative *:overflow-visible
-              *:marker:text-2xl *:marker:border-[#F7931A] *:marker:border-2 *:marker:text-[#FFCD4D]
-            "
-          >
-            <li>
-              <InstructionMarker />
-              Pick a coin that you like 💖
-            </li>
-            <li>
-              <InstructionMarker />
-              Deposit your coin to create your LP position in the AMM pool 💸
-            </li>
-            <li>
-              <InstructionMarker />
-              Withdraw anytime with no gains or losses🚪
-            </li>
-            <li>
-              <InstructionMarker />
-              Once $20k market cap is reached, Liquidity is locked & burned on
-              HenloDEX 🔥 + distrubute deployer rewards!
-            </li>
-            <li>
-              <InstructionMarker />
-              claim your LP position and earn txn fee, BGT, and other protocol
-              interest
-            </li>
-          </ul>
-        </div>
-        <Button
-          className="w-full mt-4"
-          onClick={() => {
-            popmodal.closeModal();
-            store.set("pot2pump_notice_read", true);
-          }}
-        >
-          I&apos;m ready to pump
-        </Button>
-      </div>
-    );
-  };
 
   const openInstructionModal = () => {
     popmodal.openModal({
