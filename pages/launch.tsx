@@ -26,11 +26,12 @@ import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 import CardContianer from "@/components/CardContianer/CardContianer";
-import { FaCrown } from "react-icons/fa";
+import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import MemeWarBanner from "@/components/MemeWarBanner/MemeWarBanner";
 import HoneyStickSvg from "@/components/svg/HoneyStick";
 import { set } from "lodash";
 import Pagination from "@/components/Pagination/Pagination";
+import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -126,17 +127,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
 
       <div>
         <div id="filter" className="flex flex-col sm:flex-row gap-2">
-          <Input
+          <WarppedNextInputSearchBar
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
             }}
-            startContent={<IoSearchOutline></IoSearchOutline>}
-            placeholder="Search by name, symbol or address"
-            classNames={{
-              innerWrapper: "w-[369px] h-[32px]",
-            }}
-            className=" border [background:var(--card-color,#271A0C)] rounded-2xl border-solid border-[rgba(225,138,32,0.10)]"
-          ></Input>{" "}
+          />
           <Popover
             shouldBlockScroll
             isOpen={isOpen}
@@ -330,6 +325,24 @@ const LaunchPage: NextLayoutPage = observer(() => {
             )}
           </Tab>
           <Tab href="/meme-launchs" title="To MEME projects->" />
+          <Tab
+            href="https://bartio.bonds.yeetit.xyz/"
+            target="_blank"
+            title={
+              <div className="flex items-center text-yellow-400">
+                <Image
+                  className="h-4"
+                  src="/images/partners/yeet_icon.png"
+                  alt=""
+                  width={100}
+                  height={100}
+                />
+                <span className="flex items-center justify-center gap-2">
+                  Try Yeet Bond <FaExternalLinkAlt className="inline-block" />
+                </span>
+              </div>
+            }
+          />
         </Tabs>
       </div>
     </div>

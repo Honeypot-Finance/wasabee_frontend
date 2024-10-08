@@ -178,6 +178,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/honey-token-icon.png",
       isRouterToken: true,
+      isPopular: true,
     },
     "0xfc5e3743e9fac8bb60408797607352e24db7d65e": {
       name: "T-HPOT",
@@ -193,7 +194,6 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 6,
       logoURI: "/images/icons/tokens/usdt-token-icon.png",
       isRouterToken: true,
-      isPopular: true,
     },
     "0xd6d83af58a19cd14ef3cf6fe848c9a4d21e5727c": {
       name: "USDC",
@@ -201,7 +201,6 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 6,
       logoURI: "/images/icons/tokens/usdc-token-icon.png",
       isRouterToken: true,
-      isPopular: true,
     },
     "0x2577d24a26f8fa19c1058a8b0106e2c7303454a4": {
       name: "WBTC",
@@ -216,7 +215,6 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/weth-token-icon.png",
       isRouterToken: true,
-      isPopular: true,
     },
     "0x806ef538b228844c73e8e692adcfa8eb2fcf729c": {
       name: "DAI",
@@ -248,6 +246,7 @@ export const berachainBartioTestnetNetwork = new Network({
       symbol: "YEET",
       decimals: 18,
       logoURI: "/images/icons/tokens/yeet-token-icon.jpg",
+      isPopular: true,
     },
     "0x277aadbd9ea3db8fe9ea40ea6e09f6203724bdae": {
       name: "DIRAC",
@@ -278,6 +277,7 @@ export const berachainBartioTestnetNetwork = new Network({
       symbol: "LORE",
       decimals: 18,
       logoURI: "/images/icons/tokens/lore-token-icon.jpg",
+      isPopular: true,
     },
     "0xfad73c80d67d3cb4a929d1c0faf33a820620ae41": {
       name: "POT The Bera",

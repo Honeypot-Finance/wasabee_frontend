@@ -21,9 +21,11 @@ import { SpinnerContainer } from "@/components/Spinner";
 import { DropdownSvg } from "@/components/svg/dropdown";
 import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
-import { FaCrown } from "react-icons/fa";
+import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import Pagination from "@/components/Pagination/Pagination";
+import Image from "next/image";
+import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -117,17 +119,11 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
       <div>
         <div id="filter" className="flex flex-col sm:flex-row gap-2">
-          <Input
+          <WarppedNextInputSearchBar
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
             }}
-            startContent={<IoSearchOutline></IoSearchOutline>}
-            placeholder="Search by name, symbol or address"
-            classNames={{
-              innerWrapper: "w-[369px] h-[32px]",
-            }}
-            className=" border [background:var(--card-color,#271A0C)] rounded-2xl border-solid border-[rgba(225,138,32,0.10)]"
-          ></Input>{" "}
+          />
           <Popover
             shouldBlockScroll
             isOpen={isOpen}
@@ -212,16 +208,19 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           aria-label="Options"
           classNames={{
             tabList: "bg-transparent",
-            tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
+            tab: "flex flex-col items-center gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
           }}
           className="next-tab"
           onSelectionChange={(key) => {
             launchpad.setCurrentLaunchpadType("meme");
             if (key === "all") {
+              launchpad.projectsPage.setIsInit(false);
               launchpad.pairFilterStatus = defaultPairFilters.all.status;
             } else if (key === "my") {
+              launchpad.myLaunches.setIsInit(false);
               launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
             } else if (key === "participated-launch") {
+              launchpad.participatedPairs.setIsInit(false);
               launchpad.pairFilterStatus =
                 defaultPairFilters.participatedPairs.status;
             }
@@ -258,6 +257,24 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             />
           </Tab>
           {/* <Tab href="/launch" title="To Fto projects->" /> */}
+          <Tab
+            href="https://bartio.bonds.yeetit.xyz/"
+            target="_blank"
+            title={
+              <div className="flex items-center text-yellow-400">
+                <Image
+                  className="h-4"
+                  src="/images/partners/yeet_icon.png"
+                  alt=""
+                  width={100}
+                  height={100}
+                />
+                <span className="flex items-center justify-center gap-2">
+                  Try Yeet Bond <FaExternalLinkAlt className="inline-block" />
+                </span>
+              </div>
+            }
+          />
         </Tabs>
       </div>
     </div>
