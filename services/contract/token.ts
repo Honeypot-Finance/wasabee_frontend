@@ -11,6 +11,7 @@ import { watchAsset } from "viem/actions";
 import { toast } from "react-toastify";
 import { networksMap } from "../chain";
 import { WrappedToastify } from "@/lib/wrappedToastify";
+import { trpcClient } from "@/lib/trpc";
 
 export class Token implements BaseContract {
   static tokensMap: Record<string, Token> = {};
@@ -270,6 +271,20 @@ export class Token implements BaseContract {
         this.address.toLowerCase()
       ]?.supportingFeeOnTransferTokens;
     return this.supportingFeeOnTransferTokens;
+  }
+
+  async getIndexerTokenData() {
+    const indexerTokenData =
+      await trpcClient.indexerFeedRouter.getPairTokenData.query({
+        tokenAddress: this.address,
+        chainId: wallet.currentChainId.toString(),
+      });
+
+    console.log("indexerTokenData", indexerTokenData);
+
+    if (indexerTokenData.status === "success") {
+      Object.assign(this, indexerTokenData.data);
+    }
   }
 
   async watch() {

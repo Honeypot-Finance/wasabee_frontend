@@ -8,6 +8,7 @@ import {
   GhostHoldingPairsResponse,
   GhostParticipatedProjectsResponse,
   GhostPoolPairResponse,
+  GhostToken,
   IndexerProvider,
   PageRequest,
   TrendingMEMEs,
@@ -127,6 +128,13 @@ export default class Indexer<T extends IndexerProvider> {
     chainId: string
   ): Promise<ApiResponseType<GhostBundleResponse>> => {
     return await this.dataProvider.getBundle(chainId);
+  };
+
+  getPairTokenData = async (
+    tokenAddress: string,
+    chainId: string
+  ): Promise<ApiResponseType<GhostToken>> => {
+    return await this.dataProvider.getPairTokenData(tokenAddress, chainId);
   };
 }
 

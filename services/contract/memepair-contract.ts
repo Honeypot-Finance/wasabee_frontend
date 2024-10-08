@@ -2,7 +2,7 @@ import { BaseContract } from ".";
 import { wallet } from "../wallet";
 import { getContract } from "viem";
 import { AsyncState, ContractWrite } from "../utils";
-import { makeAutoObservable } from "mobx";
+import { action, makeAutoObservable, reaction } from "mobx";
 import { MemePairABI } from "@/lib/abis/MemePair";
 import BigNumber from "bignumber.js";
 import { Token } from "./token";
@@ -118,9 +118,25 @@ export class MemePairContract implements BaseLaunchContract {
   }
 
   get price() {
-    return this.depositedRaisedToken && this.depositedLaunchedToken
-      ? this.depositedRaisedToken.div(this.depositedLaunchedToken)
-      : undefined;
+    if (this.ftoState === 0) {
+      return this.launchedToken?.derivedUSD
+        ? new BigNumber(this.launchedToken.derivedUSD)
+        : new BigNumber(0);
+    } else {
+      return this.depositedRaisedToken &&
+        this.depositedLaunchedToken &&
+        this.raiseToken?.derivedUSD
+        ? this.depositedRaisedToken
+            .multipliedBy(this.raiseToken.derivedUSD)
+            .div(this.depositedLaunchedToken)
+        : undefined;
+    }
+  }
+
+  get marketValue() {
+    return this.price && this.depositedLaunchedToken
+      ? this.price?.multipliedBy(this.depositedLaunchedToken)
+      : 0;
   }
 
   get isCompleted() {

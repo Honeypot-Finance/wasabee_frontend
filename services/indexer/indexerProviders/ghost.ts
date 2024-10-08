@@ -26,7 +26,7 @@ import dayjs from "dayjs";
 
 const memeGraphHandle = "93683ed1-90c3-46c5-b625-604b5ad873d2/ghostgraph";
 const ftoGraphHandle = "59eb35ba-6a83-4bb6-b00c-af0f103db519/ghostgraph";
-const pairGraphHandle = "da760466-df65-4f78-a593-3402d99858ed/ghostgraph";
+const pairGraphHandle = "a6482cce-5bfe-4a3b-b180-cf647da1327f/ghostgraph";
 
 function getTimeStampToDayNow() {
   return Math.floor(dayjs().unix() / 86400);
@@ -907,6 +907,39 @@ export class GhostIndexer {
             endCursor: "",
           },
         },
+      };
+    }
+  };
+
+  getPairTokenData = async (
+    tokenAddress: string,
+    chianId: string
+  ): Promise<ApiResponseType<GhostToken>> => {
+    const query = `
+      {
+        token(id: "${tokenAddress}") {
+          id
+          decimals
+          derivedETH
+          derivedUSD
+          symbol
+          name
+        }
+      }`;
+
+    const res = await this.callIndexerApi(query, {
+      apiHandle: pairGraphHandle,
+    });
+
+    console.log(res);
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: (res.data as any).token as GhostToken,
       };
     }
   };
