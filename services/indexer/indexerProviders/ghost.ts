@@ -24,9 +24,13 @@ import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 import dayjs from "dayjs";
 
-const memeGraphHandle = "09e5826c-db68-4d1a-b235-8acdef205205/ghostgraph";
+const memeGraphHandle = "93683ed1-90c3-46c5-b625-604b5ad873d2/ghostgraph";
 const ftoGraphHandle = "59eb35ba-6a83-4bb6-b00c-af0f103db519/ghostgraph";
-const pairGraphHandle = "d44b3bab-d41c-4be8-b186-0f3566fa8a23/ghostgraph";
+const pairGraphHandle = "da760466-df65-4f78-a593-3402d99858ed/ghostgraph";
+
+function getTimeStampToDayNow() {
+  return Math.floor(dayjs().unix() / 86400);
+}
 
 export class GhostIndexer {
   apiKey: string;
@@ -447,16 +451,32 @@ export class GhostIndexer {
           },`
       : ``;
 
+    const tradingVolumeSortingCondition =
+      filter?.sortingTarget === "tradingVolumeYesterday"
+        ? `pair_:{
+            timeStampToday:"${getTimeStampToDayNow()}"
+          },`
+        : "";
+
     const query = `
     {
       holdingPairs(
         where: {
+            ${tradingVolumeSortingCondition}
             holder: "${walletAddress}",
             totalLpAmount_gt: "0",
             ${searchStringCondition}
           },
-        orderBy: "totalLpAmount",
-        orderDirection: "desc",
+          ${
+            filter?.sortingTarget
+              ? `orderBy: "${filter.sortingTarget}",`
+              : `orderBy: "totalLpAmount"`
+          }
+          ${
+            filter?.sortingDirection
+              ? `orderDirection: "${filter.sortingDirection}",`
+              : `orderDirection: "desc",`
+          }
         limit: ${filter?.limit ?? 10}, 
         ${dirCondition}
       ) {
@@ -474,6 +494,11 @@ export class GhostIndexer {
             token1name
             token0symbol
             token1symbol
+
+            timeStampToday
+            tradingVolumeToday
+            tradingVolumeYesterday
+
             token0 {
                 id
                 name
@@ -635,6 +660,7 @@ export class GhostIndexer {
                             endTime
                             status
                             launchedTokenProvider
+                            
                             token0 {
                               id
                               name
@@ -657,6 +683,8 @@ export class GhostIndexer {
                         }
                       }
                     }`;
+
+    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: type === "meme" ? memeGraphHandle : ftoGraphHandle,
@@ -687,11 +715,17 @@ export class GhostIndexer {
     provider?: string,
     pageRequest?: PageRequest
   ): Promise<ApiResponseType<GhostPoolPairResponse>> => {
+    console.log(filter);
     const dirCondition = pageRequest?.cursor
       ? pageRequest?.direction === "next"
         ? `after:"${pageRequest?.cursor}"`
         : `before:"${pageRequest?.cursor}"`
       : "";
+
+    const tradingVolumeSortingCondition =
+      filter.sortingTarget === "tradingVolumeYesterday"
+        ? `timeStampToday:"${getTimeStampToDayNow()}",`
+        : "";
 
     const query = `
         {
@@ -703,6 +737,7 @@ export class GhostIndexer {
                 : ""
             }
             where: {
+              ${tradingVolumeSortingCondition}
               ${
                 filter.searchString
                   ? `
@@ -737,6 +772,9 @@ export class GhostIndexer {
               id
               trackedReserveETH
               trackedReserveUSD
+              timeStampToday
+              tradingVolumeToday
+              tradingVolumeYesterday
               token0 {
                 id
                 name
@@ -763,6 +801,8 @@ export class GhostIndexer {
           }
         }
       `;
+
+    console.log(query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,

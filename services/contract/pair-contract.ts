@@ -27,6 +27,7 @@ export class PairContract implements BaseContract {
     reserve1: BigNumber;
   } | null = null;
   trackedReserveETH: BigNumber = new BigNumber(0);
+  tradingVolumeYesterday: string = "";
   token0: Token = new Token({}); // fixed
   token1: Token = new Token({}); // fixed
   isInit = false;

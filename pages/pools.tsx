@@ -190,7 +190,34 @@ const PoolsPage: NextLayoutPage = observer(() => {
                   <h2 className=" opacity-65">Reserves</h2>
                 </div>
                 <div className="w-full flex ">
-                  <h2 className=" opacity-65">Total Market Value</h2>
+                  <h2
+                    className="opacity-65 cursor-pointer hover:text-yellow-400 hover:opacity-100"
+                    onClick={() => {
+                      liquidity.pairPage.updateFilter({
+                        sortingTarget: "trackedReserveUSD",
+                      });
+                      liquidity.myPairPage.updateFilter({
+                        sortingTarget: "trackedReserveUSD",
+                      });
+                    }}
+                  >
+                    Total Market Value
+                  </h2>
+                </div>
+                <div className="w-full flex ">
+                  <h2
+                    className="opacity-65 cursor-pointer hover:text-yellow-400 hover:opacity-100"
+                    onClick={() => {
+                      liquidity.pairPage.updateFilter({
+                        sortingTarget: "tradingVolumeYesterday",
+                      });
+                      liquidity.myPairPage.updateFilter({
+                        sortingTarget: "tradingVolumeYesterday",
+                      });
+                    }}
+                  >
+                    TradingVol(24h)
+                  </h2>
                 </div>
               </div>
               <div className="flex justify-end w-[8rem]">

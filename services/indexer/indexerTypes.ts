@@ -55,6 +55,9 @@ export type holdingPairs = {
   pair: {
     trackedReserveETH: string;
     trackedReserveUSD: string;
+    timeStampToday: string;
+    tradingVolumeToday: string;
+    tradingVolumeYesterday: string;
     token0Id: Address;
     token1Id: Address;
     token0name: string;
@@ -69,7 +72,10 @@ export type holdingPairs = {
 export type PairFilter = {
   searchString: string;
   limit: number;
-  sortingTarget?: "trackedReserveETH" | "trackedReserveUSD";
+  sortingTarget?:
+    | "trackedReserveETH"
+    | "trackedReserveUSD"
+    | "tradingVolumeYesterday";
   sortingDirection?: "asc" | "desc";
 };
 
@@ -95,6 +101,9 @@ export type GhostPoolPair = {
   id: string;
   trackedReserveETH: string;
   trackedReserveUSD: string;
+  timeStampToday: string;
+  tradingVolumeToday: string;
+  tradingVolumeYesterday: string;
   token0: GhostToken;
   token1: GhostToken;
 };

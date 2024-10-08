@@ -52,12 +52,12 @@ export const PoolLiquidityCard = observer(
           className="relative flex w-full flex-col md:flex-row gap-[0.5rem]"
         >
           <div className="flex flex-1 flex-col md:flex-row justify-between align-middle items-center gap-[0.5rem]">
-            <div className="flex flex-1  items-center gap-2">
+            <div className="flex flex-1 items-center gap-2">
               <div className="flex items-center  w-[3rem]">
                 <TokenLogo token={pair.token0} />
                 <TokenLogo token={pair.token1} />
               </div>
-              <span className="">
+              <span>
                 <Tooltip content="View pool on explore">
                   <Link
                     href={`https://bartio.beratrail.io/address/${pair.address}`}
@@ -67,7 +67,7 @@ export const PoolLiquidityCard = observer(
                     <span className="inline-flex max-w-[4rem] overflow-ellipsis overflow-hidden">
                       {pair.token0.symbol}
                     </span>{" "}
-                    /{" "}
+                    <br />
                     <span className="inline-flex max-w-[4rem] overflow-ellipsis overflow-hidden">
                       {pair.token1.symbol}
                     </span>
@@ -84,7 +84,7 @@ export const PoolLiquidityCard = observer(
                   </div>
                 </div>
                 <div className="flex-1 justify-center">
-                  <span className="pl-5">
+                  <span className="">
                     $ {toCompactLocaleString(pair.userMarketValue)}
                   </span>
                 </div>
@@ -100,17 +100,25 @@ export const PoolLiquidityCard = observer(
                   </div>
                 </div>
                 <div className="flex-1 justify-center">
-                  <span className="pl-5">
+                  <span className="">
                     ${" "}
                     {toCompactLocaleString(
                       pair.trackedReserveUSD.toNumber() / 10 ** 18
                     )}{" "}
                   </span>
                 </div>
+                <div className="flex-1 justify-center">
+                  <span className="">
+                    ${" "}
+                    {toCompactLocaleString(
+                      Number(pair.tradingVolumeYesterday) / 10 ** 18
+                    )}{" "}
+                  </span>
+                </div>
               </>
             )}
           </div>{" "}
-          <div className="absolute w-[8rem] top-[-0.5rem] left-[-0.5rem] md:relative md:flex md:justify-end md:items-center md:top-[unset] md:right-[unset]">
+          <div className="absolute w-[80px] top-[-0.5rem] left-[-0.5rem] md:relative md:flex md:justify-end md:items-center md:top-[unset] md:right-[unset]">
             <OptionsDropdown
               options={[
                 {

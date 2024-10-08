@@ -44,6 +44,7 @@ class Liquidity {
             token1,
             address: pair.id,
             trackedReserveETH: new BigNumber(pair.trackedReserveETH),
+            tradingVolumeYesterday: pair.tradingVolumeYesterday,
           });
 
           if (!this.tokensMap[token0.address]) {
@@ -116,6 +117,7 @@ class Liquidity {
           const pairContract = new PairContract({
             address: pair.pairId,
             trackedReserveETH: new BigNumber(pair.pair.trackedReserveETH),
+            tradingVolumeYesterday: pair.pair.tradingVolumeYesterday,
             token0,
             token1,
           });

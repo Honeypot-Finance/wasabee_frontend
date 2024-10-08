@@ -4,6 +4,7 @@ export function toCompactLocaleString(
   value: number | string | BigNumber,
   options?: Intl.NumberFormatOptions
 ) {
+  if (!!!value) return "0";
   return Number(value) >= 0.01
     ? Number(value).toLocaleString("en-US", {
         // add suffixes for thousands, millions, and billions

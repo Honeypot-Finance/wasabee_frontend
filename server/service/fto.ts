@@ -60,7 +60,6 @@ export const ftoService = {
     let output;
 
     output = await selectFtoProject(data);
-    console.log("getProjectInfo output:", output);
 
     if (!output || !output[0]) {
       console.log("no output");
