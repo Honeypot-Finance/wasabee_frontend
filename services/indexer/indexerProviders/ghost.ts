@@ -26,7 +26,7 @@ import dayjs from "dayjs";
 
 const memeGraphHandle = "93866c79-ad7e-4dfa-afb9-0b5a81d7d79f/ghostgraph";
 const ftoGraphHandle = "df583977-1412-4c0a-9b3a-ebea68604f3a/ghostgraph";
-const pairGraphHandle = "a6482cce-5bfe-4a3b-b180-cf647da1327f/ghostgraph";
+const pairGraphHandle = "e6aa7476-9d4b-4ee0-8b20-5a98725b5580/ghostgraph";
 
 function getTimeStampToDayNow() {
   return Math.floor(dayjs().unix() / 86400);
@@ -232,6 +232,7 @@ export class GhostIndexer {
               createdAt
               endTime
               status
+              participantsCount
               token0 {
                 id
                 name
@@ -660,7 +661,7 @@ export class GhostIndexer {
                             endTime
                             status
                             launchedTokenProvider
-                            
+                            participantsCount
                             token0 {
                               id
                               name

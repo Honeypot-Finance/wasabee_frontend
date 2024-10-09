@@ -125,6 +125,7 @@ export type GhostFTOPair = {
   status: string;
   token0: GhostToken;
   token1: GhostToken;
+  participantsCount: string;
 };
 
 export type GhostAPIOpt = {

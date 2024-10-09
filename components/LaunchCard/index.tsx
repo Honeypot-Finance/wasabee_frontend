@@ -129,6 +129,22 @@ const TotalLaunched = observer(
   }
 );
 
+const Participants = observer(
+  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+    return (
+      <ComponentContainer>
+        <h6 className="text-xs">Participants</h6>
+        <div className="flex items-center gap-2 text-sm">
+          {/* <TotalRaisedSvg /> */}
+          <span className="font-bold">
+            {pair?.participantsCount ? pair.participantsCount.toFormat(0) : "-"}
+          </span>
+        </div>
+      </ComponentContainer>
+    );
+  }
+);
+
 const TotalRaised = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
@@ -286,7 +302,7 @@ const MemeProjectDetails = observer(
           <>
             <LaunchProgress pair={pair} />
             <TotalRaised pair={pair} />
-            <TokenPrice pair={pair} />
+            <Participants pair={pair} />
           </>
         )}
       </>

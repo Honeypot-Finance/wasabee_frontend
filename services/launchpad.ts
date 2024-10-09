@@ -342,9 +342,15 @@ class LaunchPad {
             this.currentLaunchpadType.value === "fto"
               ? new FtoPairContract({
                   address: pairAddress.id,
+                  participantsCount: new BigNumber(
+                    pairAddress.participantsCount
+                  ),
                 })
               : new MemePairContract({
                   address: pairAddress.id,
+                  participantsCount: new BigNumber(
+                    pairAddress.participantsCount
+                  ),
                 });
 
           const raisedToken = this.isRaiseToken(pairAddress.token1.id)
@@ -416,9 +422,15 @@ class LaunchPad {
             this.currentLaunchpadType.value === "fto"
               ? new FtoPairContract({
                   address: pairAddress.pairId,
+                  participantsCount: new BigNumber(
+                    pairAddress.pair.participantsCount
+                  ),
                 })
               : new MemePairContract({
                   address: pairAddress.pairId,
+                  participantsCount: new BigNumber(
+                    pairAddress.pair.participantsCount
+                  ),
                 });
 
           const raisedToken = this.isRaiseToken(pairAddress.pair.token1.id)
@@ -486,9 +498,15 @@ class LaunchPad {
             this.currentLaunchpadType.value === "fto"
               ? new FtoPairContract({
                   address: pairAddress.id,
+                  participantsCount: new BigNumber(
+                    pairAddress.participantsCount
+                  ),
                 })
               : new MemePairContract({
                   address: pairAddress.id,
+                  participantsCount: new BigNumber(
+                    pairAddress.participantsCount
+                  ),
                 });
 
           const raisedToken = this.isRaiseToken(pairAddress.token1.id)

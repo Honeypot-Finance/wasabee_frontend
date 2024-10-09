@@ -463,7 +463,6 @@ const FtoView = observer(() => {
         pair: pairAddress,
         chain_id: wallet.currentChainId,
       });
-      console.log(pairInfo);
 
       const pair =
         pairInfo?.project_type === "meme"

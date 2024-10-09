@@ -46,6 +46,7 @@ export class MemePairContract implements BaseLaunchContract {
   }[] = [];
   logoUrl = "";
   bannerUrl = "";
+  participantsCount = new BigNumber(0);
 
   constructor(args: Partial<MemePairContract>) {
     Object.assign(this, args);
