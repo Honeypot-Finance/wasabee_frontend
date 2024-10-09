@@ -833,8 +833,8 @@ const FtoView = observer(() => {
                     height={12}
                   ></Image>
                   {state.pair.value?.ftoState === 0
-                    ? "Market Value"
-                    : "Est. Market Value"}
+                    ? "Market Cap"
+                    : "Est. Market Cap"}
                 </div>
                 <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
                   {amountFormatted(state.pair.value?.marketValue, {
@@ -1319,8 +1319,8 @@ const MemeView = observer(() => {
                     height={12}
                   ></Image>
                   {state.pair.value?.ftoState === 0
-                    ? "Market Value"
-                    : "Est. Market Value"}
+                    ? "Market Cap"
+                    : "Est. Market Cap"}
                 </div>
                 <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
                   {amountFormatted(state.pair.value?.marketValue, {
