@@ -182,6 +182,7 @@ export class Token implements BaseContract {
             this.claimed = claimed;
           })
         : Promise.resolve(),
+      this.getIndexerTokenData(),
     ]).catch((e) => {
       console.log(e);
       return;

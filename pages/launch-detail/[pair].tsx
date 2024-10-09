@@ -564,14 +564,6 @@ const FtoView = observer(() => {
   }, [wallet.isInit, pairAddress]);
 
   useEffect(() => {
-    state.pair.value?.launchedToken?.getIndexerTokenData();
-  }, [state.pair.value?.launchedToken]);
-
-  useEffect(() => {
-    state.pair.value?.raiseToken?.getIndexerTokenData();
-  }, [state.pair.value?.raiseToken]);
-
-  useEffect(() => {
     if (!state.pair.value) {
       return;
     }
@@ -813,7 +805,7 @@ const FtoView = observer(() => {
               />
             </div>
 
-            <div className="grid grid-cols-3">
+            <div className="grid grid-cols-2">
               <div>
                 <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
                   <Image
@@ -832,6 +824,28 @@ const FtoView = observer(() => {
                   })}
                 </div>
               </div>
+
+              <div>
+                <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
+                  <Image
+                    src="/images/wallet.png"
+                    alt="price"
+                    width={12}
+                    height={12}
+                  ></Image>
+                  {state.pair.value?.ftoState === 0
+                    ? "Market Value"
+                    : "Est. Market Value"}
+                </div>
+                <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
+                  {amountFormatted(state.pair.value?.marketValue, {
+                    decimals: 0,
+                    fixed: 3,
+                    prefix: "$",
+                  })}
+                </div>
+              </div>
+
               <div>
                 <div className="flex gap-[4px] text-white  text-[12.165px] font-bold leading-[normal]">
                   <Image
@@ -1038,14 +1052,6 @@ const MemeView = observer(() => {
 
     refreshVotes();
   }, [wallet.isInit, pairAddress]);
-
-  useEffect(() => {
-    state.pair.value?.launchedToken?.getIndexerTokenData();
-  }, [state.pair.value?.launchedToken]);
-
-  useEffect(() => {
-    state.pair.value?.raiseToken?.getIndexerTokenData();
-  }, [state.pair.value?.raiseToken]);
 
   useEffect(() => {
     if (!state.pair.value) {

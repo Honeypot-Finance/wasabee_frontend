@@ -45,6 +45,7 @@ export default class Indexer<T extends IndexerProvider> {
       projectType
     );
   };
+
   getMostSuccessfulFtos = async (
     chainId: string,
     limit: number

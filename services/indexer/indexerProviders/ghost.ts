@@ -24,8 +24,8 @@ import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 import dayjs from "dayjs";
 
-const memeGraphHandle = "93683ed1-90c3-46c5-b625-604b5ad873d2/ghostgraph";
-const ftoGraphHandle = "59eb35ba-6a83-4bb6-b00c-af0f103db519/ghostgraph";
+const memeGraphHandle = "93866c79-ad7e-4dfa-afb9-0b5a81d7d79f/ghostgraph";
+const ftoGraphHandle = "df583977-1412-4c0a-9b3a-ebea68604f3a/ghostgraph";
 const pairGraphHandle = "a6482cce-5bfe-4a3b-b180-cf647da1327f/ghostgraph";
 
 function getTimeStampToDayNow() {

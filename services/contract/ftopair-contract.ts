@@ -117,9 +117,25 @@ export class FtoPairContract implements BaseLaunchContract {
   }
 
   get price() {
-    return this.depositedRaisedToken && this.depositedLaunchedToken
-      ? this.depositedRaisedToken.div(this.depositedLaunchedToken)
-      : undefined;
+    if (this.ftoState === 0) {
+      return this.launchedToken?.derivedUSD
+        ? new BigNumber(this.launchedToken.derivedUSD)
+        : new BigNumber(0);
+    } else {
+      return this.depositedRaisedToken &&
+        this.depositedLaunchedToken &&
+        this.raiseToken?.derivedUSD
+        ? this.depositedRaisedToken
+            .multipliedBy(this.raiseToken.derivedUSD)
+            .div(this.depositedLaunchedToken)
+        : undefined;
+    }
+  }
+
+  get marketValue() {
+    return this.price && this.depositedLaunchedToken
+      ? this.price?.multipliedBy(this.depositedLaunchedToken)
+      : 0;
   }
 
   get isCompleted() {
