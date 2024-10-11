@@ -155,11 +155,10 @@ export class Token implements BaseContract {
     const loadTotalSupply = options?.loadTotalSupply ?? false;
     const loadClaimed = options?.loadClaimed ?? false;
     const loadLogoURI = options?.loadLogoURI ?? true;
-
     await Promise.all([
       loadName && !this.name
         ? this.contract.read.name().then((name) => {
-            console.log("name", name);
+            console.log("this.isNative-name", name);
             this.name = name;
           })
         : Promise.resolve(),
@@ -187,8 +186,6 @@ export class Token implements BaseContract {
       console.log(e);
       return;
     });
-
-    // fauset tokens
 
     this.isInit = true;
   }
@@ -275,6 +272,9 @@ export class Token implements BaseContract {
   }
 
   async getIndexerTokenData() {
+    if (this.isNative) {
+      return;
+    }
     const indexerTokenData =
       await trpcClient.indexerFeedRouter.getPairTokenData.query({
         tokenAddress: this.address,
