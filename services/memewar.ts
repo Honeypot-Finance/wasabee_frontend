@@ -19,10 +19,10 @@ type MemeWarParticipant = {
   isPairInitialized?: boolean;
 };
 
-const tHpotAddress = "0x0e3cc2c4fb9252d17d07c67135e48536071735d9";
+const tHpotAddress = "0xfc5e3743e9fac8bb60408797607352e24db7d65e";
 
 export class MemewarStore {
-  memewarState: EventState = "preview";
+  memewarState: EventState = "active";
   memewarParticipants: Record<string, MemeWarParticipant> = {
     JANI: {
       participantName: "JANI",
