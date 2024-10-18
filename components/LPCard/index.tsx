@@ -16,6 +16,7 @@ import { ItemSelect, SelectState } from "../ItemSelect";
 import { SelectItem } from "../ItemSelect/index";
 import _ from "lodash";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
+import { Button as NextButton } from "@nextui-org/react";
 
 const AddLiquidity = observer(() => {
   return (
@@ -292,35 +293,58 @@ export const RemoveLiquidity = observer(
         </div>
       </div>
     ) : (
-      <Table
-        rowKey="address"
-        columns={[
-          {
-            title: "Pool Name",
-            dataKey: "poolName",
-          },
-          {
-            title: "Self Liquidity",
-            dataKey: "myLiquidityDisplay",
-          },
-          {
-            title: "Action",
-            key: "action",
-            render: (value, record) => {
-              return (
-                <Button
-                  onClick={() => {
-                    liquidity.setCurrentRemovePair(record);
-                  }}
-                >
-                  Remove
-                </Button>
-              );
-            },
-          },
-        ]}
-        datasource={liquidity.myPairPage.pageItems.value}
-      ></Table>
+      liquidity.myPairPage.pageItems.value && (
+        <div className="flex flex-col justify-center items-center gap-5">
+          {liquidity.myPairPage.pageItems.value.map((item) => (
+            <div
+              key={item.address}
+              className="flex w-full justify-between items-center hover:brightness-125 hover:bg-white/50 transition-all p-2 rounded-[10px]"
+            >
+              <div>{item.poolName}</div>
+              <div>
+                {item.myLiquidityDisplay.reserve0} /{" "}
+                {item.myLiquidityDisplay.reserve1}
+              </div>
+              <NextButton
+                onClick={() => {
+                  liquidity.setCurrentRemovePair(item);
+                }}
+              >
+                Remove
+              </NextButton>
+            </div>
+          ))}
+        </div>
+        // <Table
+        //   rowKey="address"
+        //   columns={[
+        //     {
+        //       title: "Pool Name",
+        //       dataKey: "poolName",
+        //     },
+        //     {
+        //       title: "Self Liquidity",
+        //       dataKey: "myLiquidityDisplay",
+        //     },
+        //     {
+        //       title: "Action",
+        //       key: "action",
+        //       render: (value, record) => {
+        //         return (
+        //           <Button
+        //             onClick={() => {
+        //               liquidity.setCurrentRemovePair(record);
+        //             }}
+        //           >
+        //             Remove
+        //           </Button>
+        //         );
+        //       },
+        //     },
+        //   ]}
+        //   datasource={liquidity.myPairPage.pageItems.value}
+        // ></Table>
+      )
     );
   }
 );
