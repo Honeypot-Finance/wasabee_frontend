@@ -18,6 +18,23 @@ export class Network {
     ftoFacade: string;
     memeFactory: string;
     memeFacade: string;
+    //algebra intergration
+    algebraPoolDeployer: string;
+    algebraFactory: string;
+    algebraCommunityVault: string;
+    algebraVaultFactoryStub: string;
+    pluginFactory: string;
+    entryPoint: string;
+    tickLens: string;
+    quoter: string;
+    quoterV2: string;
+    swapRouter: string;
+    nonfungibleTokenPositionDescriptor: string;
+    proxy: string;
+    nonfungiblePositionManager: string;
+    algebraInterfaceMulticall: string;
+    algebraEternalFarming: string;
+    farmingCenter: string;
     ftoTokens: Partial<Token>[];
   };
   nativeToken!: Token;
@@ -106,6 +123,25 @@ export const berachainBartioTestnetNetwork = new Network({
     ftoFacade: "0x0264D933F13eE993270591668CfF87b8D35Dd3b4",
     memeFactory: "0xc906E2bA6AA4F6Dd8340487DD8CDeBcA65e56A8D",
     memeFacade: "0x1D97520d3a483457bA6b2423F6eF3dbfd9bcCe0A",
+    //algebra intergration
+    algebraPoolDeployer: "0x805488DaA81c1b9e7C5cE3f1DCeA28F21448EC6A",
+    algebraFactory: "0xab49321DF952315E208a2B7046A00d2015E39cba",
+    algebraCommunityVault: "0x59a662Ed724F19AD019307126CbEBdcF4b57d6B1",
+    algebraVaultFactoryStub: "0x95E325A85B9E6cB4DeA2ccd96218e5F8365E0B0F",
+    pluginFactory: "0x13fcE0acbe6Fb11641ab753212550574CaD31415",
+    entryPoint: "0xa77aD9f635a3FB3bCCC5E6d1A87cB269746Aba17",
+    tickLens: "0xD637cbc214Bc3dD354aBb309f4fE717ffdD0B28C",
+    quoter: "0x6AD6A4f233F1E33613e996CCc17409B93fF8bf5f",
+    quoterV2: "0x69D57B9D705eaD73a5d2f2476C30c55bD755cc2F",
+    swapRouter: "0xB4F9b6b019E75CBe51af4425b2Fc12797e2Ee2a1",
+    nonfungibleTokenPositionDescriptor:
+      "0x658E287E9C820484f5808f687dC4863B552de37D",
+    proxy: "0x49BE8AA6c684b15e0C5450e8Fa0b16Bec1435596",
+    nonfungiblePositionManager: "0xAbAc6f23fdf1313FC2E9C9244f666157CcD32990",
+    algebraInterfaceMulticall: "0x28DeD2af752655Df5Ee92450DC259F92a5ABe449",
+    algebraEternalFarming: "0x38A5C36FA8c8c9E4649b51FCD61810B14e7ce047",
+    farmingCenter: "0x83D4a9Ea77a4dbA073cD90b30410Ac9F95F93E7C",
+
     ftoTokens: [
       {
         address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E".toLowerCase(),
