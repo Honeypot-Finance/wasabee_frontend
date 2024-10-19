@@ -7,15 +7,15 @@ import BigNumber from "bignumber.js";
 import { makeAutoObservable } from "mobx";
 import { get } from "http";
 import { getContract } from "viem";
-import { algebraPoolDeployerABI } from "@/lib/abis/algebra-contracts/ABIs/AlgebraPoolDeployer";
+import { algebraFactoryABI } from "@/lib/abis/algebra-contracts/ABIs";
 import { ContractWrite } from "@/services/utils";
 
-export class AlgebraPoolDeployerContract implements BaseContract {
+export class AlgebraFactoryContract implements BaseContract {
   address = "";
   name: string = "";
-  abi = algebraPoolDeployerABI;
+  abi = algebraFactoryABI;
 
-  constructor(args: Partial<AlgebraPoolDeployerContract>) {
+  constructor(args: Partial<AlgebraFactoryContract>) {
     Object.assign(this, args);
     makeAutoObservable(this);
   }
@@ -28,9 +28,9 @@ export class AlgebraPoolDeployerContract implements BaseContract {
     });
   }
 
-  get deploy() {
-    return new ContractWrite(this.contract.write?.deploy, {
-      action: "deploy",
+  get createPool() {
+    return new ContractWrite(this.contract.write?.createPool, {
+      action: "Create Pool",
       isSuccessEffect: true,
     });
   }

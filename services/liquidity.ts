@@ -142,8 +142,6 @@ class Liquidity {
           return pairContract;
         });
 
-        console.log("myPairPage", pariContracts);
-
         return {
           items: pariContracts,
           pageInfo: pairs.data.pageInfo,
@@ -308,7 +306,7 @@ class Liquidity {
   constructor() {
     makeAutoObservable(this);
     this.getBundlePrice().then(() => {
-      console.log("bundlePrice", this.bundlePrice);
+      //console.log("bundlePrice", this.bundlePrice);
     });
     reaction(
       () => this.fromToken?.address,
@@ -632,8 +630,6 @@ class Liquidity {
     const res = await trpcClient.indexerFeedRouter.getBundle.query({
       chainId: String(wallet.currentChainId),
     });
-
-    console.log("bundlePrice", res);
 
     res.status === "success" &&
       (this.bundlePrice = Number(res.data.bundle.price));

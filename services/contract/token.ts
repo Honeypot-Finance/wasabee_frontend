@@ -281,8 +281,6 @@ export class Token implements BaseContract {
         chainId: wallet.currentChainId.toString(),
       });
 
-    console.log("indexerTokenData", indexerTokenData);
-
     if (indexerTokenData.status === "success") {
       Object.assign(this, indexerTokenData.data);
     }
