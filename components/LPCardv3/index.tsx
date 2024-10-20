@@ -16,7 +16,7 @@ import { SelectItem } from "../ItemSelect/index";
 import _ from "lodash";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
 import { Button as NextButton } from "@nextui-org/react";
-import { liquidityV3 as addLiquidityV3 } from "@/services/addLiquidityV3";
+import { addLiquidityV3 as addLiquidityV3 } from "@/services/addLiquidityV3";
 
 const AddLiquidity = observer(() => {
   return (

@@ -4,13 +4,17 @@ import { wallet } from "@/services/wallet";
 import { useEffect, useState } from "react";
 import { parseAbiItem, decodeEventLog } from "viem";
 import { usePublicClient } from "wagmi";
+import PoolLiquidityCardV3 from "../PoolLiquidityCard/PoolLiquidityCardV3";
+import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
 
 export function V3PoolsPage() {
   const pools = usePoolsList();
   return (
     <div>
       {pools.pools.map((pool) => {
-        return <div key={pool}>{pool}</div>;
+        const poolContract = new AlgebraPoolContract({ address: pool });
+        poolContract.init();
+        return <PoolLiquidityCardV3 key={pool} pair={poolContract} autoSize />;
       })}
     </div>
   );

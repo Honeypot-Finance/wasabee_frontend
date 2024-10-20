@@ -6,7 +6,7 @@ import { wallet } from "./wallet";
 import { zeroAddress } from "viem";
 import { chains } from "@/lib/chain";
 
-class LiquidityV3 {
+class AddLiquidityV3 {
   token1: null | Token = null;
   token2: null | Token = null;
 
@@ -40,4 +40,4 @@ class LiquidityV3 {
   }
 }
 
-export const liquidityV3 = new LiquidityV3();
+export const addLiquidityV3 = new AddLiquidityV3();
