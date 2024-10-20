@@ -143,6 +143,7 @@ export class Token implements BaseContract {
       loadTotalSupply?: boolean;
       loadClaimed?: boolean;
       loadLogoURI?: boolean;
+      loadIndexerTokenData?: boolean;
     }
   ) {
     if (this.isInit && !force) {
@@ -155,6 +156,7 @@ export class Token implements BaseContract {
     const loadTotalSupply = options?.loadTotalSupply ?? false;
     const loadClaimed = options?.loadClaimed ?? false;
     const loadLogoURI = options?.loadLogoURI ?? true;
+    const loadIndexerTokenData = options?.loadIndexerTokenData ?? false;
     await Promise.all([
       loadName && !this.name
         ? this.contract.read.name().then((name) => {
@@ -181,7 +183,7 @@ export class Token implements BaseContract {
             this.claimed = claimed;
           })
         : Promise.resolve(),
-      this.getIndexerTokenData(),
+      loadIndexerTokenData ? this.getIndexerTokenData() : Promise.resolve(),
     ]).catch((e) => {
       console.log(e);
       return;
@@ -281,7 +283,7 @@ export class Token implements BaseContract {
         chainId: wallet.currentChainId.toString(),
       });
 
-    console.log("indexerTokenData", indexerTokenData);
+    //console.log("indexerTokenData", indexerTokenData);
 
     if (indexerTokenData.status === "success") {
       Object.assign(this, indexerTokenData.data);
