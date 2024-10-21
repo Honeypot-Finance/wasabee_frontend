@@ -17,7 +17,7 @@ import { trpc, trpcQueryClient } from "../lib/trpc";
 import { useEffect } from "react";
 import { wallet } from "@/services/wallet";
 import { DM_Sans } from "next/font/google";
-import { Inspector } from "react-dev-inspector";
+import { Inspector, InspectParams } from "react-dev-inspector";
 import { StorageState } from "@/services/utils";
 import { Analytics } from "@vercel/analytics/react";
 // enableStaticRendering(true)
@@ -50,7 +50,12 @@ export default function App({
           <RainbowKitProvider>
             <NextUIProvider>
               <Provider>
-                <Inspector keys={["Ctrl", "Shift", "Z"]}></Inspector>
+                <Inspector keys={["Ctrl", "Shift", "Z"]} onClickElement={({codeInfo}: InspectParams) => {
+                  if (!codeInfo) {
+                    return
+                  }
+                  window.open(`cursor://file/${codeInfo.absolutePath}:${codeInfo.lineNumber}:${codeInfo.columnNumber}`, '_blank')
+                }}></Inspector>
                 <ComponentLayout className={"[font-family:MEMEP]"}>
                   <Component {...pageProps} />
                 </ComponentLayout>

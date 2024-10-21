@@ -7,6 +7,7 @@ import {
   okxWallet,
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
+import { mock } from "wagmi/connectors";
 
 //for users without bitget wallet
 let customWallets = [
@@ -30,6 +31,11 @@ const connectors = connectorsForWallets(
     projectId: "1d1c8b5204bfbd57502685fc0934a57d",
   }
 );
+if (process.env.NODE_ENV === 'development') {
+  connectors.push(mock({
+    accounts: ['0xb67daf60d82de28e54d479509b49b82d7157af6b']
+  }))
+}
 
 export const config = getDefaultConfig({
   connectors,

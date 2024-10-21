@@ -1,3 +1,4 @@
+import { parseGwei } from "viem";
 import {
   Chain,
   berachainTestnet as viemBerachainTestnet,
@@ -48,6 +49,9 @@ export const berachainBartioTestnet: Chain = {
       blockCreated: 258000,
     },
   },
+  fees: {
+    defaultPriorityFee: parseGwei("50"),
+  }
 };
 
 // export const sepolia:Chain = {
