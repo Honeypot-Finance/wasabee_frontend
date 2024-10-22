@@ -120,18 +120,30 @@ export class MemePairContract implements BaseLaunchContract {
 
   get price() {
     if (this.ftoState === 0) {
-      return this.launchedToken?.derivedUSD
-        ? new BigNumber(this.launchedToken.derivedUSD)
-        : new BigNumber(0);
+      return this.priceAfterSuccess;
     } else {
-      return this.depositedRaisedToken &&
-        this.depositedLaunchedToken &&
-        this.raiseToken?.derivedUSD
-        ? this.depositedRaisedToken
-            .multipliedBy(this.raiseToken.derivedUSD)
-            .div(this.depositedLaunchedToken)
-        : undefined;
+      return this.priceBeforeSuccess;
     }
+  }
+
+  get priceAfterSuccess(): BigNumber {
+    if (!(this.ftoState === 0)) {
+      return new BigNumber(0);
+    }
+
+    return this.launchedToken?.derivedUSD
+      ? new BigNumber(this.launchedToken.derivedUSD)
+      : new BigNumber(0);
+  }
+
+  get priceBeforeSuccess(): BigNumber {
+    return this.depositedRaisedToken &&
+      this.depositedLaunchedToken &&
+      this.raiseToken?.derivedUSD
+      ? this.depositedRaisedToken
+          .multipliedBy(this.raiseToken.derivedUSD)
+          .div(this.depositedLaunchedToken)
+      : new BigNumber(0);
   }
 
   get marketValue() {

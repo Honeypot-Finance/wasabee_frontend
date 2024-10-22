@@ -18,6 +18,19 @@ export type PageInfo = {
   endCursor: string;
 };
 
+export async function fallbacks<T>(
+  args: (() => T)[] | (() => Promise<T>)[]
+): Promise<T | undefined> {
+  for (let i = 0; i < args.length; i++) {
+    try {
+      return await args[i]();
+    } catch (error) {
+      continue;
+    }
+  }
+  return undefined;
+}
+
 export class ValueState<T> {
   _value!: T;
   constructor(args: Partial<ValueState<T>> = {}) {

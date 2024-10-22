@@ -11,6 +11,7 @@ export default function handler(
   if (!ticker) {
     return res.status(400);
   }
+
   const symbol = ticker.split(":")[0];
   const chain = ticker.split(":")[1];
   const address = ticker.split(":")[2];
