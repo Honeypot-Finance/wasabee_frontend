@@ -19,6 +19,8 @@ import {
   GhostPoolPair,
   GhostPoolPairResponse,
   GhostBundleResponse,
+  GhostAlgebraPoolPair,
+  GhostAlgebraPairResponse,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
@@ -27,6 +29,7 @@ import dayjs from "dayjs";
 const memeGraphHandle = "93866c79-ad7e-4dfa-afb9-0b5a81d7d79f/ghostgraph";
 const ftoGraphHandle = "df583977-1412-4c0a-9b3a-ebea68604f3a/ghostgraph";
 const pairGraphHandle = "e6aa7476-9d4b-4ee0-8b20-5a98725b5580/ghostgraph";
+const algebraDexGraphHandle = "fa178abc-51d9-4866-a156-b31e889ed88c/ghostgraph";
 
 function getTimeStampToDayNow() {
   return Math.floor(dayjs().unix() / 86400);
@@ -1064,4 +1067,88 @@ export class GhostIndexer {
     }
     return res;
   }
+
+  //-----------------------------------Algebra----------------------------------
+  getAlgebraDexPools = async (
+    filter: Partial<PairFilter>,
+    chainId: string,
+    provider?: string,
+    pageRequest?: PageRequest
+  ): Promise<ApiResponseType<GhostAlgebraPairResponse>> => {
+    const dirCondition = pageRequest?.cursor
+      ? pageRequest?.direction === "next"
+        ? `after:"${pageRequest?.cursor}"`
+        : `before:"${pageRequest?.cursor}"`
+      : "";
+
+    const query = `
+      {
+        pools(
+            ${filter.sortingTarget ? `orderBy: "${filter.sortingTarget}",` : ""}
+            ${
+              filter.sortingDirection
+                ? `orderDirection: "${filter.sortingDirection}",`
+                : ""
+            }
+            where: {
+            }
+            limit: ${filter.limit}
+            ${dirCondition}
+          ){
+          items{
+            id
+            token0{
+              id
+              symbol
+              name
+            }
+            token1{
+              id
+              symbol
+              name
+            }
+            timestamp 
+            block
+            txHash
+            token0name
+            token1name
+            token0symbol
+            token1symbol
+            searchString
+          }
+          pageInfo {
+            hasPreviousPage
+            hasNextPage
+            startCursor
+            endCursor
+          }
+        }
+      }
+    `;
+
+    const res = await this.callIndexerApi(query, {
+      apiHandle: algebraDexGraphHandle,
+    });
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: {
+          pairs: (res.data as any).pools?.items as GhostAlgebraPoolPair[],
+          pageInfo: (res.data as any).pools?.pageInfo as PageInfo,
+        } ?? {
+          pools: [],
+          pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: "",
+            endCursor: "",
+          },
+        },
+      };
+    }
+  };
 }

@@ -2,6 +2,7 @@ import { providers } from "ethers";
 import { PairFilter } from "../launchpad";
 import { GhostIndexer } from "./indexerProviders/ghost";
 import {
+  GhostAlgebraPairResponse,
   GhostBundleResponse,
   GhostFtoPairResponse,
   GhostFtoTokensResponse,
@@ -136,6 +137,20 @@ export default class Indexer<T extends IndexerProvider> {
     chainId: string
   ): Promise<ApiResponseType<GhostToken>> => {
     return await this.dataProvider.getPairTokenData(tokenAddress, chainId);
+  };
+
+  getAlgebraDexPools = async (
+    filter: Partial<PairFilter>,
+    chainId: string,
+    provider?: string,
+    pageRequest?: PageRequest
+  ): Promise<ApiResponseType<GhostAlgebraPairResponse>> => {
+    return await this.dataProvider.getAlgebraDexPools(
+      filter,
+      chainId,
+      provider,
+      pageRequest
+    );
   };
 }
 

@@ -166,6 +166,82 @@ class Liquidity {
     },
   });
 
+  AlgebraPairPage = new IndexerPaginationState<PairFilter, PairContract>({
+    LoadNextPageFunction: async (filter, pageRequest: PageRequest) => {
+      const pairs = await trpcClient.indexerFeedRouter.getAlgebraPairs.query({
+        chainId: String(wallet.currentChainId),
+        filter: filter,
+        pageRequest: pageRequest,
+      });
+
+      if (pairs.status === "success") {
+        const pariContracts = pairs.data.pairs.map((pair) => {
+          const token0 = Token.getToken({
+            address: pair.token0.id,
+            name: pair.token0.name,
+            symbol: pair.token0.symbol,
+            decimals: pair.token0.decimals,
+          });
+
+          const token1 = Token.getToken({
+            address: pair.token1.id,
+            name: pair.token1.name,
+            symbol: pair.token1.symbol,
+            decimals: pair.token1.decimals,
+          });
+
+          const pairContract = new PairContract({
+            address: pair.id,
+            token0,
+            token1,
+            // trackedReserveETH: new BigNumber(pair.trackedReserveETH),
+            // tradingVolumeYesterday: pair.tradingVolumeYesterday,
+          });
+
+          if (!this.tokensMap[token0.address]) {
+            this.tokensMap[token0.address] = token0;
+
+            token0.init();
+          }
+
+          if (!this.tokensMap[token1.address]) {
+            this.tokensMap[token1.address] = token1;
+
+            token1.init();
+          }
+
+          this.pairsByToken[`${token0.address}-${token1.address}`] =
+            pairContract;
+
+          pairContract.init();
+
+          return pairContract;
+        });
+
+        return {
+          items: pariContracts,
+          pageInfo: pairs.data.pageInfo,
+        };
+      } else {
+        return {
+          items: [],
+          pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: "",
+            endCursor: "",
+          },
+        };
+      }
+    },
+    filter: {
+      searchString: "",
+      limit: 10,
+      sortingTarget: "trackedReserveETH",
+      sortingDirection: "desc",
+    },
+  });
+
   pairs: PairContract[] = [];
   pairsByToken: Record<string, PairContract> = {};
   tokensMap: Record<string, Token> = {};

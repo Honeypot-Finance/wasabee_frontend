@@ -9,6 +9,7 @@ import {
   TrendingMEMEs,
   GhostBundleResponse,
   GhostToken,
+  GhostAlgebraPairResponse,
 } from "@/services/indexer/indexerTypes";
 import { cacheProvider, getCacheKey } from "@/lib/server/cache";
 
@@ -277,4 +278,40 @@ export const indexerFeedRouter = router({
         }
       );
     }),
+  getAlgebraPairs: publicProcedure
+    .input(
+      z.object({
+        filter: z.object({
+          searchString: z.string().optional(),
+          limit: z.number().optional(),
+          sortingTarget: z.string().optional(),
+          sortingDirection: z.string().optional(),
+        }),
+        chainId: z.string(),
+        provider: z.string().optional(),
+        pageRequest: z
+          .object({
+            direction: z.string(z.enum(["next", "prev"])),
+            cursor: z.string().optional(),
+          })
+          .optional(),
+      })
+    )
+    .query(
+      async ({ input }): Promise<ApiResponseType<GhostAlgebraPairResponse>> => {
+        return cacheProvider.getOrSet(
+          getCacheKey("getAlgebraPairs", input),
+          async () => {
+            const res = await indexer.getAlgebraDexPools(
+              input.filter,
+              input.chainId,
+              input.provider,
+              input.pageRequest as PageRequest
+            );
+
+            return res;
+          }
+        );
+      }
+    ),
 });
