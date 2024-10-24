@@ -8,6 +8,7 @@ import {
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { injected, safe } from "wagmi/connectors";
+import { mock } from "wagmi/connectors";
 
 //for users without bitget wallet
 let customWallets = [
@@ -35,6 +36,14 @@ const connectors = [
     }
   ),
 ];
+
+if (process.env.NODE_ENV === "development") {
+  connectors.push(
+    mock({
+      accounts: ["0xb67daf60d82de28e54d479509b49b82d7157af6b"],
+    })
+  );
+}
 
 export const config = getDefaultConfig({
   connectors,

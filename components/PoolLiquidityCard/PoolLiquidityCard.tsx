@@ -176,7 +176,7 @@ export const PoolLiquidityCard = observer(
                     height={24}
                   />
                   <span>
-                    Stake WBERA-tHPOT at BGT Station to earn Honey {`->`}
+                    Stake WBERA-tHPOT at BGT Station to earn BGT {`->`}
                   </span>
                 </NextButton>
               </Link>

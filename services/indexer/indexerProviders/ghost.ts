@@ -528,6 +528,8 @@ export class GhostIndexer {
     }
   `;
 
+  console.log('getHoldingPairs', query)
+
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
     });

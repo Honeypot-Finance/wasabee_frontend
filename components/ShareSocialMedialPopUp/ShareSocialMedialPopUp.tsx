@@ -41,7 +41,7 @@ export function ShareMediaDisplay(props: IShareSocialMedialPopUpProps) {
           target="_blank"
           href={`https://telegram.me/share/url?url=${props.shareUrl}%0A&text=${props.shareText}`}
         >
-          <Image src="/images/telegram.png" alt="" width={20} height={20} />
+          <Image src="/images/telegram.svg" alt="" width={20} height={20} />
           Share With Telegram
           <BiLinkExternal />
         </Link>

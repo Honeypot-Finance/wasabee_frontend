@@ -403,7 +403,6 @@ class LaunchPad {
   };
 
   LoadMoreParticipatedPage = async (pageRequest: PageRequest) => {
-    console.log(this.participatedPairs.filter);
     const res =
       await trpcClient.indexerFeedRouter.getParticipatedProjects.query({
         filter: this.participatedPairs.filter,
