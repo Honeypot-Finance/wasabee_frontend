@@ -56,6 +56,22 @@ export class AlgebraPoolContract implements BaseContract {
     return Token.getToken({ address: token1Address });
   });
 
+  ticks = async (skip: number) => {
+    return await this.contract.read.ticks([skip]);
+  };
+
+  tickSpacing = new AsyncState(async () => {
+    return await this.contract.read.tickSpacing();
+  });
+
+  globalState = new AsyncState(async () => {
+    return await this.contract.read.globalState();
+  });
+
+  liquidity = new AsyncState(async () => {
+    return await this.contract.read.liquidity();
+  });
+
   get contract() {
     return getContract({
       address: this.address as `0x${string}`,
@@ -69,12 +85,19 @@ export class AlgebraPoolContract implements BaseContract {
     makeAutoObservable(this);
   }
 
-  init(options?: { force?: boolean }) {
+  async init(options?: { force?: boolean }) {
     if (this.isInit && !options?.force) return;
 
     this.isInit = false;
-    this.token0.call();
-    this.token1.call();
+
+    await Promise.all([
+      this.token0.call(),
+      this.token1.call(),
+      this.tickSpacing.call(),
+      this.globalState.call(),
+      this.liquidity.call(),
+    ]);
+
     this.isInit = true;
   }
 
