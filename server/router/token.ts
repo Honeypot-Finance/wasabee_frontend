@@ -6,12 +6,17 @@ import dayjs from "dayjs";
 import { LRUCache } from "lru-cache";
 import { createPublicClientByChain } from "@/lib/client";
 import BigNumber from "bignumber.js";
-import { createWalletClient, defineChain, http } from "viem";
+import { createWalletClient, defineChain, http, parseGwei } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { defichainEvm, mainnet } from "viem/chains";
 import { berachainBartioTestnet } from "@/lib/chain";
 import { z } from "zod";
 import { tryEach } from "ethcall/lib/call";
+import { createNonceManager, jsonRpc } from 'viem/nonce'
+ 
+const nonceManager = createNonceManager({
+  source: jsonRpc() 
+})
 
 const ethPublicClient = createPublicClientByChain({
     ...mainnet,
@@ -23,7 +28,10 @@ const ethPublicClient = createPublicClientByChain({
 });
 const beraPublicClient = createPublicClientByChain(berachainBartioTestnet);
 const account = privateKeyToAccount(
-  process.env.FAUCET_PRIVATE_KEY! as `0x${string}`
+  process.env.FAUCET_PRIVATE_KEY! as `0x${string}`,
+  {
+    nonceManager
+  }
 );
 
 const walletClient = createWalletClient({
@@ -68,7 +76,7 @@ export const tokenRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { req } = ctx;
       const ip = requestIp.getClientIp(req);
-      const address = input.address;
+      const address = input.address as `0x${string}`;
 
       if (!ip) {
         throw new TRPCError({
@@ -122,16 +130,15 @@ export const tokenRouter = router({
         let sendRes: any;
         let hash = "";
         try {
-          const preparedReq = await beraPublicClient.prepareTransactionRequest({
-            // address: address as `0x${string}`,
+          hash = await walletClient.sendTransaction({
             to: address as `0x${string}`,
             value: BigInt(faucetAmount * 10 ** 18),
           });
-          hash = await walletClient.sendTransaction(preparedReq);
           console.log("hash", hash);
           sendRes = await beraPublicClient.waitForTransactionReceipt({
             hash: hash as `0x${string}`,
           });
+          console.log('sendRes', sendRes)
         } catch (error) {
           console.error(error);
           requestStatus[JSON.stringify(ip!)] = false;

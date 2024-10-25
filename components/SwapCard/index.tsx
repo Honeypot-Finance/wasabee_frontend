@@ -66,12 +66,25 @@ export const SwapCard = observer(() => {
           address: inputCurrency,
         })
       );
+    } else {
+      swap.setFromToken(
+        Token.getToken({
+          address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
+          isNative: true,
+        })
+      );
     }
 
     if (outputCurrency && isEthAddress(outputCurrency)) {
       swap.setToToken(
         Token.getToken({
           address: outputCurrency,
+        })
+      );
+    } else {
+      swap.setToToken(
+        Token.getToken({
+          address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
         })
       );
     }
