@@ -531,6 +531,8 @@ export class GhostIndexer {
     }
   `;
 
+  console.log('getHoldingPairs', query)
+
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
     });
@@ -915,6 +917,42 @@ export class GhostIndexer {
     }
   };
 
+  
+  getPairTokensData = async (
+    tokenAddresses: readonly string []
+  ): Promise<ApiResponseType<GhostToken[]>> => {
+    const query = `
+      {
+        tokens(where: {
+        id_in: [${tokenAddresses.map((address) => `"${address}"`).join(',')}]
+      }) {
+          items{
+          id
+          decimals
+          derivedETH
+          derivedUSD
+          symbol
+          name
+          }
+        }
+      }`;
+
+    const res = await this.callIndexerApi(query, {
+      apiHandle: pairGraphHandle,
+    });
+
+    console.log( res);
+
+    if (res.status === "error") {
+      return res;
+    } else {
+      return {
+        status: "success",
+        message: "Success",
+        data: (res.data as any).tokens.items as GhostToken[],
+      };
+    }
+  };
   getPairTokenData = async (
     tokenAddress: string,
     chianId: string

@@ -342,6 +342,7 @@ class Swap {
     ) {
       return;
     }
+
     const fromAmountDecimals = new BigNumber(this.fromAmount)
       .multipliedBy(new BigNumber(10).pow(this.fromToken.decimals))
       .toFixed(0);
@@ -360,6 +361,7 @@ class Swap {
     ]);
 
     if (this.isWrapOrUnwrap) {
+      console.log("wrap or unwrap");
       if (this.isWrap) {
         // @ts-ignore
         await this.toToken.deposit.callV2({
@@ -370,6 +372,7 @@ class Swap {
         await this.toToken.withdraw.callV2([BigInt(fromAmountDecimals)]);
       }
     } else {
+      console.log("swapExactTokensForTokens");
       await Promise.all([
         this.fromToken.approveIfNoAllowance({
           amount: fromAmountDecimals,
@@ -696,6 +699,9 @@ class Swap {
   getNeedApprove = async () => {
     if (!this.fromToken || !this.fromAmount) {
       return;
+    }
+    if (this.isWrapOrUnwrap) {
+      return false
     }
 
     const fromAmountDecimals = new BigNumber(this.fromAmount)

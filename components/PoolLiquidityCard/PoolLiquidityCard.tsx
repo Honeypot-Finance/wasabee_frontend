@@ -21,8 +21,9 @@ import { useState } from "react";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
 import { popmodal } from "@/services/popmodal";
-import { Tooltip } from "@nextui-org/react";
+import { Tooltip, Button as NextButton } from "@nextui-org/react";
 import { toCompactLocaleString } from "@/lib/utils";
+import Image from "next/image";
 
 interface PoolLiquidityCardProps {
   pair: PairContract;
@@ -39,7 +40,7 @@ export const PoolLiquidityCard = observer(
     const router = useRouter();
 
     return (
-      <CardContianer autoSize={autoSize}>
+      <CardContianer autoSize={autoSize} addtionalClassName="flex-col">
         <motion.div
           initial={{
             x: -100,
@@ -155,7 +156,33 @@ export const PoolLiquidityCard = observer(
               ]}
             />
           </div>{" "}
-        </motion.div>
+        </motion.div>{" "}
+        {
+          // thpot and wbera can stake vault
+          pair.address.toLowerCase() ===
+            "0x28feC64EaBc1e4Af7f5cD33d2bd20b01D5E8f203".toLowerCase() && (
+            <div className="w-full">
+              <Link
+                target="_blank"
+                href={
+                  "https://bartio.station.berachain.com/gauge/0x12F45203b4dF96106fb18d557EE3224A4dC65637"
+                }
+              >
+                <NextButton className="flex items-center justify-center gap-2">
+                  <Image
+                    src="images\icons\tokens\bgt.svg"
+                    alt="Honey"
+                    width={24}
+                    height={24}
+                  />
+                  <span>
+                    Stake WBERA-tHPOT at BGT Station to earn BGT {`->`}
+                  </span>
+                </NextButton>
+              </Link>
+            </div>
+          )
+        }
       </CardContianer>
     );
   }

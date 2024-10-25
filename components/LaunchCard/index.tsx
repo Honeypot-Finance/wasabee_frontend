@@ -519,143 +519,147 @@ const TrendingLaunchCard = observer(
     projectType: projectType;
   }) => {
     return projectType === "meme" ? (
-      <CardContianer addtionalClassName="z-[-1]">
+      <CardContianer addtionalClassName="z-[-1] cursor-pointer">
         {(pair.bannerUrl || pair.logoUrl) && (
           <Image
-            className="opacity-[0.5] z-[-1]"
+            className="opacity-[0.5] z-[-1] "
             src={!!pair.bannerUrl ? pair.bannerUrl : pair.logoUrl}
             alt="banner"
             layout="fill"
             objectFit="cover"
           ></Image>
-        )}
-        <div className="flex w-full flex-col gap-2 justify-center items-center flex-grow-[1] basis-1">
-          <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
-            <Image
-              src={!!pair?.logoUrl ? pair.logoUrl : "/images/project_honey.png"}
-              alt="honey"
-              // fill
-              width={100}
-              height={100}
-              className="object-cover w-full h-full"
-            ></Image>
-          </div>
-          <h4 className="text-white text-center text-[1rem] font-bold flex items-center">
-            <div className=" relative">
-              {pair?.launchedToken?.name} <br />({pair?.launchedToken?.symbol})
-            </div>
-          </h4>{" "}
-          <motion.div className="flex flex-col items-center gap-1">
-            <h6 className="opacity-50 text-xs">Total raised</h6>
-            <div className="flex items-center gap-2 text-sm">
-              {/* <TotalRaisedSvg /> */}
-              <span className="font-bold">
-                {pair?.depositedRaisedToken
-                  ? pair.depositedRaisedToken.toFormat(0)
-                  : "-"}{" "}
-                /{" "}
-                {(pair as MemePairContract).raisedTokenMinCap &&
-                  ((pair as MemePairContract).raisedTokenMinCap
-                    ?.div(Math.pow(10, 18))
-                    .toFixed(0) ??
-                    0)}
-                &nbsp;
-                {pair?.raiseToken?.displayName}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              {/* <TotalRaisedSvg /> */}
-              <span className="font-bold">
-                {(pair as MemePairContract)?.depositedRaisedToken &&
-                (pair as MemePairContract).raisedTokenMinCap
-                  ? new BigNumber(
-                      (
-                        pair as MemePairContract
-                      ).depositedRaisedToken?.toNumber() ?? 0
-                    )
-                      .div(
-                        new BigNumber(
-                          (
-                            pair as MemePairContract
-                          ).raisedTokenMinCap?.toNumber() ?? 0
-                        ).div(Math.pow(10, 18))
-                      )
-                      .times(100)
-                      .toFixed(2)
-                  : "-"}{" "}
-                %
-              </span>
-            </div>{" "}
-            <div className="flex items-center gap-2 text-sm w-full">
-              <ProgressBar
-                value={
-                  pair?.depositedRaisedToken &&
-                  (pair as MemePairContract).raisedTokenMinCap
-                    ? (pair.depositedRaisedToken.toNumber() /
-                        (((
-                          pair as MemePairContract
-                        ).raisedTokenMinCap?.toNumber() ?? 0) /
-                          Math.pow(10, 18))) *
-                      100
-                    : 0
+        )}{" "}
+        <Link
+          href={`/launch-detail/${pair.address}`}
+          className="flex w-full flex-col gap-2 justify-center items-center flex-grow-[1] basis-1 "
+        >
+          <div className="flex w-full flex-col gap-2 justify-center items-center flex-grow-[1] basis-1">
+            <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
+              <Image
+                src={
+                  !!pair?.logoUrl ? pair.logoUrl : "/images/project_honey.png"
                 }
-              />
+                alt="honey"
+                // fill
+                width={100}
+                height={100}
+                className="object-cover w-full h-full"
+              ></Image>
             </div>
-          </motion.div>
-          <Link
-            href={`/launch-detail/${pair.address}`}
-            className="text-black font-bold px-[8px]"
-          >
-            <Button className="">View Token</Button>
-          </Link>
-        </div>
+            <h4 className="text-white text-center text-[1rem] font-bold flex items-center">
+              <div className=" relative">
+                {pair?.launchedToken?.name} <br />({pair?.launchedToken?.symbol}
+                )
+              </div>
+            </h4>{" "}
+            <motion.div className="flex flex-col items-center gap-1">
+              <h6 className="opacity-50 text-xs">Total raised</h6>
+              <div className="flex items-center gap-2 text-sm">
+                {/* <TotalRaisedSvg /> */}
+                <span className="font-bold">
+                  {pair?.depositedRaisedToken
+                    ? pair.depositedRaisedToken.toFormat(0)
+                    : "-"}{" "}
+                  /{" "}
+                  {(pair as MemePairContract).raisedTokenMinCap &&
+                    ((pair as MemePairContract).raisedTokenMinCap
+                      ?.div(Math.pow(10, 18))
+                      .toFixed(0) ??
+                      0)}
+                  &nbsp;
+                  {pair?.raiseToken?.displayName}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                {/* <TotalRaisedSvg /> */}
+                <span className="font-bold">
+                  {(pair as MemePairContract)?.depositedRaisedToken &&
+                  (pair as MemePairContract).raisedTokenMinCap
+                    ? new BigNumber(
+                        (
+                          pair as MemePairContract
+                        ).depositedRaisedToken?.toNumber() ?? 0
+                      )
+                        .div(
+                          new BigNumber(
+                            (
+                              pair as MemePairContract
+                            ).raisedTokenMinCap?.toNumber() ?? 0
+                          ).div(Math.pow(10, 18))
+                        )
+                        .times(100)
+                        .toFixed(2)
+                    : "-"}{" "}
+                  %
+                </span>
+              </div>{" "}
+              <div className="flex items-center gap-2 text-sm w-full">
+                <ProgressBar
+                  value={
+                    pair?.depositedRaisedToken &&
+                    (pair as MemePairContract).raisedTokenMinCap
+                      ? (pair.depositedRaisedToken.toNumber() /
+                          (((
+                            pair as MemePairContract
+                          ).raisedTokenMinCap?.toNumber() ?? 0) /
+                            Math.pow(10, 18))) *
+                        100
+                      : 0
+                  }
+                />
+              </div>
+            </motion.div>
+          </div>
+        </Link>
       </CardContianer>
     ) : (
-      <CardContianer addtionalClassName="z-[-1]">
+      <CardContianer addtionalClassName="z-[-1] cursor-pointer">
         {(pair.bannerUrl || pair.logoUrl) && (
           <Image
-            className="opacity-[0.5] z-[-1]"
+            className="opacity-[0.5] z-[-1] "
             src={!!pair.bannerUrl ? pair.bannerUrl : pair.logoUrl}
             alt="banner"
             layout="fill"
             objectFit="cover"
           ></Image>
         )}
-        <div className="flex flex-col gap-2 justify-center items-center flex-grow-[1] basis-1">
-          <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
-            <Image
-              src={!!pair?.logoUrl ? pair.logoUrl : "/images/project_honey.png"}
-              alt="honey"
-              width={100}
-              height={100}
-              className="object-cover w-full h-full"
-            ></Image>
+        <Link
+          href={`/launch-detail/${pair.address}`}
+          className="flex w-full flex-col gap-2 justify-center items-center flex-grow-[1] basis-1"
+        >
+          <div className="flex flex-col gap-2 justify-center items-center flex-grow-[1] basis-1">
+            <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
+              <Image
+                src={
+                  !!pair?.logoUrl ? pair.logoUrl : "/images/project_honey.png"
+                }
+                alt="honey"
+                width={100}
+                height={100}
+                className="object-cover w-full h-full"
+              ></Image>
+            </div>
+            <h4 className="text-white text-center text-[1rem] font-bold flex items-center">
+              <div className=" relative">
+                {pair?.launchedToken?.name} <br />({pair?.launchedToken?.symbol}
+                )
+              </div>
+            </h4>{" "}
+            <motion.div className="flex flex-col items-center gap-1">
+              <h6 className="opacity-50 text-xs">Total raised</h6>
+              <div className="flex items-center gap-2 text-sm">
+                {/* <TotalRaisedSvg /> */}
+                <span className="font-bold">
+                  {pair?.depositedRaisedToken
+                    ? pair.depositedRaisedToken.toFormat(0)
+                    : "-"}{" "}
+                  &nbsp;
+                  {pair?.raiseToken?.displayName}
+                </span>
+              </div>
+            </motion.div>
           </div>
-          <h4 className="text-white text-center text-[1rem] font-bold flex items-center">
-            <div className=" relative">
-              {pair?.launchedToken?.name} <br />({pair?.launchedToken?.symbol})
-            </div>
-          </h4>{" "}
-          <motion.div className="flex flex-col items-center gap-1">
-            <h6 className="opacity-50 text-xs">Total raised</h6>
-            <div className="flex items-center gap-2 text-sm">
-              {/* <TotalRaisedSvg /> */}
-              <span className="font-bold">
-                {pair?.depositedRaisedToken
-                  ? pair.depositedRaisedToken.toFormat(0)
-                  : "-"}{" "}
-                &nbsp;
-                {pair?.raiseToken?.displayName}
-              </span>
-            </div>
-          </motion.div>
-          <Link
-            href={`/launch-detail/${pair.address}`}
-            className="text-black font-bold px-[8px]"
-          >
-            <Button className="">View Token</Button>
-          </Link>
-        </div>
+        </Link>
       </CardContianer>
     );
   }

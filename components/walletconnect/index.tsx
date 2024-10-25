@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import Link from "next/link";
 import Image from "next/image";
+import { useConnect, useConnectors } from "wagmi";
 const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   return (
     <button
@@ -24,6 +25,9 @@ const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   );
 };
 export const WalletConnect = () => {
+  const { connect } = useConnect()
+  const connectors = useConnectors()
+  const mockConnector = connectors.find(connector => connector.id === 'mock')
   return (
     <ConnectButton.Custom>
       {({
@@ -57,7 +61,13 @@ export const WalletConnect = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <ConnectButtonCustom onClick={openConnectModal}>
+                  <ConnectButtonCustom onClick={() => {
+                    if (process.env.NEXT_PUBLIC_MOCK === 'true') {
+                      connect({ connector: mockConnector! })
+                    } else {
+                      openConnectModal()
+                    }
+                  }}>
                     <span className="flex w-[1rem] h-[1rem]">
                       <WalletSvg></WalletSvg>
                     </span>
@@ -147,6 +157,9 @@ export const WalletConnect = () => {
 };
 
 export const WalletConnectMobile = () => {
+  const { connect } = useConnect()
+  const connectors = useConnectors()
+  const mockConnector = connectors.find(connector => connector.id === 'mock')
   return (
     <ConnectButton.Custom>
       {({
@@ -180,7 +193,13 @@ export const WalletConnectMobile = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <ConnectButtonCustom onClick={openConnectModal}>
+                  <ConnectButtonCustom onClick={() => {
+                    if (process.env.NEXT_PUBLIC_MOCK === 'true') {
+                      connect({ connector: mockConnector! })
+                    } else {
+                      openConnectModal()
+                    }
+                  }}>
                     <span className="flex w-[1rem] h-[1rem]">
                       <WalletSvg></WalletSvg>
                     </span>

@@ -10,7 +10,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { isEthAddress } from "@/lib/address";
 import { wallet } from "@/services/wallet";
-import { Checkbox, Slider, Tab, Tabs } from "@nextui-org/react";
+import {
+  Checkbox,
+  Slider,
+  Tab,
+  Tabs,
+  Button as NextButton,
+} from "@nextui-org/react";
 import { Table } from "../table";
 import { ItemSelect, SelectState } from "../ItemSelect";
 import { SelectItem } from "../ItemSelect/index";

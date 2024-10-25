@@ -470,8 +470,12 @@ const FtoView = observer(() => {
           : new FtoPairContract({ address: pairAddress as string });
       console.log(pair);
       await pair.init();
-      pair.raiseToken?.init();
-      pair.launchedToken?.init();
+      pair.raiseToken?.init(true, {
+        loadIndexerTokenData: true,
+      });
+      pair.launchedToken?.init(true, {
+        loadIndexerTokenData: true,
+      });
       return pair;
     }),
   }));
@@ -961,8 +965,12 @@ const MemeView = observer(() => {
     pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
       const pair = new MemePairContract({ address: pairAddress as string });
       await pair.init();
-      pair.raiseToken?.init();
-      pair.launchedToken?.init();
+      pair.raiseToken?.init(true, {
+        loadIndexerTokenData: true,
+      });
+      pair.launchedToken?.init(true, {
+        loadIndexerTokenData: true,
+      });
       console.log(pair);
       return pair;
     }),

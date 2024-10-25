@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node server.mjs",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -88,8 +88,7 @@
     "tailwind-merge": "^2.3.0",
     "tween-functions": "^1.2.0",
     "viem": "^2.8.18",
-    "wagmi": "^2.12.25",
-    "web3modal": "^1.9.12",
+    "wagmi": "^2.5.12",
     "zod": "^3.22.4"
   },
   "devDependencies": {
