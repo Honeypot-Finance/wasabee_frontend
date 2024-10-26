@@ -22,7 +22,6 @@ import { ItemSelect, SelectState } from "../ItemSelect";
 import { SelectItem } from "../ItemSelect/index";
 import _ from "lodash";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
-import { Button as NextButton } from "@nextui-org/react";
 
 const AddLiquidity = observer(() => {
   return (
@@ -40,9 +39,8 @@ const AddLiquidity = observer(() => {
               max: liquidity.fromToken?.balance.toNumber(),
               min: 0,
               isInvalid:
-                (Number(liquidity.fromAmount) >
-                  (liquidity.fromToken as Token)?.balance?.toNumber() ??
-                  0) ||
+                Number(liquidity.fromAmount) >
+                  (liquidity.fromToken as Token)?.balance?.toNumber() ||
                 Number(liquidity.fromAmount) < 0,
               errorMessage: "Insufficient balance",
               onClear: () => {
@@ -97,9 +95,8 @@ const AddLiquidity = observer(() => {
               max: liquidity.toToken?.balance.toNumber(),
               min: 0,
               isInvalid:
-                (Number(liquidity.toAmount) >
-                  (liquidity.toToken as Token)?.balance?.toNumber() ??
-                  0) ||
+                Number(liquidity.toAmount) >
+                  (liquidity.toToken as Token)?.balance?.toNumber() ||
                 Number(liquidity.toAmount) < 0,
               errorMessage: "Insufficient balance",
               onClear: () => {

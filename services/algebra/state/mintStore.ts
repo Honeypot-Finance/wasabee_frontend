@@ -26,12 +26,13 @@ import { useCallback, useMemo } from "react";
 import { useAccount, useBalance } from "wagmi";
 import { create } from "zustand";
 import { PresetsType } from "@/types/algebra/types/presets";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 import {
   PoolStateType,
   usePool,
   PoolState,
 } from "@/lib/algebra/hooks/pools/usePool";
+import { createPositionV3 } from "@/services/createPosition";
 
 export type FullRange = true;
 

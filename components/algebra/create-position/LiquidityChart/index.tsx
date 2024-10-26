@@ -32,6 +32,13 @@ const LiquidityChart = ({
   priceLower,
   priceUpper,
 }: LiquidityChartProps) => {
+  // console.log("LiquidityChart params", {
+  //   currencyA,
+  //   currencyB,
+  //   currentPrice,
+  //   priceLower,
+  //   priceUpper,
+  // });
   const { preset } = useMintState();
 
   const [processedData, setProcessedData] = useState<any>(null);

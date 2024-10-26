@@ -7,13 +7,16 @@ import {
   DEFAULT_NATIVE_SYMBOL,
 } from "@/data/algebra/default-chain-id";
 import { useAlgebraToken } from "./useAlgebraToken";
+import { berachainBartioTestnetNetwork, networksMap } from "@/services/chain";
 
 export function useCurrency(
   address: Address | undefined,
   withNative?: boolean
 ): Currency | ExtendedNative | undefined {
-  const isWNative =
-    address?.toLowerCase() === WNATIVE[DEFAULT_CHAIN_ID].address.toLowerCase();
+  const isWNative = address
+    ? address.toLowerCase() ===
+      berachainBartioTestnetNetwork.nativeToken.address.toLowerCase()
+    : false;
 
   const isNative = address === ADDRESS_ZERO;
 

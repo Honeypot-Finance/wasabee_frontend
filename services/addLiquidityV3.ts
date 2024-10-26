@@ -24,9 +24,9 @@ class AddLiquidityV3 {
   createPool = new AsyncState<() => Promise<`0x${string}` | null>>(async () => {
     if (!this.token1 || !this.token2) return null;
     const newPool = await wallet.contracts.algebraFactory.createPool.call([
-      wallet.currentChain.contracts.pluginFactory as `0x${string}`,
       this.token1?.address as `0x${string}`,
       this.token2?.address as `0x${string}`,
+      wallet.currentChain.contracts.pluginFactory as `0x${string}`,
     ]);
     return null;
   });

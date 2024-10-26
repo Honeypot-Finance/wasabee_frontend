@@ -2,7 +2,7 @@ import { InitialPoolFee } from "@cryptoalgebra/integral-sdk";
 import { Pool } from "@cryptoalgebra/integral-sdk";
 import { Address } from "viem";
 import { useCurrency } from "../common/useCurrency";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Token } from "@/services/contract/token";
 import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
 import { observer } from "mobx-react-lite";
@@ -16,43 +16,67 @@ export const PoolState = {
 
 export type PoolStateType = (typeof PoolState)[keyof typeof PoolState];
 
-export function usePool(
-  address: Address | undefined
-): [PoolStateType, Pool | null] {
-  const pool = AlgebraPoolContract.getPool({ address: address as Address });
+export function usePool(address: Address): [PoolStateType, Pool | null] {
+  const [pool] = useState<AlgebraPoolContract | undefined>(
+    address ? AlgebraPoolContract.getPool({ address }) : undefined
+  );
 
   const {
     value: tickSpacing,
     loading: isTickSpacingLoading,
     error: isTickSpacingError,
-  } = pool.tickSpacing;
+  } = pool?.tickSpacing ?? {
+    tickSpacing: undefined,
+    isTickSpacingLoading: false,
+    isTickSpacingError: true,
+  };
 
   const {
     value: globalState,
     loading: isGlobalStateLoading,
     error: isGlobalStateError,
-  } = pool.globalState;
+  } = pool?.globalState ?? {
+    globalState: undefined,
+    isGlobalStateLoading: false,
+    isGlobalStateError: true,
+  };
 
   const {
     value: liquidity,
     loading: isLiquidityLoading,
     error: isLiquidityError,
-  } = pool.liquidity;
+  } = pool?.liquidity ?? {
+    liquidity: undefined,
+    isLiquidityLoading: false,
+    isLiquidityError: true,
+  };
 
   const {
     value: token0Address,
     loading: isLoadingToken0,
     error: isToken0Error,
-  } = pool.token0;
+  } = pool?.token0 ?? {
+    token0: undefined,
+    isLoadingToken0: false,
+    isToken0Error: true,
+  };
 
   const {
     value: token1Address,
     loading: isLoadingToken1,
     error: isToken1Error,
-  } = pool.token1;
+  } = pool?.token1 ?? {
+    token1: undefined,
+    isLoadingToken1: false,
+    isToken1Error: true,
+  };
 
-  const token0 = useCurrency(token0Address as Address | undefined);
-  const token1 = useCurrency(token1Address as Address | undefined);
+  const token0 = useCurrency(
+    token0Address?.address ? (token0Address.address as Address) : undefined
+  );
+  const token1 = useCurrency(
+    token1Address?.address ? (token1Address.address as Address) : undefined
+  );
 
   const isPoolError =
     isTickSpacingError ||

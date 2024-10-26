@@ -15,7 +15,7 @@ export function usePositionAPR(
   const nativePrice = 1;
 
   // Today fees
-  const poolDayFees = pool.globalState.value?.[2];
+  const poolDayFees = pool?.globalState.value?.[2];
 
   // Avg fees
   // const poolDayFees = poolFeeData && Boolean(poolFeeData.poolDayDatas.length) && poolFeeData.poolDayDatas.reduce((acc, v) => acc + Number(v.feesUSD), 0) / poolFeeData.poolDayDatas.length
@@ -24,7 +24,7 @@ export function usePositionAPR(
 
   const liquidityRelation =
     position &&
-    pool.liquidity.value &&
+    pool?.liquidity.value &&
     Number(position.liquidity.toString()) /
       (Number(pool.liquidity.value) +
         (positionId ? 0 : Number(position.liquidity.toString())));

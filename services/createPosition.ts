@@ -12,6 +12,10 @@ class CreatePositionV3 {
   constructor() {
     makeAutoObservable(this);
   }
+
+  setPool(pool: AlgebraPoolContract) {
+    this.pool = pool;
+  }
 }
 
 export const createPositionV3 = new CreatePositionV3();

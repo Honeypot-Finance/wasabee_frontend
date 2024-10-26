@@ -39,7 +39,10 @@ export function useInfoTickData() {
     let surroundingTicksResult: any = [];
 
     const pool = AlgebraPoolContract.getPool({ address: poolAddress });
-    await pool.init();
+    await pool?.init();
+    if (!pool) {
+      return { loading: true, ticks: surroundingTicksResult };
+    }
 
     do {
       let skip = 0;
@@ -72,7 +75,10 @@ export function useInfoTickData() {
     }).toLowerCase() as Address;
 
     const pool = AlgebraPoolContract.getPool({ address: poolId });
-    await pool.init();
+    await pool?.init();
+    if (!pool) {
+      return;
+    }
 
     try {
       if (

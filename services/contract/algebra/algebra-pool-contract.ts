@@ -21,6 +21,7 @@ export class AlgebraPoolContract implements BaseContract {
     address: string;
     force?: boolean;
   } & Partial<AlgebraPoolContract>) {
+    if (!address) return;
     const lowerAddress = address.toLowerCase();
     const key = `${lowerAddress}`;
     const pool = AlgebraPoolContract.poolMap[key];
@@ -39,20 +40,32 @@ export class AlgebraPoolContract implements BaseContract {
   name: string = "";
   abi = algebraPoolABI;
   isInit = false;
+
+  get contract() {
+    return getContract({
+      address: this.address as `0x${string}`,
+      abi: this.abi,
+      client: { public: wallet.publicClient, wallet: wallet.walletClient },
+    });
+  }
+
   token0 = new AsyncState<
     (options?: { force?: boolean }) => Promise<Token | undefined>
   >(async (options) => {
     if (this.token0.value && !options?.force) return;
 
     const token0Address = await this.contract.read.token0();
+    console.log("token0Address", token0Address);
     return Token.getToken({ address: token0Address });
   });
+
   token1 = new AsyncState<
     (options?: { force?: boolean }) => Promise<Token | undefined>
   >(async (options) => {
     if (this.token1.value && !options?.force) return;
 
     const token1Address = await this.contract.read.token1();
+    console.log("token1Address", token1Address);
     return Token.getToken({ address: token1Address });
   });
 
@@ -72,14 +85,6 @@ export class AlgebraPoolContract implements BaseContract {
     return await this.contract.read.liquidity();
   });
 
-  get contract() {
-    return getContract({
-      address: this.address as `0x${string}`,
-      abi: this.abi,
-      client: { public: wallet.publicClient, wallet: wallet.walletClient },
-    });
-  }
-
   constructor(args: Partial<AlgebraPoolContract>) {
     Object.assign(this, args);
     makeAutoObservable(this);
@@ -91,11 +96,13 @@ export class AlgebraPoolContract implements BaseContract {
     this.isInit = false;
 
     await Promise.all([
-      this.token0.call(),
-      this.token1.call(),
-      this.tickSpacing.call(),
-      this.globalState.call(),
-      this.liquidity.call(),
+      await this.token0.call(),
+      await this.token1.call(),
+      await this.tickSpacing.call(),
+      await this.globalState.call(),
+      await this.liquidity.call(),
+      await this.token0.value?.init(),
+      await this.token1.value?.init(),
     ]);
 
     this.isInit = true;

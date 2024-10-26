@@ -17,31 +17,59 @@ import { ManageLiquidity } from "@/types/algebra/types/manage-liquidity";
 import { Bound } from "@cryptoalgebra/integral-sdk";
 import { useMemo, useEffect } from "react";
 import { Address, zeroAddress } from "viem";
+import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
+import { observer } from "mobx-react-lite";
+import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
+import { wallet } from "@/services/wallet";
 
-const NewPositionPage = () => {
+const NewPositionPage = observer(() => {
+  useEffect(() => {
+    if (!wallet.isInit) return;
+    const pool = AlgebraPoolContract.getPool({
+      address: "0xcBCfA5C6dfED7C5950B070e653E59f1e88954841" as Address,
+    });
+    if (!pool) return;
+    createPositionV3.setPool(pool);
+    pool.init();
+  }, [wallet.isInit]);
+
   const currencyA = useCurrency(
-    createPositionV3.pool?.token0.value?.address as Address,
+    createPositionV3.pool?.token0.value?.address
+      ? (createPositionV3.pool?.token0.value.address as Address)
+      : undefined,
     true
   );
+
   const currencyB = useCurrency(
-    createPositionV3.pool?.token1.value?.address as Address,
+    createPositionV3.pool?.token1.value?.address
+      ? (createPositionV3.pool?.token1.value.address as Address)
+      : undefined,
     true
   );
 
   const mintInfo = useDerivedMintInfo(
     currencyA ?? undefined,
     currencyB ?? undefined,
-    (createPositionV3.pool?.address ?? zeroAddress) as Address,
+    createPositionV3.pool?.address
+      ? (createPositionV3.pool?.address as Address)
+      : undefined,
     INITIAL_POOL_FEE,
     currencyA ?? undefined,
     undefined
   );
+  // console.log(
+  //   "createPositionV3.pool?.token0.value.address",
+  //   createPositionV3.pool?.token0.value?.address
+  // );
+  // console.log(currencyA, currencyB);
+  // console.log(createPositionV3.pool);
+  console.log(mintInfo);
 
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } =
     mintInfo.pricesAtTicks;
 
   const price = useMemo(() => {
-    if (!mintInfo.price) return;
+    if (!mintInfo.price || !createPositionV3.pool?.address) return;
 
     return mintInfo.invertPrice
       ? mintInfo.price.invert().toSignificant(5)
@@ -49,7 +77,7 @@ const NewPositionPage = () => {
   }, [mintInfo]);
 
   const currentPrice = useMemo(() => {
-    if (!mintInfo.price) return;
+    if (!mintInfo.price || !createPositionV3.pool?.address) return;
 
     if (Number(price) <= 0.0001) {
       return `< 0.0001 ${currencyB?.symbol}`;
@@ -89,7 +117,9 @@ const NewPositionPage = () => {
     };
   }, []);
 
-  return (
+  return createPositionV3.pool?.isInit &&
+    createPositionV3.pool.token0.value?.address &&
+    createPositionV3.pool.token1.value?.address ? (
     <PageContainer>
       <PageTitle title={"Create Position"} />
 
@@ -155,7 +185,9 @@ const NewPositionPage = () => {
         </div>
       </div>
     </PageContainer>
+  ) : (
+    <LoadingDisplay />
   );
-};
+});
 
 export default NewPositionPage;
