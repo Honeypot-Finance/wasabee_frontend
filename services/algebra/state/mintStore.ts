@@ -1,38 +1,37 @@
 import {
+  PoolStateType,
+  usePool,
+  PoolState,
+} from "@/lib/algebra/hooks/pools/usePool";
+import { PresetsType } from "@/types/algebra/types/presets";
+import {
+  ADDRESS_ZERO,
   Currency,
   CurrencyAmount,
   Pool,
   Position,
   Price,
   Token,
-} from "@cryptoalgebra/integral-sdk";
+} from "@cryptoalgebra/custom-pools-sdk";
 
-import { ZERO } from "@cryptoalgebra/integral-sdk";
-import { InitialPoolFee } from "@cryptoalgebra/integral-sdk";
+import { ZERO } from "@cryptoalgebra/custom-pools-sdk";
 
-import { Bound, Field, Rounding } from "@cryptoalgebra/integral-sdk";
-import { tryParseAmount, tryParseTick } from "@cryptoalgebra/integral-sdk";
+import { Bound, Field, Rounding } from "@cryptoalgebra/custom-pools-sdk";
+import { tryParseAmount, tryParseTick } from "@cryptoalgebra/custom-pools-sdk";
 import {
   tickToPrice,
   priceToClosestTick,
   nearestUsableTick,
   encodeSqrtRatioX96,
   TickMath,
-} from "@cryptoalgebra/integral-sdk";
+} from "@cryptoalgebra/custom-pools-sdk";
 
-import { getTickToPrice } from "@cryptoalgebra/integral-sdk";
+import { getTickToPrice } from "@cryptoalgebra/custom-pools-sdk";
+import { Address } from "viem";
 
 import { useCallback, useMemo } from "react";
 import { useAccount, useBalance } from "wagmi";
 import { create } from "zustand";
-import { PresetsType } from "@/types/algebra/types/presets";
-import { Address, zeroAddress } from "viem";
-import {
-  PoolStateType,
-  usePool,
-  PoolState,
-} from "@/lib/algebra/hooks/pools/usePool";
-import { createPositionV3 } from "@/services/createPosition";
 
 export type FullRange = true;
 
@@ -207,7 +206,7 @@ export function useDerivedMintInfo(
   currencyA?: Currency,
   currencyB?: Currency,
   poolAddress?: Address,
-  feeAmount?: InitialPoolFee,
+  feeAmount?: number,
   baseCurrency?: Currency,
   existingPosition?: Position
 ): IDerivedMintInfo {
@@ -346,6 +345,7 @@ export function useDerivedMintInfo(
         tokenB,
         feeAmount,
         currentSqrt,
+        ADDRESS_ZERO,
         0,
         currentTick,
         60,
@@ -384,40 +384,40 @@ export function useDerivedMintInfo(
         typeof existingPosition?.tickLower === "number"
           ? existingPosition.tickLower
           : (invertPrice && typeof rightRangeTypedValue === "boolean") ||
-            (!invertPrice && typeof leftRangeTypedValue === "boolean")
-          ? tickSpaceLimits[Bound.LOWER]
-          : invertPrice
-          ? tryParseTick(
-              token1,
-              token0,
-              rightRangeTypedValue.toString(),
-              tickSpacing
-            )
-          : tryParseTick(
-              token0,
-              token1,
-              leftRangeTypedValue.toString(),
-              tickSpacing
-            ),
+              (!invertPrice && typeof leftRangeTypedValue === "boolean")
+            ? tickSpaceLimits[Bound.LOWER]
+            : invertPrice
+              ? tryParseTick(
+                  token1,
+                  token0,
+                  rightRangeTypedValue.toString(),
+                  tickSpacing
+                )
+              : tryParseTick(
+                  token0,
+                  token1,
+                  leftRangeTypedValue.toString(),
+                  tickSpacing
+                ),
       [Bound.UPPER]:
         typeof existingPosition?.tickUpper === "number"
           ? existingPosition.tickUpper
           : (!invertPrice && typeof rightRangeTypedValue === "boolean") ||
-            (invertPrice && typeof leftRangeTypedValue === "boolean")
-          ? tickSpaceLimits[Bound.UPPER]
-          : invertPrice
-          ? tryParseTick(
-              token1,
-              token0,
-              leftRangeTypedValue.toString(),
-              tickSpacing
-            )
-          : tryParseTick(
-              token0,
-              token1,
-              rightRangeTypedValue.toString(),
-              tickSpacing
-            ),
+              (invertPrice && typeof leftRangeTypedValue === "boolean")
+            ? tickSpaceLimits[Bound.UPPER]
+            : invertPrice
+              ? tryParseTick(
+                  token1,
+                  token0,
+                  leftRangeTypedValue.toString(),
+                  tickSpacing
+                )
+              : tryParseTick(
+                  token0,
+                  token1,
+                  rightRangeTypedValue.toString(),
+                  tickSpacing
+                ),
     };
   }, [
     existingPosition,
@@ -436,8 +436,8 @@ export function useDerivedMintInfo(
   // specifies whether the lower and upper ticks is at the exteme bounds
   const ticksAtLimit = useMemo(
     () => ({
-      [Bound.LOWER]: feeAmount && tickLower === tickSpaceLimits.LOWER,
-      [Bound.UPPER]: feeAmount && tickUpper === tickSpaceLimits.UPPER,
+      [Bound.LOWER]: Boolean(feeAmount) && tickLower === tickSpaceLimits.LOWER,
+      [Bound.UPPER]: Boolean(feeAmount) && tickUpper === tickSpaceLimits.UPPER,
     }),
     [tickSpaceLimits, tickLower, tickUpper, feeAmount]
   );

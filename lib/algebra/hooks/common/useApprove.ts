@@ -1,26 +1,38 @@
-import { ALGEBRA_ROUTER } from "@/data/algebra/addresses";
-import { TransactionType } from "@/services/algebra/state/pendingTransactionsStore";
+import { useMemo } from "react";
 import {
-  ApprovalStateType,
-  ApprovalState,
-} from "@/types/algebra/types/approve-state";
-import {
-  CurrencyAmount,
   Currency,
+  CurrencyAmount,
+  Percent,
   Trade,
   TradeType,
-  Percent,
-} from "@cryptoalgebra/integral-sdk";
-import { Address } from "viem";
-import { useMemo } from "react";
-import { useContractWrite } from "wagmi";
-import { formatBalance } from "../../utils/common/formatBalance";
+} from "@cryptoalgebra/custom-pools-sdk";
+import {
+  Currency as CurrencyBN,
+  CurrencyAmount as CurrencyAmountBN,
+  Percent as PercentBN,
+  SmartRouter,
+  SmartRouterTrade,
+} from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
+import {
+  Address,
+  erc20ABI,
+  useContractWrite,
+  usePrepareContractWrite,
+} from "wagmi";
+
+import { ALGEBRA_ROUTER } from "@/constants/addresses";
+import { ApprovalState, ApprovalStateType } from "@/types/approve-state";
+
 import { useNeedAllowance } from "./useNeedAllowance";
 import { useTransactionAwait } from "./useTransactionAwait";
-import { erc20Abi } from "viem";
+import { TransactionType } from "@/state/pendingTransactionsStore.ts";
+import { formatBalance } from "@/utils/common/formatBalance.ts";
 
 export function useApprove(
-  amountToApprove: CurrencyAmount<Currency> | undefined,
+  amountToApprove:
+    | CurrencyAmount<Currency>
+    | CurrencyAmountBN<CurrencyBN>
+    | undefined,
   spender: Address
 ) {
   const token = amountToApprove?.currency?.isToken
@@ -35,7 +47,19 @@ export function useApprove(
     return needAllowance ? ApprovalState.NOT_APPROVED : ApprovalState.APPROVED;
   }, [amountToApprove, needAllowance, spender]);
 
-  const { data: approvalData, writeAsync: approve } = useContractWrite();
+  const { config } = usePrepareContractWrite({
+    address: amountToApprove
+      ? (amountToApprove.currency.wrapped.address as Address)
+      : undefined,
+    abi: erc20ABI,
+    functionName: "approve",
+    args: [
+      spender,
+      amountToApprove ? BigInt(amountToApprove.quotient.toString()) : 0,
+    ] as [Address, bigint],
+  });
+
+  const { data: approvalData, writeAsync: approve } = useContractWrite(config);
 
   const { isLoading, isSuccess } = useTransactionAwait(approvalData?.hash, {
     title: `Approve ${formatBalance(
@@ -66,5 +90,29 @@ export function useApproveCallbackFromTrade(
         : undefined,
     [trade, allowedSlippage]
   );
+  return useApprove(amountToApprove, ALGEBRA_ROUTER);
+}
+
+export function useApproveCallbackFromSmartTrade(
+  trade: SmartRouterTrade<TradeType> | undefined,
+  allowedSlippage: Percent
+) {
+  const allowedSlippageBN = useMemo(
+    () =>
+      new PercentBN(
+        BigInt(allowedSlippage.numerator.toString()),
+        BigInt(allowedSlippage.denominator.toString())
+      ),
+    [allowedSlippage]
+  );
+
+  const amountToApprove = useMemo(
+    () =>
+      trade && trade.inputAmount.currency.isToken
+        ? SmartRouter.maximumAmountIn(trade, allowedSlippageBN)
+        : undefined,
+    [trade, allowedSlippageBN]
+  );
+
   return useApprove(amountToApprove, ALGEBRA_ROUTER);
 }

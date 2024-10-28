@@ -55,8 +55,10 @@ export class AlgebraPoolContract implements BaseContract {
     if (this.token0.value && !options?.force) return;
 
     const token0Address = await this.contract.read.token0();
-    console.log("token0Address", token0Address);
-    return Token.getToken({ address: token0Address });
+    const token = Token.getToken({ address: token0Address });
+    await token.init();
+
+    return token;
   });
 
   token1 = new AsyncState<
@@ -65,8 +67,10 @@ export class AlgebraPoolContract implements BaseContract {
     if (this.token1.value && !options?.force) return;
 
     const token1Address = await this.contract.read.token1();
-    console.log("token1Address", token1Address);
-    return Token.getToken({ address: token1Address });
+    const token = Token.getToken({ address: token1Address });
+    await token.init();
+
+    return token;
   });
 
   ticks = async (skip: number) => {
@@ -101,8 +105,6 @@ export class AlgebraPoolContract implements BaseContract {
       await this.tickSpacing.call(),
       await this.globalState.call(),
       await this.liquidity.call(),
-      await this.token0.value?.init(),
-      await this.token1.value?.init(),
     ]);
 
     this.isInit = true;

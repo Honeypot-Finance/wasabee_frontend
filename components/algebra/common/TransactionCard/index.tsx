@@ -46,10 +46,7 @@ export const TransactionCard = ({ hash, transaction }: { hash: Address, transact
                             currencyA ?
                             <span className="text-sm">{currencyA.symbol}</span>
                             :
-                            transaction.data.tokenId ? 
-                            <span className="text-sm">Position #{transaction.data.tokenId}</span>
-                            :
-                            <span className="text-sm">{truncateHash(hash as Address)}</span>
+                            <span>{truncateHash(hash as Address)}</span>
                         }
                     </div>
                     {

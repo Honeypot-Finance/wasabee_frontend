@@ -1,11 +1,14 @@
-import { InitialPoolFee } from "@cryptoalgebra/integral-sdk";
-import { Pool } from "@cryptoalgebra/integral-sdk";
-import { Address } from "viem";
+import {
+  useReadAlgebraPoolGlobalState,
+  useReadAlgebraPoolLiquidity,
+  useReadAlgebraPoolTickSpacing,
+  useReadAlgebraPoolToken0,
+  useReadAlgebraPoolToken1,
+} from "@/wagmi-generated";
+import { Pool } from "@cryptoalgebra/custom-pools-sdk";
+import { Address, zeroAddress } from "viem";
 import { useCurrency } from "../common/useCurrency";
-import { useMemo, useState } from "react";
-import { Token } from "@/services/contract/token";
-import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
-import { observer } from "mobx-react-lite";
+import { useMemo } from "react";
 
 export const PoolState = {
   LOADING: "LOADING",
@@ -16,67 +19,57 @@ export const PoolState = {
 
 export type PoolStateType = (typeof PoolState)[keyof typeof PoolState];
 
-export function usePool(address: Address): [PoolStateType, Pool | null] {
-  const [pool] = useState<AlgebraPoolContract | undefined>(
-    address ? AlgebraPoolContract.getPool({ address }) : undefined
-  );
+export function usePool(
+  address: Address | undefined
+): [PoolStateType, Pool | null] {
+  const {
+    data: tickSpacing,
+    isLoading: isTickSpacingLoading,
+    isError: isTickSpacingError,
+  } = useReadAlgebraPoolTickSpacing({
+    address,
+  });
+  const {
+    data: globalState,
+    isLoading: isGlobalStateLoading,
+    isError: isGlobalStateError,
+  } = useReadAlgebraPoolGlobalState({
+    address,
+  });
+  const {
+    data: liquidity,
+    isLoading: isLiquidityLoading,
+    isError: isLiquidityError,
+  } = useReadAlgebraPoolLiquidity({
+    address,
+  });
 
   const {
-    value: tickSpacing,
-    loading: isTickSpacingLoading,
-    error: isTickSpacingError,
-  } = pool?.tickSpacing ?? {
-    tickSpacing: undefined,
-    isTickSpacingLoading: false,
-    isTickSpacingError: true,
-  };
-
+    data: token0Address,
+    isLoading: isLoadingToken0,
+    isError: isToken0Error,
+  } = useReadAlgebraPoolToken0({
+    address,
+  });
   const {
-    value: globalState,
-    loading: isGlobalStateLoading,
-    error: isGlobalStateError,
-  } = pool?.globalState ?? {
-    globalState: undefined,
-    isGlobalStateLoading: false,
-    isGlobalStateError: true,
-  };
+    data: token1Address,
+    isLoading: isLoadingToken1,
+    isError: isToken1Error,
+  } = useReadAlgebraPoolToken1({
+    address,
+  });
 
-  const {
-    value: liquidity,
-    loading: isLiquidityLoading,
-    error: isLiquidityError,
-  } = pool?.liquidity ?? {
-    liquidity: undefined,
-    isLiquidityLoading: false,
-    isLiquidityError: true,
-  };
+  // const { data: poolDeployer, loading: isPoolDeployerLoading, error: isPoolDeployerError } = useCustomPoolDeployerQuery({
+  //   variables: {
+  //     poolId: address?.toLowerCase() || ''
+  //   }
+  // })
 
-  const {
-    value: token0Address,
-    loading: isLoadingToken0,
-    error: isToken0Error,
-  } = pool?.token0 ?? {
-    token0: undefined,
-    isLoadingToken0: false,
-    isToken0Error: true,
-  };
+  const isPoolDeployerLoading = false;
+  const isPoolDeployerError = false;
 
-  const {
-    value: token1Address,
-    loading: isLoadingToken1,
-    error: isToken1Error,
-  } = pool?.token1 ?? {
-    token1: undefined,
-    isLoadingToken1: false,
-    isToken1Error: true,
-  };
-
-  const token0 = useCurrency(
-    token0Address?.address ? (token0Address.address as Address) : undefined
-  );
-  const token1 = useCurrency(
-    token1Address?.address ? (token1Address.address as Address) : undefined
-  );
+  const token0 = useCurrency(token0Address);
+  const token1 = useCurrency(token1Address);
 
   const isPoolError =
     isTickSpacingError ||
@@ -84,6 +77,7 @@ export function usePool(address: Address): [PoolStateType, Pool | null] {
     isLiquidityError ||
     isToken0Error ||
     isToken1Error ||
+    isPoolDeployerError ||
     !address;
 
   const isPoolLoading =
@@ -91,7 +85,8 @@ export function usePool(address: Address): [PoolStateType, Pool | null] {
     isGlobalStateLoading ||
     isLiquidityLoading ||
     isLoadingToken0 ||
-    isLoadingToken1;
+    isLoadingToken1 ||
+    isPoolDeployerLoading;
   const isTokensLoading = !token0 || !token1;
 
   return useMemo(() => {
@@ -101,7 +96,12 @@ export function usePool(address: Address): [PoolStateType, Pool | null] {
     if (!tickSpacing || !globalState || liquidity === undefined)
       return [PoolState.NOT_EXISTS, null];
 
-    if (globalState[0] === BigInt(0) || !token0 || !token1)
+    if (
+      globalState[0] === BigInt(0) ||
+      !token0 ||
+      !token1
+      //|| !poolDeployer?.pool
+    )
       return [PoolState.NOT_EXISTS, null];
 
     try {
@@ -110,8 +110,11 @@ export function usePool(address: Address): [PoolStateType, Pool | null] {
         new Pool(
           token0.wrapped,
           token1.wrapped,
-          globalState[2] as InitialPoolFee,
+          globalState[2],
           globalState[0].toString(),
+
+          zeroAddress,
+          // poolDeployer.pool.deployer,
           Number(liquidity),
           globalState[1],
           tickSpacing
@@ -126,6 +129,8 @@ export function usePool(address: Address): [PoolStateType, Pool | null] {
     globalState,
     liquidity,
     tickSpacing,
+    // poolDeployer
+    zeroAddress,
     isPoolError,
     isPoolLoading,
     isTokensLoading,

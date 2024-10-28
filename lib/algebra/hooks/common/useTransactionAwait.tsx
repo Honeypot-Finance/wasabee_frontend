@@ -1,21 +1,20 @@
+import { ExternalLinkIcon } from "lucide-react";
+import { useEffect } from "react";
+import Link from "next/link";
+import { useAccount, useTransactionReceipt } from "wagmi";
+import { Address } from "viem";
 import { ToastAction } from "@/components/algebra/ui/toast";
-import { WrappedToastify } from "@/lib/wrappedToastify";
 import {
   TransactionInfo,
   usePendingTransactionsStore,
 } from "@/services/algebra/state/pendingTransactionsStore";
-import { Address } from "cluster";
-import { Link, ExternalLinkIcon } from "lucide-react";
-import { wrap } from "module";
-import { useEffect } from "react";
-import { useToast } from "react-toastify";
-import { useAccount, useTransaction } from "wagmi";
+import { useToast } from "@/components/algebra/ui/use-toast";
 
 export const ViewTxOnExplorer = ({ hash }: { hash: Address | undefined }) =>
   hash ? (
     <ToastAction altText="View on explorer" asChild>
       <Link
-        to={`https://holesky.etherscan.io/tx/${hash}`}
+        href={`https://holesky.etherscan.io/tx/${hash}`}
         target={"_blank"}
         className="border-none gap-2 hover:bg-transparent hover:text-blue-400"
       >
@@ -32,19 +31,24 @@ export function useTransactionAwait(
   transactionInfo: TransactionInfo,
   redirectPath?: string
 ) {
+  const { toast } = useToast();
+
   const { address: account } = useAccount();
 
   const {
     actions: { addPendingTransaction, updatePendingTransaction },
   } = usePendingTransactionsStore();
 
-  const { data, isError, isLoading, isSuccess } = useTransaction(hash);
+  const { data, isError, isLoading, isSuccess } = useTransactionReceipt({
+    hash,
+  });
 
   useEffect(() => {
     if (isLoading && hash && account) {
-      WrappedToastify.info({
+      toast({
         title: transactionInfo.title,
-        message: transactionInfo.description || "Transaction was sent",
+        description: transactionInfo.description || "Transaction was sent",
+        action: <ViewTxOnExplorer hash={hash} />,
       });
       addPendingTransaction(account, hash);
       updatePendingTransaction(account, hash, {
@@ -58,29 +62,24 @@ export function useTransactionAwait(
 
   useEffect(() => {
     if (isError && hash) {
-      WrappedToastify.info({
+      toast({
         title: transactionInfo.title,
-        message: (
-          <div>
-            {transactionInfo.description || "Transaction failed"}
-            <ViewTxOnExplorer hash={hash} />
-          </div>
-        ),
+        description: transactionInfo.description || "Transaction failed",
+        action: <ViewTxOnExplorer hash={hash} />,
       });
     }
   }, [isError]);
 
   useEffect(() => {
     if (isSuccess && hash) {
-      WrappedToastify.info({
+      toast({
         title: transactionInfo.title,
-        message: (
-          <div>
-            {transactionInfo.description || "Transaction confirmed"}
-            <ViewTxOnExplorer hash={hash} />
-          </div>
-        ),
+        description: transactionInfo.description || "Transaction confirmed",
+        action: <ViewTxOnExplorer hash={hash} />,
       });
+      if (redirectPath) {
+        window.location.href = redirectPath;
+      }
     }
   }, [isSuccess]);
 

@@ -10,7 +10,7 @@ import { usePosition, usePositions } from "@/hooks/positions/usePositions";
 import { useBurnActionHandlers, useBurnState, useDerivedBurnInfo } from "@/state/burnStore";
 import { TransactionType } from "@/state/pendingTransactionsStore";
 import { useUserState } from "@/state/userStore";
-import { NonfungiblePositionManager, Percent } from "@cryptoalgebra/integral-sdk";
+import { NonfungiblePositionManager, Percent } from "@cryptoalgebra/custom-pools-sdk";
 import { useEffect, useMemo, useState } from "react";
 import { Address, useAccount, useContractWrite } from "wagmi";
 
@@ -87,7 +87,7 @@ const RemoveLiquidityModal = ({ positionId }: RemoveLiquidityModalProps) => {
     const { isLoading: isRemoveLoading, isSuccess } = useTransactionAwait(
         removeLiquidityData?.hash,
         {
-            title: 'Removing liquidity',
+            title: 'Remove liquidity',
             tokenA: position?.token0 as Address,
             tokenB: position?.token1 as Address,
             type: TransactionType.POOL

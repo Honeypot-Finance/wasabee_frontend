@@ -13,8 +13,6 @@ import { MemeFactoryContract } from "./contract/memefactory-contract";
 import { MEMEFacadeContract } from "./contract/memefacade-contract";
 import { init } from "next/dist/compiled/webpack/webpack";
 import { AlgebraFactoryContract } from "./contract/algebra/algebra-factory-contract";
-import { AlgebraPoolDeployerContract } from "./contract/algebra/algebra-pooldeployer-contract";
-
 export class Wallet {
   account: string = "";
   accountShort = "";
@@ -31,15 +29,18 @@ export class Wallet {
     memeFacade: MEMEFacadeContract;
     //Algebra
     algebraFactory: AlgebraFactoryContract;
-    algebraPoolDeployer: AlgebraPoolDeployerContract;
+    //algebraPoolDeployer: AlgebraPoolDeployerContract;
   } = {} as any;
   publicClient!: PublicClient;
   isInit = false;
   get networksMap() {
-    return this.networks.reduce((acc, network) => {
-      acc[network.chainId] = network;
-      return acc;
-    }, {} as Record<number, Network>);
+    return this.networks.reduce(
+      (acc, network) => {
+        acc[network.chainId] = network;
+        return acc;
+      },
+      {} as Record<number, Network>
+    );
   }
 
   get currentChain() {
@@ -91,9 +92,9 @@ export class Wallet {
       algebraFactory: new AlgebraFactoryContract({
         address: this.currentChain.contracts.algebraFactory,
       }),
-      algebraPoolDeployer: new AlgebraPoolDeployerContract({
-        address: this.currentChain.contracts.algebraPoolDeployer,
-      }),
+      // algebraPoolDeployer: new AlgebraPoolDeployerContract({
+      //   address: this.currentChain.contracts.algebraPoolDeployer,
+      // }),
     };
     this.publicClient = createPublicClientByChain(this.currentChain.chain);
     this.walletClient = walletClient;
