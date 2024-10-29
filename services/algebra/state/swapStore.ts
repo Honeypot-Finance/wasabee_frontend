@@ -1,39 +1,35 @@
-import { STABLECOINS } from "@/data/algebra/tokens";
-import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
+import { STABLECOINS } from "@/constants/tokens";
+import {
+  useAlgebraPoolGlobalState,
+  useAlgebraPoolTickSpacing,
+} from "@/generated";
+import { useCurrency } from "@/hooks/common/useCurrency";
 import {
   useBestTradeExactIn,
   useBestTradeExactOut,
-} from "@/lib/algebra/hooks/swap/useBestTrade";
-import useSwapSlippageTolerance from "@/lib/algebra/hooks/swap/useSwapSlippageTolerance";
-import { SwapFieldType, SwapField } from "@/types/algebra/types/swap-field";
-import { TradeStateType } from "@/types/algebra/types/trade-state";
+} from "@/hooks/swap/useBestTrade";
+import useSwapSlippageTolerance from "@/hooks/swap/useSwapSlippageTolerance";
+import { SwapField, SwapFieldType } from "@/types/swap-field";
+import { TradeStateType } from "@/types/trade-state";
 import {
   ADDRESS_ZERO,
   Currency,
   CurrencyAmount,
   Percent,
   TickMath,
-  Token,
   Trade,
   TradeType,
   computePoolAddress,
 } from "@cryptoalgebra/custom-pools-sdk";
-import { Address, zeroAddress } from "viem";
-import { create } from "zustand";
-import { useCallback, useMemo } from "react";
-import { Account, parseUnits } from "viem";
-import { useAccount, useBalance } from "wagmi";
-import JSBI from "jsbi";
 import {
   Currency as CurrencyBN,
   CurrencyAmount as CurrencyAmountBN,
 } from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
-import {
-  useReadAlgebraFactoryComputePoolAddress,
-  useReadAlgebraPoolGlobalState,
-  useReadAlgebraPoolTickSpacing,
-} from "@/wagmi-generated";
-import { DEFAULT_CHAIN_ID } from "@/data/algebra/default-chain-id";
+import JSBI from "jsbi";
+import { useCallback, useMemo } from "react";
+import { parseUnits } from "viem";
+import { Address, useAccount, useBalance } from "wagmi";
+import { create } from "zustand";
 
 interface SwapState {
   readonly independentField: SwapFieldType;
@@ -84,7 +80,7 @@ export const useSwapState = create<SwapState>((set, get) => ({
     currencyId: ADDRESS_ZERO,
   },
   [SwapField.OUTPUT]: {
-    currencyId: STABLECOINS.USDT.address as Address,
+    currencyId: STABLECOINS.USDT.address as Account,
   },
   wasInverted: false,
   lastFocusedField: SwapField.INPUT,
@@ -150,8 +146,8 @@ export function useSwapActionHandlers(): {
         currency.isToken
           ? currency.address
           : currency.isNative
-            ? ADDRESS_ZERO
-            : ""
+          ? ADDRESS_ZERO
+          : ""
       ),
     []
   );
@@ -254,10 +250,12 @@ export function useDerivedSwapInfo(): IDerivedSwapInfo {
   const { data: inputCurrencyBalance } = useBalance({
     address: account,
     token: addressA,
+    watch: true,
   });
   const { data: outputCurrencyBalance } = useBalance({
     address: account,
     token: addressB,
+    watch: true,
   });
 
   const currencyBalances = {
@@ -321,19 +319,20 @@ export function useDerivedSwapInfo(): IDerivedSwapInfo {
     currencies.OUTPUT &&
     currencies.INPUT.wrapped.equals(currencies.OUTPUT.wrapped);
 
-  console.log(currencies.INPUT, currencies.OUTPUT, isWrap);
+  const poolAddress = isWrap
+    ? undefined
+    : currencies[SwapField.INPUT] &&
+      currencies[SwapField.OUTPUT] &&
+      (computePoolAddress({
+        tokenA: currencies[SwapField.INPUT]!.wrapped,
+        tokenB: currencies[SwapField.OUTPUT]!.wrapped,
+      }).toLowerCase() as Address);
 
-  const { data: poolAddress } = useReadAlgebraFactoryComputePoolAddress({
-    args: [
-      currencies[SwapField.INPUT]?.wrapped?.address as Address,
-      currencies[SwapField.OUTPUT]?.wrapped?.address as Address,
-    ],
-  });
-  const { data: globalState } = useReadAlgebraPoolGlobalState({
+  const { data: globalState } = useAlgebraPoolGlobalState({
     address: poolAddress,
   });
 
-  const { data: tickSpacing } = useReadAlgebraPoolTickSpacing({
+  const { data: tickSpacing } = useAlgebraPoolTickSpacing({
     address: poolAddress,
   });
 

@@ -1,18 +1,12 @@
-import { cn } from "@/lib/tailwindcss";
+import { cn } from "@/lib/utils";
 import { Loader2Icon } from "lucide-react";
 
 interface LoaderProps {
-  size?: number;
-  color?: string;
-  className?: string;
+    size?: number;
+    color?: string;
+    className?: string;
 }
 
-const Loader = ({ size = 22, color = "white", className }: LoaderProps) => (
-  <Loader2Icon
-    size={size}
-    color={color}
-    className={cn("animate-spin", className)}
-  />
-);
+const Loader = ({ size = 22, color = 'white', className }: LoaderProps) => <Loader2Icon size={size} color={color} className={cn("animate-spin", className)} />
 
-export default Loader;
+export default Loader
