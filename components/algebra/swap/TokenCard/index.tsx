@@ -8,6 +8,10 @@ import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { Input } from "../../ui/input";
 import CurrencyLogo from "../../common/CurrencyLogo";
 import TokenSelectorModal from "../../modals/TokenSelectorModal";
+import { TokenSelector } from "@/components/TokenSelector";
+import { Token as IntergralToken } from "@cryptoalgebra/integral-sdk";
+import { wallet } from "@/services/wallet";
+import { Token } from "@/services/contract/token";
 
 interface TokenSwapCardProps {
   handleTokenSelection: (currency: Currency) => void;
@@ -67,24 +71,25 @@ const TokenCard = ({
   return (
     <div className="flex w-full px-4 py-6 bg-card-dark rounded-2xl">
       <div className="flex flex-col gap-2 min-w-fit">
-        <TokenSelectorModal
-          showNativeToken={showNativeToken}
-          onSelect={handleTokenSelect}
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          otherCurrency={otherCurrency}
-        >
-          <button
-            className="flex items-center gap-4 px-3 py-1 w-fit bg-card rounded-xl hover:bg-card-hover"
-            onClick={() => setIsOpen(true)}
-          >
-            <CurrencyLogo currency={currency} size={32} />
-            <span className="font-bold text-lg">
-              {currency ? currency.symbol : "Select a token"}
-            </span>
-            <ChevronRight size={16} />
-          </button>
-        </TokenSelectorModal>
+        <TokenSelector
+          onSelect={(token) => {
+            const currency = new IntergralToken(
+              wallet.currentChainId,
+              token.address,
+              token.decimals,
+              token.symbol,
+              token.name
+            );
+            handleTokenSelect(currency);
+          }}
+          value={
+            currency?.wrapped?.address
+              ? Token.getToken({
+                  address: currency?.wrapped.address as string,
+                })
+              : undefined
+          }
+        ></TokenSelector>
         {currency && account && (
           <div className={"flex text-sm whitespace-nowrap"}>
             {showBalance && (

@@ -13,11 +13,12 @@ import {
   CurrencyAmount,
   Percent,
   TickMath,
+  Token,
   Trade,
   TradeType,
   computePoolAddress,
 } from "@cryptoalgebra/custom-pools-sdk";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 import { create } from "zustand";
 import { useCallback, useMemo } from "react";
 import { Account, parseUnits } from "viem";
@@ -28,9 +29,11 @@ import {
   CurrencyAmount as CurrencyAmountBN,
 } from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
 import {
+  useReadAlgebraFactoryComputePoolAddress,
   useReadAlgebraPoolGlobalState,
   useReadAlgebraPoolTickSpacing,
 } from "@/wagmi-generated";
+import { DEFAULT_CHAIN_ID } from "@/data/algebra/default-chain-id";
 
 interface SwapState {
   readonly independentField: SwapFieldType;
@@ -318,15 +321,14 @@ export function useDerivedSwapInfo(): IDerivedSwapInfo {
     currencies.OUTPUT &&
     currencies.INPUT.wrapped.equals(currencies.OUTPUT.wrapped);
 
-  const poolAddress = isWrap
-    ? undefined
-    : currencies[SwapField.INPUT] &&
-      currencies[SwapField.OUTPUT] &&
-      (computePoolAddress({
-        tokenA: currencies[SwapField.INPUT]!.wrapped,
-        tokenB: currencies[SwapField.OUTPUT]!.wrapped,
-      }).toLowerCase() as Address);
+  console.log(currencies.INPUT, currencies.OUTPUT, isWrap);
 
+  const { data: poolAddress } = useReadAlgebraFactoryComputePoolAddress({
+    args: [
+      currencies[SwapField.INPUT]?.wrapped?.address as Address,
+      currencies[SwapField.OUTPUT]?.wrapped?.address as Address,
+    ],
+  });
   const { data: globalState } = useReadAlgebraPoolGlobalState({
     address: poolAddress,
   });

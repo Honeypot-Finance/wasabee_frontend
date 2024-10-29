@@ -33,6 +33,8 @@ import { useAccount, useContractWrite, useWriteContract } from "wagmi";
 import SelectPair from "./SelectPair";
 import Summary from "./Summary";
 import {
+  useReadAlgebraFactoryComputeCustomPoolAddress,
+  useReadAlgebraFactoryComputePoolAddress,
   useSimulateAlgebraCustomPoolDeployerCreateCustomPool,
   useSimulateAlgebraPositionManagerMulticall,
 } from "@/wagmi-generated";
@@ -77,31 +79,38 @@ const CreatePoolForm = () => {
   const isSameToken =
     areCurrenciesSelected && currencyA.wrapped.equals(currencyB.wrapped);
 
-  const poolAddress =
-    areCurrenciesSelected && !isSameToken
-      ? (computePoolAddress({
-          tokenA: currencyA.wrapped,
-          tokenB: currencyB.wrapped,
-        }) as Address)
-      : undefined;
+  const { data: poolAddress } = useReadAlgebraFactoryComputePoolAddress({
+    args: [
+      currencyA?.wrapped?.address as Address,
+      currencyB?.wrapped?.address as Address,
+    ],
+  });
 
-  const customPoolsAddresses =
-    areCurrenciesSelected && !isSameToken
-      ? [CUSTOM_POOL_DEPLOYER_BLANK, CUSTOM_POOL_DEPLOYER_FEE_CHANGER].map(
-          (customPoolDeployer) =>
-            computeCustomPoolAddress({
-              tokenA: currencyA.wrapped,
-              tokenB: currencyB.wrapped,
-              customPoolDeployer,
-            }) as Address
-        )
-      : [];
+  const { data: customPoolsAddressesFeeChanger } =
+    useReadAlgebraFactoryComputeCustomPoolAddress({
+      args: [
+        currencyA?.wrapped?.address as Address,
+        currencyB?.wrapped?.address as Address,
+        CUSTOM_POOL_DEPLOYER_FEE_CHANGER,
+      ],
+    });
+
+  const { data: customPoolsAddressesBlank } =
+    useReadAlgebraFactoryComputeCustomPoolAddress({
+      args: [
+        currencyA?.wrapped?.address as Address,
+        currencyB?.wrapped?.address as Address,
+        CUSTOM_POOL_DEPLOYER_BLANK,
+      ],
+    });
+
+  //custompools
 
   const [poolState] = usePool(poolAddress);
 
   // TODO
-  const [poolState0] = usePool(customPoolsAddresses[0]);
-  const [poolState1] = usePool(customPoolsAddresses[1]);
+  const [poolState0] = usePool(customPoolsAddressesFeeChanger);
+  const [poolState1] = usePool(customPoolsAddressesBlank);
 
   const isPoolExists =
     poolState === PoolState.EXISTS && poolDeployer === POOL_DEPLOYER.BASE;
@@ -149,6 +158,8 @@ const CreatePoolForm = () => {
 
   const { data: createBasePoolData, writeContract: createBasePool } =
     useWriteContract();
+
+  console.log("createBasePoolConfig", createBasePoolConfig);
 
   const { isLoading: isBasePoolLoading } = useTransactionAwait(
     createBasePoolData,
@@ -223,10 +234,10 @@ const CreatePoolForm = () => {
 
   const handleCreatePool = () => {
     if (poolDeployer === POOL_DEPLOYER.BASE) {
-      if (!createBasePool) return;
+      if (!createBasePool || !createBasePoolConfig) return;
       createBasePool(createBasePoolConfig!.request);
     }
-    if (!createCustomPool) return;
+    if (!createCustomPool || !createCustomPoolConfig) return;
     createCustomPool(createCustomPoolConfig!.request);
   };
 

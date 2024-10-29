@@ -1324,9 +1324,40 @@ export const algebraFactoryAbi = [
     anonymous: false,
     inputs: [
       {
+        name: 'deployer',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'token0',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'token1',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'pool',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'CustomPool',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
         name: 'newDefaultCommunityFee',
-        internalType: 'uint8',
-        type: 'uint8',
+        internalType: 'uint16',
+        type: 'uint16',
         indexed: false,
       },
     ],
@@ -1337,52 +1368,39 @@ export const algebraFactoryAbi = [
     anonymous: false,
     inputs: [
       {
-        name: 'newFarmingAddress',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
+        name: 'newDefaultFee',
+        internalType: 'uint16',
+        type: 'uint16',
+        indexed: false,
       },
     ],
-    name: 'FarmingAddress',
+    name: 'DefaultFee',
   },
   {
     type: 'event',
     anonymous: false,
     inputs: [
       {
-        name: 'alpha1',
-        internalType: 'uint16',
-        type: 'uint16',
-        indexed: false,
-      },
-      {
-        name: 'alpha2',
-        internalType: 'uint16',
-        type: 'uint16',
-        indexed: false,
-      },
-      { name: 'beta1', internalType: 'uint32', type: 'uint32', indexed: false },
-      { name: 'beta2', internalType: 'uint32', type: 'uint32', indexed: false },
-      {
-        name: 'gamma1',
-        internalType: 'uint16',
-        type: 'uint16',
-        indexed: false,
-      },
-      {
-        name: 'gamma2',
-        internalType: 'uint16',
-        type: 'uint16',
-        indexed: false,
-      },
-      {
-        name: 'baseFee',
-        internalType: 'uint16',
-        type: 'uint16',
+        name: 'defaultPluginFactoryAddress',
+        internalType: 'address',
+        type: 'address',
         indexed: false,
       },
     ],
-    name: 'FeeConfiguration',
+    name: 'DefaultPluginFactory',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'newDefaultTickspacing',
+        internalType: 'int24',
+        type: 'int24',
+        indexed: false,
+      },
+    ],
+    name: 'DefaultTickspacing',
   },
   {
     type: 'event',
@@ -1451,6 +1469,51 @@ export const algebraFactoryAbi = [
     type: 'event',
     anonymous: false,
     inputs: [
+      {
+        name: 'timestamp',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'RenounceOwnershipFinish',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'timestamp',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'finishTimestamp',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'RenounceOwnershipStart',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'timestamp',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'RenounceOwnershipStop',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
       { name: 'role', internalType: 'bytes32', type: 'bytes32', indexed: true },
       {
         name: 'previousAdminRole',
@@ -1512,50 +1575,39 @@ export const algebraFactoryAbi = [
     anonymous: false,
     inputs: [
       {
-        name: 'timestamp',
-        internalType: 'uint256',
-        type: 'uint256',
+        name: 'newVaultFactory',
+        internalType: 'address',
+        type: 'address',
         indexed: false,
       },
     ],
-    name: 'renounceOwnershipFinished',
+    name: 'VaultFactory',
   },
   {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'timestamp',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-      {
-        name: 'finishTimestamp',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'renounceOwnershipStarted',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'timestamp',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'renounceOwnershipStopped',
+    type: 'function',
+    inputs: [],
+    name: 'CUSTOM_POOL_DEPLOYER',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    stateMutability: 'view',
   },
   {
     type: 'function',
     inputs: [],
     name: 'DEFAULT_ADMIN_ROLE',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'POOLS_ADMINISTRATOR_ROLE',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'POOL_INIT_CODE_HASH',
     outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
     stateMutability: 'view',
   },
@@ -1568,31 +1620,44 @@ export const algebraFactoryAbi = [
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'baseFeeConfiguration',
-    outputs: [
-      { name: 'alpha1', internalType: 'uint16', type: 'uint16' },
-      { name: 'alpha2', internalType: 'uint16', type: 'uint16' },
-      { name: 'beta1', internalType: 'uint32', type: 'uint32' },
-      { name: 'beta2', internalType: 'uint32', type: 'uint32' },
-      { name: 'gamma1', internalType: 'uint16', type: 'uint16' },
-      { name: 'gamma2', internalType: 'uint16', type: 'uint16' },
-      { name: 'baseFee', internalType: 'uint16', type: 'uint16' },
+    inputs: [
+      { name: 'deployer', internalType: 'address', type: 'address' },
+      { name: 'token0', internalType: 'address', type: 'address' },
+      { name: 'token1', internalType: 'address', type: 'address' },
     ],
+    name: 'computeCustomPoolAddress',
+    outputs: [{ name: 'customPool', internalType: 'address', type: 'address' }],
     stateMutability: 'view',
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'communityVault',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    inputs: [
+      { name: 'token0', internalType: 'address', type: 'address' },
+      { name: 'token1', internalType: 'address', type: 'address' },
+    ],
+    name: 'computePoolAddress',
+    outputs: [{ name: 'pool', internalType: 'address', type: 'address' }],
     stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'deployer', internalType: 'address', type: 'address' },
+      { name: 'creator', internalType: 'address', type: 'address' },
+      { name: 'tokenA', internalType: 'address', type: 'address' },
+      { name: 'tokenB', internalType: 'address', type: 'address' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'createCustomPool',
+    outputs: [{ name: 'customPool', internalType: 'address', type: 'address' }],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
     inputs: [
       { name: 'tokenA', internalType: 'address', type: 'address' },
       { name: 'tokenB', internalType: 'address', type: 'address' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
     ],
     name: 'createPool',
     outputs: [{ name: 'pool', internalType: 'address', type: 'address' }],
@@ -1600,16 +1665,58 @@ export const algebraFactoryAbi = [
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'defaultCommunityFee',
-    outputs: [{ name: '', internalType: 'uint8', type: 'uint8' }],
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'address', type: 'address' },
+    ],
+    name: 'customPoolByPair',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
     stateMutability: 'view',
   },
   {
     type: 'function',
     inputs: [],
-    name: 'farmingAddress',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'defaultCommunityFee',
+    outputs: [{ name: '', internalType: 'uint16', type: 'uint16' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'defaultConfigurationForPool',
+    outputs: [
+      { name: 'communityFee', internalType: 'uint16', type: 'uint16' },
+      { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+      { name: 'fee', internalType: 'uint16', type: 'uint16' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'defaultFee',
+    outputs: [{ name: '', internalType: 'uint16', type: 'uint16' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'defaultPluginFactory',
+    outputs: [
+      {
+        name: '',
+        internalType: 'contract IAlgebraPluginFactory',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'defaultTickspacing',
+    outputs: [{ name: '', internalType: 'int24', type: 'int24' }],
     stateMutability: 'view',
   },
   {
@@ -1735,28 +1842,10 @@ export const algebraFactoryAbi = [
     type: 'function',
     inputs: [
       {
-        name: '_config',
-        internalType: 'struct IAlgebraFeeConfiguration.Configuration',
-        type: 'tuple',
-        components: [
-          { name: 'alpha1', internalType: 'uint16', type: 'uint16' },
-          { name: 'alpha2', internalType: 'uint16', type: 'uint16' },
-          { name: 'beta1', internalType: 'uint32', type: 'uint32' },
-          { name: 'beta2', internalType: 'uint32', type: 'uint32' },
-          { name: 'gamma1', internalType: 'uint16', type: 'uint16' },
-          { name: 'gamma2', internalType: 'uint16', type: 'uint16' },
-          { name: 'baseFee', internalType: 'uint16', type: 'uint16' },
-        ],
+        name: 'newDefaultCommunityFee',
+        internalType: 'uint16',
+        type: 'uint16',
       },
-    ],
-    name: 'setBaseFeeConfiguration',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'newDefaultCommunityFee', internalType: 'uint8', type: 'uint8' },
     ],
     name: 'setDefaultCommunityFee',
     outputs: [],
@@ -1764,10 +1853,39 @@ export const algebraFactoryAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'newDefaultFee', internalType: 'uint16', type: 'uint16' }],
+    name: 'setDefaultFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [
-      { name: 'newFarmingAddress', internalType: 'address', type: 'address' },
+      {
+        name: 'newDefaultPluginFactory',
+        internalType: 'address',
+        type: 'address',
+      },
     ],
-    name: 'setFarmingAddress',
+    name: 'setDefaultPluginFactory',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'newDefaultTickspacing', internalType: 'int24', type: 'int24' },
+    ],
+    name: 'setDefaultTickspacing',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'newVaultFactory', internalType: 'address', type: 'address' },
+    ],
+    name: 'setVaultFactory',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -1798,6 +1916,19 @@ export const algebraFactoryAbi = [
     name: 'transferOwnership',
     outputs: [],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'vaultFactory',
+    outputs: [
+      {
+        name: '',
+        internalType: 'contract IAlgebraVaultFactory',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
   },
 ] as const
 
@@ -5297,6 +5428,16 @@ export const readAlgebraFactory = /*#__PURE__*/ createReadContract({
 })
 
 /**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"CUSTOM_POOL_DEPLOYER"`
+ */
+export const readAlgebraFactoryCustomPoolDeployer =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'CUSTOM_POOL_DEPLOYER',
+  })
+
+/**
  * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"DEFAULT_ADMIN_ROLE"`
  */
 export const readAlgebraFactoryDefaultAdminRole =
@@ -5307,23 +5448,53 @@ export const readAlgebraFactoryDefaultAdminRole =
   })
 
 /**
- * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"baseFeeConfiguration"`
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"POOLS_ADMINISTRATOR_ROLE"`
  */
-export const readAlgebraFactoryBaseFeeConfiguration =
+export const readAlgebraFactoryPoolsAdministratorRole =
   /*#__PURE__*/ createReadContract({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    functionName: 'baseFeeConfiguration',
+    functionName: 'POOLS_ADMINISTRATOR_ROLE',
   })
 
 /**
- * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"communityVault"`
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"POOL_INIT_CODE_HASH"`
  */
-export const readAlgebraFactoryCommunityVault =
+export const readAlgebraFactoryPoolInitCodeHash =
   /*#__PURE__*/ createReadContract({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    functionName: 'communityVault',
+    functionName: 'POOL_INIT_CODE_HASH',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"computeCustomPoolAddress"`
+ */
+export const readAlgebraFactoryComputeCustomPoolAddress =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'computeCustomPoolAddress',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"computePoolAddress"`
+ */
+export const readAlgebraFactoryComputePoolAddress =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'computePoolAddress',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"customPoolByPair"`
+ */
+export const readAlgebraFactoryCustomPoolByPair =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'customPoolByPair',
   })
 
 /**
@@ -5337,13 +5508,42 @@ export const readAlgebraFactoryDefaultCommunityFee =
   })
 
 /**
- * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"farmingAddress"`
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultConfigurationForPool"`
  */
-export const readAlgebraFactoryFarmingAddress =
+export const readAlgebraFactoryDefaultConfigurationForPool =
   /*#__PURE__*/ createReadContract({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    functionName: 'farmingAddress',
+    functionName: 'defaultConfigurationForPool',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultFee"`
+ */
+export const readAlgebraFactoryDefaultFee = /*#__PURE__*/ createReadContract({
+  abi: algebraFactoryAbi,
+  address: algebraFactoryAddress,
+  functionName: 'defaultFee',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultPluginFactory"`
+ */
+export const readAlgebraFactoryDefaultPluginFactory =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'defaultPluginFactory',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultTickspacing"`
+ */
+export const readAlgebraFactoryDefaultTickspacing =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'defaultTickspacing',
   })
 
 /**
@@ -5452,6 +5652,15 @@ export const readAlgebraFactorySupportsInterface =
   })
 
 /**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"vaultFactory"`
+ */
+export const readAlgebraFactoryVaultFactory = /*#__PURE__*/ createReadContract({
+  abi: algebraFactoryAbi,
+  address: algebraFactoryAddress,
+  functionName: 'vaultFactory',
+})
+
+/**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraFactoryAbi}__
  */
 export const writeAlgebraFactory = /*#__PURE__*/ createWriteContract({
@@ -5467,6 +5676,16 @@ export const writeAlgebraFactoryAcceptOwnership =
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
     functionName: 'acceptOwnership',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"createCustomPool"`
+ */
+export const writeAlgebraFactoryCreateCustomPool =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'createCustomPool',
   })
 
 /**
@@ -5517,16 +5736,6 @@ export const writeAlgebraFactoryRevokeRole = /*#__PURE__*/ createWriteContract({
 })
 
 /**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setBaseFeeConfiguration"`
- */
-export const writeAlgebraFactorySetBaseFeeConfiguration =
-  /*#__PURE__*/ createWriteContract({
-    abi: algebraFactoryAbi,
-    address: algebraFactoryAddress,
-    functionName: 'setBaseFeeConfiguration',
-  })
-
-/**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultCommunityFee"`
  */
 export const writeAlgebraFactorySetDefaultCommunityFee =
@@ -5537,13 +5746,43 @@ export const writeAlgebraFactorySetDefaultCommunityFee =
   })
 
 /**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setFarmingAddress"`
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultFee"`
  */
-export const writeAlgebraFactorySetFarmingAddress =
+export const writeAlgebraFactorySetDefaultFee =
   /*#__PURE__*/ createWriteContract({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    functionName: 'setFarmingAddress',
+    functionName: 'setDefaultFee',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultPluginFactory"`
+ */
+export const writeAlgebraFactorySetDefaultPluginFactory =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'setDefaultPluginFactory',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultTickspacing"`
+ */
+export const writeAlgebraFactorySetDefaultTickspacing =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'setDefaultTickspacing',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setVaultFactory"`
+ */
+export const writeAlgebraFactorySetVaultFactory =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'setVaultFactory',
   })
 
 /**
@@ -5592,6 +5831,16 @@ export const simulateAlgebraFactoryAcceptOwnership =
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
     functionName: 'acceptOwnership',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"createCustomPool"`
+ */
+export const simulateAlgebraFactoryCreateCustomPool =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'createCustomPool',
   })
 
 /**
@@ -5645,16 +5894,6 @@ export const simulateAlgebraFactoryRevokeRole =
   })
 
 /**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setBaseFeeConfiguration"`
- */
-export const simulateAlgebraFactorySetBaseFeeConfiguration =
-  /*#__PURE__*/ createSimulateContract({
-    abi: algebraFactoryAbi,
-    address: algebraFactoryAddress,
-    functionName: 'setBaseFeeConfiguration',
-  })
-
-/**
  * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultCommunityFee"`
  */
 export const simulateAlgebraFactorySetDefaultCommunityFee =
@@ -5665,13 +5904,43 @@ export const simulateAlgebraFactorySetDefaultCommunityFee =
   })
 
 /**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setFarmingAddress"`
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultFee"`
  */
-export const simulateAlgebraFactorySetFarmingAddress =
+export const simulateAlgebraFactorySetDefaultFee =
   /*#__PURE__*/ createSimulateContract({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    functionName: 'setFarmingAddress',
+    functionName: 'setDefaultFee',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultPluginFactory"`
+ */
+export const simulateAlgebraFactorySetDefaultPluginFactory =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'setDefaultPluginFactory',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultTickspacing"`
+ */
+export const simulateAlgebraFactorySetDefaultTickspacing =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'setDefaultTickspacing',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setVaultFactory"`
+ */
+export const simulateAlgebraFactorySetVaultFactory =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'setVaultFactory',
   })
 
 /**
@@ -5713,6 +5982,16 @@ export const watchAlgebraFactoryEvent = /*#__PURE__*/ createWatchContractEvent({
 })
 
 /**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"CustomPool"`
+ */
+export const watchAlgebraFactoryCustomPoolEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    eventName: 'CustomPool',
+  })
+
+/**
  * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"DefaultCommunityFee"`
  */
 export const watchAlgebraFactoryDefaultCommunityFeeEvent =
@@ -5723,23 +6002,33 @@ export const watchAlgebraFactoryDefaultCommunityFeeEvent =
   })
 
 /**
- * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"FarmingAddress"`
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"DefaultFee"`
  */
-export const watchAlgebraFactoryFarmingAddressEvent =
+export const watchAlgebraFactoryDefaultFeeEvent =
   /*#__PURE__*/ createWatchContractEvent({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    eventName: 'FarmingAddress',
+    eventName: 'DefaultFee',
   })
 
 /**
- * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"FeeConfiguration"`
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"DefaultPluginFactory"`
  */
-export const watchAlgebraFactoryFeeConfigurationEvent =
+export const watchAlgebraFactoryDefaultPluginFactoryEvent =
   /*#__PURE__*/ createWatchContractEvent({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    eventName: 'FeeConfiguration',
+    eventName: 'DefaultPluginFactory',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"DefaultTickspacing"`
+ */
+export const watchAlgebraFactoryDefaultTickspacingEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    eventName: 'DefaultTickspacing',
   })
 
 /**
@@ -5773,6 +6062,36 @@ export const watchAlgebraFactoryPoolEvent =
   })
 
 /**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RenounceOwnershipFinish"`
+ */
+export const watchAlgebraFactoryRenounceOwnershipFinishEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    eventName: 'RenounceOwnershipFinish',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RenounceOwnershipStart"`
+ */
+export const watchAlgebraFactoryRenounceOwnershipStartEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    eventName: 'RenounceOwnershipStart',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RenounceOwnershipStop"`
+ */
+export const watchAlgebraFactoryRenounceOwnershipStopEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    eventName: 'RenounceOwnershipStop',
+  })
+
+/**
  * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RoleAdminChanged"`
  */
 export const watchAlgebraFactoryRoleAdminChangedEvent =
@@ -5803,33 +6122,13 @@ export const watchAlgebraFactoryRoleRevokedEvent =
   })
 
 /**
- * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"renounceOwnershipFinished"`
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"VaultFactory"`
  */
-export const watchAlgebraFactoryRenounceOwnershipFinishedEvent =
+export const watchAlgebraFactoryVaultFactoryEvent =
   /*#__PURE__*/ createWatchContractEvent({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    eventName: 'renounceOwnershipFinished',
-  })
-
-/**
- * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"renounceOwnershipStarted"`
- */
-export const watchAlgebraFactoryRenounceOwnershipStartedEvent =
-  /*#__PURE__*/ createWatchContractEvent({
-    abi: algebraFactoryAbi,
-    address: algebraFactoryAddress,
-    eventName: 'renounceOwnershipStarted',
-  })
-
-/**
- * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"renounceOwnershipStopped"`
- */
-export const watchAlgebraFactoryRenounceOwnershipStoppedEvent =
-  /*#__PURE__*/ createWatchContractEvent({
-    abi: algebraFactoryAbi,
-    address: algebraFactoryAddress,
-    eventName: 'renounceOwnershipStopped',
+    eventName: 'VaultFactory',
   })
 
 /**
@@ -9345,6 +9644,16 @@ export const useReadAlgebraFactory = /*#__PURE__*/ createUseReadContract({
 })
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"CUSTOM_POOL_DEPLOYER"`
+ */
+export const useReadAlgebraFactoryCustomPoolDeployer =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'CUSTOM_POOL_DEPLOYER',
+  })
+
+/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"DEFAULT_ADMIN_ROLE"`
  */
 export const useReadAlgebraFactoryDefaultAdminRole =
@@ -9355,23 +9664,53 @@ export const useReadAlgebraFactoryDefaultAdminRole =
   })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"baseFeeConfiguration"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"POOLS_ADMINISTRATOR_ROLE"`
  */
-export const useReadAlgebraFactoryBaseFeeConfiguration =
+export const useReadAlgebraFactoryPoolsAdministratorRole =
   /*#__PURE__*/ createUseReadContract({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    functionName: 'baseFeeConfiguration',
+    functionName: 'POOLS_ADMINISTRATOR_ROLE',
   })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"communityVault"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"POOL_INIT_CODE_HASH"`
  */
-export const useReadAlgebraFactoryCommunityVault =
+export const useReadAlgebraFactoryPoolInitCodeHash =
   /*#__PURE__*/ createUseReadContract({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    functionName: 'communityVault',
+    functionName: 'POOL_INIT_CODE_HASH',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"computeCustomPoolAddress"`
+ */
+export const useReadAlgebraFactoryComputeCustomPoolAddress =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'computeCustomPoolAddress',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"computePoolAddress"`
+ */
+export const useReadAlgebraFactoryComputePoolAddress =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'computePoolAddress',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"customPoolByPair"`
+ */
+export const useReadAlgebraFactoryCustomPoolByPair =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'customPoolByPair',
   })
 
 /**
@@ -9385,13 +9724,43 @@ export const useReadAlgebraFactoryDefaultCommunityFee =
   })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"farmingAddress"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultConfigurationForPool"`
  */
-export const useReadAlgebraFactoryFarmingAddress =
+export const useReadAlgebraFactoryDefaultConfigurationForPool =
   /*#__PURE__*/ createUseReadContract({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    functionName: 'farmingAddress',
+    functionName: 'defaultConfigurationForPool',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultFee"`
+ */
+export const useReadAlgebraFactoryDefaultFee =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'defaultFee',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultPluginFactory"`
+ */
+export const useReadAlgebraFactoryDefaultPluginFactory =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'defaultPluginFactory',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultTickspacing"`
+ */
+export const useReadAlgebraFactoryDefaultTickspacing =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'defaultTickspacing',
   })
 
 /**
@@ -9505,6 +9874,16 @@ export const useReadAlgebraFactorySupportsInterface =
   })
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"vaultFactory"`
+ */
+export const useReadAlgebraFactoryVaultFactory =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'vaultFactory',
+  })
+
+/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__
  */
 export const useWriteAlgebraFactory = /*#__PURE__*/ createUseWriteContract({
@@ -9520,6 +9899,16 @@ export const useWriteAlgebraFactoryAcceptOwnership =
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
     functionName: 'acceptOwnership',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"createCustomPool"`
+ */
+export const useWriteAlgebraFactoryCreateCustomPool =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'createCustomPool',
   })
 
 /**
@@ -9573,16 +9962,6 @@ export const useWriteAlgebraFactoryRevokeRole =
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setBaseFeeConfiguration"`
- */
-export const useWriteAlgebraFactorySetBaseFeeConfiguration =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: algebraFactoryAbi,
-    address: algebraFactoryAddress,
-    functionName: 'setBaseFeeConfiguration',
-  })
-
-/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultCommunityFee"`
  */
 export const useWriteAlgebraFactorySetDefaultCommunityFee =
@@ -9593,13 +9972,43 @@ export const useWriteAlgebraFactorySetDefaultCommunityFee =
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setFarmingAddress"`
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultFee"`
  */
-export const useWriteAlgebraFactorySetFarmingAddress =
+export const useWriteAlgebraFactorySetDefaultFee =
   /*#__PURE__*/ createUseWriteContract({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    functionName: 'setFarmingAddress',
+    functionName: 'setDefaultFee',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultPluginFactory"`
+ */
+export const useWriteAlgebraFactorySetDefaultPluginFactory =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'setDefaultPluginFactory',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultTickspacing"`
+ */
+export const useWriteAlgebraFactorySetDefaultTickspacing =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'setDefaultTickspacing',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setVaultFactory"`
+ */
+export const useWriteAlgebraFactorySetVaultFactory =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'setVaultFactory',
   })
 
 /**
@@ -9649,6 +10058,16 @@ export const useSimulateAlgebraFactoryAcceptOwnership =
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
     functionName: 'acceptOwnership',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"createCustomPool"`
+ */
+export const useSimulateAlgebraFactoryCreateCustomPool =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'createCustomPool',
   })
 
 /**
@@ -9702,16 +10121,6 @@ export const useSimulateAlgebraFactoryRevokeRole =
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setBaseFeeConfiguration"`
- */
-export const useSimulateAlgebraFactorySetBaseFeeConfiguration =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: algebraFactoryAbi,
-    address: algebraFactoryAddress,
-    functionName: 'setBaseFeeConfiguration',
-  })
-
-/**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultCommunityFee"`
  */
 export const useSimulateAlgebraFactorySetDefaultCommunityFee =
@@ -9722,13 +10131,43 @@ export const useSimulateAlgebraFactorySetDefaultCommunityFee =
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setFarmingAddress"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultFee"`
  */
-export const useSimulateAlgebraFactorySetFarmingAddress =
+export const useSimulateAlgebraFactorySetDefaultFee =
   /*#__PURE__*/ createUseSimulateContract({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    functionName: 'setFarmingAddress',
+    functionName: 'setDefaultFee',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultPluginFactory"`
+ */
+export const useSimulateAlgebraFactorySetDefaultPluginFactory =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'setDefaultPluginFactory',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultTickspacing"`
+ */
+export const useSimulateAlgebraFactorySetDefaultTickspacing =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'setDefaultTickspacing',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setVaultFactory"`
+ */
+export const useSimulateAlgebraFactorySetVaultFactory =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    functionName: 'setVaultFactory',
   })
 
 /**
@@ -9771,6 +10210,16 @@ export const useWatchAlgebraFactoryEvent =
   })
 
 /**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"CustomPool"`
+ */
+export const useWatchAlgebraFactoryCustomPoolEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    eventName: 'CustomPool',
+  })
+
+/**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"DefaultCommunityFee"`
  */
 export const useWatchAlgebraFactoryDefaultCommunityFeeEvent =
@@ -9781,23 +10230,33 @@ export const useWatchAlgebraFactoryDefaultCommunityFeeEvent =
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"FarmingAddress"`
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"DefaultFee"`
  */
-export const useWatchAlgebraFactoryFarmingAddressEvent =
+export const useWatchAlgebraFactoryDefaultFeeEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    eventName: 'FarmingAddress',
+    eventName: 'DefaultFee',
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"FeeConfiguration"`
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"DefaultPluginFactory"`
  */
-export const useWatchAlgebraFactoryFeeConfigurationEvent =
+export const useWatchAlgebraFactoryDefaultPluginFactoryEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    eventName: 'FeeConfiguration',
+    eventName: 'DefaultPluginFactory',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"DefaultTickspacing"`
+ */
+export const useWatchAlgebraFactoryDefaultTickspacingEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    eventName: 'DefaultTickspacing',
   })
 
 /**
@@ -9831,6 +10290,36 @@ export const useWatchAlgebraFactoryPoolEvent =
   })
 
 /**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RenounceOwnershipFinish"`
+ */
+export const useWatchAlgebraFactoryRenounceOwnershipFinishEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    eventName: 'RenounceOwnershipFinish',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RenounceOwnershipStart"`
+ */
+export const useWatchAlgebraFactoryRenounceOwnershipStartEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    eventName: 'RenounceOwnershipStart',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RenounceOwnershipStop"`
+ */
+export const useWatchAlgebraFactoryRenounceOwnershipStopEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: algebraFactoryAbi,
+    address: algebraFactoryAddress,
+    eventName: 'RenounceOwnershipStop',
+  })
+
+/**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RoleAdminChanged"`
  */
 export const useWatchAlgebraFactoryRoleAdminChangedEvent =
@@ -9861,33 +10350,13 @@ export const useWatchAlgebraFactoryRoleRevokedEvent =
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"renounceOwnershipFinished"`
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"VaultFactory"`
  */
-export const useWatchAlgebraFactoryRenounceOwnershipFinishedEvent =
+export const useWatchAlgebraFactoryVaultFactoryEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: algebraFactoryAbi,
     address: algebraFactoryAddress,
-    eventName: 'renounceOwnershipFinished',
-  })
-
-/**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"renounceOwnershipStarted"`
- */
-export const useWatchAlgebraFactoryRenounceOwnershipStartedEvent =
-  /*#__PURE__*/ createUseWatchContractEvent({
-    abi: algebraFactoryAbi,
-    address: algebraFactoryAddress,
-    eventName: 'renounceOwnershipStarted',
-  })
-
-/**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"renounceOwnershipStopped"`
- */
-export const useWatchAlgebraFactoryRenounceOwnershipStoppedEvent =
-  /*#__PURE__*/ createUseWatchContractEvent({
-    abi: algebraFactoryAbi,
-    address: algebraFactoryAddress,
-    eventName: 'renounceOwnershipStopped',
+    eventName: 'VaultFactory',
   })
 
 /**
