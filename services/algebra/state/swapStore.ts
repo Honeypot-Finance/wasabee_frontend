@@ -34,6 +34,8 @@ import {
   useReadAlgebraPoolTickSpacing,
 } from "@/wagmi-generated";
 import { DEFAULT_CHAIN_ID } from "@/data/algebra/default-chain-id";
+import { WNATIVE_EXTENDED } from "@/data/algebra/routing";
+import { NATIVE_TOKEN_WRAPPED } from "@/data/algebra/addresses";
 
 interface SwapState {
   readonly independentField: SwapFieldType;
@@ -214,6 +216,7 @@ export function useDerivedSwapInfo(): IDerivedSwapInfo {
 
   const inputCurrency = useCurrency(inputCurrencyId);
   const outputCurrency = useCurrency(outputCurrencyId);
+  console.log(inputCurrency, outputCurrency);
 
   const isExactIn: boolean = independentField === SwapField.INPUT;
 
@@ -247,8 +250,12 @@ export function useDerivedSwapInfo(): IDerivedSwapInfo {
   const trade = (isExactIn ? bestTradeExactIn : bestTradeExactOut) ?? undefined;
 
   const [addressA, addressB] = [
-    inputCurrency?.isNative ? undefined : inputCurrency?.address || "",
-    outputCurrency?.isNative ? undefined : outputCurrency?.address || "",
+    inputCurrency?.isNative
+      ? NATIVE_TOKEN_WRAPPED
+      : inputCurrency?.address || "",
+    outputCurrency?.isNative
+      ? NATIVE_TOKEN_WRAPPED
+      : outputCurrency?.address || "",
   ] as Address[];
 
   const { data: inputCurrencyBalance } = useBalance({

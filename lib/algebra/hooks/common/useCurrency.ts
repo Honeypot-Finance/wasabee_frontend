@@ -11,6 +11,7 @@ import {
   DEFAULT_NATIVE_SYMBOL,
   DEFAULT_NATIVE_NAME,
 } from "@/data/algebra/default-chain-id";
+import { NATIVE_TOKEN_WRAPPED } from "@/data/algebra/addresses";
 
 export function useCurrency(
   address: Address | undefined,
@@ -22,7 +23,9 @@ export function useCurrency(
 
   const isNative = address === ADDRESS_ZERO;
 
-  const token = useAlgebraToken(isNative || isWNative ? ADDRESS_ZERO : address);
+  const token = useAlgebraToken(
+    isNative || isWNative ? NATIVE_TOKEN_WRAPPED : address
+  );
 
   const extendedEther = ExtendedNative.onChain(
     DEFAULT_CHAIN_ID,
@@ -30,9 +33,5 @@ export function useCurrency(
     DEFAULT_NATIVE_NAME
   );
 
-  if (withNative) return isNative || isWNative ? extendedEther : token;
-
-  if (isWNative) return extendedEther.wrapped;
-
-  return isNative ? extendedEther : token;
+  return token;
 }

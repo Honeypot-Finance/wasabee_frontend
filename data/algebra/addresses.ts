@@ -1,6 +1,9 @@
 import { ADDRESS_ZERO } from "@cryptoalgebra/integral-sdk";
 import { Address } from "viem";
 
+export const NATIVE_TOKEN_WRAPPED: Address =
+  "0x7507c1dc16935b82698e4c63f2746a2fcf994df8";
+
 export const POOL_INIT_CODE_HASH: Address =
   "0x3093a65c28d1e6def42997fdea76d033dfd42b432c107e19412cf91a1eac0f91";
 
