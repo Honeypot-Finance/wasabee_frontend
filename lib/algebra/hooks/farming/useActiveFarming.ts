@@ -1,13 +1,15 @@
-import { Address, useAccount } from "wagmi";
+import { useAccount } from "wagmi";
 import { useClients } from "../graphql/useClients";
 import { useEffect, useState } from "react";
+
+import { Address } from "viem";
 import {
-  useDepositsQuery,
+  SinglePoolQuery,
   useEternalFarmingsQuery,
   useSingleTokenQuery,
-  SinglePoolQuery,
-} from "@/graphql/generated/graphql";
-import { Farming } from "@/types/farming-info";
+  useDepositsQuery,
+} from "@/lib/graphql/generated/graphql";
+import { Farming } from "@/types/algebra/types/farming-info";
 
 export function useActiveFarming({
   poolId,

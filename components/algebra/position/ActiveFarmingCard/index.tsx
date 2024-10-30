@@ -1,105 +1,101 @@
-import { useEffect, useState } from 'react';
-import { Farming } from '@/types/farming-info';
-import { ADDRESS_ZERO } from '@cryptoalgebra/custom-pools-sdk';
-import { useFarmHarvest } from '@/hooks/farming/useFarmHarvest';
-import { useFarmUnstake } from '@/hooks/farming/useFarmStake';
-import { useAccount } from 'wagmi';
-import { getFarmingRewards } from '@/utils/farming/getFarmingRewards';
-import { Button } from '@/components/ui/button';
-import Loader from '@/components/common/Loader';
-import { Deposit } from '@/graphql/generated/graphql';
-import { useRewardEarnedUSD } from '@/hooks/farming/useRewardEarnedUSD';
+import { useEffect, useState } from "react";
+import { ADDRESS_ZERO } from "@cryptoalgebra/custom-pools-sdk";
+import { useAccount } from "wagmi";
+import { Button } from "@/components/algebra/ui/button";
+import Loader from "@/components/algebra/common/Loader";
+import { useFarmHarvest } from "@/lib/algebra/hooks/farming/useFarmHarvest";
+import { useFarmUnstake } from "@/lib/algebra/hooks/farming/useFarmStake";
+import { useRewardEarnedUSD } from "@/lib/algebra/hooks/farming/useRewardEarnedUSD";
+import { getFarmingRewards } from "@/lib/algebra/utils/farming/getFarmingRewards";
+import { Deposit } from "@/lib/graphql/generated/graphql";
+import { Farming } from "@/types/algebra/types/farming-info";
 
 interface ActiveFarmingCardProps {
-    farming: Farming;
-    selectedPosition: Deposit;
+  farming: Farming;
+  selectedPosition: Deposit;
 }
 
 const ActiveFarmingCard = ({
-    farming,
-    selectedPosition,
+  farming,
+  selectedPosition,
 }: ActiveFarmingCardProps) => {
-    const { address: account } = useAccount();
+  const { address: account } = useAccount();
 
-    const [rewardEarned, setRewardEarned] = useState<bigint>(0n);
-    const [bonusRewardEarned, setBonusRewardEarned] = useState<bigint>(0n);
+  const [rewardEarned, setRewardEarned] = useState<bigint>(BigInt(0));
+  const [bonusRewardEarned, setBonusRewardEarned] = useState<bigint>(BigInt(0));
+  const rewardEarnedUSD = useRewardEarnedUSD({
+    token: farming.rewardToken,
+    reward: rewardEarned,
+  });
 
-    const rewardEarnedUSD = useRewardEarnedUSD({
-        token: farming.rewardToken,
-        reward: rewardEarned,
+  const bonusRewardEarnedUSD = useRewardEarnedUSD({
+    token: farming.bonusRewardToken,
+    reward: bonusRewardEarned,
+  });
+
+  const farmingRewards = (rewardEarnedUSD + bonusRewardEarnedUSD).toFixed(4);
+
+  const farmingArgs = {
+    tokenId: BigInt(selectedPosition.id),
+    rewardToken: farming.farming.rewardToken,
+    bonusRewardToken: farming.farming.bonusRewardToken,
+    pool: farming.farming.pool,
+    nonce: farming.farming.nonce,
+    account: account ?? ADDRESS_ZERO,
+  };
+
+  const {
+    onHarvest,
+    isLoading: isHarvesting,
+    isSuccess: isHarvested,
+  } = useFarmHarvest(farmingArgs);
+
+  const { onUnstake, isLoading: isUnstaking } = useFarmUnstake(farmingArgs);
+
+  const handleUnstake = async () => {
+    if (!account) return;
+    if (!onUnstake) return;
+    onUnstake();
+  };
+
+  const handleHarvest = async () => {
+    if (!account) return;
+    if (!onHarvest) return;
+    onHarvest();
+  };
+
+  useEffect(() => {
+    if (!account) return;
+    getFarmingRewards(farmingArgs).then((rewards) => {
+      setRewardEarned(rewards.reward);
+      setBonusRewardEarned(rewards.bonusReward);
     });
+  }, [farming, account, selectedPosition, isHarvested]);
 
-    const bonusRewardEarnedUSD = useRewardEarnedUSD({
-        token: farming.bonusRewardToken,
-        reward: bonusRewardEarned,
-    });
-
-    const farmingRewards = (rewardEarnedUSD + bonusRewardEarnedUSD).toFixed(4);
-
-    const farmingArgs = {
-        tokenId: BigInt(selectedPosition.id),
-        rewardToken: farming.farming.rewardToken,
-        bonusRewardToken: farming.farming.bonusRewardToken,
-        pool: farming.farming.pool,
-        nonce: farming.farming.nonce,
-        account: account ?? ADDRESS_ZERO,
-    };
-
-    const {
-        onHarvest,
-        isLoading: isHarvesting,
-        isSuccess: isHarvested,
-    } = useFarmHarvest(farmingArgs);
-
-    const { onUnstake, isLoading: isUnstaking } = useFarmUnstake(farmingArgs);
-
-    const handleUnstake = async () => {
-        if (!account) return;
-        if (!onUnstake) return;
-        onUnstake();
-    };
-
-    const handleHarvest = async () => {
-        if (!account) return;
-        if (!onHarvest) return;
-        onHarvest();
-    };
-
-    useEffect(() => {
-        if (!account) return;
-        getFarmingRewards(farmingArgs).then((rewards) => {
-            setRewardEarned(rewards.reward);
-            setBonusRewardEarned(rewards.bonusReward);
-        });
-    }, [farming, account, selectedPosition, isHarvested]);
-
-    return (
-        <div className="flex flex-col gap-6">
-            <div className="flex w-full justify-between bg-card-dark p-4 rounded-xl">
-                <div className="text-left">
-                    <div className="font-bold text-xs">EARNED REWARDS</div>
-                    <div className="font-semibold text-2xl">
-                        <span className="text-cyan-300 drop-shadow-cyan">
-                            ${farmingRewards}
-                        </span>
-                    </div>
-                </div>
-                <Button
-                    size={'md'}
-                    disabled={isHarvesting || isUnstaking}
-                    onClick={handleHarvest}
-                >
-                    {isHarvesting ? <Loader /> : 'Collect'}
-                </Button>
-            </div>
-            <Button
-                onClick={handleUnstake}
-                disabled={isUnstaking || isHarvesting}
-            >
-                {isUnstaking ? <Loader /> : 'Exit from farming'}
-            </Button>
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex w-full justify-between bg-card-dark p-4 rounded-xl">
+        <div className="text-left">
+          <div className="font-bold text-xs">EARNED REWARDS</div>
+          <div className="font-semibold text-2xl">
+            <span className="text-cyan-300 drop-shadow-cyan">
+              ${farmingRewards}
+            </span>
+          </div>
         </div>
-    );
+        <Button
+          size={"md"}
+          disabled={isHarvesting || isUnstaking}
+          onClick={handleHarvest}
+        >
+          {isHarvesting ? <Loader /> : "Collect"}
+        </Button>
+      </div>
+      <Button onClick={handleUnstake} disabled={isUnstaking || isHarvesting}>
+        {isUnstaking ? <Loader /> : "Exit from farming"}
+      </Button>
+    </div>
+  );
 };
 
 export default ActiveFarmingCard;

@@ -1,4 +1,4 @@
-import { useAlgebraPositionManagerTokenUri } from "@/generated";
+import { useReadAlgebraPositionManagerTokenUri } from "@/wagmi-generated";
 import { cn } from "@/lib/tailwindcss";
 import { useEffect, useRef } from "react";
 
@@ -11,7 +11,7 @@ export const FarmingPositionImg = ({
   size: number;
   className?: string;
 }) => {
-  const { data: uri } = useAlgebraPositionManagerTokenUri({
+  const { data: uri } = useReadAlgebraPositionManagerTokenUri({
     args: [positionId],
   });
 

@@ -13,20 +13,19 @@ import {
   SmartRouter,
   SmartRouterTrade,
 } from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
-import {
-  Address,
-  erc20ABI,
-  useContractWrite,
-  usePrepareContractWrite,
-} from "wagmi";
-
-import { ALGEBRA_ROUTER } from "@/constants/addresses";
-import { ApprovalState, ApprovalStateType } from "@/types/approve-state";
 
 import { useNeedAllowance } from "./useNeedAllowance";
 import { useTransactionAwait } from "./useTransactionAwait";
-import { TransactionType } from "@/state/pendingTransactionsStore.ts";
-import { formatBalance } from "@/utils/common/formatBalance.ts";
+import { Address } from "viem";
+import { ALGEBRA_ROUTER } from "@/data/algebra/addresses";
+import { TransactionType } from "@/services/algebra/state/pendingTransactionsStore";
+import {
+  ApprovalStateType,
+  ApprovalState,
+} from "@/types/algebra/types/approve-state";
+import { useContractWrite, useSimulateContract, useWriteContract } from "wagmi";
+import { formatBalance } from "../../utils/common/formatBalance";
+import { erc20Abi } from "viem";
 
 export function useApprove(
   amountToApprove:
@@ -47,11 +46,11 @@ export function useApprove(
     return needAllowance ? ApprovalState.NOT_APPROVED : ApprovalState.APPROVED;
   }, [amountToApprove, needAllowance, spender]);
 
-  const { config } = usePrepareContractWrite({
+  const { data: config } = useSimulateContract({
     address: amountToApprove
       ? (amountToApprove.currency.wrapped.address as Address)
       : undefined,
-    abi: erc20ABI,
+    abi: erc20Abi,
     functionName: "approve",
     args: [
       spender,
@@ -59,9 +58,10 @@ export function useApprove(
     ] as [Address, bigint],
   });
 
-  const { data: approvalData, writeAsync: approve } = useContractWrite(config);
+  const { data: approvalData, writeContractAsync: approve } =
+    useWriteContract();
 
-  const { isLoading, isSuccess } = useTransactionAwait(approvalData?.hash, {
+  const { isLoading, isSuccess } = useTransactionAwait(approvalData, {
     title: `Approve ${formatBalance(
       amountToApprove?.toSignificant() as string
     )} ${amountToApprove?.currency.symbol}`,
@@ -73,9 +73,9 @@ export function useApprove(
     approvalState: isLoading
       ? ApprovalState.PENDING
       : isSuccess && approvalState === ApprovalState.APPROVED
-      ? ApprovalState.APPROVED
-      : approvalState,
-    approvalCallback: approve,
+        ? ApprovalState.APPROVED
+        : approvalState,
+    approvalCallback: approve && config && approve(config?.request),
   };
 }
 

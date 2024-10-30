@@ -1,17 +1,24 @@
-import { useNeedAllowance } from "@/hooks/common/useNeedAllowance";
-import { IDerivedMintInfo, useMintState, useMintActionHandlers } from "@/state/mintStore";
-import { Currency,  Field, } from "@cryptoalgebra/custom-pools-sdk";
+import { Currency, Field } from "@cryptoalgebra/custom-pools-sdk";
 import { useEffect, useMemo } from "react";
 import EnterAmountCard from "../EnterAmountsCard";
-import { ALGEBRA_POSITION_MANAGER } from "@/constants/addresses";
-
+import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
+import { useNeedAllowance } from "@/lib/algebra/hooks/common/useNeedAllowance";
+import {
+  IDerivedMintInfo,
+  useMintState,
+  useMintActionHandlers,
+} from "@/services/algebra/state/mintStore";
 interface EnterAmountsProps {
   currencyA: Currency | undefined;
   currencyB: Currency | undefined;
   mintInfo: IDerivedMintInfo;
 }
 
-const EnterAmounts = ({ currencyA, currencyB, mintInfo }: EnterAmountsProps) => {
+const EnterAmounts: React.FC<EnterAmountsProps> = ({
+  currencyA,
+  currencyB,
+  mintInfo,
+}) => {
   const { independentField, typedValue } = useMintState();
 
   const { onFieldAInput, onFieldBInput } = useMintActionHandlers(
@@ -21,9 +28,8 @@ const EnterAmounts = ({ currencyA, currencyB, mintInfo }: EnterAmountsProps) => 
   const formattedAmounts = {
     [independentField]: typedValue,
     [mintInfo.dependentField]:
-      mintInfo.parsedAmounts[mintInfo.dependentField]?.toSignificant(6) ?? '',
+      mintInfo.parsedAmounts[mintInfo.dependentField]?.toSignificant(6) ?? "",
   };
-
 
   const currencyAError = useMemo(() => {
     if (
@@ -33,7 +39,7 @@ const EnterAmounts = ({ currencyA, currencyB, mintInfo }: EnterAmountsProps) => 
     )
       return;
 
-    const erroredToken = mintInfo.errorMessage.split(' ')[1];
+    const erroredToken = mintInfo.errorMessage.split(" ")[1];
     const erroredSymbol = currencyA.isNative
       ? currencyA.symbol
       : currencyA.wrapped.symbol;
@@ -51,7 +57,7 @@ const EnterAmounts = ({ currencyA, currencyB, mintInfo }: EnterAmountsProps) => 
     )
       return;
 
-    const erroredToken = mintInfo.errorMessage.split(' ')[1];
+    const erroredToken = mintInfo.errorMessage.split(" ")[1];
 
     if (currencyB.wrapped.symbol === erroredToken) return mintInfo.errorMessage;
 
@@ -72,10 +78,10 @@ const EnterAmounts = ({ currencyA, currencyB, mintInfo }: EnterAmountsProps) => 
 
   useEffect(() => {
     return () => {
-      onFieldAInput('')
-      onFieldBInput('')
-    }
-  }, [])
+      onFieldAInput("");
+      onFieldBInput("");
+    };
+  }, []);
 
   return (
     <div className="flex flex-col md:flex-row lg:flex-col gap-2">
@@ -84,7 +90,7 @@ const EnterAmounts = ({ currencyA, currencyB, mintInfo }: EnterAmountsProps) => 
           currency={currencyA}
           value={formattedAmounts[Field.CURRENCY_A]}
           valueForApprove={mintInfo.parsedAmounts[Field.CURRENCY_A]}
-          handleChange={value => onFieldAInput(value)}
+          handleChange={(value) => onFieldAInput(value)}
           needApprove={allowanceA}
           error={currencyAError}
         />
@@ -100,7 +106,7 @@ const EnterAmounts = ({ currencyA, currencyB, mintInfo }: EnterAmountsProps) => 
           value={formattedAmounts[Field.CURRENCY_B]}
           needApprove={allowanceB}
           valueForApprove={mintInfo.parsedAmounts[Field.CURRENCY_B]}
-          handleChange={value => onFieldBInput(value)}
+          handleChange={(value) => onFieldBInput(value)}
           error={currencyBError}
         />
         {mintInfo.depositBDisabled && (
