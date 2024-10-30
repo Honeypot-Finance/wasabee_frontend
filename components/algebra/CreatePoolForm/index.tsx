@@ -25,7 +25,7 @@ import {
 } from "@cryptoalgebra/custom-pools-sdk";
 import { Button } from "@nextui-org/react";
 import { cn } from "@nextui-org/theme";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 import { Loader } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "viem";
@@ -33,6 +33,8 @@ import { useAccount, useContractWrite, useWriteContract } from "wagmi";
 import SelectPair from "../SelectPair";
 import Summary from "../Summary";
 import {
+  useReadAlgebraFactoryComputeCustomPoolAddress,
+  useReadAlgebraFactoryComputePoolAddress,
   useSimulateAlgebraCustomPoolDeployerCreateCustomPool,
   useSimulateAlgebraPositionManagerMulticall,
 } from "@/wagmi-generated";
@@ -77,31 +79,36 @@ const CreatePoolForm = () => {
   const isSameToken =
     areCurrenciesSelected && currencyA.wrapped.equals(currencyB.wrapped);
 
-  const poolAddress =
-    areCurrenciesSelected && !isSameToken
-      ? (computePoolAddress({
-          tokenA: currencyA.wrapped,
-          tokenB: currencyB.wrapped,
-        }) as Address)
-      : undefined;
+  const { data: poolAddress } = useReadAlgebraFactoryComputePoolAddress({
+    args: [
+      (currencyA?.wrapped as Address | undefined) ?? zeroAddress,
+      (currencyB?.wrapped as Address | undefined) ?? zeroAddress,
+    ],
+  });
 
-  const customPoolsAddresses =
-    areCurrenciesSelected && !isSameToken
-      ? [CUSTOM_POOL_DEPLOYER_BLANK, CUSTOM_POOL_DEPLOYER_FEE_CHANGER].map(
-          (customPoolDeployer) =>
-            computeCustomPoolAddress({
-              tokenA: currencyA.wrapped,
-              tokenB: currencyB.wrapped,
-              customPoolDeployer,
-            }) as Address
-        )
-      : [];
+  const { data: customPoolDeployerAddressesBlank } =
+    useReadAlgebraFactoryComputeCustomPoolAddress({
+      args: [
+        (currencyA?.wrapped as Address | undefined) ?? zeroAddress,
+        (currencyB?.wrapped as Address | undefined) ?? zeroAddress,
+        CUSTOM_POOL_DEPLOYER_BLANK,
+      ],
+    });
+
+  const { data: customPoolDeployerAddressesFeeChanger } =
+    useReadAlgebraFactoryComputeCustomPoolAddress({
+      args: [
+        (currencyA?.wrapped as Address | undefined) ?? zeroAddress,
+        (currencyB?.wrapped as Address | undefined) ?? zeroAddress,
+        CUSTOM_POOL_DEPLOYER_FEE_CHANGER,
+      ],
+    });
 
   const [poolState] = usePool(poolAddress);
 
   // TODO
-  const [poolState0] = usePool(customPoolsAddresses[0]);
-  const [poolState1] = usePool(customPoolsAddresses[1]);
+  const [poolState0] = usePool(customPoolDeployerAddressesBlank);
+  const [poolState1] = usePool(customPoolDeployerAddressesFeeChanger);
 
   const isPoolExists =
     poolState === PoolState.EXISTS && poolDeployer === POOL_DEPLOYER.BASE;
@@ -223,10 +230,10 @@ const CreatePoolForm = () => {
 
   const handleCreatePool = () => {
     if (poolDeployer === POOL_DEPLOYER.BASE) {
-      if (!createBasePool) return;
+      if (!createBasePool || !createBasePoolConfig) return;
       createBasePool(createBasePoolConfig!.request);
     }
-    if (!createCustomPool) return;
+    if (!createCustomPool || !createCustomPoolConfig) return;
     createCustomPool(createCustomPoolConfig!.request);
   };
 

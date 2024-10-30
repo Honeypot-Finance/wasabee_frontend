@@ -2,12 +2,16 @@ import { Currency, Percent } from "@cryptoalgebra/custom-pools-sdk";
 import { ChevronRight } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { useAccount, useBalance } from "wagmi";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 import { formatBalance } from "@/lib/algebra/utils/common/formatBalance";
 import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { Input } from "../../ui/input";
 import CurrencyLogo from "../../common/CurrencyLogo";
 import TokenSelectorModal from "../../modals/TokenSelectorModal";
+import { TokenSelector } from "@/components/TokenSelector";
+import { Token } from "@/services/contract/token";
+import { Token as AlgebraToken } from "@cryptoalgebra/custom-pools-sdk";
+import { wallet } from "@/services/wallet";
 
 interface TokenSwapCardProps {
   handleTokenSelection: (currency: Currency) => void;
@@ -67,7 +71,22 @@ const TokenCard = ({
   return (
     <div className="flex w-full px-4 py-6 bg-card-dark rounded-2xl">
       <div className="flex flex-col gap-2 min-w-fit">
-        <TokenSelectorModal
+        <TokenSelector
+          onSelect={(token) => {
+            const currency: Currency = new AlgebraToken(
+              wallet.currentChainId,
+              token.address,
+              token.decimals,
+              token.symbol,
+              token.name
+            );
+            handleTokenSelection(currency);
+          }}
+          value={Token.getToken({
+            address: currency?.wrapped?.address ?? zeroAddress,
+          })}
+        />
+        {/* <TokenSelectorModal
           showNativeToken={showNativeToken}
           onSelect={handleTokenSelect}
           isOpen={isOpen}
@@ -84,7 +103,7 @@ const TokenCard = ({
             </span>
             <ChevronRight size={16} />
           </button>
-        </TokenSelectorModal>
+        </TokenSelectorModal> */}
         {currency && account && (
           <div className={"flex text-sm whitespace-nowrap"}>
             {showBalance && (
