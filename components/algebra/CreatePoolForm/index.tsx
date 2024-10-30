@@ -154,8 +154,8 @@ const CreatePoolForm = () => {
     createBasePoolData,
     {
       title: "Create Base Pool",
-      tokenA: currencyA?.wrapped.address as Address,
-      tokenB: currencyB?.wrapped.address as Address,
+      tokenA: currencyA?.wrapped?.address as Address,
+      tokenB: currencyB?.wrapped?.address as Address,
       type: TransactionType.POOL,
     },
     "/pools"
@@ -196,8 +196,8 @@ const CreatePoolForm = () => {
     createCustomPoolData,
     {
       title: "Create Custom Pool",
-      tokenA: currencyA?.wrapped.address as Address,
-      tokenB: currencyB?.wrapped.address as Address,
+      tokenA: currencyA?.wrapped?.address as Address,
+      tokenB: currencyB?.wrapped?.address as Address,
       type: TransactionType.POOL,
     },
     "/pools"

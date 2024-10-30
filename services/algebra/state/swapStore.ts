@@ -1,16 +1,16 @@
-import { STABLECOINS } from "@/constants/tokens";
-import {
-  useAlgebraPoolGlobalState,
-  useAlgebraPoolTickSpacing,
-} from "@/generated";
-import { useCurrency } from "@/hooks/common/useCurrency";
+import { STABLECOINS } from "@/data/algebra/tokens";
+import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
 import {
   useBestTradeExactIn,
   useBestTradeExactOut,
-} from "@/hooks/swap/useBestTrade";
-import useSwapSlippageTolerance from "@/hooks/swap/useSwapSlippageTolerance";
-import { SwapField, SwapFieldType } from "@/types/swap-field";
-import { TradeStateType } from "@/types/trade-state";
+} from "@/lib/algebra/hooks/swap/useBestTrade";
+import useSwapSlippageTolerance from "@/lib/algebra/hooks/swap/useSwapSlippageTolerance";
+import { SwapFieldType, SwapField } from "@/types/algebra/types/swap-field";
+import { TradeStateType } from "@/types/algebra/types/trade-state";
+import {
+  useReadAlgebraPoolGlobalState,
+  useReadAlgebraPoolTickSpacing,
+} from "@/wagmi-generated";
 import {
   ADDRESS_ZERO,
   Currency,
@@ -27,8 +27,8 @@ import {
 } from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
 import JSBI from "jsbi";
 import { useCallback, useMemo } from "react";
-import { parseUnits } from "viem";
-import { Address, useAccount, useBalance } from "wagmi";
+import { Account, Address, parseUnits } from "viem";
+import { useAccount, useBalance } from "wagmi";
 import { create } from "zustand";
 
 interface SwapState {
@@ -80,7 +80,7 @@ export const useSwapState = create<SwapState>((set, get) => ({
     currencyId: ADDRESS_ZERO,
   },
   [SwapField.OUTPUT]: {
-    currencyId: STABLECOINS.USDT.address as Account,
+    currencyId: STABLECOINS.USDT.address as Address,
   },
   wasInverted: false,
   lastFocusedField: SwapField.INPUT,
@@ -146,8 +146,8 @@ export function useSwapActionHandlers(): {
         currency.isToken
           ? currency.address
           : currency.isNative
-          ? ADDRESS_ZERO
-          : ""
+            ? ADDRESS_ZERO
+            : ""
       ),
     []
   );
@@ -250,12 +250,10 @@ export function useDerivedSwapInfo(): IDerivedSwapInfo {
   const { data: inputCurrencyBalance } = useBalance({
     address: account,
     token: addressA,
-    watch: true,
   });
   const { data: outputCurrencyBalance } = useBalance({
     address: account,
     token: addressB,
-    watch: true,
   });
 
   const currencyBalances = {
@@ -328,11 +326,11 @@ export function useDerivedSwapInfo(): IDerivedSwapInfo {
         tokenB: currencies[SwapField.OUTPUT]!.wrapped,
       }).toLowerCase() as Address);
 
-  const { data: globalState } = useAlgebraPoolGlobalState({
+  const { data: globalState } = useReadAlgebraPoolGlobalState({
     address: poolAddress,
   });
 
-  const { data: tickSpacing } = useAlgebraPoolTickSpacing({
+  const { data: tickSpacing } = useReadAlgebraPoolTickSpacing({
     address: poolAddress,
   });
 

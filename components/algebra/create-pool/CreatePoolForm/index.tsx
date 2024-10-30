@@ -22,7 +22,7 @@ import Summary from "../Summary";
 import SelectPair from "../SelectPair";
 import { STABLECOINS } from "@/constants/tokens";
 import { TransactionType } from "@/state/pendingTransactionsStore";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/tailwindcss";
 import {
   CUSTOM_POOL_DEPLOYER_BLANK,
   CUSTOM_POOL_DEPLOYER_FEE_CHANGER,
@@ -171,7 +171,11 @@ const CreatePoolForm = () => {
       enabled: Boolean(isCustomPoolDeployerReady),
     });
 
-    console.log('createCustomPoolConfig', isCustomPoolDeployerReady, customPoolDeployerAddresses[poolDeployer])
+  console.log(
+    "createCustomPoolConfig",
+    isCustomPoolDeployerReady,
+    customPoolDeployerAddresses[poolDeployer]
+  );
 
   const { data: createCustomPoolData, write: createCustomPool } =
     useContractWrite(createCustomPoolConfig);

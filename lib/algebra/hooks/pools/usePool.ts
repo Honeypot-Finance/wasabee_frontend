@@ -1,15 +1,15 @@
-import {
-  useAlgebraPoolGlobalState,
-  useAlgebraPoolLiquidity,
-  useAlgebraPoolTickSpacing,
-  useAlgebraPoolToken0,
-  useAlgebraPoolToken1,
-} from "@/generated";
 import { Pool } from "@cryptoalgebra/custom-pools-sdk";
-import { Address } from "wagmi";
+import { Address } from "viem";
 import { useCurrency } from "../common/useCurrency";
 import { useMemo } from "react";
-import { useCustomPoolDeployerQuery } from "@/graphql/generated/graphql";
+import { useCustomPoolDeployerQuery } from "@/lib/graphql/generated/graphql";
+import {
+  useReadAlgebraPoolGlobalState,
+  useReadAlgebraPoolLiquidity,
+  useReadAlgebraPoolTickSpacing,
+  useReadAlgebraPoolToken0,
+  useReadAlgebraPoolToken1,
+} from "@/wagmi-generated";
 
 export const PoolState = {
   LOADING: "LOADING",
@@ -27,21 +27,21 @@ export function usePool(
     data: tickSpacing,
     isLoading: isTickSpacingLoading,
     isError: isTickSpacingError,
-  } = useAlgebraPoolTickSpacing({
+  } = useReadAlgebraPoolTickSpacing({
     address,
   });
   const {
     data: globalState,
     isLoading: isGlobalStateLoading,
     isError: isGlobalStateError,
-  } = useAlgebraPoolGlobalState({
+  } = useReadAlgebraPoolGlobalState({
     address,
   });
   const {
     data: liquidity,
     isLoading: isLiquidityLoading,
     isError: isLiquidityError,
-  } = useAlgebraPoolLiquidity({
+  } = useReadAlgebraPoolLiquidity({
     address,
   });
 
@@ -49,14 +49,14 @@ export function usePool(
     data: token0Address,
     isLoading: isLoadingToken0,
     isError: isToken0Error,
-  } = useAlgebraPoolToken0({
+  } = useReadAlgebraPoolToken0({
     address,
   });
   const {
     data: token1Address,
     isLoading: isLoadingToken1,
     isError: isToken1Error,
-  } = useAlgebraPoolToken1({
+  } = useReadAlgebraPoolToken1({
     address,
   });
 
@@ -105,7 +105,12 @@ export function usePool(
     if (!tickSpacing || !globalState || liquidity === undefined)
       return [PoolState.NOT_EXISTS, null];
 
-    if (globalState[0] === 0n || !token0 || !token1 || !poolDeployer?.pool)
+    if (
+      globalState[0] === BigInt(0) ||
+      !token0 ||
+      !token1 ||
+      !poolDeployer?.pool
+    )
       return [PoolState.NOT_EXISTS, null];
 
     try {

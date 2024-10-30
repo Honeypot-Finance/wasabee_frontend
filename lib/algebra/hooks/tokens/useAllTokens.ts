@@ -1,12 +1,12 @@
 import {
-  DEFAULT_NATIVE_NAME,
   DEFAULT_NATIVE_SYMBOL,
-} from "@/constants/default-chain-id";
+  DEFAULT_NATIVE_NAME,
+} from "@/data/algebra/default-chain-id";
 import {
-  TokenFieldsFragment,
   useAllTokensQuery,
-} from "@/graphql/generated/graphql";
-import { useTokensState } from "@/state/tokensStore";
+  TokenFieldsFragment,
+} from "@/lib/graphql/generated/graphql";
+import { useTokensState } from "@/services/algebra/state/tokensStore";
 import { ADDRESS_ZERO } from "@cryptoalgebra/custom-pools-sdk";
 import { useMemo } from "react";
 import { Address } from "viem";
@@ -33,7 +33,8 @@ export function useAllTokens(showNativeToken: boolean = true) {
           derivedMatic: 0,
         });
       }
-      return [...tokens].map(([, token]) => ({ ...token }));
+      //return [...tokens].map(([, token]) => ({ ...token }));
+      return Object.values(tokens).map((token) => ({ ...token }));
     }
 
     if (showNativeToken)
@@ -60,7 +61,8 @@ export function useAllTokens(showNativeToken: boolean = true) {
       });
     }
 
-    return [...tokens].map(([, token]) => ({ ...token }));
+    //return [...tokens].map(([, token]) => ({ ...token }));
+    return Object.values(tokens).map((token) => ({ ...token }));
   }, [allTokens, importedTokens, tokensBlackList, chainId, showNativeToken]);
 
   return useMemo(
