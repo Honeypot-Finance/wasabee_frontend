@@ -313,10 +313,10 @@ export function useDerivedSwapInfo(): IDerivedSwapInfo {
     inputError = `Insufficient ${amountIn.currency.symbol} balance`;
   }
 
-  const isWrap =
-    currencies.INPUT &&
-    currencies.OUTPUT &&
-    currencies.INPUT.wrapped.equals(currencies.OUTPUT.wrapped);
+  // const isWrap =
+  //   currencies.INPUT &&
+  //   currencies.OUTPUT &&
+  //   currencies.INPUT.wrapped?.equals(currencies.OUTPUT.wrapped);
 
   const { data: poolAddress } = useReadAlgebraFactoryComputePoolAddress({
     args: [

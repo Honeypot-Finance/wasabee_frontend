@@ -1,26 +1,45 @@
+import CreatePoolForm from "@/components/algebra/CreatePoolForm";
+import CardContianer from "@/components/CardContianer/CardContianer";
 import { Layout } from "@/components/layout";
+import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { LPCard } from "@/components/LPCard";
 import { LPCardv3 } from "@/components/LPCardv3";
 import { Swap } from "@/components/swap";
+import { liquidity } from "@/services/liquidity";
+import { wallet } from "@/services/wallet";
 import { Tab, Tabs } from "@nextui-org/react";
+import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 
-const Pool = () => {
+const Pool = observer(() => {
+  const isInit = wallet.isInit && liquidity.isInit;
+  useEffect(() => {
+    if (!wallet.isInit) {
+      return;
+    }
+
+    liquidity.initPool();
+  }, [wallet.isInit]);
   return (
     <div>
-      <Tabs className="relative w-full flex justify-center content-center items-center">
-        <Tab title="v3">
-          <div className="relative w-full flex justify-center content-center items-center">
-            <LPCardv3></LPCardv3>
-          </div>
-        </Tab>
-        <Tab title="v2">
-          <div className="relative w-full flex justify-center content-center items-center">
-            <LPCard></LPCard>
-          </div>
-        </Tab>
-      </Tabs>
+      {isInit ? (
+        <Tabs className="relative w-full flex justify-center content-center items-center">
+          <Tab title="v3">
+            <div className="relative w-full flex justify-center content-center items-center">
+              <CreatePoolForm />
+            </div>
+          </Tab>
+          <Tab title="v2">
+            <div className="relative w-full flex justify-center content-center items-center">
+              <LPCard></LPCard>
+            </div>
+          </Tab>
+        </Tabs>
+      ) : (
+        <LoadingDisplay />
+      )}
     </div>
   );
-};
+});
 
 export default Pool;
