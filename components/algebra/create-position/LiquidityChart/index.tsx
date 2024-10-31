@@ -212,19 +212,19 @@ const LiquidityChart = ({
 
 const LiquidityChartLoader = () => (
   <div className="flex items-end gap-4 w-full h-[250px]">
-    <Skeleton className="w-[40px] h-[120px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[130px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[160px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[130px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[120px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[160px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[200px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[140px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[130px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[120px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[140px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[120px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[190px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[120px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[130px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[160px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[130px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[120px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[160px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[200px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[140px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[130px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[120px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[140px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[120px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[190px] bg-orange-300 border-1" />
   </div>
 );
 
