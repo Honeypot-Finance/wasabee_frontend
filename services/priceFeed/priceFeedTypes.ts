@@ -1,4 +1,8 @@
 export interface PriceFeedProvider {
+  getMultipleTokenCurrentPrice(
+    addresses: string[],
+    networkId: string
+  ): Promise<ApiResponseType<TokenCurrentPriceResponseType[]>>;
   getTokenCurrentPrice(
     address: string,
     networkId: string
@@ -38,6 +42,7 @@ export type resolutionType =
   | "7D";
 
 export type TokenCurrentPriceResponseType = {
+  address: string;
   price: number;
   lastUpdated?: number;
   timestamp?: number;
