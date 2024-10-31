@@ -75,7 +75,7 @@ export function useApprove(
       : isSuccess && approvalState === ApprovalState.APPROVED
         ? ApprovalState.APPROVED
         : approvalState,
-    approvalCallback: approve && config && approve(config?.request),
+    approvalCallback: () => (config ? approve(config?.request) : undefined),
   };
 }
 

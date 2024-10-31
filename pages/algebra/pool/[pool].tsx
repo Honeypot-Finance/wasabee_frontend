@@ -1,6 +1,6 @@
 import { Position, ZERO } from "@cryptoalgebra/custom-pools-sdk";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { Link, MoveRightIcon } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import JSBI from "jsbi";
@@ -24,9 +24,11 @@ import {
   useNativePriceQuery,
 } from "@/lib/graphql/generated/graphql";
 import { FormattedPosition } from "@/types/algebra/types/formatted-position";
-import { Button } from "@/components/algebra/ui/button";
+import { Button as algebraButton } from "@/components/algebra/ui/button";
+import { Button } from "@/components/button";
 import { Skeleton } from "@/components/algebra/ui/skeleton";
 import { useParams } from "next/navigation";
+import { MoveRightIcon } from "lucide-react";
 
 const PoolPage = () => {
   const { address: account } = useAccount();
@@ -263,8 +265,11 @@ const NoPositions = ({ poolId }: { poolId: Address }) => (
       {`You don't have positions for this pool`}
     </h2>
     <p className="text-md font-semibold my-4">{`Let's create one!`}</p>
-    <Button className="gap-2" asChild>
-      <Link to={`/pool/${poolId}/new-position`}>
+    <Button className="gap-2 z-1 w-full">
+      <Link
+        href={`/algebra/new-position/${poolId}`}
+        className="flex justify-center items-center gap-2"
+      >
         Create Position
         <MoveRightIcon />
       </Link>

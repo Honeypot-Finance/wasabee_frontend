@@ -43,10 +43,6 @@ export const AddLiquidityButton = ({
 }: AddLiquidityButtonProps) => {
   const { address: account } = useAccount();
 
-  const { open } = useWeb3Modal();
-
-  const { selectedNetworkId } = useWeb3ModalState();
-
   const { txDeadline } = useUserState();
 
   const useNative = baseCurrency?.isNative
@@ -130,17 +126,17 @@ export const AddLiquidityButton = ({
     `/pool/${poolAddress}`
   );
 
-  const isWrongChain = Number(selectedNetworkId) !== DEFAULT_CHAIN_ID;
+  //   const isWrongChain = Number(selectedNetworkId) !== DEFAULT_CHAIN_ID;
 
-  if (!account) return <Button onClick={() => open()}>Connect Wallet</Button>;
+  //   if (!account) return <Button onClick={() => open()}>Connect Wallet</Button>;
 
-  if (isWrongChain)
-    return (
-      <Button
-        variant={"destructive"}
-        onClick={() => open({ view: "Networks" })}
-      >{`Connect to ${DEFAULT_CHAIN_NAME}`}</Button>
-    );
+  //   if (isWrongChain)
+  //     return (
+  //       <Button
+  //         variant={"destructive"}
+  //         onClick={() => open({ view: "Networks" })}
+  //       >{`Connect to ${DEFAULT_CHAIN_NAME}`}</Button>
+  //     );
 
   if (mintInfo.errorMessage)
     return <Button disabled>{mintInfo.errorMessage}</Button>;
