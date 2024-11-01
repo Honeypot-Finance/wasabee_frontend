@@ -16,7 +16,6 @@ import {
   useSwapState,
 } from "@/services/algebra/state/swapStore";
 import { SwapField } from "@/types/algebra/types/swap-field";
-import { computeCustomPoolAddress } from "@cryptoalgebra/custom-pools-sdk";
 import {
   computePoolAddress,
   INITIAL_POOL_FEE,
@@ -38,6 +37,7 @@ import {
   useSimulateAlgebraCustomPoolDeployerCreateCustomPool,
   useSimulateAlgebraPositionManagerMulticall,
 } from "@/wagmi-generated";
+import CardContianer from "@/components/CardContianer/CardContianer";
 
 const POOL_DEPLOYER = {
   BASE: "Base",
@@ -77,7 +77,7 @@ const CreatePoolForm = () => {
   const areCurrenciesSelected = currencyA && currencyB;
 
   const isSameToken =
-    areCurrenciesSelected && currencyA.wrapped.equals(currencyB.wrapped);
+    areCurrenciesSelected && currencyA.wrapped?.equals(currencyB.wrapped);
 
   const { data: poolAddress } = useReadAlgebraFactoryComputePoolAddress({
     args: [
@@ -246,8 +246,10 @@ const CreatePoolForm = () => {
   );
 
   return (
-    <div className="flex flex-col gap-1 p-2 bg-card border border-card-border rounded-3xl">
-      <h2 className="font-semibold text-xl text-left ml-2 mt-2">Select Pair</h2>
+    <CardContianer addtionalClassName="w-auto flex-none flex-col gap-1 p-2 rounded-3xl">
+      <h2 className="font-semibold text-xl text-left ml-2 mt-2 ">
+        Create Pool
+      </h2>
       <SelectPair
         mintInfo={mintInfo}
         currencyA={currencyA}
@@ -303,7 +305,7 @@ const CreatePoolForm = () => {
           {isBasePoolLoading ? <Loader /> : "Initialize"}
         </Button>
       )}
-    </div>
+    </CardContianer>
   );
 };
 

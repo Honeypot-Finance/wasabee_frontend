@@ -347,6 +347,12 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/bero-token-icon.webp",
     },
+    "0x16221CaD160b441db008eF6DA2d3d89a32A05859": {
+      name: "uniBTC",
+      symbol: "uniBTC",
+      decimals: 8,
+      logoURI: "/images/icons/tokens/unibtc-token-icon.png",
+    },
   },
   validatedFtoAddresses: [
     "0x2c504e661750e03aa9252c67e771dc059a521863".toLowerCase(),
@@ -359,7 +365,10 @@ export const networks = [
   berachainBartioTestnetNetwork,
   //sepoliaNetwork,
 ];
-export const networksMap = networks.reduce((acc, network) => {
-  acc[network.chainId] = network;
-  return acc;
-}, {} as Record<number | string, Network>);
+export const networksMap = networks.reduce(
+  (acc, network) => {
+    acc[network.chainId] = network;
+    return acc;
+  },
+  {} as Record<number | string, Network>
+);

@@ -17,11 +17,11 @@ const Summary = observer(({ currencyA, currencyB }: ISummary) => {
   const [suggestedPrice, setSuggestedPrice] = useState(0);
   const { startPriceTypedValue } = useMintState();
 
-  const token0 = currencyA?.wrapped.address.toLowerCase() as Address;
-  const token1 = currencyB?.wrapped.address.toLowerCase() as Address;
+  const token0 = currencyA?.wrapped?.address.toLowerCase() as Address;
+  const token1 = currencyB?.wrapped?.address.toLowerCase() as Address;
 
-  const singleToken0 = Token.getToken({ address: token0 });
-  const singleToken1 = Token.getToken({ address: token1 });
+  const singleToken0 = token0 && Token.getToken({ address: token0 });
+  const singleToken1 = token1 && Token.getToken({ address: token1 });
 
   useEffect(() => {
     if (!singleToken0 || !singleToken1) return;
