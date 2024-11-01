@@ -7,7 +7,6 @@ import {
   Field,
   ZERO,
 } from "@cryptoalgebra/custom-pools-sdk";
-import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 import JSBI from "jsbi";
 import { useMemo } from "react";
 import { useAccount, useContractWrite } from "wagmi";
@@ -42,7 +41,6 @@ export const AddLiquidityButton = ({
   poolAddress,
 }: AddLiquidityButtonProps) => {
   const { address: account } = useAccount();
-
   const { txDeadline } = useUserState();
 
   const useNative = baseCurrency?.isNative
@@ -59,16 +57,23 @@ export const AddLiquidityButton = ({
     )
       return { calldata: undefined, value: undefined };
 
-    return NonfungiblePositionManager.addCallParameters(mintInfo.position, {
-      slippageTolerance: mintInfo.outOfRange
-        ? ZERO_PERCENT
-        : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE,
-      recipient: account,
-      deadline: Date.now() + txDeadline,
-      useNative,
-      createPool: mintInfo.noLiquidity,
-      deployer: mintInfo.pool?.deployer,
-    });
+    console.log("mintInfo", mintInfo, account, txDeadline, useNative);
+
+    const res = NonfungiblePositionManager.addCallParameters(
+      mintInfo.position,
+      {
+        slippageTolerance: mintInfo.outOfRange
+          ? ZERO_PERCENT
+          : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE,
+        recipient: account,
+        deadline: Date.now() + txDeadline,
+        useNative,
+        createPool: mintInfo.noLiquidity,
+        deployer: mintInfo.pool?.deployer,
+      }
+    );
+
+    return res;
   }, [mintInfo, account, txDeadline, useNative]);
 
   const { approvalState: approvalStateA, approvalCallback: approvalCallbackA } =
@@ -76,6 +81,7 @@ export const AddLiquidityButton = ({
       mintInfo.parsedAmounts[Field.CURRENCY_A],
       ALGEBRA_POSITION_MANAGER
     );
+
   const { approvalState: approvalStateB, approvalCallback: approvalCallbackB } =
     useApprove(
       mintInfo.parsedAmounts[Field.CURRENCY_B],
@@ -176,11 +182,10 @@ export const AddLiquidityButton = ({
   return (
     <Button
       disabled={!isReady}
-      onClick={() =>
-        addLiquidity &&
-        addLiquidityConfig &&
-        addLiquidity(addLiquidityConfig.request)
-      }
+      onClick={() => {
+        if (addLiquidityConfig?.request && addLiquidity)
+          addLiquidity(addLiquidityConfig.request);
+      }}
     >
       {isAddingLiquidityLoading ? <Loader /> : "Create Position"}
     </Button>

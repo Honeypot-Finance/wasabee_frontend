@@ -128,7 +128,7 @@ const PoolsList = () => {
         columns={poolsColumns}
         data={formattedPools}
         defaultSortingID={"tvlUSD"}
-        link={"pool"}
+        link={"algebra/pool"}
         showPagination={true}
         loading={isLoading}
       />

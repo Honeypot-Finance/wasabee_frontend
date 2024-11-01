@@ -53,10 +53,10 @@ const AmountsSection = ({
         mintInfo={mintInfo}
       />
       <HoverCard>
-        <HoverCardTrigger>
+        <HoverCardTrigger className="w-full">
           <TokenRatio mintInfo={mintInfo} />
         </HoverCardTrigger>
-        <HoverCardContent className="flex flex-col gap-2 bg-card rounded-3xl border border-card-border text-white w-fit">
+        <HoverCardContent className="flex flex-col w-full gap-2 rounded-3xl  text-white">
           <div className="flex items-center">
             <span className="font-bold">Token Ratio</span>
           </div>

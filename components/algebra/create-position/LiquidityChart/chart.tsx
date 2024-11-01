@@ -213,6 +213,8 @@ export function Chart({
                 100;
             }
 
+            console.log(props);
+
             return (
               <CustomBar
                 height={props.height}
@@ -240,7 +242,7 @@ export function Chart({
                 Number(value) >= Number(leftPrice) &&
                 Number(value) <= Number(rightPrice)
               ) {
-                fill = "url(#colorUv)";
+                fill = "white";
               }
             }
 

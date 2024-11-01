@@ -20,6 +20,7 @@ import {
   useReadAlgebraPoolToken0,
   useReadAlgebraPoolToken1,
 } from "@/wagmi-generated";
+import CardContianer from "@/components/CardContianer/CardContianer";
 
 type NewPositionPageParams = Record<"pool", Address>;
 
@@ -116,7 +117,10 @@ const NewPositionPage = () => {
           </div>
 
           <div className="flex flex-col w-full">
-            <div className="w-full px-8 py-6 bg-card text-left rounded-3xl border border-card-border">
+            <CardContianer
+              childrenAutoSize
+              addtionalClassName="flex-col w-full px-8 py-6  text-left rounded-3xl"
+            >
               <div className="flex w-full flex-col md:flex-row gap-4">
                 <RangeSelector
                   priceLower={priceLower}
@@ -146,7 +150,7 @@ const NewPositionPage = () => {
                 priceLower={priceLower}
                 priceUpper={priceUpper}
               />
-            </div>
+            </CardContianer>
           </div>
         </div>
 
@@ -154,14 +158,17 @@ const NewPositionPage = () => {
           <h2 className="font-semibold text-2xl text-left mb-6 leading-[44px]">
             2. Enter Amounts
           </h2>
-          <div className="flex flex-col w-full h-full gap-2 bg-card border border-card-border rounded-3xl p-2">
+          <CardContianer
+            childrenAutoSize
+            addtionalClassName="flex flex-col w-full h-full gap-2 p-2"
+          >
             <AmountsSection
               currencyA={currencyA}
               currencyB={currencyB}
               mintInfo={mintInfo}
               manageLiquidity={ManageLiquidity.ADD}
             />
-          </div>
+          </CardContianer>
         </div>
       </div>
     </PageContainer>

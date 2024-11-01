@@ -10,7 +10,7 @@ export function computeFiatValuePriceImpact(
 
     if (!fiatValueInput.currency.equals(fiatValueOutput.currency)) return undefined
 
-    if (BigInt(fiatValueInput.quotient.toString()) === 0n) return undefined
+    if (BigInt(fiatValueInput.quotient.toString()) === BigInt(0)) return undefined
 
     const pct = ONE_HUNDRED_PERCENT.subtract(fiatValueOutput.divide(fiatValueInput))
 

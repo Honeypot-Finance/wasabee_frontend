@@ -29,6 +29,7 @@ import { Button } from "@/components/button";
 import { Skeleton } from "@/components/algebra/ui/skeleton";
 import { useParams } from "next/navigation";
 import { MoveRightIcon } from "lucide-react";
+import CardContianer from "@/components/CardContianer/CardContianer";
 
 const PoolPage = () => {
   const { address: account } = useAccount();
@@ -260,7 +261,7 @@ const PoolPage = () => {
 };
 
 const NoPositions = ({ poolId }: { poolId: Address }) => (
-  <div className="flex flex-col items-start p-8 bg-card border border-card-border rounded-3xl animate-fade-in">
+  <CardContianer addtionalClassName="flex flex-col items-start p-8 rounded-3xl animate-fade-in">
     <h2 className="text-2xl font-bold">
       {`You don't have positions for this pool`}
     </h2>
@@ -274,20 +275,20 @@ const NoPositions = ({ poolId }: { poolId: Address }) => (
         <MoveRightIcon />
       </Link>
     </Button>
-  </div>
+  </CardContianer>
 );
 
 const NoAccount = () => {
   const { open } = useWeb3Modal();
 
   return (
-    <div className="flex flex-col items-start p-8 bg-card border border-card-border rounded-3xl animate-fade-in">
+    <CardContianer addtionalClassName="flex flex-col items-start p-8 rounded-3xl animate-fade-in">
       <h2 className="text-2xl font-bold">Connect Wallet</h2>
       <p className="text-md font-semibold my-4">
         Connect your account to view or create positions
       </p>
       <Button onClick={() => open()}>Connect Wallet</Button>
-    </div>
+    </CardContianer>
   );
 };
 
