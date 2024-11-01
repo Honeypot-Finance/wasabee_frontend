@@ -213,8 +213,6 @@ export function Chart({
                 100;
             }
 
-            console.log(props);
-
             return (
               <CustomBar
                 height={props.height}

@@ -37,6 +37,7 @@ export function useApprove(
   const token = amountToApprove?.currency?.isToken
     ? amountToApprove.currency
     : undefined;
+
   const needAllowance = useNeedAllowance(token, amountToApprove, spender);
 
   const approvalState: ApprovalStateType = useMemo(() => {

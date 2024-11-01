@@ -57,8 +57,6 @@ export const AddLiquidityButton = ({
     )
       return { calldata: undefined, value: undefined };
 
-    console.log("mintInfo", mintInfo, account, txDeadline, useNative);
-
     const res = NonfungiblePositionManager.addCallParameters(
       mintInfo.position,
       {
@@ -81,6 +79,8 @@ export const AddLiquidityButton = ({
       mintInfo.parsedAmounts[Field.CURRENCY_A],
       ALGEBRA_POSITION_MANAGER
     );
+
+  console.log("approvalStateA", approvalStateA);
 
   const { approvalState: approvalStateB, approvalCallback: approvalCallbackB } =
     useApprove(
@@ -109,7 +109,7 @@ export const AddLiquidityButton = ({
     );
   }, [mintInfo, approvalStateA, approvalStateB]);
 
-  const { data: addLiquidityConfig } =
+  const { data: addLiquidityConfig, error } =
     useSimulateAlgebraPositionManagerMulticall({
       args: calldata && [calldata as `0x${string}`[]],
       query: {

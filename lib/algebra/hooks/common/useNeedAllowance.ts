@@ -3,22 +3,36 @@ import {
   Currency as CurrencyBN,
   CurrencyAmount as CurrencyAmountBN,
 } from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
-import { erc20ABI, useAccount, useContractRead } from "wagmi";
+import { Account } from "viem/accounts";
+import {
+  useAccount,
+  useBlockNumber,
+  useContractRead,
+  useReadContract,
+} from "wagmi";
+import { Address, erc20Abi } from "viem";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function useNeedAllowance(
   currency: Currency | CurrencyBN | null | undefined,
   amount: CurrencyAmount<Currency> | CurrencyAmountBN<CurrencyBN> | undefined,
-  spender: Account | undefined
+  spender: Address | undefined
 ) {
+  const queryClient = useQueryClient();
   const { address: account } = useAccount();
+  const { data: blockNumber } = useBlockNumber({ watch: true });
 
-  const { data: allowance } = useContractRead({
-    address: currency?.wrapped.address as Account,
-    abi: erc20ABI,
+  const { data: allowance, queryKey } = useReadContract({
+    address: currency?.wrapped.address as Address,
+    abi: erc20Abi,
     functionName: "allowance",
-    watch: true,
     args: account && spender && [account, spender],
   });
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey });
+  }, [blockNumber, queryClient]);
 
   return Boolean(
     !currency?.isNative &&
