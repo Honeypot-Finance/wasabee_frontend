@@ -1,10 +1,3 @@
-import { useUSDCValue } from "@/hooks/common/useUSDCValue";
-import {
-  IDerivedSwapInfo,
-  useSwapActionHandlers,
-  useSwapState,
-} from "@/state/swapStore";
-import { SwapField, SwapFieldType } from "@/types/swap-field";
 import {
   Currency,
   CurrencyAmount,
@@ -15,8 +8,17 @@ import {
 import { useCallback, useMemo } from "react";
 import TokenCard from "../TokenCard";
 import { ChevronsUpDownIcon } from "lucide-react";
-import useWrapCallback, { WrapType } from "@/hooks/swap/useWrapCallback";
 import { SmartRouterTrade } from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
+import { useUSDCValue } from "@/lib/algebra/hooks/common/useUSDCValue";
+import useWrapCallback, {
+  WrapType,
+} from "@/lib/algebra/hooks/swap/useWrapCallback";
+import {
+  IDerivedSwapInfo,
+  useSwapState,
+  useSwapActionHandlers,
+} from "@/services/algebra/state/swapStore";
+import { SwapField, SwapFieldType } from "@/types/algebra/types/swap-field";
 
 const SwapPair = ({
   derivedSwap,
@@ -134,10 +136,10 @@ const SwapPair = ({
   const formattedAmounts = {
     [independentField]: typedValue,
     [dependentField]: showWrap
-      ? parsedAmounts[independentField]?.toExact() ?? ""
-      : parsedAmounts[dependentField]?.toFixed(
+      ? (parsedAmounts[independentField]?.toExact() ?? "")
+      : (parsedAmounts[dependentField]?.toFixed(
           (parsedAmounts[dependentField]?.currency.decimals || 6) / 2
-        ) ?? "",
+        ) ?? ""),
   };
 
   return (

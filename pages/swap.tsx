@@ -19,6 +19,8 @@ import { animate, motion } from "framer-motion";
 import React from "react";
 import { itemPopUpVariants } from "@/lib/animation";
 import { popmodal } from "@/services/popmodal";
+import { Tabs, Tab } from "@nextui-org/react";
+import V3swapCard from "@/components/algebra/swap/swapCard/swapCard";
 
 const SwapPage = observer(() => {
   useEffect(() => {
@@ -52,7 +54,14 @@ const SwapPage = observer(() => {
             (chart.showChart ? "justify-start" : "")
           }
         >
-          <SwapCard></SwapCard>
+          <Tabs>
+            <Tab title="v3">
+              <V3swapCard />
+            </Tab>
+            <Tab title="v2">
+              <SwapCard></SwapCard>
+            </Tab>
+          </Tabs>
         </motion.div>
       </div>
     </>

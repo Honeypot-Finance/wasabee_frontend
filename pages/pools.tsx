@@ -31,6 +31,7 @@ import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import Image from "next/image";
 import Pagination from "@/components/Pagination/Pagination";
 import { V3PoolsPage } from "@/components/V3Pools/V3poolsPage";
+import PoolsList from "@/components/algebra/pools/PoolsList";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const { chainId } = useAccount();
@@ -141,7 +142,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
   return (
     <Tabs>
       <Tab key="v3" title="v3">
-        <V3PoolsPage></V3PoolsPage>
+        <PoolsList />
       </Tab>
       <Tab key="v2" title="v2">
         <div className="flex flex-col items-center">

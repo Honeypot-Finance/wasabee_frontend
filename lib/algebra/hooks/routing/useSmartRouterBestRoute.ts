@@ -17,15 +17,14 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount, useBlockNumber } from "wagmi";
 
-import {
-  useUserSlippageToleranceWithDefault,
-  useUserState,
-} from "@/state/userStore";
-
 import useDebounce from "../common/useDebounce";
 
 import { useCommonPools } from "./useRoutingPools";
-import usePreviousValue from "@/hooks/uitls/usePreviousValue.ts";
+import {
+  useUserState,
+  useUserSlippageToleranceWithDefault,
+} from "@/services/algebra/state/userStore";
+import usePreviousValue from "../uitls/usePreviousValue";
 
 const REFRESH_TIMEOUT = 15_000;
 
@@ -193,7 +192,7 @@ export function useSmartRouterBestRoute(
   }, [trade, keepPreviousDataRef]);
 
   const isValidating = fetchStatus === "fetching";
-  const isLoading = status === "loading" || isPlaceholderData;
+  const isLoading = status === "pending" || isPlaceholderData;
 
   const refresh = useCallback(async () => {
     await refreshPools();

@@ -1,25 +1,31 @@
-import Loader from "@/components/common/Loader";
-import { Button } from "@/components/ui/button";
+import Loader from "@/components/algebra/common/Loader";
+import { Button } from "@/components/algebra/ui/button";
+import { useApproveCallbackFromSmartTrade } from "@/lib/algebra/hooks/common/useApprove";
+import useWrapCallback, {
+  WrapType,
+} from "@/lib/algebra/hooks/swap/useWrapCallback";
 import {
-  DEFAULT_CHAIN_ID,
-  DEFAULT_CHAIN_NAME,
-} from "@/constants/default-chain-id";
-import { useApproveCallbackFromSmartTrade } from "@/hooks/common/useApprove";
-import useWrapCallback, { WrapType } from "@/hooks/swap/useWrapCallback";
-import { IDerivedSwapInfo, useSwapState } from "@/state/swapStore";
-import { useUserState } from "@/state/userStore";
-import { ApprovalState } from "@/types/approve-state";
-import { SwapField } from "@/types/swap-field";
-import { warningSeverity } from "@/utils/swap/prices";
+  IDerivedSwapInfo,
+  useSwapState,
+} from "@/services/algebra/state/swapStore";
+import { useUserState } from "@/services/algebra/state/userStore";
+import { ApprovalState } from "@/types/algebra/types/approve-state";
+import { SwapField } from "@/types/algebra/types/swap-field";
+import { warningSeverity } from "@/lib/algebra/utils/swap/prices";
 import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 import { useCallback, useMemo } from "react";
-import { Address, useAccount } from "wagmi";
+import { useAccount } from "wagmi";
 import {
   SmartRouter,
   SmartRouterTrade,
 } from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
 import { TradeType, tryParseAmount } from "@cryptoalgebra/custom-pools-sdk";
-import { useSmartRouterCallback } from "@/hooks/routing/useSmartRouterCallback.ts";
+import { useSmartRouterCallback } from "@/lib/algebra/hooks/routing/useSmartRouterCallback";
+import { Address } from "viem";
+import {
+  DEFAULT_CHAIN_ID,
+  DEFAULT_CHAIN_NAME,
+} from "@/data/algebra/default-chain-id";
 
 const SwapButton = ({
   derivedSwap,
@@ -145,7 +151,7 @@ const SwapButton = ({
 
   const priceImpactTooHigh = priceImpactSeverity > 3 && !isExpertMode;
 
-  const isWrongChain = selectedNetworkId !== DEFAULT_CHAIN_ID;
+  const isWrongChain = Number(selectedNetworkId) !== DEFAULT_CHAIN_ID;
 
   if (!account) return <Button onClick={() => open()}>Connect Wallet</Button>;
 

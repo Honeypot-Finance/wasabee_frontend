@@ -1,62 +1,62 @@
+import { usePoolsStore } from "@/services/algebra/state/poolsStore";
 import {
-    useAlgebraPoolGlobalState,
-    useAlgebraPoolPlugin,
-    useAlgebraBasePluginIncentive,
-} from '@/generated';
-import { usePoolsStore } from '@/state/poolsStore';
-import { ADDRESS_ZERO } from '@cryptoalgebra/custom-pools-sdk';
-import { useEffect } from 'react';
-import { Address } from 'wagmi';
+  useReadAlgebraPoolGlobalState,
+  useReadAlgebraPoolPlugin,
+  useReadAlgebraBasePluginIncentive,
+} from "@/wagmi-generated";
+import { ADDRESS_ZERO } from "@cryptoalgebra/custom-pools-sdk";
+import { useEffect } from "react";
+import { Address } from "viem";
 
 export function usePoolPlugins(poolId: Address | undefined) {
-    const { pluginsForPools, setPluginsForPool } = usePoolsStore();
+  const { pluginsForPools, setPluginsForPool } = usePoolsStore();
 
-    const skipFetch = Boolean(poolId && pluginsForPools[poolId]);
+  const skipFetch = Boolean(poolId && pluginsForPools[poolId]);
 
-    const { data: globalState, isLoading: globalStateLoading } =
-        useAlgebraPoolGlobalState({
-            address: skipFetch ? undefined : poolId,
-        });
-
-    const { data: plugin, isLoading: pluginLoading } = useAlgebraPoolPlugin({
-        address: skipFetch ? undefined : poolId,
+  const { data: globalState, isLoading: globalStateLoading } =
+    useReadAlgebraPoolGlobalState({
+      address: skipFetch ? undefined : poolId,
     });
 
-    const { data: hasFarmingPlugin, isLoading: farmingLoading } =
-        useAlgebraBasePluginIncentive({
-            address: skipFetch ? undefined : plugin,
-        });
+  const { data: plugin, isLoading: pluginLoading } = useReadAlgebraPoolPlugin({
+    address: skipFetch ? undefined : poolId,
+  });
 
-    // const { data: hasLimitOrderPlugin, isLoading: limitLoading } =
-    //     useAlgebraBasePluginLimitOrderPlugin({
-    //         address: skipFetch ? undefined : plugin,
-    //     });
+  const { data: hasFarmingPlugin, isLoading: farmingLoading } =
+    useReadAlgebraBasePluginIncentive({
+      address: skipFetch ? undefined : plugin,
+    });
 
-    const isLoading = globalStateLoading || pluginLoading || farmingLoading;
+  // const { data: hasLimitOrderPlugin, isLoading: limitLoading } =
+  //     useAlgebraBasePluginLimitOrderPlugin({
+  //         address: skipFetch ? undefined : plugin,
+  //     });
 
-    const hasDynamicFee = globalState && Number(globalState[3]) >> 7 === 1;
+  const isLoading = globalStateLoading || pluginLoading || farmingLoading;
 
-    useEffect(() => {
-        if (!poolId || isLoading || pluginsForPools[poolId]) return;
+  const hasDynamicFee = globalState && Number(globalState[3]) >> 7 === 1;
 
-        setPluginsForPool(poolId, {
-            dynamicFeePlugin: Boolean(hasDynamicFee),
-            farmingPlugin: hasFarmingPlugin !== ADDRESS_ZERO,
-            limitOrderPlugin: false,
-        });
-    }, [poolId, isLoading, pluginsForPools]);
+  useEffect(() => {
+    if (!poolId || isLoading || pluginsForPools[poolId]) return;
 
-    if (poolId && pluginsForPools[poolId]) {
-        return {
-            ...pluginsForPools[poolId],
-            isLoading: false,
-        };
-    }
+    setPluginsForPool(poolId, {
+      dynamicFeePlugin: Boolean(hasDynamicFee),
+      farmingPlugin: hasFarmingPlugin !== ADDRESS_ZERO,
+      limitOrderPlugin: false,
+    });
+  }, [poolId, isLoading, pluginsForPools]);
 
+  if (poolId && pluginsForPools[poolId]) {
     return {
-        dynamicFeePlugin: Boolean(hasDynamicFee),
-        farmingPlugin: hasFarmingPlugin !== ADDRESS_ZERO,
-        limitOrderPlugin: false,
-        isLoading,
+      ...pluginsForPools[poolId],
+      isLoading: false,
     };
+  }
+
+  return {
+    dynamicFeePlugin: Boolean(hasDynamicFee),
+    farmingPlugin: hasFarmingPlugin !== ADDRESS_ZERO,
+    limitOrderPlugin: false,
+    isLoading,
+  };
 }

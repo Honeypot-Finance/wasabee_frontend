@@ -1,22 +1,29 @@
-import Loader from "@/components/common/Loader";
-import { usePoolPlugins } from "@/hooks/pools/usePoolPlugins";
-import useWrapCallback, { WrapType } from "@/hooks/swap/useWrapCallback";
-import { IDerivedSwapInfo, useSwapState } from "@/state/swapStore";
-import { SwapField } from "@/types/swap-field";
-import { warningSeverity } from "@/utils/swap/prices";
 import { ADDRESS_ZERO, TradeType } from "@cryptoalgebra/custom-pools-sdk";
-import { ChevronDownIcon, ZapIcon } from "lucide-react";
+import { ChevronDownIcon, Loader, ZapIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   SmartRouter,
   SmartRouterTrade,
   Percent as PercentBN,
 } from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
-import SwapRouteModal from "@/components/modals/SwapRouteModal";
-import { Button } from "@/components/ui/button.tsx";
-import { getAlgebraBasePlugin, getAlgebraPool } from "@/generated";
-import { ALGEBRA_ROUTER } from "@/constants/addresses";
-import { MAX_UINT128 } from "@/constants/max-uint128";
+import SwapRouteModal from "@/components/algebra/modals/SwapRouteModal";
+import { Button } from "@/components/algebra/ui/button";
+import { ALGEBRA_ROUTER } from "@/data/algebra/addresses";
+import { MAX_UINT128 } from "@/data/algebra/max-uint128";
+import { usePoolPlugins } from "@/lib/algebra/hooks/pools/usePoolPlugins";
+import useWrapCallback, {
+  WrapType,
+} from "@/lib/algebra/hooks/swap/useWrapCallback";
+import { warningSeverity } from "@/lib/algebra/utils/swap/prices";
+import {
+  IDerivedSwapInfo,
+  useSwapState,
+} from "@/services/algebra/state/swapStore";
+import { SwapField } from "@/types/algebra/types/swap-field";
+import { readAlgebraPool } from "@/wagmi-generated";
+import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
+import { Contract } from "ethers";
+import { AlgebraBasePluginContract } from "@/services/contract/algebra/algebra-base-plugin";
 
 const SwapParams = ({
   derivedSwap,
@@ -44,72 +51,72 @@ const SwapParams = ({
   const { dynamicFeePlugin } = usePoolPlugins(poolAddress);
 
   useEffect(() => {
+    if (!smartTrade) return undefined;
 
-    if (!smartTrade) return undefined
-    
-    async function getFees () {
-
-      const fees: number[] = []
+    async function getFees() {
+      const fees: number[] = [];
 
       for (const route of smartTrade.routes) {
-
         const splits = [];
-      
+
         for (let idx = 0; idx < Math.ceil(route.path.length / 2); idx++) {
           splits[idx] = [route.path[idx], route.path[idx + 1]];
         }
-      
+
         for (let idx = 0; idx < route.pools.length; idx++) {
-  
-          const pool = route.pools[idx]
-          const split = splits[idx]
-          const amountIn = route.amountInList?.[idx] || 0n
-          const amountOut = route.amountOutList?.[idx] || 0n
+          const pool = route.pools[idx];
+          const split = splits[idx];
+          const amountIn = route.amountInList?.[idx] || BigInt(0);
+          const amountOut = route.amountOutList?.[idx] || BigInt(0);
 
-          if (pool.type !== 1) continue
+          if (pool.type !== 1) continue;
 
-          const isZeroToOne = split[0].wrapped.sortsBefore(split[1].wrapped)
-  
-          const poolContract = getAlgebraPool({
-            address: pool.address
-          })
-  
-          const plugin = await poolContract.read.plugin()
+          const isZeroToOne = split[0].wrapped.sortsBefore(split[1].wrapped);
 
-          const pluginContract = getAlgebraBasePlugin({
-            address: plugin
-          })
+          const poolContract = AlgebraPoolContract.getPool({
+            address: pool.address,
+          });
+          if (!poolContract) continue;
 
-          let beforeSwap: [string, number, number]
+          const plugin = await poolContract.contract.read.plugin();
+
+          const pluginContract = new AlgebraBasePluginContract({
+            address: plugin,
+          });
+
+          let beforeSwap: [string, number, number];
 
           try {
-
-            beforeSwap = await pluginContract.simulate.beforeSwap([
-              ALGEBRA_ROUTER,
-              ADDRESS_ZERO,
-              isZeroToOne,
-              smartTrade.tradeType === TradeType.EXACT_INPUT ? amountIn : amountOut,
-              MAX_UINT128,
-              false,
-              '0x'
-            ], { account: pool.address }).then(v => v.result as [string, number, number])
-
+            beforeSwap = await pluginContract.contract.simulate
+              .beforeSwap(
+                [
+                  ALGEBRA_ROUTER,
+                  ADDRESS_ZERO,
+                  isZeroToOne,
+                  smartTrade.tradeType === TradeType.EXACT_INPUT
+                    ? amountIn
+                    : amountOut,
+                  MAX_UINT128,
+                  false,
+                  "0x",
+                ],
+                { account: pool.address }
+              )
+              .then((v) => v.result as [string, number, number]);
           } catch (error) {
-            beforeSwap = ['', 0, 0]
+            beforeSwap = ["", 0, 0];
           }
 
-          const [, overrideFee, pluginFee] = beforeSwap || ['', 0, 0]
-  
+          const [, overrideFee, pluginFee] = beforeSwap || ["", 0, 0];
+
           if (overrideFee) {
-            fees.push(overrideFee + pluginFee)
+            fees.push(overrideFee + pluginFee);
           } else {
-            fees.push(pool.fee + pluginFee)
+            fees.push(pool.fee + pluginFee);
           }
 
-          fees[fees.length - 1] = fees[fees.length - 1] * route.percent / 100
-
+          fees[fees.length - 1] = (fees[fees.length - 1] * route.percent) / 100;
         }
-  
       }
 
       let p = 100;
@@ -117,14 +124,12 @@ const SwapParams = ({
       for (const fee of fees) {
         p *= 1 - Number(fee) / 1_000_000;
       }
-  
-      setSlidingFee(100 - p)
 
+      setSlidingFee(100 - p);
     }
 
-    getFees()
-
-  }, [smartTrade])
+    getFees();
+  }, [smartTrade]);
 
   const priceImpact = useMemo(() => {
     if (!smartTrade) return undefined;
@@ -160,9 +165,11 @@ const SwapParams = ({
               )}
               <span>{`${slidingFee?.toFixed(4)}% fee`}</span>
             </div>
-          ) : <div className="rounded select-none px-1.5 py-1 flex items-center relative">
-            <Loader size={16} />   
-          </div>}
+          ) : (
+            <div className="rounded select-none px-1.5 py-1 flex items-center relative">
+              <Loader size={16} />
+            </div>
+          )}
           <div className={`ml-auto duration-300 ${isExpanded && "rotate-180"}`}>
             <ChevronDownIcon strokeWidth={2} size={16} />
           </div>
@@ -250,8 +257,8 @@ const PriceImpact = ({
     severity === 3 || severity === 4
       ? "text-red-400"
       : severity === 2
-      ? "text-yellow-400"
-      : "currentColor";
+        ? "text-yellow-400"
+        : "currentColor";
 
   return (
     <span className={color}>

@@ -1,14 +1,15 @@
 import { useMemo } from "react";
 import { Address } from "viem";
-import { useContractWrite } from "wagmi";
-
-import { ALGEBRA_ROUTER } from "@/constants/addresses";
 
 import { useTransactionAwait } from "../common/useTransactionAwait";
-import { TransactionType } from "@/state/pendingTransactionsStore";
-import { algebraRouterABI } from "@/abis";
+import { TransactionType } from "@/services/algebra/state/pendingTransactionsStore";
+import {
+  algebraRouterAbi,
+  useSimulateAlgebraRouterMulticall,
+  useWriteAlgebraRouterMulticall,
+} from "@/wagmi-generated";
 import { Currency } from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
-import { formatAmount } from "@/utils/common/formatAmount";
+import { formatAmount } from "../../utils/common/formatAmount";
 
 export function useSmartRouterCallback(
   currencyA: Currency | undefined,
@@ -17,15 +18,14 @@ export function useSmartRouterCallback(
   calldata: Address | undefined,
   value: string | undefined
 ) {
-  const { data: swapData, writeAsync: callback } = useContractWrite({
-    address: ALGEBRA_ROUTER,
-    abi: algebraRouterABI,
-    functionName: "multicall",
+  const { data: config } = useSimulateAlgebraRouterMulticall({
     args: calldata ? [[calldata]] : undefined,
-    value: BigInt(value || 0),
   });
 
-  const { isLoading } = useTransactionAwait(swapData?.hash, {
+  const { data: swapData, writeContractAsync: callback } =
+    useWriteAlgebraRouterMulticall();
+
+  const { isLoading } = useTransactionAwait(swapData, {
     title: `Swap ${formatAmount(amount || "0", 6)} ${currencyA?.symbol}`,
     type: TransactionType.SWAP,
     tokenA: currencyA?.wrapped.address as Address,
@@ -34,7 +34,10 @@ export function useSmartRouterCallback(
 
   return useMemo(
     () => ({
-      callback,
+      callback: async () => {
+        if (!config) return;
+        await callback(config.request);
+      },
       isLoading,
     }),
     [callback, isLoading]

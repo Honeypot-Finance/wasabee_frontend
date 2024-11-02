@@ -6,26 +6,30 @@ import {
   CredenzaHeader,
   CredenzaTitle,
   CredenzaTrigger,
-} from "@/components/ui/credenza";
-import CurrencyLogo from "@/components/common/CurrencyLogo";
+} from "@/components/algebra/ui/credenza";
+import CurrencyLogo from "@/components/algebra/common/CurrencyLogo";
 import { ArrowRight } from "lucide-react";
-import { Address, useAccount } from "wagmi";
-import {
-  CUSTOM_POOL_BASE,
-  CUSTOM_POOL_DEPLOYER_BLANK,
-  CUSTOM_POOL_DEPLOYER_FEE_CHANGER,
-} from "@/constants/addresses";
-import { MAX_UINT128 } from "@/constants/max-uint128";
-import { useCurrency } from "@/hooks/common/useCurrency";
-import { ALGEBRA_ROUTER } from "@/constants/addresses"
+import { useAccount } from "wagmi";
+import { Address } from "viem";
 import { useMemo } from "react";
 import {
   Route,
   Currency,
   Pool,
 } from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
-import { useAlgebraPoolPlugin, usePrepareAlgebraBasePluginBeforeSwap } from "@/generated"
 import { TradeType } from "@cryptoalgebra/custom-pools-sdk";
+import {
+  CUSTOM_POOL_BASE,
+  CUSTOM_POOL_DEPLOYER_BLANK,
+  CUSTOM_POOL_DEPLOYER_FEE_CHANGER,
+  ALGEBRA_ROUTER,
+} from "@/data/algebra/addresses";
+import { MAX_UINT128 } from "@/data/algebra/max-uint128";
+import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
+import {
+  useReadAlgebraPoolPlugin,
+  useSimulateAlgebraBasePluginBeforeSwap,
+} from "@/wagmi-generated";
 
 interface ISwapRouteModal {
   isOpen: boolean;
@@ -45,12 +49,12 @@ const RoutePool = ({
   pool,
   amountIn,
   amountOut,
-  tradeType
+  tradeType,
 }: {
-  pool: { path: Currency[]; address: Address; deployer: Address; fee: number; };
-  amountIn: bigint,
-  amountOut: bigint,
-  tradeType: TradeType
+  pool: { path: Currency[]; address: Address; deployer: Address; fee: number };
+  amountIn: bigint;
+  amountOut: bigint;
+  tradeType: TradeType;
 }) => {
   const [token0, token1] = [pool.path[0], pool.path[1]];
   const currencyA = useCurrency(token0.wrapped.address as Address, true);
@@ -58,31 +62,33 @@ const RoutePool = ({
 
   const deployer = customPoolDeployers[pool.deployer.toLowerCase()];
 
-  const isZeroToOne = token0.wrapped.sortsBefore(token1.wrapped)
+  const isZeroToOne = token0.wrapped.sortsBefore(token1.wrapped);
 
-  const { address: recipient } = useAccount()
+  const { address: recipient } = useAccount();
 
-  const { data: plugin } = useAlgebraPoolPlugin({
-    address: pool.address
-  })
+  const { data: plugin } = useReadAlgebraPoolPlugin({
+    address: pool.address,
+  });
 
-  const { data: beforeSwap } = usePrepareAlgebraBasePluginBeforeSwap({
+  const { data: beforeSwap } = useSimulateAlgebraBasePluginBeforeSwap({
     account: pool.address,
     address: plugin,
-    args: recipient ? [
-      ALGEBRA_ROUTER,
-      recipient,
-      isZeroToOne,
-      tradeType === TradeType.EXACT_INPUT ? amountIn : amountOut,
-      MAX_UINT128,
-      false,
-      '0x'
-    ] : undefined,
-  })
+    args: recipient
+      ? [
+          ALGEBRA_ROUTER,
+          recipient,
+          isZeroToOne,
+          tradeType === TradeType.EXACT_INPUT ? amountIn : amountOut,
+          MAX_UINT128,
+          false,
+          "0x",
+        ]
+      : undefined,
+  });
 
-  const [, overrideFee, pluginFee] = beforeSwap?.result || ['', 0, 0]
+  const [, overrideFee, pluginFee] = beforeSwap?.result || ["", 0, 0];
 
-  const fee = overrideFee ? overrideFee : pool.fee
+  const fee = overrideFee ? overrideFee : pool.fee;
 
   return (
     <div className={"w-full flex items-center justify-between py-2"}>
@@ -104,10 +110,16 @@ const RoutePool = ({
 
 const RouteSplit = ({
   route,
-  tradeType
+  tradeType,
 }: {
-  route: { pools: Pool[]; path: Currency[]; percent: number; amountInList?: bigint[]; amountOutList?: bigint[] };
-  tradeType: TradeType
+  route: {
+    pools: Pool[];
+    path: Currency[];
+    percent: number;
+    amountInList?: bigint[];
+    amountOutList?: bigint[];
+  };
+  tradeType: TradeType;
 }) => {
   const splits = useMemo(() => {
     const split = [];
@@ -133,11 +145,12 @@ const RouteSplit = ({
               path: splits[idx],
               fee: pool.fee,
               address: pool.address,
-              deployer: pool.deployer
+              deployer: pool.deployer,
             }}
-            amountIn={route.amountInList?.[idx] || 0n}
-            amountOut={route.amountOutList?.[idx] || 0n}
+            amountIn={route.amountInList?.[idx] || BigInt(0)}
+            amountOut={route.amountOutList?.[idx] || BigInt(0)}
             tradeType={tradeType}
+            key={`route-pool-${pool.address}`}
           />
         ) : null
       )}
