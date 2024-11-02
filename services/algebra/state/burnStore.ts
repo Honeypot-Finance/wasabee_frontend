@@ -2,12 +2,12 @@ import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
 import { usePool } from "@/lib/algebra/hooks/pools/usePool";
 import { usePositionFees } from "@/lib/algebra/hooks/positions/usePositionFees";
 import { PositionFromTokenId } from "@/lib/algebra/hooks/positions/usePositions";
+import { unwrappedToken } from "@cryptoalgebra/custom-pools-and-sliding-fee-sdk";
 import {
   Currency,
   CurrencyAmount,
   Percent,
   Position,
-  unwrappedToken,
 } from "@cryptoalgebra/custom-pools-sdk";
 import { useCallback, useMemo } from "react";
 import { useAccount } from "wagmi";
@@ -78,17 +78,20 @@ export function useDerivedBurnInfo(
         ? liquidityPercentage.multiply(positionSDK.amount1.quotient).quotient
         : undefined;
 
+      console.log(JSON.stringify(currency0));
+
       const liquidityValue0 =
-        currency0 && discountedAmount0
+        currency0 && discountedAmount0 && currency0.isToken
           ? CurrencyAmount.fromRawAmount(
-              asWNative ? currency0 : unwrappedToken(currency0),
+              asWNative ? currency0 : currency0.wrapped,
               discountedAmount0
             )
           : undefined;
+
       const liquidityValue1 =
         currency1 && discountedAmount1
           ? CurrencyAmount.fromRawAmount(
-              asWNative ? currency1 : unwrappedToken(currency1),
+              asWNative ? currency1 : currency1.wrapped,
               discountedAmount1
             )
           : undefined;
@@ -98,7 +101,7 @@ export function useDerivedBurnInfo(
         liquidityValue0,
         liquidityValue1,
       };
-    }, [percent, positionSDK, currency0, currency1]);
+    }, [percent, positionSDK, currency0, currency1, asWNative]);
 
   const { amount0: feeValue0, amount1: feeValue1 } = usePositionFees(
     pool ?? undefined,

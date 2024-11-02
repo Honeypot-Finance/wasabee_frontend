@@ -1,5 +1,9 @@
 import { MAX_UINT128 } from "@/data/algebra/max-uint128";
 import {
+  useReadAlgebraPositionManagerOwnerOf,
+  useSimulateAlgebraPositionManagerCollect,
+} from "@/wagmi-generated";
+import {
   Currency,
   CurrencyAmount,
   Pool,
@@ -18,13 +22,13 @@ export function usePositionFees(
   tokenId?: number,
   asWNative = false
 ): PositionFeesResult {
-  const { data: owner } = useAlgebraPositionManagerOwnerOf({
+  const { data: owner } = useReadAlgebraPositionManagerOwnerOf({
     args: tokenId ? [BigInt(tokenId)] : undefined,
   });
 
   const isReady = tokenId && owner;
 
-  const { config: amountsConfig } = usePrepareAlgebraPositionManagerCollect({
+  const { data: amountsConfig } = useSimulateAlgebraPositionManagerCollect({
     args: Boolean(isReady)
       ? [
           {
@@ -35,7 +39,9 @@ export function usePositionFees(
           },
         ]
       : undefined,
-    enabled: Boolean(isReady),
+    query: {
+      enabled: Boolean(isReady),
+    },
   });
 
   const amounts = amountsConfig?.result;
@@ -59,23 +65,4 @@ export function usePositionFees(
       };
     }
   }, [pool, amounts]);
-}
-function useAlgebraPositionManagerOwnerOf(arg0: {
-  args: bigint[] | undefined;
-}): { data: any } {
-  throw new Error("Function not implemented.");
-}
-
-function usePrepareAlgebraPositionManagerCollect(arg0: {
-  args:
-    | {
-        tokenId: bigint;
-        recipient: Address;
-        amount0Max: any;
-        amount1Max: any;
-      }[]
-    | undefined;
-  enabled: boolean;
-}): { config: any } {
-  throw new Error("Function not implemented.");
 }
