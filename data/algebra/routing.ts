@@ -1,4 +1,4 @@
-import { Token } from "@cryptoalgebra/integral-sdk";
+import { Token } from "@cryptoalgebra/custom-pools-sdk";
 import { STABLECOINS } from "./tokens";
 import { DEFAULT_CHAIN_ID } from "./default-chain-id";
 

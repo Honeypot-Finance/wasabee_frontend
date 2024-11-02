@@ -1,4 +1,4 @@
-import { ADDRESS_ZERO } from "@cryptoalgebra/integral-sdk";
+import { ADDRESS_ZERO } from "@cryptoalgebra/custom-pools-sdk";
 import { Address } from "viem";
 
 /** 
@@ -60,6 +60,9 @@ export const FARMING_CENTER: Address =
   "0x83D4a9Ea77a4dbA073cD90b30410Ac9F95F93E7C";
 
 // Custom pools
+export const CUSTOM_POOL_DEPLOYER: Address =
+  "0xc9cf812513d9983585eb40fcfe6fd49fbb6a45815663ec33b30a6c6c7de3683b";
+
 export const CUSTOM_POOL_DEPLOYER_FEE_CHANGER: Address =
   "0x7e3387e0595552e992ede4476417704703866e5a"; // placeholder
 

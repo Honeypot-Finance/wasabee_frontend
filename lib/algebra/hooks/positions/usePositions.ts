@@ -2,9 +2,7 @@ import {
   ADDRESS_ZERO,
   Token,
   algebraPositionManagerABI,
-  computeCustomPoolAddress,
-  computePoolAddress,
-} from "@cryptoalgebra/custom-pools-sdk";
+} from "@cryptoalgebra/custom-pools-and-sliding-fee-sdk";
 import { useMemo } from "react";
 import {
   useAccount,
@@ -13,14 +11,23 @@ import {
   useReadContracts,
 } from "wagmi";
 import { Address, zeroAddress } from "viem";
-import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
+import {
+  ALGEBRA_POSITION_MANAGER,
+  POOL_INIT_CODE_HASH,
+} from "@/data/algebra/addresses";
 import { DEFAULT_CHAIN_ID } from "@/data/algebra/default-chain-id";
 import { farmingClient } from "@/lib/graphql/clients";
 import { useDepositsQuery } from "@/lib/graphql/generated/graphql";
 import {
   readAlgebraFactoryComputePoolAddress,
+  useReadAlgebraFactoryComputePoolAddress,
   useReadAlgebraPositionManagerBalanceOf,
 } from "@/wagmi-generated";
+import { ethers } from "ethers";
+import {
+  computeCustomPoolAddress,
+  computePoolAddress,
+} from "../../utils/pool/computepool";
 
 export interface PositionFromTokenId {
   tokenId: number;
@@ -60,10 +67,13 @@ function usePositionsFromTokenIds(tokenIds: any[] | undefined): {
       address: ALGEBRA_POSITION_MANAGER,
       abi: algebraPositionManagerABI,
       functionName: "positions",
-      args: [[Number(x)]],
+      args: [Number(x)],
     })),
     //cacheTime: 10_000,
   });
+
+  console.log(inputs);
+  console.log(results);
 
   const positions = useMemo(() => {
     if (!isLoading && !isError && tokenIds && !error) {
@@ -74,24 +84,37 @@ function usePositionsFromTokenIds(tokenIds: any[] | undefined): {
           const result = call.result as any;
           const isBasePool = result[4] === ADDRESS_ZERO;
 
-          let pool: Address = zeroAddress;
+          const pool = (
+            isBasePool
+              ? computePoolAddress({
+                  tokenA: new Token(DEFAULT_CHAIN_ID, result[2], 18),
+                  tokenB: new Token(DEFAULT_CHAIN_ID, result[3], 18),
+                  initCodeHashManualOverride: POOL_INIT_CODE_HASH,
+                })
+              : computeCustomPoolAddress({
+                  tokenA: new Token(DEFAULT_CHAIN_ID, result[2], 18),
+                  tokenB: new Token(DEFAULT_CHAIN_ID, result[3], 18),
+                  initCodeHashManualOverride: POOL_INIT_CODE_HASH,
+                  customPoolDeployer: result[4],
+                })
+          ) as Address;
 
-          try {
-            pool = (
-              isBasePool
-                ? computePoolAddress({
-                    tokenA: new Token(DEFAULT_CHAIN_ID, result[2], 18),
-                    tokenB: new Token(DEFAULT_CHAIN_ID, result[3], 18),
-                  })
-                : computeCustomPoolAddress({
-                    tokenA: new Token(DEFAULT_CHAIN_ID, result[2], 18),
-                    tokenB: new Token(DEFAULT_CHAIN_ID, result[3], 18),
-                    customPoolDeployer: result[4],
-                  })
-            ) as Address;
-          } catch (e) {
-            console.log(e);
-          }
+          console.log({
+            tokenId,
+            feeGrowthInside0LastX128: result[8],
+            feeGrowthInside1LastX128: result[9],
+            liquidity: result[7],
+            nonce: result[0],
+            operator: result[1],
+            tickLower: result[5],
+            tickUpper: result[6],
+            token0: result[2],
+            token1: result[3],
+            deployer: result[4],
+            tokensOwed0: result[10],
+            tokensOwed1: result[11],
+            pool,
+          });
 
           return {
             tokenId,
@@ -145,7 +168,7 @@ export function usePositions() {
   }, [account, balanceResult]);
 
   const { data: tokenIdResults, isLoading: someTokenIdsLoading } =
-    useContractReads({
+    useReadContracts({
       contracts: tokenIdsArgs.map((args) => ({
         address: ALGEBRA_POSITION_MANAGER,
         abi: algebraPositionManagerABI,
@@ -155,12 +178,24 @@ export function usePositions() {
       //cacheTime: 10_000,
     });
 
+  console.log(tokenIdResults);
+
   const tokenIds = useMemo(() => {
     if (account) {
-      return tokenIdResults
-        ?.map(({ result }) => result)
-        .filter((result) => !!result)
-        .map((result) => result);
+      return (
+        tokenIdResults as
+          | {
+              result: BigInt;
+              status: string;
+            }[]
+          | undefined
+      )
+        ?.filter((result) => {
+          return result.result !== BigInt(0);
+        })
+        .map((result) => {
+          return Number(result.result);
+        });
     }
     return [];
   }, [account, tokenIdResults]);

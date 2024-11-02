@@ -24,6 +24,7 @@ const PoolsList = () => {
       client: farmingClient,
     });
   const { positions, loading: isPositionsLoading } = usePositions();
+  console.log("positions", positions);
 
   const { data: poolsMaxApr, isLoading: isPoolsMaxAprLoading } = useSWR(
     POOL_MAX_APR_API,
