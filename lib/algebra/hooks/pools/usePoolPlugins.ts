@@ -39,6 +39,7 @@ export function usePoolPlugins(poolId: Address | undefined) {
   useEffect(() => {
     if (!poolId || isLoading || pluginsForPools[poolId]) return;
 
+    console.log("Setting plugins for pool", poolId, pluginsForPools[poolId]);
     setPluginsForPool(poolId, {
       dynamicFeePlugin: Boolean(hasDynamicFee),
       farmingPlugin: hasFarmingPlugin !== ADDRESS_ZERO,

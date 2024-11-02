@@ -12,7 +12,6 @@ import { useUserState } from "@/services/algebra/state/userStore";
 import { ApprovalState } from "@/types/algebra/types/approve-state";
 import { SwapField } from "@/types/algebra/types/swap-field";
 import { warningSeverity } from "@/lib/algebra/utils/swap/prices";
-import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 import { useCallback, useMemo } from "react";
 import { useAccount } from "wagmi";
 import {
@@ -38,10 +37,6 @@ const SwapButton = ({
   isSmartTradeLoading: boolean;
   callOptions: { calldata: Address; value: Address };
 }) => {
-  const { open } = useWeb3Modal();
-
-  const { selectedNetworkId } = useWeb3ModalState();
-
   const { address: account } = useAccount();
 
   const { isExpertMode } = useUserState();
@@ -150,18 +145,6 @@ const SwapButton = ({
   const isValid = !swapInputError;
 
   const priceImpactTooHigh = priceImpactSeverity > 3 && !isExpertMode;
-
-  const isWrongChain = Number(selectedNetworkId) !== DEFAULT_CHAIN_ID;
-
-  if (!account) return <Button onClick={() => open()}>Connect Wallet</Button>;
-
-  if (isWrongChain)
-    return (
-      <Button
-        variant={"destructive"}
-        onClick={() => open({ view: "Networks" })}
-      >{`Connect to ${DEFAULT_CHAIN_NAME}`}</Button>
-    );
 
   if (showWrap && wrapInputError)
     return <Button disabled>{wrapInputError}</Button>;

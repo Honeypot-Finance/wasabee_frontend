@@ -14,6 +14,7 @@ import {
   useSimulateWrappedNativeDeposit,
   useSimulateWrappedNativeWithdraw,
 } from "@/wagmi-generated";
+import { networksMap } from "@/services/chain";
 
 export const WrapType = {
   NOT_APPLICABLE: "NOT_APPLICABLE",
@@ -42,7 +43,7 @@ export default function useWrapCallback(
   );
 
   const { data: wrapConfig } = useSimulateWrappedNativeDeposit({
-    address: WNATIVE[chainId].address as Address,
+    address: networksMap[chainId.toString()].nativeToken.address as Address,
     value: inputAmount ? BigInt(inputAmount.quotient.toString()) : undefined,
   });
 
@@ -50,12 +51,12 @@ export default function useWrapCallback(
 
   const { isLoading: isWrapLoading } = useTransactionAwait(wrapData, {
     title: `Wrap ${inputAmount?.toSignificant(3)} ${DEFAULT_NATIVE_SYMBOL}`,
-    tokenA: WNATIVE[chainId].address as Address,
+    tokenA: networksMap[chainId.toString()].nativeToken.address as Address,
     type: TransactionType.SWAP,
   });
 
   const { data: unwrapConfig } = useSimulateWrappedNativeWithdraw({
-    address: WNATIVE[chainId].address as Address,
+    address: networksMap[chainId.toString()].nativeToken.address as Address,
     args: inputAmount ? [BigInt(inputAmount.quotient.toString())] : undefined,
   });
 
@@ -63,7 +64,7 @@ export default function useWrapCallback(
 
   const { isLoading: isUnwrapLoading } = useTransactionAwait(unwrapData, {
     title: `Unwrap ${inputAmount?.toSignificant(3)} W${DEFAULT_NATIVE_SYMBOL}`,
-    tokenA: WNATIVE[chainId].address as Address,
+    tokenA: networksMap[chainId.toString()].nativeToken.address as Address,
     type: TransactionType.SWAP,
   });
 

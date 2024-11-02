@@ -19,31 +19,29 @@ const SwapCard = () => {
     true
   );
 
-  return smartTrade && smartTrade.trade && smartTrade.trade.bestTrade ? (
+  console.log("smartTrade", smartTrade);
+
+  return (
     <div className="flex flex-col gap-1 w-full bg-card border border-card-border p-2 rounded-3xl">
       <SwapPair
         derivedSwap={derivedSwap}
-        smartTrade={smartTrade.trade.bestTrade}
+        smartTrade={smartTrade.trade?.bestTrade}
       />
       <SwapParams
         derivedSwap={derivedSwap}
-        smartTrade={smartTrade.trade.bestTrade}
+        smartTrade={smartTrade.trade?.bestTrade}
         isSmartTradeLoading={smartTrade.isLoading}
+      />{" "}
+      <SwapButton
+        derivedSwap={derivedSwap}
+        smartTrade={smartTrade.trade?.bestTrade}
+        isSmartTradeLoading={smartTrade.isLoading}
+        callOptions={{
+          calldata: smartTrade.trade?.calldata,
+          value: smartTrade.trade?.value,
+        }}
       />
-      {smartTrade.trade.calldata && smartTrade.trade.value && (
-        <SwapButton
-          derivedSwap={derivedSwap}
-          smartTrade={smartTrade.trade.bestTrade}
-          isSmartTradeLoading={smartTrade.isLoading}
-          callOptions={{
-            calldata: smartTrade.trade.calldata,
-            value: smartTrade.trade.value,
-          }}
-        />
-      )}
     </div>
-  ) : (
-    <LoadingDisplay />
   );
 };
 

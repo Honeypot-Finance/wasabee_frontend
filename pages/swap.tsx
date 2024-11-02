@@ -21,13 +21,23 @@ import { itemPopUpVariants } from "@/lib/animation";
 import { popmodal } from "@/services/popmodal";
 import { Tabs, Tab } from "@nextui-org/react";
 import V3swapCard from "@/components/algebra/swap/swapCard/swapCard";
+import { liquidity } from "@/services/liquidity";
+import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 
 const SwapPage = observer(() => {
   useEffect(() => {
     observe(chart, "chartTarget", () => {});
   }, []);
 
-  return (
+  useEffect(() => {
+    if (wallet.isInit) {
+      liquidity.initPool();
+    }
+  }, [wallet.isInit]);
+
+  const isInit = wallet.isInit && liquidity;
+
+  return isInit ? (
     <>
       <div
         className={`grid ${
@@ -50,7 +60,7 @@ const SwapPage = observer(() => {
           initial="hidden"
           animate="visible"
           className={
-            "relative w-full flex justify-center" +
+            "relative w-full flex flex-col items-center justify-center" +
             (chart.showChart ? "justify-start" : "")
           }
         >
@@ -65,6 +75,8 @@ const SwapPage = observer(() => {
         </motion.div>
       </div>
     </>
+  ) : (
+    <LoadingDisplay />
   );
 });
 
