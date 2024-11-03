@@ -1,8 +1,8 @@
+import { Currency, Token } from "@cryptoalgebra/custom-pools-sdk";
 import {
-  Currency,
-  Token,
+  computeCustomPoolAddress,
   computePoolAddress,
-} from "@cryptoalgebra/custom-pools-sdk";
+} from "../../utils/pool/computepool";
 import { useEffect, useMemo, useState } from "react";
 import { useAllCurrencyCombinations } from "./useAllCurrencyCombinations";
 import { Address } from "viem";

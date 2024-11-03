@@ -37,7 +37,12 @@ export function usePoolPlugins(poolId: Address | undefined) {
   const hasDynamicFee = globalState && Number(globalState[3]) >> 7 === 1;
 
   useEffect(() => {
-    if (!poolId || isLoading || pluginsForPools[poolId]) return;
+    if (
+      !poolId ||
+      isLoading ||
+      pluginsForPools[poolId.toLowerCase() as Address]
+    )
+      return;
 
     console.log("Setting plugins for pool", poolId, pluginsForPools[poolId]);
     setPluginsForPool(poolId, {
@@ -45,7 +50,14 @@ export function usePoolPlugins(poolId: Address | undefined) {
       farmingPlugin: hasFarmingPlugin !== ADDRESS_ZERO,
       limitOrderPlugin: false,
     });
-  }, [poolId, isLoading, pluginsForPools]);
+  }, [
+    poolId,
+    isLoading,
+    pluginsForPools,
+    hasDynamicFee,
+    hasFarmingPlugin,
+    setPluginsForPool,
+  ]);
 
   if (poolId && pluginsForPools[poolId]) {
     return {

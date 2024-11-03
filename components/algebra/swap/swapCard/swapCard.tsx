@@ -18,7 +18,8 @@ const SwapCard = () => {
     derivedSwap.isExactIn,
     true
   );
-
+  console.log("derivedSwap", derivedSwap);
+  //"0xDeC4BC6Cf82cA04d724aa5c17FB1D96Be234b4E1"
   console.log("smartTrade", smartTrade);
 
   return (

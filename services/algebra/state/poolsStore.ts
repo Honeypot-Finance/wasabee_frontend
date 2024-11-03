@@ -17,13 +17,15 @@ export const usePoolsStore = create(
   persist<PoolsState>(
     (set, get) => ({
       pluginsForPools: {},
-      setPluginsForPool: (poolId: Address, plugins: PoolPlugins) =>
+      setPluginsForPool: (poolId: Address, plugins: PoolPlugins) => {
+        console.log(get().pluginsForPools);
         set({
           pluginsForPools: {
             ...get().pluginsForPools,
             [poolId.toLowerCase()]: plugins,
           },
-        }),
+        });
+      },
     }),
     {
       name: "pools-plugins",
