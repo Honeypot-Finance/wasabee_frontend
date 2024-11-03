@@ -47,6 +47,41 @@ export const priceFeedRouter = router({
         );
       }
     ),
+  getMultipleTokenPrice: publicProcedure
+    .input(
+      z.object({
+        chainId: z.string(),
+        tokenAddresses: z.array(z.string()),
+      })
+    )
+    .query(
+      async ({
+        input,
+      }): Promise<ApiResponseType<TokenCurrentPriceResponseType[]>> => {
+        return cacheProvider.getOrSet(
+          getCacheKey("getMultipleTokenPrice", input),
+          async () => {
+            const res = await priceFeed.getMultipleTokenCurrentPrice(
+              input.tokenAddresses,
+              input.chainId
+            );
+
+            if (res.status === "error") {
+              return {
+                status: "error",
+                message: "Error fetching token prices",
+              };
+            } else {
+              return {
+                status: "success",
+                data: res.data,
+                message: "Success",
+              };
+            }
+          }
+        );
+      }
+    ),
   getChartData: publicProcedure
     .input(
       z.object({
@@ -68,7 +103,8 @@ export const priceFeedRouter = router({
         tokenNumber: z.number().optional(),
         currencyCode: z.enum(["USD", "TOKEN"]).optional(),
       })
-    ).output(z.any())
+    )
+    .output(z.any())
     .query(async ({ input }): Promise<ApiResponseType<ChartDataResponse>> => {
       const ttl = () => {
         if (input.resolution === "1D") return "1d";
