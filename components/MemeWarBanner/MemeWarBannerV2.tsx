@@ -1,7 +1,7 @@
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { AsyncState, ValueState } from "@/services/utils";
 import { wallet } from "@/services/wallet";
-import { Input, Select, SelectItem } from "@nextui-org/react";
+import { card, Input, Select, SelectItem } from "@nextui-org/react";
 import { Button } from "../button";
 import { motion, Variants } from "framer-motion";
 import { observer, useLocalObservable } from "mobx-react-lite";
@@ -34,6 +34,20 @@ export const MemeWarBannerV2 = observer((props: Props) => {
     memewarStore.reloadParticipants();
   }, [wallet.isInit]);
 
+  useEffect(() => {
+    if (!memewarStore.isInit) {
+      return;
+    }
+
+    const updateScoreInterval = setInterval(() => {
+      memewarStore.updateAllParticipantScore();
+    }, 5000);
+
+    return () => {
+      clearInterval(updateScoreInterval);
+    };
+  }, [memewarStore.isInit]);
+
   return memewarStore.isInit ? (
     <div className="lg:grid lg:grid-cols-[80%_20%] gap-2">
       <div>
@@ -43,12 +57,13 @@ export const MemeWarBannerV2 = observer((props: Props) => {
           </h2>
         </div>
 
-        <div className="relative grid w-full aspect-video">
+        <div className="relative grid w-full aspect-video gap-2">
           {Object.values(memewarStore.sortedMemewarParticipants).map(
-            (participant) => {
+            (participant, idx) => {
               return (
                 <MemeWarPariticipantCard
                   key={participant.pairAddress}
+                  rank={(idx + 1).toString()}
                   {...participant}
                 />
               );
@@ -154,13 +169,27 @@ export const MemeWarBannerV2 = observer((props: Props) => {
 });
 
 export const MemeWarPariticipantCard = observer(
-  (participant: MemeWarParticipant) => {
+  (participant: MemeWarParticipant & { rank?: string }) => {
+    //animate every time participant score changes
+    const cardRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+      if (!cardRef.current) {
+        return;
+      }
+      cardRef.current.style.transition = `transform ${ANIMATION_DURATION}ms`;
+    }, [participant.currentScore]);
+
     return (
       participant.pair && (
-        <div
+        <motion.div
+          ref={cardRef}
+          animate={{ scale: [1.1, 1] }}
           key={participant.pair.address}
-          className="flex w-full items-center z-10 justify-center"
+          className="flex w-full items-center z-10 justify-center transition-all gap-4"
         >
+          <h2 className="flex justify-center items-center font-[MEMEH] text-[3rem] w-[5rem]">
+            {participant.rank == "1" ? "👑" : participant.rank}
+          </h2>
           <Link href={`/launch-detail/${participant.pair.address}`}>
             <Image
               src={
@@ -174,28 +203,33 @@ export const MemeWarPariticipantCard = observer(
               className="w-10 h-10 md:w-20 md:h-20 object-contain rounded-full cursor-pointer"
             />
           </Link>
-          <div className="relative flex justify-center items-center h-8">
-            <Image
-              src={HP_BAR_URL}
-              alt=""
-              width={200}
-              height={50}
-              className="w-full h-full object-contain"
-            />
-            <h3 className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-black">
-              {participant.pair.ftoState != 0
-                ? participant.pair?.depositedRaisedToken?.toFixed(0) ||
-                  "loading..."
-                : Math.max(
-                    participant.currentScore.toNumber(),
-                    participant.pair?.depositedRaisedToken?.toNumber() ?? 0
-                  ).toLocaleString("en-US", {
-                    style: "decimal",
-                    maximumFractionDigits: 0,
-                  })}
-            </h3>
+          <div className="relative flex flex-col justify-center items-center h-8 ">
+            <div className="flex w-full justify-start items-start">
+              {participant.participantName}
+            </div>
+            <div className="relative">
+              <Image
+                src={HP_BAR_URL}
+                alt=""
+                width={200}
+                height={50}
+                className="w-full h-full object-contain"
+              />
+              <h3 className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-black">
+                {participant.pair.ftoState != 0
+                  ? participant.pair?.depositedRaisedToken?.toFixed(0) ||
+                    "loading..."
+                  : Math.max(
+                      participant.currentScore.toNumber(),
+                      participant.pair?.depositedRaisedToken?.toNumber() ?? 0
+                    ).toLocaleString("en-US", {
+                      style: "decimal",
+                      maximumFractionDigits: 0,
+                    })}
+              </h3>
+            </div>
           </div>
-        </div>
+        </motion.div>
       )
     );
   }

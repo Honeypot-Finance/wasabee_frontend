@@ -150,6 +150,18 @@ export class MemewarStore {
     console.log(this.memewarParticipants);
   };
 
+  updateAllParticipantScore = async () => {
+    await Promise.all(
+      Object.keys(this.memewarParticipants).map(async (key) => {
+        const participant = this.memewarParticipants[key];
+        const score = await this.loadScore(
+          participant.pair?.launchedToken?.address || key
+        );
+        participant.currentScore = score;
+      })
+    );
+  };
+
   initParticipant = async (address: string) => {
     const participant = this.getParticipantByAddress(address);
     if (!participant) return;
