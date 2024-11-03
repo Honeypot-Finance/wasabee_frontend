@@ -165,7 +165,7 @@ export class MemewarStore {
       await pair.raiseToken?.init(),
       await pair.launchedToken?.init(),
     ]);
-    const score = await this.loadScore(address);
+    const score = await this.loadScore(pair.launchedToken?.address || address);
 
     participant.pair = pair;
     participant.token = pair.launchedToken ?? token;
@@ -197,6 +197,8 @@ export class MemewarStore {
       tHpotAddress.toLowerCase()
     );
 
+    console.log("poolPair", poolPair);
+
     await poolPair?.init();
     await poolPair?.getReserves();
 
@@ -213,10 +215,13 @@ export class MemewarStore {
         ? await poolPair?.token0.getTotalSupply()
         : await poolPair?.token1.getTotalSupply();
 
+    console.log("hpotReserve", hpotReserve);
+    console.log("launchTokenReserve", launchTokenReserve);
+    console.log("launchTokenAmount", launchTokenAmount);
+
     if (!launchTokenReserve || !hpotReserve || !launchTokenAmount) {
       return new BigNumber(0);
     }
-
     return new BigNumber(
       (hpotReserve.toNumber() / launchTokenReserve.toNumber()) *
         (launchTokenAmount.toNumber() / Math.pow(10, 18))
@@ -227,7 +232,14 @@ export class MemewarStore {
     this.supportAmount = new BigNumber(amount);
   };
 
-  setSelectedSupportParticipant = (address: string) => {
+  setSelectedSupportParticipant = (
+    address: string | MemePairContract | FtoPairContract
+  ) => {
+    if (typeof address === "object") {
+      this.selectedSupportParticipantPair = address;
+      return;
+    }
+
     this.selectedSupportParticipantPair =
       this.getParticipantByAddress(address)?.pair;
   };

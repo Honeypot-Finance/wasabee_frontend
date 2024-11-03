@@ -5,11 +5,11 @@
 <path d="M0 14H14.288V14.8H0V14ZM14.285 14H36.2077V14.8H14.285V14Z" fill="url(#paint1_linear_2528_6663)"/>
 <defs>
 <linearGradient id="paint0_linear_2528_6663" x1="17.0769" y1="-2.9" x2="17.0769" y2="16.9" gradientUnits="userSpaceOnUse">
-<stop offset="0.401038" stop-color="#E8D37C" stop-opacity="0.13"/>
+<stop offset="0.401038" stop-color="#E8D37C" stopOpacity="0.13"/>
 <stop offset="1" stop-color="#FCD729"/>
 </linearGradient>
 <linearGradient id="paint1_linear_2528_6663" x1="17.0769" y1="-2.9" x2="17.0769" y2="16.9" gradientUnits="userSpaceOnUse">
-<stop offset="0.401038" stop-color="#E8D37C" stop-opacity="0.13"/>
+<stop offset="0.401038" stop-color="#E8D37C" stopOpacity="0.13"/>
 <stop offset="1" stop-color="#FCD729"/>
 </linearGradient>
 </defs>

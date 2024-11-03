@@ -66,6 +66,11 @@ export const MemeWarBannerV2 = observer((props: Props) => {
         <div className="grid md:grid-cols-2 mt-1 gap-5">
           <WarppedNextSelect
             items={Object.entries(memewarStore.memewarParticipants)}
+            onChange={(e) => {
+              memewarStore.setSelectedSupportParticipant(
+                memewarStore.memewarParticipants[e.target.value].pair!
+              );
+            }}
           >
             {Object.entries(memewarStore.memewarParticipants).map(
               ([key, value]) => {

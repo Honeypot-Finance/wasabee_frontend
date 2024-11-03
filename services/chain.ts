@@ -317,6 +317,67 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 8,
       logoURI: "/images/icons/tokens/unibtc-token-icon.png",
     },
+    //memewar 2
+    "0x8b045d02c581284295be33d4f261f8e1e6f78f18": {
+      name: "Bera Neiro",
+      symbol: "BERA NEIRO",
+      decimals: 18,
+      logoURI: "",
+    },
+    "0xff4abcd6d4cea557e4267bc81f1d2064615cb49e": {
+      name: "Bera Pepe",
+      symbol: "BERA PEPE",
+      decimals: 18,
+      logoURI: "",
+    },
+    "0x3F7AAE503000A08A8d4A9AFefa738b565f3A6CD6": {
+      name: "Bera Mog",
+      symbol: "BERA MOG",
+      decimals: 18,
+      logoURI: "",
+    },
+    "0xEF348b9FD378c91b00874d611b22062d7ee60284": {
+      name: "Bera Dog Wif Hat",
+      symbol: "BERA DOG WIF HAT",
+      decimals: 18,
+      logoURI: "",
+    },
+    "0x51A42ceAFDA32F68390840A187b65a99584332df": {
+      name: "Bera Popcat",
+      symbol: "BERA POPCAT",
+      decimals: 18,
+      logoURI: "",
+    },
+    "0x96dc300D5406E42051575B8b49d3057F1Ef678FC": {
+      name: "Bera Giga Chad",
+      symbol: "BERA GIGA CHAD",
+      decimals: 18,
+      logoURI: "",
+    },
+    "0x0874955158639A594fd65641E16C7de91F3dF465": {
+      name: "Bera Goat",
+      symbol: "BERA GOAT",
+      decimals: 18,
+      logoURI: "",
+    },
+    "0x96d62fbd15608ef087219f20986735a1d65a22a4": {
+      name: "Bera Moo Deng",
+      symbol: "BERA Moo Deng",
+      decimals: 18,
+      logoURI: "",
+    },
+    "0xFa9FB9d84525e4fE6c7DEaE137e3f1C81F86FdF8": {
+      name: "Bera Retadrio",
+      symbol: "BERA RETADRIO",
+      decimals: 18,
+      logoURI: "",
+    },
+    "0x5a42fefa75b0adebd63d3078c2f1e3e9a6c39177": {
+      name: "Bera Apu",
+      symbol: "BERA APU",
+      decimals: 18,
+      logoURI: "",
+    },
   },
   validatedFtoAddresses: [
     "0x2c504e661750e03aa9252c67e771dc059a521863".toLowerCase(),

@@ -15,6 +15,7 @@ import {
 import { add, debounce, forEach } from "lodash";
 import dayjs from "dayjs";
 import { PageRequest, PairFilter } from "./indexer/indexerTypes";
+import { Address, zeroAddress } from "viem";
 
 class Liquidity {
   pairPage = new IndexerPaginationState<PairFilter, PairContract>({
@@ -647,11 +648,14 @@ class Liquidity {
         return memoryPair;
       }
 
-      const pair = await trpcClient.pair.getPairByTokens.query({
+      console.log("getPairByTokens", token0Address, token1Address);
+      let pair = await trpcClient.pair.getPairByTokens.query({
         chainId: wallet.currentChainId,
         token0Address,
         token1Address,
       });
+
+      console.log("pair", pair);
 
       if (pair) {
         const pairContract = new PairContract({
@@ -664,6 +668,26 @@ class Liquidity {
 
         this.pairsByToken[`${token0Address}-${token1Address}`] = pairContract;
         return pairContract;
+      } else {
+        const pairAdd = await this.factoryContract.contract.read.getPair([
+          token0Address as Address,
+          token1Address as Address,
+        ]);
+
+        console.log("pairAdd", pairAdd);
+
+        if (pairAdd && pairAdd !== zeroAddress) {
+          const pairContract = new PairContract({
+            address: pairAdd,
+            token0: Token.getToken({ address: token0Address }),
+            token1: Token.getToken({ address: token1Address }),
+          });
+
+          pairContract.init();
+
+          this.pairsByToken[`${token0Address}-${token1Address}`] = pairContract;
+          return pairContract;
+        }
       }
     } catch (e) {
       console.log(e);
