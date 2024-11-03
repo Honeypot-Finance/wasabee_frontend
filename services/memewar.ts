@@ -37,7 +37,7 @@ export class MemewarStore {
     BERAPEPE: {
       type: "meme",
       participantName: "Bera Pepe",
-      pairAddress: "0xdf5484AF1d8b17B147DE2584fC4EA44ba9Beb714",
+      pairAddress: "0x5a42fefa75b0adebd63d3078c2f1e3e9a6c39177",
       tokenAddress: "0xff4abcd6d4cea557e4267bc81f1d2064615cb49e",
       iconUrl: "",
       currentScore: new BigNumber(0),
@@ -109,7 +109,7 @@ export class MemewarStore {
     BERAAPU: {
       type: "meme",
       participantName: "Bera Apu",
-      pairAddress: "0x0a14B021B337074cCBE3Ba124Fe901809f851Dc8",
+      pairAddress: "0xf24438e67f9c5b9ee5284b6a7ee9e43b5f56e0f3",
       tokenAddress: "0x96d62fbd15608ef087219f20986735a1d65a22a4",
       iconUrl: "",
       currentScore: new BigNumber(0),

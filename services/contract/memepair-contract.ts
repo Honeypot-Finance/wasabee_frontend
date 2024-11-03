@@ -382,6 +382,10 @@ export class MemePairContract implements BaseLaunchContract {
       this.getUserParticipated(),
     ]).catch((error) => {
       console.error(error, `init-memepair-error-${this.address}`);
+      trpcClient.projects.revalidateProjectType.mutate({
+        chain_id: wallet.currentChainId,
+        pair: this.address,
+      });
       return;
     });
 

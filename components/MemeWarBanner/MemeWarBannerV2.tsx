@@ -158,11 +158,15 @@ export const MemeWarPariticipantCard = observer(
         >
           <Link href={`/launch-detail/${participant.pair.address}`}>
             <Image
-              src={participant.iconUrl ?? ""}
+              src={
+                !!participant.iconUrl
+                  ? participant.iconUrl
+                  : participant.pair.logoUrl
+              }
               alt=""
               width={100}
               height={100}
-              className="w-10 h-10 md:w-20 md:h-20 object-contain"
+              className="w-10 h-10 md:w-20 md:h-20 object-contain rounded-full cursor-pointer"
             />
           </Link>
           <div className="relative flex justify-center items-center h-8">

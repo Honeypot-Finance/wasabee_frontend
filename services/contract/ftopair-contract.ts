@@ -380,6 +380,10 @@ export class FtoPairContract implements BaseLaunchContract {
       this.getUserDepositeAmount(),
     ]).catch((error) => {
       console.error(error, `init-${this.address}`);
+      trpcClient.projects.revalidateProjectType.mutate({
+        chain_id: wallet.currentChainId,
+        pair: this.address,
+      });
       return;
     });
     this.isInit = true;
