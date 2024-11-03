@@ -69,7 +69,8 @@ export class FtoPairContract implements BaseLaunchContract {
 
   get depositedRaisedToken() {
     if (!this.raiseToken) {
-      throw new Error("token is not initialized");
+      console.log("token is not initialized");
+      return undefined;
     }
 
     return this.depositedRaisedTokenWithoutDecimals && this.raiseToken.decimals
@@ -401,7 +402,7 @@ export class FtoPairContract implements BaseLaunchContract {
 
     try {
       const claimed = await this.contract.read.claimedLp([wallet.account] as [
-        `0x${string}`
+        `0x${string}`,
       ]);
 
       const claimable = await this.contract.read.claimableLP([
