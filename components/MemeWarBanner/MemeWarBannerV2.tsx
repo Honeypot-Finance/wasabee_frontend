@@ -3,7 +3,7 @@ import { AsyncState, ValueState } from "@/services/utils";
 import { wallet } from "@/services/wallet";
 import { card, Input, Select, SelectItem } from "@nextui-org/react";
 import { Button } from "../button";
-import { motion, Variants } from "framer-motion";
+import { animate, motion, Variants } from "framer-motion";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,7 +18,7 @@ import { MemeWarParticipant, memewarStore } from "@/services/memewar";
 import { WarppedNextSelect } from "../wrappedNextUI/Select/Select";
 import BigNumber from "bignumber.js";
 
-const ANIMATION_DURATION = 100; //ms
+const ANIMATION_DURATION = 500; //ms
 const HP_BAR_URL = "/images/memewar/HP_BAR.png";
 
 export interface Props {
@@ -38,14 +38,15 @@ export const MemeWarBannerV2 = observer((props: Props) => {
     if (!memewarStore.isInit) {
       return;
     }
-
-    const updateScoreInterval = setInterval(() => {
-      memewarStore.updateAllParticipantScore();
-    }, 5000);
-
-    return () => {
-      clearInterval(updateScoreInterval);
+    const startUpdateScoreInterval = async () => {
+      memewarStore.updateAllParticipantScore().then(() => {
+        setTimeout(() => {
+          startUpdateScoreInterval();
+        }, 1000);
+      });
     };
+
+    startUpdateScoreInterval();
   }, [memewarStore.isInit]);
 
   return memewarStore.isInit ? (
@@ -171,19 +172,23 @@ export const MemeWarBannerV2 = observer((props: Props) => {
 export const MemeWarPariticipantCard = observer(
   (participant: MemeWarParticipant & { rank?: string }) => {
     //animate every time participant score changes
-    const cardRef = useRef<HTMLDivElement>(null);
+    const [currentScore, setCurrentScore] = useState(participant.currentScore);
+    const [currentScale, setCurrentScale] = useState(1);
+
     useEffect(() => {
-      if (!cardRef.current) {
-        return;
-      }
-      cardRef.current.style.transition = `transform ${ANIMATION_DURATION}ms`;
-    }, [participant.currentScore]);
+      if (currentScore.eq(participant.currentScore)) return;
+      setCurrentScore(participant.currentScore);
+      setCurrentScale(1.1);
+
+      setTimeout(() => {
+        setCurrentScale(1);
+      }, ANIMATION_DURATION);
+    }, [currentScore, participant.currentScore]);
 
     return (
       participant.pair && (
         <motion.div
-          ref={cardRef}
-          animate={{ scale: [1.1, 1] }}
+          animate={{ scale: currentScale }}
           key={participant.pair.address}
           className="flex w-full items-center z-10 justify-center transition-all gap-4"
         >
