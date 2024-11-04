@@ -5,10 +5,10 @@ import {
   useBestTradeExactOut,
 } from "@/lib/algebra/hooks/swap/useBestTrade";
 import useSwapSlippageTolerance from "@/lib/algebra/hooks/swap/useSwapSlippageTolerance";
+import { computePoolAddress } from "@/lib/algebra/utils/pool/computepool";
 import { SwapFieldType, SwapField } from "@/types/algebra/types/swap-field";
 import { TradeStateType } from "@/types/algebra/types/trade-state";
 import {
-  useReadAlgebraFactoryComputePoolAddress,
   useReadAlgebraPoolGlobalState,
   useReadAlgebraPoolTickSpacing,
 } from "@/wagmi-generated";
@@ -20,7 +20,6 @@ import {
   TickMath,
   Trade,
   TradeType,
-  computePoolAddress,
 } from "@cryptoalgebra/custom-pools-sdk";
 import {
   Currency as CurrencyBN,
@@ -201,17 +200,14 @@ export function tryParseAmount<T extends Currency>(
 
 export function useDerivedSwapInfo(): IDerivedSwapInfo {
   const { address: account } = useAccount();
-
   const {
     independentField,
     typedValue,
     [SwapField.INPUT]: { currencyId: inputCurrencyId },
     [SwapField.OUTPUT]: { currencyId: outputCurrencyId },
   } = useSwapState();
-
   const inputCurrency = useCurrency(inputCurrencyId);
   const outputCurrency = useCurrency(outputCurrencyId);
-
   const isExactIn: boolean = independentField === SwapField.INPUT;
 
   const parsedAmount = useMemo(
@@ -236,10 +232,14 @@ export function useDerivedSwapInfo(): IDerivedSwapInfo {
     isExactIn ? parsedAmount : undefined,
     outputCurrency ?? undefined
   );
+
+  console.log("bestTradeExactIn", bestTradeExactIn);
   const bestTradeExactOut = useBestTradeExactOut(
     inputCurrency ?? undefined,
     !isExactIn ? parsedAmount : undefined
   );
+
+  console.log("bestTradeExactOut", bestTradeExactOut);
 
   const trade = (isExactIn ? bestTradeExactIn : bestTradeExactOut) ?? undefined;
 
@@ -313,28 +313,19 @@ export function useDerivedSwapInfo(): IDerivedSwapInfo {
     inputError = `Insufficient ${amountIn.currency.symbol} balance`;
   }
 
-  // const isWrap =
-  //   currencies.INPUT &&
-  //   currencies.OUTPUT &&
-  //   currencies.INPUT.wrapped?.equals(currencies.OUTPUT.wrapped);
+  const isWrap =
+    currencies.INPUT &&
+    currencies.OUTPUT &&
+    currencies.INPUT.wrapped?.equals(currencies.OUTPUT.wrapped);
 
-  const { data: poolAddress } = useReadAlgebraFactoryComputePoolAddress({
-    args: [
-      (currencies[SwapField.INPUT]?.wrapped?.address as Address | undefined) ??
-        zeroAddress,
-      (currencies[SwapField.OUTPUT]?.wrapped?.address as Address | undefined) ??
-        zeroAddress,
-    ],
-  });
-
-  // const poolAddress = isWrap
-  //   ? undefined
-  //   : currencies[SwapField.INPUT] &&
-  //     currencies[SwapField.OUTPUT] &&
-  //     (computePoolAddress({
-  //       tokenA: currencies[SwapField.INPUT]!.wrapped,
-  //       tokenB: currencies[SwapField.OUTPUT]!.wrapped,
-  //     }).toLowerCase() as Address);
+  const poolAddress = isWrap
+    ? undefined
+    : currencies[SwapField.INPUT]?.wrapped &&
+      currencies[SwapField.OUTPUT]?.wrapped &&
+      (computePoolAddress({
+        tokenA: currencies[SwapField.INPUT]!.wrapped,
+        tokenB: currencies[SwapField.OUTPUT]!.wrapped,
+      }).toLowerCase() as Address);
 
   const { data: globalState } = useReadAlgebraPoolGlobalState({
     address: poolAddress,

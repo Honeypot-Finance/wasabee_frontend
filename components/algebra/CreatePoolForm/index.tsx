@@ -17,7 +17,6 @@ import {
 } from "@/services/algebra/state/swapStore";
 import { SwapField } from "@/types/algebra/types/swap-field";
 import {
-  computePoolAddress,
   INITIAL_POOL_FEE,
   NonfungiblePositionManager,
   ADDRESS_ZERO,
@@ -31,13 +30,15 @@ import { Account } from "viem";
 import { useAccount, useContractWrite, useWriteContract } from "wagmi";
 import SelectPair from "../SelectPair";
 import Summary from "../Summary";
+import CardContianer from "@/components/CardContianer/CardContianer";
 import {
-  useReadAlgebraFactoryComputeCustomPoolAddress,
-  useReadAlgebraFactoryComputePoolAddress,
+  computeCustomPoolAddress,
+  computePoolAddress,
+} from "@/lib/algebra/utils/pool/computepool";
+import {
   useSimulateAlgebraCustomPoolDeployerCreateCustomPool,
   useSimulateAlgebraPositionManagerMulticall,
 } from "@/wagmi-generated";
-import CardContianer from "@/components/CardContianer/CardContianer";
 
 const POOL_DEPLOYER = {
   BASE: "Base",
@@ -78,31 +79,21 @@ const CreatePoolForm = () => {
 
   const isSameToken =
     areCurrenciesSelected && currencyA.wrapped?.equals(currencyB.wrapped);
+  const poolAddress = computePoolAddress({
+    tokenA: currencyA!.wrapped,
+    tokenB: currencyB!.wrapped,
+  }) as Address;
 
-  const { data: poolAddress } = useReadAlgebraFactoryComputePoolAddress({
-    args: [
-      (currencyA?.wrapped as Address | undefined) ?? zeroAddress,
-      (currencyB?.wrapped as Address | undefined) ?? zeroAddress,
-    ],
-  });
-
-  const { data: customPoolDeployerAddressesBlank } =
-    useReadAlgebraFactoryComputeCustomPoolAddress({
-      args: [
-        (currencyA?.wrapped as Address | undefined) ?? zeroAddress,
-        (currencyB?.wrapped as Address | undefined) ?? zeroAddress,
-        CUSTOM_POOL_DEPLOYER_BLANK,
-      ],
-    });
-
-  const { data: customPoolDeployerAddressesFeeChanger } =
-    useReadAlgebraFactoryComputeCustomPoolAddress({
-      args: [
-        (currencyA?.wrapped as Address | undefined) ?? zeroAddress,
-        (currencyB?.wrapped as Address | undefined) ?? zeroAddress,
-        CUSTOM_POOL_DEPLOYER_FEE_CHANGER,
-      ],
-    });
+  const customPoolDeployerAddressesBlank = computeCustomPoolAddress({
+    tokenA: currencyA!.wrapped,
+    tokenB: currencyB!.wrapped,
+    customPoolDeployer: CUSTOM_POOL_DEPLOYER_BLANK,
+  }) as Address;
+  const customPoolDeployerAddressesFeeChanger = computeCustomPoolAddress({
+    tokenA: currencyA!.wrapped,
+    tokenB: currencyB!.wrapped,
+    customPoolDeployer: CUSTOM_POOL_DEPLOYER_FEE_CHANGER,
+  }) as Address;
 
   const [poolState] = usePool(poolAddress);
 

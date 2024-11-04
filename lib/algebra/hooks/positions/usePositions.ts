@@ -18,16 +18,13 @@ import {
 import { DEFAULT_CHAIN_ID } from "@/data/algebra/default-chain-id";
 import { farmingClient } from "@/lib/graphql/clients";
 import { useDepositsQuery } from "@/lib/graphql/generated/graphql";
-import {
-  readAlgebraFactoryComputePoolAddress,
-  useReadAlgebraFactoryComputePoolAddress,
-  useReadAlgebraPositionManagerBalanceOf,
-} from "@/wagmi-generated";
+
 import { ethers } from "ethers";
 import {
   computeCustomPoolAddress,
   computePoolAddress,
 } from "../../utils/pool/computepool";
+import { useReadAlgebraPositionManagerBalanceOf } from "@/wagmi-generated";
 
 export interface PositionFromTokenId {
   tokenId: number;
@@ -89,12 +86,10 @@ function usePositionsFromTokenIds(tokenIds: any[] | undefined): {
               ? computePoolAddress({
                   tokenA: new Token(DEFAULT_CHAIN_ID, result[2], 18),
                   tokenB: new Token(DEFAULT_CHAIN_ID, result[3], 18),
-                  initCodeHashManualOverride: POOL_INIT_CODE_HASH,
                 })
               : computeCustomPoolAddress({
                   tokenA: new Token(DEFAULT_CHAIN_ID, result[2], 18),
                   tokenB: new Token(DEFAULT_CHAIN_ID, result[3], 18),
-                  initCodeHashManualOverride: POOL_INIT_CODE_HASH,
                   customPoolDeployer: result[4],
                 })
           ) as Address;
