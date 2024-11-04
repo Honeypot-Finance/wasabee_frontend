@@ -280,6 +280,12 @@ export const ftoService = {
   }) => {
     return await revalidateProject(data);
   },
+  selectProjectByLaunchToken: async (data: {
+    token: string;
+    chain_id: number;
+  }) => {
+    return await pg`SELECT * FROM fto_project WHERE provider = ${data.token.toLowerCase()} and chain_id = ${data.chain_id}`;
+  },
 };
 
 const createFtoProject = async (data: {
