@@ -152,7 +152,9 @@ export const MemeWarBannerV2 = observer((props: Props) => {
             />
             <h3 className="z-10 text-3xl">Complete quest to earn prize</h3>
             <Link
-              href={"https://www.cubquests.com/quests/jani-vs-pot"}
+              href={
+                "https://www.cubquests.com/campaigns/berachaindevs?quest=honeypot-finance"
+              }
               target="_blank"
             >
               <Button className="z-10">Explore</Button>
