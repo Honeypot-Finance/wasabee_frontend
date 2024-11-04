@@ -291,7 +291,6 @@ export class Token implements BaseContract {
   }
 
   async watch() {
-    console.log("watching image", window.location.origin + this.logoURI);
     watchAsset(wallet.walletClient, {
       type: "ERC20",
       options: {

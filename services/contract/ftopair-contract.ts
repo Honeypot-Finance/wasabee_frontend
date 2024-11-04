@@ -69,7 +69,8 @@ export class FtoPairContract implements BaseLaunchContract {
 
   get depositedRaisedToken() {
     if (!this.raiseToken) {
-      throw new Error("token is not initialized");
+      console.log("token is not initialized");
+      return undefined;
     }
 
     return this.depositedRaisedTokenWithoutDecimals && this.raiseToken.decimals
@@ -379,6 +380,10 @@ export class FtoPairContract implements BaseLaunchContract {
       this.getUserDepositeAmount(),
     ]).catch((error) => {
       console.error(error, `init-${this.address}`);
+      trpcClient.projects.revalidateProjectType.mutate({
+        chain_id: wallet.currentChainId,
+        pair: this.address,
+      });
       return;
     });
     this.isInit = true;
@@ -401,7 +406,7 @@ export class FtoPairContract implements BaseLaunchContract {
 
     try {
       const claimed = await this.contract.read.claimedLp([wallet.account] as [
-        `0x${string}`
+        `0x${string}`,
       ]);
 
       const claimable = await this.contract.read.claimableLP([

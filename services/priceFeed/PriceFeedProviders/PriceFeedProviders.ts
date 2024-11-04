@@ -61,9 +61,8 @@ export class DefinedPriceFeed implements PriceFeedProvider {
       }
     }`;
 
-    const data = await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(
-      query
-    );
+    const data =
+      await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(query);
 
     if (!data || data.status === "error") {
       return {
@@ -74,9 +73,51 @@ export class DefinedPriceFeed implements PriceFeedProvider {
       return {
         status: "success",
         data: {
+          address: address,
           price: data.data.getTokenPrices[0].priceUsd,
           lastUpdated: data.data.getTokenPrices[0].timestamp,
         },
+        message: "Success",
+      };
+    }
+  };
+
+  getMultipleTokenCurrentPrice = async (
+    addresses: string[],
+    networkId: string
+  ): Promise<ApiResponseType<TokenCurrentPriceResponseType[]>> => {
+    const query = `#graphql
+    {
+      getTokenPrices(
+        inputs: [
+          ${addresses.map((address) => {
+            return `{ address: "${address.toString()}", networkId: ${networkId.toString()} }`;
+          })}
+        ]
+      ) {
+        priceUsd
+        timestamp
+      }
+    }`;
+
+    const data =
+      await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(query);
+
+    if (!data || data.status === "error") {
+      return {
+        status: "error",
+        message: "Failed to fetch data.",
+      };
+    } else {
+      return {
+        status: "success",
+        data: data.data.getTokenPrices.map((price, index) => {
+          return {
+            address: addresses[index],
+            price: price.priceUsd,
+            lastUpdated: price.timestamp,
+          };
+        }),
         message: "Success",
       };
     }
@@ -112,9 +153,8 @@ export class DefinedPriceFeed implements PriceFeedProvider {
     }
 `;
 
-    const data = await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(
-      query
-    );
+    const data =
+      await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(query);
 
     if (!data || data.status === "error") {
       return {
@@ -125,7 +165,11 @@ export class DefinedPriceFeed implements PriceFeedProvider {
       return {
         status: "success",
         data: data.data.getTokenPrices.map((price) => {
-          return { price: price.priceUsd, lastUpdated: price.timestamp };
+          return {
+            address: address,
+            price: price.priceUsd,
+            lastUpdated: price.timestamp,
+          };
         }),
         message: "Success",
       };

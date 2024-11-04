@@ -1,13 +1,16 @@
 import { MUBAI_FTO_PAIR_ABI } from "@/lib/abis/ftoPair";
 import { MemePairABI } from "@/lib/abis/MemePair";
 import { chains, chainsMap } from "@/lib/chain";
+import { createPublicClientByChain } from "@/lib/client";
 import { exec } from "@/lib/contract";
 import { pg } from "@/lib/db";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
+import { MemePairContract } from "@/services/contract/memepair-contract";
 import { wallet } from "@/services/wallet";
 import { Contract, ethers, providers } from "ethers";
 import { key } from "localforage";
 import { getContract } from "viem";
+import { readContract } from "viem/actions";
 import { record } from "zod";
 
 const super_api_key = process.env.FTO_API_KEY ?? "";
@@ -270,6 +273,19 @@ export const ftoService = {
     const outdata = res[0];
     return outdata as any;
   },
+  revalidateProject: async (data: {
+    pair: string;
+    chain_id: number;
+    creator_api_key?: string;
+  }) => {
+    return await revalidateProject(data);
+  },
+  selectProjectByLaunchToken: async (data: {
+    token: string;
+    chain_id: number;
+  }) => {
+    return await pg`SELECT * FROM fto_project WHERE provider = ${data.token.toLowerCase()} and chain_id = ${data.chain_id}`;
+  },
 };
 
 const createFtoProject = async (data: {
@@ -326,6 +342,136 @@ const updateFtoProject = async (data: {
   } catch (e) {
     console.log("updateFtoProject error: ", e);
     return false;
+  }
+};
+
+const revalidateProject = async (data: {
+  pair: string;
+  chain_id: number;
+  creator_api_key?: string;
+}) => {
+  const res =
+    await pg`SELECT * FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${data.chain_id}`;
+
+  const publicClient = createPublicClientByChain(chainsMap[data.chain_id]);
+
+  if (!res || !res[0]) {
+    //create
+    let provider = "";
+    let project_type = "fto";
+
+    const memePairContract = {
+      address: data.pair as `0x${string}`,
+      abi: MemePairABI.abi,
+    };
+
+    const ftoPairContract = {
+      address: data.pair as `0x${string}`,
+      abi: MUBAI_FTO_PAIR_ABI,
+    };
+
+    await publicClient
+      .readContract({
+        ...ftoPairContract,
+        functionName: "launchedTokenProvider",
+      })
+      .then((data: string) => {
+        console.log("data: ", data);
+        provider = data.toLowerCase();
+      })
+      .catch((e) => {
+        console.log("ftoPairContract error", e);
+        project_type = "meme";
+      });
+
+    if (!provider) {
+      await publicClient
+        .readContract({ ...memePairContract, functionName: "memeToken" })
+        .then((data) => {
+          console.log("data: ", data);
+          provider = data.toLowerCase();
+        })
+        .catch((e) => {
+          console.log("memePairContract error", e);
+          project_type = "";
+        });
+    }
+
+    // if (!provider) {
+    //   return null;
+    // }
+
+    await createFtoProject({
+      pair: data.pair,
+      chain_id: data.chain_id,
+      provider: provider ?? "",
+      creator_api_key: data.creator_api_key ?? super_api_key,
+      project_type: project_type,
+    });
+
+    return await selectFtoProject(data);
+  } else {
+    //revalidate
+    let needUpdate = false;
+    let project_type = res[0].project_type;
+    let provider = res[0].provider;
+
+    if (!project_type || project_type == "" || !provider || provider == "") {
+      needUpdate = true;
+      project_type = "fto";
+
+      const memePairContract = {
+        address: data.pair as `0x${string}`,
+        abi: MemePairABI.abi,
+      };
+
+      const ftoPairContract = {
+        address: data.pair as `0x${string}`,
+        abi: MUBAI_FTO_PAIR_ABI,
+      };
+
+      await publicClient
+        .readContract({
+          ...ftoPairContract,
+          functionName: "launchedTokenProvider",
+        })
+        .then((data: string) => {
+          provider = data.toLowerCase();
+        })
+        .catch(() => {
+          project_type = "meme";
+        });
+
+      if (!provider) {
+        await publicClient
+          .readContract({ ...memePairContract, functionName: "tokenDeployer" })
+          .then((data) => {
+            provider = data.toLowerCase();
+          })
+          .catch(() => {
+            project_type = "";
+          });
+      }
+
+      // if (!provider) {
+      //   return null;
+      // }
+    }
+
+    if (needUpdate) {
+      const updateData = {
+        pair: data.pair,
+        chain_id: data.chain_id,
+        creator_api_key: data.creator_api_key ?? super_api_key,
+        name: res[0].name,
+        provider: provider,
+        project_type: project_type,
+      };
+
+      await updateFtoProject(updateData);
+
+      return await selectFtoProject(data);
+    }
   }
 };
 

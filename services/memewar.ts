@@ -6,11 +6,12 @@ import { get } from "lodash";
 import { Token } from "./contract/token";
 import { FtoPairContract } from "./contract/ftopair-contract";
 
-type EventState = "preview" | "active" | "ended";
-type MemeWarParticipant = {
+export type EventState = "preview" | "active" | "ended";
+export type MemeWarParticipant = {
+  type: "fto" | "meme";
   participantName: string;
   pairAddress: string;
-  pair?: FtoPairContract;
+  pair?: FtoPairContract | MemePairContract;
   tokenAddress: string;
   token?: Token;
   iconUrl?: string;
@@ -24,42 +25,109 @@ const tHpotAddress = "0xfc5e3743e9fac8bb60408797607352e24db7d65e";
 export class MemewarStore {
   memewarState: EventState = "active";
   memewarParticipants: Record<string, MemeWarParticipant> = {
-    JANI: {
-      participantName: "JANI",
-      pairAddress: "0x2c504e661750e03aa9252c67e771dc059a521863",
-      tokenAddress: "0x180f30908b7c92ff2d65609088ad17bf923b42dc",
-      iconUrl: "/images/memewar/JANI_ICON.png",
+    BERANEIRO: {
+      type: "meme",
+      participantName: "Bera Neiro",
+      pairAddress: "0x4A54e266279C0715445C9Ae4f57894cD8e8B9Fb7",
+      tokenAddress: "0x8b045d02c581284295be33d4f261f8e1e6f78f18",
+      iconUrl: "",
       currentScore: new BigNumber(0),
-      finalScore: new BigNumber(16_883_055),
+      finalScore: new BigNumber(0),
     },
-    POT: {
-      participantName: "POT",
-      pairAddress: "0x93f8beabd145a61067ef2fca38c4c9c31d47ab7e",
-      tokenAddress: "0xfad73c80d67d3cb4a929d1c0faf33a820620ae41",
-      iconUrl: "/images/memewar/POT_ICON.png",
+    BERAPEPE: {
+      type: "meme",
+      participantName: "Bera Pepe",
+      pairAddress: "0x5a42fefa75b0adebd63d3078c2f1e3e9a6c39177",
+      tokenAddress: "0xff4abcd6d4cea557e4267bc81f1d2064615cb49e",
+      iconUrl: "",
       currentScore: new BigNumber(0),
-      finalScore: new BigNumber(85_906_400),
+      finalScore: new BigNumber(0),
     },
-    BULLA: {
-      participantName: "BULLA",
-      pairAddress: "0xa8c0dda3dff715dd6093101c585d25addc5046c8",
-      tokenAddress: "0x5da73142f3c8d8d749db4459b2fcc9024fad024e",
-      iconUrl: "/images/memewar/BULLAS_ICON.png",
+    BERAMOG: {
+      type: "meme",
+      participantName: "Bera Mog",
+      pairAddress: "0x8696b803174F254E8c9Afdf3Fb713e5931755370",
+      tokenAddress: "0x3F7AAE503000A08A8d4A9AFefa738b565f3A6CD6",
+      iconUrl: "",
       currentScore: new BigNumber(0),
-      finalScore: new BigNumber(28_600_103),
+      finalScore: new BigNumber(0),
     },
-    IVX: {
-      participantName: "IVX",
-      pairAddress: "0xa9edde04fc958264b1d6ad6153cffe26b1c79411",
-      tokenAddress: "0x2da7ec28dae827ea513da752bc161e55147b4d66",
-      iconUrl: "/images/memewar/IVX_ICON.png",
+    BERADOGWIFHAT: {
+      type: "meme",
+      participantName: "Bera Dog Wif Hat",
+      pairAddress: "0x295Fd12782Ae118d93Ea903D66a322Cc7cEfbdD5",
+      tokenAddress: "0xEF348b9FD378c91b00874d611b22062d7ee60284",
+      iconUrl: "",
       currentScore: new BigNumber(0),
-      finalScore: new BigNumber(695_585),
+      finalScore: new BigNumber(0),
+    },
+    BERAPOPCAT: {
+      type: "meme",
+      participantName: "Bera Popcat",
+      pairAddress: "0x8011F8fd78001D027556D7607d23Aa003c425c11",
+      tokenAddress: "0x51A42ceAFDA32F68390840A187b65a99584332df",
+      iconUrl: "",
+      currentScore: new BigNumber(0),
+      finalScore: new BigNumber(0),
+    },
+    BERAGIGACHAD: {
+      type: "meme",
+      participantName: "Bera Giga Chad",
+      pairAddress: "0x4238B8CCD693749e4b46b5c5DFC087da9661218D",
+      tokenAddress: "0x96dc300D5406E42051575B8b49d3057F1Ef678FC",
+      iconUrl: "",
+      currentScore: new BigNumber(0),
+      finalScore: new BigNumber(0),
+    },
+    BERAGOAT: {
+      type: "meme",
+      participantName: "Bera Goat",
+      pairAddress: "0xb3e9CEd28D6d9F50A3857c77B838e4226d7cF525",
+      tokenAddress: "0x0874955158639A594fd65641E16C7de91F3dF465",
+      iconUrl: "",
+      currentScore: new BigNumber(0),
+      finalScore: new BigNumber(0),
+    },
+    BERAMOODENG: {
+      type: "meme",
+      participantName: "Bera Moo Deng",
+      pairAddress: "0x81A443e25F139b8090FF3Ce19B6707e0D55006d5",
+      tokenAddress: "0x5c648D0Fd479cAFB9638eB94dB50aAA4d6A58c33",
+      iconUrl: "",
+      currentScore: new BigNumber(0),
+      finalScore: new BigNumber(0),
+    },
+    BERARETADRIO: {
+      type: "meme",
+      participantName: "Bera Retadrio",
+      pairAddress: "0xc0D158540537BBd46058B0DEB5b3a28f6BC24FFC",
+      tokenAddress: "0xFa9FB9d84525e4fE6c7DEaE137e3f1C81F86FdF8",
+      iconUrl: "",
+      currentScore: new BigNumber(0),
+      finalScore: new BigNumber(0),
+    },
+    BERAAPU: {
+      type: "meme",
+      participantName: "Bera Apu",
+      pairAddress: "0xf24438e67f9c5b9ee5284b6a7ee9e43b5f56e0f3",
+      tokenAddress: "0x96d62fbd15608ef087219f20986735a1d65a22a4",
+      iconUrl: "",
+      currentScore: new BigNumber(0),
+      finalScore: new BigNumber(0),
     },
   };
-  selectedSupportParticipantPair: FtoPairContract | undefined = undefined;
+  selectedSupportParticipantPair:
+    | FtoPairContract
+    | MemePairContract
+    | undefined = undefined;
   supportAmount = new BigNumber(0);
   tHpotToken: Token | undefined = undefined;
+
+  get sortedMemewarParticipants() {
+    return Object.values(this.memewarParticipants).sort(
+      (a, b) => b.currentScore.toNumber() - a.currentScore.toNumber()
+    );
+  }
 
   get isInit() {
     return Object.values(this.memewarParticipants).every(
@@ -82,19 +150,34 @@ export class MemewarStore {
     console.log(this.memewarParticipants);
   };
 
+  updateAllParticipantScore = async () => {
+    await Promise.all(
+      Object.keys(this.memewarParticipants).map(async (key) => {
+        const participant = this.memewarParticipants[key];
+        const score = await this.loadScore(
+          participant.pair?.launchedToken?.address || key
+        );
+        participant.currentScore = score;
+      })
+    );
+  };
+
   initParticipant = async (address: string) => {
     const participant = this.getParticipantByAddress(address);
     if (!participant) return;
 
-    const pair = new FtoPairContract({ address });
+    const pair =
+      participant.type === "fto"
+        ? new FtoPairContract({ address })
+        : new MemePairContract({ address });
     const token = Token.getToken({ address: participant.tokenAddress });
     await pair.init();
     await Promise.all([
+      await token.init(),
       await pair.raiseToken?.init(),
       await pair.launchedToken?.init(),
-      await token.init(),
     ]);
-    const score = await this.loadScore(address);
+    const score = await this.loadScore(pair.launchedToken?.address || address);
 
     participant.pair = pair;
     participant.token = pair.launchedToken ?? token;
@@ -126,6 +209,8 @@ export class MemewarStore {
       tHpotAddress.toLowerCase()
     );
 
+    console.log("poolPair", poolPair);
+
     await poolPair?.init();
     await poolPair?.getReserves();
 
@@ -142,10 +227,13 @@ export class MemewarStore {
         ? await poolPair?.token0.getTotalSupply()
         : await poolPair?.token1.getTotalSupply();
 
+    console.log("hpotReserve", hpotReserve);
+    console.log("launchTokenReserve", launchTokenReserve);
+    console.log("launchTokenAmount", launchTokenAmount);
+
     if (!launchTokenReserve || !hpotReserve || !launchTokenAmount) {
       return new BigNumber(0);
     }
-
     return new BigNumber(
       (hpotReserve.toNumber() / launchTokenReserve.toNumber()) *
         (launchTokenAmount.toNumber() / Math.pow(10, 18))
@@ -156,7 +244,14 @@ export class MemewarStore {
     this.supportAmount = new BigNumber(amount);
   };
 
-  setSelectedSupportParticipant = (address: string) => {
+  setSelectedSupportParticipant = (
+    address: string | MemePairContract | FtoPairContract
+  ) => {
+    if (typeof address === "object") {
+      this.selectedSupportParticipantPair = address;
+      return;
+    }
+
     this.selectedSupportParticipantPair =
       this.getParticipantByAddress(address)?.pair;
   };
