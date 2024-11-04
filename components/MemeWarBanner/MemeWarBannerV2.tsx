@@ -50,7 +50,7 @@ export const MemeWarBannerV2 = observer((props: Props) => {
   }, [memewarStore.isInit]);
 
   return memewarStore.isInit ? (
-    <div className="lg:grid lg:grid-cols-[80%_20%] gap-2">
+    <div className="flex  flex-col gap-5">
       <div>
         <div className="flex justify-between text-center">
           <h2 className="w-full text-center text-xl md:text-5xl font-[MEMEH] mb-2">
@@ -58,107 +58,109 @@ export const MemeWarBannerV2 = observer((props: Props) => {
           </h2>
         </div>
 
-        <div className="relative grid w-full aspect-video gap-2">
-          {Object.values(memewarStore.sortedMemewarParticipants).map(
-            (participant, idx) => {
-              return (
-                <MemeWarPariticipantCard
-                  key={participant.pairAddress}
-                  rank={(idx + 1).toString()}
-                  {...participant}
-                />
-              );
-            }
-          )}
-        </div>
-        <div className="text-center">
-          your tHpot balance:{" "}
-          {amountFormatted(memewarStore.tHpotToken?.balance, {
-            fixed: 2,
-            decimals: 0,
-            symbol: " tHPOT",
-          }) || "loading..."}
-        </div>
-        <div className="grid md:grid-cols-2 mt-1 gap-5">
-          <WarppedNextSelect
-            items={Object.entries(memewarStore.memewarParticipants)}
-            onChange={(e) => {
-              memewarStore.setSelectedSupportParticipant(
-                memewarStore.memewarParticipants[e.target.value].pair!
-              );
-            }}
-          >
-            {Object.entries(memewarStore.memewarParticipants).map(
-              ([key, value]) => {
+        <div className="md:flex justify-center">
+          <div className="relative flex flex-col flex-1 gap-2">
+            {Object.values(memewarStore.sortedMemewarParticipants).map(
+              (participant, idx) => {
                 return (
-                  <SelectItem key={key} value={key}>
-                    {value.participantName}
-                  </SelectItem>
+                  <MemeWarPariticipantCard
+                    key={participant.pairAddress}
+                    rank={(idx + 1).toString()}
+                    {...participant}
+                  />
                 );
               }
             )}
-          </WarppedNextSelect>{" "}
-          <div className="flex justify-center items-center gap-2">
-            <Button
-              isDisabled={false}
-              onClick={async () => {
-                if (
-                  memewarStore.selectedSupportParticipantPair?.ftoState === 3
-                ) {
-                  memewarStore.selectedSupportParticipantPair.deposit.call({
-                    amount: memewarStore.supportAmount.toFixed(0),
-                  });
-                } else {
-                  if (
-                    !memewarStore.tHpotToken ||
-                    !memewarStore.selectedSupportParticipantPair ||
-                    !memewarStore.selectedSupportParticipantPair.launchedToken
-                  ) {
-                    console.error("missing data");
-                    return;
-                  }
-                  swap.setFromToken(memewarStore.tHpotToken);
-                  swap.setToToken(
-                    memewarStore.selectedSupportParticipantPair.launchedToken
-                  );
-                  swap.setFromAmount(memewarStore.supportAmount.toFixed(0));
-
-                  await new Promise((resolve) => {
-                    setTimeout(() => {
-                      resolve(undefined);
-                    }, 1000);
-                  });
-
-                  swap.swapExactTokensForTokens.call();
-                }
-              }}
-            >
-              Support
-            </Button>
-            <Input
-              placeholder="Amount"
-              onChange={(e) => {
-                memewarStore.supportAmount = new BigNumber(e.target.value);
-              }}
-            />
           </div>
-          <div className=" relative w-full flex justify-around items-center col-span-2 h-[200px] border-4 border-black rounded-[1rem] overflow-hidden">
-            <Image
-              src="/images/memewar/janivspot.webp"
-              alt=""
-              width={300}
-              height={300}
-              className="w-full h-full object-cover object-top absolute brightness-50"
-            />
-            <h3 className="z-10 text-3xl">Complete quest to earn prize</h3>
-            <Link
-              href={
-                "https://www.cubquests.com/campaigns/berachaindevs?quest=honeypot-finance"
-              }
-              target="_blank"
+          <div className="flex flex-col m-2 gap-5 flex-[min(300px,1fr)]">
+            <div className="text-center">
+              your tHpot balance:{" "}
+              {amountFormatted(memewarStore.tHpotToken?.balance, {
+                fixed: 2,
+                decimals: 0,
+                symbol: " tHPOT",
+              }) || "loading..."}
+            </div>
+            <WarppedNextSelect
+              items={Object.entries(memewarStore.memewarParticipants)}
+              onChange={(e) => {
+                memewarStore.setSelectedSupportParticipant(
+                  memewarStore.memewarParticipants[e.target.value].pair!
+                );
+              }}
             >
-              <Button className="z-10">Explore</Button>
-            </Link>
+              {Object.entries(memewarStore.memewarParticipants).map(
+                ([key, value]) => {
+                  return (
+                    <SelectItem key={key} value={key}>
+                      {value.participantName}
+                    </SelectItem>
+                  );
+                }
+              )}
+            </WarppedNextSelect>{" "}
+            <div className="flex justify-center items-center gap-2">
+              <Button
+                isDisabled={false}
+                onClick={async () => {
+                  if (
+                    memewarStore.selectedSupportParticipantPair?.ftoState === 3
+                  ) {
+                    memewarStore.selectedSupportParticipantPair.deposit.call({
+                      amount: memewarStore.supportAmount.toFixed(0),
+                    });
+                  } else {
+                    if (
+                      !memewarStore.tHpotToken ||
+                      !memewarStore.selectedSupportParticipantPair ||
+                      !memewarStore.selectedSupportParticipantPair.launchedToken
+                    ) {
+                      console.error("missing data");
+                      return;
+                    }
+                    swap.setFromToken(memewarStore.tHpotToken);
+                    swap.setToToken(
+                      memewarStore.selectedSupportParticipantPair.launchedToken
+                    );
+                    swap.setFromAmount(memewarStore.supportAmount.toFixed(0));
+
+                    await new Promise((resolve) => {
+                      setTimeout(() => {
+                        resolve(undefined);
+                      }, 1000);
+                    });
+
+                    swap.swapExactTokensForTokens.call();
+                  }
+                }}
+              >
+                Support
+              </Button>
+              <Input
+                placeholder="Amount"
+                onChange={(e) => {
+                  memewarStore.supportAmount = new BigNumber(e.target.value);
+                }}
+              />
+            </div>
+            <div className=" relative w-full flex flex-col justify-center items-center col-span-2 h-[200px] border-4 border-black rounded-[1rem] overflow-hidden">
+              <Image
+                src="/images/memewar/janivspot.webp"
+                alt=""
+                width={300}
+                height={300}
+                className="w-full h-full object-cover object-top absolute brightness-50"
+              />
+              <h3 className="z-10 text-3xl">Complete quest to earn prize</h3>
+              <Link
+                href={
+                  "https://www.cubquests.com/campaigns/berachaindevs?quest=honeypot-finance"
+                }
+                target="_blank"
+              >
+                <Button className="z-10">Explore</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
