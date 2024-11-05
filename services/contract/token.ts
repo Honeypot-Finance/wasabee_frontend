@@ -53,6 +53,8 @@ export class Token implements BaseContract {
   isPopular = false;
   derivedETH = "";
   derivedUSD = "";
+  swapCount = "";
+  indexerDataLoaded = false;
 
   // determines the order of the token in the list
   get priority() {
@@ -273,10 +275,14 @@ export class Token implements BaseContract {
     return this.supportingFeeOnTransferTokens;
   }
 
-  async getIndexerTokenData() {
+  async getIndexerTokenData(option?: { force: boolean }) {
     if (this.isNative) {
       return;
     }
+    if (this.indexerDataLoaded && !option?.force) {
+      return;
+    }
+
     const indexerTokenData =
       await trpcClient.indexerFeedRouter.getPairTokenData.query({
         tokenAddress: this.address,

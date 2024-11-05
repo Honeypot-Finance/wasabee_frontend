@@ -22,7 +22,7 @@ export type MemeWarParticipant = {
 
 const tHpotAddress = "0xfc5e3743e9fac8bb60408797607352e24db7d65e";
 
-export class MemewarStore {
+class MemewarStore {
   memewarState: EventState = "active";
   memewarParticipants: Record<string, MemeWarParticipant> = {
     BERANEIRO: {
@@ -213,6 +213,8 @@ export class MemewarStore {
 
     await poolPair?.init();
     await poolPair?.getReserves();
+    poolPair?.token0.getIndexerTokenData();
+    poolPair?.token1.getIndexerTokenData();
 
     const launchTokenReserve =
       poolPair?.token0.address.toLowerCase() === address.toLowerCase()

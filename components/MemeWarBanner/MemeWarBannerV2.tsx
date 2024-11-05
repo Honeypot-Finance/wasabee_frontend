@@ -17,6 +17,8 @@ import { amountFormatted } from "@/lib/format";
 import { MemeWarParticipant, memewarStore } from "@/services/memewar";
 import { WarppedNextSelect } from "../wrappedNextUI/Select/Select";
 import BigNumber from "bignumber.js";
+import dynamic from "next/dynamic";
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const ANIMATION_DURATION = 500; //ms
 const HP_BAR_URL = "/images/memewar/HP_BAR.png";
@@ -42,7 +44,7 @@ export const MemeWarBannerV2 = observer((props: Props) => {
       memewarStore.updateAllParticipantScore().then(() => {
         setTimeout(() => {
           startUpdateScoreInterval();
-        }, 5000);
+        }, 10000);
       });
     };
 
@@ -59,21 +61,9 @@ export const MemeWarBannerV2 = observer((props: Props) => {
         </div>
 
         <div className="md:flex">
-          <div className="relative flex justify-end flex-col flex-1 gap-2">
-            {Object.values(memewarStore.sortedMemewarParticipants).map(
-              (participant, idx) => {
-                return (
-                  <MemeWarPariticipantCard
-                    key={participant.pairAddress}
-                    rank={(idx + 1).toString()}
-                    {...participant}
-                  />
-                );
-              }
-            )}
-          </div>
-          <div className="flex flex-col m-2 gap-5 flex-1">
-            <div className="max-w-[500px] *:my-4">
+          <MemeWarPariticipantRaceChart />
+          <div className="flex flex-col m-2 gap-5 ">
+            <div className="md:max-w-[400px] *:my-4">
               <div className="text-center">
                 your tHpot balance:{" "}
                 {amountFormatted(memewarStore.tHpotToken?.balance, {
@@ -174,6 +164,165 @@ export const MemeWarBannerV2 = observer((props: Props) => {
   ) : (
     <div className="flex justify-center items-center h-[500px]">
       <h1>Loading...</h1>
+    </div>
+  );
+});
+
+export const MemeWarPariticipantRaceChart = observer(() => {
+  const state: {
+    series: ApexAxisChartSeries;
+    options: ApexCharts.ApexOptions;
+  } = {
+    series: memewarStore.sortedMemewarParticipants.map((participant) => {
+      return {
+        name: participant.participantName,
+        data: [
+          {
+            x: Number(participant.token?.swapCount) ?? 0,
+            y: participant.currentScore.toNumber(),
+            meta: { participant },
+          },
+        ],
+      };
+    }),
+    options: {
+      chart: {
+        type: "scatter",
+        animations: {
+          enabled: false,
+        },
+        zoom: {
+          enabled: false,
+        },
+        toolbar: {
+          show: false,
+        },
+        events: {
+          markerClick(e, chart, options) {
+            console.log(e, chart, options);
+            const target =
+              memewarStore.sortedMemewarParticipants[options.seriesIndex];
+            window
+              .open(`/launch-detail/${target.pairAddress}`, "_blank")
+              ?.focus();
+          },
+        },
+      },
+      colors: ["orange"],
+      xaxis: {
+        tickAmount: 10,
+        // min: 0,
+        // max: 40,
+        title: {
+          text: "Tx Count→",
+        },
+        axisBorder: {
+          show: false,
+        },
+        labels: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+      },
+      yaxis: {
+        title: {
+          text: "Score→",
+        },
+        labels: {
+          show: false,
+        },
+        axisBorder: {
+          show: false,
+        },
+        tickAmount: 10,
+        axisTicks: {
+          show: false,
+        },
+        // tickAmount: 7,
+      },
+      markers: {
+        size: 20,
+      },
+      grid: { borderColor: "transparent", show: false },
+      stroke: {
+        show: false,
+      },
+      tooltip: {
+        enabled: true,
+        x: {
+          //formatter: (value) => `Tx Count: ${value}`,
+        },
+        y: {
+          title: {
+            formatter: (seriesName) => `${seriesName}`,
+          },
+        },
+        custom(options) {
+          const target =
+            memewarStore.sortedMemewarParticipants[options.seriesIndex];
+          return `
+          <div class="p-2 bg-black/20 rounded-md">
+            <h3>${target.participantName}</h3>
+            <p>Score: ${target.currentScore.toFixed(0)}</p>
+          </div>`;
+        },
+        theme: "dark",
+        fillSeriesColor: true,
+        fixed: {
+          enabled: true,
+          position: "topRight",
+        },
+      },
+
+      fill: {
+        type: "image",
+        opacity: 1,
+        image: {
+          src: memewarStore.sortedMemewarParticipants.map((participant) => {
+            return participant.iconUrl || participant.pair?.logoUrl || "";
+          }),
+          width: 40,
+          height: 40,
+        },
+      },
+
+      legend: {
+        show: false,
+        labels: {
+          useSeriesColors: true,
+        },
+      },
+    },
+  };
+
+  return (
+    <div className="relative flex justify-end flex-col flex-1 p-2 bg-black/20 rounded-md">
+      <Chart
+        options={state.options}
+        series={state.series}
+        type="scatter"
+        width="100%"
+      />
+    </div>
+  );
+});
+
+export const MemeWarPariticipantCardListDisplay = observer(() => {
+  return (
+    <div className="relative flex justify-end flex-col flex-1 gap-2">
+      {Object.values(memewarStore.sortedMemewarParticipants).map(
+        (participant, idx) => {
+          return (
+            <MemeWarPariticipantCard
+              key={participant.pairAddress}
+              rank={(idx + 1).toString()}
+              {...participant}
+            />
+          );
+        }
+      )}
     </div>
   );
 });

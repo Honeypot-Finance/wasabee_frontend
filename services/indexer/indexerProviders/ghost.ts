@@ -26,7 +26,7 @@ import dayjs from "dayjs";
 
 const memeGraphHandle = "93866c79-ad7e-4dfa-afb9-0b5a81d7d79f/ghostgraph";
 const ftoGraphHandle = "df583977-1412-4c0a-9b3a-ebea68604f3a/ghostgraph";
-const pairGraphHandle = "e6aa7476-9d4b-4ee0-8b20-5a98725b5580/ghostgraph";
+const pairGraphHandle = "c0bb4104-f7ae-4325-926a-e31bec273615/ghostgraph";
 
 function getTimeStampToDayNow() {
   return Math.floor(dayjs().unix() / 86400);
@@ -507,6 +507,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
+                swapCount
               }
               token1 {
                 id
@@ -515,6 +516,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
+                swapCount
               }
           }
         }
@@ -528,7 +530,7 @@ export class GhostIndexer {
     }
   `;
 
-  console.log('getHoldingPairs', query)
+    console.log("getHoldingPairs", query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
@@ -785,6 +787,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
+                swapCount
               }
               token1 {
                 id
@@ -793,6 +796,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
+                swapCount
               }
             }
             pageInfo {
@@ -875,6 +879,7 @@ export class GhostIndexer {
             decimals
             derivedETH
             derivedUSD
+            swapCount
           }
           token1{
             id
@@ -883,6 +888,7 @@ export class GhostIndexer {
             decimals
             derivedETH
             derivedUSD
+            swapCount
           }
         }
       }
@@ -914,20 +920,20 @@ export class GhostIndexer {
     }
   };
 
-  
   getPairTokensData = async (
-    tokenAddresses: readonly string []
+    tokenAddresses: readonly string[]
   ): Promise<ApiResponseType<GhostToken[]>> => {
     const query = `
       {
         tokens(where: {
-        id_in: [${tokenAddresses.map((address) => `"${address}"`).join(',')}]
+        id_in: [${tokenAddresses.map((address) => `"${address}"`).join(",")}]
       }) {
           items{
           id
           decimals
           derivedETH
           derivedUSD
+          swapCount
           symbol
           name
           }
@@ -938,7 +944,7 @@ export class GhostIndexer {
       apiHandle: pairGraphHandle,
     });
 
-    console.log( res);
+    console.log(res);
 
     if (res.status === "error") {
       return res;
@@ -961,6 +967,7 @@ export class GhostIndexer {
           decimals
           derivedETH
           derivedUSD
+          swapCount
           symbol
           name
         }
@@ -1051,6 +1058,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
+        swapCount
       }
       token1{
         address: id
@@ -1059,6 +1067,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
+        swapCount
       }
       reserve0
       reserve1
@@ -1077,6 +1086,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
+        swapCount
       }
       token1{
         address: id
@@ -1085,6 +1095,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
+        swapCount
       }
       reserve0
       reserve1
