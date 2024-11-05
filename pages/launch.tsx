@@ -343,6 +343,16 @@ const LaunchPage: NextLayoutPage = observer(() => {
               </div>
             }
           />
+          <Tab
+            href="/memewar"
+            title={
+              <div className="flex items-center text-yellow-400">
+                <span className="flex items-center justify-center gap-2">
+                  Meme War ⚔️
+                </span>
+              </div>
+            }
+          />
         </Tabs>
       </div>
     </div>

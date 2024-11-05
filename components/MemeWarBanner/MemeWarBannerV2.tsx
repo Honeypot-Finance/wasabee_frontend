@@ -42,7 +42,7 @@ export const MemeWarBannerV2 = observer((props: Props) => {
       memewarStore.updateAllParticipantScore().then(() => {
         setTimeout(() => {
           startUpdateScoreInterval();
-        }, 1000);
+        }, 5000);
       });
     };
 
