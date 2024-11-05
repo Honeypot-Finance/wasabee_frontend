@@ -66,6 +66,14 @@ body {
 .next-tab button[data-selected="true"] > span {
   @apply bg-transparent;
 }
+
+.next-tab-lbp button[data-selected="true"] {
+  @apply bg-[#E18A2066] border-1 border-[#E18A2066] text-white
+}
+
+.next-tab-lbp button[data-selected="true"] > span {
+  @apply bg-transparent;
+}
 .next-card {
   @apply [background:#1D1407] rounded-[20px];
 }
