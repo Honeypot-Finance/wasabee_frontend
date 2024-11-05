@@ -23,6 +23,12 @@ import { Analytics } from "@vercel/analytics/react";
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
 
+const dmSans = DM_Sans({
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin", "latin-ext"],
+  variable: "--dm_sans",
+});
+
 const Provider = ({ children }: { children: React.ReactNode }) => {
   const { data: walletClient } = useWalletClient({
     config,
@@ -50,13 +56,19 @@ export default function App({
           <RainbowKitProvider>
             <NextUIProvider>
               <Provider>
-                <Inspector keys={["Ctrl", "Shift", "Z"]} onClickElement={({codeInfo}: InspectParams) => {
-                  if (!codeInfo) {
-                    return
-                  }
-                  window.open(`cursor://file/${codeInfo.absolutePath}:${codeInfo.lineNumber}:${codeInfo.columnNumber}`, '_blank')
-                }}></Inspector>
-                <ComponentLayout className={"[font-family:MEMEP]"}>
+                <Inspector
+                  keys={["Ctrl", "Shift", "Z"]}
+                  onClickElement={({ codeInfo }: InspectParams) => {
+                    if (!codeInfo) {
+                      return;
+                    }
+                    window.open(
+                      `cursor://file/${codeInfo.absolutePath}:${codeInfo.lineNumber}:${codeInfo.columnNumber}`,
+                      "_blank"
+                    );
+                  }}
+                ></Inspector>
+                <ComponentLayout className={`${dmSans.className}`}>
                   <Component {...pageProps} />
                 </ComponentLayout>
               </Provider>

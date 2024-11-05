@@ -5,7 +5,7 @@ import superjson from "superjson";
 import { createTRPCReact } from "@trpc/react-query";
 import { toast } from "react-toastify";
 
-export function getBaseUrl() {
+export function getBaseUrl () {
   if (typeof window !== "undefined")
     // browser should use relative path
     return "";
@@ -60,11 +60,11 @@ export const trpcClient = createTRPCClient<AppRouter>({
       //     const data = await cloned.json()
       //     toast.error(data[0]?.error.message)
       //   }
-   
+
       //   return res
       // },
       url: `${getBaseUrl()}/api/trpc`,
-      async headers() {
+      async headers () {
         const headers = {} as Record<string, string>;
         if (
           localStorage.getItem("message") &&
@@ -86,7 +86,7 @@ export const trpcQueryClient = trpc.createClient({
       url: `${getBaseUrl()}/api/trpc`,
       // You can pass any HTTP headers you wish here
       transformer: superjson,
-      async headers() {
+      async headers () {
         const headers = {} as Record<string, string>;
         if (
           localStorage.getItem("message") &&
