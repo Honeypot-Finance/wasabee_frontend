@@ -115,6 +115,15 @@ class MemewarStore {
       currentScore: new BigNumber(0),
       finalScore: new BigNumber(0),
     },
+    TRUMPOT: {
+      type: "meme",
+      participantName: "TRUMPOT",
+      pairAddress: "0xcd7fb843f16c884fc87d913ae313bf4c61bedf5a",
+      tokenAddress: "0xc06b8ee779d065061c2087c5c78c1ef774850041",
+      iconUrl: "",
+      currentScore: new BigNumber(0),
+      finalScore: new BigNumber(0),
+    },
   };
   selectedSupportParticipantPair:
     | FtoPairContract
