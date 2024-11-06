@@ -16,7 +16,7 @@ import { config } from "@/config/wagmi";
 import { trpc, trpcQueryClient } from "../lib/trpc";
 import { useEffect } from "react";
 import { wallet } from "@/services/wallet";
-import { DM_Sans } from "next/font/google";
+import { DM_Sans, Inter } from "next/font/google";
 import { Inspector, InspectParams } from "react-dev-inspector";
 import { StorageState } from "@/services/utils";
 import { Analytics } from "@vercel/analytics/react";
@@ -28,6 +28,8 @@ const dmSans = DM_Sans({
   subsets: ["latin", "latin-ext"],
   variable: "--dm_sans",
 });
+
+
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
   const { data: walletClient } = useWalletClient({

@@ -55,7 +55,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   console.log("launchpad.projectsPage", launchpad.projectsPage)
 
   return (
-    <div className="px-7 xl:max-w-[1280px] mx-auto flex flex-col sm:gap-y-4">
+    <div className="px-7 xl:max-w-[1280px] mx-auto flex flex-col sm:gap-y-5">
      
       {mostSuccessProjects && mostSuccessProjects.length > 0 && (
         <>
@@ -87,6 +87,8 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             tabContent: "group-data-[selected=true]:text-[#ffffff]",
             cursor: "group-data-[selected=true]:bg-[#E18A2066]"
           }}
+          defaultSelectedKey={selectedTab}
+          selectedKey={selectedTab}
           onSelectionChange={(key) => {
             launchpad.setCurrentLaunchpadType("meme");
             if (key === "all") {
@@ -129,19 +131,21 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
       </div>
 
       <div>
-            {selectedTab === 'all' ? <Pagination
-              paginationState={launchpad.projectsPage}
-              render={(pair) => <LaunchPadProjectCard status={"live"} coverImg={''}  isShowCoverImage={true} />}
-              classNames={{
-                itemsContainer:
-                  "w-full flex flex-col lg:flex-row gap-4",
-              }}
-            />:<Pagination
+            {selectedTab === 'all' ? 
+            <Pagination
+            paginationState={launchpad.projectsPage}
+            render={(pair) => <LaunchPadProjectCard status={"live"} coverImg={''} isShowCoverImage={true} />}
+            classNames={{
+              itemsContainer:
+                "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-x-4 xl:gap-y-5 xl:grid-cols-4",
+            }}
+          />:
+          <Pagination
             paginationState={launchpad.myLaunches}
             render={(pair) => <LaunchPadProjectCard status={"live"} coverImg={''} isShowCoverImage={true}  />}
             classNames={{
               itemsContainer:
-                "flex flex-wrap gap-4",
+              "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-x-4 xl:gap-y-5 xl:grid-cols-4",
             }}
           /> }
           </div>
