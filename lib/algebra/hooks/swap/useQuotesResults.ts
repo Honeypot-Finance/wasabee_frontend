@@ -6,7 +6,7 @@ import {
   encodeRouteToPath,
 } from "@cryptoalgebra/custom-pools-sdk";
 import { useMemo } from "react";
-import { useContractReads } from "wagmi";
+import { useReadContracts } from "wagmi";
 import { useAllRoutes } from "./useAllRoutes";
 
 export function useQuotesResults({
@@ -27,6 +27,18 @@ export function useQuotesResults({
     !exactInput ? amountOut?.currency : currencyOut
   );
 
+  // console.log("routes", routes);
+  // exactInput &&
+  //   routes &&
+  //   routes.length > 0 &&
+  //   console.log(
+  //     "encodeRouteToPath(route, !exactInput)",
+  //     routes?.[0],
+  //     exactInput,
+  //     amountIn ? amountIn : undefined,
+  //     amountOut ? amountOut : undefined,
+  //     encodeRouteToPath(routes[0], exactInput)
+  //   );
   const quoteInputs = useMemo(() => {
     return routes.map((route) => [
       encodeRouteToPath(route, !exactInput),
@@ -42,11 +54,13 @@ export function useQuotesResults({
 
   const functionName = exactInput ? "quoteExactInput" : "quoteExactOutput";
 
+  //console.log("quoteInputs", quoteInputs);
+
   const {
     data: quotesResults,
     isLoading,
     refetch,
-  } = useContractReads({
+  } = useReadContracts({
     contracts: quoteInputs.map((quote: any) => ({
       address: ALGEBRA_QUOTER_V2,
       abi: algebraQuoterV2ABI,

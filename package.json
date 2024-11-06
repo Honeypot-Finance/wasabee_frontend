@@ -12,8 +12,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.11.8",
-    "@cryptoalgebra/custom-pools-sdk": "^1.0.5",
-    "@cryptoalgebra/custom-pools-and-sliding-fee-sdk": "^0.12.5",
+    "@cryptoalgebra/custom-pools-sdk": "npm:@cryptoalgebra/custom-pools-and-sliding-fee-sdk@1.2.0",
     "@cryptoalgebra/integral-sdk": "^0.12.5",
     "@cryptoalgebra/router-custom-pools-and-sliding-fee": "^1.3.5",
     "@ethersproject/bytes": "^5.7.0",

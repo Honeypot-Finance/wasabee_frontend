@@ -73,6 +73,7 @@ export function useBestTradeExactIn(
         { result }: any,
         i
       ) => {
+        console.log("result", result);
         if (!result) return currentBest;
 
         if (currentBest.amountOut === null) {

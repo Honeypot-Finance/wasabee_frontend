@@ -2,7 +2,7 @@ import {
   ADDRESS_ZERO,
   Token,
   algebraPositionManagerABI,
-} from "@cryptoalgebra/custom-pools-and-sliding-fee-sdk";
+} from "@cryptoalgebra/custom-pools-sdk";
 import { useMemo } from "react";
 import {
   useAccount,
