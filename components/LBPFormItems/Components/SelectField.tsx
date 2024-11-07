@@ -19,7 +19,7 @@ const SelectField = ({label, items, className,children}: Props) => {
                 base: "bg-[#3E2A0FC4] rounded-xl border",
                 mainWrapper: 'bg-[#3E2A0FC4] rounded-xl',
                 innerWrapper: "bg-[#3E2A0FC4] rounded-xl",
-                trigger: "bg-[#3E2A0FC4] rounded-xl !hover:bg-[#3E2A0FC4] !focus:bg-[#3E2A0FC4]",
+                trigger: "bg-[#3E2A0FC4] rounded-xl data-[hover=true]:bg-[#3E2A0FC4]",
                 listboxWrapper: "bg-[#3E2A0FC4]"
             }}
                 className={clsx('min-w-32', className)}

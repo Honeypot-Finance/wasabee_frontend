@@ -63,7 +63,7 @@ const StepsData = [
 
 const LaunchProject = () => {
 
-  const [activeTab, setActiveTab] = useState('8')
+  const [activeTab, setActiveTab] = useState('4')
 
   const methods = useForm({
     
