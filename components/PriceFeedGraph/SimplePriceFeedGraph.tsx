@@ -223,7 +223,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
 
   return (
     <div className="relative w-full h-full">
-      <CardContianer autoSize>
+      <CardContianer>
         {chart.isLoading && (
           <FaSpinner className="animate-spin absolute top-1/2 left-1/2 z-50"></FaSpinner>
         )}
@@ -276,6 +276,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
                 </span>
               </div>
               <div className="w-full">
+                {/* FIXME:  left side is too wide. */}
                 <Chart
                   options={state.options}
                   series={state.series}
