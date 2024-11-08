@@ -49,6 +49,7 @@ import ProgressBar from "@/components/atoms/ProgressBar/ProgressBar";
 import BigNumber from "bignumber.js";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import Action from "./componets/Action";
+import PriceFeedGraph from "@/components/PriceFeedGraph/PriceFeedGraph";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
