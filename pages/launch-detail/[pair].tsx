@@ -1178,17 +1178,16 @@ const MemeView = observer(() => {
             <div className="text-[color:var(--Button-Gradient,var(--card-stroke,#F7931A))]">
               <span className="font-bold">
                 $
-                {amountFormatted(pair?.depositedRaisedToken, {
-                  decimals: pair?.raiseToken?.decimals ?? 0,
-                  fixed: 3,
-                })}
+                {(pair?.depositedRaisedToken ?? BigNumber(0))
+                  .multipliedBy(pair?.raiseToken?.derivedUSD ?? 1)
+                  .toFixed()}
               </span>
               <span className="text-sm">
                 / $
-                {amountFormatted(pair?.raisedTokenMinCap, {
-                  decimals: pair?.raiseToken?.decimals ?? 0,
-                  fixed: 3,
-                })}
+                {(pair?.raisedTokenMinCap ?? BigNumber(0))
+                  .div(10 ** (pair?.raiseToken?.decimals ?? 0))
+                  .multipliedBy(pair?.raiseToken?.derivedUSD ?? BigNumber(1))
+                  .toFixed()}
               </span>
             </div>
           </div>
@@ -1215,17 +1214,12 @@ const MemeView = observer(() => {
             />
             <div className="flex items-center justify-between">
               <div>
-                {(pair?.depositedRaisedToken ?? BigNumber(0))
-                  .div(pair?.raisedTokenMinCap ?? BigNumber(1))
-                  .multipliedBy(100)
-                  .toFixed()}{" "}
-                of tokens sold
-              </div>
-              <div>
                 <span className="text-[#FFCD4D]">
-                  {(pair?.depositedRaisedToken ?? BigNumber(0))
-                    .div(10 ** (pair?.raiseToken?.decimals ?? 0))
-                    .toFixed()}
+                  {pair?.ftoStatusDisplay?.status === "success"
+                    ? (pair?.raisedTokenMinCap ?? BigNumber(0))
+                        .div(10 ** (pair?.raiseToken?.decimals ?? 0))
+                        .toFixed()
+                    : (pair?.depositedRaisedToken ?? BigNumber(0)).toFixed()}
                 </span>
                 <span className="text-xs">
                   /
@@ -1469,12 +1463,6 @@ const MemeView = observer(() => {
                 <span className="text-[#F0A64A] text-sm">Token supply</span>
                 <span className="text-white text-xl">
                   {pair?.launchedToken?.totalSupplyWithoutDecimals.toNumber()}
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-                <span className="text-[#F0A64A] text-sm">initial supply</span>
-                <span className="text-white text-xl">
-                  {pair?.deposit?.initialValue ?? "--"}
                 </span>
               </div>
               <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
