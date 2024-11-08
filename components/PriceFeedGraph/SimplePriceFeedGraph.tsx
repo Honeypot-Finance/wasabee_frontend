@@ -220,7 +220,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
       {chart.isLoading && (
         <FaSpinner className="animate-spin absolute top-1/2 left-1/2 z-50"></FaSpinner>
       )}
-      <div className="relative w-full h-full flex-col flex items-center justify-center">
+      <div className="relative w-full flex-col flex items-center justify-center">
         <div className="flex justify-between items-center w-full gap-5">
           <span className="lg:pl-4">
             <div className="flex">

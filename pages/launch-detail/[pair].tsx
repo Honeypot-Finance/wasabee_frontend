@@ -8,10 +8,9 @@ import { AsyncState } from "@/services/utils";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { wallet } from "@/services/wallet";
 import { Button } from "@/components/button";
-import { Input } from "@/components/input";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import Image from "next/image";
-import { amountFormatted, formatLargeNumber, truncate } from "@/lib/format";
+import { amountFormatted, truncate } from "@/lib/format";
 import { Copy } from "@/components/copy";
 import { LuFileEdit } from "react-icons/lu";
 import {
@@ -27,8 +26,7 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import TokenLogo from "@/components/TokenLogo/TokenLogo";
-import { BiLinkExternal, BiWallet } from "react-icons/bi";
+import { BiLinkExternal } from "react-icons/bi";
 import PopUp from "@/components/PopUp/PopUp";
 import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { trpcClient } from "@/lib/trpc";
@@ -49,10 +47,8 @@ import { WrappedToastify } from "@/lib/wrappedToastify";
 import Countdown from "react-countdown";
 import ProgressBar from "@/components/atoms/ProgressBar/ProgressBar";
 import BigNumber from "bignumber.js";
-import { SwapCard } from "@/components/SwapCard/MemeSwap";
 import CardContianer from "@/components/CardContianer/CardContianer";
-import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
-import PriceFeedGraph from "@/components/PriceFeedGraph/PriceFeedGraph";
+import Action from "./componets/Action";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -261,184 +257,6 @@ const UpdateProjectModal = observer(
         {(onClose) => <FormBody onClose={onClose}></FormBody>}
       </ModalContent>
     );
-  }
-);
-
-const SuccessAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    return (
-      // <div className="flex gap-[16px] justify-center items-center flex-col lg:flex-row">
-      //   {wallet.account != pair.provider && (
-      //     <Button
-      //       className="w-full"
-      //       isLoading={pair.claimLP.loading}
-      //       onClick={() => {
-      //         pair.claimLP.call();
-      //       }}
-      //       isDisabled={!pair.canClaimLP}
-      //     >
-      //       {pair.canClaimLP ? "Claim LP" : "Claim LP (Not available)"}
-      //     </Button>
-      //   )}
-
-      //   <Link
-      //     href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
-      //     className="text-black font-bold w-full"
-      //   >
-      //     <Button className="w-full">
-      //       <p>BUY Token</p>
-      //       <p>
-      //         <Copy
-      //           onClick={(e) => {
-      //             e.preventDefault();
-      //           }}
-      //           className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-      //           value={`${window.location.origin}/swap?inputCurrency=${pair.raiseToken?.address}&outputCurrency=${pair.launchedToken?.address}`}
-      //         ></Copy>
-      //       </p>
-      //     </Button>{" "}
-      //   </Link>
-      // </div>
-      <SwapCard outputAddress={pair.launchedToken?.address} />
-    );
-  }
-);
-const FailAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    return (
-      <div className="flex flex-col gap-[16px]">
-        {pair instanceof FtoPairContract && pair.isProvider && (
-          <Button
-            className="w-full"
-            isLoading={pair.withdraw.loading}
-            onClick={() => {
-              pair.withdraw.call();
-            }}
-          >
-            Provider Withdraw
-          </Button>
-        )}
-        {pair instanceof MemePairContract && pair.canRefund && (
-          <Button
-            className="w-full"
-            onClick={() => {
-              pair.refund.call();
-            }}
-            isLoading={pair.refund.loading}
-            style={{
-              backgroundColor: "green",
-            }}
-          >
-            Refund LP
-          </Button>
-        )}
-      </div>
-    );
-  }
-);
-
-const PauseAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    return pair.isProvider ? (
-      <div className="flex flex-col gap-[16px]">
-        <Button
-          className="w-full"
-          isLoading={pair.resume.loading}
-          onClick={() => {
-            pair.resume.call();
-          }}
-        >
-          Resume
-        </Button>
-      </div>
-    ) : (
-      <></>
-    );
-  }
-);
-
-const ProcessingAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    const acc = useAccount();
-    const state = useLocalObservable(() => ({
-      depositAmount: "0",
-      setDepositAmount(val: string) {
-        this.depositAmount = val;
-      },
-    }));
-    return (
-      pair.raiseToken && (
-        <div className="flex flex-col gap-[16px]">
-          <Input
-            className="bg-[#2F200B] rounded-[10px]"
-            value={state.depositAmount}
-            placeholder="Deposit amount"
-            min={0}
-            type="number"
-            isClearable={false}
-            max={pair.raiseToken.balance.toFixed()}
-            onChange={(e) => {
-              state.setDepositAmount(e.target.value);
-            }}
-            onBlur={() => {
-              state.setDepositAmount(Number(state.depositAmount).toString());
-            }}
-            defaultValue="0"
-            endContent={
-              <div className="flex items-center">
-                <span className="mr-2">{pair.raiseToken.displayName}</span>
-                <TokenLogo token={pair.raiseToken} />
-              </div>
-            }
-          ></Input>
-          <div className="flex items-center gap-[8px]">
-            <div>Balance: {pair.raiseToken.balance.toFormat(5)}</div>
-            <div
-              onClick={() => {
-                state.setDepositAmount(
-                  pair.raiseToken?.balance.toFixed() ?? "0"
-                );
-                pair.raiseToken?.getBalance();
-              }}
-              className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline"
-            >
-              Max
-            </div>
-          </div>
-          <Button
-            className="w-full"
-            isDisabled={!Number(state.depositAmount)}
-            isLoading={pair.deposit.loading}
-            onClick={() => {
-              pair.deposit.call({
-                amount: state.depositAmount,
-              });
-            }}
-          >
-            Deposit
-          </Button>
-        </div>
-      )
-    );
-  }
-);
-
-const Action = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    switch (pair.ftoState) {
-      case 0:
-        return <SuccessAction pair={pair}></SuccessAction>;
-      case 1:
-        return <FailAction pair={pair}></FailAction>;
-      case 2:
-        // return <PauseAction pair={pair}></PauseAction>;
-        return <></>;
-      case 3:
-        if (pair.isCompleted) {
-          return <></>;
-        }
-        return <ProcessingAction pair={pair}></ProcessingAction>;
-    }
   }
 );
 
@@ -924,6 +742,7 @@ const FtoView = observer(() => {
                 );
               })}
             </div>
+            <div>{state.pair.value?.ftoState}</div>
             {state.pair.value?.ftoState === 0 && (
               <SimplePriceFeedGraph></SimplePriceFeedGraph>
             )}
@@ -1180,14 +999,14 @@ const MemeView = observer(() => {
                 $
                 {(pair?.depositedRaisedToken ?? BigNumber(0))
                   .multipliedBy(pair?.raiseToken?.derivedUSD ?? 1)
-                  .toFixed()}
+                  .toFixed(3)}
               </span>
               <span className="text-sm">
                 / $
                 {(pair?.raisedTokenMinCap ?? BigNumber(0))
                   .div(10 ** (pair?.raiseToken?.decimals ?? 0))
                   .multipliedBy(pair?.raiseToken?.derivedUSD ?? BigNumber(1))
-                  .toFixed()}
+                  .toFixed(3)}
               </span>
             </div>
           </div>
@@ -1255,7 +1074,7 @@ const MemeView = observer(() => {
             />
           </div>
 
-          <div className="grid grid-cols-5 *:margin">
+          <div className="grid grid-cols-4 *:margin">
             <div className="flex flex-col items-center">
               <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
                 Token Price
@@ -1283,29 +1102,18 @@ const MemeView = observer(() => {
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="flex gap-[4px] text-white text-xs font-bold leading-[normal] text-balance">
-                Full Diluted Value
+              <div className="flex gap-[4px] text-white  text-[12.165px] font-bold leading-[normal]">
+                <Image
+                  src="/images/calendar.png"
+                  alt="price"
+                  width={12}
+                  height={12}
+                ></Image>
+                Start Date
               </div>
-              <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
-                {formatLargeNumber(
-                  pair?.raisedTokenMinCap ?? 0,
-                  pair?.launchedToken?.decimals ?? 0
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <Image
-                src="/images/calendar.png"
-                alt="price"
-                width={12}
-                height={12}
-              ></Image>
               <div className="text-[#FFCD4D]  text-xs font-medium leading-[normal] mt-[4px]">
                 {state.pair.value?.endTimeDisplay
-                  ? new Date(
-                      state.pair.value?.endTimeDisplay
-                    ).toLocaleDateString()
+                  ? new Date(state.pair.value?.startTime).toLocaleDateString()
                   : "--"}
                 <br />
                 {state.pair.value?.endTimeDisplay
@@ -1318,6 +1126,12 @@ const MemeView = observer(() => {
 
             <div className="flex flex-col items-center">
               <div className="flex gap-[4px] text-white  text-[12.165px] font-bold leading-[normal]">
+                <Image
+                  src="/images/calendar.png"
+                  alt="price"
+                  width={12}
+                  height={12}
+                ></Image>
                 End Date
               </div>
               <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
@@ -1368,6 +1182,9 @@ const MemeView = observer(() => {
               );
             })}
           </div>
+          {state.pair.value?.ftoState === 0 && (
+            <SimplePriceFeedGraph></SimplePriceFeedGraph>
+          )}
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
           {pair && <Action pair={pair} />}
