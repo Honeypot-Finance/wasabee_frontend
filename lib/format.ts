@@ -6,7 +6,7 @@ export const amountFormatted = (
     decimals,
     fixed,
     prefix,
-    symbol
+    symbol,
   }: {
     decimals?: number;
     fixed?: number;
@@ -28,7 +28,11 @@ export const amountFormatted = (
   if (r.isLessThan(minValue)) {
     return prefix + `<${minValue.toFixed()}${symbol ?? ""}`;
   }
-  return prefix + new BigNumber(new BigNumber(r.toFixed(fixed, 1)).toFixed()).toFormat() + (symbol ?? "");
+  return (
+    prefix +
+    new BigNumber(new BigNumber(r.toFixed(fixed, 1)).toFixed()).toFormat() +
+    (symbol ?? "")
+  );
 };
 
 // truncate middle of string
@@ -72,3 +76,19 @@ export const formatAmount = (amount?: number | string) => {
     start: String(amount),
   };
 };
+
+export function formatLargeNumber(
+  number: number | string | BigNumber,
+  decimals = 0
+) {
+  const units = ["", "K", "M", "B", "T"];
+  let unitIndex = 0;
+  let num = new BigNumber(number).div(10 ** decimals);
+
+  while (num.isGreaterThanOrEqualTo(1000) && unitIndex < units.length - 1) {
+    num = num.dividedBy(1000);
+    unitIndex++;
+  }
+
+  return `${num.toFixed(0)}${units[unitIndex]}`;
+}

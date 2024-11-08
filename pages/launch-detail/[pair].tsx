@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
+import { Logo } from "@/components/svg/logo";
 import { observer, useLocalObservable } from "mobx-react-lite";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import launchpad from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { AsyncState } from "@/services/utils";
@@ -10,18 +11,15 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import Image from "next/image";
-import { amountFormatted } from "@/lib/format";
+import { amountFormatted, formatLargeNumber, truncate } from "@/lib/format";
 import { Copy } from "@/components/copy";
 import { LuFileEdit } from "react-icons/lu";
 import {
-  Button as NextButton,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Textarea,
-  Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
@@ -31,34 +29,27 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { BiLinkExternal, BiWallet } from "react-icons/bi";
-import { PopupActions } from "reactjs-popup/dist/types";
 import PopUp from "@/components/PopUp/PopUp";
-import { info } from "console";
 import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { trpcClient } from "@/lib/trpc";
+import ProjectStatus from "@/components/atoms/TokenStatusDisplay/TokenStatus";
 import ProjectStatusDisplay from "@/components/atoms/TokenStatusDisplay/TokenStatusDisplay";
-import { Provider } from "ethcall";
-import { WatchAsset } from "@/components/atoms/WatchAsset/WatchAsset";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
 import {
   OptionsDropdown,
   optionsPresets,
 } from "@/components/OptionsDropdown/OptionsDropdown";
-import { SlShare } from "react-icons/sl";
 import { VscCopy } from "react-icons/vsc";
-import { Token } from "@/services/contract/token";
 import { useAccount } from "wagmi";
-import { useParams } from "next/navigation";
-import { useQueries } from "@tanstack/react-query";
 import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
 import { chart } from "@/services/chart";
-import CopyToClipboard from "react-copy-to-clipboard";
-import CardContianer from "@/components/CardContianer/CardContianer";
-import { CommentCard } from "@/components/Discussion/CommentCard/CommentCard";
 import { DiscussionArea } from "@/components/Discussion/DiscussionArea/DiscussionArea";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { WrappedToastify } from "@/lib/wrappedToastify";
-import { title } from "process";
+import Countdown from "react-countdown";
+import ProgressBar from "@/components/atoms/ProgressBar/ProgressBar";
+import BigNumber from "bignumber.js";
+import { SwapCard } from "@/components/SwapCard/MemeSwap";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -273,38 +264,39 @@ const UpdateProjectModal = observer(
 const SuccessAction = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
-      <div className="flex gap-[16px] justify-center items-center flex-col lg:flex-row">
-        {wallet.account != pair.provider && (
-          <Button
-            className="w-full"
-            isLoading={pair.claimLP.loading}
-            onClick={() => {
-              pair.claimLP.call();
-            }}
-            isDisabled={!pair.canClaimLP}
-          >
-            {pair.canClaimLP ? "Claim LP" : "Claim LP (Not available)"}
-          </Button>
-        )}
+      // <div className="flex gap-[16px] justify-center items-center flex-col lg:flex-row">
+      //   {wallet.account != pair.provider && (
+      //     <Button
+      //       className="w-full"
+      //       isLoading={pair.claimLP.loading}
+      //       onClick={() => {
+      //         pair.claimLP.call();
+      //       }}
+      //       isDisabled={!pair.canClaimLP}
+      //     >
+      //       {pair.canClaimLP ? "Claim LP" : "Claim LP (Not available)"}
+      //     </Button>
+      //   )}
 
-        <Link
-          href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
-          className="text-black font-bold w-full"
-        >
-          <Button className="w-full">
-            <p>BUY Token</p>
-            <p>
-              <Copy
-                onClick={(e) => {
-                  e.preventDefault();
-                }}
-                className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-                value={`${window.location.origin}/swap?inputCurrency=${pair.raiseToken?.address}&outputCurrency=${pair.launchedToken?.address}`}
-              ></Copy>
-            </p>
-          </Button>{" "}
-        </Link>
-      </div>
+      //   <Link
+      //     href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
+      //     className="text-black font-bold w-full"
+      //   >
+      //     <Button className="w-full">
+      //       <p>BUY Token</p>
+      //       <p>
+      //         <Copy
+      //           onClick={(e) => {
+      //             e.preventDefault();
+      //           }}
+      //           className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
+      //           value={`${window.location.origin}/swap?inputCurrency=${pair.raiseToken?.address}&outputCurrency=${pair.launchedToken?.address}`}
+      //         ></Copy>
+      //       </p>
+      //     </Button>{" "}
+      //   </Link>
+      // </div>
+      <SwapCard outputAddress={pair.launchedToken?.address} />
     );
   }
 );
@@ -951,6 +943,7 @@ const FtoView = observer(() => {
 
 const MemeView = observer(() => {
   const router = useRouter();
+  const [tab, setTab] = useState<"info" | "about" | "txs" | "comment">("info");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { pair: pairAddress } = router.query;
   const [votes, setVotes] = useState({
@@ -1076,6 +1069,8 @@ const MemeView = observer(() => {
       });
   }
 
+  const pair = useMemo(() => state.pair.value, [state.pair.value]);
+
   return (
     <div className="px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
       {state.pair.value && (
@@ -1089,326 +1084,413 @@ const MemeView = observer(() => {
           <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
         </Modal>
       )}
-      <Breadcrumbs
-        breadcrumbs={[
-          {
-            title: "Projects",
-            href: "/meme-launchs",
-          },
-          {
-            title: state.pair.value?.launchedToken?.displayName || "-",
-            href: "",
-          },
-        ]}
-      ></Breadcrumbs>
-      <div className="flex justify-center mt-[24px]">
-        <div className="flex gap-[20px] flex-wrap min-h-[425px]">
-          <div className="flex-1 flex basis-full sm:basis-0 w-full sm:min-w-[500px] flex-col items-center  shrink-0 [background:#271B0C] rounded-2xl">
-            <div className="relative flex h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px] overflow-hidden">
-              {state.pair.value?.bannerUrl && (
-                <Image
-                  src={state.pair.value?.bannerUrl}
-                  alt="banner"
-                  layout="fill"
-                  objectFit="fill"
-                ></Image>
-              )}
-            </div>
-            <div className="relative flex-1 w-full h-full px-[29px] pb-[26px]">
-              <ProjectStatusDisplay pair={state.pair.value} />
-              <div className=" relative translate-y-[-50%] w-[65px] h-[65px] [background:#271B0C] rounded-[11.712px] overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center [background:#ECC94E] rounded-[11.712px] overflow-hidden">
-                  <Image
-                    src={
-                      !!state.pair.value?.logoUrl
-                        ? state.pair.value.logoUrl
-                        : "/images/project_honey.png"
-                    }
-                    alt="honey"
-                    fill
-                  ></Image>
-                </div>
-              </div>
-              <div className="flex flex-col gap-[16px]">
-                <div>
-                  <div>
-                    <div className="text-[rgba(255,255,255,0.66)] text-base font-medium leading-[normal]">
-                      {state.pair.value?.launchedToken?.displayName}
-                    </div>
-                    <div className="text-white text-[32px] font-medium leading-[normal]">
-                      {state.pair.value?.projectName}
-                    </div>
-                  </div>
-                  <div></div>
-                </div>
-                <div>{state.pair.value?.description}</div>
-                <div>
-                  {state.pair.value && (
-                    <Action pair={state.pair.value}></Action>
-                  )}
-                </div>
-                <div className="flex gap-[10px] justify-center">
-                  {state.pair.value?.socials.map((social) => {
-                    return social.name === "website" ? (
-                      <PopUp
-                        info="warning"
-                        trigger={
-                          <div key={social.name}>
-                            <span className="cursor-pointer">
-                              <Image
-                                src={social.icon}
-                                width={23}
-                                height={23}
-                                alt={social.name}
-                              ></Image>
-                            </span>
-                          </div>
-                        }
-                        contents={
-                          <div>
-                            <h2 className="text-red-500 text-[2rem]">
-                              Caution!
-                            </h2>
-                            <p>
-                              This project is not verified, are you sure you
-                              want to proceed to the website?
-                            </p>
-                            <div className="flex justify-end">
-                              <Link
-                                className="text-blue-500 text-right flex"
-                                href={social.link}
-                                target="_blank"
-                              >
-                                <Button>
-                                  Proceed
-                                  <BiLinkExternal />
-                                </Button>
-                              </Link>
-                            </div>
-                          </div>
-                        }
-                      ></PopUp>
-                    ) : (
-                      <div key={social.name}>
-                        <Link href={social.link} target="_blank">
-                          <Image
-                            src={social.icon}
-                            width={23}
-                            height={23}
-                            alt={social.name}
-                          ></Image>
-                        </Link>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              {state.pair.value?.launchedToken?.address && (
-                <span className="flex justify-end flex-row ml-2 absolute right-4 bottom-4">
-                  <ShareSocialMedialPopUp
-                    shareUrl={window.location.href}
-                    shareText={
-                      "My Meme FTO eats bonding burves for breakfast. Inflate and innovation with Boneypot. Den moon 🌙: " +
-                      state.pair?.value?.projectName
-                    }
-                    text="Share this project"
-                  />
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="text-left relative flex-1 flex basis-full w-full sm:basis-0 sm:min-w-[500px]  flex-col gap-[10px] shrink-0 [background:#271B0C] rounded-2xl py-[12px] px-[24px]">
-            <div className="flex absolute right-[24px] top-[12px]">
-              <OptionsDropdown
-                className=""
-                options={[
-                  optionsPresets.copy({
-                    copyText: state.pair?.value?.launchedToken?.address ?? "",
-                    displayText: "Copy Token address",
-                    copysSuccessText: "Token address copied",
-                  }),
-                  optionsPresets.share({
-                    shareUrl: `${window.location.origin}/launch-detail/${state.pair?.value?.address}`,
-                    displayText: "Share this project",
-                    shareText:
-                      "My Meme FTO eats bonding burves for breakfast. Inflate and innovation with Boneypot. Den moon 🌙: " +
-                      state.pair?.value?.projectName,
-                  }),
-                  optionsPresets.importTokenToWallet({
-                    token: state.pair?.value?.launchedToken,
-                  }),
-                  optionsPresets.viewOnExplorer({
-                    address: state.pair?.value?.address ?? "",
-                  }),
-                  {
-                    icon: <LuFileEdit />,
-                    display: "Update Project",
-                    onClick: () => {
-                      if (!state.pair.value) return;
-
-                      if (
-                        state.pair.value.provider.toLowerCase() !==
-                        wallet.account.toLowerCase()
-                      ) {
-                        WrappedToastify.warn({
-                          message: "You are not the owner of this project",
-                        });
-
-                        return;
-                      }
-
-                      onOpen();
-                    },
-                  },
-                ]}
-              />
-            </div>
-            <div>
-              <div className="text-[rgba(255,255,255,0.66)] text-[15.958px] font-bold leading-[normal]">
-                Token Raised
-              </div>{" "}
-              <div className="text-[color:var(--Button-Gradient,var(--card-stroke,#F7931A))] text-[16.727px] font-normal leading-[normal]">
-                {amountFormatted(state.pair.value?.depositedRaisedToken, {
-                  decimals: 0,
-                  fixed: 3,
-                })}{" "}
-                {state.pair.value?.raiseToken?.displayName}
-              </div>
-            </div>
-            {/* // TODO: raised progress */}
-            {/* <div></div> */}
-            <div>
-              <div className="text-[rgba(255,255,255,0.66)] text-sm font-medium leading-[normal]">
-                Token address
-              </div>
-
-              <Copy
-                className={"w-full"}
-                content="Copy address"
-                value={state.pair.value?.launchedToken?.address ?? ""}
-                displayContent={
-                  <span className="mt-[8px] flex  h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px] cursor-pointer hover:brightness-150 active:brightness-75 select-none">
-                    {state.pair.value?.launchedToken?.address}
-                  </span>
+      <div className="grid grid-cols-2 gap-4 xl:w-[1170px]">
+        <div className="bg-[#271A0C] col-span-2 px-5 py-2.5 rounded-[30px] flex items-center justify-between">
+          <div className="flex items-center gap-x-[7.5px]">
+            <div className="size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
+              <Image
+                alt="honey"
+                width={44}
+                height={44}
+                className="rounded-full"
+                src={
+                  !!state.pair.value?.logoUrl
+                    ? state.pair.value.logoUrl
+                    : "/images/project_honey.png"
                 }
               />
             </div>
-
-            <div className="grid grid-cols-3 *:margin">
-              <div>
-                <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
-                  <Image
-                    src="/images/wallet.png"
-                    alt="price"
-                    width={12}
-                    height={12}
-                  ></Image>
-                  Token Price
-                </div>
-                <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
-                  {amountFormatted(state.pair.value?.price, {
-                    decimals: 0,
-                    fixed: 3,
-                    prefix: "$",
-                  })}
-                </div>
+            <div className="flex flex-col gap-x-[7.5px]">
+              <div className="text-2xl">
+                {state.pair.value?.launchedToken?.name}
               </div>
-
-              <div>
-                <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
-                  <Image
-                    src="/images/wallet.png"
-                    alt="price"
-                    width={12}
-                    height={12}
-                  ></Image>
-                  {state.pair.value?.ftoState === 0
-                    ? "Market Cap"
-                    : "Est. Market Cap"}
-                </div>
-                <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
-                  {amountFormatted(state.pair.value?.marketValue, {
-                    decimals: 0,
-                    fixed: 3,
-                    prefix: "$",
-                  })}
-                </div>
-              </div>
-
-              <div>
-                <div className="flex gap-[4px] text-white  text-[12.165px] font-bold leading-[normal]">
-                  <Image
-                    src="/images/calendar.png"
-                    alt="price"
-                    width={12}
-                    height={12}
-                  ></Image>
-                  End Date
-                </div>
-                <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
-                  {state.pair.value?.endTimeDisplay
-                    ? new Date(
-                        state.pair.value?.endTimeDisplay
-                      ).toLocaleDateString()
-                    : "--"}
-                  <br />
-                  {state.pair.value?.endTimeDisplay
-                    ? new Date(
-                        state.pair.value?.endTimeDisplay
-                      ).toLocaleTimeString()
-                    : "--"}
-                </div>
+              <div className="text-2xl text-white/55">
+                {state.pair.value?.launchedToken?.displayName}
               </div>
             </div>
-            <p>Token Vote</p>
-            <hr />
-            <div className="flex gap-5">
-              {Object.entries(votes).map(([key, value]) => {
-                return (
-                  <div
-                    key={key}
-                    onClick={() => {
-                      if (!wallet.account || !state.pair.value?.address) return;
+          </div>
+          <div className="flex items-center gap-x-8">
+            <div className="flex flex-col gap-y-2.5">
+              {/* TODO: gradient color */}
+              <div className="text-[#F7931A] text-xl">Ends In</div>
+              {state.pair.value?.endTime && (
+                <Countdown
+                  date={Number(state.pair.value?.endTime) * 1000}
+                  renderer={({ days, hours, minutes, seconds, completed }) => {
+                    if (completed || state.pair.value?.ftoState !== 3) {
+                      return state.pair.value?.endTimeDisplay;
+                    } else {
+                      return (
+                        <div className="text-3xl flex items-start gap-x-2">
+                          <div className="flex flex-col items-center gap-y-1.5">
+                            <span>{days}</span>
+                            <span className="text-xs text-white/45">Days</span>
+                          </div>
 
-                      trpcClient.projects.createOrUpdateProjectVotes
-                        .mutate({
-                          project_pair: state.pair.value?.address,
-                          wallet_address: wallet.account,
-                          vote: key.split("_")[0],
-                        })
-                        .then(() => {
-                          refreshVotes();
-                        });
-                    }}
-                    className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
-                  >
-                    <p>
-                      {(key.split("_")[0] === "rocket" && "🚀") ||
-                        (key.split("_")[0] === "fire" && "🔥") ||
-                        (key.split("_")[0] === "poo" && "💩") ||
-                        (key.split("_")[0] === "flag" && "🚩")}
-                    </p>
-                    <p>{value}</p>
-                  </div>
-                );
-              })}
+                          <div>:</div>
+
+                          <div className="flex flex-col items-center gap-y-1.5">
+                            <span>{hours}</span>
+                            <span className="text-xs text-white/45">Hours</span>
+                          </div>
+
+                          <div>:</div>
+
+                          <div className="flex flex-col items-center gap-y-1.5">
+                            <span>{minutes}</span>
+                            <span className="text-xs text-white/45">
+                              Minutes
+                            </span>
+                          </div>
+
+                          <div>:</div>
+
+                          <div className="flex flex-col items-center gap-y-1.5">
+                            <span>{seconds}</span>
+                            <span className="text-xs text-white/45">
+                              Seconds
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    }
+                  }}
+                />
+              )}
             </div>
-            {state.pair.value?.ftoState === 0 && chart.chartTarget && (
-              <SimplePriceFeedGraph></SimplePriceFeedGraph>
+            {/* TODO: update style */}
+            <ProjectStatus pair={state.pair.value} />
+          </div>
+        </div>
+        <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+          {/* Token Raised */}
+          <div>
+            <div className="text-[rgba(255,255,255,0.66)] text-[15.958px] font-bold leading-[normal]">
+              Token Raised
+            </div>
+            <div className="text-[color:var(--Button-Gradient,var(--card-stroke,#F7931A))]">
+              <span className="font-bold">
+                $
+                {amountFormatted(pair?.depositedRaisedToken, {
+                  decimals: pair?.raiseToken?.decimals ?? 0,
+                  fixed: 3,
+                })}
+              </span>
+              <span className="text-sm">
+                / $
+                {amountFormatted(pair?.raisedTokenMinCap, {
+                  decimals: pair?.raiseToken?.decimals ?? 0,
+                  fixed: 3,
+                })}
+              </span>
+            </div>
+          </div>
+          {/* raised progress */}
+          <div className="space-y-2">
+            <div className="text-white text-sm font-bold leading-[normal]">
+              Sale progress
+            </div>
+            <ProgressBar
+              label={
+                (
+                  ((pair?.depositedRaisedToken ?? BigNumber(0)).toNumber() /
+                    ((pair?.raisedTokenMinCap ?? BigNumber(1)).toNumber() /
+                      Math.pow(10, 18))) *
+                  100
+                ).toFixed(2) + "%"
+              }
+              value={
+                ((pair?.depositedRaisedToken ?? BigNumber(0)).toNumber() /
+                  ((pair?.raisedTokenMinCap ?? BigNumber(1)).toNumber() /
+                    Math.pow(10, 18))) *
+                100
+              }
+            />
+            <div className="flex items-center justify-between">
+              <div>
+                {(pair?.depositedRaisedToken ?? BigNumber(0))
+                  .div(pair?.raisedTokenMinCap ?? BigNumber(1))
+                  .multipliedBy(100)
+                  .toFixed()}{" "}
+                of tokens sold
+              </div>
+              <div>
+                <span className="text-[#FFCD4D]">
+                  {(pair?.depositedRaisedToken ?? BigNumber(0))
+                    .div(10 ** (pair?.raiseToken?.decimals ?? 0))
+                    .toFixed()}
+                </span>
+                <span className="text-xs">
+                  /
+                  {(pair?.raisedTokenMinCap ?? BigNumber(0))
+                    .div(10 ** (pair?.raiseToken?.decimals ?? 0))
+                    .toFixed()}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Token Address */}
+          <div>
+            <div className="text-white text-sm font-medium leading-[normal]">
+              Token address
+            </div>
+
+            <Copy
+              className={"w-full"}
+              content="Copy address"
+              value={state.pair.value?.launchedToken?.address ?? ""}
+              displayContent={
+                <div className="relative">
+                  <span className="mt-[8px] flex  h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px] cursor-pointer hover:brightness-150 active:brightness-75 select-none">
+                    {truncate(
+                      state.pair.value?.launchedToken?.address || "",
+                      28
+                    )}
+                  </span>
+                  <VscCopy className="size-4 absolute right-2 top-1/2 -translate-y-1/2" />
+                </div>
+              }
+            />
+          </div>
+
+          <div className="grid grid-cols-5 *:margin">
+            <div className="flex flex-col items-center">
+              <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
+                Token Price
+              </div>
+              <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
+                {amountFormatted(state.pair.value?.price, {
+                  decimals: 0,
+                  fixed: 3,
+                  prefix: "$",
+                })}
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
+                Funds Raised
+              </div>
+              <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
+                {amountFormatted(pair?.depositedRaisedToken, {
+                  decimals: 0,
+                  fixed: 3,
+                  prefix: "$",
+                })}
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <div className="flex gap-[4px] text-white text-xs font-bold leading-[normal] text-balance">
+                Full Diluted Value
+              </div>
+              <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
+                {formatLargeNumber(
+                  pair?.raisedTokenMinCap ?? 0,
+                  pair?.launchedToken?.decimals ?? 0
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <Image
+                src="/images/calendar.png"
+                alt="price"
+                width={12}
+                height={12}
+              ></Image>
+              <div className="text-[#FFCD4D]  text-xs font-medium leading-[normal] mt-[4px]">
+                {state.pair.value?.endTimeDisplay
+                  ? new Date(
+                      state.pair.value?.endTimeDisplay
+                    ).toLocaleDateString()
+                  : "--"}
+                <br />
+                {state.pair.value?.endTimeDisplay
+                  ? new Date(
+                      state.pair.value?.endTimeDisplay
+                    ).toLocaleTimeString()
+                  : "--"}
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <div className="flex gap-[4px] text-white  text-[12.165px] font-bold leading-[normal]">
+                End Date
+              </div>
+              <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
+                {state.pair.value?.endTimeDisplay
+                  ? new Date(
+                      state.pair.value?.endTimeDisplay
+                    ).toLocaleDateString()
+                  : "--"}
+                <br />
+                {state.pair.value?.endTimeDisplay
+                  ? new Date(
+                      state.pair.value?.endTimeDisplay
+                    ).toLocaleTimeString()
+                  : "--"}
+              </div>
+            </div>
+          </div>
+          <hr />
+          <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
+          <div className="flex gap-5">
+            {Object.entries(votes).map(([key, value]) => {
+              return (
+                <div
+                  key={key}
+                  onClick={() => {
+                    if (!wallet.account || !state.pair.value?.address) return;
+
+                    trpcClient.projects.createOrUpdateProjectVotes
+                      .mutate({
+                        project_pair: state.pair.value?.address,
+                        wallet_address: wallet.account,
+                        vote: key.split("_")[0],
+                      })
+                      .then(() => {
+                        refreshVotes();
+                      });
+                  }}
+                  className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
+                >
+                  <p>
+                    {(key.split("_")[0] === "rocket" && "🚀") ||
+                      (key.split("_")[0] === "fire" && "🔥") ||
+                      (key.split("_")[0] === "poo" && "💩") ||
+                      (key.split("_")[0] === "flag" && "🚩")}
+                  </p>
+                  <p>{value}</p>
+                </div>
+              );
+            })}
+          </div>
+          {state.pair.value?.ftoState === 0 && chart.chartTarget && (
+            <SimplePriceFeedGraph></SimplePriceFeedGraph>
+          )}
+        </div>
+        <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+          {pair && <Action pair={pair} />}
+        </div>
+      </div>
+
+      <div className="w-full flex items-center justify-between my-12">
+        <div>Project Details</div>
+        <div className="flex items-center">
+          <Logo />
+          <span className='text-[#FFCD4D] [font-family:"Bebas_Neue"] text-3xl'>
+            Honeypot Finance
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-x-1">
+        <button
+          onClick={() => setTab("info")}
+          className={[
+            "px-8 pt-2 pb-1 rounded-t-2xl",
+            tab === "info"
+              ? "bg-[#9D5E28] text-white"
+              : "bg-[#3B2712] text-[#A46617]",
+          ].join(" ")}
+        >
+          Token Info
+        </button>
+        <button
+          onClick={() => setTab("about")}
+          className={[
+            "px-8 pt-2 pb-1 rounded-t-2xl",
+            tab === "about"
+              ? "bg-[#9D5E28] text-white"
+              : "bg-[#3B2712] text-[#A46617]",
+          ].join(" ")}
+        >
+          About the Project
+        </button>
+        <button
+          onClick={() => setTab("txs")}
+          className={[
+            "px-8 pt-2 pb-1 rounded-t-2xl",
+            tab === "txs"
+              ? "bg-[#9D5E28] text-white"
+              : "bg-[#3B2712] text-[#A46617]",
+          ].join(" ")}
+        >
+          Transactions
+        </button>
+        <button
+          onClick={() => setTab("comment")}
+          className={[
+            "px-8 pt-2 pb-1 rounded-t-2xl",
+            tab === "comment"
+              ? "bg-[#9D5E28] text-white"
+              : "bg-[#3B2712] text-[#A46617]",
+          ].join(" ")}
+        >
+          Comments
+        </button>
+      </div>
+      {/** Comment section */}
+      {tab === "info" && (
+        <div className="flex flex-col w-full px-10">
+          <h1 className="text-4xl py-16">Token Info</h1>
+          <div className="flex flex-col gap-x-2">
+            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+              <span className="text-[#F0A64A] text-sm">Token Name</span>
+              <span className="text-white text-xl">
+                {pair?.launchedToken?.name}
+              </span>
+            </div>
+            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+              <span className="text-[#F0A64A] text-sm">Token Symbol</span>
+              <span className="text-white text-xl">
+                {pair?.launchedToken?.symbol}
+              </span>
+            </div>
+            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+              <span className="text-[#F0A64A] text-sm">Token supply</span>
+              <span className="text-white text-xl">
+                {pair?.launchedToken?.totalSupplyWithoutDecimals.toNumber()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+              <span className="text-[#F0A64A] text-sm">initial supply</span>
+              <span className="text-white text-xl">
+                {pair?.deposit?.initialValue ?? "--"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+              <span className="text-[#F0A64A] text-sm">INITIAL MARKET CAP</span>
+              <span className="text-white text-xl">
+                {pair?.raisedTokenMinCap
+                  ?.div(10 ** (pair.launchedToken?.decimals ?? 0))
+                  .toFixed()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+              <span className="text-[#F0A64A] text-sm">Token Type</span>
+              <span className="text-white text-xl">MEME</span>
+            </div>
+            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+              <span className="text-[#F0A64A] text-sm">Token Address</span>
+              <span className="text-white text-xl">{pair?.address}</span>
+            </div>
+          </div>
+        </div>
+      )}
+      {tab === "comment" && (
+        <div className="flex justify-center">
+          <div className="w-full">
+            {state.pair.value && (
+              <DiscussionArea
+                pairDatabaseId={state.pair.value.databaseId ?? -1}
+              ></DiscussionArea>
             )}
           </div>
         </div>
-      </div>
-      {/** Comment section */}
-      <div className="flex justify-center mt-[24px] ">
-        <div className="w-[100vw] lg:w-full lg:min-w-[1000px] lg:max-w-[1000px]">
-          {state.pair.value && (
-            <DiscussionArea
-              pairDatabaseId={state.pair.value.databaseId ?? -1}
-            ></DiscussionArea>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 });
