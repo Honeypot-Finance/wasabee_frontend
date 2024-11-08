@@ -244,7 +244,16 @@ export const MemeWarPariticipantRaceChart = observer(() => {
       markers: {
         size: 20,
       },
-      grid: { borderColor: "transparent", show: false },
+      grid: {
+        borderColor: "transparent",
+        show: false,
+        padding: {
+          left: 30,
+          right: 30,
+          top: 30,
+          bottom: 30,
+        },
+      },
       stroke: {
         show: false,
       },
@@ -262,16 +271,23 @@ export const MemeWarPariticipantRaceChart = observer(() => {
           const target =
             memewarStore.sortedMemewarParticipants[options.seriesIndex];
           return `
-          <div class="p-2 bg-black/20 rounded-md">
-            <h3>${target.participantName}</h3>
-            <p>Score: ${target.currentScore.toFixed(0)}</p>
-          </div>`;
+            <div class="p-2 bg-black/20 rounded-md text-center">
+              <h3>${target.participantName}</h3>
+              <p>Score: ${target.currentScore.toFixed(0)}</p>
+              <button
+                class="text-primary  underline"
+                href="/swap?inputCurrency=${target.pair?.raiseToken?.address}&outputCurrency=${target.pair?.launchedToken?.address}"
+              >
+                click to buy
+              </button>
+            </div>
+          `;
         },
         theme: "dark",
         fillSeriesColor: true,
         fixed: {
           enabled: true,
-          position: "topRight",
+          offsetY: -20,
         },
       },
 
