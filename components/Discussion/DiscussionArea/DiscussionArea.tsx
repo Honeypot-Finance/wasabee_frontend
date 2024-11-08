@@ -19,6 +19,9 @@ import { WrappedToastify } from "@/lib/wrappedToastify";
 interface DiscussionAreaProps {
   pairDatabaseId: number;
   isSide?: boolean;
+  classNames?: {
+    container?: string;
+  };
 }
 
 export function DiscussionArea(props: DiscussionAreaProps) {
@@ -122,7 +125,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
   };
 
   return (
-    <CardContianer>
+    <CardContianer addtionalClassName={cn(props.classNames?.container)}>
       <div
         className={cn(
           "flex-col w-full ",

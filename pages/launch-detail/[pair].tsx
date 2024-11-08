@@ -50,6 +50,9 @@ import Countdown from "react-countdown";
 import ProgressBar from "@/components/atoms/ProgressBar/ProgressBar";
 import BigNumber from "bignumber.js";
 import { SwapCard } from "@/components/SwapCard/MemeSwap";
+import CardContianer from "@/components/CardContianer/CardContianer";
+import SwapPriceFeedGraph from "@/components/PriceFeedGraph/SwapPriceFeedGraph";
+import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -943,7 +946,9 @@ const FtoView = observer(() => {
 
 const MemeView = observer(() => {
   const router = useRouter();
-  const [tab, setTab] = useState<"info" | "about" | "txs" | "comment">("info");
+  const [tab, setTab] = useState<
+    "info" | "about" | "txs" | "comment" | "pricechart"
+  >("info");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { pair: pairAddress } = router.query;
   const [votes, setVotes] = useState({
@@ -1367,9 +1372,6 @@ const MemeView = observer(() => {
               );
             })}
           </div>
-          {state.pair.value?.ftoState === 0 && chart.chartTarget && (
-            <SimplePriceFeedGraph></SimplePriceFeedGraph>
-          )}
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
           {pair && <Action pair={pair} />}
@@ -1431,66 +1433,107 @@ const MemeView = observer(() => {
         >
           Comments
         </button>
+        <button
+          onClick={() => setTab("pricechart")}
+          className={[
+            "px-8 pt-2 pb-1 rounded-t-2xl",
+            tab === "pricechart"
+              ? "bg-[#9D5E28] text-white"
+              : "bg-[#3B2712] text-[#A46617]",
+          ].join(" ")}
+        >
+          Price Chart
+        </button>
       </div>
       {/** Comment section */}
-      {tab === "info" && (
-        <div className="flex flex-col w-full px-10">
-          <h1 className="text-4xl py-16">Token Info</h1>
-          <div className="flex flex-col gap-x-2">
-            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-              <span className="text-[#F0A64A] text-sm">Token Name</span>
-              <span className="text-white text-xl">
-                {pair?.launchedToken?.name}
-              </span>
-            </div>
-            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-              <span className="text-[#F0A64A] text-sm">Token Symbol</span>
-              <span className="text-white text-xl">
-                {pair?.launchedToken?.symbol}
-              </span>
-            </div>
-            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-              <span className="text-[#F0A64A] text-sm">Token supply</span>
-              <span className="text-white text-xl">
-                {pair?.launchedToken?.totalSupplyWithoutDecimals.toNumber()}
-              </span>
-            </div>
-            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-              <span className="text-[#F0A64A] text-sm">initial supply</span>
-              <span className="text-white text-xl">
-                {pair?.deposit?.initialValue ?? "--"}
-              </span>
-            </div>
-            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-              <span className="text-[#F0A64A] text-sm">INITIAL MARKET CAP</span>
-              <span className="text-white text-xl">
-                {pair?.raisedTokenMinCap
-                  ?.div(10 ** (pair.launchedToken?.decimals ?? 0))
-                  .toFixed()}
-              </span>
-            </div>
-            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-              <span className="text-[#F0A64A] text-sm">Token Type</span>
-              <span className="text-white text-xl">MEME</span>
-            </div>
-            <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-              <span className="text-[#F0A64A] text-sm">Token Address</span>
-              <span className="text-white text-xl">{pair?.address}</span>
+      <CardContianer addtionalClassName={"block"}>
+        {tab === "info" && (
+          <div className="flex flex-col w-full px-10">
+            <h1 className="text-4xl py-16">Token Info</h1>
+            <div className="flex flex-col gap-x-2">
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">Token Name</span>
+                <span className="text-white text-xl">
+                  {pair?.launchedToken?.name}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">Token Symbol</span>
+                <span className="text-white text-xl">
+                  {pair?.launchedToken?.symbol}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">Token supply</span>
+                <span className="text-white text-xl">
+                  {pair?.launchedToken?.totalSupplyWithoutDecimals.toNumber()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">initial supply</span>
+                <span className="text-white text-xl">
+                  {pair?.deposit?.initialValue ?? "--"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">
+                  INITIAL MARKET CAP
+                </span>
+                <span className="text-white text-xl">
+                  {pair?.raisedTokenMinCap
+                    ?.div(10 ** (pair.launchedToken?.decimals ?? 0))
+                    .toFixed()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">Token Type</span>
+                <span className="text-white text-xl">MEME</span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">Token Address</span>
+                <span className="text-white text-xl">{pair?.address}</span>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      {tab === "comment" && (
-        <div className="flex justify-center">
-          <div className="w-full">
-            {state.pair.value && (
-              <DiscussionArea
-                pairDatabaseId={state.pair.value.databaseId ?? -1}
-              ></DiscussionArea>
-            )}
+        )}
+        {tab === "about" && (
+          <div>
+            <h2 className="text-[2rem]">project description:</h2>
+            <p>
+              {!!pair?.description
+                ? pair?.description
+                : "this project does not have description info"}
+            </p>
           </div>
-        </div>
-      )}
+        )}
+        {tab === "txs" && (
+          <div>
+            <h2 className="text-[2rem] text-center">Coming Thoon</h2>
+          </div>
+        )}
+        {tab === "comment" && (
+          <div className="flex justify-center">
+            <div className="w-full">
+              {state.pair.value && (
+                <DiscussionArea
+                  pairDatabaseId={state.pair.value.databaseId ?? -1}
+                ></DiscussionArea>
+              )}
+            </div>
+          </div>
+        )}
+        {tab === "pricechart" && (
+          <div className="flex justify-center">
+            <div className="w-full">
+              {state.pair.value?.ftoState === 0 && chart.chartTarget ? (
+                <SimplePriceFeedGraph></SimplePriceFeedGraph>
+              ) : (
+                <LoadingDisplay></LoadingDisplay>
+              )}
+            </div>
+          </div>
+        )}
+      </CardContianer>
     </div>
   );
 });
