@@ -7,7 +7,7 @@ import { wallet } from "./wallet";
 import { trpcClient } from "@/lib/trpc";
 import { dayjs } from "@/lib/dayjs";
 
-type Range = "5M" | "15M" | "30M" | "4H";
+type Range = "5M" | "15M" | "30M" | "4H" | "1D";
 
 export const chartColorThemes = {
   default: {
@@ -49,7 +49,12 @@ export const chartTimeRanges: {
   "4H": {
     label: "4H",
     value: dayjs().unix() - 60 * 60 * 4,
-    resolution: "5",
+    resolution: "15",
+  },
+  "1D": {
+    label: "1D",
+    value: dayjs().unix() - 60 * 60 * 24,
+    resolution: "30",
   },
 };
 

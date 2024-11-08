@@ -183,7 +183,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
               ...state.options.tooltip,
               x: {
                 ...state.options.tooltip?.x,
-                format: "dd MMM HH:mm",
+                format: chart.range === "1D" ? "dd MMM HH" : "dd MMM HH:mm",
               },
             },
             fill: {

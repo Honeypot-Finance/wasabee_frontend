@@ -50,6 +50,7 @@ import BigNumber from "bignumber.js";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import Action from "./componets/Action";
 import PriceFeedGraph from "@/components/PriceFeedGraph/PriceFeedGraph";
+import { swap } from "@/services/swap";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -876,18 +877,6 @@ const MemeView = observer(() => {
     refreshVotes();
   }, [wallet.isInit, pairAddress]);
 
-  useEffect(() => {
-    console.log("pair", state.pair.value?.launchedToken);
-    if (!state.pair.value?.launchedToken) {
-      return;
-    }
-    chart.setCurrencyCode("USD");
-    chart.setTokenNumber(0);
-    chart.setChartTarget(state.pair.value.launchedToken);
-    chart.setChartLabel(state.pair.value.launchedToken?.displayName + "/USD");
-    console.log("chart", chart);
-  }, [state.pair.value?.launchedToken]);
-
   function refreshVotes() {
     trpcClient.projects.getProjectVotes
       .query({ pair: pairAddress as string })
@@ -1183,9 +1172,6 @@ const MemeView = observer(() => {
               );
             })}
           </div>
-          {state.pair.value?.ftoState === 0 && (
-            <SimplePriceFeedGraph></SimplePriceFeedGraph>
-          )}
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
           {pair && <Action pair={pair} />}
@@ -1247,17 +1233,29 @@ const MemeView = observer(() => {
         >
           Comments
         </button>
-        <button
-          onClick={() => setTab("pricechart")}
-          className={[
-            "px-8 pt-2 pb-1 rounded-t-2xl",
-            tab === "pricechart"
-              ? "bg-[#9D5E28] text-white"
-              : "bg-[#3B2712] text-[#A46617]",
-          ].join(" ")}
-        >
-          Price Chart
-        </button>
+        {state.pair.value?.ftoState === 0 && (
+          <button
+            onClick={() => {
+              if (state.pair.value) {
+                chart.setCurrencyCode("USD");
+                chart.setTokenNumber(0);
+                chart.setChartTarget(state.pair.value.launchedToken);
+                chart.setChartLabel(
+                  state.pair.value.launchedToken?.displayName + "/USD"
+                );
+              }
+              setTab("pricechart");
+            }}
+            className={[
+              "px-8 pt-2 pb-1 rounded-t-2xl",
+              tab === "pricechart"
+                ? "bg-[#9D5E28] text-white"
+                : "bg-[#3B2712] text-[#A46617]",
+            ].join(" ")}
+          >
+            Price Chart
+          </button>
+        )}
       </div>
       {/** Comment section */}
       <CardContianer addtionalClassName={"block"}>

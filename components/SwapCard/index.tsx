@@ -14,7 +14,6 @@ import { wallet } from "@/services/wallet";
 import { amountFormatted } from "../../lib/format";
 import { AmountFormat } from "../AmountFormat";
 import ChartData from "../svg/chartData";
-import SwapPriceFeedGraph from "../PriceFeedGraph/SwapPriceFeedGraph";
 import { liquidity } from "@/services/liquidity";
 import { chart } from "@/services/chart";
 import LoadingDisplay, {
@@ -121,9 +120,8 @@ export const SwapCard = observer(() => {
                   max: swap.fromToken?.balance.toNumber(),
                   min: 0,
                   isInvalid:
-                    (Number(swap.fromAmount) >
-                      (swap.fromToken as Token)?.balance?.toNumber() ??
-                      0) ||
+                    Number(swap.fromAmount) >
+                      (swap.fromToken as Token)?.balance?.toNumber() ||
                     Number(swap.fromAmount) < 0,
                   errorMessage: "Insufficient balance",
                   onClear: () => {

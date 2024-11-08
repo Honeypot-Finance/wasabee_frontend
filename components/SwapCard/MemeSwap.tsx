@@ -13,8 +13,6 @@ import { useAccount } from "wagmi";
 import { wallet } from "@/services/wallet";
 import { amountFormatted } from "../../lib/format";
 import { AmountFormat } from "../AmountFormat";
-import ChartData from "../svg/chartData";
-import SwapPriceFeedGraph from "../PriceFeedGraph/SwapPriceFeedGraph";
 import { liquidity } from "@/services/liquidity";
 import { chart } from "@/services/chart";
 import LoadingDisplay, {
