@@ -52,10 +52,14 @@ export const appPathsList: Menu[] = [
       // },
       {
         path: "/meme-launchs",
-        title: "🐻Pot2pump launch",
+        title: "launch meme",
+      },
+      {
+        path: "/memewar",
+        title: "Meme War ⚔️",
       },
     ],
-    title: "Launch",
+    title: "🐻Pot2pump",
   },
   {
     path: "/profile",
