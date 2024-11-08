@@ -5,6 +5,7 @@ import { resolutionType } from "@/services/priceFeed/priceFeedTypes";
 import { priceFeedRouter } from "@/server/router/priceFeed";
 import Trpc from "../trpc/[trpc]";
 import { appRouter, caller } from "@/server/_app";
+import { chart } from "@/services/chart";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
@@ -29,6 +30,8 @@ export default async function handler(
     from: parseInt(from),
     to: parseInt(to),
     resolution: resolution,
+    tokenNumber: chart.tokenNumber,
+    currencyCode: chart.currencyCode,
   });
 
   if (data.status === "success") {

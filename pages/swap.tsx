@@ -1,5 +1,4 @@
 import { TVChartContainer } from "@/components/AdvancedChart/TVChartContainer/TVChartContainer";
-import SwapPriceFeedGraph from "@/components/PriceFeedGraph/SwapPriceFeedGraph";
 import { Swap } from "@/components/swap";
 import { SwapCard } from "@/components/SwapCard";
 import { chart } from "@/services/chart";
@@ -8,18 +7,11 @@ import { Token } from "@/services/contract/token";
 import { observe, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-
-import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
-import { getBaseUrl, trpcClient } from "@/lib/trpc";
-import { tokenToTicker } from "@/lib/advancedChart.util";
-import { berachainBartioTestnetNetwork, networksMap } from "@/services/chain";
-import { berachainBartioTestnet } from "@/lib/chain";
-import { wallet } from "@/services/wallet";
-import dayjs from "dayjs";
 import { animate, motion } from "framer-motion";
 import React from "react";
 import { itemPopUpVariants } from "@/lib/animation";
 import { popmodal } from "@/services/popmodal";
+import PriceFeedGraph from "@/components/PriceFeedGraph/PriceFeedGraph";
 
 const SwapPage = observer(() => {
   useEffect(() => {
@@ -41,7 +33,7 @@ const SwapPage = observer(() => {
             transition={{ duration: 0.5 }}
             className="w-full lg:max-w-[574px] flex flex-col self-center place-self-end"
           >
-            <SimplePriceFeedGraph></SimplePriceFeedGraph>
+            <PriceFeedGraph></PriceFeedGraph>
           </motion.div>
         )}
         <motion.div

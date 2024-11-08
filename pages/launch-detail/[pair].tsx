@@ -51,8 +51,8 @@ import ProgressBar from "@/components/atoms/ProgressBar/ProgressBar";
 import BigNumber from "bignumber.js";
 import { SwapCard } from "@/components/SwapCard/MemeSwap";
 import CardContianer from "@/components/CardContianer/CardContianer";
-import SwapPriceFeedGraph from "@/components/PriceFeedGraph/SwapPriceFeedGraph";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
+import PriceFeedGraph from "@/components/PriceFeedGraph/PriceFeedGraph";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -1057,14 +1057,16 @@ const MemeView = observer(() => {
   }, [wallet.isInit, pairAddress]);
 
   useEffect(() => {
-    if (!state.pair.value) {
+    console.log("pair", state.pair.value?.launchedToken);
+    if (!state.pair.value?.launchedToken) {
       return;
     }
     chart.setCurrencyCode("USD");
     chart.setTokenNumber(0);
-    chart.setChartTarget(state.pair.value?.launchedToken ?? undefined);
-    chart.setChartLabel(state.pair.value?.launchedToken?.displayName + "/USD");
-  }, [state.pair.value]);
+    chart.setChartTarget(state.pair.value.launchedToken);
+    chart.setChartLabel(state.pair.value.launchedToken?.displayName + "/USD");
+    console.log("chart", chart);
+  }, [state.pair.value?.launchedToken]);
 
   function refreshVotes() {
     trpcClient.projects.getProjectVotes
@@ -1525,11 +1527,7 @@ const MemeView = observer(() => {
         {tab === "pricechart" && (
           <div className="flex justify-center">
             <div className="w-full">
-              {state.pair.value?.ftoState === 0 && chart.chartTarget ? (
-                <SimplePriceFeedGraph></SimplePriceFeedGraph>
-              ) : (
-                <LoadingDisplay></LoadingDisplay>
-              )}
+              {chart.chartTarget && <PriceFeedGraph></PriceFeedGraph>}
             </div>
           </div>
         )}

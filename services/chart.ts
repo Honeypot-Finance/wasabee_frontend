@@ -7,7 +7,7 @@ import { wallet } from "./wallet";
 import { trpcClient } from "@/lib/trpc";
 import { dayjs } from "@/lib/dayjs";
 
-type Range = "1H" | "1D" | "1W" | "1M" | "6M" | "1Y";
+type Range = "5M" | "15M" | "30M" | "4H";
 
 export const chartColorThemes = {
   default: {
@@ -31,35 +31,25 @@ export const chartTimeRanges: {
     resolution: resolutionType;
   };
 } = {
-  "1H": {
-    label: "1H",
-    value: dayjs().unix() - 60 * 60,
+  "5M": {
+    label: "5M",
+    value: dayjs().unix() - 60 * 5,
     resolution: "1",
   },
-  "1D": {
-    label: "1D",
-    value: dayjs().unix() - 60 * 60 * 24,
+  "15M": {
+    label: "15M",
+    value: dayjs().unix() - 60 * 15,
+    resolution: "1",
+  },
+  "30M": {
+    label: "30M",
+    value: dayjs().unix() - 60 * 30,
+    resolution: "1",
+  },
+  "4H": {
+    label: "4H",
+    value: dayjs().unix() - 60 * 60 * 4,
     resolution: "5",
-  },
-  "1W": {
-    label: "1W",
-    value: dayjs().unix() - 60 * 60 * 24 * 7,
-    resolution: "15",
-  },
-  "1M": {
-    label: "1M",
-    value: dayjs().unix() - 60 * 60 * 24 * 30,
-    resolution: "60",
-  },
-  "6M": {
-    label: "6M",
-    value: dayjs().unix() - 60 * 60 * 24 * 180,
-    resolution: "720",
-  },
-  "1Y": {
-    label: "1Y",
-    value: dayjs().unix() - 60 * 60 * 24 * 365,
-    resolution: "7D",
   },
 };
 
@@ -69,7 +59,7 @@ class Chart {
   chartTarget: Token | PairContract | undefined = undefined;
   tokenNumber: 0 | 1 = 0;
   currencyCode: "USD" | "TOKEN" = "USD";
-  range: Range = "1D";
+  range: Range = "5M";
   chartColors = chartColorThemes.default;
   chartLabel = "";
 
@@ -192,7 +182,7 @@ class Chart {
     this.chartTarget = target;
   }
 
-  setRange(value: "1H" | "1D" | "1W" | "1M" | "6M" | "1Y") {
+  setRange(value: Range) {
     this.range = value;
   }
 
