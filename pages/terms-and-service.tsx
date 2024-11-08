@@ -1,5 +1,6 @@
 import Discord from '@/components/svg/Discord'
 import Twitter from '@/components/svg/Twitter'
+import clsx from 'clsx'
 import Link from 'next/link'
 import React from 'react'
 
@@ -108,8 +109,6 @@ const TermsAndService = (props: Props) => {
   )
 }
 
-TermsAndService.Layout = ({children}: {children: React.ReactNode}) => {
-    return <div>{children}</div>
-}
+
 
 export default TermsAndService
