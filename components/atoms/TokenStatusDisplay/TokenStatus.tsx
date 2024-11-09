@@ -29,7 +29,7 @@ const ProjectStatus = observer(({ pair }: ProjectStatusDisplayProps) => {
         )}
       >
         <div className="rounded-full bg-current w-2 h-2"></div>
-        <span className="text-ss  text-current">
+        <span className="text-ss text-current xs:text-xs">
           {pair?.ftoStatusDisplay?.status}
         </span>
       </motion.div>
