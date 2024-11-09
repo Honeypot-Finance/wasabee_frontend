@@ -9,10 +9,7 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 import { injected, safe } from "wagmi/connectors";
 import { mock } from "wagmi/connectors";
-
-// const holdstationWallet:WalletConnectWalletOptions = {
-
-// }
+import { WalletConnectMobile } from "@/components/walletconnect";
 
 //for users without bitget wallet
 let customWallets = [

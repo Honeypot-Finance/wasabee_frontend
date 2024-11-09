@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Observer, observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/button";
 import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
@@ -33,6 +33,20 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     MemePairContract[] | null
   >(null);
 
+  const updateMostSuccessProjects = useCallback(() => {
+    console.log("updating most success projects", mostSuccessProjects);
+    mostSuccessProjects?.forEach((pair) => {
+      pair.getDepositedRaisedToken();
+    });
+  }, [mostSuccessProjects]);
+
+  useEffect(() => {
+    const updateInterval = setInterval(() => {
+      updateMostSuccessProjects();
+    }, 2000);
+    return () => clearInterval(updateInterval);
+  }, [updateMostSuccessProjects]);
+
   useEffect(() => {
     if (!wallet.isInit) {
       return;
@@ -49,9 +63,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
       launchpad.trendingMEMEs().then((data) => {
         //if data is same as previous data then no need to update
         setMostSuccessProjects(data);
-        setTimeout(() => {
-          startMostSuccessfulFtoPolling();
-        }, 10000);
       });
     };
 
