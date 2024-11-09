@@ -50,6 +50,8 @@ import BigNumber from "bignumber.js";
 
 import Action from "./componets/Action";
 import Tabs from "./componets/Tabs";
+import PriceFeedGraph from "@/components/PriceFeedGraph/PriceFeedGraph";
+import { swap } from "@/services/swap";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -874,18 +876,6 @@ const MemeView = observer(() => {
     refreshVotes();
   }, [wallet.isInit, pairAddress]);
 
-  useEffect(() => {
-    console.log("pair", state.pair.value?.launchedToken);
-    if (!state.pair.value?.launchedToken) {
-      return;
-    }
-    chart.setCurrencyCode("USD");
-    chart.setTokenNumber(0);
-    chart.setChartTarget(state.pair.value.launchedToken);
-    chart.setChartLabel(state.pair.value.launchedToken?.displayName + "/USD");
-    console.log("chart", chart);
-  }, [state.pair.value?.launchedToken]);
-
   function refreshVotes() {
     trpcClient.projects.getProjectVotes
       .query({ pair: pairAddress as string })
@@ -1188,9 +1178,6 @@ const MemeView = observer(() => {
               );
             })}
           </div>
-          {state.pair.value?.ftoState === 0 && (
-            <SimplePriceFeedGraph></SimplePriceFeedGraph>
-          )}
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
           {pair && <Action pair={pair} />}
@@ -1208,6 +1195,154 @@ const MemeView = observer(() => {
       </div>
 
       <Tabs pair={pair} />
+      <div className="flex items-center gap-x-1">
+        <button
+          onClick={() => setTab("info")}
+          className={[
+            "px-8 pt-2 pb-1 rounded-t-2xl",
+            tab === "info"
+              ? "bg-[#9D5E28] text-white"
+              : "bg-[#3B2712] text-[#A46617]",
+          ].join(" ")}
+        >
+          Token Info
+        </button>
+        <button
+          onClick={() => setTab("about")}
+          className={[
+            "px-8 pt-2 pb-1 rounded-t-2xl",
+            tab === "about"
+              ? "bg-[#9D5E28] text-white"
+              : "bg-[#3B2712] text-[#A46617]",
+          ].join(" ")}
+        >
+          About the Project
+        </button>
+        <button
+          onClick={() => setTab("txs")}
+          className={[
+            "px-8 pt-2 pb-1 rounded-t-2xl",
+            tab === "txs"
+              ? "bg-[#9D5E28] text-white"
+              : "bg-[#3B2712] text-[#A46617]",
+          ].join(" ")}
+        >
+          Transactions
+        </button>
+        <button
+          onClick={() => setTab("comment")}
+          className={[
+            "px-8 pt-2 pb-1 rounded-t-2xl",
+            tab === "comment"
+              ? "bg-[#9D5E28] text-white"
+              : "bg-[#3B2712] text-[#A46617]",
+          ].join(" ")}
+        >
+          Comments
+        </button>
+        {state.pair.value?.ftoState === 0 && (
+          <button
+            onClick={() => {
+              if (state.pair.value) {
+                chart.setCurrencyCode("USD");
+                chart.setTokenNumber(0);
+                chart.setChartTarget(state.pair.value.launchedToken);
+                chart.setChartLabel(
+                  state.pair.value.launchedToken?.displayName + "/USD"
+                );
+              }
+              setTab("pricechart");
+            }}
+            className={[
+              "px-8 pt-2 pb-1 rounded-t-2xl",
+              tab === "pricechart"
+                ? "bg-[#9D5E28] text-white"
+                : "bg-[#3B2712] text-[#A46617]",
+            ].join(" ")}
+          >
+            Price Chart
+          </button>
+        )}
+      </div>
+      {/** Comment section */}
+      <CardContianer addtionalClassName={"block"}>
+        {tab === "info" && (
+          <div className="flex flex-col w-full px-10">
+            <h1 className="text-4xl py-16">Token Info</h1>
+            <div className="flex flex-col gap-x-2">
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">Token Name</span>
+                <span className="text-white text-xl">
+                  {pair?.launchedToken?.name}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">Token Symbol</span>
+                <span className="text-white text-xl">
+                  {pair?.launchedToken?.symbol}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">Token supply</span>
+                <span className="text-white text-xl">
+                  {pair?.launchedToken?.totalSupplyWithoutDecimals.toNumber()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">
+                  INITIAL MARKET CAP
+                </span>
+                <span className="text-white text-xl">
+                  {pair?.raisedTokenMinCap
+                    ?.div(10 ** (pair.launchedToken?.decimals ?? 0))
+                    .toFixed()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">Token Type</span>
+                <span className="text-white text-xl">MEME</span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+                <span className="text-[#F0A64A] text-sm">Token Address</span>
+                <span className="text-white text-xl">{pair?.address}</span>
+              </div>
+            </div>
+          </div>
+        )}
+        {tab === "about" && (
+          <div>
+            <h2 className="text-[2rem]">project description:</h2>
+            <p>
+              {!!pair?.description
+                ? pair?.description
+                : "this project does not have description info"}
+            </p>
+          </div>
+        )}
+        {tab === "txs" && (
+          <div>
+            <h2 className="text-[2rem] text-center">Coming Thoon</h2>
+          </div>
+        )}
+        {tab === "comment" && (
+          <div className="flex justify-center">
+            <div className="w-full">
+              {state.pair.value && (
+                <DiscussionArea
+                  pairDatabaseId={state.pair.value.databaseId ?? -1}
+                ></DiscussionArea>
+              )}
+            </div>
+          </div>
+        )}
+        {tab === "pricechart" && (
+          <div className="flex justify-center">
+            <div className="w-full">
+              {chart.chartTarget && <PriceFeedGraph></PriceFeedGraph>}
+            </div>
+          </div>
+        )}
+      </CardContianer>
     </div>
   );
 });

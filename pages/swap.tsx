@@ -14,10 +14,6 @@ import { popmodal } from "@/services/popmodal";
 import PriceFeedGraph from "@/components/PriceFeedGraph/PriceFeedGraph";
 
 const SwapPage = observer(() => {
-  useEffect(() => {
-    observe(chart, "chartTarget", () => {});
-  }, []);
-
   return (
     <>
       <div

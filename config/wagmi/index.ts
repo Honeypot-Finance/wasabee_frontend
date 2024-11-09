@@ -9,13 +9,16 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 import { injected, safe } from "wagmi/connectors";
 import { mock } from "wagmi/connectors";
+import { holdstationWallet } from "./customWallets";
 
+const pId = "1d1c8b5204bfbd57502685fc0934a57d";
 //for users without bitget wallet
 let customWallets = [
   rainbowWallet,
   walletConnectWallet,
   bitgetWallet,
   okxWallet,
+  holdstationWallet,
 ];
 // if(!window.bitkeep){
 //   customWallets.unshift(bitgetWallet);
@@ -32,7 +35,7 @@ const connectors = [
     ],
     {
       appName: "Honypot Finance",
-      projectId: "1d1c8b5204bfbd57502685fc0934a57d",
+      projectId: pId,
     }
   ),
 ];

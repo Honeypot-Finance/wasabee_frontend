@@ -13,8 +13,6 @@ import { useAccount } from "wagmi";
 import { wallet } from "@/services/wallet";
 import { amountFormatted } from "../../lib/format";
 import { AmountFormat } from "../AmountFormat";
-import ChartData from "../svg/chartData";
-import SwapPriceFeedGraph from "../PriceFeedGraph/SwapPriceFeedGraph";
 import { liquidity } from "@/services/liquidity";
 import { chart } from "@/services/chart";
 import LoadingDisplay, {
@@ -78,8 +76,7 @@ export const SwapCard = observer(
         swap.setFromToken(
           Token.getToken({
             address:
-              inputAddress || "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
-            isNative: true,
+              inputAddress || "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
           })
         );
       }
@@ -93,8 +90,7 @@ export const SwapCard = observer(
       } else {
         swap.setToToken(
           Token.getToken({
-            address:
-              outputAddress || "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
+            address: outputAddress ?? "",
           })
         );
       }

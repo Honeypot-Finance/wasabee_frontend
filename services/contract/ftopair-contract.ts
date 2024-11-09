@@ -346,6 +346,7 @@ export class FtoPairContract implements BaseLaunchContract {
   }
 
   async init({
+    force,
     raisedToken,
     launchedToken,
     depositedRaisedToken,
@@ -354,6 +355,7 @@ export class FtoPairContract implements BaseLaunchContract {
     endTime,
     ftoState,
   }: {
+    force?: boolean;
     raisedToken?: Token;
     launchedToken?: Token;
     depositedRaisedToken?: string;
@@ -362,7 +364,7 @@ export class FtoPairContract implements BaseLaunchContract {
     endTime?: string;
     ftoState?: number;
   } = {}) {
-    if (this.isInit) {
+    if (this.isInit && !force) {
       return;
     }
 

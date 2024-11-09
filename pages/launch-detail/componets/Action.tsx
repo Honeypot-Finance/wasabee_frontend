@@ -266,7 +266,10 @@ const SuccessAction = observer(
       //     </Button>{" "}
       //   </Link>
       // </div>
-      <SwapCard outputAddress={pair.launchedToken?.address} />
+      <SwapCard
+        inputAddress={pair.raiseToken?.address ?? ""}
+        outputAddress={pair.launchedToken?.address}
+      />
     );
   }
 );
