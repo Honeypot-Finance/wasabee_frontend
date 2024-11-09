@@ -45,7 +45,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     // launchpad.participatedPairs.reloadPage();
 
     //loading most success projects
-    //loading most success projects
     const startMostSuccessfulFtoPolling = () => {
       launchpad.trendingMEMEs().then((data) => {
         //if data is same as previous data then no need to update

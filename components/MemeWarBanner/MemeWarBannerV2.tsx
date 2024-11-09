@@ -18,6 +18,8 @@ import { MemeWarParticipant, memewarStore } from "@/services/memewar";
 import { WarppedNextSelect } from "../wrappedNextUI/Select/Select";
 import BigNumber from "bignumber.js";
 import dynamic from "next/dynamic";
+import { popmodal } from "@/services/popmodal";
+import { SwapCard } from "../SwapCard/MemeSwap";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const ANIMATION_DURATION = 500; //ms
@@ -40,15 +42,20 @@ export const MemeWarBannerV2 = observer((props: Props) => {
     if (!memewarStore.isInit) {
       return;
     }
+    let interval: NodeJS.Timeout;
     const startUpdateScoreInterval = async () => {
       memewarStore.updateAllParticipantScore().then(() => {
-        setTimeout(() => {
+        interval = setTimeout(() => {
           startUpdateScoreInterval();
         }, 10000);
       });
     };
 
     startUpdateScoreInterval();
+
+    return () => {
+      clearTimeout(interval);
+    };
   }, [memewarStore.isInit]);
 
   return memewarStore.isInit ? (
@@ -56,11 +63,20 @@ export const MemeWarBannerV2 = observer((props: Props) => {
       <div>
         <div className="flex justify-between text-center">
           <h2 className="w-full text-center text-xl md:text-5xl font-[MEMEH] mb-2">
-            MEME WAR
+            OG MEME WAR
           </h2>
         </div>
 
         <MemeWarSupportSection />
+        <div className="flex justify-between text-center">
+          <p className="max-w-[600px] m-auto">
+            The MemeWar Health Graph shows the relationship between the Number
+            of Holders (X-axis) and Market Cap (Y-axis) to indicate token
+            health. A strong positive correlation between these factors suggests
+            that as more people hold MemeWar, its market cap grows, showing a
+            robust and widely supported community.
+          </p>
+        </div>
         <MemeWarPariticipantRaceChart />
       </div>
       <DiscussionArea pairDatabaseId={-9999} isSide />
@@ -144,13 +160,20 @@ export const MemeWarSupportSection = observer(() => {
             }}
           />
         </div>
-        <div className=" relative w-full flex flex-col justify-center items-center col-span-2 h-[200px] border-4 border-black rounded-[1rem] overflow-hidden">
+        <div className="bg-black relative w-full flex flex-col justify-center items-center col-span-2 h-[200px] border-4 border-black rounded-[1rem] overflow-hidden">
           <Image
             src="/images/memewar/janivspot.webp"
             alt=""
             width={300}
             height={300}
-            className="w-full h-full object-cover object-top absolute brightness-50"
+            className="w-full h-full object-cover object-center absolute brightness-25 opacity-10"
+          />
+          <Image
+            src="/images/memewar/janivspot.webp"
+            alt=""
+            width={300}
+            height={300}
+            className="w-full h-full object-contain object-top absolute brightness-50 opacity-80 shadow-lg"
           />
           <h3 className="z-10 text-3xl">Complete quest to earn prize</h3>
           <Link
@@ -201,9 +224,23 @@ export const MemeWarPariticipantRaceChart = observer(() => {
             console.log(e, chart, options);
             const target =
               memewarStore.sortedMemewarParticipants[options.seriesIndex];
-            window
-              .open(`/launch-detail/${target.pairAddress}`, "_blank")
-              ?.focus();
+
+            console.log(
+              target.pair?.raiseToken?.address,
+              target.pair?.launchedToken?.address
+            );
+
+            popmodal.openModal({
+              content: (
+                <SwapCard
+                  inputAddress={target.pair?.raiseToken?.address}
+                  outputAddress={target.pair?.launchedToken?.address}
+                />
+              ),
+            });
+            // window
+            //   .open(`/launch-detail/${target.pairAddress}`, "_blank")
+            //   ?.focus();
           },
         },
       },
@@ -213,10 +250,16 @@ export const MemeWarPariticipantRaceChart = observer(() => {
         // min: 0,
         // max: 40,
         title: {
-          text: "Tx Count→",
+          text: "Holders →",
+          offsetY: -40,
+          style: {
+            color: "white",
+          },
         },
         axisBorder: {
-          show: false,
+          show: true,
+          offsetY: 25,
+          offsetX: -45,
         },
         labels: {
           show: false,
@@ -227,13 +270,19 @@ export const MemeWarPariticipantRaceChart = observer(() => {
       },
       yaxis: {
         title: {
-          text: "Score→",
+          text: "Market Cap →",
+          offsetX: 10,
+          style: {
+            color: "white",
+          },
         },
         labels: {
           show: false,
         },
         axisBorder: {
-          show: false,
+          show: true,
+          offsetY: 25,
+          offsetX: -25,
         },
         tickAmount: 10,
         axisTicks: {
@@ -260,7 +309,7 @@ export const MemeWarPariticipantRaceChart = observer(() => {
       tooltip: {
         enabled: true,
         x: {
-          //formatter: (value) => `Tx Count: ${value}`,
+          // formatter: (value) => `Tx Count: ${value}`,
         },
         y: {
           title: {
@@ -273,10 +322,9 @@ export const MemeWarPariticipantRaceChart = observer(() => {
           return `
             <div class="p-2 bg-black/20 rounded-md text-center">
               <h3>${target.participantName}</h3>
-              <p>Score: ${target.currentScore.toFixed(0)}</p>
+              <p>Market Cap: ${target.currentScore.toFixed(0)}</p>
               <button
                 class="text-primary  underline"
-                href="/swap?inputCurrency=${target.pair?.raiseToken?.address}&outputCurrency=${target.pair?.launchedToken?.address}"
               >
                 click to buy
               </button>
@@ -313,12 +361,13 @@ export const MemeWarPariticipantRaceChart = observer(() => {
   };
 
   return (
-    <div className="relative flex justify-end flex-col flex-1 p-2 bg-black/20 rounded-md">
+    <div className="relative w-full h-[80vh] md:h-auto m-auto flex-col flex-1 p-2 bg-black/20 rounded-md md:aspect-video max-h-[95vh] max-w-[95vw]">
       <Chart
         options={state.options}
         series={state.series}
         type="scatter"
         width="100%"
+        height={"100%"}
       />
     </div>
   );
