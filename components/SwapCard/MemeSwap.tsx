@@ -76,7 +76,7 @@ export const SwapCard = observer(
         swap.setFromToken(
           Token.getToken({
             address:
-              inputAddress || "0x0874955158639a594fd65641e16c7de91f3df465",
+              inputAddress || "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
           })
         );
       }

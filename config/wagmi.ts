@@ -10,6 +10,10 @@ import {
 import { injected, safe } from "wagmi/connectors";
 import { mock } from "wagmi/connectors";
 
+// const holdstationWallet:WalletConnectWalletOptions = {
+
+// }
+
 //for users without bitget wallet
 let customWallets = [
   rainbowWallet,
