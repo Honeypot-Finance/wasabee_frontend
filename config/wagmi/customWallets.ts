@@ -5,8 +5,7 @@ export interface MyWalletOptions {
 export const holdstationWallet = ({ projectId }: MyWalletOptions): Wallet => ({
   id: "holdstation-wallet",
   name: "Holdstation Wallet",
-  iconUrl:
-    "https://holdstation.com/_next/image?url=%2Flogo%2Flogo.png&w=384&q=75",
+  iconUrl: "/images/partners/holdstation.png",
   iconBackground: "#0c2f78",
   downloadUrls: {
     android:
@@ -15,7 +14,6 @@ export const holdstationWallet = ({ projectId }: MyWalletOptions): Wallet => ({
     qrCode:
       "https://holdstation.com/_next/image?url=%2Flogo%2Flogo-scan.png&w=3840&q=75",
   },
-  installed: true,
   mobile: {
     getUri: (uri: string) => `holdstation://wc?uri=${encodeURIComponent(uri)}`,
   },
