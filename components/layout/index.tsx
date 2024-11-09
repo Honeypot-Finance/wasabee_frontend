@@ -4,7 +4,7 @@ import { Header } from "./header";
 import { useRouter } from "next/router";
 import { useAccount, useConnectorClient } from "wagmi";
 import { wallet } from "@/services/wallet";
-import { config } from "@/config/wagmi";
+import { config } from "@/config/wagmi/wagmi";
 import { networksMap } from "@/services/chain";
 import LaunchHeader from "./LaunchHeader";
 import { cn } from "@/lib/tailwindcss";
