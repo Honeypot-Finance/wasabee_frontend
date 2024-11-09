@@ -20,6 +20,7 @@ import BigNumber from "bignumber.js";
 import dynamic from "next/dynamic";
 import { popmodal } from "@/services/popmodal";
 import { SwapCard } from "../SwapCard/MemeSwap";
+import { toCompactLocaleString } from "@/lib/utils";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const ANIMATION_DURATION = 500; //ms
@@ -59,7 +60,7 @@ export const MemeWarBannerV2 = observer((props: Props) => {
   }, [memewarStore.isInit]);
 
   return memewarStore.isInit ? (
-    <div className="flex  flex-col gap-5">
+    <div className="flex m-auto flex-col gap-5 md:max-w-[min(1024px,80vw)]">
       <div>
         <div className="flex justify-between text-center">
           <h2 className="w-full text-center text-xl md:text-5xl font-[MEMEH] mb-2">
@@ -70,11 +71,11 @@ export const MemeWarBannerV2 = observer((props: Props) => {
         <MemeWarSupportSection />
         <div className="flex justify-between text-center">
           <p className="max-w-[600px] m-auto">
-            The MemeWar Health Graph shows the relationship between the Number
-            of Holders (X-axis) and Market Cap (Y-axis) to indicate token
-            health. A strong positive correlation between these factors suggests
-            that as more people hold MemeWar, its market cap grows, showing a
-            robust and widely supported community.
+            The Meme War Status Tracker is a health graph showing the
+            relationship between the Number of Holders (X-axis) and Market Cap
+            (Y-axis) to indicate token health. A strong positive correlation
+            between these factors suggests that as more people hold MemeWar, its
+            market cap grows, showing a robust and widely supported community.
           </p>
         </div>
         <MemeWarPariticipantRaceChart />
@@ -90,7 +91,7 @@ export const MemeWarBannerV2 = observer((props: Props) => {
 
 export const MemeWarSupportSection = observer(() => {
   return (
-    <div className="flex flex-col m-2 gap-5 ">
+    <div className="flex flex-col m-2 gap-5 md:max-w-[min(1024px,80vw)] md:m-auto">
       <div className=" *:my-4">
         <div className="text-center">
           your tHpot balance:{" "}
@@ -208,6 +209,11 @@ export const MemeWarPariticipantRaceChart = observer(() => {
       };
     }),
     options: {
+      title: {
+        text: "Meme War Status Checker",
+        align: "center",
+        style: {},
+      },
       chart: {
         type: "scatter",
         animations: {
@@ -262,10 +268,10 @@ export const MemeWarPariticipantRaceChart = observer(() => {
           offsetX: -45,
         },
         labels: {
-          show: false,
+          show: true,
         },
         axisTicks: {
-          show: false,
+          show: true,
         },
       },
       yaxis: {
@@ -277,16 +283,22 @@ export const MemeWarPariticipantRaceChart = observer(() => {
           },
         },
         labels: {
-          show: false,
+          show: true,
+          formatter: (value) => {
+            return toCompactLocaleString(value, {
+              maximumFractionDigits: 0,
+            });
+          },
         },
         axisBorder: {
           show: true,
           offsetY: 25,
-          offsetX: -25,
+          offsetX: 6,
         },
+
         tickAmount: 10,
         axisTicks: {
-          show: false,
+          show: true,
         },
         // tickAmount: 7,
       },
@@ -297,7 +309,7 @@ export const MemeWarPariticipantRaceChart = observer(() => {
         borderColor: "transparent",
         show: false,
         padding: {
-          left: 30,
+          left: 60,
           right: 30,
           top: 30,
           bottom: 30,
@@ -322,7 +334,9 @@ export const MemeWarPariticipantRaceChart = observer(() => {
           return `
             <div class="p-2 bg-black/20 rounded-md text-center">
               <h3>${target.participantName}</h3>
-              <p>Market Cap: ${target.currentScore.toFixed(0)}</p>
+              <p>Market Cap: ${toCompactLocaleString(target.currentScore, {
+                maximumFractionDigits: 3,
+              })}</p>
               <button
                 class="text-primary  underline"
               >
@@ -361,7 +375,7 @@ export const MemeWarPariticipantRaceChart = observer(() => {
   };
 
   return (
-    <div className="relative w-full h-[80vh] md:h-auto m-auto flex-col flex-1 p-2 bg-black/20 rounded-md md:aspect-video max-h-[95vh] max-w-[95vw]">
+    <div className="relative w-full h-[80vh] md:h-auto m-auto flex-col flex-1 p-2 bg-black/20 rounded-md md:aspect-video max-h-[95vh] max-w-[95%]">
       <Chart
         options={state.options}
         series={state.series}
