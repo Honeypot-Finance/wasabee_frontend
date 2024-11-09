@@ -51,9 +51,18 @@ const LaunchPage: NextLayoutPage = observer(() => {
     launchpad.participatedPairs.reloadPage();
 
     //loading most success projects
-    launchpad.mostSuccessfulFtos().then((data) => {
-      setMostSuccessProjects(data);
-    });
+    const startMostSuccessfulFtoPolling = () => {
+      launchpad.mostSuccessfulFtos().then((data) => {
+        console.log("startMostSuccessfulFtoPolling");
+        setMostSuccessProjects(data);
+        setTimeout(() => {
+          console.log("startMostSuccessfulFtoPolling");
+          startMostSuccessfulFtoPolling();
+        }, 5000);
+      });
+    };
+
+    startMostSuccessfulFtoPolling();
   }, [wallet.isInit]);
 
   return (

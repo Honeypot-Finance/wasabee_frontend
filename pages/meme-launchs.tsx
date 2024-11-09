@@ -45,9 +45,18 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     // launchpad.participatedPairs.reloadPage();
 
     //loading most success projects
-    launchpad.trendingMEMEs().then((data) => {
-      setMostSuccessProjects(data);
-    });
+    //loading most success projects
+    const startMostSuccessfulFtoPolling = () => {
+      launchpad.trendingMEMEs().then((data) => {
+        //if data is same as previous data then no need to update
+        setMostSuccessProjects(data);
+        setTimeout(() => {
+          startMostSuccessfulFtoPolling();
+        }, 10000);
+      });
+    };
+
+    startMostSuccessfulFtoPolling();
   }, [wallet.isInit]);
 
   return (
