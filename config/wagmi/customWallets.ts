@@ -15,7 +15,7 @@ export const holdstationWallet = ({ projectId }: MyWalletOptions): Wallet => ({
       "https://holdstation.com/_next/image?url=%2Flogo%2Flogo-scan.png&w=3840&q=75",
   },
   mobile: {
-    getUri: (uri: string) => `holdstation://wc?uri=${encodeURIComponent(uri)}`,
+    getUri: (uri: string) => uri,
   },
   qrCode: {
     getUri: (uri: string) => uri,
