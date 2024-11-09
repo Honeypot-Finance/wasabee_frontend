@@ -17,6 +17,8 @@ import { amountFormatted } from "@/lib/format";
 import { MemeWarParticipant, memewarStore } from "@/services/memewar";
 import { WarppedNextSelect } from "../wrappedNextUI/Select/Select";
 import BigNumber from "bignumber.js";
+import dynamic from "next/dynamic";
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const ANIMATION_DURATION = 500; //ms
 const HP_BAR_URL = "/images/memewar/HP_BAR.png";
@@ -42,7 +44,7 @@ export const MemeWarBannerV2 = observer((props: Props) => {
       memewarStore.updateAllParticipantScore().then(() => {
         setTimeout(() => {
           startUpdateScoreInterval();
-        }, 1000);
+        }, 10000);
       });
     };
 
@@ -50,7 +52,7 @@ export const MemeWarBannerV2 = observer((props: Props) => {
   }, [memewarStore.isInit]);
 
   return memewarStore.isInit ? (
-    <div className="lg:grid lg:grid-cols-[80%_20%] gap-2">
+    <div className="flex  flex-col gap-5">
       <div>
         <div className="flex justify-between text-center">
           <h2 className="w-full text-center text-xl md:text-5xl font-[MEMEH] mb-2">
@@ -58,19 +60,22 @@ export const MemeWarBannerV2 = observer((props: Props) => {
           </h2>
         </div>
 
-        <div className="relative grid w-full aspect-video gap-2">
-          {Object.values(memewarStore.sortedMemewarParticipants).map(
-            (participant, idx) => {
-              return (
-                <MemeWarPariticipantCard
-                  key={participant.pairAddress}
-                  rank={(idx + 1).toString()}
-                  {...participant}
-                />
-              );
-            }
-          )}
-        </div>
+        <MemeWarSupportSection />
+        <MemeWarPariticipantRaceChart />
+      </div>
+      <DiscussionArea pairDatabaseId={-9999} isSide />
+    </div>
+  ) : (
+    <div className="flex justify-center items-center h-[500px]">
+      <h1>Loading...</h1>
+    </div>
+  );
+});
+
+export const MemeWarSupportSection = observer(() => {
+  return (
+    <div className="flex flex-col m-2 gap-5 ">
+      <div className=" *:my-4">
         <div className="text-center">
           your tHpot balance:{" "}
           {amountFormatted(memewarStore.tHpotToken?.balance, {
@@ -79,94 +84,260 @@ export const MemeWarBannerV2 = observer((props: Props) => {
             symbol: " tHPOT",
           }) || "loading..."}
         </div>
-        <div className="grid md:grid-cols-2 mt-1 gap-5">
-          <WarppedNextSelect
-            items={Object.entries(memewarStore.memewarParticipants)}
-            onChange={(e) => {
-              memewarStore.setSelectedSupportParticipant(
-                memewarStore.memewarParticipants[e.target.value].pair!
+        <WarppedNextSelect
+          items={Object.entries(memewarStore.memewarParticipants)}
+          onChange={(e) => {
+            memewarStore.setSelectedSupportParticipant(
+              memewarStore.memewarParticipants[e.target.value].pair!
+            );
+          }}
+        >
+          {Object.entries(memewarStore.memewarParticipants).map(
+            ([key, value]) => {
+              return (
+                <SelectItem key={key} value={key}>
+                  {value.participantName}
+                </SelectItem>
               );
+            }
+          )}
+        </WarppedNextSelect>{" "}
+        <div className="flex justify-center items-center gap-2">
+          <Button
+            isDisabled={false}
+            onClick={async () => {
+              if (memewarStore.selectedSupportParticipantPair?.ftoState === 3) {
+                memewarStore.selectedSupportParticipantPair.deposit.call({
+                  amount: memewarStore.supportAmount.toFixed(0),
+                });
+              } else {
+                if (
+                  !memewarStore.tHpotToken ||
+                  !memewarStore.selectedSupportParticipantPair ||
+                  !memewarStore.selectedSupportParticipantPair.launchedToken
+                ) {
+                  console.error("missing data");
+                  return;
+                }
+                swap.setFromToken(memewarStore.tHpotToken);
+                swap.setToToken(
+                  memewarStore.selectedSupportParticipantPair.launchedToken
+                );
+                swap.setFromAmount(memewarStore.supportAmount.toFixed(0));
+
+                await new Promise((resolve) => {
+                  setTimeout(() => {
+                    resolve(undefined);
+                  }, 1000);
+                });
+
+                swap.swapExactTokensForTokens.call();
+              }
             }}
           >
-            {Object.entries(memewarStore.memewarParticipants).map(
-              ([key, value]) => {
-                return (
-                  <SelectItem key={key} value={key}>
-                    {value.participantName}
-                  </SelectItem>
-                );
-              }
-            )}
-          </WarppedNextSelect>{" "}
-          <div className="flex justify-center items-center gap-2">
-            <Button
-              isDisabled={false}
-              onClick={async () => {
-                if (
-                  memewarStore.selectedSupportParticipantPair?.ftoState === 3
-                ) {
-                  memewarStore.selectedSupportParticipantPair.deposit.call({
-                    amount: memewarStore.supportAmount.toFixed(0),
-                  });
-                } else {
-                  if (
-                    !memewarStore.tHpotToken ||
-                    !memewarStore.selectedSupportParticipantPair ||
-                    !memewarStore.selectedSupportParticipantPair.launchedToken
-                  ) {
-                    console.error("missing data");
-                    return;
-                  }
-                  swap.setFromToken(memewarStore.tHpotToken);
-                  swap.setToToken(
-                    memewarStore.selectedSupportParticipantPair.launchedToken
-                  );
-                  swap.setFromAmount(memewarStore.supportAmount.toFixed(0));
-
-                  await new Promise((resolve) => {
-                    setTimeout(() => {
-                      resolve(undefined);
-                    }, 1000);
-                  });
-
-                  swap.swapExactTokensForTokens.call();
-                }
-              }}
-            >
-              Support
-            </Button>
-            <Input
-              placeholder="Amount"
-              onChange={(e) => {
-                memewarStore.supportAmount = new BigNumber(e.target.value);
-              }}
-            />
-          </div>
-          <div className=" relative w-full flex justify-around items-center col-span-2 h-[200px] border-4 border-black rounded-[1rem] overflow-hidden">
-            <Image
-              src="/images/memewar/janivspot.webp"
-              alt=""
-              width={300}
-              height={300}
-              className="w-full h-full object-cover object-top absolute brightness-50"
-            />
-            <h3 className="z-10 text-3xl">Complete quest to earn prize</h3>
-            <Link
-              href={
-                "https://www.cubquests.com/campaigns/berachaindevs?quest=honeypot-finance"
-              }
-              target="_blank"
-            >
-              <Button className="z-10">Explore</Button>
-            </Link>
-          </div>
+            Support
+          </Button>
+          <Input
+            placeholder="Amount"
+            onChange={(e) => {
+              memewarStore.supportAmount = new BigNumber(e.target.value);
+            }}
+          />
+        </div>
+        <div className=" relative w-full flex flex-col justify-center items-center col-span-2 h-[200px] border-4 border-black rounded-[1rem] overflow-hidden">
+          <Image
+            src="/images/memewar/janivspot.webp"
+            alt=""
+            width={300}
+            height={300}
+            className="w-full h-full object-cover object-top absolute brightness-50"
+          />
+          <h3 className="z-10 text-3xl">Complete quest to earn prize</h3>
+          <Link
+            href={
+              "https://www.cubquests.com/campaigns/berachaindevs?quest=honeypot-finance"
+            }
+            target="_blank"
+          >
+            <Button className="z-10">Explore</Button>
+          </Link>
         </div>
       </div>
-      <DiscussionArea pairDatabaseId={-9999} isSide />
     </div>
-  ) : (
-    <div className="flex justify-center items-center h-[500px]">
-      <h1>Loading...</h1>
+  );
+});
+
+export const MemeWarPariticipantRaceChart = observer(() => {
+  const state: {
+    series: ApexAxisChartSeries;
+    options: ApexCharts.ApexOptions;
+  } = {
+    series: memewarStore.sortedMemewarParticipants.map((participant) => {
+      return {
+        name: participant.participantName,
+        data: [
+          {
+            x: Number(participant.token?.swapCount) ?? 0,
+            y: participant.currentScore.toNumber(),
+            meta: { participant },
+          },
+        ],
+      };
+    }),
+    options: {
+      chart: {
+        type: "scatter",
+        animations: {
+          enabled: false,
+        },
+        zoom: {
+          enabled: false,
+        },
+        toolbar: {
+          show: false,
+        },
+        events: {
+          markerClick(e, chart, options) {
+            console.log(e, chart, options);
+            const target =
+              memewarStore.sortedMemewarParticipants[options.seriesIndex];
+            window
+              .open(`/launch-detail/${target.pairAddress}`, "_blank")
+              ?.focus();
+          },
+        },
+      },
+      colors: ["orange"],
+      xaxis: {
+        tickAmount: 10,
+        // min: 0,
+        // max: 40,
+        title: {
+          text: "Tx Count→",
+        },
+        axisBorder: {
+          show: false,
+        },
+        labels: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+      },
+      yaxis: {
+        title: {
+          text: "Score→",
+        },
+        labels: {
+          show: false,
+        },
+        axisBorder: {
+          show: false,
+        },
+        tickAmount: 10,
+        axisTicks: {
+          show: false,
+        },
+        // tickAmount: 7,
+      },
+      markers: {
+        size: 20,
+      },
+      grid: {
+        borderColor: "transparent",
+        show: false,
+        padding: {
+          left: 30,
+          right: 30,
+          top: 30,
+          bottom: 30,
+        },
+      },
+      stroke: {
+        show: false,
+      },
+      tooltip: {
+        enabled: true,
+        x: {
+          //formatter: (value) => `Tx Count: ${value}`,
+        },
+        y: {
+          title: {
+            formatter: (seriesName) => `${seriesName}`,
+          },
+        },
+        custom(options) {
+          const target =
+            memewarStore.sortedMemewarParticipants[options.seriesIndex];
+          return `
+            <div class="p-2 bg-black/20 rounded-md text-center">
+              <h3>${target.participantName}</h3>
+              <p>Score: ${target.currentScore.toFixed(0)}</p>
+              <button
+                class="text-primary  underline"
+                href="/swap?inputCurrency=${target.pair?.raiseToken?.address}&outputCurrency=${target.pair?.launchedToken?.address}"
+              >
+                click to buy
+              </button>
+            </div>
+          `;
+        },
+        theme: "dark",
+        fillSeriesColor: true,
+        fixed: {
+          enabled: true,
+          offsetY: -20,
+        },
+      },
+
+      fill: {
+        type: "image",
+        opacity: 1,
+        image: {
+          src: memewarStore.sortedMemewarParticipants.map((participant) => {
+            return participant.iconUrl || participant.pair?.logoUrl || "";
+          }),
+          width: 40,
+          height: 40,
+        },
+      },
+
+      legend: {
+        show: false,
+        labels: {
+          useSeriesColors: true,
+        },
+      },
+    },
+  };
+
+  return (
+    <div className="relative flex justify-end flex-col flex-1 p-2 bg-black/20 rounded-md">
+      <Chart
+        options={state.options}
+        series={state.series}
+        type="scatter"
+        width="100%"
+      />
+    </div>
+  );
+});
+
+export const MemeWarPariticipantCardListDisplay = observer(() => {
+  return (
+    <div className="relative flex justify-end flex-col flex-1 gap-2">
+      {Object.values(memewarStore.sortedMemewarParticipants).map(
+        (participant, idx) => {
+          return (
+            <MemeWarPariticipantCard
+              key={participant.pairAddress}
+              rank={(idx + 1).toString()}
+              {...participant}
+            />
+          );
+        }
+      )}
     </div>
   );
 });
@@ -192,7 +363,7 @@ export const MemeWarPariticipantCard = observer(
         <motion.div
           animate={{ scale: currentScale }}
           key={participant.pair.address}
-          className="flex w-full items-center z-10 justify-center transition-all gap-4"
+          className="flex w-full items-center z-10 justify-center md:justify-end transition-all gap-4"
         >
           <h2 className="flex justify-center items-center font-[MEMEH] text-[3rem] w-[5rem]">
             {participant.rank == "1" ? "👑" : participant.rank}

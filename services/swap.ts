@@ -701,7 +701,7 @@ class Swap {
       return;
     }
     if (this.isWrapOrUnwrap) {
-      return false
+      return false;
     }
 
     const fromAmountDecimals = new BigNumber(this.fromAmount)

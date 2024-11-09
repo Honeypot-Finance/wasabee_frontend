@@ -96,10 +96,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
       tooltip: {
         enabled: true,
         x: {
-          format:
-            chart.range === "1D" || chart.range === "1H"
-              ? "dd MMM HH:mm"
-              : "dd MMM yyyy",
+          format: "dd MMM HH:mm",
         },
         theme: "dark",
         fillSeriesColor: true,
@@ -186,10 +183,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
               ...state.options.tooltip,
               x: {
                 ...state.options.tooltip?.x,
-                format:
-                  chart.range === "1D" || chart.range === "1H"
-                    ? "dd MMM HH:mm"
-                    : "dd MMM yyyy",
+                format: chart.range === "1D" ? "dd MMM HH" : "dd MMM HH:mm",
               },
             },
             fill: {
@@ -222,90 +216,72 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
   }, [chart.chartTarget, chart.range, chart.chartLabel]);
 
   return (
-    <div className="relative w-full h-full">
-      <CardContianer autoSize>
-        {chart.isLoading && (
-          <FaSpinner className="animate-spin absolute top-1/2 left-1/2 z-50"></FaSpinner>
-        )}
-        <div className="relative w-full h-full flex-col flex items-center justify-center">
-          <div className="flex justify-between items-center w-full gap-5">
-            <span className="lg:pl-4">
-              <div className="flex">
-                {chart.TargetLogoDisplay.map((logo) => (
-                  <TokenLogo key={logo.address} token={logo} />
-                ))}
-              </div>
-              {chart.chartLabel}
-            </span>
-            <div className="grid w-full gap-2 grid-cols-3 lg:grid-cols-6  items-center flex-wrap">
-              {Object.values(chartTimeRanges).map((range) => (
-                <Button
-                  className="min-w-[1rem] disabled:border-[red_2px_solid] "
-                  key={range.value}
-                  isDisabled={chart.range === range.label || chart.isLoading}
-                  onClick={() => {
-                    chart.setRange(range.label);
-                  }}
-                >
-                  {range.label}
-                </Button>
+    <>
+      {chart.isLoading && (
+        <FaSpinner className="animate-spin absolute top-1/2 left-1/2 z-50"></FaSpinner>
+      )}
+      <div className="relative w-full flex-col flex items-center justify-center">
+        <div className="flex justify-between items-center w-full gap-5">
+          <span className="lg:pl-4">
+            <div className="flex">
+              {chart.TargetLogoDisplay.map((logo) => (
+                <TokenLogo key={logo.address} token={logo} />
               ))}
             </div>
+            {chart.chartLabel}
+          </span>
+          <div className="grid w-full gap-2 grid-cols-3 lg:grid-cols-6  items-center flex-wrap">
+            {Object.values(chartTimeRanges).map((range) => (
+              <Button
+                className="min-w-[1rem] disabled:border-[red_2px_solid] "
+                key={range.value}
+                isDisabled={chart.range === range.label || chart.isLoading}
+                onClick={() => {
+                  chart.setRange(range.label);
+                }}
+              >
+                {range.label}
+              </Button>
+            ))}
           </div>
-          {chart.chartTarget ? (
-            <>
-              <div className="w-full pl-4">
-                <span className="mr-2 text-[2rem]">
-                  {(chart.currentPrice ?? 0) < 0.004 && "<"}
-                  {chart.currentPrice?.toFixed(2)}
-                </span>
-                <span
-                  className={cn(
-                    "inline-flex justify-start",
-                    chart.chartPricePercentageChange >= 0
-                      ? "text-green-500"
-                      : "text-red-500"
-                  )}
-                >
-                  {chart.chartPricePercentageChange >= 0 ? (
-                    <IoCaretUp className="inline" />
-                  ) : (
-                    <IoCaretDown className="inline" />
-                  )}
-                  {chart.chartPricePercentageChange.toFixed(2)}%
-                </span>
-              </div>
-              <div className="w-full">
-                <Chart
-                  options={state.options}
-                  series={state.series}
-                  type="area"
-                />
-              </div>
-            </>
-          ) : (
-            <div className="w-full h-[400px] flex items-center justify-center">
-              <HoneyStickSvg />
-            </div>
-          )}
         </div>
-      </CardContianer>
-      <div className="flex justify-end">
-        <Link
-          href={"https://www.codex.io/"}
-          target="_blank"
-          className="flex p-2 gap-2 items-center"
-        >
-          <div>Price feed powered by </div>{" "}
-          <Image
-            className="h-4"
-            src="/images/partners/codex_white.png"
-            alt=""
-            width={100}
-            height={20}
-          />
-        </Link>
+        {chart.chartTarget ? (
+          <>
+            <div className="w-full pl-4">
+              <span className="mr-2 text-[2rem]">
+                {(chart.currentPrice ?? 0) < 0.004 && "<"}
+                {chart.currentPrice?.toFixed(2)}
+              </span>
+              <span
+                className={cn(
+                  "inline-flex justify-start",
+                  chart.chartPricePercentageChange >= 0
+                    ? "text-green-500"
+                    : "text-red-500"
+                )}
+              >
+                {chart.chartPricePercentageChange >= 0 ? (
+                  <IoCaretUp className="inline" />
+                ) : (
+                  <IoCaretDown className="inline" />
+                )}
+                {chart.chartPricePercentageChange.toFixed(2)}%
+              </span>
+            </div>
+            <div className="w-full">
+              <Chart
+                options={state.options}
+                series={state.series}
+                type="area"
+              />
+            </div>
+          </>
+        ) : (
+          <div className="w-full h-[400px] flex items-center justify-center">
+            <HoneyStickSvg />
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 });

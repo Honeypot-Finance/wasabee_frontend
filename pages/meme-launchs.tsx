@@ -45,9 +45,18 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     // launchpad.participatedPairs.reloadPage();
 
     //loading most success projects
-    launchpad.trendingMEMEs().then((data) => {
-      setMostSuccessProjects(data);
-    });
+    //loading most success projects
+    const startMostSuccessfulFtoPolling = () => {
+      launchpad.trendingMEMEs().then((data) => {
+        //if data is same as previous data then no need to update
+        setMostSuccessProjects(data);
+        setTimeout(() => {
+          startMostSuccessfulFtoPolling();
+        }, 10000);
+      });
+    };
+
+    startMostSuccessfulFtoPolling();
   }, [wallet.isInit]);
 
   return (
@@ -271,6 +280,16 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 />
                 <span className="flex items-center justify-center gap-2">
                   Try Yeet Bond <FaExternalLinkAlt className="inline-block" />
+                </span>
+              </div>
+            }
+          />
+          <Tab
+            href="/memewar"
+            title={
+              <div className="flex items-center text-rose-600">
+                <span className="flex items-center justify-center gap-2">
+                  Meme War ⚔️
                 </span>
               </div>
             }

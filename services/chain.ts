@@ -382,6 +382,12 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/memewar2/BERA_APU.png",
     },
+    "0xc06b8ee779d065061c2087c5c78c1ef774850041": {
+      name: "Trumpot",
+      symbol: "TRUMPOT",
+      decimals: 18,
+      logoURI: "/images/memewar2/trumpot.jpg",
+    },
   },
   validatedFtoAddresses: [
     "0x2c504e661750e03aa9252c67e771dc059a521863".toLowerCase(),
