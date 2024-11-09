@@ -47,8 +47,9 @@ import { WrappedToastify } from "@/lib/wrappedToastify";
 import Countdown from "react-countdown";
 import ProgressBar from "@/components/atoms/ProgressBar/ProgressBar";
 import BigNumber from "bignumber.js";
-import CardContianer from "@/components/CardContianer/CardContianer";
+
 import Action from "./componets/Action";
+import Tabs from "./componets/Tabs";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -765,9 +766,7 @@ const FtoView = observer(() => {
 
 const MemeView = observer(() => {
   const router = useRouter();
-  const [tab, setTab] = useState<
-    "info" | "about" | "txs" | "comment" | "pricechart"
-  >("info");
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { pair: pairAddress } = router.query;
   const [votes, setVotes] = useState({
@@ -911,14 +910,25 @@ const MemeView = observer(() => {
         </Modal>
       )}
       <div className="grid grid-cols-2 gap-4 xl:w-[1170px]">
-        <div className="bg-[#271A0C] col-span-2 px-5 py-2.5 rounded-[30px] flex items-center justify-between">
-          <div className="flex items-center gap-x-[7.5px]">
-            <div className="size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
+        <div className="bg-[#271A0C] col-span-2 px-5 py-2.5 rounded-[30px] flex md:items-center md:justify-between md:flex-row flex-col gap-2 md:gap-0">
+          <div className="flex items-center gap-x-4 md:gap-x-[7.5px]">
+            <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
               <Image
-                alt="honey"
+                alt={state.pair.value?.launchedToken?.name || "honey"}
                 width={44}
                 height={44}
-                className="rounded-full"
+                className="rounded-full hidden md:inline-block"
+                src={
+                  !!state.pair.value?.logoUrl
+                    ? state.pair.value.logoUrl
+                    : "/images/project_honey.png"
+                }
+              />
+              <Image
+                alt={state.pair.value?.launchedToken?.name || "honey"}
+                width={20}
+                height={20}
+                className="rounded-full md:hidden"
                 src={
                   !!state.pair.value?.logoUrl
                     ? state.pair.value.logoUrl
@@ -926,19 +936,17 @@ const MemeView = observer(() => {
                 }
               />
             </div>
-            <div className="flex flex-col gap-x-[7.5px]">
-              <div className="text-2xl">
-                {state.pair.value?.launchedToken?.name}
-              </div>
-              <div className="text-2xl text-white/55">
-                {state.pair.value?.launchedToken?.displayName}
-              </div>
+            <div className="flex flex-col gap-x-[7.5px] md:text-2xl">
+              <div>{state.pair.value?.launchedToken?.name}</div>
+              <div>{state.pair.value?.launchedToken?.displayName}</div>
             </div>
           </div>
-          <div className="flex items-center gap-x-8">
+          <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
             <div className="flex flex-col gap-y-2.5">
               {/* TODO: gradient color */}
-              <div className="text-[#F7931A] text-xl">Ends In</div>
+              <div className="text-[#F7931A] xs:text-lg md:text-xl">
+                Ends In
+              </div>
               {state.pair.value?.endTime && (
                 <Countdown
                   date={Number(state.pair.value?.endTime) * 1000}
@@ -947,23 +955,23 @@ const MemeView = observer(() => {
                       return state.pair.value?.endTimeDisplay;
                     } else {
                       return (
-                        <div className="text-3xl flex items-start gap-x-2">
+                        <div className="flex items-start md:gap-x-2">
                           <div className="flex flex-col items-center gap-y-1.5">
-                            <span>{days}</span>
+                            <span className="text-base">{days}</span>
                             <span className="text-xs text-white/45">Days</span>
                           </div>
 
                           <div>:</div>
 
                           <div className="flex flex-col items-center gap-y-1.5">
-                            <span>{hours}</span>
+                            <span className="text-base">{hours}</span>
                             <span className="text-xs text-white/45">Hours</span>
                           </div>
 
                           <div>:</div>
 
                           <div className="flex flex-col items-center gap-y-1.5">
-                            <span>{minutes}</span>
+                            <span className="text-base">{minutes}</span>
                             <span className="text-xs text-white/45">
                               Minutes
                             </span>
@@ -972,7 +980,7 @@ const MemeView = observer(() => {
                           <div>:</div>
 
                           <div className="flex flex-col items-center gap-y-1.5">
-                            <span>{seconds}</span>
+                            <span className="text-base">{seconds}</span>
                             <span className="text-xs text-white/45">
                               Seconds
                             </span>
@@ -990,8 +998,8 @@ const MemeView = observer(() => {
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
           {/* Token Raised */}
-          <div>
-            <div className="text-[rgba(255,255,255,0.66)] text-[15.958px] font-bold leading-[normal]">
+          <div className="flex flex-col gap-y-2">
+            <div className="text-white md:text-base text-sm font-bold leading-[normal]">
               Token Raised
             </div>
             <div className="text-[color:var(--Button-Gradient,var(--card-stroke,#F7931A))]">
@@ -1068,7 +1076,7 @@ const MemeView = observer(() => {
                       28
                     )}
                   </span>
-                  <VscCopy className="size-4 absolute right-2 top-1/2 -translate-y-1/2" />
+                  <VscCopy className="size-4 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer" />
                 </div>
               }
             />
@@ -1102,46 +1110,44 @@ const MemeView = observer(() => {
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="flex gap-[4px] text-white  text-[12.165px] font-bold leading-[normal]">
+              <div className="flex items-center gap-[4px] text-white text-xs font-bold leading-[normal]">
+                {/* TODO: fix different size display */}
                 <Image
-                  src="/images/calendar.png"
-                  alt="price"
                   width={12}
                   height={12}
-                ></Image>
-                Start Date
+                  alt="Start Date"
+                  src="/images/calendar.png"
+                />
+                <span>Start Date</span>
               </div>
               <div className="text-[#FFCD4D]  text-xs font-medium leading-[normal] mt-[4px]">
-                {state.pair.value?.endTimeDisplay
-                  ? new Date(state.pair.value?.startTime).toLocaleDateString()
+                {pair?.startTimeDisplay && pair?.startTimeDisplay !== "-"
+                  ? new Date(pair.startTimeDisplay).toLocaleDateString()
                   : "--"}
                 <br />
-                {state.pair.value?.endTimeDisplay
-                  ? new Date(
-                      state.pair.value?.endTimeDisplay
-                    ).toLocaleTimeString()
+                {pair?.startTimeDisplay && pair?.startTimeDisplay !== "-"
+                  ? new Date(pair.startTimeDisplay).toLocaleTimeString()
                   : "--"}
               </div>
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="flex gap-[4px] text-white  text-[12.165px] font-bold leading-[normal]">
+              <div className="flex gap-1 text-white text-xs font-bold leading-[normal]">
                 <Image
-                  src="/images/calendar.png"
-                  alt="price"
                   width={12}
                   height={12}
-                ></Image>
-                End Date
+                  alt="End Date"
+                  src="/images/calendar.png"
+                />
+                <span>End Date</span>
               </div>
               <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
-                {state.pair.value?.endTimeDisplay
-                  ? new Date(
-                      state.pair.value?.endTimeDisplay
-                    ).toLocaleDateString()
+                {pair?.endTimeDisplay && pair?.endTimeDisplay !== "-"
+                  ? new Date(pair?.endTimeDisplay).toLocaleDateString()
                   : "--"}
                 <br />
-                {state.pair.value?.endTimeDisplay
+                {state.pair.value?.endTimeDisplay &&
+                pair?.endTimeDisplay !== "-"
                   ? new Date(
                       state.pair.value?.endTimeDisplay
                     ).toLocaleTimeString()
@@ -1191,152 +1197,17 @@ const MemeView = observer(() => {
         </div>
       </div>
 
-      <div className="w-full flex items-center justify-between my-12">
-        <div>Project Details</div>
-        <div className="flex items-center">
+      <div className="w-full flex items-center justify-between my-4 md:my-12">
+        <div className="text-lg md:text-xl">Project Details</div>
+        <div className="flex items-center gap-x-1">
           <Logo />
-          <span className='text-[#FFCD4D] [font-family:"Bebas_Neue"] text-3xl'>
+          <span className='text-[#FFCD4D] [font-family:"Bebas_Neue"] text-lg md:text-3xl'>
             Honeypot Finance
           </span>
         </div>
       </div>
 
-      <div className="flex items-center gap-x-1">
-        <button
-          onClick={() => setTab("info")}
-          className={[
-            "px-8 pt-2 pb-1 rounded-t-2xl",
-            tab === "info"
-              ? "bg-[#9D5E28] text-white"
-              : "bg-[#3B2712] text-[#A46617]",
-          ].join(" ")}
-        >
-          Token Info
-        </button>
-        <button
-          onClick={() => setTab("about")}
-          className={[
-            "px-8 pt-2 pb-1 rounded-t-2xl",
-            tab === "about"
-              ? "bg-[#9D5E28] text-white"
-              : "bg-[#3B2712] text-[#A46617]",
-          ].join(" ")}
-        >
-          About the Project
-        </button>
-        <button
-          onClick={() => setTab("txs")}
-          className={[
-            "px-8 pt-2 pb-1 rounded-t-2xl",
-            tab === "txs"
-              ? "bg-[#9D5E28] text-white"
-              : "bg-[#3B2712] text-[#A46617]",
-          ].join(" ")}
-        >
-          Transactions
-        </button>
-        <button
-          onClick={() => setTab("comment")}
-          className={[
-            "px-8 pt-2 pb-1 rounded-t-2xl",
-            tab === "comment"
-              ? "bg-[#9D5E28] text-white"
-              : "bg-[#3B2712] text-[#A46617]",
-          ].join(" ")}
-        >
-          Comments
-        </button>
-        <button
-          onClick={() => setTab("pricechart")}
-          className={[
-            "px-8 pt-2 pb-1 rounded-t-2xl",
-            tab === "pricechart"
-              ? "bg-[#9D5E28] text-white"
-              : "bg-[#3B2712] text-[#A46617]",
-          ].join(" ")}
-        >
-          Price Chart
-        </button>
-      </div>
-      {/** Comment section */}
-      <CardContianer addtionalClassName={"block"}>
-        {tab === "info" && (
-          <div className="flex flex-col w-full px-10">
-            <h1 className="text-4xl py-16">Token Info</h1>
-            <div className="flex flex-col gap-x-2">
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-                <span className="text-[#F0A64A] text-sm">Token Name</span>
-                <span className="text-white text-xl">
-                  {pair?.launchedToken?.name}
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-                <span className="text-[#F0A64A] text-sm">Token Symbol</span>
-                <span className="text-white text-xl">
-                  {pair?.launchedToken?.symbol}
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-                <span className="text-[#F0A64A] text-sm">Token supply</span>
-                <span className="text-white text-xl">
-                  {pair?.launchedToken?.totalSupplyWithoutDecimals.toNumber()}
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-                <span className="text-[#F0A64A] text-sm">
-                  INITIAL MARKET CAP
-                </span>
-                <span className="text-white text-xl">
-                  {pair?.raisedTokenMinCap
-                    ?.div(10 ** (pair.launchedToken?.decimals ?? 0))
-                    .toFixed()}
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-                <span className="text-[#F0A64A] text-sm">Token Type</span>
-                <span className="text-white text-xl">MEME</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
-                <span className="text-[#F0A64A] text-sm">Token Address</span>
-                <span className="text-white text-xl">{pair?.address}</span>
-              </div>
-            </div>
-          </div>
-        )}
-        {tab === "about" && (
-          <div>
-            <h2 className="text-[2rem]">project description:</h2>
-            <p>
-              {!!pair?.description
-                ? pair?.description
-                : "this project does not have description info"}
-            </p>
-          </div>
-        )}
-        {tab === "txs" && (
-          <div>
-            <h2 className="text-[2rem] text-center">Coming Thoon</h2>
-          </div>
-        )}
-        {tab === "comment" && (
-          <div className="flex justify-center">
-            <div className="w-full">
-              {state.pair.value && (
-                <DiscussionArea
-                  pairDatabaseId={state.pair.value.databaseId ?? -1}
-                ></DiscussionArea>
-              )}
-            </div>
-          </div>
-        )}
-        {tab === "pricechart" && (
-          <div className="flex justify-center">
-            <div className="w-full">
-              {chart.chartTarget && <PriceFeedGraph></PriceFeedGraph>}
-            </div>
-          </div>
-        )}
-      </CardContianer>
+      <Tabs pair={pair} />
     </div>
   );
 });

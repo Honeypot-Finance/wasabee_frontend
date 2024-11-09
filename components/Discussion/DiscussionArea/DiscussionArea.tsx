@@ -145,11 +145,10 @@ export function DiscussionArea(props: DiscussionAreaProps) {
             label="Leave a Comment!"
             classNames={{
               base: "w-full h-full bg-[#2F200B]",
-              innerWrapper: "w-full h-full ",
-              inputWrapper: "w-full !h-full bg-[#2F200B] hover:bg-[#2F200B]",
+              inputWrapper: "w-full !h-full bg-[#2F200B] hover:bg-[#2F200B] z-1",
               input: "w-full h-full",
-              mainWrapper: "w-full h-full bg-[#2F200B] hover:bg-[#2F200B]",
-              label: "text-[#FFCD4D] text-base font-bold leading-[normal]",
+              mainWrapper: "w-full h-full bg-[#2F200B] hover:bg-[#2F200B] z-1",
+              label: "text-[#FFCD4D] text-base font-bold leading-[normal] z-1",
             }}
             value={userComment}
             onChange={(e) => setUserComment(e.target.value)}
