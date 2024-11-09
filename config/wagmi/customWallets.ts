@@ -12,13 +12,12 @@ export const holdstationWallet = ({ projectId }: MyWalletOptions): Wallet => ({
     android:
       "https://play.google.com/store/apps/details?id=io.holdstation&pli=1",
     ios: "https://apps.apple.com/us/app/holdstation-web3-wallet/id6444925618",
-    chrome:
-      "https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn",
     qrCode:
       "https://holdstation.com/_next/image?url=%2Flogo%2Flogo-scan.png&w=3840&q=75",
   },
+  installed: true,
   mobile: {
-    getUri: (uri: string) => uri,
+    getUri: (uri: string) => `holdstation://wc?uri=${encodeURIComponent(uri)}`,
   },
   qrCode: {
     getUri: (uri: string) => uri,
