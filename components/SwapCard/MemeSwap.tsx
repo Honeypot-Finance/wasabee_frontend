@@ -21,7 +21,7 @@ import LoadingDisplay, {
 import { trpc, trpcClient } from "@/lib/trpc";
 import { GhostLaunchPair } from "@/services/indexer/indexerTypes";
 import { ItemSelect, SelectItem, SelectState } from "../ItemSelect";
-import { Input, Slider, Tooltip } from "@nextui-org/react";
+import { cn, Input, Slider, Tooltip } from "@nextui-org/react";
 import Image from "next/image";
 import { delay } from "lodash";
 import { LuOption } from "react-icons/lu";
@@ -38,10 +38,12 @@ export const SwapCard = observer(
     inputAddress,
     outputAddress,
     extraTokenAction,
+    noBoarder,
   }: {
     inputAddress?: string;
     outputAddress?: string;
     extraTokenAction?: React.ReactNode;
+    noBoarder?: boolean;
   }) => {
     const router = useRouter();
     const isInit = wallet.isInit && liquidity.isInit;
@@ -104,10 +106,17 @@ export const SwapCard = observer(
 
     return (
       <SpinnerContainer
-        className="flex flex-1 justify-around items-center"
+        className={cn(
+          "flex flex-1 justify-around items-center flex-col gap-2 w-full"
+        )}
         isLoading={false}
       >
-        <div className=" flex flex-1 flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all">
+        <div
+          className={cn(
+            " w-full flex flex-1 flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all",
+            noBoarder && "border-0"
+          )}
+        >
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-x-4">
               <button
@@ -341,6 +350,7 @@ export const SwapCard = observer(
             </>
           </LoadingContainer>
         </div>
+        {extraTokenAction}
       </SpinnerContainer>
     );
   }

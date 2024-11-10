@@ -21,6 +21,7 @@ import dynamic from "next/dynamic";
 import { popmodal } from "@/services/popmodal";
 import { SwapCard } from "../SwapCard/MemeSwap";
 import { toCompactLocaleString } from "@/lib/utils";
+import TokenLogo from "../TokenLogo/TokenLogo";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const ANIMATION_DURATION = 500; //ms
@@ -236,8 +237,23 @@ export const MemeWarPariticipantRaceChart = observer(() => {
             popmodal.openModal({
               content: (
                 <SwapCard
+                  noBoarder
                   inputAddress={target.pair?.raiseToken?.address}
                   outputAddress={target.pair?.launchedToken?.address}
+                  extraTokenAction={
+                    <a
+                      href={`
+                      /launch-detail/${target.pairAddress}
+                    `}
+                    >
+                      {target.pair?.launchedToken && (
+                        <Button>
+                          <TokenLogo token={target.pair?.launchedToken} />
+                          View {target.participantName} detail
+                        </Button>
+                      )}
+                    </a>
+                  }
                 />
               ),
             });

@@ -267,6 +267,7 @@ const SuccessAction = observer(
       //   </Link>
       // </div>
       <SwapCard
+        noBoarder
         inputAddress={pair.raiseToken?.address ?? ""}
         outputAddress={pair.launchedToken?.address}
       />
