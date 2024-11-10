@@ -1,4 +1,9 @@
-import { INITIAL_POOL_FEE, Position } from "@cryptoalgebra/custom-pools-sdk";
+import { usePool } from "@/lib/algebra/hooks/pools/usePool";
+import {
+  usePosition,
+  usePositionInFarming,
+} from "@/lib/algebra/hooks/positions/usePositions";
+import { Position } from "@cryptoalgebra/sdk";
 import PositionNFT from "../PositionNFT";
 import { Skeleton } from "@/components/algebra/ui/skeleton";
 import PositionRangeChart from "../PositionRangeChart";
@@ -9,14 +14,9 @@ import ActiveFarmingCard from "../ActiveFarmingCard";
 import ClosedFarmingCard from "../ClosedFarmingCard";
 import { IncreaseLiquidityModal } from "@/components/algebra/modals/IncreaseLiquidityModal";
 import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
-import { usePool } from "@/lib/algebra/hooks/pools/usePool";
-import {
-  usePosition,
-  usePositionInFarming,
-} from "@/lib/algebra/hooks/positions/usePositions";
+import { EternalFarming } from "@/lib/algebra/graphql/generated/graphql";
+import { useDerivedMintInfo } from "@/lib/algebra/state/mintStore";
 import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
-import { EternalFarming } from "@/lib/graphql/generated/graphql";
-import { useDerivedMintInfo } from "@/services/algebra/state/mintStore";
 import { Farming } from "@/types/algebra/types/farming-info";
 import { FormattedPosition } from "@/types/algebra/types/formatted-position";
 
@@ -60,7 +60,7 @@ const PositionCard = ({
     currencyA,
     currencyB,
     position?.pool,
-    INITIAL_POOL_FEE,
+    100,
     currencyA,
     positionEntity || undefined
   );

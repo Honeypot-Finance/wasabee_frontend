@@ -1,21 +1,21 @@
-import { useFarmApprove } from "@/lib/algebra/hooks/farming/useFarmApprove";
-import { useFarmCheckApprove } from "@/lib/algebra/hooks/farming/useFarmCheckApprove";
-import { useFarmStake } from "@/lib/algebra/hooks/farming/useFarmStake";
-import { Deposit } from "@/lib/graphql/generated/graphql";
-import { cn } from "@/lib/tailwindcss";
-import { Farming } from "@/types/algebra/types/farming-info";
-import { FormattedPosition } from "@/types/algebra/types/formatted-position";
-import { Button } from "@nextui-org/react";
-import { Loader } from "lucide-react";
-import { useState } from "react";
-import FarmingPositionCard from "../../farming/FarmingPositionCard";
+import Loader from "@/components/algebra/common/Loader";
+import FarmingPositionCard from "@/components/algebra/farming/FarmingPositionCard";
+import { Button } from "@/components/algebra/ui/button";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "../../ui/dialog";
+  DialogTrigger,
+} from "@/components/algebra/ui/dialog";
+import { useFarmApprove } from "@/lib/algebra/hooks/farming/useFarmApprove";
+import { useFarmCheckApprove } from "@/lib/algebra/hooks/farming/useFarmCheckApprove";
+import { cn } from "@/lib/tailwindcss";
+import { useState } from "react";
+import { useFarmStake } from "@/lib/algebra/hooks/farming/useFarmStake";
+import { Deposit } from "@/lib/algebra/graphql/generated/graphql";
+import { Farming } from "@/types/algebra/types/farming-info";
+import { FormattedPosition } from "@/types/algebra/types/formatted-position";
 
 interface SelectPositionFarmModalProps {
   positions: Deposit[];

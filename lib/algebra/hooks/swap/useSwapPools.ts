@@ -1,8 +1,4 @@
-import { Currency, Token } from "@cryptoalgebra/custom-pools-sdk";
-import {
-  computeCustomPoolAddress,
-  computePoolAddress,
-} from "../../utils/pool/computepool";
+import { Currency, Token, computePoolAddress } from "@cryptoalgebra/sdk";
 import { useEffect, useMemo, useState } from "react";
 import { useAllCurrencyCombinations } from "./useAllCurrencyCombinations";
 import { Address } from "viem";
@@ -10,7 +6,7 @@ import { DEFAULT_CHAIN_ID } from "@/data/algebra/default-chain-id";
 import {
   TokenFieldsFragment,
   useMultiplePoolsLazyQuery,
-} from "@/lib/graphql/generated/graphql";
+} from "../../graphql/generated/graphql";
 
 /**
  * Returns all the existing pools that should be considered for swapping between an input currency and an output currency
@@ -29,7 +25,6 @@ export function useSwapPools(
       price: string;
       tick: string;
       fee: string;
-      deployer: string;
       token0: TokenFieldsFragment;
       token1: TokenFieldsFragment;
     };
@@ -77,7 +72,6 @@ export function useSwapPools(
           price: pool.sqrtPrice,
           tick: pool.tick,
           fee: pool.fee,
-          deployer: pool.deployer,
           token0: pool.token0,
           token1: pool.token1,
         }));

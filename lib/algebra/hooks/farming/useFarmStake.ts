@@ -1,14 +1,15 @@
-import { useTransactionAwait } from "../common/useTransactionAwait";
-import { Address, encodeFunctionData } from "viem";
-import { MaxUint128 } from "@cryptoalgebra/custom-pools-sdk";
+import { useContractWrite, useSimulateContract } from "wagmi";
+import { encodeFunctionData } from "viem";
+import { MaxUint128 } from "@cryptoalgebra/sdk";
 import { useFarmCheckApprove } from "./useFarmCheckApprove";
 import { useEffect, useState } from "react";
+import { useTransactionAwait } from "../common/useTransactionAwait";
+import { Address } from "viem";
 import { FARMING_CENTER } from "@/data/algebra/addresses";
 import { farmingCenterABI } from "@/lib/abis/algebra-contracts/ABIs";
-import { farmingClient } from "@/lib/graphql/clients";
-import { Deposit } from "@/lib/graphql/generated/graphql";
-import { TransactionType } from "@/services/algebra/state/pendingTransactionsStore";
-import { useContractWrite, useSimulateContract } from "wagmi";
+import { farmingClient } from "../../graphql";
+import { Deposit } from "../../graphql/generated/graphql";
+import { TransactionType } from "../../state/pendingTransactionsStore";
 
 export function useFarmStake({
   tokenId,
@@ -47,7 +48,7 @@ export function useFarmStake({
   const { data: data, writeContractAsync: onStake } = useContractWrite();
 
   const { isLoading, isSuccess } = useTransactionAwait(data, {
-    title: `Stake Position #${tokenId}`,
+    title: `Farm Stake`,
     tokenId: tokenId.toString(),
     type: TransactionType.FARM,
   });
@@ -67,8 +68,10 @@ export function useFarmStake({
             if (!currentPos) return;
 
             if (currentPos.eternalFarming !== null) {
-              setIsQueryLoading(false);
-              clearInterval(interval);
+              query.refetch().then(() => {
+                setIsQueryLoading(false);
+                clearInterval(interval);
+              });
             } else {
               query.refetch().then();
             }
@@ -83,7 +86,7 @@ export function useFarmStake({
   return {
     isLoading: isQueryLoading || isLoading,
     isSuccess,
-    onStake: () => onStake && config && onStake(config?.request),
+    onStake: () => config && onStake(config.request),
   };
 }
 
@@ -146,7 +149,7 @@ export function useFarmUnstake({
   const { data: data, writeContractAsync: onUnstake } = useContractWrite();
 
   const { isLoading, isSuccess } = useTransactionAwait(data, {
-    title: `Unstake Position #${tokenId}`,
+    title: `Farm Unstake`,
     tokenId: tokenId.toString(),
     type: TransactionType.FARM,
   });
@@ -166,8 +169,10 @@ export function useFarmUnstake({
             if (!currentPos) return;
 
             if (currentPos.eternalFarming === null) {
-              setIsQueryLoading(false);
-              clearInterval(interval);
+              query.refetch().then(() => {
+                setIsQueryLoading(false);
+                clearInterval(interval);
+              });
             } else {
               query.refetch().then();
             }
@@ -182,6 +187,6 @@ export function useFarmUnstake({
   return {
     isLoading: isLoading || isQueryLoading,
     isSuccess,
-    onUnstake: () => onUnstake && config && onUnstake(config?.request),
+    onUnstakes: () => config && onUnstake(config.request),
   };
 }

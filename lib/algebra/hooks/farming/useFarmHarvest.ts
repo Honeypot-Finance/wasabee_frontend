@@ -1,10 +1,11 @@
 import { useContractWrite, useSimulateContract } from "wagmi";
+import { encodeFunctionData } from "viem";
 import { useTransactionAwait } from "../common/useTransactionAwait";
-import { Address, encodeFunctionData } from "viem";
+import { Address } from "viem";
 import { FARMING_CENTER } from "@/data/algebra/addresses";
 import { farmingCenterABI } from "@/lib/abis/algebra-contracts/ABIs";
-import { Deposit } from "@/lib/graphql/generated/graphql";
-import { TransactionType } from "@/services/algebra/state/pendingTransactionsStore";
+import { Deposit } from "../../graphql/generated/graphql";
+import { TransactionType } from "../../state/pendingTransactionsStore";
 import { getRewardsCalldata } from "../../utils/farming/getRewardsCalldata";
 
 export function useFarmHarvest({
@@ -41,7 +42,7 @@ export function useFarmHarvest({
   const { data: data, writeContractAsync: onHarvest } = useContractWrite();
 
   const { isLoading, isSuccess } = useTransactionAwait(data, {
-    title: `Harvest Position #${tokenId}`,
+    title: `Farm Harvest`,
     tokenId: tokenId.toString(),
     type: TransactionType.FARM,
   });
@@ -49,7 +50,7 @@ export function useFarmHarvest({
   return {
     isLoading,
     isSuccess,
-    onHarvest: () => onHarvest && config && onHarvest(config?.request),
+    onHarvest: () => config && onHarvest(config.request),
   };
 }
 
@@ -109,6 +110,6 @@ export function useFarmHarvestAll(
   return {
     isLoading,
     isSuccess,
-    onHarvestAll: () => onHarvestAll && config && onHarvestAll(config?.request),
+    onHarvestAll: () => config && onHarvestAll(config.request),
   };
 }

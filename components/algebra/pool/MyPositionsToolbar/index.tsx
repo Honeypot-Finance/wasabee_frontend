@@ -1,10 +1,10 @@
+import { Button } from "@/components/algebra/ui/button";
+import { formatPlural } from "@/lib/algebra/utils/common/formatPlural";
+import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { Address } from "viem";
 import FilterPopover from "../FilterPopover";
 import { Link, SlidersHorizontal } from "lucide-react";
-import { formatPlural } from "@/lib/algebra/utils/common/formatPlural";
-import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { FormattedPosition } from "@/types/algebra/types/formatted-position";
-import { Button } from "../../ui/button";
 
 interface MyPositionsToolbar {
   positionsData: FormattedPosition[];

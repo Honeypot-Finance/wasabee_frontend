@@ -1,10 +1,14 @@
-import { usePositionFilterStore } from "@/services/algebra/state/positionFilterStore";
+import { Switch } from "@/components/algebra/ui/switch";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/algebra/ui/popover";
+import React, { useState } from "react";
+import { Button } from "@/components/algebra/ui/button";
+import { cn } from "@/lib/tailwindcss";
+import { usePositionFilterStore } from "@/lib/algebra/state/positionFilterStore";
 import { PositionsStatus } from "@/types/algebra/types/position-filter-status";
-import { cn } from "@nextui-org/theme";
-import { useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
-import { Button } from "../../ui/button";
-import { Switch } from "../../ui/switch";
 
 const FilterPopover = ({ children }: { children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);

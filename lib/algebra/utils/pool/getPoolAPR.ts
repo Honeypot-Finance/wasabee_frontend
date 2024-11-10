@@ -4,13 +4,8 @@ export async function getPoolAPR(poolId: Address) {
   if (!poolId) return;
 
   const poolsAPR = await fetch(
-    "http://localhost/api/APR/pools/?network=berachain"
-  )
-    .then((v) => v?.json())
-    .catch((e) => {
-      console.error(e);
-      return {};
-    });
+    "https://api.dexed.org/api/APR/pools/?network=goerli"
+  ).then((v) => v.json());
 
   if (poolsAPR[poolId.toLowerCase()]) {
     return poolsAPR[poolId.toLowerCase()];

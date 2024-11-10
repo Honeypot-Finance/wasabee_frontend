@@ -7,9 +7,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/algebra/ui/dialog";
-import { IDerivedMintInfo } from "@/services/algebra/state/mintStore";
+import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
 import { ManageLiquidity } from "@/types/algebra/types/manage-liquidity";
-import { Currency } from "@cryptoalgebra/custom-pools-sdk";
+import { Currency } from "@cryptoalgebra/sdk";
 import { useState } from "react";
 
 interface IncreaseLiquidityModalProps {

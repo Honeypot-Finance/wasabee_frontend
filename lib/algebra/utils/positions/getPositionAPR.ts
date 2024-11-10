@@ -1,11 +1,10 @@
-import { algebraPoolABI } from "@/lib/abis/algebra-contracts/ABIs";
+import { Position } from "@cryptoalgebra/sdk";
+import { Address } from "viem";
 import {
   PoolFieldsFragment,
   PoolFeeDataFieldsFragment,
-} from "@/lib/graphql/generated/graphql";
-import { wallet } from "@/services/wallet";
-import { Position } from "@cryptoalgebra/custom-pools-sdk";
-import { Address, getContract } from "viem";
+} from "../../graphql/generated/graphql";
+import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
 
 export async function getPositionAPR(
   poolId: Address,
@@ -16,11 +15,9 @@ export async function getPositionAPR(
 ) {
   if (!pool || !poolFeeData || !nativePrice) return;
 
-  const algebraPool = getContract({
-    abi: algebraPoolABI,
+  const algebraPool = new AlgebraPoolContract({
     address: poolId,
-    client: wallet.publicClient,
-  });
+  }).contract;
 
   try {
     const liquidity = await algebraPool.read.liquidity();

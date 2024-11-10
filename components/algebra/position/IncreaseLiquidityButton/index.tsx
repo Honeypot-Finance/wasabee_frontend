@@ -1,17 +1,5 @@
 import Loader from "@/components/algebra/common/Loader";
 import { Button } from "@/components/algebra/ui/button";
-import {
-  Currency,
-  Field,
-  NonfungiblePositionManager,
-  Percent,
-  ZERO,
-} from "@cryptoalgebra/custom-pools-sdk";
-import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
-import JSBI from "jsbi";
-import { useEffect, useMemo } from "react";
-import { useAccount, useContractWrite, useWriteContract } from "wagmi";
-import { Address } from "viem";
 import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
 import {
   DEFAULT_CHAIN_ID,
@@ -20,13 +8,26 @@ import {
 import { useApprove } from "@/lib/algebra/hooks/common/useApprove";
 import { useTransactionAwait } from "@/lib/algebra/hooks/common/useTransactionAwait";
 import {
-  usePositions,
   usePosition,
+  usePositions,
 } from "@/lib/algebra/hooks/positions/usePositions";
-import { IDerivedMintInfo } from "@/services/algebra/state/mintStore";
-import { TransactionType } from "@/services/algebra/state/pendingTransactionsStore";
-import { useUserState } from "@/services/algebra/state/userStore";
+import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
+import { TransactionType } from "@/lib/algebra/state/pendingTransactionsStore";
+import { useUserState } from "@/lib/algebra/state/userStore";
 import { ApprovalState } from "@/types/algebra/types/approve-state";
+import {
+  ADDRESS_ZERO,
+  Currency,
+  Field,
+  NonfungiblePositionManager,
+  Percent,
+  ZERO,
+} from "@cryptoalgebra/sdk";
+import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
+import { Address } from "viem";
+import JSBI from "jsbi";
+import { useEffect, useMemo } from "react";
+import { useAccount, useContractWrite } from "wagmi";
 import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
 
 interface IncreaseLiquidityButtonProps {
@@ -48,11 +49,6 @@ export const IncreaseLiquidityButton = ({
   handleCloseModal,
 }: IncreaseLiquidityButtonProps) => {
   const { address: account } = useAccount();
-
-  const { open } = useWeb3Modal();
-
-  const { selectedNetworkId } = useWeb3ModalState();
-
   const { txDeadline } = useUserState();
 
   const { refetch: refetchAllPositions } = usePositions();
@@ -79,6 +75,7 @@ export const IncreaseLiquidityButton = ({
         ? ZERO_PERCENT
         : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE,
       deadline: Date.now() + txDeadline,
+      deployer: ADDRESS_ZERO,
       useNative,
     });
   }, [mintInfo, account, tokenId, txDeadline, useNative]);
@@ -125,7 +122,7 @@ export const IncreaseLiquidityButton = ({
     });
 
   const { data: increaseLiquidityData, writeContract: increaseLiquidity } =
-    useWriteContract();
+    useContractWrite();
 
   const { isLoading: isIncreaseLiquidityLoading, isSuccess } =
     useTransactionAwait(increaseLiquidityData, {
@@ -141,18 +138,6 @@ export const IncreaseLiquidityButton = ({
       handleCloseModal?.()
     );
   }, [isSuccess]);
-
-  const isWrongChain = Number(selectedNetworkId) !== DEFAULT_CHAIN_ID;
-
-  if (!account) return <Button onClick={() => open()}>Connect Wallet</Button>;
-
-  if (isWrongChain)
-    return (
-      <Button
-        variant={"destructive"}
-        onClick={() => open({ view: "Networks" })}
-      >{`Connect to ${DEFAULT_CHAIN_NAME}`}</Button>
-    );
 
   if (mintInfo.errorMessage)
     return <Button disabled>{mintInfo.errorMessage}</Button>;
@@ -193,7 +178,6 @@ export const IncreaseLiquidityButton = ({
     <Button
       disabled={!isReady || isIncreaseLiquidityLoading}
       onClick={() =>
-        increaseLiquidity &&
         increaseLiquidityConfig &&
         increaseLiquidity(increaseLiquidityConfig.request)
       }

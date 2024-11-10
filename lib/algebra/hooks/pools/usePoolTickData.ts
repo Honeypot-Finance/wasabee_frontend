@@ -1,20 +1,18 @@
 import {
-  Pool,
+  Currency,
   TickMath,
   Token,
-  computeCustomPoolAddress,
+  computePoolAddress,
   tickToPrice,
-} from "@cryptoalgebra/custom-pools-sdk";
+} from "@cryptoalgebra/sdk";
 import { useState } from "react";
 import { Address } from "viem";
 import keyBy from "lodash.keyby";
 import {
+  useSinglePoolLazyQuery,
   useAllTicksLazyQuery,
   TickFieldsFragment,
-} from "@/lib/graphql/generated/graphql";
-import { readAlgebraFactoryComputeCustomPoolAddress } from "@/wagmi-generated";
-import { wallet } from "@/services/wallet";
-import { config } from "@/config/wagmi";
+} from "../../graphql/generated/graphql";
 
 interface TickProcessed {
   liquidityActive: bigint;
@@ -40,6 +38,7 @@ export function useInfoTickData() {
   const [ticksResult, setTicksResult] = useState<TicksResult | null>(null);
   const [ticksLoading, setTicksLoading] = useState(false);
 
+  const [getPool] = useSinglePoolLazyQuery();
   const [getAllTicks] = useAllTicksLazyQuery();
 
   async function fetchInitializedTicks(poolAddress: Address) {
@@ -50,7 +49,7 @@ export function useInfoTickData() {
     do {
       const { data: ticks } = await getAllTicks({
         variables: {
-          poolAddress: poolAddress.toLowerCase(),
+          poolAddress,
           skip,
         },
       });
@@ -70,175 +69,193 @@ export function useInfoTickData() {
     return { ticks: surroundingTicksResult, loading: false, error: false };
   }
 
-  async function fetchTicksSurroundingPrice(pool: Pool) {
+  async function fetchTicksSurroundingPrice(
+    currencyA: Currency,
+    currencyB: Currency
+  ) {
     setTicksLoading(true);
 
-    const { tickCurrent: poolCurrentTick, liquidity, token0, token1 } = pool;
+    const poolId = computePoolAddress({
+      tokenA: currencyA.wrapped,
+      tokenB: currencyB.wrapped,
+    }).toLowerCase() as Address;
 
-    console.log("pool", pool);
-
-    const poolId = await readAlgebraFactoryComputeCustomPoolAddress(config, {
-      args: [
-        token0.address as Address,
-        token1.address as Address,
-        pool.deployer as Address,
-      ],
+    const { data: pool } = await getPool({
+      variables: {
+        poolId,
+      },
     });
 
-    const tickSpacing = Number(pool.tickSpacing);
+    try {
+      if (!pool?.pool) return;
 
-    const poolCurrentTickIdx = parseInt(poolCurrentTick.toString());
+      const {
+        tick: poolCurrentTick,
+        liquidity,
+        token0: { id: token0Address, decimals: token0Decimals },
+        token1: { id: token1Address, decimals: token1Decimals },
+      } = pool.pool;
 
-    const activeTickIdx =
-      Math.floor(poolCurrentTickIdx / tickSpacing) * tickSpacing;
+      const tickSpacing = Number(pool.pool.tickSpacing);
 
-    const initializedTicksResult = await fetchInitializedTicks(poolId);
+      const poolCurrentTickIdx = parseInt(poolCurrentTick);
 
-    if (initializedTicksResult.error || initializedTicksResult.loading) {
-      return {
-        error: initializedTicksResult.error,
-        loading: initializedTicksResult.loading,
-      };
-    }
+      const activeTickIdx =
+        Math.floor(poolCurrentTickIdx / tickSpacing) * tickSpacing;
 
-    const { ticks: initializedTicks } = initializedTicksResult;
+      const initializedTicksResult = await fetchInitializedTicks(poolId);
 
-    const tickIdxToInitializedTick = keyBy(initializedTicks, "tickIdx");
+      if (initializedTicksResult.error || initializedTicksResult.loading) {
+        return {
+          error: initializedTicksResult.error,
+          loading: initializedTicksResult.loading,
+        };
+      }
 
-    let activeTickIdxForPrice = activeTickIdx;
-    if (activeTickIdxForPrice < TickMath.MIN_TICK) {
-      activeTickIdxForPrice = TickMath.MIN_TICK;
-    }
-    if (activeTickIdxForPrice > TickMath.MAX_TICK) {
-      activeTickIdxForPrice = TickMath.MAX_TICK;
-    }
+      const { ticks: initializedTicks } = initializedTicksResult;
 
-    const activeTickProcessed = {
-      liquidityActive: BigInt(liquidity.toString()),
-      tickIdx: activeTickIdx,
-      liquidityNet: BigInt(0),
-      price0: tickToPrice(token0, token1, activeTickIdxForPrice).toFixed(
-        PRICE_FIXED_DIGITS
-      ),
-      price1: tickToPrice(token1, token0, activeTickIdxForPrice).toFixed(
-        PRICE_FIXED_DIGITS
-      ),
-      liquidityGross: BigInt(0),
-    };
+      const tickIdxToInitializedTick = keyBy(initializedTicks, "tickIdx");
 
-    const activeTick = tickIdxToInitializedTick[activeTickIdx];
-    if (activeTick) {
-      activeTickProcessed.liquidityGross = BigInt(activeTick.liquidityGross);
-      activeTickProcessed.liquidityNet = BigInt(activeTick.liquidityNet);
-    }
+      const token0 = new Token(1, token0Address, parseInt(token0Decimals));
+      const token1 = new Token(1, token1Address, parseInt(token1Decimals));
 
-    const Direction = {
-      ASC: "ASC",
-      DESC: "DESC",
-    };
+      let activeTickIdxForPrice = activeTickIdx;
+      if (activeTickIdxForPrice < TickMath.MIN_TICK) {
+        activeTickIdxForPrice = TickMath.MIN_TICK;
+      }
+      if (activeTickIdxForPrice > TickMath.MAX_TICK) {
+        activeTickIdxForPrice = TickMath.MAX_TICK;
+      }
 
-    // Computes the numSurroundingTicks above or below the active tick.
-    const computeSurroundingTicks = (
-      activeTickProcessed: TickProcessed,
-      tickSpacing: number,
-      numSurroundingTicks: number,
-      direction: string
-    ) => {
-      let previousTickProcessed = {
-        ...activeTickProcessed,
+      const activeTickProcessed = {
+        liquidityActive: BigInt(liquidity),
+        tickIdx: activeTickIdx,
+        liquidityNet: BigInt(0),
+        price0: tickToPrice(token0, token1, activeTickIdxForPrice).toFixed(
+          PRICE_FIXED_DIGITS
+        ),
+        price1: tickToPrice(token1, token0, activeTickIdxForPrice).toFixed(
+          PRICE_FIXED_DIGITS
+        ),
+        liquidityGross: BigInt(0),
       };
 
-      // Iterate outwards (either up or down depending on 'Direction') from the active tick,
-      // building active liquidity for every tick.
-      let processedTicks = [];
-      for (let i = 0; i < numSurroundingTicks; i++) {
-        const currentTickIdx =
-          direction == Direction.ASC
-            ? previousTickProcessed.tickIdx + tickSpacing
-            : previousTickProcessed.tickIdx - tickSpacing;
+      const activeTick = tickIdxToInitializedTick[activeTickIdx];
+      if (activeTick) {
+        activeTickProcessed.liquidityGross = BigInt(activeTick.liquidityGross);
+        activeTickProcessed.liquidityNet = BigInt(activeTick.liquidityNet);
+      }
 
-        if (
-          currentTickIdx < TickMath.MIN_TICK ||
-          currentTickIdx > TickMath.MAX_TICK
-        ) {
-          break;
-        }
+      const Direction = {
+        ASC: "ASC",
+        DESC: "DESC",
+      };
 
-        const currentTickProcessed = {
-          liquidityActive: previousTickProcessed.liquidityActive,
-          tickIdx: currentTickIdx,
-          liquidityNet: BigInt(0),
-          price0: tickToPrice(token0, token1, currentTickIdx).toFixed(
-            PRICE_FIXED_DIGITS
-          ),
-          price1: tickToPrice(token1, token0, currentTickIdx).toFixed(
-            PRICE_FIXED_DIGITS
-          ),
-          liquidityGross: BigInt(0),
+      // Computes the numSurroundingTicks above or below the active tick.
+      const computeSurroundingTicks = (
+        activeTickProcessed: TickProcessed,
+        tickSpacing: number,
+        numSurroundingTicks: number,
+        direction: string
+      ) => {
+        let previousTickProcessed = {
+          ...activeTickProcessed,
         };
 
-        const currentInitializedTick =
-          tickIdxToInitializedTick[currentTickIdx.toString()];
-        if (currentInitializedTick) {
-          currentTickProcessed.liquidityGross = BigInt(
-            currentInitializedTick.liquidityGross
-          );
-          currentTickProcessed.liquidityNet = BigInt(
-            currentInitializedTick.liquidityNet
-          );
+        // Iterate outwards (either up or down depending on 'Direction') from the active tick,
+        // building active liquidity for every tick.
+        let processedTicks = [];
+        for (let i = 0; i < numSurroundingTicks; i++) {
+          const currentTickIdx =
+            direction == Direction.ASC
+              ? previousTickProcessed.tickIdx + tickSpacing
+              : previousTickProcessed.tickIdx - tickSpacing;
+
+          if (
+            currentTickIdx < TickMath.MIN_TICK ||
+            currentTickIdx > TickMath.MAX_TICK
+          ) {
+            break;
+          }
+
+          const currentTickProcessed = {
+            liquidityActive: previousTickProcessed.liquidityActive,
+            tickIdx: currentTickIdx,
+            liquidityNet: BigInt(0),
+            price0: tickToPrice(token0, token1, currentTickIdx).toFixed(
+              PRICE_FIXED_DIGITS
+            ),
+            price1: tickToPrice(token1, token0, currentTickIdx).toFixed(
+              PRICE_FIXED_DIGITS
+            ),
+            liquidityGross: BigInt(0),
+          };
+
+          const currentInitializedTick =
+            tickIdxToInitializedTick[currentTickIdx.toString()];
+          if (currentInitializedTick) {
+            currentTickProcessed.liquidityGross = BigInt(
+              currentInitializedTick.liquidityGross
+            );
+            currentTickProcessed.liquidityNet = BigInt(
+              currentInitializedTick.liquidityNet
+            );
+          }
+
+          if (direction == Direction.ASC && currentInitializedTick) {
+            currentTickProcessed.liquidityActive =
+              BigInt(previousTickProcessed.liquidityActive) +
+              BigInt(currentInitializedTick.liquidityNet);
+          } else if (
+            direction == Direction.DESC &&
+            BigInt(previousTickProcessed.liquidityNet) !== BigInt(0)
+          ) {
+            currentTickProcessed.liquidityActive =
+              BigInt(previousTickProcessed.liquidityActive) -
+              BigInt(previousTickProcessed.liquidityNet);
+          }
+
+          processedTicks.push(currentTickProcessed);
+          previousTickProcessed = currentTickProcessed;
         }
 
-        if (direction == Direction.ASC && currentInitializedTick) {
-          currentTickProcessed.liquidityActive =
-            BigInt(previousTickProcessed.liquidityActive) +
-            BigInt(currentInitializedTick.liquidityNet);
-        } else if (
-          direction == Direction.DESC &&
-          BigInt(previousTickProcessed.liquidityNet) !== BigInt(0)
-        ) {
-          currentTickProcessed.liquidityActive =
-            BigInt(previousTickProcessed.liquidityActive) -
-            BigInt(previousTickProcessed.liquidityNet);
+        if (direction == Direction.DESC) {
+          processedTicks = processedTicks.reverse();
         }
 
-        processedTicks.push(currentTickProcessed);
-        previousTickProcessed = currentTickProcessed;
-      }
+        return processedTicks;
+      };
 
-      if (direction == Direction.DESC) {
-        processedTicks = processedTicks.reverse();
-      }
+      const subsequentTicks = computeSurroundingTicks(
+        activeTickProcessed,
+        tickSpacing,
+        numSurroundingTicks,
+        Direction.ASC
+      );
 
-      return processedTicks;
-    };
+      const previousTicks = computeSurroundingTicks(
+        activeTickProcessed,
+        tickSpacing,
+        numSurroundingTicks,
+        Direction.DESC
+      );
 
-    const subsequentTicks = computeSurroundingTicks(
-      activeTickProcessed,
-      tickSpacing,
-      numSurroundingTicks,
-      Direction.ASC
-    );
+      const ticksProcessed = previousTicks
+        .concat(activeTickProcessed)
+        .concat(subsequentTicks);
 
-    const previousTicks = computeSurroundingTicks(
-      activeTickProcessed,
-      tickSpacing,
-      numSurroundingTicks,
-      Direction.DESC
-    );
-
-    const ticksProcessed = previousTicks
-      .concat(activeTickProcessed)
-      .concat(subsequentTicks);
-
-    setTicksResult({
-      ticksProcessed,
-      tickSpacing: Number(tickSpacing),
-      activeTickIdx,
-      token0,
-      token1,
-    });
-
-    setTicksLoading(false);
+      setTicksResult({
+        ticksProcessed,
+        tickSpacing: Number(tickSpacing),
+        activeTickIdx,
+        token0,
+        token1,
+      });
+    } catch (err: any) {
+      throw new Error(err);
+    } finally {
+      setTicksLoading(false);
+    }
   }
 
   return {

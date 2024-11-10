@@ -1,12 +1,12 @@
-import { usePoolsStore } from "@/services/algebra/state/poolsStore";
+import { ADDRESS_ZERO } from "@cryptoalgebra/sdk";
+import { useEffect } from "react";
+import { Address } from "viem";
+import { usePoolsStore } from "../../state/poolsStore";
 import {
   useReadAlgebraPoolGlobalState,
   useReadAlgebraPoolPlugin,
   useReadAlgebraBasePluginIncentive,
 } from "@/wagmi-generated";
-import { ADDRESS_ZERO } from "@cryptoalgebra/custom-pools-sdk";
-import { useEffect } from "react";
-import { Address } from "viem";
 
 export function usePoolPlugins(poolId: Address | undefined) {
   const { pluginsForPools, setPluginsForPool } = usePoolsStore();
@@ -37,27 +37,14 @@ export function usePoolPlugins(poolId: Address | undefined) {
   const hasDynamicFee = globalState && Number(globalState[3]) >> 7 === 1;
 
   useEffect(() => {
-    if (
-      !poolId ||
-      isLoading ||
-      pluginsForPools[poolId.toLowerCase() as Address]
-    )
-      return;
+    if (!poolId || isLoading || pluginsForPools[poolId]) return;
 
-    console.log("Setting plugins for pool", poolId, pluginsForPools[poolId]);
     setPluginsForPool(poolId, {
       dynamicFeePlugin: Boolean(hasDynamicFee),
       farmingPlugin: hasFarmingPlugin !== ADDRESS_ZERO,
       limitOrderPlugin: false,
     });
-  }, [
-    poolId,
-    isLoading,
-    pluginsForPools,
-    hasDynamicFee,
-    hasFarmingPlugin,
-    setPluginsForPool,
-  ]);
+  }, [poolId, isLoading, pluginsForPools]);
 
   if (poolId && pluginsForPools[poolId]) {
     return {

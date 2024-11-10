@@ -1,24 +1,26 @@
-import { Currency, Field } from "@cryptoalgebra/custom-pools-sdk";
+import { useNeedAllowance } from "@/lib/algebra/hooks/common/useNeedAllowance";
+
+import { Currency, Field } from "@cryptoalgebra/sdk";
 import { useEffect, useMemo } from "react";
 import EnterAmountCard from "../EnterAmountsCard";
 import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
-import { useNeedAllowance } from "@/lib/algebra/hooks/common/useNeedAllowance";
 import {
   IDerivedMintInfo,
   useMintState,
   useMintActionHandlers,
-} from "@/services/algebra/state/mintStore";
+} from "@/lib/algebra/state/mintStore";
+
 interface EnterAmountsProps {
   currencyA: Currency | undefined;
   currencyB: Currency | undefined;
   mintInfo: IDerivedMintInfo;
 }
 
-const EnterAmounts: React.FC<EnterAmountsProps> = ({
+const EnterAmounts = ({
   currencyA,
   currencyB,
   mintInfo,
-}) => {
+}: EnterAmountsProps) => {
   const { independentField, typedValue } = useMintState();
 
   const { onFieldAInput, onFieldBInput } = useMintActionHandlers(

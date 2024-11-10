@@ -1,25 +1,22 @@
+import { useInfoTickData } from "@/lib/algebra/hooks/pools/usePoolTickData";
+
 import {
   CurrencyAmount,
-  INITIAL_POOL_FEE,
   Pool,
   Token,
   TickMath,
   Price,
   Currency,
   ADDRESS_ZERO,
-} from "@cryptoalgebra/custom-pools-sdk";
+} from "@cryptoalgebra/sdk";
 import { useEffect, useMemo, useState } from "react";
 import { Chart } from "./chart";
 import { Skeleton } from "@/components/algebra/ui/skeleton";
 import { MAX_UINT128 } from "@/data/algebra/max-uint128";
-import { useInfoTickData } from "@/lib/algebra/hooks/pools/usePoolTickData";
-import { useMintState } from "@/services/algebra/state/mintStore";
-import { Presets } from "@/types/algebra/types/presets";
-
+import { useMintState, Presets } from "@/lib/algebra/state/mintStore";
 interface LiquidityChartProps {
   currencyA: Currency | undefined;
   currencyB: Currency | undefined;
-  pool: Pool | null | undefined;
   currentPrice: number | undefined;
   priceLower: Price<Token, Token> | undefined;
   priceUpper: Price<Token, Token> | undefined;
@@ -30,7 +27,6 @@ interface LiquidityChartProps {
 const LiquidityChart = ({
   currencyA,
   currencyB,
-  pool,
   currentPrice,
   priceLower,
   priceUpper,
@@ -46,9 +42,9 @@ const LiquidityChart = ({
   } = useInfoTickData();
 
   useEffect(() => {
-    if (!pool) return;
-    fetchTicksSurroundingPrice(pool);
-  }, [pool]);
+    if (!currencyA || !currencyB) return;
+    fetchTicksSurroundingPrice(currencyA, currencyB);
+  }, [currencyA, currencyB]);
 
   useEffect(() => {
     if (!ticksResult || !ticksResult.ticksProcessed) return;
@@ -64,7 +60,7 @@ const LiquidityChart = ({
             {
               index: Number(t.tickIdx) - Number(ticksResult.tickSpacing),
               liquidityGross: t.liquidityGross.toString(),
-              liquidityNet: (t.liquidityNet * BigInt(-1)).toString(),
+              liquidityNet: (t.liquidityNet * BigInt(1)).toString(),
             },
             {
               index: t.tickIdx,
@@ -77,7 +73,7 @@ const LiquidityChart = ({
               ? new Pool(
                   currencyA.wrapped,
                   currencyB.wrapped,
-                  INITIAL_POOL_FEE,
+                  100,
                   sqrtPriceX96,
                   ADDRESS_ZERO,
                   t.liquidityActive.toString(),
@@ -212,19 +208,19 @@ const LiquidityChart = ({
 
 const LiquidityChartLoader = () => (
   <div className="flex items-end gap-4 w-full h-[250px]">
-    <Skeleton className="w-[40px] h-[120px] bg-orange-300 border-1" />
-    <Skeleton className="w-[40px] h-[130px] bg-orange-300 border-1" />
-    <Skeleton className="w-[40px] h-[160px] bg-orange-300 border-1" />
-    <Skeleton className="w-[40px] h-[130px] bg-orange-300 border-1" />
-    <Skeleton className="w-[40px] h-[120px] bg-orange-300 border-1" />
-    <Skeleton className="w-[40px] h-[160px] bg-orange-300 border-1" />
-    <Skeleton className="w-[40px] h-[200px] bg-orange-300 border-1" />
-    <Skeleton className="w-[40px] h-[140px] bg-orange-300 border-1" />
-    <Skeleton className="w-[40px] h-[130px] bg-orange-300 border-1" />
-    <Skeleton className="w-[40px] h-[120px] bg-orange-300 border-1" />
-    <Skeleton className="w-[40px] h-[140px] bg-orange-300 border-1" />
-    <Skeleton className="w-[40px] h-[120px] bg-orange-300 border-1" />
-    <Skeleton className="w-[40px] h-[190px] bg-orange-300 border-1" />
+    <Skeleton className="w-[40px] h-[120px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[130px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[160px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[130px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[120px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[160px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[200px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[140px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[130px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[120px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[140px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[120px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[190px] bg-card-light" />
   </div>
 );
 

@@ -1,16 +1,12 @@
 import { useMemo } from "react";
-import { Currency } from "@cryptoalgebra/custom-pools-sdk";
-import { Button } from "@/components/algebra/ui/button";
+import { Currency } from "@cryptoalgebra/sdk";
 import {
   IDerivedMintInfo,
   useMintState,
   useMintActionHandlers,
-} from "@/services/algebra/state/mintStore";
-import {
-  Presets,
-  PresetProfits,
-  PresetsArgs,
-} from "@/types/algebra/types/presets";
+} from "@/state/mintStore";
+import { PresetProfits, Presets, PresetsArgs } from "@/types/presets";
+import { Button } from "@/components/algebra/ui/button";
 
 interface RangeSidebarProps {
   currencyA: Currency | undefined;
@@ -118,7 +114,7 @@ const PresetTabs = ({ currencyA, currencyB, mintInfo }: RangeSidebarProps) => {
   }
 
   return (
-    <div className="flex h-fit bg-card rounded-3xl p-1">
+    <div className="flex h-fit w-fit bg-card rounded-3xl p-1">
       {presets.map((range) => (
         <Button
           variant={preset === range.type ? "iconActive" : "icon"}

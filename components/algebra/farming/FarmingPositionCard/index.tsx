@@ -1,5 +1,4 @@
 import { Deposit } from "@/graphql/generated/graphql";
-
 import { cn } from "@/lib/tailwindcss";
 import { FarmingPositionImg } from "../FarmingPositionImg";
 

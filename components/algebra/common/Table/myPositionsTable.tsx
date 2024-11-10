@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/algebra/ui/table";
+import { cn } from "@/lib/tailwindcss";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -19,9 +20,8 @@ import {
 import { ChevronDown } from "lucide-react";
 import { useCallback, useState } from "react";
 import { LoadingState } from "./loadingState";
-import { usePositionFilterStore } from "@/services/algebra/state/positionFilterStore";
+import { usePositionFilterStore } from "@/lib/algebra/state/positionFilterStore";
 import { PositionsStatus } from "@/types/algebra/types/position-filter-status";
-import { cn } from "@nextui-org/theme";
 
 interface MyPositionsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -194,7 +194,6 @@ const MyPositionsTable = <TData, TValue>({
       expandClosed,
       selectedRow,
       table,
-      //navigate,
     ]
   );
 

@@ -389,119 +389,6 @@ export const algebraBasePluginAbi = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// AlgebraCustomPoolDeployer
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const algebraCustomPoolDeployerAbi = [
-  {
-    type: 'constructor',
-    inputs: [
-      { name: '_entryPoint', internalType: 'address', type: 'address' },
-      { name: '_plugin', internalType: 'address', type: 'address' },
-    ],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: '', internalType: 'address', type: 'address' },
-      { name: '', internalType: 'address', type: 'address' },
-      { name: '', internalType: 'address', type: 'address' },
-      { name: '', internalType: 'address', type: 'address' },
-      { name: '', internalType: 'address', type: 'address' },
-      { name: '', internalType: 'bytes', type: 'bytes' },
-    ],
-    name: 'beforeCreatePoolHook',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'deployer', internalType: 'address', type: 'address' },
-      { name: 'creator', internalType: 'address', type: 'address' },
-      { name: 'tokenA', internalType: 'address', type: 'address' },
-      { name: 'tokenB', internalType: 'address', type: 'address' },
-      { name: 'data', internalType: 'bytes', type: 'bytes' },
-    ],
-    name: 'createCustomPool',
-    outputs: [{ name: 'customPool', internalType: 'address', type: 'address' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'entryPoint',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'plugin',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'poolToPlugin',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'pool', internalType: 'address', type: 'address' },
-      { name: 'newFee', internalType: 'uint16', type: 'uint16' },
-    ],
-    name: 'setFee',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'pool', internalType: 'address', type: 'address' },
-      { name: 'newPluginAddress', internalType: 'address', type: 'address' },
-    ],
-    name: 'setPlugin',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'pool', internalType: 'address', type: 'address' },
-      { name: 'newConfig', internalType: 'uint8', type: 'uint8' },
-    ],
-    name: 'setPluginConfig',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'pool', internalType: 'address', type: 'address' },
-      { name: '_plugin', internalType: 'address', type: 'address' },
-    ],
-    name: 'setPluginForPool',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'pool', internalType: 'address', type: 'address' },
-      { name: 'newTickSpacing', internalType: 'int24', type: 'int24' },
-    ],
-    name: 'setTickSpacing',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-] as const
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // AlgebraEternalFarming
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -3721,6 +3608,277 @@ export const algebraRouterConfig = {
 } as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// AlgebraVirtualPool
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const algebraVirtualPoolAbi = [
+  {
+    type: 'constructor',
+    inputs: [
+      { name: '_farmingAddress', internalType: 'address', type: 'address' },
+      { name: '_plugin', internalType: 'address', type: 'address' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  { type: 'error', inputs: [], name: 'invalidFeeWeights' },
+  { type: 'error', inputs: [], name: 'invalidNewMaxRate' },
+  { type: 'error', inputs: [], name: 'invalidNewMinRate' },
+  { type: 'error', inputs: [], name: 'liquidityAdd' },
+  { type: 'error', inputs: [], name: 'liquidityOverflow' },
+  { type: 'error', inputs: [], name: 'liquiditySub' },
+  { type: 'error', inputs: [], name: 'onlyFarming' },
+  { type: 'error', inputs: [], name: 'onlyPlugin' },
+  { type: 'error', inputs: [], name: 'tickInvalidLinks' },
+  { type: 'error', inputs: [], name: 'tickIsNotInitialized' },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'FEE_WEIGHT_DENOMINATOR',
+    outputs: [{ name: '', internalType: 'uint16', type: 'uint16' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'RATE_CHANGE_FREQUENCY',
+    outputs: [{ name: '', internalType: 'uint32', type: 'uint32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'token0Amount', internalType: 'uint128', type: 'uint128' },
+      { name: 'token1Amount', internalType: 'uint128', type: 'uint128' },
+    ],
+    name: 'addRewards',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'bottomTick', internalType: 'int24', type: 'int24' },
+      { name: 'topTick', internalType: 'int24', type: 'int24' },
+      { name: 'liquidityDelta', internalType: 'int128', type: 'int128' },
+      { name: 'currentTick', internalType: 'int24', type: 'int24' },
+    ],
+    name: 'applyLiquidityDeltaToPosition',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'targetTick', internalType: 'int24', type: 'int24' },
+      { name: 'zeroToOne', internalType: 'bool', type: 'bool' },
+      { name: 'feeAmount', internalType: 'uint128', type: 'uint128' },
+    ],
+    name: 'crossTo',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'currentLiquidity',
+    outputs: [{ name: '', internalType: 'uint128', type: 'uint128' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'deactivate',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'deactivated',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'token0Amount', internalType: 'uint128', type: 'uint128' },
+      { name: 'token1Amount', internalType: 'uint128', type: 'uint128' },
+    ],
+    name: 'decreaseRewards',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'distributeRewards',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'dynamicRateActivated',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'farmingAddress',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'feeWeights',
+    outputs: [
+      { name: 'weight0', internalType: 'uint16', type: 'uint16' },
+      { name: 'weight1', internalType: 'uint16', type: 'uint16' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'bottomTick', internalType: 'int24', type: 'int24' },
+      { name: 'topTick', internalType: 'int24', type: 'int24' },
+    ],
+    name: 'getInnerRewardsGrowth',
+    outputs: [
+      { name: 'rewardGrowthInside0', internalType: 'uint256', type: 'uint256' },
+      { name: 'rewardGrowthInside1', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'globalTick',
+    outputs: [{ name: '', internalType: 'int24', type: 'int24' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'plugin',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'prevTimestamp',
+    outputs: [{ name: '', internalType: 'uint32', type: 'uint32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'rateLimits',
+    outputs: [
+      { name: 'maxRewardRate0', internalType: 'uint128', type: 'uint128' },
+      { name: 'maxRewardRate1', internalType: 'uint128', type: 'uint128' },
+      { name: 'minRewardRate0', internalType: 'uint128', type: 'uint128' },
+      { name: 'minRewardRate1', internalType: 'uint128', type: 'uint128' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'rewardRates',
+    outputs: [
+      { name: 'rate0', internalType: 'uint128', type: 'uint128' },
+      { name: 'rate1', internalType: 'uint128', type: 'uint128' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'rewardReserves',
+    outputs: [
+      { name: 'reserve0', internalType: 'uint128', type: 'uint128' },
+      { name: 'reserve1', internalType: 'uint128', type: 'uint128' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_maxRate0', internalType: 'uint128', type: 'uint128' },
+      { name: '_maxRate1', internalType: 'uint128', type: 'uint128' },
+      { name: '_minRate0', internalType: 'uint128', type: 'uint128' },
+      { name: '_minRate1', internalType: 'uint128', type: 'uint128' },
+    ],
+    name: 'setDynamicRateLimits',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'rate0', internalType: 'uint128', type: 'uint128' },
+      { name: 'rate1', internalType: 'uint128', type: 'uint128' },
+    ],
+    name: 'setRates',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'weight0', internalType: 'uint16', type: 'uint16' },
+      { name: 'weight1', internalType: 'uint16', type: 'uint16' },
+    ],
+    name: 'setWeights',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'isActive', internalType: 'bool', type: 'bool' }],
+    name: 'switchDynamicRate',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'tickId', internalType: 'int24', type: 'int24' }],
+    name: 'ticks',
+    outputs: [
+      { name: 'liquidityTotal', internalType: 'uint256', type: 'uint256' },
+      { name: 'liquidityDelta', internalType: 'int128', type: 'int128' },
+      { name: 'prevTick', internalType: 'int24', type: 'int24' },
+      { name: 'nextTick', internalType: 'int24', type: 'int24' },
+      {
+        name: 'outerFeeGrowth0Token',
+        internalType: 'uint256',
+        type: 'uint256',
+      },
+      {
+        name: 'outerFeeGrowth1Token',
+        internalType: 'uint256',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'totalRewardGrowth',
+    outputs: [
+      { name: 'rewardGrowth0', internalType: 'uint256', type: 'uint256' },
+      { name: 'rewardGrowth1', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // AlgerbaQuoterV2
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -3774,8 +3932,8 @@ export const algerbaQuoterV2Abi = [
     ],
     name: 'quoteExactInput',
     outputs: [
-      { name: 'amountOutList', internalType: 'uint256[]', type: 'uint256[]' },
-      { name: 'amountInList', internalType: 'uint256[]', type: 'uint256[]' },
+      { name: 'amountOut', internalType: 'uint256', type: 'uint256' },
+      { name: 'amountIn', internalType: 'uint256', type: 'uint256' },
       {
         name: 'sqrtPriceX96AfterList',
         internalType: 'uint160[]',
@@ -3830,8 +3988,8 @@ export const algerbaQuoterV2Abi = [
     ],
     name: 'quoteExactOutput',
     outputs: [
-      { name: 'amountOutList', internalType: 'uint256[]', type: 'uint256[]' },
-      { name: 'amountInList', internalType: 'uint256[]', type: 'uint256[]' },
+      { name: 'amountOut', internalType: 'uint256', type: 'uint256' },
+      { name: 'amountIn', internalType: 'uint256', type: 'uint256' },
       {
         name: 'sqrtPriceX96AfterList',
         internalType: 'uint160[]',
@@ -4152,126 +4310,36 @@ export const farmingCenterConfig = {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const wrappedNativeAbi = [
-  {
-    constant: true,
-    payable: false,
-    type: 'function',
-    inputs: [],
-    name: 'name',
-    outputs: [{ name: '', type: 'string' }],
-    stateMutability: 'view',
-  },
-  {
-    constant: false,
-    payable: false,
-    type: 'function',
-    inputs: [
-      { name: 'guy', type: 'address' },
-      { name: 'wad', type: 'uint256' },
-    ],
-    name: 'approve',
-    outputs: [{ name: '', type: 'bool' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    constant: true,
-    payable: false,
-    type: 'function',
-    inputs: [],
-    name: 'totalSupply',
-    outputs: [{ name: '', type: 'uint256' }],
-    stateMutability: 'view',
-  },
-  {
-    constant: false,
-    payable: false,
-    type: 'function',
-    inputs: [
-      { name: 'src', type: 'address' },
-      { name: 'dst', type: 'address' },
-      { name: 'wad', type: 'uint256' },
-    ],
-    name: 'transferFrom',
-    outputs: [{ name: '', type: 'bool' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    constant: false,
-    payable: false,
-    type: 'function',
-    inputs: [{ name: 'wad', type: 'uint256' }],
-    name: 'withdraw',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    constant: true,
-    payable: false,
-    type: 'function',
-    inputs: [],
-    name: 'decimals',
-    outputs: [{ name: '', type: 'uint8' }],
-    stateMutability: 'view',
-  },
-  {
-    constant: true,
-    payable: false,
-    type: 'function',
-    inputs: [{ name: '', type: 'address' }],
-    name: 'balanceOf',
-    outputs: [{ name: '', type: 'uint256' }],
-    stateMutability: 'view',
-  },
-  {
-    constant: true,
-    payable: false,
-    type: 'function',
-    inputs: [],
-    name: 'symbol',
-    outputs: [{ name: '', type: 'string' }],
-    stateMutability: 'view',
-  },
-  {
-    constant: false,
-    payable: false,
-    type: 'function',
-    inputs: [
-      { name: 'dst', type: 'address' },
-      { name: 'wad', type: 'uint256' },
-    ],
-    name: 'transfer',
-    outputs: [{ name: '', type: 'bool' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    constant: false,
-    payable: true,
-    type: 'function',
-    inputs: [],
-    name: 'deposit',
-    outputs: [],
-    stateMutability: 'payable',
-  },
-  {
-    constant: true,
-    payable: false,
-    type: 'function',
-    inputs: [
-      { name: '', type: 'address' },
-      { name: '', type: 'address' },
-    ],
-    name: 'allowance',
-    outputs: [{ name: '', type: 'uint256' }],
-    stateMutability: 'view',
-  },
-  { payable: true, type: 'fallback', stateMutability: 'payable' },
+  { type: 'error', inputs: [], name: 'AllowanceOverflow' },
+  { type: 'error', inputs: [], name: 'AllowanceUnderflow' },
+  { type: 'error', inputs: [], name: 'ETHTransferFailed' },
+  { type: 'error', inputs: [], name: 'InsufficientAllowance' },
+  { type: 'error', inputs: [], name: 'InsufficientBalance' },
+  { type: 'error', inputs: [], name: 'InvalidPermit' },
+  { type: 'error', inputs: [], name: 'PermitExpired' },
+  { type: 'error', inputs: [], name: 'TotalSupplyOverflow' },
   {
     type: 'event',
     anonymous: false,
     inputs: [
-      { name: 'src', type: 'address', indexed: true },
-      { name: 'guy', type: 'address', indexed: true },
-      { name: 'wad', type: 'uint256', indexed: false },
+      {
+        name: 'owner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'spender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
     ],
     name: 'Approval',
   },
@@ -4279,18 +4347,13 @@ export const wrappedNativeAbi = [
     type: 'event',
     anonymous: false,
     inputs: [
-      { name: 'src', type: 'address', indexed: true },
-      { name: 'dst', type: 'address', indexed: true },
-      { name: 'wad', type: 'uint256', indexed: false },
-    ],
-    name: 'Transfer',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'dst', type: 'address', indexed: true },
-      { name: 'wad', type: 'uint256', indexed: false },
+      { name: 'from', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
     ],
     name: 'Deposit',
   },
@@ -4298,11 +4361,151 @@ export const wrappedNativeAbi = [
     type: 'event',
     anonymous: false,
     inputs: [
-      { name: 'src', type: 'address', indexed: true },
-      { name: 'wad', type: 'uint256', indexed: false },
+      { name: 'from', internalType: 'address', type: 'address', indexed: true },
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Transfer',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
     ],
     name: 'Withdrawal',
   },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'DOMAIN_SEPARATOR',
+    outputs: [{ name: 'result', internalType: 'bytes32', type: 'bytes32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'owner', internalType: 'address', type: 'address' },
+      { name: 'spender', internalType: 'address', type: 'address' },
+    ],
+    name: 'allowance',
+    outputs: [{ name: 'result', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'spender', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'approve',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
+    name: 'balanceOf',
+    outputs: [{ name: 'result', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'decimals',
+    outputs: [{ name: '', internalType: 'uint8', type: 'uint8' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'deposit',
+    outputs: [],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'name',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'pure',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
+    name: 'nonces',
+    outputs: [{ name: 'result', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'owner', internalType: 'address', type: 'address' },
+      { name: 'spender', internalType: 'address', type: 'address' },
+      { name: 'value', internalType: 'uint256', type: 'uint256' },
+      { name: 'deadline', internalType: 'uint256', type: 'uint256' },
+      { name: 'v', internalType: 'uint8', type: 'uint8' },
+      { name: 'r', internalType: 'bytes32', type: 'bytes32' },
+      { name: 's', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'permit',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'symbol',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'pure',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'totalSupply',
+    outputs: [{ name: 'result', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'transfer',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'from', internalType: 'address', type: 'address' },
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'transferFrom',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'amount', internalType: 'uint256', type: 'uint256' }],
+    name: 'withdraw',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  { type: 'receive', stateMutability: 'payable' },
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4760,170 +4963,6 @@ export const watchAlgebraBasePluginPriceChangeFactorEvent =
   /*#__PURE__*/ createWatchContractEvent({
     abi: algebraBasePluginAbi,
     eventName: 'PriceChangeFactor',
-  })
-
-/**
- * Wraps __{@link readContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__
- */
-export const readAlgebraCustomPoolDeployer = /*#__PURE__*/ createReadContract({
-  abi: algebraCustomPoolDeployerAbi,
-})
-
-/**
- * Wraps __{@link readContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"beforeCreatePoolHook"`
- */
-export const readAlgebraCustomPoolDeployerBeforeCreatePoolHook =
-  /*#__PURE__*/ createReadContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'beforeCreatePoolHook',
-  })
-
-/**
- * Wraps __{@link readContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"entryPoint"`
- */
-export const readAlgebraCustomPoolDeployerEntryPoint =
-  /*#__PURE__*/ createReadContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'entryPoint',
-  })
-
-/**
- * Wraps __{@link readContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"plugin"`
- */
-export const readAlgebraCustomPoolDeployerPlugin =
-  /*#__PURE__*/ createReadContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'plugin',
-  })
-
-/**
- * Wraps __{@link readContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"poolToPlugin"`
- */
-export const readAlgebraCustomPoolDeployerPoolToPlugin =
-  /*#__PURE__*/ createReadContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'poolToPlugin',
-  })
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__
- */
-export const writeAlgebraCustomPoolDeployer = /*#__PURE__*/ createWriteContract(
-  { abi: algebraCustomPoolDeployerAbi },
-)
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"createCustomPool"`
- */
-export const writeAlgebraCustomPoolDeployerCreateCustomPool =
-  /*#__PURE__*/ createWriteContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'createCustomPool',
-  })
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setFee"`
- */
-export const writeAlgebraCustomPoolDeployerSetFee =
-  /*#__PURE__*/ createWriteContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setFee',
-  })
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setPlugin"`
- */
-export const writeAlgebraCustomPoolDeployerSetPlugin =
-  /*#__PURE__*/ createWriteContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setPlugin',
-  })
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setPluginConfig"`
- */
-export const writeAlgebraCustomPoolDeployerSetPluginConfig =
-  /*#__PURE__*/ createWriteContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setPluginConfig',
-  })
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setPluginForPool"`
- */
-export const writeAlgebraCustomPoolDeployerSetPluginForPool =
-  /*#__PURE__*/ createWriteContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setPluginForPool',
-  })
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setTickSpacing"`
- */
-export const writeAlgebraCustomPoolDeployerSetTickSpacing =
-  /*#__PURE__*/ createWriteContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setTickSpacing',
-  })
-
-/**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__
- */
-export const simulateAlgebraCustomPoolDeployer =
-  /*#__PURE__*/ createSimulateContract({ abi: algebraCustomPoolDeployerAbi })
-
-/**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"createCustomPool"`
- */
-export const simulateAlgebraCustomPoolDeployerCreateCustomPool =
-  /*#__PURE__*/ createSimulateContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'createCustomPool',
-  })
-
-/**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setFee"`
- */
-export const simulateAlgebraCustomPoolDeployerSetFee =
-  /*#__PURE__*/ createSimulateContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setFee',
-  })
-
-/**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setPlugin"`
- */
-export const simulateAlgebraCustomPoolDeployerSetPlugin =
-  /*#__PURE__*/ createSimulateContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setPlugin',
-  })
-
-/**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setPluginConfig"`
- */
-export const simulateAlgebraCustomPoolDeployerSetPluginConfig =
-  /*#__PURE__*/ createSimulateContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setPluginConfig',
-  })
-
-/**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setPluginForPool"`
- */
-export const simulateAlgebraCustomPoolDeployerSetPluginForPool =
-  /*#__PURE__*/ createSimulateContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setPluginForPool',
-  })
-
-/**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setTickSpacing"`
- */
-export const simulateAlgebraCustomPoolDeployerSetTickSpacing =
-  /*#__PURE__*/ createSimulateContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setTickSpacing',
   })
 
 /**
@@ -7907,6 +7946,347 @@ export const simulateAlgebraRouterUnwrapWNativeTokenWithFee =
   })
 
 /**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__
+ */
+export const readAlgebraVirtualPool = /*#__PURE__*/ createReadContract({
+  abi: algebraVirtualPoolAbi,
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"FEE_WEIGHT_DENOMINATOR"`
+ */
+export const readAlgebraVirtualPoolFeeWeightDenominator =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'FEE_WEIGHT_DENOMINATOR',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"RATE_CHANGE_FREQUENCY"`
+ */
+export const readAlgebraVirtualPoolRateChangeFrequency =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'RATE_CHANGE_FREQUENCY',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"currentLiquidity"`
+ */
+export const readAlgebraVirtualPoolCurrentLiquidity =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'currentLiquidity',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"deactivated"`
+ */
+export const readAlgebraVirtualPoolDeactivated =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'deactivated',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"dynamicRateActivated"`
+ */
+export const readAlgebraVirtualPoolDynamicRateActivated =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'dynamicRateActivated',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"farmingAddress"`
+ */
+export const readAlgebraVirtualPoolFarmingAddress =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'farmingAddress',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"feeWeights"`
+ */
+export const readAlgebraVirtualPoolFeeWeights =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'feeWeights',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"getInnerRewardsGrowth"`
+ */
+export const readAlgebraVirtualPoolGetInnerRewardsGrowth =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'getInnerRewardsGrowth',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"globalTick"`
+ */
+export const readAlgebraVirtualPoolGlobalTick =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'globalTick',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"plugin"`
+ */
+export const readAlgebraVirtualPoolPlugin = /*#__PURE__*/ createReadContract({
+  abi: algebraVirtualPoolAbi,
+  functionName: 'plugin',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"prevTimestamp"`
+ */
+export const readAlgebraVirtualPoolPrevTimestamp =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'prevTimestamp',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"rateLimits"`
+ */
+export const readAlgebraVirtualPoolRateLimits =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'rateLimits',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"rewardRates"`
+ */
+export const readAlgebraVirtualPoolRewardRates =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'rewardRates',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"rewardReserves"`
+ */
+export const readAlgebraVirtualPoolRewardReserves =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'rewardReserves',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"ticks"`
+ */
+export const readAlgebraVirtualPoolTicks = /*#__PURE__*/ createReadContract({
+  abi: algebraVirtualPoolAbi,
+  functionName: 'ticks',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"totalRewardGrowth"`
+ */
+export const readAlgebraVirtualPoolTotalRewardGrowth =
+  /*#__PURE__*/ createReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'totalRewardGrowth',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__
+ */
+export const writeAlgebraVirtualPool = /*#__PURE__*/ createWriteContract({
+  abi: algebraVirtualPoolAbi,
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"addRewards"`
+ */
+export const writeAlgebraVirtualPoolAddRewards =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'addRewards',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"applyLiquidityDeltaToPosition"`
+ */
+export const writeAlgebraVirtualPoolApplyLiquidityDeltaToPosition =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'applyLiquidityDeltaToPosition',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"crossTo"`
+ */
+export const writeAlgebraVirtualPoolCrossTo = /*#__PURE__*/ createWriteContract(
+  { abi: algebraVirtualPoolAbi, functionName: 'crossTo' },
+)
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"deactivate"`
+ */
+export const writeAlgebraVirtualPoolDeactivate =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'deactivate',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"decreaseRewards"`
+ */
+export const writeAlgebraVirtualPoolDecreaseRewards =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'decreaseRewards',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"distributeRewards"`
+ */
+export const writeAlgebraVirtualPoolDistributeRewards =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'distributeRewards',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"setDynamicRateLimits"`
+ */
+export const writeAlgebraVirtualPoolSetDynamicRateLimits =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'setDynamicRateLimits',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"setRates"`
+ */
+export const writeAlgebraVirtualPoolSetRates =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'setRates',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"setWeights"`
+ */
+export const writeAlgebraVirtualPoolSetWeights =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'setWeights',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"switchDynamicRate"`
+ */
+export const writeAlgebraVirtualPoolSwitchDynamicRate =
+  /*#__PURE__*/ createWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'switchDynamicRate',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__
+ */
+export const simulateAlgebraVirtualPool = /*#__PURE__*/ createSimulateContract({
+  abi: algebraVirtualPoolAbi,
+})
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"addRewards"`
+ */
+export const simulateAlgebraVirtualPoolAddRewards =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'addRewards',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"applyLiquidityDeltaToPosition"`
+ */
+export const simulateAlgebraVirtualPoolApplyLiquidityDeltaToPosition =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'applyLiquidityDeltaToPosition',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"crossTo"`
+ */
+export const simulateAlgebraVirtualPoolCrossTo =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'crossTo',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"deactivate"`
+ */
+export const simulateAlgebraVirtualPoolDeactivate =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'deactivate',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"decreaseRewards"`
+ */
+export const simulateAlgebraVirtualPoolDecreaseRewards =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'decreaseRewards',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"distributeRewards"`
+ */
+export const simulateAlgebraVirtualPoolDistributeRewards =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'distributeRewards',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"setDynamicRateLimits"`
+ */
+export const simulateAlgebraVirtualPoolSetDynamicRateLimits =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'setDynamicRateLimits',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"setRates"`
+ */
+export const simulateAlgebraVirtualPoolSetRates =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'setRates',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"setWeights"`
+ */
+export const simulateAlgebraVirtualPoolSetWeights =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'setWeights',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"switchDynamicRate"`
+ */
+export const simulateAlgebraVirtualPoolSwitchDynamicRate =
+  /*#__PURE__*/ createSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'switchDynamicRate',
+  })
+
+/**
  * Wraps __{@link readContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__
  */
 export const readAlgerbaQuoterV2 = /*#__PURE__*/ createReadContract({
@@ -8331,27 +8711,20 @@ export const readWrappedNative = /*#__PURE__*/ createReadContract({
 })
 
 /**
- * Wraps __{@link readContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"name"`
+ * Wraps __{@link readContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"DOMAIN_SEPARATOR"`
  */
-export const readWrappedNativeName = /*#__PURE__*/ createReadContract({
-  abi: wrappedNativeAbi,
-  functionName: 'name',
-})
+export const readWrappedNativeDomainSeparator =
+  /*#__PURE__*/ createReadContract({
+    abi: wrappedNativeAbi,
+    functionName: 'DOMAIN_SEPARATOR',
+  })
 
 /**
- * Wraps __{@link readContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"totalSupply"`
+ * Wraps __{@link readContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"allowance"`
  */
-export const readWrappedNativeTotalSupply = /*#__PURE__*/ createReadContract({
+export const readWrappedNativeAllowance = /*#__PURE__*/ createReadContract({
   abi: wrappedNativeAbi,
-  functionName: 'totalSupply',
-})
-
-/**
- * Wraps __{@link readContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"decimals"`
- */
-export const readWrappedNativeDecimals = /*#__PURE__*/ createReadContract({
-  abi: wrappedNativeAbi,
-  functionName: 'decimals',
+  functionName: 'allowance',
 })
 
 /**
@@ -8363,6 +8736,30 @@ export const readWrappedNativeBalanceOf = /*#__PURE__*/ createReadContract({
 })
 
 /**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"decimals"`
+ */
+export const readWrappedNativeDecimals = /*#__PURE__*/ createReadContract({
+  abi: wrappedNativeAbi,
+  functionName: 'decimals',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"name"`
+ */
+export const readWrappedNativeName = /*#__PURE__*/ createReadContract({
+  abi: wrappedNativeAbi,
+  functionName: 'name',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"nonces"`
+ */
+export const readWrappedNativeNonces = /*#__PURE__*/ createReadContract({
+  abi: wrappedNativeAbi,
+  functionName: 'nonces',
+})
+
+/**
  * Wraps __{@link readContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"symbol"`
  */
 export const readWrappedNativeSymbol = /*#__PURE__*/ createReadContract({
@@ -8371,11 +8768,11 @@ export const readWrappedNativeSymbol = /*#__PURE__*/ createReadContract({
 })
 
 /**
- * Wraps __{@link readContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"allowance"`
+ * Wraps __{@link readContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"totalSupply"`
  */
-export const readWrappedNativeAllowance = /*#__PURE__*/ createReadContract({
+export const readWrappedNativeTotalSupply = /*#__PURE__*/ createReadContract({
   abi: wrappedNativeAbi,
-  functionName: 'allowance',
+  functionName: 'totalSupply',
 })
 
 /**
@@ -8394,6 +8791,30 @@ export const writeWrappedNativeApprove = /*#__PURE__*/ createWriteContract({
 })
 
 /**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"deposit"`
+ */
+export const writeWrappedNativeDeposit = /*#__PURE__*/ createWriteContract({
+  abi: wrappedNativeAbi,
+  functionName: 'deposit',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"permit"`
+ */
+export const writeWrappedNativePermit = /*#__PURE__*/ createWriteContract({
+  abi: wrappedNativeAbi,
+  functionName: 'permit',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"transfer"`
+ */
+export const writeWrappedNativeTransfer = /*#__PURE__*/ createWriteContract({
+  abi: wrappedNativeAbi,
+  functionName: 'transfer',
+})
+
+/**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"transferFrom"`
  */
 export const writeWrappedNativeTransferFrom = /*#__PURE__*/ createWriteContract(
@@ -8406,22 +8827,6 @@ export const writeWrappedNativeTransferFrom = /*#__PURE__*/ createWriteContract(
 export const writeWrappedNativeWithdraw = /*#__PURE__*/ createWriteContract({
   abi: wrappedNativeAbi,
   functionName: 'withdraw',
-})
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"transfer"`
- */
-export const writeWrappedNativeTransfer = /*#__PURE__*/ createWriteContract({
-  abi: wrappedNativeAbi,
-  functionName: 'transfer',
-})
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"deposit"`
- */
-export const writeWrappedNativeDeposit = /*#__PURE__*/ createWriteContract({
-  abi: wrappedNativeAbi,
-  functionName: 'deposit',
 })
 
 /**
@@ -8438,6 +8843,31 @@ export const simulateWrappedNativeApprove =
   /*#__PURE__*/ createSimulateContract({
     abi: wrappedNativeAbi,
     functionName: 'approve',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"deposit"`
+ */
+export const simulateWrappedNativeDeposit =
+  /*#__PURE__*/ createSimulateContract({
+    abi: wrappedNativeAbi,
+    functionName: 'deposit',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"permit"`
+ */
+export const simulateWrappedNativePermit = /*#__PURE__*/ createSimulateContract(
+  { abi: wrappedNativeAbi, functionName: 'permit' },
+)
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"transfer"`
+ */
+export const simulateWrappedNativeTransfer =
+  /*#__PURE__*/ createSimulateContract({
+    abi: wrappedNativeAbi,
+    functionName: 'transfer',
   })
 
 /**
@@ -8459,24 +8889,6 @@ export const simulateWrappedNativeWithdraw =
   })
 
 /**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"transfer"`
- */
-export const simulateWrappedNativeTransfer =
-  /*#__PURE__*/ createSimulateContract({
-    abi: wrappedNativeAbi,
-    functionName: 'transfer',
-  })
-
-/**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"deposit"`
- */
-export const simulateWrappedNativeDeposit =
-  /*#__PURE__*/ createSimulateContract({
-    abi: wrappedNativeAbi,
-    functionName: 'deposit',
-  })
-
-/**
  * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link wrappedNativeAbi}__
  */
 export const watchWrappedNativeEvent = /*#__PURE__*/ createWatchContractEvent({
@@ -8493,21 +8905,21 @@ export const watchWrappedNativeApprovalEvent =
   })
 
 /**
- * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link wrappedNativeAbi}__ and `eventName` set to `"Transfer"`
- */
-export const watchWrappedNativeTransferEvent =
-  /*#__PURE__*/ createWatchContractEvent({
-    abi: wrappedNativeAbi,
-    eventName: 'Transfer',
-  })
-
-/**
  * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link wrappedNativeAbi}__ and `eventName` set to `"Deposit"`
  */
 export const watchWrappedNativeDepositEvent =
   /*#__PURE__*/ createWatchContractEvent({
     abi: wrappedNativeAbi,
     eventName: 'Deposit',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link wrappedNativeAbi}__ and `eventName` set to `"Transfer"`
+ */
+export const watchWrappedNativeTransferEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: wrappedNativeAbi,
+    eventName: 'Transfer',
   })
 
 /**
@@ -8977,168 +9389,6 @@ export const useWatchAlgebraBasePluginPriceChangeFactorEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: algebraBasePluginAbi,
     eventName: 'PriceChangeFactor',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__
- */
-export const useReadAlgebraCustomPoolDeployer =
-  /*#__PURE__*/ createUseReadContract({ abi: algebraCustomPoolDeployerAbi })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"beforeCreatePoolHook"`
- */
-export const useReadAlgebraCustomPoolDeployerBeforeCreatePoolHook =
-  /*#__PURE__*/ createUseReadContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'beforeCreatePoolHook',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"entryPoint"`
- */
-export const useReadAlgebraCustomPoolDeployerEntryPoint =
-  /*#__PURE__*/ createUseReadContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'entryPoint',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"plugin"`
- */
-export const useReadAlgebraCustomPoolDeployerPlugin =
-  /*#__PURE__*/ createUseReadContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'plugin',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"poolToPlugin"`
- */
-export const useReadAlgebraCustomPoolDeployerPoolToPlugin =
-  /*#__PURE__*/ createUseReadContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'poolToPlugin',
-  })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__
- */
-export const useWriteAlgebraCustomPoolDeployer =
-  /*#__PURE__*/ createUseWriteContract({ abi: algebraCustomPoolDeployerAbi })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"createCustomPool"`
- */
-export const useWriteAlgebraCustomPoolDeployerCreateCustomPool =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'createCustomPool',
-  })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setFee"`
- */
-export const useWriteAlgebraCustomPoolDeployerSetFee =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setFee',
-  })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setPlugin"`
- */
-export const useWriteAlgebraCustomPoolDeployerSetPlugin =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setPlugin',
-  })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setPluginConfig"`
- */
-export const useWriteAlgebraCustomPoolDeployerSetPluginConfig =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setPluginConfig',
-  })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setPluginForPool"`
- */
-export const useWriteAlgebraCustomPoolDeployerSetPluginForPool =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setPluginForPool',
-  })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setTickSpacing"`
- */
-export const useWriteAlgebraCustomPoolDeployerSetTickSpacing =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setTickSpacing',
-  })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__
- */
-export const useSimulateAlgebraCustomPoolDeployer =
-  /*#__PURE__*/ createUseSimulateContract({ abi: algebraCustomPoolDeployerAbi })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"createCustomPool"`
- */
-export const useSimulateAlgebraCustomPoolDeployerCreateCustomPool =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'createCustomPool',
-  })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setFee"`
- */
-export const useSimulateAlgebraCustomPoolDeployerSetFee =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setFee',
-  })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setPlugin"`
- */
-export const useSimulateAlgebraCustomPoolDeployerSetPlugin =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setPlugin',
-  })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setPluginConfig"`
- */
-export const useSimulateAlgebraCustomPoolDeployerSetPluginConfig =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setPluginConfig',
-  })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setPluginForPool"`
- */
-export const useSimulateAlgebraCustomPoolDeployerSetPluginForPool =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setPluginForPool',
-  })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraCustomPoolDeployerAbi}__ and `functionName` set to `"setTickSpacing"`
- */
-export const useSimulateAlgebraCustomPoolDeployerSetTickSpacing =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: algebraCustomPoolDeployerAbi,
-    functionName: 'setTickSpacing',
   })
 
 /**
@@ -12167,6 +12417,350 @@ export const useSimulateAlgebraRouterUnwrapWNativeTokenWithFee =
   })
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__
+ */
+export const useReadAlgebraVirtualPool = /*#__PURE__*/ createUseReadContract({
+  abi: algebraVirtualPoolAbi,
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"FEE_WEIGHT_DENOMINATOR"`
+ */
+export const useReadAlgebraVirtualPoolFeeWeightDenominator =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'FEE_WEIGHT_DENOMINATOR',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"RATE_CHANGE_FREQUENCY"`
+ */
+export const useReadAlgebraVirtualPoolRateChangeFrequency =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'RATE_CHANGE_FREQUENCY',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"currentLiquidity"`
+ */
+export const useReadAlgebraVirtualPoolCurrentLiquidity =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'currentLiquidity',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"deactivated"`
+ */
+export const useReadAlgebraVirtualPoolDeactivated =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'deactivated',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"dynamicRateActivated"`
+ */
+export const useReadAlgebraVirtualPoolDynamicRateActivated =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'dynamicRateActivated',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"farmingAddress"`
+ */
+export const useReadAlgebraVirtualPoolFarmingAddress =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'farmingAddress',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"feeWeights"`
+ */
+export const useReadAlgebraVirtualPoolFeeWeights =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'feeWeights',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"getInnerRewardsGrowth"`
+ */
+export const useReadAlgebraVirtualPoolGetInnerRewardsGrowth =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'getInnerRewardsGrowth',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"globalTick"`
+ */
+export const useReadAlgebraVirtualPoolGlobalTick =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'globalTick',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"plugin"`
+ */
+export const useReadAlgebraVirtualPoolPlugin =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'plugin',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"prevTimestamp"`
+ */
+export const useReadAlgebraVirtualPoolPrevTimestamp =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'prevTimestamp',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"rateLimits"`
+ */
+export const useReadAlgebraVirtualPoolRateLimits =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'rateLimits',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"rewardRates"`
+ */
+export const useReadAlgebraVirtualPoolRewardRates =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'rewardRates',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"rewardReserves"`
+ */
+export const useReadAlgebraVirtualPoolRewardReserves =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'rewardReserves',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"ticks"`
+ */
+export const useReadAlgebraVirtualPoolTicks =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'ticks',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"totalRewardGrowth"`
+ */
+export const useReadAlgebraVirtualPoolTotalRewardGrowth =
+  /*#__PURE__*/ createUseReadContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'totalRewardGrowth',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__
+ */
+export const useWriteAlgebraVirtualPool = /*#__PURE__*/ createUseWriteContract({
+  abi: algebraVirtualPoolAbi,
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"addRewards"`
+ */
+export const useWriteAlgebraVirtualPoolAddRewards =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'addRewards',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"applyLiquidityDeltaToPosition"`
+ */
+export const useWriteAlgebraVirtualPoolApplyLiquidityDeltaToPosition =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'applyLiquidityDeltaToPosition',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"crossTo"`
+ */
+export const useWriteAlgebraVirtualPoolCrossTo =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'crossTo',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"deactivate"`
+ */
+export const useWriteAlgebraVirtualPoolDeactivate =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'deactivate',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"decreaseRewards"`
+ */
+export const useWriteAlgebraVirtualPoolDecreaseRewards =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'decreaseRewards',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"distributeRewards"`
+ */
+export const useWriteAlgebraVirtualPoolDistributeRewards =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'distributeRewards',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"setDynamicRateLimits"`
+ */
+export const useWriteAlgebraVirtualPoolSetDynamicRateLimits =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'setDynamicRateLimits',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"setRates"`
+ */
+export const useWriteAlgebraVirtualPoolSetRates =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'setRates',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"setWeights"`
+ */
+export const useWriteAlgebraVirtualPoolSetWeights =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'setWeights',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"switchDynamicRate"`
+ */
+export const useWriteAlgebraVirtualPoolSwitchDynamicRate =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'switchDynamicRate',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__
+ */
+export const useSimulateAlgebraVirtualPool =
+  /*#__PURE__*/ createUseSimulateContract({ abi: algebraVirtualPoolAbi })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"addRewards"`
+ */
+export const useSimulateAlgebraVirtualPoolAddRewards =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'addRewards',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"applyLiquidityDeltaToPosition"`
+ */
+export const useSimulateAlgebraVirtualPoolApplyLiquidityDeltaToPosition =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'applyLiquidityDeltaToPosition',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"crossTo"`
+ */
+export const useSimulateAlgebraVirtualPoolCrossTo =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'crossTo',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"deactivate"`
+ */
+export const useSimulateAlgebraVirtualPoolDeactivate =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'deactivate',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"decreaseRewards"`
+ */
+export const useSimulateAlgebraVirtualPoolDecreaseRewards =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'decreaseRewards',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"distributeRewards"`
+ */
+export const useSimulateAlgebraVirtualPoolDistributeRewards =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'distributeRewards',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"setDynamicRateLimits"`
+ */
+export const useSimulateAlgebraVirtualPoolSetDynamicRateLimits =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'setDynamicRateLimits',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"setRates"`
+ */
+export const useSimulateAlgebraVirtualPoolSetRates =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'setRates',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"setWeights"`
+ */
+export const useSimulateAlgebraVirtualPoolSetWeights =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'setWeights',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraVirtualPoolAbi}__ and `functionName` set to `"switchDynamicRate"`
+ */
+export const useSimulateAlgebraVirtualPoolSwitchDynamicRate =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: algebraVirtualPoolAbi,
+    functionName: 'switchDynamicRate',
+  })
+
+/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__
  */
 export const useReadAlgerbaQuoterV2 = /*#__PURE__*/ createUseReadContract({
@@ -12593,28 +13187,22 @@ export const useReadWrappedNative = /*#__PURE__*/ createUseReadContract({
 })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"name"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"DOMAIN_SEPARATOR"`
  */
-export const useReadWrappedNativeName = /*#__PURE__*/ createUseReadContract({
-  abi: wrappedNativeAbi,
-  functionName: 'name',
-})
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"totalSupply"`
- */
-export const useReadWrappedNativeTotalSupply =
+export const useReadWrappedNativeDomainSeparator =
   /*#__PURE__*/ createUseReadContract({
     abi: wrappedNativeAbi,
-    functionName: 'totalSupply',
+    functionName: 'DOMAIN_SEPARATOR',
   })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"decimals"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"allowance"`
  */
-export const useReadWrappedNativeDecimals = /*#__PURE__*/ createUseReadContract(
-  { abi: wrappedNativeAbi, functionName: 'decimals' },
-)
+export const useReadWrappedNativeAllowance =
+  /*#__PURE__*/ createUseReadContract({
+    abi: wrappedNativeAbi,
+    functionName: 'allowance',
+  })
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"balanceOf"`
@@ -12626,6 +13214,29 @@ export const useReadWrappedNativeBalanceOf =
   })
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"decimals"`
+ */
+export const useReadWrappedNativeDecimals = /*#__PURE__*/ createUseReadContract(
+  { abi: wrappedNativeAbi, functionName: 'decimals' },
+)
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"name"`
+ */
+export const useReadWrappedNativeName = /*#__PURE__*/ createUseReadContract({
+  abi: wrappedNativeAbi,
+  functionName: 'name',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"nonces"`
+ */
+export const useReadWrappedNativeNonces = /*#__PURE__*/ createUseReadContract({
+  abi: wrappedNativeAbi,
+  functionName: 'nonces',
+})
+
+/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"symbol"`
  */
 export const useReadWrappedNativeSymbol = /*#__PURE__*/ createUseReadContract({
@@ -12634,12 +13245,12 @@ export const useReadWrappedNativeSymbol = /*#__PURE__*/ createUseReadContract({
 })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"allowance"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"totalSupply"`
  */
-export const useReadWrappedNativeAllowance =
+export const useReadWrappedNativeTotalSupply =
   /*#__PURE__*/ createUseReadContract({
     abi: wrappedNativeAbi,
-    functionName: 'allowance',
+    functionName: 'totalSupply',
   })
 
 /**
@@ -12656,6 +13267,31 @@ export const useWriteWrappedNativeApprove =
   /*#__PURE__*/ createUseWriteContract({
     abi: wrappedNativeAbi,
     functionName: 'approve',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"deposit"`
+ */
+export const useWriteWrappedNativeDeposit =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: wrappedNativeAbi,
+    functionName: 'deposit',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"permit"`
+ */
+export const useWriteWrappedNativePermit = /*#__PURE__*/ createUseWriteContract(
+  { abi: wrappedNativeAbi, functionName: 'permit' },
+)
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"transfer"`
+ */
+export const useWriteWrappedNativeTransfer =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: wrappedNativeAbi,
+    functionName: 'transfer',
   })
 
 /**
@@ -12677,24 +13313,6 @@ export const useWriteWrappedNativeWithdraw =
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"transfer"`
- */
-export const useWriteWrappedNativeTransfer =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: wrappedNativeAbi,
-    functionName: 'transfer',
-  })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"deposit"`
- */
-export const useWriteWrappedNativeDeposit =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: wrappedNativeAbi,
-    functionName: 'deposit',
-  })
-
-/**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link wrappedNativeAbi}__
  */
 export const useSimulateWrappedNative = /*#__PURE__*/ createUseSimulateContract(
@@ -12708,6 +13326,33 @@ export const useSimulateWrappedNativeApprove =
   /*#__PURE__*/ createUseSimulateContract({
     abi: wrappedNativeAbi,
     functionName: 'approve',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"deposit"`
+ */
+export const useSimulateWrappedNativeDeposit =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: wrappedNativeAbi,
+    functionName: 'deposit',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"permit"`
+ */
+export const useSimulateWrappedNativePermit =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: wrappedNativeAbi,
+    functionName: 'permit',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"transfer"`
+ */
+export const useSimulateWrappedNativeTransfer =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: wrappedNativeAbi,
+    functionName: 'transfer',
   })
 
 /**
@@ -12729,24 +13374,6 @@ export const useSimulateWrappedNativeWithdraw =
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"transfer"`
- */
-export const useSimulateWrappedNativeTransfer =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: wrappedNativeAbi,
-    functionName: 'transfer',
-  })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link wrappedNativeAbi}__ and `functionName` set to `"deposit"`
- */
-export const useSimulateWrappedNativeDeposit =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: wrappedNativeAbi,
-    functionName: 'deposit',
-  })
-
-/**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link wrappedNativeAbi}__
  */
 export const useWatchWrappedNativeEvent =
@@ -12762,21 +13389,21 @@ export const useWatchWrappedNativeApprovalEvent =
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link wrappedNativeAbi}__ and `eventName` set to `"Transfer"`
- */
-export const useWatchWrappedNativeTransferEvent =
-  /*#__PURE__*/ createUseWatchContractEvent({
-    abi: wrappedNativeAbi,
-    eventName: 'Transfer',
-  })
-
-/**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link wrappedNativeAbi}__ and `eventName` set to `"Deposit"`
  */
 export const useWatchWrappedNativeDepositEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: wrappedNativeAbi,
     eventName: 'Deposit',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link wrappedNativeAbi}__ and `eventName` set to `"Transfer"`
+ */
+export const useWatchWrappedNativeTransferEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: wrappedNativeAbi,
+    eventName: 'Transfer',
   })
 
 /**

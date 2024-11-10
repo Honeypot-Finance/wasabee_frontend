@@ -1,29 +1,15 @@
 import {
-  ADDRESS_ZERO,
   Token,
   algebraPositionManagerABI,
-} from "@cryptoalgebra/custom-pools-sdk";
-import { useMemo } from "react";
-import {
-  useAccount,
-  useContractReads,
-  useReadContract,
-  useReadContracts,
-} from "wagmi";
-import { Address, zeroAddress } from "viem";
-import {
-  ALGEBRA_POSITION_MANAGER,
-  POOL_INIT_CODE_HASH,
-} from "@/data/algebra/addresses";
-import { DEFAULT_CHAIN_ID } from "@/data/algebra/default-chain-id";
-import { farmingClient } from "@/lib/graphql/clients";
-import { useDepositsQuery } from "@/lib/graphql/generated/graphql";
-
-import { ethers } from "ethers";
-import {
-  computeCustomPoolAddress,
   computePoolAddress,
-} from "../../utils/pool/computepool";
+} from "@cryptoalgebra/sdk";
+import { useMemo } from "react";
+import { useAccount, useContractReads } from "wagmi";
+import { Address } from "viem";
+import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
+import { DEFAULT_CHAIN_ID } from "@/data/algebra/default-chain-id";
+import { farmingClient } from "../../graphql";
+import { useDepositsQuery } from "../../graphql/generated/graphql";
 import { useReadAlgebraPositionManagerBalanceOf } from "@/wagmi-generated";
 
 export interface PositionFromTokenId {
@@ -37,7 +23,6 @@ export interface PositionFromTokenId {
   tickUpper: bigint;
   token0: Address;
   token1: Address;
-  deployer: Address;
   tokensOwed0: bigint;
   tokensOwed1: bigint;
   pool: Address;
@@ -59,57 +44,30 @@ function usePositionsFromTokenIds(tokenIds: any[] | undefined): {
     isError,
     error,
     refetch,
-  } = useReadContracts({
+  } = useContractReads({
     contracts: inputs.map((x) => ({
       address: ALGEBRA_POSITION_MANAGER,
       abi: algebraPositionManagerABI,
       functionName: "positions",
-      args: [Number(x)],
+      args: [[Number(x)]],
     })),
-    //cacheTime: 10_000,
+    // cacheTime: 10_000,
   });
 
-  console.log(inputs);
-  console.log(results);
+  const { address: account } = useAccount();
 
   const positions = useMemo(() => {
     if (!isLoading && !isError && tokenIds && !error) {
-      return (results as any[])
+      return results
         ?.filter((v) => !v.error)
         .map((call, i) => {
           const tokenId = tokenIds[i];
           const result = call.result as any;
-          const isBasePool = result[4] === ADDRESS_ZERO;
 
-          const pool = (
-            isBasePool
-              ? computePoolAddress({
-                  tokenA: new Token(DEFAULT_CHAIN_ID, result[2], 18),
-                  tokenB: new Token(DEFAULT_CHAIN_ID, result[3], 18),
-                })
-              : computeCustomPoolAddress({
-                  tokenA: new Token(DEFAULT_CHAIN_ID, result[2], 18),
-                  tokenB: new Token(DEFAULT_CHAIN_ID, result[3], 18),
-                  customPoolDeployer: result[4],
-                })
-          ) as Address;
-
-          console.log({
-            tokenId,
-            feeGrowthInside0LastX128: result[8],
-            feeGrowthInside1LastX128: result[9],
-            liquidity: result[7],
-            nonce: result[0],
-            operator: result[1],
-            tickLower: result[5],
-            tickUpper: result[6],
-            token0: result[2],
-            token1: result[3],
-            deployer: result[4],
-            tokensOwed0: result[10],
-            tokensOwed1: result[11],
-            pool,
-          });
+          const pool = computePoolAddress({
+            tokenA: new Token(DEFAULT_CHAIN_ID, result[2], 18),
+            tokenB: new Token(DEFAULT_CHAIN_ID, result[3], 18),
+          }) as Address;
 
           return {
             tokenId,
@@ -122,7 +80,6 @@ function usePositionsFromTokenIds(tokenIds: any[] | undefined): {
             tickUpper: result[6],
             token0: result[2],
             token1: result[3],
-            deployer: result[4],
             tokensOwed0: result[10],
             tokensOwed1: result[11],
             pool,
@@ -130,7 +87,7 @@ function usePositionsFromTokenIds(tokenIds: any[] | undefined): {
         });
     }
     return undefined;
-  }, [isLoading, isError, error, results, tokenIds]);
+  }, [isLoading, isError, error, results, tokenIds, account, refetch]);
 
   return useMemo(() => {
     return {
@@ -147,7 +104,7 @@ export function usePositions() {
   const { data: balanceResult, isLoading: balanceLoading } =
     useReadAlgebraPositionManagerBalanceOf({
       args: account ? [account] : undefined,
-      //cacheTime: 10_000,
+      // cacheTime: 10_000,
     });
 
   const tokenIdsArgs: [Address, number][] = useMemo(() => {
@@ -163,7 +120,7 @@ export function usePositions() {
   }, [account, balanceResult]);
 
   const { data: tokenIdResults, isLoading: someTokenIdsLoading } =
-    useReadContracts({
+    useContractReads({
       contracts: tokenIdsArgs.map((args) => ({
         address: ALGEBRA_POSITION_MANAGER,
         abi: algebraPositionManagerABI,
@@ -173,24 +130,12 @@ export function usePositions() {
       //cacheTime: 10_000,
     });
 
-  console.log(tokenIdResults);
-
   const tokenIds = useMemo(() => {
     if (account) {
-      return (
-        tokenIdResults as
-          | {
-              result: BigInt;
-              status: string;
-            }[]
-          | undefined
-      )
-        ?.filter((result) => {
-          return result.result !== BigInt(0);
-        })
-        .map((result) => {
-          return Number(result.result);
-        });
+      return tokenIdResults
+        ?.map(({ result }) => result)
+        .filter((result) => !!result)
+        .map((result) => result);
     }
     return [];
   }, [account, tokenIdResults]);

@@ -1,13 +1,13 @@
-import { useContractWrite, useSimulateContract, useWriteContract } from "wagmi";
-import { useTransactionAwait } from "../common/useTransactionAwait";
+import { useContractWrite, useSimulateContract } from "wagmi";
 import { useEffect } from "react";
 import { useFarmCheckApprove } from "./useFarmCheckApprove";
+import { useTransactionAwait } from "../common/useTransactionAwait";
 import {
   ALGEBRA_POSITION_MANAGER,
   FARMING_CENTER,
 } from "@/data/algebra/addresses";
-import { TransactionType } from "@/services/algebra/state/pendingTransactionsStore";
-import { algebraPositionManagerABI } from "@cryptoalgebra/custom-pools-sdk";
+import { algebraPositionManagerABI } from "@cryptoalgebra/sdk";
+import { TransactionType } from "../../state/pendingTransactionsStore";
 
 export function useFarmApprove(tokenId: bigint) {
   const APPROVE = true;
@@ -19,10 +19,10 @@ export function useFarmApprove(tokenId: bigint) {
     args: [tokenId, APPROVE, FARMING_CENTER],
   });
 
-  const { data: data, writeContractAsync: onApprove } = useWriteContract();
+  const { data: data, writeContractAsync: onApprove } = useContractWrite();
 
   const { isLoading, isSuccess } = useTransactionAwait(data, {
-    title: `Approve Position #${tokenId}`,
+    title: `Farm Approve`,
     tokenId: tokenId.toString(),
     type: TransactionType.FARM,
   });
@@ -38,6 +38,6 @@ export function useFarmApprove(tokenId: bigint) {
   return {
     isLoading,
     isSuccess,
-    onApprove: () => onApprove && config && onApprove(config?.request),
+    onApprove: () => config && onApprove(config.request),
   };
 }

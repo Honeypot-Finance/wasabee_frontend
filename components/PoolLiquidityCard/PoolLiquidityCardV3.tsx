@@ -22,7 +22,7 @@ import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
 import { popmodal } from "@/services/popmodal";
 import { Tooltip } from "@nextui-org/react";
-import { toCompactLocaleString } from "@/lib/utils";
+import { toCompactLocaleString } from "@/lib/tailwindcss";
 import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
 import { removeLiquidityV3 } from "@/services/removeLoqioditiV3";
 

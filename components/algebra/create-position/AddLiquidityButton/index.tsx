@@ -1,16 +1,5 @@
 import Loader from "@/components/algebra/common/Loader";
 import { Button } from "@/components/algebra/ui/button";
-import {
-  Percent,
-  Currency,
-  NonfungiblePositionManager,
-  Field,
-  ZERO,
-} from "@cryptoalgebra/custom-pools-sdk";
-import JSBI from "jsbi";
-import { useMemo } from "react";
-import { useAccount, useContractWrite } from "wagmi";
-import { Address } from "viem";
 import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
 import {
   DEFAULT_CHAIN_ID,
@@ -18,10 +7,23 @@ import {
 } from "@/data/algebra/default-chain-id";
 import { useApprove } from "@/lib/algebra/hooks/common/useApprove";
 import { useTransactionAwait } from "@/lib/algebra/hooks/common/useTransactionAwait";
-import { IDerivedMintInfo } from "@/services/algebra/state/mintStore";
-import { TransactionType } from "@/services/algebra/state/pendingTransactionsStore";
-import { useUserState } from "@/services/algebra/state/userStore";
+import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
+import { TransactionType } from "@/lib/algebra/state/pendingTransactionsStore";
+import { useUserState } from "@/lib/algebra/state/userStore";
 import { ApprovalState } from "@/types/algebra/types/approve-state";
+import {
+  Percent,
+  Currency,
+  NonfungiblePositionManager,
+  Field,
+  ZERO,
+  ADDRESS_ZERO,
+} from "@cryptoalgebra/sdk";
+import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
+import { Address } from "viem";
+import JSBI from "jsbi";
+import { useMemo } from "react";
+import { useAccount, useContractWrite } from "wagmi";
 import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
 
 interface AddLiquidityButtonProps {
@@ -41,6 +43,7 @@ export const AddLiquidityButton = ({
   poolAddress,
 }: AddLiquidityButtonProps) => {
   const { address: account } = useAccount();
+
   const { txDeadline } = useUserState();
 
   const useNative = baseCurrency?.isNative
@@ -57,21 +60,16 @@ export const AddLiquidityButton = ({
     )
       return { calldata: undefined, value: undefined };
 
-    const res = NonfungiblePositionManager.addCallParameters(
-      mintInfo.position,
-      {
-        slippageTolerance: mintInfo.outOfRange
-          ? ZERO_PERCENT
-          : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE,
-        recipient: account,
-        deadline: Date.now() + txDeadline,
-        useNative,
-        createPool: mintInfo.noLiquidity,
-        deployer: mintInfo.pool?.deployer,
-      }
-    );
-
-    return res;
+    return NonfungiblePositionManager.addCallParameters(mintInfo.position, {
+      slippageTolerance: mintInfo.outOfRange
+        ? ZERO_PERCENT
+        : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE,
+      recipient: account,
+      deadline: Date.now() + txDeadline,
+      deployer: ADDRESS_ZERO,
+      useNative,
+      createPool: mintInfo.noLiquidity,
+    });
   }, [mintInfo, account, txDeadline, useNative]);
 
   const { approvalState: approvalStateA, approvalCallback: approvalCallbackA } =
@@ -79,9 +77,6 @@ export const AddLiquidityButton = ({
       mintInfo.parsedAmounts[Field.CURRENCY_A],
       ALGEBRA_POSITION_MANAGER
     );
-
-  console.log("approvalStateA", approvalStateA);
-
   const { approvalState: approvalStateB, approvalCallback: approvalCallbackB } =
     useApprove(
       mintInfo.parsedAmounts[Field.CURRENCY_B],
@@ -109,7 +104,7 @@ export const AddLiquidityButton = ({
     );
   }, [mintInfo, approvalStateA, approvalStateB]);
 
-  const { data: addLiquidityConfig, error } =
+  const { data: addLiquidityConfig } =
     useSimulateAlgebraPositionManagerMulticall({
       args: calldata && [calldata as `0x${string}`[]],
       query: {
@@ -131,18 +126,6 @@ export const AddLiquidityButton = ({
     },
     `/pool/${poolAddress}`
   );
-
-  //   const isWrongChain = Number(selectedNetworkId) !== DEFAULT_CHAIN_ID;
-
-  //   if (!account) return <Button onClick={() => open()}>Connect Wallet</Button>;
-
-  //   if (isWrongChain)
-  //     return (
-  //       <Button
-  //         variant={"destructive"}
-  //         onClick={() => open({ view: "Networks" })}
-  //       >{`Connect to ${DEFAULT_CHAIN_NAME}`}</Button>
-  //     );
 
   if (mintInfo.errorMessage)
     return <Button disabled>{mintInfo.errorMessage}</Button>;
@@ -182,10 +165,9 @@ export const AddLiquidityButton = ({
   return (
     <Button
       disabled={!isReady}
-      onClick={() => {
-        if (addLiquidityConfig?.request && addLiquidity)
-          addLiquidity(addLiquidityConfig.request);
-      }}
+      onClick={() =>
+        addLiquidityConfig && addLiquidity(addLiquidityConfig.request)
+      }
     >
       {isAddingLiquidityLoading ? <Loader /> : "Create Position"}
     </Button>

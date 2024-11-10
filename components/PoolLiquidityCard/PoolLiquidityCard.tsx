@@ -22,7 +22,7 @@ import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
 import { popmodal } from "@/services/popmodal";
 import { Tooltip, Button as NextButton } from "@nextui-org/react";
-import { toCompactLocaleString } from "@/lib/utils";
+import { toCompactLocaleString } from "@/lib/tailwindcss";
 import Image from "next/image";
 
 interface PoolLiquidityCardProps {

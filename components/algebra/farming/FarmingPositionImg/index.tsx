@@ -1,5 +1,5 @@
-import { useReadAlgebraPositionManagerTokenUri } from "@/wagmi-generated";
 import { cn } from "@/lib/tailwindcss";
+import { useReadAlgebraPositionManagerTokenUri } from "@/wagmi-generated";
 import { useEffect, useRef } from "react";
 
 export const FarmingPositionImg = ({
@@ -29,12 +29,12 @@ export const FarmingPositionImg = ({
   return (
     <div
       className={cn(
-        "rounded-full flex items-center justify-center overflow-hidden",
-        className,
-        `w-${size}`
+        "rounded-full flex items-center justify-center overflow-hidden w-12",
+        className
       )}
       style={{
         background: "linear-gradient(181.1deg, #686EFF 0.93%, #141520 99.07%)",
+        width: `${size / 4}rem`,
       }}
     >
       {json ? (

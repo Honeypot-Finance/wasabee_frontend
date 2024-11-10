@@ -3,7 +3,7 @@ import PageTitle from "@/components/algebra/common/PageTitle";
 import { Skeleton } from "@/components/algebra/ui/skeleton";
 import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
 import { formatPercent } from "@/lib/algebra/utils/common/formatPercent";
-import { Pool } from "@cryptoalgebra/custom-pools-sdk";
+import { Pool } from "@cryptoalgebra/sdk";
 import { Address } from "viem";
 
 interface PoolHeaderProps {

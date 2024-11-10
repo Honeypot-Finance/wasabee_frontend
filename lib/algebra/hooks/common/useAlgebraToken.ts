@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { useToken } from "wagmi";
 import { Address } from "viem";
-import { Token } from "@cryptoalgebra/custom-pools-sdk";
-import { ExtendedNative } from "@cryptoalgebra/custom-pools-sdk";
-import { ADDRESS_ZERO } from "@cryptoalgebra/custom-pools-sdk";
+import { Token } from "@cryptoalgebra/sdk";
+import { ExtendedNative } from "@cryptoalgebra/sdk";
+import { ADDRESS_ZERO } from "@cryptoalgebra/sdk";
 import {
   DEFAULT_CHAIN_ID,
-  DEFAULT_NATIVE_NAME,
   DEFAULT_NATIVE_SYMBOL,
+  DEFAULT_NATIVE_NAME,
 } from "@/data/algebra/default-chain-id";
 
 export function useAlgebraToken(address: Address | undefined) {

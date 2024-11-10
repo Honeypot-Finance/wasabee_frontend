@@ -1,11 +1,11 @@
+import { useReadAlgebraPoolLiquidity } from "@/wagmi-generated";
+import { Position } from "@cryptoalgebra/sdk";
+import { Address } from "viem";
 import {
   useSinglePoolQuery,
   usePoolFeeDataQuery,
   useNativePriceQuery,
-} from "@/lib/graphql/generated/graphql";
-import { useReadAlgebraPoolLiquidity } from "@/wagmi-generated";
-import { Position } from "@cryptoalgebra/custom-pools-sdk";
-import { Address } from "viem";
+} from "../../graphql/generated/graphql";
 
 export function usePositionAPR(
   poolId: Address | undefined,

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { Price, Token } from "@cryptoalgebra/custom-pools-sdk";
-import { useMintState } from "@/services/algebra/state/mintStore";
+import { Price, Token } from "@cryptoalgebra/sdk";
+import { useMintState } from "@/state/mintStore";
 import { Button } from "@/components/algebra/ui/button";
 import { Input } from "@/components/algebra/ui/input";
 

@@ -1,5 +1,5 @@
 import CurrencyLogo from "@/components/algebra/common/CurrencyLogo";
-import { IDerivedMintInfo } from "@/services/algebra/state/mintStore";
+import { IDerivedMintInfo } from "@/state/mintStore";
 import { useMemo } from "react";
 
 interface TokenRatioProps {

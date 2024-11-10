@@ -2,18 +2,21 @@ import { ColumnDef } from "@tanstack/react-table";
 import { HeaderItem } from "./common";
 import { Address } from "viem";
 import CurrencyLogo from "../CurrencyLogo";
-import { ReactNode } from "react";
-import { customPoolDeployerTitles } from "@/data/algebra/deployers";
+import { DynamicFeePluginIcon } from "../PluginIcons";
+import { usePoolPlugins } from "@/lib/algebra/hooks/pools/usePoolPlugins";
+import { Skeleton } from "@/components/algebra/ui/skeleton";
+import { FarmingPluginIcon } from "../PluginIcons";
 import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
-import { formatPercent } from "@/lib/algebra/utils/common/formatPercent";
-import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
-import { TokenFieldsFragment } from "@/lib/graphql/generated/graphql";
-import { Skeleton } from "@nextui-org/react";
 import {
   HoverCard,
-  HoverCardTrigger,
   HoverCardContent,
-} from "../../ui/hover-card";
+  HoverCardTrigger,
+} from "@/components/algebra/ui/hover-card";
+import { TokenFieldsFragment } from "@/lib/algebra/graphql/generated/graphql";
+import { formatPercent } from "@/lib/algebra/utils/common/formatPercent";
+import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
+import { ReactNode } from "react";
+
 interface Pair {
   token0: TokenFieldsFragment;
   token1: TokenFieldsFragment;
@@ -31,7 +34,6 @@ interface Pool {
   farmApr: number;
   isMyPool: boolean;
   hasActiveFarming: boolean;
-  deployer: string;
 }
 
 const PoolPair = ({ pair, fee }: Pool) => {
@@ -55,6 +57,17 @@ const PoolPair = ({ pair, fee }: Pool) => {
       )}
 
       <div className="bg-muted-primary text-primary-text rounded-xl px-2 py-1">{`${fee}%`}</div>
+    </div>
+  );
+};
+
+const Plugins = ({ poolId }: { poolId: Address }) => {
+  const { dynamicFeePlugin, farmingPlugin } = usePoolPlugins(poolId);
+
+  return (
+    <div className="flex gap-2">
+      {dynamicFeePlugin && <DynamicFeePluginIcon />}
+      {farmingPlugin && <FarmingPluginIcon />}
     </div>
   );
 };
@@ -99,16 +112,10 @@ export const poolsColumns: ColumnDef<Pool>[] = [
         .includes(value),
   },
   {
-    accessorKey: "deployer",
-    header: ({ column }) => (
-      <HeaderItem
-        sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        isAsc={column.getIsSorted() === "asc"}
-      >
-        Deployer
-      </HeaderItem>
-    ),
-    cell: ({ row }) => customPoolDeployerTitles[row.original.deployer],
+    accessorKey: "plugins",
+    header: () => <HeaderItem>Plugins</HeaderItem>,
+    cell: ({ row }) => <Plugins poolId={row.original.id} />,
+    filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
   },
   {
     accessorKey: "tvlUSD",

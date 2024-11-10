@@ -1,33 +1,30 @@
+import { useUSDCValue } from "@/lib/algebra/hooks/common/useUSDCValue";
 import {
   Currency,
   CurrencyAmount,
   maxAmountSpend,
-  TradeType,
   tryParseAmount,
-} from "@cryptoalgebra/custom-pools-sdk";
+} from "@cryptoalgebra/sdk";
 import { useCallback, useMemo } from "react";
 import TokenCard from "../TokenCard";
 import { ChevronsUpDownIcon } from "lucide-react";
-import { SmartRouterTrade } from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
-import { useUSDCValue } from "@/lib/algebra/hooks/common/useUSDCValue";
 import useWrapCallback, {
   WrapType,
 } from "@/lib/algebra/hooks/swap/useWrapCallback";
 import {
-  IDerivedSwapInfo,
+  useDerivedSwapInfo,
   useSwapState,
   useSwapActionHandlers,
-} from "@/services/algebra/state/swapStore";
+} from "@/lib/algebra/state/swapStore";
 import { SwapField, SwapFieldType } from "@/types/algebra/types/swap-field";
 
-const SwapPair = ({
-  derivedSwap,
-  smartTrade,
-}: {
-  derivedSwap: IDerivedSwapInfo;
-  smartTrade: SmartRouterTrade<TradeType>;
-}) => {
-  const { currencyBalances, parsedAmount, currencies } = derivedSwap;
+const SwapPair = () => {
+  const {
+    toggledTrade: trade,
+    currencyBalances,
+    parsedAmount,
+    currencies,
+  } = useDerivedSwapInfo();
 
   const baseCurrency = currencies[SwapField.INPUT];
   const quoteCurrency = currencies[SwapField.OUTPUT];
@@ -75,20 +72,10 @@ const SwapPair = ({
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE;
 
   const parsedAmountA =
-    independentField === SwapField.INPUT
-      ? parsedAmount
-      : tryParseAmount(
-          smartTrade?.inputAmount?.toFixed(),
-          smartTrade?.inputAmount?.currency
-        );
+    independentField === SwapField.INPUT ? parsedAmount : trade?.inputAmount;
 
   const parsedAmountB =
-    independentField === SwapField.OUTPUT
-      ? parsedAmount
-      : tryParseAmount(
-          smartTrade?.outputAmount?.toFixed(),
-          smartTrade?.outputAmount?.currency
-        );
+    independentField === SwapField.OUTPUT ? parsedAmount : trade?.outputAmount;
 
   const parsedAmounts = useMemo(
     () =>

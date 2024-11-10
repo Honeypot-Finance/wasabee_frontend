@@ -1,13 +1,13 @@
 import { ToastAction } from "@/components/algebra/ui/toast";
 import { useToast } from "@/components/algebra/ui/use-toast";
+import { ExternalLinkIcon, Link } from "lucide-react";
+import { useEffect } from "react";
+import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import {
   TransactionInfo,
   usePendingTransactionsStore,
-} from "@/services/algebra/state/pendingTransactionsStore";
+} from "../../state/pendingTransactionsStore";
 import { Address } from "viem";
-import { ExternalLinkIcon, Link } from "lucide-react";
-import { useEffect } from "react";
-import { useAccount, useTransaction } from "wagmi";
 
 export const ViewTxOnExplorer = ({ hash }: { hash: Address | undefined }) =>
   hash ? (
@@ -38,7 +38,7 @@ export function useTransactionAwait(
     actions: { addPendingTransaction, updatePendingTransaction },
   } = usePendingTransactionsStore();
 
-  const { data, isError, isLoading, isSuccess } = useTransaction({
+  const { data, isError, isLoading, isSuccess } = useWaitForTransactionReceipt({
     hash,
   });
 
@@ -76,6 +76,9 @@ export function useTransactionAwait(
         description: transactionInfo.description || "Transaction confirmed",
         action: <ViewTxOnExplorer hash={hash} />,
       });
+      if (redirectPath) {
+        window.location.href = redirectPath;
+      }
     }
   }, [isSuccess]);
 

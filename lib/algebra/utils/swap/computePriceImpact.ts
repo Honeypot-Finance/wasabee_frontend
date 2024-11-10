@@ -1,4 +1,4 @@
-import { CurrencyAmount, Percent, Token } from "@cryptoalgebra/custom-pools-sdk"
+import { CurrencyAmount, Percent, Token } from "@cryptoalgebra/sdk"
 
 export const ONE_HUNDRED_PERCENT = new Percent('1')
 
@@ -10,7 +10,7 @@ export function computeFiatValuePriceImpact(
 
     if (!fiatValueInput.currency.equals(fiatValueOutput.currency)) return undefined
 
-    if (BigInt(fiatValueInput.quotient.toString()) === BigInt(0)) return undefined
+    if (BigInt(fiatValueInput.quotient.toString()) === 0n) return undefined
 
     const pct = ONE_HUNDRED_PERCENT.subtract(fiatValueOutput.divide(fiatValueInput))
 

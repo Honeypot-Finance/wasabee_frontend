@@ -1,5 +1,5 @@
-import LiquidityChart from "../../create-position/LiquidityChart";
-import { Pool, Position, tickToPrice } from "@cryptoalgebra/custom-pools-sdk";
+import LiquidityChart from "@/components/algebra/create-position/LiquidityChart";
+import { Pool, Position, tickToPrice } from "@cryptoalgebra/sdk";
 
 interface PositionRangeChartProps {
   pool: Pool;
@@ -13,7 +13,6 @@ const PositionRangeChart = ({ pool, position }: PositionRangeChartProps) => {
 
   return (
     <LiquidityChart
-      pool={pool}
       currencyA={pool.token0}
       currencyB={pool.token1}
       currentPrice={price ? parseFloat(price) : undefined}

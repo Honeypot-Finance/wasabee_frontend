@@ -1,3 +1,7 @@
+import { useMemo } from "react";
+import { Address } from "viem";
+import { useChainId } from "wagmi";
+import { ADDRESS_ZERO } from "@cryptoalgebra/sdk";
 import {
   DEFAULT_NATIVE_SYMBOL,
   DEFAULT_NATIVE_NAME,
@@ -5,18 +9,13 @@ import {
 import {
   useAllTokensQuery,
   TokenFieldsFragment,
-} from "@/lib/graphql/generated/graphql";
-import { useTokensState } from "@/services/algebra/state/tokensStore";
-import { ADDRESS_ZERO } from "@cryptoalgebra/custom-pools-sdk";
-import { useMemo } from "react";
-import { Address } from "viem";
-import { useChainId } from "wagmi";
+} from "../../graphql/generated/graphql";
+import { useTokensState } from "../../state/tokensStore";
 
 export function useAllTokens(showNativeToken: boolean = true) {
   const chainId = useChainId();
 
   const { data: allTokens, loading } = useAllTokensQuery();
-  console.log("allTokens", allTokens);
 
   const { importedTokens } = useTokensState();
 
@@ -33,8 +32,7 @@ export function useAllTokens(showNativeToken: boolean = true) {
           derivedMatic: 0,
         });
       }
-      //return [...tokens].map(([, token]) => ({ ...token }));
-      return Object.values(tokens).map((token) => ({ ...token }));
+      return [...tokens].map(([, token]) => ({ ...token }));
     }
 
     if (showNativeToken)
@@ -61,8 +59,7 @@ export function useAllTokens(showNativeToken: boolean = true) {
       });
     }
 
-    //return [...tokens].map(([, token]) => ({ ...token }));
-    return Object.values(tokens).map((token) => ({ ...token }));
+    return [...tokens].map(([, token]) => ({ ...token }));
   }, [allTokens, importedTokens, tokensBlackList, chainId, showNativeToken]);
 
   return useMemo(

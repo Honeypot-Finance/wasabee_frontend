@@ -1,6 +1,5 @@
-import { farmingCenterABI } from "@/lib/abis/algebra-contracts/ABIs/farming/farmingCenter";
 import { wallet } from "@/services/wallet";
-import { farmingCenterAddress, readFarmingCenter } from "@/wagmi-generated";
+import { farmingCenterAbi, farmingCenterAddress } from "@/wagmi-generated";
 import { Address, getContract } from "viem";
 
 export async function getFarmingRewards({
@@ -18,11 +17,10 @@ export async function getFarmingRewards({
 }): Promise<{ reward: bigint; bonusReward: bigint }> {
   try {
     const farmingCenter = getContract({
-      abi: farmingCenterABI,
       address: farmingCenterAddress,
+      abi: farmingCenterAbi,
       client: wallet.publicClient,
     });
-
     const {
       result: [reward, bonusReward],
     } = await farmingCenter.simulate.collectRewards([

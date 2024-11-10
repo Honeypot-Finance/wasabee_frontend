@@ -1,15 +1,14 @@
 import Loader from "@/components/algebra/common/Loader";
 import { Button } from "@/components/algebra/ui/button";
 import { Skeleton } from "@/components/algebra/ui/skeleton";
-import { NonfungiblePositionManager } from "@cryptoalgebra/custom-pools-sdk";
-import { useMemo } from "react";
-import { useAccount, useContractWrite, useWriteContract } from "wagmi";
-import { Address } from "viem";
 import { useTransactionAwait } from "@/lib/algebra/hooks/common/useTransactionAwait";
 import { usePositionFees } from "@/lib/algebra/hooks/positions/usePositionFees";
-import { IDerivedMintInfo } from "@/services/algebra/state/mintStore";
-import { TransactionType } from "@/services/algebra/state/pendingTransactionsStore";
-import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
+import { NonfungiblePositionManager } from "@cryptoalgebra/sdk";
+import { useMemo } from "react";
+import { useAccount, useContractWrite } from "wagmi";
+import { Address } from "viem";
+import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
+import { TransactionType } from "@/lib/algebra/state/pendingTransactionsStore";
 
 interface CollectFeesProps {
   mintInfo: IDerivedMintInfo;
@@ -46,14 +45,14 @@ const CollectFees = ({
     });
   }, [positionId, amount0, amount1, account]);
 
-  const { data: collectConfig } = useSimulateAlgebraPositionManagerMulticall({
+  const { config: collectConfig } = usePrepareAlgebraPositionManagerMulticall({
     args: calldata && [calldata as `0x${string}`[]],
     value: BigInt(value || 0),
   });
 
-  const { data: collectData, writeContract: collect } = useWriteContract();
+  const { data: collectData, write: collect } = useContractWrite(collectConfig);
 
-  const { isLoading } = useTransactionAwait(collectData, {
+  const { isLoading } = useTransactionAwait(collectData?.hash, {
     title: "Collect fees",
     tokenA: mintInfo.currencies.CURRENCY_A?.wrapped.address as Address,
     tokenB: mintInfo.currencies.CURRENCY_B?.wrapped.address as Address,
@@ -79,10 +78,8 @@ const CollectFees = ({
       </div>
       <Button
         size={"md"}
-        disabled={!collect || zeroRewards || isLoading || !collectConfig}
-        onClick={() =>
-          collect && collectConfig?.request && collect(collectConfig.request)
-        }
+        disabled={!collect || zeroRewards || isLoading}
+        onClick={() => collect && collect()}
       >
         {isLoading ? <Loader /> : "Collect fees"}
       </Button>

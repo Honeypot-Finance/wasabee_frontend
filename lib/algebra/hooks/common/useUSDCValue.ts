@@ -1,16 +1,15 @@
 import { STABLECOINS } from "@/data/algebra/tokens";
 import {
-  useNativePriceQuery,
-  useSingleTokenQuery,
-} from "@/lib/graphql/generated/graphql";
-
-import {
   Currency,
   CurrencyAmount,
   Price,
   tryParseAmount,
-} from "@cryptoalgebra/custom-pools-sdk";
+} from "@cryptoalgebra/sdk";
 import { useMemo } from "react";
+import {
+  useNativePriceQuery,
+  useSingleTokenQuery,
+} from "../../graphql/generated/graphql";
 
 export function useUSDCPrice(currency: Currency | undefined) {
   const { data: bundles } = useNativePriceQuery();

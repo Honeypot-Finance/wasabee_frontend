@@ -1,6 +1,5 @@
-import AlgebraLogo from "@/assets/algebra-logo.svg";
-import AlgebraIntegral from "@/assets/algebra-itegral.svg";
-
+import AlgebraLogo from "@/assets/algebra/algebra-logo.svg";
+import AlgebraIntegral from "@/assets/algebra/algebra-itegral.svg";
 import { cn } from "@/lib/tailwindcss";
 
 const PoweredByAlgebra = ({ className }: { className?: string }) => {

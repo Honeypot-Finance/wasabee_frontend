@@ -1,8 +1,12 @@
-import { Currency } from "@cryptoalgebra/custom-pools-sdk";
+import { Currency } from "@cryptoalgebra/sdk";
 import React from "react";
 import { Address } from "viem";
-import { cn } from "@nextui-org/theme";
-import { Skeleton } from "../../ui/skeleton";
+import USDTLogo from "@/assets/algebra/tokens/usdt.png";
+import USDCLogo from "@/assets/algebra/tokens/usdc.svg";
+import WBTCLogo from "@/assets/algebra/tokens/wbtc.svg";
+import EtherLogo from "@/assets/algebra/tokens/ether.svg";
+import { cn } from "@/lib/tailwindcss";
+import { Skeleton } from "@/components/algebra/ui/skeleton";
 
 interface CurrencyLogoProps {
   currency: Currency | undefined | null;
@@ -16,19 +20,19 @@ export const specialTokens: {
 } = {
   ["0x94373a4919b3240d86ea41593d5eba789fef3848"]: {
     symbol: "ETH",
-    logo: "",
+    logo: EtherLogo,
   },
   ["0x7d98346b3b000c55904918e3d9e2fc3f94683b01"]: {
     symbol: "USDT",
-    logo: "",
+    logo: USDTLogo.src,
   },
   ["0x9dad8a1f64692adeb74aca26129e0f16897ff4bb"]: {
     symbol: "WBTC",
-    logo: "",
+    logo: WBTCLogo,
   },
   ["0x6581e59a1c8da66ed0d313a0d4029dce2f746cc5"]: {
     symbol: "USDC",
-    logo: "",
+    logo: USDCLogo,
   },
 };
 
@@ -52,7 +56,7 @@ const CurrencyLogo = ({
       />
     );
 
-  const address = currency.wrapped?.address.toLowerCase() as Address;
+  const address = currency.wrapped.address.toLowerCase() as Address;
 
   const classString = cn(
     `w-[${size}px] h-[${size}px] min-w-[${size}px] min-h-[${size}px] bg-card-dark rounded-full`,
@@ -75,7 +79,7 @@ const CurrencyLogo = ({
   if (currency.isNative) {
     return (
       <img
-        src={""}
+        src={WBTCLogo}
         alt={"ETH"}
         width={size}
         height={size}

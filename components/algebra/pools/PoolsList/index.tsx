@@ -1,20 +1,21 @@
+import { poolsColumns } from "@/components/algebra/common/Table/poolsColumns";
+
+import { useMemo } from "react";
+import { Address } from "viem";
+import useSWR from "swr";
+import PoolsTable from "@/components/algebra/common/Table/poolsTable";
+import { usePositions } from "@/lib/algebra/hooks/positions/usePositions";
 import {
   POOL_MAX_APR_API,
   fetcher,
   POOL_AVG_APR_API,
   ETERNAL_FARMINGS_API,
 } from "@/data/algebra/api";
-import { usePositions } from "@/lib/algebra/hooks/positions/usePositions";
-import { farmingClient } from "@/lib/graphql/clients";
+import { farmingClient } from "@/lib/algebra/graphql";
 import {
   usePoolsListQuery,
   useActiveFarmingsQuery,
-} from "@/lib/graphql/generated/graphql";
-import { Address } from "viem";
-import { useMemo } from "react";
-import useSWR from "swr";
-import { poolsColumns } from "../../common/Table/poolsColumns";
-import PoolsTable from "../../common/Table/poolsTable";
+} from "@/lib/algebra/graphql/generated/graphql";
 
 const PoolsList = () => {
   const { data: pools, loading: isPoolsListLoading } = usePoolsListQuery();
@@ -24,7 +25,6 @@ const PoolsList = () => {
       client: farmingClient,
     });
   const { positions, loading: isPositionsLoading } = usePositions();
-  console.log("positions", positions);
 
   const { data: poolsMaxApr, isLoading: isPoolsMaxAprLoading } = useSWR(
     POOL_MAX_APR_API,
@@ -39,8 +39,6 @@ const PoolsList = () => {
     fetcher
   );
 
-  console.log("pools", pools);
-
   const isLoading =
     isPoolsListLoading ||
     isPoolsMaxAprLoading ||
@@ -53,15 +51,7 @@ const PoolsList = () => {
     if (isLoading || !pools) return [];
 
     return pools.pools.map(
-      ({
-        id,
-        token0,
-        token1,
-        fee,
-        totalValueLockedUSD,
-        deployer,
-        poolDayData,
-      }) => {
+      ({ id, token0, token1, fee, totalValueLockedUSD, poolDayData }) => {
         const currentPool = poolDayData[0];
         const lastDate = currentPool ? currentPool.date * 1000 : 0;
         const currentDate = new Date().getTime();
@@ -109,7 +99,6 @@ const PoolsList = () => {
           avgApr,
           isMyPool: Boolean(openPositions?.length),
           hasActiveFarming: Boolean(activeFarming),
-          deployer: deployer.toLowerCase(),
         };
       }
     );
@@ -129,7 +118,7 @@ const PoolsList = () => {
         columns={poolsColumns}
         data={formattedPools}
         defaultSortingID={"tvlUSD"}
-        link={"algebra/pool"}
+        link={"pooldetail"}
         showPagination={true}
         loading={isLoading}
       />

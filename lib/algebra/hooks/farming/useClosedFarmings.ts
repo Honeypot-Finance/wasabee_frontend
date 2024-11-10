@@ -5,7 +5,7 @@ import {
   SinglePoolQuery,
   EternalFarming,
   useEternalFarmingsQuery,
-} from "@/lib/graphql/generated/graphql";
+} from "../../graphql/generated/graphql";
 
 export function useClosedFarmings({
   poolId,

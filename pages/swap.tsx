@@ -20,9 +20,13 @@ import React from "react";
 import { itemPopUpVariants } from "@/lib/animation";
 import { popmodal } from "@/services/popmodal";
 import { Tabs, Tab } from "@nextui-org/react";
-import V3swapCard from "@/components/algebra/swap/swapCard/swapCard";
 import { liquidity } from "@/services/liquidity";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
+import PoweredByAlgebra from "@/components/algebra/common/PoweredByAlgebra";
+import IntegralPools from "@/components/algebra/swap/IntegralPools";
+import SwapButton from "@/components/algebra/swap/SwapButton";
+import SwapPair from "@/components/algebra/swap/SwapPair";
+import SwapParams from "@/components/algebra/swap/SwapParams";
 
 const SwapPage = observer(() => {
   useEffect(() => {
@@ -66,7 +70,20 @@ const SwapPage = observer(() => {
         >
           <Tabs>
             <Tab title="v3">
-              <V3swapCard />
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8 mt-8 lg:mt-16">
+                <div className="flex flex-col gap-2">
+                  <IntegralPools />
+
+                  <div className="flex flex-col gap-1 w-full bg-card border border-card-border p-2 rounded-3xl">
+                    <SwapPair />
+                    <SwapParams />
+                    <SwapButton />
+                  </div>
+                  <PoweredByAlgebra />
+                </div>
+
+                <div className="col-span-2">{/* <SwapChart /> */}</div>
+              </div>
             </Tab>
             <Tab title="v2">
               <SwapCard></SwapCard>

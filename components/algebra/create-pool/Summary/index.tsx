@@ -1,10 +1,10 @@
-import CurrencyLogo from "@/components/common/CurrencyLogo";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useSingleTokenQuery } from "@/graphql/generated/graphql";
-import { useMintState } from "@/state/mintStore";
-import { Currency } from "@cryptoalgebra/custom-pools-sdk";
+import { useSingleTokenQuery } from "@/lib/algebra/graphql/generated/graphql";
+import { useMintState } from "@/lib/algebra/state/mintStore";
+import { Currency } from "@cryptoalgebra/sdk";
+import { Skeleton } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { Address } from "viem";
+import CurrencyLogo from "../../common/CurrencyLogo";
 
 interface ISummary {
   currencyA: Currency | undefined;
@@ -24,8 +24,6 @@ const Summary = ({ currencyA, currencyB }: ISummary) => {
     },
     skip: !token0,
   });
-
-  console.log("singleToken0", singleToken0);
 
   const { data: singleToken1 } = useSingleTokenQuery({
     variables: {

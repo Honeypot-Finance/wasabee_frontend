@@ -1,4 +1,4 @@
-import { ADDRESS_ZERO } from "@cryptoalgebra/custom-pools-sdk";
+import { zeroAddress } from "viem";
 import { Address } from "viem";
 
 /** 
@@ -69,4 +69,4 @@ export const CUSTOM_POOL_DEPLOYER_FEE_CHANGER: Address =
 export const CUSTOM_POOL_DEPLOYER_BLANK: Address =
   "0xbb75acad36f08201a49a6dd077229d95f4e7bd50"; // placeholder
 
-export const CUSTOM_POOL_BASE: Address = ADDRESS_ZERO;
+export const CUSTOM_POOL_BASE: Address = zeroAddress;

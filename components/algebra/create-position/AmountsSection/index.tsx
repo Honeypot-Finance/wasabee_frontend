@@ -4,15 +4,15 @@ import {
   HoverCardTrigger,
 } from "@/components/algebra/ui/hover-card";
 import TokenRatio from "../TokenRatio";
-import { Currency } from "@cryptoalgebra/custom-pools-sdk";
+import { Currency } from "@cryptoalgebra/sdk";
+import { usePositionAPR } from "@/lib/algebra/hooks/positions/usePositionAPR";
+import { getPoolAPR } from "@/lib/algebra/utils/pool/getPoolAPR";
 import AddLiquidityButton from "../AddLiquidityButton";
 import { Address } from "viem";
 import { useEffect, useState } from "react";
 import EnterAmounts from "../EnterAmounts";
 import IncreaseLiquidityButton from "@/components/algebra/position/IncreaseLiquidityButton";
-import { usePositionAPR } from "@/lib/algebra/hooks/positions/usePositionAPR";
-import { getPoolAPR } from "@/lib/algebra/utils/pool/getPoolAPR";
-import { IDerivedMintInfo } from "@/services/algebra/state/mintStore";
+import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
 import { ManageLiquidity } from "@/types/algebra/types/manage-liquidity";
 import { useParams } from "next/navigation";
 
@@ -53,10 +53,10 @@ const AmountsSection = ({
         mintInfo={mintInfo}
       />
       <HoverCard>
-        <HoverCardTrigger className="w-full">
+        <HoverCardTrigger>
           <TokenRatio mintInfo={mintInfo} />
         </HoverCardTrigger>
-        <HoverCardContent className="flex flex-col w-full gap-2 rounded-3xl  text-white">
+        <HoverCardContent className="flex flex-col gap-2 bg-card rounded-3xl border border-card-border text-white w-fit">
           <div className="flex items-center">
             <span className="font-bold">Token Ratio</span>
           </div>

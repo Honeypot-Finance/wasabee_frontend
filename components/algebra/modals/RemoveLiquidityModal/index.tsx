@@ -8,27 +8,24 @@ import {
   DialogTrigger,
 } from "@/components/algebra/ui/dialog";
 import { Slider } from "@/components/algebra/ui/slider";
-import {
-  NonfungiblePositionManager,
-  Percent,
-} from "@cryptoalgebra/custom-pools-sdk";
-import { useEffect, useMemo, useState } from "react";
-import { useAccount, useContractWrite } from "wagmi";
-import { Address } from "viem";
+import { farmingClient } from "@/lib/algebra/graphql";
+import { Deposit } from "@/lib/algebra/graphql/generated/graphql";
 import { useTransactionAwait } from "@/lib/algebra/hooks/common/useTransactionAwait";
 import {
-  usePositions,
   usePosition,
+  usePositions,
 } from "@/lib/algebra/hooks/positions/usePositions";
-import { farmingClient } from "@/lib/graphql/clients";
-import { Deposit } from "@/lib/graphql/generated/graphql";
 import {
   useBurnState,
   useBurnActionHandlers,
   useDerivedBurnInfo,
-} from "@/services/algebra/state/burnStore";
-import { TransactionType } from "@/services/algebra/state/pendingTransactionsStore";
-import { useUserState } from "@/services/algebra/state/userStore";
+} from "@/lib/algebra/state/burnStore";
+import { TransactionType } from "@/lib/algebra/state/pendingTransactionsStore";
+import { useUserState } from "@/lib/algebra/state/userStore";
+import { NonfungiblePositionManager, Percent } from "@cryptoalgebra/sdk";
+import { Address } from "viem";
+import { useEffect, useMemo, useState } from "react";
+import { useAccount, useContractWrite } from "wagmi";
 import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
 
 interface RemoveLiquidityModalProps {
@@ -107,7 +104,7 @@ const RemoveLiquidityModal = ({ positionId }: RemoveLiquidityModalProps) => {
   const { isLoading: isRemoveLoading, isSuccess } = useTransactionAwait(
     removeLiquidityData,
     {
-      title: "Remove liquidity",
+      title: "Removing liquidity",
       tokenA: position?.token0 as Address,
       tokenB: position?.token1 as Address,
       type: TransactionType.POOL,
@@ -213,7 +210,6 @@ const RemoveLiquidityModal = ({ positionId }: RemoveLiquidityModalProps) => {
           <Button
             disabled={isDisabled}
             onClick={() =>
-              removeLiquidity &&
               removeLiquidityConfig &&
               removeLiquidity(removeLiquidityConfig.request)
             }

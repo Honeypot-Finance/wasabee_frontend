@@ -1,4 +1,4 @@
-import CreatePoolForm from "@/components/algebra/CreatePoolForm";
+import CreatePoolForm from "@/components/algebra/create-pool/CreatePoolForm";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { Layout } from "@/components/layout";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";

@@ -1,3 +1,9 @@
+import { TokenFieldsFragment } from "@/lib/algebra/graphql/generated/graphql";
+import { useAlgebraToken } from "@/lib/algebra/hooks/common/useAlgebraToken";
+import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
+import useDebounce from "@/lib/algebra/hooks/common/useDebounce";
+import { useFuse } from "@/lib/algebra/hooks/common/useFuse";
+import { useAllTokens } from "@/lib/algebra/hooks/tokens/useAllTokens";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FixedSizeList } from "react-window";
 import { Address, isAddress } from "viem";
@@ -8,17 +14,11 @@ import {
   Currency,
   ExtendedNative,
   Token,
-} from "@cryptoalgebra/custom-pools-sdk";
+} from "@cryptoalgebra/sdk";
+import { useTokensState } from "@/lib/algebra/state/tokensStore";
 import { Copy } from "lucide-react";
-import { useAlgebraToken } from "@/lib/algebra/hooks/common/useAlgebraToken";
-import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
-import useDebounce from "@/lib/algebra/hooks/common/useDebounce";
-import { useFuse } from "@/lib/algebra/hooks/common/useFuse";
-import { useAllTokens } from "@/lib/algebra/hooks/tokens/useAllTokens";
+import { cn } from "@/lib/tailwindcss";
 import { formatBalance } from "@/lib/algebra/utils/common/formatBalance";
-import { useTokensState } from "@/services/algebra/state/tokensStore";
-import { TokenFieldsFragment } from "@/types/algebra/types/graphql";
-import { cn } from "@nextui-org/theme";
 
 const TokenSelectorView = {
   DEFAULT_LIST: "DEFAULT_LIST",

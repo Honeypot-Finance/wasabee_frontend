@@ -1,4 +1,4 @@
-import { infoClient, blocksClient, farmingClient } from "@/lib/graphql/clients";
+import { infoClient, blocksClient, farmingClient } from "../../graphql";
 
 export function useClients() {
   return {

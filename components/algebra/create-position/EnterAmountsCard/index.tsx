@@ -1,6 +1,6 @@
 import CurrencyLogo from "@/components/algebra/common/CurrencyLogo";
 import { Input } from "@/components/algebra/ui/input";
-import { Currency, CurrencyAmount } from "@cryptoalgebra/custom-pools-sdk";
+import { Currency, CurrencyAmount } from "@cryptoalgebra/sdk";
 import { useCallback, useMemo } from "react";
 import { useAccount, useBalance } from "wagmi";
 import { Address } from "viem";
@@ -27,7 +27,7 @@ const EnterAmountCard = ({
     token: currency?.isNative
       ? undefined
       : (currency?.wrapped.address as Address),
-    //watch: true
+    // watch: true,
   });
 
   const balanceString = useMemo(() => {

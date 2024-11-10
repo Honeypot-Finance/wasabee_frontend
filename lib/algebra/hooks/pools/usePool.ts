@@ -1,12 +1,11 @@
-import { Pool } from "@cryptoalgebra/custom-pools-sdk";
+import { ADDRESS_ZERO, Pool } from "@cryptoalgebra/sdk";
 import { Address } from "viem";
 import { useCurrency } from "../common/useCurrency";
 import { useMemo } from "react";
-import { useCustomPoolDeployerQuery } from "@/lib/graphql/generated/graphql";
 import {
+  useReadAlgebraPoolTickSpacing,
   useReadAlgebraPoolGlobalState,
   useReadAlgebraPoolLiquidity,
-  useReadAlgebraPoolTickSpacing,
   useReadAlgebraPoolToken0,
   useReadAlgebraPoolToken1,
 } from "@/wagmi-generated";
@@ -60,23 +59,6 @@ export function usePool(
     address,
   });
 
-  const {
-    data: poolDeployer,
-    loading: isPoolDeployerLoading,
-    error: isPoolDeployerError,
-  } = useCustomPoolDeployerQuery({
-    variables: {
-      poolId: address?.toLowerCase() || "",
-    },
-  });
-
-  console.log(
-    "pooldata",
-    poolDeployer,
-    isPoolDeployerLoading,
-    isPoolDeployerError
-  );
-
   const token0 = useCurrency(token0Address);
   const token1 = useCurrency(token1Address);
 
@@ -86,7 +68,6 @@ export function usePool(
     isLiquidityError ||
     isToken0Error ||
     isToken1Error ||
-    isPoolDeployerError ||
     !address;
 
   const isPoolLoading =
@@ -94,8 +75,7 @@ export function usePool(
     isGlobalStateLoading ||
     isLiquidityLoading ||
     isLoadingToken0 ||
-    isLoadingToken1 ||
-    isPoolDeployerLoading;
+    isLoadingToken1;
   const isTokensLoading = !token0 || !token1;
 
   return useMemo(() => {
@@ -105,12 +85,7 @@ export function usePool(
     if (!tickSpacing || !globalState || liquidity === undefined)
       return [PoolState.NOT_EXISTS, null];
 
-    if (
-      globalState[0] === BigInt(0) ||
-      !token0 ||
-      !token1 ||
-      !poolDeployer?.pool
-    )
+    if (globalState[0] === BigInt(0) || !token0 || !token1)
       return [PoolState.NOT_EXISTS, null];
 
     try {
@@ -121,7 +96,7 @@ export function usePool(
           token1.wrapped,
           globalState[2],
           globalState[0].toString(),
-          poolDeployer.pool.deployer,
+          ADDRESS_ZERO,
           Number(liquidity),
           globalState[1],
           tickSpacing
@@ -136,7 +111,6 @@ export function usePool(
     globalState,
     liquidity,
     tickSpacing,
-    poolDeployer,
     isPoolError,
     isPoolLoading,
     isTokensLoading,

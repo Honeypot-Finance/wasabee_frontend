@@ -8,9 +8,9 @@ const config: CodegenConfig = {
     "https://api.goldsky.com/api/public/project_cm0keevd9v59l01w4fokhdcg9/subgraphs/hpot-farming/1.0.0/gn",
   ],
 
-  documents: "lib/graphql/queries/!(*.d).{ts,tsx}",
+  documents: "lib/algebra/graphql/queries/!(*.d).{ts,tsx}",
   generates: {
-    "src/graphql/generated/graphql.tsx": {
+    "lib/algebra/graphql/generated/graphql.tsx": {
       plugins: [
         "typescript",
         "typescript-operations",

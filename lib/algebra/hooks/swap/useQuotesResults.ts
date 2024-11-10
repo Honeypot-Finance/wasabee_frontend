@@ -1,13 +1,13 @@
-import { algebraQuoterV2ABI } from "@/lib/abis/algebra-contracts/ABIs";
-import { ALGEBRA_QUOTER_V2 } from "@/data/algebra/addresses";
 import {
   Currency,
   CurrencyAmount,
   encodeRouteToPath,
-} from "@cryptoalgebra/custom-pools-sdk";
+} from "@cryptoalgebra/sdk";
 import { useMemo } from "react";
-import { useReadContracts } from "wagmi";
+import { useContractReads } from "wagmi";
 import { useAllRoutes } from "./useAllRoutes";
+import { ALGEBRA_QUOTER_V2 } from "@/data/algebra/addresses";
+import { algebraQuoterV2ABI } from "@/lib/abis/algebra-contracts/ABIs";
 
 export function useQuotesResults({
   exactInput,
@@ -27,18 +27,6 @@ export function useQuotesResults({
     !exactInput ? amountOut?.currency : currencyOut
   );
 
-  // console.log("routes", routes);
-  // exactInput &&
-  //   routes &&
-  //   routes.length > 0 &&
-  //   console.log(
-  //     "encodeRouteToPath(route, !exactInput)",
-  //     routes?.[0],
-  //     exactInput,
-  //     amountIn ? amountIn : undefined,
-  //     amountOut ? amountOut : undefined,
-  //     encodeRouteToPath(routes[0], exactInput)
-  //   );
   const quoteInputs = useMemo(() => {
     return routes.map((route) => [
       encodeRouteToPath(route, !exactInput),
@@ -54,13 +42,11 @@ export function useQuotesResults({
 
   const functionName = exactInput ? "quoteExactInput" : "quoteExactOutput";
 
-  //console.log("quoteInputs", quoteInputs);
-
   const {
     data: quotesResults,
     isLoading,
     refetch,
-  } = useReadContracts({
+  } = useContractReads({
     contracts: quoteInputs.map((quote: any) => ({
       address: ALGEBRA_QUOTER_V2,
       abi: algebraQuoterV2ABI,
@@ -68,7 +54,7 @@ export function useQuotesResults({
       args: quote,
     })),
     // watch: true,
-    // cacheTime: 5_000
+    // cacheTime: 5_000,
   });
 
   return {
