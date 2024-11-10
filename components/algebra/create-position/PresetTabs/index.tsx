@@ -1,12 +1,13 @@
 import { useMemo } from "react";
 import { Currency } from "@cryptoalgebra/sdk";
+import { Button } from "@/components/algebra/ui/button";
 import {
   IDerivedMintInfo,
+  Presets,
   useMintState,
   useMintActionHandlers,
-} from "@/state/mintStore";
-import { PresetProfits, Presets, PresetsArgs } from "@/types/presets";
-import { Button } from "@/components/algebra/ui/button";
+} from "@/lib/algebra/state/mintStore";
+import { PresetProfits, PresetsArgs } from "@/types/algebra/types/presets";
 
 interface RangeSidebarProps {
   currencyA: Currency | undefined;

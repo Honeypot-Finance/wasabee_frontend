@@ -15,7 +15,8 @@ import { getPositionFees } from "@/lib/algebra/utils/positions/getPositionFees";
 import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
 import { Position, ZERO } from "@cryptoalgebra/sdk";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { Link, MoveRightIcon } from "lucide-react";
+import { MoveRightIcon } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import JSBI from "jsbi";
@@ -264,7 +265,7 @@ const NoPositions = ({ poolId }: { poolId: Address }) => (
     </h2>
     <p className="text-md font-semibold my-4">{`Let's create one!`}</p>
     <Button className="gap-2" asChild>
-      <Link to={`/pool/${poolId}/new-position`}>
+      <Link href={`/new-position/${poolId}`}>
         Create Position
         <MoveRightIcon />
       </Link>
