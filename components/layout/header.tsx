@@ -3,9 +3,7 @@ import { Logo } from "../svg/logo";
 import { WalletConnect, WalletConnectMobile } from "../walletconnect";
 import clsx from "clsx";
 import {
-  Dropdown,
   DropdownItem,
-  DropdownMenu,
   DropdownTrigger,
   Navbar,
   NavbarBrand,
@@ -20,8 +18,8 @@ import Link from "next/link";
 import { cn } from "@/lib/tailwindcss";
 import { Menu, appPathsList as menuList } from "@/data/allAppPath";
 import {
-  WarppedNextDropdownMenu,
   WarppedNextDropdown,
+  WarppedNextDropdownMenu,
 } from "../wrappedNextUI/Dropdown/Dropdown";
 
 export const Header = (props: HtmlHTMLAttributes<any>) => {

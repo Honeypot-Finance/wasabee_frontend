@@ -59,7 +59,7 @@ export const appPathsList: Menu[] = [
         title: "Meme War ⚔️",
       },
     ],
-    title: "🐻Pot2pump",
+    title: "Pot2pump",
   },
   {
     path: "/profile",

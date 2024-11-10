@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { truncate } from "@/lib/format";
 import { chart } from "@/services/chart";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { DiscussionArea } from "@/components/Discussion/DiscussionArea/DiscussionArea";
 import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
-import { truncate } from "@/lib/format";
 
 const menuItems = [
   { key: "info", label: "Token Info" },
   { key: "about", label: "About the Project" },
   { key: "txs", label: "Transactions" },
   { key: "comment", label: "Comments" },
-  { key: "priceChart", label: "Price Chart" },
+  // { key: "priceChart", label: "Price Chart" },
 ];
 
 const Tabs = ({
@@ -23,6 +23,13 @@ const Tabs = ({
 }) => {
   const [tab, setTab] = useState(menuItems[0].key);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  if (
+    pair?.ftoStatusDisplay?.status === "success" &&
+    !menuItems.find((item) => item.key === "priceChart")
+  ) {
+    menuItems.push({ key: "priceChart", label: "Price Chart" });
+  }
   return (
     <>
       <div className="hidden sm:flex items-center gap-x-1 md:text-xs ml-3">
@@ -44,6 +51,7 @@ const Tabs = ({
 
       <div className="relative sm:hidden inline-block text-left">
         <button
+          onBlur={() => setIsMenuOpen(false)}
           onClick={() => setIsMenuOpen((isMenuOpen) => !isMenuOpen)}
           className="inline-flex justify-center w-full rounded-md shadow-sm px-4 py-2 bg-[#3B2712] text-[#A46617] text-sm font-medium hover:bg-[#9D5E28] hover:text-white focus:outline-none mb-2"
         >
@@ -58,11 +66,13 @@ const Tabs = ({
           transition={{ duration: 0.3 }}
           className="absolute left-0 w-56 rounded-md overflow-hidden z-10"
         >
-          <div className="py-1 rounded-md">
+          <div className="py-1 rounded-md z-10">
             {menuItems.map((item) => (
               <button
                 key={item.key}
                 onClick={() => {
+                  console.log("key", item.key);
+
                   setTab(item.key);
                   setIsMenuOpen(false);
                 }}
@@ -130,7 +140,7 @@ const Tabs = ({
         )}
         {tab === "about" && (
           <div>
-            <h2 className="text-[2rem]">project description:</h2>
+            <h2 className="text-xl sm:text-3xl">project description:</h2>
             <p>
               {!!pair?.description
                 ? pair?.description
@@ -152,7 +162,7 @@ const Tabs = ({
             </div>
           </div>
         )}
-        {tab === "pricechart" && (
+        {tab === "priceChart" && (
           <div className="flex justify-center">
             <div className="w-full">
               {chart.chartTarget && <SimplePriceFeedGraph />}
