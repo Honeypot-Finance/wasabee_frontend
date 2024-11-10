@@ -254,6 +254,12 @@ const PoolPage = () => {
           />
         </div>
       </div>
+      <Button className="gap-2" asChild>
+        <Link href={`/new-position/${poolId}`}>
+          Create Position
+          <MoveRightIcon />
+        </Link>
+      </Button>
     </PageContainer>
   );
 };

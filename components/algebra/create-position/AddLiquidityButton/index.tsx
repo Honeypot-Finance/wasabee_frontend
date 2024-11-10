@@ -53,6 +53,7 @@ export const AddLiquidityButton = ({
       : undefined;
 
   const { calldata, value } = useMemo(() => {
+    console.log("mintInfo", mintInfo);
     if (
       !account ||
       !mintInfo.position ||
@@ -71,6 +72,8 @@ export const AddLiquidityButton = ({
       createPool: mintInfo.noLiquidity,
     });
   }, [mintInfo, account, txDeadline, useNative]);
+
+  console.log("calldata", calldata);
 
   const { approvalState: approvalStateA, approvalCallback: approvalCallbackA } =
     useApprove(
@@ -104,7 +107,9 @@ export const AddLiquidityButton = ({
     );
   }, [mintInfo, approvalStateA, approvalStateB]);
 
-  const { data: addLiquidityConfig } =
+  console.log("isReady", isReady);
+
+  const { data: addLiquidityConfig, error } =
     useSimulateAlgebraPositionManagerMulticall({
       args: calldata && [calldata as `0x${string}`[]],
       query: {
@@ -113,10 +118,13 @@ export const AddLiquidityButton = ({
       value: BigInt(value || 0),
     });
 
+  console.log("addLiquidityConfig", addLiquidityConfig);
+  console.log("error", error);
+
   const { data: addLiquidityData, writeContract: addLiquidity } =
     useContractWrite();
 
-  const { isLoading: isAddingLiquidityLoading } = useTransactionAwait(
+  const { isLoading: isAddingLiquidityLoading, data } = useTransactionAwait(
     addLiquidityData,
     {
       title: "Add liquidity",
@@ -124,8 +132,10 @@ export const AddLiquidityButton = ({
       tokenB: quoteCurrency?.wrapped.address as Address,
       type: TransactionType.POOL,
     },
-    `/pool/${poolAddress}`
+    `/pooldetail/${poolAddress}`
   );
+
+  console.log("data", data);
 
   if (mintInfo.errorMessage)
     return <Button disabled>{mintInfo.errorMessage}</Button>;
@@ -165,9 +175,10 @@ export const AddLiquidityButton = ({
   return (
     <Button
       disabled={!isReady}
-      onClick={() =>
-        addLiquidityConfig && addLiquidity(addLiquidityConfig.request)
-      }
+      onClick={() => {
+        console.log("addLiquidityConfig", addLiquidityConfig);
+        addLiquidityConfig && addLiquidity(addLiquidityConfig.request);
+      }}
     >
       {isAddingLiquidityLoading ? <Loader /> : "Create Position"}
     </Button>

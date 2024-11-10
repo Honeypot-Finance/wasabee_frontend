@@ -9,6 +9,7 @@ import { useAccount, useContractWrite } from "wagmi";
 import { Address } from "viem";
 import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
 import { TransactionType } from "@/lib/algebra/state/pendingTransactionsStore";
+import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
 
 interface CollectFeesProps {
   mintInfo: IDerivedMintInfo;
@@ -45,14 +46,14 @@ const CollectFees = ({
     });
   }, [positionId, amount0, amount1, account]);
 
-  const { config: collectConfig } = usePrepareAlgebraPositionManagerMulticall({
+  const { data: collectConfig } = useSimulateAlgebraPositionManagerMulticall({
     args: calldata && [calldata as `0x${string}`[]],
     value: BigInt(value || 0),
   });
 
-  const { data: collectData, write: collect } = useContractWrite(collectConfig);
+  const { data: collectData, writeContract: collect } = useContractWrite();
 
-  const { isLoading } = useTransactionAwait(collectData?.hash, {
+  const { isLoading } = useTransactionAwait(collectData, {
     title: "Collect fees",
     tokenA: mintInfo.currencies.CURRENCY_A?.wrapped.address as Address,
     tokenB: mintInfo.currencies.CURRENCY_B?.wrapped.address as Address,
@@ -78,8 +79,8 @@ const CollectFees = ({
       </div>
       <Button
         size={"md"}
-        disabled={!collect || zeroRewards || isLoading}
-        onClick={() => collect && collect()}
+        disabled={!collect || zeroRewards || isLoading || !collectConfig}
+        onClick={() => collectConfig && collect(collectConfig.request)}
       >
         {isLoading ? <Loader /> : "Collect fees"}
       </Button>

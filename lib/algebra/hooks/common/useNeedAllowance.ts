@@ -1,21 +1,38 @@
 import { Currency, CurrencyAmount } from "@cryptoalgebra/sdk";
-import { erc20ABI, useAccount, useContractRead } from "wagmi";
+import { Address } from "viem";
+import {
+  useAccount,
+  useContractRead,
+  useReadContract,
+  useWatchBlockNumber,
+} from "wagmi";
+import { erc20Abi } from "viem";
+export function useNeedAllowance(
+  currency: Currency | null | undefined,
+  amount: CurrencyAmount<Currency> | undefined,
+  spender: Address | undefined
+) {
+  const { address: account } = useAccount();
 
-export function useNeedAllowance(currency: Currency | null | undefined, amount: CurrencyAmount<Currency> | undefined, spender: Account | undefined) {
+  const { data: allowance, refetch } = useReadContract({
+    address: currency?.wrapped.address as Address,
+    abi: erc20Abi,
+    functionName: "allowance",
+    args: account && spender && [account, spender],
+    //watch:true
+  });
 
-    const { address: account } = useAccount()
+  //watch block number
+  const watch = useWatchBlockNumber({
+    onBlockNumber: () => {
+      refetch();
+    },
+  });
 
-    const { data: allowance } = useContractRead({
-        address: currency?.wrapped.address as Account,
-        abi: erc20ABI,
-        functionName: 'allowance',
-        watch: true,
-        args: account && spender && [account, spender]
-    });
-
-    return Boolean(!currency?.isNative &&
-        typeof allowance === 'bigint' &&
-        amount &&
-        amount.greaterThan(allowance.toString()))
-
+  return Boolean(
+    !currency?.isNative &&
+      typeof allowance === "bigint" &&
+      amount &&
+      amount.greaterThan(allowance.toString())
+  );
 }

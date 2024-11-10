@@ -13,6 +13,8 @@ import {
   computeRealizedLPFeePercent,
   warningSeverity,
 } from "@/lib/algebra/utils/swap/prices";
+import { AlgebraBasePluginContract } from "@/services/contract/algebra/algebra-base-plugin";
+import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
 import { SwapField } from "@/types/algebra/types/swap-field";
 import { TradeState } from "@/types/algebra/types/trade-state";
 import {
@@ -61,20 +63,20 @@ const SwapParams = () => {
             tokenB: pool.token1,
           });
 
-          const poolContract = getAlgebraPool({
-            address,
-          });
+          const poolContract = new AlgebraPoolContract({ address });
 
-          const plugin = await poolContract.read.plugin();
+          const plugin = await poolContract.contract.read.plugin();
 
-          const pluginContract = getAlgebraBasePlugin({
+          const pluginContract = new AlgebraBasePluginContract({
             address: plugin,
           });
+
+          AlgebraBasePluginContract;
 
           let beforeSwap: [string, number, number];
 
           try {
-            beforeSwap = await pluginContract.simulate
+            beforeSwap = await pluginContract.contract.simulate
               .beforeSwap(
                 [
                   ALGEBRA_ROUTER,
@@ -248,3 +250,6 @@ const PriceImpact = ({ priceImpact }: { priceImpact: Percent | undefined }) => {
 };
 
 export default SwapParams;
+function getAlgebraPool(arg0: { address: string }) {
+  throw new Error("Function not implemented.");
+}

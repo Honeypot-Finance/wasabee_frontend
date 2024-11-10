@@ -3,17 +3,17 @@ import { useAccount, useContractWrite } from "wagmi";
 import { useSwapCallArguments } from "./useSwapCallArguments";
 import { useEffect, useMemo, useState } from "react";
 import { useTransactionAwait } from "../common/useTransactionAwait";
-import { Address } from "viem";
+import { Address, getContract } from "viem";
 import { ApprovalStateType } from "@/types/algebra/types/approve-state";
 import { SwapCallbackState } from "@/types/algebra/types/swap-state";
 import { TransactionType } from "../../state/pendingTransactionsStore";
 import { formatBalance } from "../../utils/common/formatBalance";
-import { Contract, ethers } from "ethers";
 import { ALGEBRA_ROUTER } from "@/data/algebra/addresses";
 import {
   algebraRouterAbi,
   useSimulateAlgebraRouterMulticall,
 } from "@/wagmi-generated";
+import { wallet } from "@/services/wallet";
 
 interface SwapCallEstimate {
   calldata: string;
@@ -49,11 +49,11 @@ export function useSwapCallback(
 
       setBestCall(undefined);
 
-      const algebraRouter = new Contract(
-        ALGEBRA_ROUTER,
-        algebraRouterAbi,
-        new ethers.providers.Web3Provider(window.ethereum).getSigner()
-      );
+      const algebraRouter = getContract({
+        address: ALGEBRA_ROUTER,
+        abi: algebraRouterAbi,
+        client: wallet.publicClient,
+      });
 
       const calls = await Promise.all(
         swapCalldata.map(({ calldata, value: _value }) => {
@@ -82,11 +82,16 @@ export function useSwapCallback(
                     `Unexpected issue with estimating the gas. Please try again. ${gasError}`
                   ),
                 }))
-                .catch((callError) => ({
-                  calldata,
-                  value,
-                  error: new Error(callError),
-                }));
+                .catch(
+                  (callError) => (
+                    console.log("Error in useSwapCallback", callError),
+                    {
+                      calldata,
+                      value,
+                      error: callError,
+                    }
+                  )
+                );
             });
         })
       );
@@ -102,8 +107,13 @@ export function useSwapCallback(
         const errorCalls = calls.filter(
           (call): call is FailedCall => "error" in call
         );
-        if (errorCalls.length > 0)
-          throw errorCalls[errorCalls.length - 1].error;
+        if (errorCalls.length > 0) {
+          //throw errorCalls[errorCalls.length - 1].error?;
+          console.log(
+            "Error in useSwapCallback",
+            errorCalls[errorCalls.length - 1].error
+          );
+        }
         const firstNoErrorCall = calls.find<any>(
           (call): call is any => !("error" in call)
         );
