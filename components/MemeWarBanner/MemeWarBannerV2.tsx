@@ -71,11 +71,8 @@ export const MemeWarBannerV2 = observer((props: Props) => {
         <MemeWarSupportSection />
         <div className="flex justify-between text-center">
           <p className="max-w-[600px] m-auto">
-            The Meme War Status Tracker is a health graph showing the
-            relationship between the Number of Holders (X-axis) and Market Cap
-            (Y-axis) to indicate token health. A strong positive correlation
-            between these factors suggests that as more people hold MemeWar, its
-            market cap grows, showing a robust and widely supported community.
+            X: # of peeps who HODL their favorite ticker <br />
+            Y: total market-cap - the divine measure of peeps collective faith
           </p>
         </div>
         <MemeWarPariticipantRaceChart />

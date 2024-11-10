@@ -37,9 +37,11 @@ export const SwapCard = observer(
   ({
     inputAddress,
     outputAddress,
+    extraTokenAction,
   }: {
     inputAddress?: string;
     outputAddress?: string;
+    extraTokenAction?: React.ReactNode;
   }) => {
     const router = useRouter();
     const isInit = wallet.isInit && liquidity.isInit;

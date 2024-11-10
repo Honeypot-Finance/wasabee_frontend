@@ -87,7 +87,7 @@ export const SwapCard = observer(() => {
         })
       );
     }
-  }, [inputCurrency, outputCurrency, liquidity.isInit, wallet.isInit]);
+  }, [inputCurrency, outputCurrency, isInit]);
 
   useInterval(() => {
     swap.onFromAmountChange();
