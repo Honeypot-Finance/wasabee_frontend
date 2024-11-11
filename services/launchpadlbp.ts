@@ -2,49 +2,48 @@ import { parseEventLogs } from "viem";
 import { AsyncState } from "./utils";
 import { wallet } from "./wallet";
 import BigNumber from "bignumber.js";
-import dayjs from "dayjs";
 import { LiquidityBootstrapPoolFactoryABI } from "@/lib/abis/LiquidityBootstrapPoolFactory";
 import { LiquidityBootstrapPoolABI } from "@/lib/abis/LiquidityBootstrapPoolAbi";
 
 
 interface PoolSettings {
-    asset: `0x${string}`;               
+    asset: `0x${string}`;
     share: `0x${string}`;
     creator: `0x${string}`;
-    virtualAssets: bigint;      
+    virtualAssets: bigint;
     maxSharePrice: bigint;
     maxSharesOut: bigint;
     maxTotalAssetsIn: bigint;
-    maxTotalAssetsInDeviation: number;  
-    weightStart: bigint;                
-    weightEnd: bigint;                  
-    saleStart: number;                  
-    saleEnd: number;                    
-    vestCliff: number;                  
-    vestEnd: number;                    
-    redemptionDelay: number;            
-    sellingAllowed: boolean;            
-    whitelistMerkleRoot: `0x${string}`;        
-    minAssetsIn: bigint;                
-    minPercAssetsSeeding: number;       
-    minSharesSeeding: bigint;           
+    maxTotalAssetsInDeviation: number;
+    weightStart: bigint;
+    weightEnd: bigint;
+    saleStart: number;
+    saleEnd: number;
+    vestCliff: number;
+    vestEnd: number;
+    redemptionDelay: number;
+    sellingAllowed: boolean;
+    whitelistMerkleRoot: `0x${string}`;
+    minAssetsIn: bigint;
+    minPercAssetsSeeding: number;
+    minSharesSeeding: bigint;
 }
 
 // Parameters for createLiquidityBootstrapPool function
 interface CreateLiquidityBootstrapPoolParams {
     args: PoolSettings;
-    shares: bigint;                    
-    assets: bigint;                   
-    salt: `0x${string}`;                       
+    shares: bigint;
+    assets: bigint;
+    salt: `0x${string}`;
 }
 
 class LaunchPadLbp {
 
-    createLiquidityBootstrapPool = new AsyncState<({}: any) => Promise<string>>(
-        async ({args, shares, assets, salt}:CreateLiquidityBootstrapPoolParams) : Promise<string> => {
+    createLiquidityBootstrapPool = new AsyncState<({ }: any) => Promise<string>>(
+        async ({ args, shares, assets, salt }: CreateLiquidityBootstrapPoolParams): Promise<string> => {
             const res = await this.liquidityBootstrapPoolFactoryContract.createLiquidityBootstrapPool.call([{
                 ...args,
-            },shares, assets, salt])
+            }, shares, assets, salt])
 
             const logs = parseEventLogs({
                 logs: res.logs,
@@ -55,17 +54,17 @@ class LaunchPadLbp {
         }
     )
 
-    swapAssetsForExactShares = new AsyncState<({}: any) => Promise<bigint>>(
-        async ({sharesOut,maxAssetsIn,recipient }: {sharesOut: bigint, maxAssetsIn: bigint, recipient: `0x${string}`}) : Promise<bigint> => {
-            const res = await this.liquidityBootstrapPoolContract.swapAssetsForExactShares.call([sharesOut,maxAssetsIn,recipient])
+    swapAssetsForExactShares = new AsyncState<({ }: any) => Promise<bigint>>(
+        async ({ sharesOut, maxAssetsIn, recipient }: { sharesOut: bigint, maxAssetsIn: bigint, recipient: `0x${string}` }): Promise<bigint> => {
+            const res = await this.liquidityBootstrapPoolContract.swapAssetsForExactShares.call([sharesOut, maxAssetsIn, recipient])
 
             const logs = parseEventLogs({
                 logs: res.logs,
                 abi: LiquidityBootstrapPoolABI,
             })
 
-            if(logs[0]){
-                if (logs[0].eventName = "Buy" ){
+            if (logs[0]) {
+                if (logs[0].eventName = "Buy") {
                     return (logs[0].args as {
                         caller: `0x${string}`;
                         recipient: `0x${string}`;
@@ -80,17 +79,17 @@ class LaunchPadLbp {
         }
     )
 
-    swapExactAssetsForShares = new AsyncState<({}: any) => Promise<bigint>>(
-        async ({assetsIn,minSharesOut,recipient }: {assetsIn: bigint, minSharesOut: bigint, recipient: `0x${string}`}) : Promise<bigint> => {
-            const res = await this.liquidityBootstrapPoolContract.swapExactAssetsForShares.call([assetsIn,minSharesOut,recipient])
+    swapExactAssetsForShares = new AsyncState<({ }: any) => Promise<bigint>>(
+        async ({ assetsIn, minSharesOut, recipient }: { assetsIn: bigint, minSharesOut: bigint, recipient: `0x${string}` }): Promise<bigint> => {
+            const res = await this.liquidityBootstrapPoolContract.swapExactAssetsForShares.call([assetsIn, minSharesOut, recipient])
 
             const logs = parseEventLogs({
                 logs: res.logs,
                 abi: LiquidityBootstrapPoolABI,
             })
 
-            if(logs[0]){
-                if (logs[0].eventName = "Buy" ){
+            if (logs[0]) {
+                if (logs[0].eventName = "Buy") {
                     return (logs[0].args as {
                         caller: `0x${string}`;
                         recipient: `0x${string}`;
@@ -105,8 +104,8 @@ class LaunchPadLbp {
         }
     )
 
-    swapExactSharesForAssets = new AsyncState<({}: any) => Promise<bigint>>(
-        async ({sharesIn, minAssetsOut, recipient}: {sharesIn: bigint, minAssetsOut: bigint, recipient: `0x${string}`}) : Promise<bigint> => {
+    swapExactSharesForAssets = new AsyncState<({ }: any) => Promise<bigint>>(
+        async ({ sharesIn, minAssetsOut, recipient }: { sharesIn: bigint, minAssetsOut: bigint, recipient: `0x${string}` }): Promise<bigint> => {
             const res = await this.liquidityBootstrapPoolContract.swapExactSharesForAssets.call([sharesIn, minAssetsOut, recipient])
 
             const logs = parseEventLogs({
@@ -114,8 +113,8 @@ class LaunchPadLbp {
                 abi: LiquidityBootstrapPoolABI,
             })
 
-            if(logs[0]){
-                if (logs[0].eventName = "Sell" ){
+            if (logs[0]) {
+                if (logs[0].eventName = "Sell") {
                     return (logs[0].args as {
                         caller: `0x${string}`;
                         recipient: `0x${string}`;
@@ -130,8 +129,8 @@ class LaunchPadLbp {
         }
     )
 
-    swapSharesForExactAssets = new AsyncState<({}: any) => Promise<bigint>>(
-        async ({sharesIn, minAssetsOut, recipient}: {sharesIn: bigint, minAssetsOut: bigint, recipient: `0x${string}`}) : Promise<bigint> => {
+    swapSharesForExactAssets = new AsyncState<({ }: any) => Promise<bigint>>(
+        async ({ sharesIn, minAssetsOut, recipient }: { sharesIn: bigint, minAssetsOut: bigint, recipient: `0x${string}` }): Promise<bigint> => {
             const res = await this.liquidityBootstrapPoolContract.swapSharesForExactAssets.call([sharesIn, minAssetsOut, recipient])
 
             const logs = parseEventLogs({
@@ -139,8 +138,8 @@ class LaunchPadLbp {
                 abi: LiquidityBootstrapPoolABI,
             })
 
-            if(logs[0]){
-                if (logs[0].eventName = "Sell" ){
+            if (logs[0]) {
+                if (logs[0].eventName = "Sell") {
                     return (logs[0].args as {
                         caller: `0x${string}`;
                         recipient: `0x${string}`;
@@ -155,43 +154,43 @@ class LaunchPadLbp {
         }
     )
 
-    args = new AsyncState<({}: any) => Promise<any>>(
-        async () : Promise<any> => {
+    args = new AsyncState<({ }: any) => Promise<any>>(
+        async (): Promise<any> => {
             return this.liquidityBootstrapPoolContract.args
         }
-    ) 
+    )
 
-    reservesAndWeights =  new AsyncState<({}: any) => Promise<any>>(
-        async () : Promise<any> => {
+    reservesAndWeights = new AsyncState<({ }: any) => Promise<any>>(
+        async (): Promise<any> => {
             return this.liquidityBootstrapPoolContract.reservesAndWeights
         }
-    ) 
+    )
 
-    previewAssetsIn = new AsyncState<({}: any) => Promise<any>>(
-        async (shareOut: bigint) : Promise<any> => {
+    previewAssetsIn = new AsyncState<({ }: any) => Promise<any>>(
+        async (shareOut: bigint): Promise<any> => {
             return this.liquidityBootstrapPoolContract.previewAssetsIn(shareOut)
         }
     )
-    
-    previewAssetsOut = new AsyncState<({}: any) => Promise<any>>(
-        async (shareIn: bigint) : Promise<any> => {
+
+    previewAssetsOut = new AsyncState<({ }: any) => Promise<any>>(
+        async (shareIn: bigint): Promise<any> => {
             return this.liquidityBootstrapPoolContract.previewAssetsOut(shareIn)
         }
     )
 
-    previewSharesIn = new AsyncState<({}: any) => Promise<any>>(
-        async (assetsOut: bigint) : Promise<any> => {
+    previewSharesIn = new AsyncState<({ }: any) => Promise<any>>(
+        async (assetsOut: bigint): Promise<any> => {
             return this.liquidityBootstrapPoolContract.previewSharesIn(assetsOut)
         }
     )
 
-    previewSharesOut = new AsyncState<({}: any) => Promise<any>>(
-        async (assetIn: bigint) : Promise<any> => {
+    previewSharesOut = new AsyncState<({ }: any) => Promise<any>>(
+        async (assetIn: bigint): Promise<any> => {
             return this.liquidityBootstrapPoolContract.previewSharesOut(assetIn)
         }
     )
 
-    get liquidityBootstrapPoolFactoryContract() {
+    get liquidityBootstrapPoolFactoryContract () {
         return wallet.contracts.lbpFactory;
     }
 
