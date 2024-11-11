@@ -113,8 +113,10 @@ export function useInfoTickData() {
       }
 
       const { ticks: initializedTicks } = initializedTicksResult;
+      console.log("Initialized ticks", initializedTicks);
 
       const tickIdxToInitializedTick = keyBy(initializedTicks, "tickIdx");
+      console.log("Tick idx to initialized tick", tickIdxToInitializedTick);
 
       const token0 = new Token(1, token0Address, parseInt(token0Decimals));
       const token1 = new Token(1, token1Address, parseInt(token1Decimals));

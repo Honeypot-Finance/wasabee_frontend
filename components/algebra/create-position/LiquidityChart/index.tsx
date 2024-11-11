@@ -41,6 +41,8 @@ const LiquidityChart = ({
     fetchTicksSurroundingPrice: { ticksResult, fetchTicksSurroundingPrice },
   } = useInfoTickData();
 
+  console.log("ticksResult", ticksResult);
+
   useEffect(() => {
     if (!currencyA || !currencyB) return;
     fetchTicksSurroundingPrice(currencyA, currencyB);
@@ -69,31 +71,42 @@ const LiquidityChart = ({
             },
           ];
 
-          console.log(
-            currencyA?.wrapped,
-            currencyB?.wrapped,
-            100,
-            sqrtPriceX96,
-            ADDRESS_ZERO,
-            t.liquidityActive.toString(),
-            t.tickIdx,
-            ticksResult.tickSpacing,
-            mockTicks
-          );
-          const pool =
-            currencyA && currencyB
-              ? new Pool(
-                  currencyA.wrapped,
-                  currencyB.wrapped,
-                  100,
-                  sqrtPriceX96,
-                  ADDRESS_ZERO,
-                  t.liquidityActive.toString(),
-                  t.tickIdx,
-                  ticksResult.tickSpacing,
-                  mockTicks
-                )
-              : undefined;
+          currencyA &&
+            currencyB &&
+            !(t.liquidityActive === BigInt(0)) &&
+            console.log(
+              currencyA?.wrapped,
+              currencyB?.wrapped,
+              100,
+              sqrtPriceX96,
+              ADDRESS_ZERO,
+              t.liquidityActive.toString(),
+              t.tickIdx,
+              ticksResult.tickSpacing,
+              mockTicks
+            );
+
+          let pool;
+
+          try {
+            pool =
+              currencyA &&
+              currencyB &&
+              !(t.liquidityActive === BigInt(0)) &&
+              new Pool(
+                currencyA.wrapped,
+                currencyB.wrapped,
+                100,
+                sqrtPriceX96,
+                ADDRESS_ZERO,
+                t.liquidityActive.toString(),
+                t.tickIdx,
+                ticksResult.tickSpacing,
+                mockTicks
+              );
+          } catch (e) {
+            console.error(e);
+          }
 
           const nextSqrtX96 = ticksResult.ticksProcessed[i - 1]
             ? TickMath.getSqrtRatioAtTick(
