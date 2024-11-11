@@ -208,9 +208,13 @@ export const MemeWarPariticipantRaceChart = observer(() => {
     }),
     options: {
       title: {
-        text: "Meme War Status Checker",
+        text: "Meme War Tracker",
         align: "center",
-        style: {},
+        style: {
+          color: "white",
+          fontSize: "2rem",
+        },
+        offsetY: 30,
       },
       chart: {
         type: "scatter",
