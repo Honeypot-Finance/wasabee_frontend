@@ -51,14 +51,6 @@ const TokenCardV3 = ({
       refetch();
     },
   });
-  const [state, setState] = useState({
-    selectState: new SelectState({
-      value: 0,
-      onSelectChange: (value) => {
-        handleInput((Number(value) * Number(balance?.formatted)).toString());
-      },
-    }),
-  });
   const [storedValue, setStoredValue] = useState(value);
 
   const {
@@ -109,7 +101,7 @@ const TokenCardV3 = ({
             value={storedValue}
             id={`amount-${currency?.symbol}`}
             onUserInput={(v) => handleInput(v)}
-            className={`text-right border-none text-xl font-bold w-9/12 p-0 disabled:cursor-default disabled:text-white`}
+            className={`text-right bg-black/20 border-none text-xl font-bold w-11/12 p-2 disabled:cursor-default disabled:text-white`}
             placeholder={"0.0"}
             maxDecimals={currency?.decimals}
           />
@@ -195,7 +187,16 @@ const TokenCardV3 = ({
           <div className="p-2">
             <div className="w-full flex justify-end items-center">
               <ItemSelect
-                selectState={state.selectState}
+                selectState={
+                  new SelectState({
+                    value: 1,
+                    onSelectChange: (value) => {
+                      handleInput(
+                        (Number(balance?.formatted) * Number(value)).toString()
+                      );
+                    },
+                  })
+                }
                 className=" grid grid-cols-2 lg:grid-cols-4 gap-[16px] justify-around w-full"
               >
                 <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
