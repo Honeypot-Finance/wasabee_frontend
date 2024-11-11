@@ -250,6 +250,3 @@ const PriceImpact = ({ priceImpact }: { priceImpact: Percent | undefined }) => {
 };
 
 export default SwapParams;
-function getAlgebraPool(arg0: { address: string }) {
-  throw new Error("Function not implemented.");
-}

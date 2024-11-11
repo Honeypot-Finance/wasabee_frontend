@@ -7,6 +7,7 @@ import {
 } from "@/components/algebra/ui/popover";
 import { Separator } from "@/components/algebra/ui/separator";
 import { Switch } from "@/components/algebra/ui/switch";
+import CardContianer from "@/components/CardContianer/CardContianer";
 import { useUserState } from "@/lib/algebra/state/userStore";
 import { Percent } from "@cryptoalgebra/sdk";
 import { SettingsIcon } from "lucide-react";
@@ -20,16 +21,15 @@ const Settings = () => {
           <SettingsIcon />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        align={"end"}
-        className="flex flex-col gap-4 p-6 w-fit bg-card rounded-3xl border border-card-border text-white"
-      >
-        <div className="text-md font-bold">Transaction Settings</div>
-        <Separator orientation={"horizontal"} className="bg-border" />
-        <SlippageTolerance />
-        <TransactionDeadline />
-        <Multihop />
-        <ExpertMode />
+      <PopoverContent>
+        <CardContianer addtionalClassName="flex-col gap-2">
+          <div className="text-md font-bold">Transaction Settings</div>
+          <Separator orientation={"horizontal"} className="bg-border" />
+          <SlippageTolerance />
+          <TransactionDeadline />
+          <Multihop />
+          <ExpertMode />
+        </CardContianer>
       </PopoverContent>
     </Popover>
   );

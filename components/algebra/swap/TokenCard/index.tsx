@@ -6,8 +6,12 @@ import { formatUSD } from "@/lib//algebra/utils/common/formatUSD";
 import { Currency, Percent } from "@cryptoalgebra/sdk";
 import { ChevronRight } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance, useWatchBlockNumber } from "wagmi";
 import { Address } from "viem";
+import { TokenSelector } from "@/components/TokenSelector";
+import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
+import { wallet } from "@/services/wallet";
+import { Token } from "@/services/contract/token";
 
 interface TokenSwapCardProps {
   handleTokenSelection: (currency: Currency) => void;
@@ -37,16 +41,23 @@ const TokenCard = ({
   showNativeToken,
   disabled,
 }: TokenSwapCardProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const { address: account } = useAccount();
+  useWatchBlockNumber({
+    onBlockNumber: () => {
+      refetch();
+    },
+  });
 
-  const { data: balance, isLoading } = useBalance({
+  const {
+    data: balance,
+    isLoading,
+    refetch,
+  } = useBalance({
     address: account,
     token: currency?.isNative
       ? undefined
       : (currency?.wrapped.address as Address),
-    watch: true,
+    //watch: true,
   });
 
   const balanceString = useMemo(() => {
@@ -61,31 +72,32 @@ const TokenCard = ({
   }, []);
 
   const handleTokenSelect = (newCurrency: Currency) => {
-    setIsOpen(false);
     handleTokenSelection(newCurrency);
   };
 
   return (
     <div className="flex w-full px-4 py-6 bg-card-dark rounded-2xl">
       <div className="flex flex-col gap-2 min-w-fit">
-        <TokenSelectorModal
-          showNativeToken={showNativeToken}
-          onSelect={handleTokenSelect}
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          otherCurrency={otherCurrency}
-        >
-          <button
-            className="flex items-center gap-4 px-3 py-1 w-fit bg-card rounded-xl hover:bg-card-hover"
-            onClick={() => setIsOpen(true)}
-          >
-            <CurrencyLogo currency={currency} size={32} />
-            <span className="font-bold text-lg">
-              {currency ? currency.symbol : "Select a token"}
-            </span>
-            <ChevronRight size={16} />
-          </button>
-        </TokenSelectorModal>
+        <TokenSelector
+          value={
+            currency?.wrapped.address
+              ? Token.getToken({
+                  address: currency?.wrapped.address,
+                })
+              : undefined
+          }
+          onSelect={(token) => {
+            handleTokenSelect(
+              new AlgebraToken(
+                wallet.currentChainId,
+                token.address,
+                token.decimals,
+                token.symbol,
+                token.name
+              )
+            );
+          }}
+        />
         {currency && account && (
           <div className={"flex text-sm whitespace-nowrap"}>
             {showBalance && (
@@ -102,7 +114,6 @@ const TokenCard = ({
           </div>
         )}
       </div>
-
       <div className="flex flex-col items-end w-full">
         <Input
           disabled={disabled}
