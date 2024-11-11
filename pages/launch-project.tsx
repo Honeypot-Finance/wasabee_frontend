@@ -1,3 +1,4 @@
+import { Button } from "@/components/button";
 import Confirm from "@/components/LBPFormItems/Confirm";
 import CreateAndBranding from "@/components/LBPFormItems/CreateAndBranding";
 import ProjectInfo from "@/components/LBPFormItems/ProjectInfo";
@@ -8,8 +9,10 @@ import TermsConditions from "@/components/LBPFormItems/TermsConditions";
 import TokenomicsAndPreview from "@/components/LBPFormItems/TokenomicsAndPreview";
 import TokenVesting from "@/components/LBPFormItems/TokenVesting";
 import Stepper from "@/components/Stepper";
+import launchPadLbp, { PoolSettings } from "@/services/launchpadlbp";
 import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { keccak256, parseEther } from "viem";
 
 const StepsData = [
   {
@@ -98,6 +101,38 @@ const LaunchProject = () => {
     }
   };
 
+  const CreateLBP = async () => {
+    const args:PoolSettings = {
+      asset: `0x3E70A4Ca1295DaA7E8Ca2204b0fBcaDE69B9C43e`,
+      share: `0xF9a97b37d9f7d9f7968f267ad266b1f71f2B511D`,
+      creator: `0xf8184eFf83C646B56A955bc46F2F5723563eb5ED`,
+      virtualAssets: parseEther('0.0000000001'),
+      maxSharePrice: BigInt(0),
+      maxSharesOut: BigInt(0),
+      maxTotalAssetsIn: BigInt(0),
+      maxTotalAssetsInDeviation: 0,
+      weightStart: BigInt(0),
+      weightEnd: BigInt(0),
+      saleStart: 0,
+      saleEnd: 0,
+      vestCliff: 0,
+      vestEnd: 0,
+      redemptionDelay: 0,
+      sellingAllowed: false,
+      whitelistMerkleRoot: `0x0000000000000000000000000000000000000000000000000000000000000000`,
+      minAssetsIn: BigInt(100),
+      minPercAssetsSeeding: 0,
+      minSharesSeeding: BigInt(0),
+    }
+
+     const pairAddress =  await launchPadLbp.createLiquidityBootstrapPool.call({
+      args,
+      assets: BigInt(100),
+      shares: BigInt(100),
+      salt: keccak256("0x")
+     })
+  }
+
   return (
     <div className="md:p-6  md:max-w-full xl:max-w-[1440px] mx-auto mb-[30vh] flex">
       <div className="flex-[0.35] bg-[#271A0C] py-[60px] rounded-[28px] justify-center">
@@ -108,6 +143,7 @@ const LaunchProject = () => {
           <CurrentStep />
         </FormProvider>
       </div>
+      <Button>Click</Button>
     </div>
   );
 };

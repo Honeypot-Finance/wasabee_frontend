@@ -5,8 +5,8 @@ import BigNumber from "bignumber.js";
 import { LiquidityBootstrapPoolFactoryABI } from "@/lib/abis/LiquidityBootstrapPoolFactory";
 import { LiquidityBootstrapPoolABI } from "@/lib/abis/LiquidityBootstrapPoolAbi";
 
-
-interface PoolSettings {
+ 
+export interface PoolSettings {
     asset: `0x${string}`;
     share: `0x${string}`;
     creator: `0x${string}`;
@@ -39,7 +39,7 @@ interface CreateLiquidityBootstrapPoolParams {
 
 class LaunchPadLbp {
 
-    createLiquidityBootstrapPool = new AsyncState<({ }: any) => Promise<string>>(
+    createLiquidityBootstrapPool = new AsyncState<({ args, shares, assets, salt }: CreateLiquidityBootstrapPoolParams) => Promise<string>>(
         async ({ args, shares, assets, salt }: CreateLiquidityBootstrapPoolParams): Promise<string> => {
             const res = await this.liquidityBootstrapPoolFactoryContract.createLiquidityBootstrapPool.call([{
                 ...args,
