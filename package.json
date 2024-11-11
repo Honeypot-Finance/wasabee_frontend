@@ -53,6 +53,7 @@
     "framer-motion": "^11.3.24",
     "fuse.js": "^7.0.0",
     "graphql": "^16.9.0",
+    "lightweight-charts": "^4.2.1",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "lodash.keyby": "^4.6.0",

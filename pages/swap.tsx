@@ -27,6 +27,7 @@ import IntegralPools from "@/components/algebra/swap/IntegralPools";
 import SwapButton from "@/components/algebra/swap/SwapButton";
 import SwapPair from "@/components/algebra/swap/SwapPair";
 import SwapParams from "@/components/algebra/swap/SwapParams";
+import V3SwapCard from "@/components/algebra/swap/V3SwapCard";
 
 const SwapPage = observer(() => {
   useEffect(() => {
@@ -70,20 +71,7 @@ const SwapPage = observer(() => {
         >
           <Tabs>
             <Tab title="v3">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8 mt-8 lg:mt-16">
-                <div className="flex flex-col gap-2">
-                  <IntegralPools />
-
-                  <div className="flex flex-col gap-1 w-full bg-card border border-card-border p-2 rounded-3xl">
-                    <SwapPair />
-                    <SwapParams />
-                    <SwapButton />
-                  </div>
-                  <PoweredByAlgebra />
-                </div>
-
-                <div className="col-span-2">{/* <SwapChart /> */}</div>
-              </div>
+              <V3SwapCard />
             </Tab>
             <Tab title="v2">
               <SwapCard></SwapCard>

@@ -1,7 +1,7 @@
-import { MAX_UINT128 } from "@/constants/max-uint128";
+import { MAX_UINT128 } from "@/data/algebra/max-uint128";
 import { useInfoTickData } from "@/lib/algebra/hooks/pools/usePoolTickData";
-import { useDerivedSwapInfo } from "@/state/swapStore";
-import { formatCurrency } from "@/utils/common/formatCurrency";
+import { useDerivedSwapInfo } from "@/lib/algebra/state/swapStore";
+import { formatCurrency } from "@/lib/algebra/utils/common/formatCurrency";
 import {
   ADDRESS_ZERO,
   CurrencyAmount,
@@ -66,7 +66,7 @@ const MarketDepthChart = ({
             {
               index: Number(t.tickIdx) - Number(ticksResult.tickSpacing),
               liquidityGross: t.liquidityGross.toString(),
-              liquidityNet: (t.liquidityNet * -1n).toString(),
+              liquidityNet: (t.liquidityNet * BigInt(-1)).toString(),
             },
             {
               index: t.tickIdx,
@@ -259,6 +259,7 @@ const MarketDepthChart = ({
             {beforeCurrent
               ? beforeCurrent.map((v: any, idx: number) => (
                   <div
+                    key={idx}
                     id={`before-current-${idx}`}
                     className={`relative flex items-center h-[25px] py-1 w-full`}
                     onMouseOver={() => setHoveredIndex(idx)}
@@ -307,6 +308,7 @@ const MarketDepthChart = ({
             {afterCurrent
               ? afterCurrent.map((v: any, idx: number) => (
                   <div
+                    key={idx}
                     id={`after-current-${idx}`}
                     className={`relative flex items-center h-[25px] py-1 w-full`}
                     onMouseOver={() => setHoveredIndex(-idx)}

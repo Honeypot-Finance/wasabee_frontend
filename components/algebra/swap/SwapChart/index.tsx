@@ -1,12 +1,3 @@
-import { useDerivedSwapInfo } from "@/state/swapStore";
-import {
-  SwapChartPair,
-  SwapChartPairType,
-  SwapChartSpan,
-  SwapChartSpanType,
-  SwapChartView,
-  SwapChartViewType,
-} from "@/types/swap-chart";
 import {
   useCallback,
   useEffect,
@@ -31,9 +22,7 @@ import {
 import CurrencyLogo from "@/components/algebra/common/CurrencyLogo";
 import { Currency } from "@cryptoalgebra/sdk";
 import { Button } from "@/components/algebra/ui/button";
-import { formatCurrency } from "@/utils/common/formatCurrency";
 import { Address } from "viem";
-import { formatUSD } from "@/utils/common/formatUSD";
 import { Skeleton } from "@/components/algebra/ui/skeleton";
 import Loader from "@/components/algebra/common/Loader";
 import {
@@ -42,6 +31,17 @@ import {
   HoverCardTrigger,
 } from "@/components/algebra/ui/hover-card";
 import MarketDepthChart from "../MarketDepthChart";
+import { useDerivedSwapInfo } from "@/lib/algebra/state/swapStore";
+import { formatCurrency } from "@/lib/algebra/utils/common/formatCurrency";
+import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
+import {
+  SwapChartPairType,
+  SwapChartPair,
+  SwapChartViewType,
+  SwapChartView,
+  SwapChartSpanType,
+  SwapChartSpan,
+} from "@/types/algebra/types/swap-chart";
 
 const getTokenTitle = (
   chartPair: SwapChartPairType,
@@ -51,7 +51,7 @@ const getTokenTitle = (
   switch (chartPair) {
     case SwapChartPair.AB:
       return [
-        <div className="flex">
+        <div className="flex" key={SwapChartPair.AB}>
           <CurrencyLogo currency={currencyA} size={30} />
           <CurrencyLogo
             currency={currencyB}
@@ -63,7 +63,7 @@ const getTokenTitle = (
       ];
     case SwapChartPair.BA:
       return [
-        <div className="flex">
+        <div className="flex" key={SwapChartPair.BA}>
           <CurrencyLogo currency={currencyB} size={30} />
           <CurrencyLogo
             currency={currencyA}
@@ -75,12 +75,12 @@ const getTokenTitle = (
       ];
     case SwapChartPair.A:
       return [
-        <CurrencyLogo currency={currencyA} size={30} />,
+        <CurrencyLogo currency={currencyA} size={30} key={SwapChartPair.A} />,
         `${currencyA.symbol}`,
       ];
     case SwapChartPair.B:
       return [
-        <CurrencyLogo currency={currencyB} size={30} />,
+        <CurrencyLogo currency={currencyB} size={30} key={SwapChartPair.B} />,
         `${currencyB.symbol}`,
       ];
   }
@@ -359,7 +359,7 @@ const SwapChart = () => {
 
   const [pairImage, pairTitle] = useMemo(() => {
     if (!currencies.INPUT || !currencies.OUTPUT)
-      return [<Loader size={16} />, "Loading..."];
+      return [<Loader size={16} key={"loader"} />, "Loading..."];
 
     return getTokenTitle(chartPair, currencies.INPUT, currencies.OUTPUT);
   }, [currencies, chartPair]);
