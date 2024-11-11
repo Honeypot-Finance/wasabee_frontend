@@ -2,7 +2,7 @@ import { Input } from "@/components/algebra/ui/input";
 import { formatBalance } from "@/lib/algebra/utils/common/formatBalance";
 import { formatUSD } from "@/lib//algebra/utils/common/formatUSD";
 import { Currency, Percent } from "@cryptoalgebra/sdk";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAccount, useBalance, useWatchBlockNumber } from "wagmi";
 import { Address } from "viem";
 import { TokenSelector } from "@/components/TokenSelector";
@@ -12,6 +12,8 @@ import { Token } from "@/services/contract/token";
 import { Accordion, AccordionItem, Slider } from "@nextui-org/react";
 import { WrappedNextAccordion } from "@/components/wrappedNextUI/Accordion/Accordion";
 import { BiDownArrow } from "react-icons/bi";
+import { debounce } from "lodash";
+import { ItemSelect, SelectState, SelectItem } from "@/components/ItemSelect";
 
 interface TokenSwapCardProps {
   handleTokenSelection: (currency: Currency) => void;
@@ -49,6 +51,15 @@ const TokenCardV3 = ({
       refetch();
     },
   });
+  const [state, setState] = useState({
+    selectState: new SelectState({
+      value: 0,
+      onSelectChange: (value) => {
+        handleInput((Number(value) * Number(balance?.formatted)).toString());
+      },
+    }),
+  });
+  const [storedValue, setStoredValue] = useState(value);
 
   const {
     data: balance,
@@ -62,16 +73,25 @@ const TokenCardV3 = ({
     //watch: true,
   });
 
+  useEffect(() => {
+    setStoredValue(value);
+  }, [value]);
+
   const balanceString = useMemo(() => {
     if (isLoading || !balance) return "Loading...";
 
     return formatBalance(balance.formatted);
   }, [balance, isLoading]);
 
-  const handleInput = useCallback((value: string) => {
-    if (value === ".") value = "0.";
-    handleValueChange?.(value);
-  }, []);
+  const handleInput = useMemo(
+    () =>
+      debounce((value: string) => {
+        if (value === ".") value = "0.";
+        console.log("value", value);
+        handleValueChange?.(value);
+      }, 200),
+    []
+  );
 
   const handleTokenSelect = (newCurrency: Currency) => {
     handleTokenSelection(newCurrency);
@@ -86,7 +106,7 @@ const TokenCardV3 = ({
           <Input
             disabled={disabled}
             type={"text"}
-            value={value}
+            value={storedValue}
             id={`amount-${currency?.symbol}`}
             onUserInput={(v) => handleInput(v)}
             className={`text-right border-none text-xl font-bold w-9/12 p-0 disabled:cursor-default disabled:text-white`}
@@ -160,14 +180,37 @@ const TokenCardV3 = ({
               <Slider
                 className="w-full"
                 size="sm"
-                maxValue={Number(balance)}
+                maxValue={Number(balance?.formatted)}
                 minValue={0}
                 onChange={(value) => {
-                  handleValueChange?.(value.toString());
+                  setStoredValue(value.toString());
+                  handleInput(value.toString());
                 }}
-                value={Number(value)}
+                value={Number(storedValue)}
                 step={Math.pow(0.1, 18)}
               ></Slider>
+            </div>
+          </div>
+
+          <div className="p-2">
+            <div className="w-full flex justify-end items-center">
+              <ItemSelect
+                selectState={state.selectState}
+                className=" grid grid-cols-2 lg:grid-cols-4 gap-[16px] justify-around w-full"
+              >
+                <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
+                  25%
+                </SelectItem>
+                <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
+                  50%
+                </SelectItem>
+                <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
+                  75%
+                </SelectItem>
+                <SelectItem className="rounded-[30px] px-[24px]" value={1}>
+                  100%
+                </SelectItem>
+              </ItemSelect>
             </div>
           </div>
         </AccordionItem>

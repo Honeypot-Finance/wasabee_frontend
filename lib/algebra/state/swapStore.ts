@@ -212,11 +212,7 @@ export function useDerivedSwapInfo(): {
     !isExactIn ? parsedAmount : undefined
   );
 
-  console.log(bestTradeExactIn);
-
   const trade = (isExactIn ? bestTradeExactIn : bestTradeExactOut) ?? undefined;
-
-  console.log(trade);
 
   const [addressA, addressB] = [
     inputCurrency?.isNative ? undefined : inputCurrency?.address || "",

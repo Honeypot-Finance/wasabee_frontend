@@ -18,6 +18,7 @@ import {
 } from "@/lib/algebra/state/swapStore";
 import { SwapField, SwapFieldType } from "@/types/algebra/types/swap-field";
 import TokenCardV3 from "../TokenCard/TokenCardV3";
+import { ExchangeSvg } from "@/components/svg/exchange";
 
 const SwapPairV3 = () => {
   const {
@@ -144,12 +145,15 @@ const SwapPairV3 = () => {
         showBalance={true}
         label="From"
       />
-      <button
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-1.5 bg-card-dark w-fit rounded-full border-[5px] border-[#1a1d2b] hover:bg-card-hover duration-200"
-        onClick={onSwitchTokens}
-      >
-        <ChevronsUpDownIcon size={16} />
-      </button>
+
+      <div className="flex w-full items-center gap-[5px]">
+        <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
+        <ExchangeSvg
+          className=" cursor-pointer hover:rotate-180 transition-all"
+          onClick={onSwitchTokens}
+        ></ExchangeSvg>
+        <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
+      </div>
       <TokenCardV3
         value={formattedAmounts[SwapField.OUTPUT] || ""}
         currency={quoteCurrency}
