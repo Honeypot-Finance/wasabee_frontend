@@ -1,9 +1,67 @@
+import useMulticall3 from "@/components/hooks/useMulticall3";
+import { ERC20ABI } from "@/lib/abis/erc20";
 import { Divider } from "@nextui-org/react";
+import { CallReturnContext } from "ethereum-multicall";
 import React from "react";
+import { formatUnits, parseEther, parseUnits } from "viem";
 
-type Props = {};
+type Props = {
+  tokenAddress ?: string
+};
 
-const TokenInfo = () => {
+function formatErc20Data(data: CallReturnContext[]): { [key: string]: any } {
+  if(data.length === 0) return {}
+  let decimals = 1; // Default to 1 if decimals are not found
+
+  // First, extract decimals from the data
+  data.forEach((item) => {
+    if (item.returnValues.length === 0) {
+      throw new Error("Invalid ERC20 token address");
+    }
+
+    if (item.reference === "decimals") {
+      decimals = Math.pow(10, item.returnValues[0]);
+    }
+  });
+
+  return data.reduce((formattedData: {[key: string]: any}, item) => {
+    
+      formattedData[item.reference] = item.returnValues[0];
+    
+    return formattedData;
+  }, {});
+}
+
+const TokenInfo = ({tokenAddress}: Props) => {
+
+  const  {data} = useMulticall3({
+    args: [
+      {
+        reference: "erc20",
+        contractAddress: "0xF9a97b37d9f7d9f7968f267ad266b1f71f2B511D",
+        abi: ERC20ABI,
+        calls: [
+          { reference: "name", methodName: "name", methodParameters: [] },
+          { reference: "symbol", methodName: "symbol", methodParameters: [] },
+          {
+            reference: "decimals",
+            methodName: "decimals",
+            methodParameters: [],
+          },
+          {
+            reference: "totalSupply",
+            methodName: "totalSupply",
+            methodParameters: [],
+          },
+        ],
+      },
+    ]
+  })
+
+  const tokenInfo = formatErc20Data(data?.results.erc20.callsReturnContext ?? [])
+
+
+
   return (
     <div className="">
       <div className="text-[34px] leading-[48px] font-bold">Token Info</div>
@@ -13,7 +71,7 @@ const TokenInfo = () => {
             Token Name
           </div>
           <div className="uppercase text-xl font-medium text-white">
-            Honey Token
+            {tokenInfo?.name ?? "Token Name"}
           </div>
         </div>
         <Divider className="my-2" />
@@ -22,7 +80,7 @@ const TokenInfo = () => {
             Token Symbol
           </div>
           <div className="uppercase text-xl font-medium text-white">
-            Hunny
+            {tokenInfo?.symbol ?? "Token Symbol"}
           </div>
         </div>
         <Divider className="my-2" />
@@ -31,7 +89,7 @@ const TokenInfo = () => {
             Total Supply
           </div>
           <div className="uppercase text-xl font-medium text-white">
-            200,000
+            {new Intl.NumberFormat('en-DE').format(Number(formatUnits(BigInt(tokenInfo?.totalSupply?.hex ?? '0') , tokenInfo?.decimals ?? 18 )))}
           </div>
         </div>
         <Divider className="my-2" />
@@ -67,7 +125,7 @@ const TokenInfo = () => {
             Token Address
           </div>
           <div className="uppercase text-xl font-medium text-white">
-            0x2354236347689
+            {tokenAddress}
           </div>
         </div>
       </div>

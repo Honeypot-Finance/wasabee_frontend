@@ -6,14 +6,10 @@ import { FactoryContract } from "./contract/factory-contract";
 import { FtoFactoryContract } from "./contract/ftofactory-contract";
 import { FtoFacadeContract } from "./contract/ftofacade-contract";
 import { makeAutoObservable, reaction } from "mobx";
-import { Token } from "./contract/token";
 import { createPublicClientByChain } from "@/lib/client";
-import { AsyncState, StorageState } from "./utils";
+import { StorageState } from "./utils";
 import { MemeFactoryContract } from "./contract/memefactory-contract";
 import { MEMEFacadeContract } from "./contract/memefacade-contract";
-import { init } from "next/dist/compiled/webpack/webpack";
-import { LiquidityBootstrapPoolFactoryContract } from "./contract/liquidity_bootstrap_pool_factory";
-import { LiquidityBootstrapPoolContract } from "./contract/liquidity_bootstrap_pool";
 
 export class Wallet {
   account: string = "";
@@ -29,8 +25,7 @@ export class Wallet {
     ftofacade: FtoFacadeContract;
     memeFactory: MemeFactoryContract;      
     memeFacade: MEMEFacadeContract;
-    lbpFactory: LiquidityBootstrapPoolFactoryContract;
-    lbp: LiquidityBootstrapPoolContract
+    
   } = {} as any;
   publicClient!: PublicClient;
   isInit = false;
@@ -86,13 +81,6 @@ export class Wallet {
       memeFacade: new MEMEFacadeContract({
         address: this.currentChain.contracts.memeFacade,
       }),
-      lbpFactory: new LiquidityBootstrapPoolFactoryContract({
-        address: this.currentChain.contracts.lbpFactory,
-      }),
-      lbp: new LiquidityBootstrapPoolContract({
-        address: this.currentChain.contracts.lbp,
-      })
-
     };
     this.publicClient = createPublicClientByChain(this.currentChain.chain);
     this.walletClient = walletClient;

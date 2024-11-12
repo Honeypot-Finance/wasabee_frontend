@@ -1,6 +1,6 @@
 import { Divider, Progress } from "@nextui-org/react";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Countdown from "react-countdown";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import CopyIcon from "@/components/svg/CopyIcon";
@@ -8,7 +8,13 @@ import CalenderIcon from "@/components/svg/CalenderIcon";
 import { cn } from "@/lib/tailwindcss";
 import TokenInfo from "./components/TokenInfo";
 import BuySell from "./components/BuySell";
-type Props = {};
+import { useRouter } from "next/router";
+import { Address, isAddress } from "viem";
+import { useReadContract } from "wagmi";
+import { LiquidityBootstrapPoolABI } from "@/lib/abis/LiquidityBootstrapPoolAbi";
+import { BigNumber } from "ethers";
+import useMulticall3 from "@/components/hooks/useMulticall3";
+import { formatLBPPoolData, Pool } from "@/services/lib/helper";
 
 const RankProjectData = [
     {icon: '🚀', value: 10},
@@ -24,9 +30,47 @@ const ProjectDetailTabs = [
     {title: "Transactions", key: 3},
 ]
 
-const LBPDetail = (props: Props) => {
-  const endDate = Date.now() + 100000000;
 
+
+const LBPDetail = () => {
+
+  const router = useRouter();
+  const { pair: pairAddress } = router.query;
+
+  const {data} = useMulticall3({args:
+    [{
+      abi:LiquidityBootstrapPoolABI,
+      reference: "LiquidityBootstrapPool",
+      contractAddress: pairAddress as Address,
+      calls: [
+        {methodName: "args", reference: 'args', methodParameters:[]},
+        {methodName: "totalAssetsIn", reference: 'totalAssetsIn', methodParameters:[]},
+      ]
+    }],
+    select(data: any) {
+      const result : {args: Pool | {}, totalAssetsIn: BigInt}= {
+        args: {},
+        totalAssetsIn: BigInt(0)
+      }
+      data.LiquidityBootstrapPool.callsReturnContext.forEach((data: any) => {
+        console.log(data)
+        if(data.reference === "args"){
+          result.args = formatLBPPoolData(data.returnValues?? [])
+        }else if(data.reference === "totalAssetsIn") {
+          result.totalAssetsIn = BigNumber.from(data?.returnValues?.[0]?.hex ?? 0).toBigInt()
+        }
+      })
+
+      return result
+    },
+  })
+
+
+useEffect(() => {
+  if(!isAddress(pairAddress as Address ?? '')){
+    router.push('/')
+  }
+}, [pairAddress])
   const [activeProjectDetailTab,setActiveProjectDetailTab ] = useState<1| 2 | 3>(1);
 
   const onChangeTab = (tab: 1 |2 |3) => {
@@ -58,17 +102,8 @@ const LBPDetail = (props: Props) => {
             </div>
             <div>
               <Countdown
-                date={endDate}
+                date={BigNumber.from(data?.args?.saleEnd ?? 0).toString()} 
                 renderer={({ days, hours, minutes, seconds, completed }) => {
-                  if (completed) {
-                    return (
-                      <div className="text-center font-bold">
-                        <div className="mt-[5px] text-[9px] leading-[11px] text-[#FFFFFF70] ">
-                          Total Raised
-                        </div>
-                      </div>
-                    );
-                  } else {
                     return (
                       <div className="font-bold text-[28px] flex items-center gap-5">
                         <div className="flex flex-col text-center gap-[5px]">
@@ -108,7 +143,7 @@ const LBPDetail = (props: Props) => {
                         </div>
                       </div>
                     );
-                  }
+                  
                 }}
               />
             </div>
@@ -202,7 +237,7 @@ const LBPDetail = (props: Props) => {
                 </div>)}
             </div>
             <div className="bg-[#211708] rounded-b-[20px] rounded-e-[20px] h-[545px] px-[38px] py-[64px]">
-                    {activeProjectDetailTab === 1 && <TokenInfo/>}
+                    {activeProjectDetailTab === 1 && <TokenInfo tokenAddress={data?.share}/>}
             </div>
         </div>
       </div>
@@ -211,3 +246,7 @@ const LBPDetail = (props: Props) => {
 };
 
 export default LBPDetail;
+function BigInt(arg0: number): BigInt {
+  throw new Error("Function not implemented.");
+}
+
