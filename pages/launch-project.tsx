@@ -13,14 +13,18 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CreateAndBrandingForm,
+  ProjectInfoForm,
   SalesStructureForm,
   TokenomicsAndPreviewForm,
+  TokenVestingForm,
 } from "@/types/launch-project";
 import {
   createAndBrandingSchema,
   DEFAULT_LAUNCH_PROJECT_FORM,
+  projectInfoFormSchema,
   salesStructureSchema,
   tokenomicsAndPreviewSchema,
+  tokenVestingSchema,
 } from "@/constants/launch-project";
 import { LBPButton } from "@/components/LBPFormItems/Components";
 
@@ -56,15 +60,19 @@ const STEP_DATA = [
 
 type LaunchProjectForm = CreateAndBrandingForm &
   SalesStructureForm &
-  TokenomicsAndPreviewForm;
+  TokenomicsAndPreviewForm &
+  TokenVestingForm &
+  ProjectInfoForm;
 
 const LaunchProject = () => {
-  const [currentStep, setCurrentStep] = useState<number>(2);
+  const [currentStep, setCurrentStep] = useState<number>(3);
 
   const validationSchema = [
     createAndBrandingSchema,
     salesStructureSchema,
     tokenomicsAndPreviewSchema,
+    tokenVestingSchema,
+    projectInfoFormSchema,
   ];
 
   const methods = useForm<LaunchProjectForm>({
@@ -132,7 +140,6 @@ const LaunchProject = () => {
               <LBPButton
                 type={currentStep === 8 ? "submit" : "button"}
                 onClick={handleNextStep}
-                isDisabled={!methods.formState.isValid}
               >
                 {currentStep === 8
                   ? "Submit"

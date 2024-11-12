@@ -37,3 +37,33 @@ export type TokenomicsAndPreviewForm = {
   startWeight: number;
   endWeight: number;
 };
+
+// 4.Token Vesting
+export type TokenVestingForm = {
+  isTokenVestingEnabled: boolean;
+  isVestingCliffTimeEnabled: boolean;
+  vestingEndTime: Date;
+};
+
+// 5.Project Info
+export enum PROJECT_CATEGORY_TYPE {
+  GAMING = "gaming",
+  CRYPTO = "crypto",
+  FINANCE = "finance",
+}
+
+export type InvestmentRound = {
+  raiseAmount: number;
+  valuationOfRound: number;
+  tgePercentage: number;
+  supplySoldRound: number;
+  vestingLengthTime: number;
+};
+
+export type ProjectInfoForm = {
+  category: PROJECT_CATEGORY_TYPE;
+  lbpDescription: string;
+  projectLink: string;
+  blockedCountry: string[];
+  investmentRound: InvestmentRound[];
+};

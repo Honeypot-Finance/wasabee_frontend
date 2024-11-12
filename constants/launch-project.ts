@@ -2,8 +2,11 @@ import {
   CreateAndBrandingForm,
   LBP_TYPE,
   PRICE_TYPE,
+  PROJECT_CATEGORY_TYPE,
+  ProjectInfoForm,
   SalesStructureForm,
   TokenomicsAndPreviewForm,
+  TokenVestingForm,
 } from "@/types/launch-project";
 import { z, ZodType } from "zod";
 
@@ -22,6 +25,24 @@ export const DEFAULT_LAUNCH_PROJECT_FORM = {
   tokenClaimDelayHours: undefined,
   tokenClaimDelayMinutes: undefined,
   tokenClaimDelay: new Date(),
+  // 3.Tokenomics & Preview
+  projectTokenQuantity: 0,
+  assetTokenType: "",
+  assetTokenQuantity: 0,
+  customTotalSupplyType: true,
+  customTotalSupply: undefined,
+  startWeight: 50,
+  endWeight: 50,
+  // 4.Token Vesting
+  isTokenVestingEnabled: true,
+  isVestingCliffTimeEnabled: true,
+  vestingEndTime: new Date(),
+  // 5.Project Info
+  category: PROJECT_CATEGORY_TYPE.GAMING,
+  lbpDescription: "",
+  projectLink: "",
+  blockedCountry: [],
+  investmentRound: [],
 };
 
 export const createAndBrandingSchema: ZodType<CreateAndBrandingForm> = z.object(
@@ -115,3 +136,42 @@ export const tokenomicsAndPreviewSchema: ZodType<TokenomicsAndPreviewForm> = z
       path: ["customTotalSupply"],
     }
   );
+
+export const tokenVestingSchema: ZodType<TokenVestingForm> = z.object({
+  isTokenVestingEnabled: z.boolean(),
+  isVestingCliffTimeEnabled: z.boolean(),
+  vestingEndTime: z.date().refine((val) => !isNaN(val.getTime()), {
+    message: "Vesting end time is required",
+  }),
+});
+
+const investmentRoundSchema = z.object({
+  raiseAmount: z.number().min(0, "Raise amount must be a positive number"),
+  valuationOfRound: z
+    .number()
+    .min(0, "Valuation of round must be a positive number"),
+  tgePercentage: z
+    .number()
+    .min(0)
+    .max(100, "TGE percentage must be between 0 and 100"),
+  supplySoldRound: z
+    .number()
+    .min(0, "Supply sold round must be a positive number"),
+  vestingLengthTime: z
+    .number()
+    .min(0, "Vesting length time must be a positive number"),
+});
+
+export const projectInfoFormSchema: ZodType<ProjectInfoForm> = z.object({
+  category: z.enum([
+    PROJECT_CATEGORY_TYPE.GAMING,
+    PROJECT_CATEGORY_TYPE.CRYPTO,
+    PROJECT_CATEGORY_TYPE.FINANCE,
+  ]),
+  lbpDescription: z.string().min(1, "LBP Description cannot be empty"),
+  projectLink: z.string().url("Invalid URL format"),
+  blockedCountry: z
+    .array(z.string())
+    .min(1, "At least one country must be blocked"), // Assuming string array of country codes
+  investmentRound: z.array(investmentRoundSchema),
+});

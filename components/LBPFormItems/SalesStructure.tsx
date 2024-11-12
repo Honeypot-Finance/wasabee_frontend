@@ -97,7 +97,7 @@ const SalesStructure = () => {
                 minValue={today(getLocalTimeZone())}
                 value={parseAbsoluteToLocal(field.value.toISOString())}
                 onChange={(value: DateValue) => {
-                  setValue("startTime", value.toDate(getLocalTimeZone()));
+                  field.onChange(value.toDate(getLocalTimeZone()));
                 }}
                 isInvalid={!!errors?.startTime}
                 errorMessage={errors?.startTime?.message?.toString()}
@@ -114,7 +114,7 @@ const SalesStructure = () => {
                 minValue={today(getLocalTimeZone())}
                 value={parseAbsoluteToLocal(field.value.toISOString())}
                 onChange={(value: DateValue) => {
-                  setValue("endTime", value.toDate(getLocalTimeZone()));
+                  field.onChange(value.toDate(getLocalTimeZone()));
                 }}
                 isInvalid={!!errors?.endTime}
                 errorMessage={errors?.endTime?.message?.toString()}
@@ -176,8 +176,10 @@ const SalesStructure = () => {
                 <DatePickerField
                   value={parseAbsoluteToLocal(field.value.toISOString())}
                   onChange={(value: DateValue) => {
-                    setValue("endTime", value.toDate(getLocalTimeZone()));
+                    field.onChange(value.toDate(getLocalTimeZone()));
                   }}
+                  isInvalid={!!errors?.tokenClaimDelay}
+                  errorMessage={errors?.tokenClaimDelay?.message?.toString()}
                 />
               )}
             />

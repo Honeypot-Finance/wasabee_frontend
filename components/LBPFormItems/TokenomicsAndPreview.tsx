@@ -1,7 +1,7 @@
-import React from "react";
-import { InputField, NumberField } from "./Components";
+/* eslint-disable @next/next/no-img-element */
+import React, { useEffect, useState } from "react";
+import { InputField, NumberField, SliderField } from "./Components";
 import { Controller, useFormContext } from "react-hook-form";
-import Image from "next/image";
 import {
   Modal,
   ModalBody,
@@ -9,19 +9,33 @@ import {
   useDisclosure,
   Listbox,
   ListboxItem,
+  Switch,
+  Selection,
 } from "@nextui-org/react";
 import SearchIcon from "../svg/SearchIcon";
 import { berachainBartioTestnetNetwork } from "@/services/chain";
+import Image from "next/image";
 
-const AssetTokenModal = () => {
+type AssetTokenData = {
+  tokenName: string;
+  tokenIcon: string;
+};
+
+type AssetTokenModalProps = {
+  onSelect: (value: AssetTokenData | undefined) => void;
+};
+
+const AssetTokenModal = (props: AssetTokenModalProps) => {
+  const { onSelect } = props;
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [searchValue, setSearchValue] = React.useState("");
+
   const {
     control,
     formState: { errors },
     setValue,
     watch,
   } = useFormContext();
-  const [searchValue, setSearchValue] = React.useState("");
 
   const listToken = Object.keys(
     berachainBartioTestnetNetwork.validatedTokensInfo
@@ -38,19 +52,37 @@ const AssetTokenModal = () => {
     (item) => item.symbol === watch("assetTokenType")
   );
 
+  const handleSelect = (value: Selection) => {
+    const assetTokenType = (value as Set<string>).values().next().value;
+    const selectedToken = listToken.find(
+      (item) => item.symbol === assetTokenType
+    );
+    setValue("assetTokenType", assetTokenType);
+    onSelect({
+      tokenName: selectedToken?.name ?? "",
+      tokenIcon: selectedToken?.logoURI ?? "",
+    });
+  };
+
   return (
     <>
       <div
         className="flex items-center gap-2 cursor-pointer bg-[#865215] w-fit px-3 py-1 rounded-md"
         onClick={onOpen}
       >
-        <Image
-          src={selectedToken?.logoURI || ""}
-          alt="Asset token"
-          width={18}
-          height={18}
-        />
-        <span className="text-sm text-nowrap">{selectedToken?.name}</span>
+        {selectedToken ? (
+          <>
+            <img
+              src={selectedToken?.logoURI}
+              alt="Asset token"
+              width={18}
+              height={18}
+            />
+            <span className="text-sm text-nowrap">{selectedToken?.name}</span>
+          </>
+        ) : (
+          <span className="text-sm text-white">Select Token</span>
+        )}
       </div>
       <Modal
         classNames={{
@@ -89,11 +121,7 @@ const AssetTokenModal = () => {
                     disallowEmptySelection
                     selectionMode="single"
                     selectedKeys={new Set([field.value])}
-                    onSelectionChange={(value) => {
-                      return field.onChange(
-                        (value as Set<string>).values().next().value
-                      );
-                    }}
+                    onSelectionChange={handleSelect}
                     className="bg-[#37250E] p-2 rounded-md"
                   >
                     {filteredList.map((token) => (
@@ -129,12 +157,26 @@ const AssetTokenModal = () => {
 };
 
 const TokenomicsAndPreview = () => {
+  const [selectedAssetToken, setSelectedAssetToken] =
+    useState<AssetTokenData>();
+  console.log(
+    "😻 ~ TokenomicsAndPreview ~ selectedAssetToken:",
+    selectedAssetToken
+  );
   const {
     control,
     formState: { errors },
     setValue,
     watch,
   } = useFormContext();
+
+  const projectToken = watch("projectToken");
+  const projectTokenLogo = watch("projectTokenLogo");
+  const isCustomTotalSupply = watch("customTotalSupplyType");
+
+  const handleSelectedToken = (selected?: AssetTokenData) => {
+    setSelectedAssetToken(selected);
+  };
 
   return (
     <div>
@@ -156,30 +198,31 @@ const TokenomicsAndPreview = () => {
                 field.onChange(Number(values.floatValue))
               }
               label="Project Token"
-              placeholder=" "
+              placeholder="0"
               isInvalid={!!errors.projectTokenQuantity}
               errorMessage={errors.projectTokenQuantity?.message?.toString()}
               className="max-w-[400px]"
               startContent={
                 <div className="flex items-center gap-1">
-                  <Image
-                    src="/images/usdc.png"
-                    alt="Project token"
+                  <img
+                    src={projectTokenLogo}
+                    alt={projectToken}
                     width={18}
                     height={18}
                   />
-                  <span className="text-sm">USDC</span>
+                  <span className="text-sm">{projectToken}</span>
                 </div>
               }
               classNames={{
                 input: "text-right flex-1",
               }}
-              description={
-                <div className="text-[10px] text-white/50 px-4 flex items-center justify-between">
-                  <span>Use Max</span>
-                  <span>% supply: 0.000000003930187014%</span>
-                </div>
-              }
+
+              // description={
+              //   <div className="text-[10px] text-white/50 px-4 flex items-center justify-between">
+              //     <span>Use Max</span>
+              //     <span>% supply: 0.000000003930187014%</span>
+              //   </div>
+              // }
             />
           )}
         />
@@ -194,14 +237,92 @@ const TokenomicsAndPreview = () => {
                 field.onChange(Number(values.floatValue))
               }
               label="Asset Token"
-              placeholder=" "
+              placeholder="0"
               isInvalid={!!errors.projectTokenQuantity}
               errorMessage={errors.projectTokenQuantity?.message?.toString()}
               className="max-w-[400px]"
-              startContent={<AssetTokenModal />}
+              startContent={<AssetTokenModal onSelect={handleSelectedToken} />}
               classNames={{
                 input: "text-right flex-1",
               }}
+            />
+          )}
+        />
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-4">
+            <label className="text-xs text-white/50">Custom Total Supply</label>
+            <Controller
+              name="customTotalSupplyType"
+              control={control}
+              render={({ field }) => (
+                <Switch
+                  size="sm"
+                  classNames={{
+                    wrapper: "group-data-[selected=true]:bg-[#865215]",
+                    thumb: "bg-[#ECC94E]",
+                  }}
+                  isSelected={field.value}
+                  onValueChange={(isSelected) => field.onChange(isSelected)}
+                />
+              )}
+            />
+          </div>
+
+          {isCustomTotalSupply && (
+            <Controller
+              name="customTotalSupply"
+              control={control}
+              render={({ field }) => (
+                <NumberField
+                  value={field.value}
+                  onValueChange={(values) =>
+                    field.onChange(Number(values.floatValue))
+                  }
+                  placeholder="0"
+                  isInvalid={!!errors.customTotalSupply}
+                  errorMessage={errors.customTotalSupply?.message?.toString()}
+                  className="max-w-[400px]"
+                />
+              )}
+            />
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-5 mt-12">
+        <h3 className="text-base font-medium text-white">
+          2. Configure Weights
+        </h3>
+
+        <Controller
+          name="startWeight"
+          control={control}
+          render={({ field }) => (
+            <SliderField
+              label="Start Weight"
+              firstTokenName={projectToken}
+              firstTokenIcon={projectTokenLogo}
+              secondTokenName={selectedAssetToken?.tokenName}
+              secondTokenIcon={selectedAssetToken?.tokenIcon}
+              value={field.value}
+              onChange={(value) => field.onChange(Number(value))}
+            />
+          )}
+        />
+
+        <Controller
+          name="endWeight"
+          control={control}
+          render={({ field }) => (
+            <SliderField
+              label="End Weight"
+              firstTokenName={projectToken}
+              firstTokenIcon={projectTokenLogo}
+              secondTokenName={selectedAssetToken?.tokenName}
+              secondTokenIcon={selectedAssetToken?.tokenIcon}
+              value={field.value}
+              onChange={(value) => field.onChange(Number(value))}
             />
           )}
         />
