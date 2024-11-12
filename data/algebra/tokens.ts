@@ -9,4 +9,11 @@ export const STABLECOINS = {
     "USDT",
     "USDT"
   ),
+  THPOT: new Token(
+    DEFAULT_CHAIN_ID,
+    "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
+    18,
+    "Test Honeypot Finance",
+    "tHPOT"
+  ),
 };

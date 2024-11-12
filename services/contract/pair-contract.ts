@@ -6,7 +6,7 @@ import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import { makeAutoObservable } from "mobx";
 import { Address, getContract, zeroAddress } from "viem";
 import { AsyncState } from "../utils";
-import { toCompactLocaleString } from "@/lib/tailwindcss";
+import { toCompactLocaleString } from "@/lib/utils";
 import { amountFormatted, formatAmount } from "@/lib/format";
 import dayjs from "dayjs";
 import { liquidity } from "../liquidity";

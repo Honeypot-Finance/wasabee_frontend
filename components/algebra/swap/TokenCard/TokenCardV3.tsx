@@ -92,7 +92,7 @@ const TokenCardV3 = ({
   return (
     <div className="p-2">
       <div className="flex w-full py-1 bg-card-dark rounded-2xl">
-        <div className="flex flex-col min-w-fit">
+        <div className="flex flex-col w-full">
           <div className="text-sub text-sm font-normal ">{label}</div>
 
           <Input
@@ -109,7 +109,7 @@ const TokenCardV3 = ({
                 focus:ring-offset-0 focus:ring-offset-transparent focus:ring-transparent
               `}
             placeholder={"0.0"}
-            maxDecimals={currency?.decimals}
+            maxDecimals={currency?.decimals ?? 0 + 2}
           />
           {showBalance && (
             <div className="text-sm">
