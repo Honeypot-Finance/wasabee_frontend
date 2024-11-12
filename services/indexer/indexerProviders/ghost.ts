@@ -390,14 +390,6 @@ export class GhostIndexer {
         data: {
           pairs: (res.data as any).pairs?.items as GhostPoolPair[],
           pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
-        } ?? {
-          pairs: [],
-          pageInfo: {
-            hasNextPage: true,
-            hasPreviousPage: false,
-            startCursor: "",
-            endCursor: "",
-          },
         },
       };
     }
@@ -551,14 +543,6 @@ export class GhostIndexer {
         data: {
           holdingPairs: (res.data as any).holdingPairs?.items as holdingPairs[],
           pageInfo: (res.data as any).holdingPairs?.pageInfo as PageInfo,
-        } ?? {
-          pairs: [],
-          pageInfo: {
-            hasNextPage: true,
-            hasPreviousPage: false,
-            startCursor: "",
-            endCursor: "",
-          },
         },
       };
     }
@@ -824,14 +808,6 @@ export class GhostIndexer {
         data: {
           pairs: (res.data as any).pairs?.items as GhostPoolPair[],
           pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
-        } ?? {
-          pairs: [],
-          pageInfo: {
-            hasNextPage: true,
-            hasPreviousPage: false,
-            startCursor: "",
-            endCursor: "",
-          },
         },
       };
     }
@@ -907,14 +883,6 @@ export class GhostIndexer {
         data: {
           pairs: (res.data as any).pairs?.items as GhostPoolPair[],
           pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
-        } ?? {
-          pairs: [],
-          pageInfo: {
-            hasNextPage: true,
-            hasPreviousPage: false,
-            startCursor: "",
-            endCursor: "",
-          },
         },
       };
     }

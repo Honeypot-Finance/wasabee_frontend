@@ -54,8 +54,14 @@ export const SwapCard = observer(() => {
   };
 
   useEffect(() => {
+    if (!wallet.isInit) {
+      return;
+    }
+    liquidity.initPool();
+  }, [wallet.isInit]);
+
+  useEffect(() => {
     if (!isInit) {
-      liquidity.initPool();
       return;
     }
 
