@@ -1,9 +1,5 @@
 import Loader from "@/components/algebra/common/Loader";
 import { Button } from "@/components/algebra/ui/button";
-import {
-  DEFAULT_CHAIN_ID,
-  DEFAULT_CHAIN_NAME,
-} from "@/data/algebra/default-chain-id";
 import { useApproveCallbackFromTrade } from "@/lib/algebra/hooks/common/useApprove";
 import { useSwapCallback } from "@/lib/algebra/hooks/swap/useSwapCallback";
 import useWrapCallback, {
@@ -21,17 +17,9 @@ import {
 import { ApprovalState } from "@/types/algebra/types/approve-state";
 import { SwapField } from "@/types/algebra/types/swap-field";
 import { TradeState } from "@/types/algebra/types/trade-state";
-import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 import { useCallback, useMemo } from "react";
-import { useAccount } from "wagmi";
 
 const SwapButton = () => {
-  //const { open } = useWeb3Modal();
-
-  //   const { selectedNetworkId } = useWeb3ModalState();
-
-  //   const { address: account } = useAccount();
-
   const { isExpertMode } = useUserState();
 
   const { independentField, typedValue } = useSwapState();
@@ -116,18 +104,6 @@ const SwapButton = () => {
   const isValid = !swapInputError;
 
   const priceImpactTooHigh = priceImpactSeverity > 3 && !isExpertMode;
-
-  //   const isWrongChain = selectedNetworkId !== DEFAULT_CHAIN_ID;
-
-  //   if (!account) return <Button onClick={() => open()}>Connect Wallet</Button>;
-
-  //   if (isWrongChain)
-  //     return (
-  //       <Button
-  //         variant={"destructive"}
-  //         onClick={() => open({ view: "Networks" })}
-  //       >{`Connect to ${DEFAULT_CHAIN_NAME}`}</Button>
-  //     );
 
   if (showWrap && wrapInputError)
     return <Button disabled>{wrapInputError}</Button>;

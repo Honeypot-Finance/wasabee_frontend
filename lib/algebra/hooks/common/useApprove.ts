@@ -18,6 +18,7 @@ import { TransactionType } from "../../state/pendingTransactionsStore";
 import { Address } from "viem";
 import { useContractWrite, useSimulateContract } from "wagmi";
 import { erc20Abi } from "viem";
+import { useToastify } from "@/lib/hooks/useContractToastify";
 
 export function useApprove(
   amountToApprove: CurrencyAmount<Currency> | undefined,
@@ -50,10 +51,18 @@ export function useApprove(
   const { data: approvalData, writeContractAsync: approve } =
     useContractWrite();
 
-  const { isLoading, isSuccess } = useTransactionAwait(approvalData, {
+  const { isLoading, isSuccess, isError } = useTransactionAwait(approvalData, {
     title: `Approve ${formatBalance(amountToApprove?.toSignificant() as string)} ${amountToApprove?.currency.symbol}`,
     tokenA: token?.address as Address,
     type: TransactionType.SWAP,
+  });
+
+  useToastify({
+    title: `Approve ${formatBalance(amountToApprove?.toSignificant() as string)} ${amountToApprove?.currency.symbol}`,
+    message: "Approve",
+    isError: isError,
+    isLoading: isLoading,
+    isSuccess: isSuccess,
   });
 
   return {

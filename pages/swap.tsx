@@ -1,32 +1,17 @@
-import { TVChartContainer } from "@/components/AdvancedChart/TVChartContainer/TVChartContainer";
-import { Swap } from "@/components/swap";
 import { SwapCard } from "@/components/SwapCard";
 import { chart } from "@/services/chart";
-import { PairContract } from "@/services/contract/pair-contract";
-import { Token } from "@/services/contract/token";
 import { observe, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import PriceFeedGraph from "@/components/PriceFeedGraph/PriceFeedGraph";
 
-import { getBaseUrl, trpcClient } from "@/lib/trpc";
-import { tokenToTicker } from "@/lib/advancedChart.util";
-import { berachainBartioTestnetNetwork, networksMap } from "@/services/chain";
-import { berachainBartioTestnet } from "@/lib/chain";
 import { wallet } from "@/services/wallet";
-import dayjs from "dayjs";
 import { animate, motion } from "framer-motion";
 import React from "react";
 import { itemPopUpVariants } from "@/lib/animation";
-import { popmodal } from "@/services/popmodal";
 import { Tabs, Tab } from "@nextui-org/react";
 import { liquidity } from "@/services/liquidity";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
-import PoweredByAlgebra from "@/components/algebra/common/PoweredByAlgebra";
-import IntegralPools from "@/components/algebra/swap/IntegralPools";
-import SwapButton from "@/components/algebra/swap/SwapButton";
-import SwapPair from "@/components/algebra/swap/SwapPair";
-import SwapParams from "@/components/algebra/swap/SwapParams";
 import V3SwapCard from "@/components/algebra/swap/V3SwapCard";
 
 const SwapPage = observer(() => {

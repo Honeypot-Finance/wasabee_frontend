@@ -14,6 +14,7 @@ import {
   computeRealizedLPFeePercent,
   warningSeverity,
 } from "@/lib/algebra/utils/swap/prices";
+import { useToastify } from "@/lib/hooks/useContractToastify";
 import { ApprovalState } from "@/types/algebra/types/approve-state";
 import { SwapField } from "@/types/algebra/types/swap-field";
 import { TradeState } from "@/types/algebra/types/trade-state";
@@ -89,7 +90,18 @@ const SwapButtonV3 = () => {
     callback: swapCallback,
     error: swapCallbackError,
     isLoading: isSwapLoading,
+    isSuccess: isSwapSuccess,
   } = useSwapCallback(trade, allowedSlippage, approvalState);
+
+  console.log("swapCallbackError", swapCallbackError);
+
+  const swapToast = useToastify({
+    title: `Swap ${trade?.inputAmount.toSignificant()} ${trade?.inputAmount.currency.symbol}`,
+    message: "Swap",
+    isError: !!swapCallback && swapCallbackError != null,
+    isLoading: isSwapLoading,
+    isSuccess: isSwapSuccess,
+  });
 
   const handleSwap = useCallback(async () => {
     if (!swapCallback) return;
