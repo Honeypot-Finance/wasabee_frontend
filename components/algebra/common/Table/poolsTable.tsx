@@ -21,7 +21,7 @@ import {
 import { useState } from "react";
 import { LoadingState } from "./loadingState";
 import { Input } from "@/components/algebra/ui/input";
-import { Search, Tractor } from "lucide-react";
+import { Search, Plus, LayoutGrid } from "lucide-react";
 import { Switch } from "@/components/algebra/ui/switch";
 
 interface PoolsTableProps<TData, TValue> {
@@ -44,6 +44,15 @@ const PoolsTable = <TData, TValue>({
   showPagination = true,
   loading,
 }: PoolsTableProps<TData, TValue>) => {
+  const [selectedFilter, setSelectedFilter] = useState<string>("trending");
+
+  const filters = [
+    { key: "trending", label: "🔥Trending" },
+    { key: "highApr", label: "High APR" },
+    { key: "stablecoin", label: "Stablecoin" },
+    { key: "myPools", label: "My Pools" },
+  ];
+
   const [sorting, setSorting] = useState<SortingState>(
     defaultSortingID ? [{ id: defaultSortingID, desc: true }] : []
   );
@@ -66,8 +75,6 @@ const PoolsTable = <TData, TValue>({
       row.original.isMyPool === value,
   });
 
-  const isMyPools: boolean | undefined = table.getState().globalFilter;
-
   const searchID = "pair";
 
   const totalRows = table.getFilteredRowModel().rows.length;
@@ -83,65 +90,78 @@ const PoolsTable = <TData, TValue>({
   if (loading) return <LoadingState />;
 
   return (
-    <>
+    <div>
       {searchID && (
-        <div className="flex gap-4 w-full justify-between items-center p-4 pb-0">
-          <div className="flex items-center relative w-fit">
-            <Input
-              placeholder="Search pool"
-              value={
-                (table.getColumn(searchID)?.getFilterValue() as string) ?? ""
-              }
-              onChange={(event) =>
-                table.getColumn(searchID)?.setFilterValue(event.target.value)
-              }
-              className="border border-border border-opacity-60 pl-12 h-12 max-w-80 md:w-64 lg:w-80 focus:border-opacity-100 rounded-xl"
-            />
-            <Search className="absolute left-4 text-border" size={20} />
-          </div>
-          <ul className="flex gap-1 p-1 border rounded-xl border-border/60 w-fit h-12 max-xs:hidden">
-            <li>
-              <Button
-                onClick={() => table.setGlobalFilter(undefined)}
-                className="rounded-lg h-full p-4 w-fit flex-nowrap"
-                size="md"
-                variant={!isMyPools ? "iconActive" : "ghost"}
-              >
-                All
-              </Button>
-            </li>
-            <li>
-              <Button
-                onClick={() => table.setGlobalFilter(true)}
-                className="rounded-lg h-full p-4 w-fit whitespace-nowrap"
-                size="md"
-                variant={isMyPools ? "iconActive" : "ghost"}
-              >
-                My pools
-              </Button>
-            </li>
-          </ul>
-          <div className="flex gap-2 max-md:gap-4 items-center w-fit ml-auto max-sm:hidden">
-            <label
-              className="flex gap-2 items-center"
-              htmlFor="farmingAvailable"
-            >
-              <Tractor
-                className="w-5 h-5 max-md:w-6 max-md:h-6"
-                color="#d84eff"
+        <div className="flex gap-4 w-full justify-between items-center py-4">
+          <div className="flex items-center gap-x-6 w-fit">
+            <div className="flex items-center">
+              {filters.map((filter) => (
+                <button
+                  key={filter.key}
+                  onClick={() => {
+                    if (filter.key === "myPools") {
+                      table.setGlobalFilter(true);
+                    } else {
+                      table.setGlobalFilter(undefined);
+                    }
+                    setSelectedFilter(filter.key);
+                  }}
+                  className={`p-2.5 cursor-pointer ${
+                    selectedFilter === filter.key
+                      ? "border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
+                      : ""
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+            {/* TODO：placeholder text vertical-align: middle */}
+            <div className="relative">
+              <Input
+                placeholder="Search pool"
+                value={
+                  (table.getColumn(searchID)?.getFilterValue() as string) ?? ""
+                }
+                onChange={(event) =>
+                  table.getColumn(searchID)?.setFilterValue(event.target.value)
+                }
+                className="border border-[#E18A20]/10 bg-[#271A0C] pl-12 pr-4 h-12 w-[353px] focus:border-opacity-100 rounded-2xl placeholder:align-middle"
               />
-              <span className="max-md:hidden">Farming Available</span>
-            </label>
-            <Switch
-              id="farmingAvailable"
-              checked={table.getColumn("plugins")?.getFilterValue() === true}
-              onCheckedChange={() => {
-                const column = table.getColumn("plugins");
-                if (column?.getFilterValue() === undefined)
-                  column?.setFilterValue(true);
-                else column?.setFilterValue(undefined);
-              }}
-            />
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-border"
+                size={20}
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-x-5">
+            <button
+              className={`flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]`}
+            >
+              <Plus />
+              <span>Create Pool</span>
+            </button>
+            <div className="flex gap-2 max-md:gap-4 items-center w-fit ml-auto max-sm:hidden">
+              <label
+                className="flex gap-2 items-center"
+                htmlFor="farmingAvailable"
+              >
+                <span className="max-md:hidden">Farming Available</span>
+              </label>
+              {/* TODO: switch color */}
+              <Switch
+                className="bg-[#865215]"
+                id="farmingAvailable"
+                checked={table.getColumn("plugins")?.getFilterValue() === true}
+                onCheckedChange={() => {
+                  const column = table.getColumn("plugins");
+                  if (column?.getFilterValue() === undefined)
+                    column?.setFilterValue(true);
+                  else column?.setFilterValue(undefined);
+                }}
+              />
+              <LayoutGrid className="text-[#F7941D80]/50 cursor-pointer text-xl" />
+            </div>
           </div>
         </div>
       )}
@@ -206,7 +226,7 @@ const PoolsTable = <TData, TValue>({
         </TableBody>
       </Table>
       {showPagination && (
-        <div className="flex items-center justify-end space-x-2 px-4 mt-auto">
+        <div className="flex items-center justify-end space-x-2 px-4 mt-2">
           {totalRows > 0 && (
             <p className="mr-2">
               {startsFromRow === totalRows
@@ -232,7 +252,7 @@ const PoolsTable = <TData, TValue>({
           </Button>
         </div>
       )}
-    </>
+    </div>
   );
 };
 export default PoolsTable;

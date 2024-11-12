@@ -102,7 +102,7 @@ const NewPositionPage = () => {
     <PageContainer>
       <PageTitle title={"Create Position"} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8 mt-8 lg:mt-16 text-left">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8 text-left">
         <div className="col-span-2">
           <div className="flex max-md:flex-col md:items-center justify-between w-full mb-6 gap-4">
             <h2 className="font-semibold text-2xl text-left">

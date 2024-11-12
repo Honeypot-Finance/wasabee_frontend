@@ -1,13 +1,13 @@
 interface PageContainerProps {
-    children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const PageContainer = ({ children }: PageContainerProps) => {
-
-    return <div className="flex flex-col items-start py-8 lg:py-16">
-        {children}
+  return (
+    <div className="max-w-screen-xl mx-auto flex flex-col items-start">
+      {children}
     </div>
+  );
+};
 
-}
-
-export default PageContainer
+export default PageContainer;

@@ -203,7 +203,7 @@ const PoolPage = () => {
     <PageContainer>
       <PoolHeader pool={poolEntity} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8 mt-8 lg:mt-16">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8">
         <div className="col-span-2">
           {!account ? (
             <NoAccount />
@@ -265,7 +265,13 @@ const PoolPage = () => {
 };
 
 const NoPositions = ({ poolId }: { poolId: Address }) => (
-  <div className="flex flex-col items-start p-8 bg-card border border-card-border rounded-3xl animate-fade-in">
+  <div className="flex flex-col items-start animate-fade-in mt-10">
+    <div>
+      <div className="p-2.5">My Positions</div>
+      <div className="p-2.5">1 position</div>
+      <div className="p-2.5">$203.34 TVL</div>
+      <div className="p-2.5">$0 Fees</div>
+    </div>
     <h2 className="text-2xl font-bold">
       {`You don't have positions for this pool`}
     </h2>

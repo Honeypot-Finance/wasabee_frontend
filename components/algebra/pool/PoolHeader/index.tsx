@@ -19,15 +19,16 @@ const PoolHeader = ({ pool }: PoolHeaderProps) => {
   const poolFee = pool && formatPercent.format(pool.fee / 10_00000);
 
   return (
-    <div className="flex w-full gap-8">
+    <div className="flex items-center w-full gap-3.5">
       <div className="flex">
-        <CurrencyLogo currency={currencyA} size={40} />
+        <CurrencyLogo currency={currencyA} size={40} className="z-10" />
         <CurrencyLogo currency={currencyB} size={40} className="-ml-2" />
       </div>
 
+      {/* TODO: bg color  */}
       {currencyA && currencyB ? (
         <PageTitle title={`${currencyA.symbol} / ${currencyB.symbol}`}>
-          <span className="hidden sm:inline px-3 py-2 bg-muted-primary text-primary-text font-semibold rounded-2xl">{`${poolFee}`}</span>
+          <span className="hidden sm:inline px-3 py-2 font-medium rounded-full text-[#479FFF] border border-[#271A0C] bg-[#F7931A]/20">{`${poolFee}`}</span>
         </PageTitle>
       ) : (
         <Skeleton className="w-[200px] h-[40px] bg-card" />
