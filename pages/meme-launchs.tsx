@@ -181,6 +181,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "all";
+                            onClose();
                           }}
                           className="w-[100px]"
                         >
@@ -189,6 +190,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "success";
+                            onClose();
                           }}
                           className="w-[100px]"
                         >
@@ -197,6 +199,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "fail";
+                            onClose();
                           }}
                           className="w-[100px]"
                         >
@@ -204,8 +207,8 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                         </NextButton>
                         <NextButton
                           onClick={() => {
-                            console.log("processing");
                             launchpad.pairFilterStatus = "processing";
+                            onClose();
                           }}
                           className="w-[100px]"
                         >

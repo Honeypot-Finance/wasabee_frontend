@@ -874,6 +874,17 @@ const MemeView = observer(() => {
     refreshVotes();
   }, [wallet.isInit, pairAddress]);
 
+  useEffect(() => {
+    if (!state.pair.value?.launchedToken) {
+      return;
+    }
+    chart.setCurrencyCode("USD");
+    chart.setTokenNumber(0);
+    chart.setChartTarget(state.pair.value.launchedToken);
+    chart.setChartLabel(state.pair.value.launchedToken?.displayName + "/USD");
+    console.log("chart", chart);
+  }, [state.pair.value?.launchedToken]);
+
   function refreshVotes() {
     trpcClient.projects.getProjectVotes
       .query({ pair: pairAddress as string })
@@ -1013,18 +1024,22 @@ const MemeView = observer(() => {
             </div>
             <ProgressBar
               label={
-                (
-                  ((pair?.depositedRaisedToken ?? BigNumber(0)).toNumber() /
-                    ((pair?.raisedTokenMinCap ?? BigNumber(1)).toNumber() /
-                      Math.pow(10, 18))) *
-                  100
-                ).toFixed(2) + "%"
+                pair?.ftoStatusDisplay?.status === "success"
+                  ? "100%"
+                  : (
+                      ((pair?.depositedRaisedToken ?? BigNumber(0)).toNumber() /
+                        ((pair?.raisedTokenMinCap ?? BigNumber(1)).toNumber() /
+                          Math.pow(10, 18))) *
+                      100
+                    ).toFixed(2) + "%"
               }
               value={
-                ((pair?.depositedRaisedToken ?? BigNumber(0)).toNumber() /
-                  ((pair?.raisedTokenMinCap ?? BigNumber(1)).toNumber() /
-                    Math.pow(10, 18))) *
-                100
+                pair?.ftoStatusDisplay?.status === "success"
+                  ? 100
+                  : ((pair?.depositedRaisedToken ?? BigNumber(0)).toNumber() /
+                      ((pair?.raisedTokenMinCap ?? BigNumber(1)).toNumber() /
+                        Math.pow(10, 18))) *
+                    100
               }
             />
             <div className="flex items-center justify-between">
