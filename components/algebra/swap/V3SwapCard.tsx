@@ -10,6 +10,8 @@ import { Slippage } from "@/components/SwapCard/Slippage";
 import { chart } from "@/services/chart";
 import Settings from "../common/Settings";
 import SwapPairV3 from "./SwapPair/SwapPairV3";
+import SwapButtonV3 from "./SwapButton/SwapButotnV3";
+import SwapParamsV3 from "./SwapParams/SwapParamsV3";
 
 export function V3SwapCard() {
   return (
@@ -27,8 +29,8 @@ export function V3SwapCard() {
           <Settings />
         </div>
         <SwapPairV3 />
-        <SwapParams />
-        <SwapButton />
+        <SwapParamsV3 />
+        <SwapButtonV3 />
         {/* <PoweredByAlgebra /> */}
       </CardContianer>
 

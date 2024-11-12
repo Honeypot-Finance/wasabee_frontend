@@ -21,7 +21,7 @@ const Settings = () => {
           <SettingsIcon />
         </Button>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent className=" z-20">
         <CardContianer addtionalClassName="flex-col gap-2">
           <div className="text-md font-bold">Transaction Settings</div>
           <Separator orientation={"horizontal"} className="bg-border" />

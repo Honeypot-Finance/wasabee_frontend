@@ -100,8 +100,14 @@ const TokenCardV3 = ({
             type={"text"}
             value={storedValue}
             id={`amount-${currency?.symbol}`}
-            onUserInput={(v) => handleInput(v)}
-            className={`text-right bg-black/20 border-none text-xl font-bold w-11/12 p-2 disabled:cursor-default disabled:text-white`}
+            onUserInput={(v) => {
+              setStoredValue(v);
+              handleInput(v);
+            }}
+            className={`bg-transparent border-none text-xl font-bold w-11/12 p-2 disabled:cursor-default disabled:text-white 
+               focus:bg-black/20 focus:outline-none focus:boader-none focus:ring-0 
+                focus:ring-offset-0 focus:ring-offset-transparent focus:ring-transparent
+              `}
             placeholder={"0.0"}
             maxDecimals={currency?.decimals}
           />
@@ -189,7 +195,7 @@ const TokenCardV3 = ({
               <ItemSelect
                 selectState={
                   new SelectState({
-                    value: 1,
+                    value: Number(storedValue),
                     onSelectChange: (value) => {
                       handleInput(
                         (Number(balance?.formatted) * Number(value)).toString()
