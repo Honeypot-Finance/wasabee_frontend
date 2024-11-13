@@ -111,7 +111,9 @@ const Tabs = ({
               <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
                 <span className="text-[#F0A64A] text-sm">Token supply</span>
                 <span className="text-white md:text-xl">
-                  {pair?.launchedToken?.totalSupplyWithoutDecimals.toNumber()}
+                  {(pair as MemePairContract)?.raisedTokenMinCap
+                    ?.div(10 ** (pair?.raiseToken?.decimals ?? 0))
+                    .toNumber()}
                 </span>
               </div>
               <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
@@ -120,7 +122,7 @@ const Tabs = ({
                 </span>
                 <span className="text-white md:text-xl">
                   {(pair as MemePairContract)?.raisedTokenMinCap
-                    ?.div(10 ** (pair?.launchedToken?.decimals ?? 0))
+                    ?.div(10 ** (pair?.raiseToken?.decimals ?? 0))
                     .toFixed()}
                 </span>
               </div>
@@ -128,7 +130,7 @@ const Tabs = ({
                 <span className="text-[#F0A64A] text-sm">Token Type</span>
                 <span className="text-white md:text-xl">MEME</span>
               </div>
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+              <div className="flex items-center justify-between py-4">
                 <span className="text-[#F0A64A] text-sm">Token Address</span>
                 <span className="text-white md:text-xl">
                   {" "}
