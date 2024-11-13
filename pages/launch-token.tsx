@@ -26,8 +26,8 @@ import {
   Modal,
   ModalBody,
   ModalContent,
+  DatePicker
 } from "@nextui-org/react";
-import { DatePicker } from "@nextui-org/date-picker";
 import { useRouter } from "next/router";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Copy } from "@/components/copy";
