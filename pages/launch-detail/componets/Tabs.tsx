@@ -71,8 +71,6 @@ const Tabs = ({
               <button
                 key={item.key}
                 onClick={() => {
-                  console.log("key", item.key);
-
                   setTab(item.key);
                   setIsMenuOpen(false);
                 }}
@@ -95,28 +93,28 @@ const Tabs = ({
         {tab === "info" && (
           <div className="flex flex-col w-full px-2 md:px-10">
             <h1 className="text-lg xl:text-4xl xl:py-16">Token Info</h1>
-            <div className="flex flex-col gap-x-2">
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+            <div className="flex flex-col gap-x-2 divide-y-1 divide-[#F0A64A]">
+              <div className="flex items-center justify-between py-4">
                 <span className="text-[#F0A64A] text-sm">Token Name</span>
                 <span className="text-white md:text-xl">
                   {pair?.launchedToken?.name}
                 </span>
               </div>
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+              <div className="flex items-center justify-between py-4">
                 <span className="text-[#F0A64A] text-sm">Token Symbol</span>
                 <span className="text-white md:text-xl">
                   {pair?.launchedToken?.symbol}
                 </span>
               </div>
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+              <div className="flex items-center justify-between py-4">
                 <span className="text-[#F0A64A] text-sm">Token supply</span>
                 <span className="text-white md:text-xl">
-                  {(pair as MemePairContract)?.raisedTokenMinCap
-                    ?.div(10 ** (pair?.raiseToken?.decimals ?? 0))
-                    .toNumber()}
+                  {(
+                    pair as MemePairContract
+                  )?.depositedLaunchedToken?.toNumber()}
                 </span>
               </div>
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+              <div className="flex items-center justify-between py-4">
                 <span className="text-[#F0A64A] text-sm">
                   INITIAL MARKET CAP
                 </span>
@@ -126,7 +124,7 @@ const Tabs = ({
                     .toFixed()}
                 </span>
               </div>
-              <div className="flex items-center justify-between border-b border-[#F0A64A] py-4">
+              <div className="flex items-center justify-between py-4">
                 <span className="text-[#F0A64A] text-sm">Token Type</span>
                 <span className="text-white md:text-xl">MEME</span>
               </div>
