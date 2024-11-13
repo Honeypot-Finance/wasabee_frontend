@@ -1,26 +1,13 @@
 import React from "react";
-import SelectField from "./Components/SelectField";
-import { DateValue, Input, SelectItem } from "@nextui-org/react";
-import { useForm, Controller } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { DateValue, SelectItem } from "@nextui-org/react";
+import { Controller, useFormContext } from "react-hook-form";
 import {
   getLocalTimeZone,
   parseAbsoluteToLocal,
   today,
 } from "@internationalized/date";
-import { WrappedNextDatePicker } from "../wrappedNextUI/DatePicker/DatePicker";
-import { NumericFormat } from "react-number-format";
-
-enum PRICE_TYPE {
-  LBP = "lbp",
-  FIXED = "fixed",
-}
-
-enum LBP_TYPE {
-  BUY_SELL = "buy-sell",
-  SELL_ONLY = "sell-only",
-}
+import { DatePickerField, NumberField, SelectField } from "./Components";
+import { LBP_TYPE, PRICE_TYPE } from "@/types/launch-project";
 
 const PRICE_TYPE_OPTIONS = [
   { key: "lbp", value: PRICE_TYPE.LBP, label: "LBP" },
@@ -32,49 +19,13 @@ const LBP_TYPE_OPTIONS = [
   { key: "sell-only", value: LBP_TYPE.SELL_ONLY, label: "Sell Only" },
 ];
 
-type SalesStructureForm = {
-  priceType: PRICE_TYPE;
-  lbpType?: LBP_TYPE;
-  startTime: Date;
-  endTime: Date;
-  tokenClaimDelayHours?: number;
-  tokenClaimDelayMinutes?: number;
-  tokenClaimDelay: Date;
-};
-
 const SalesStructure = () => {
-  const salesStructureSchema = yup.object().shape({
-    priceType: yup
-      .mixed<PRICE_TYPE>()
-      .oneOf(Object.values(PRICE_TYPE))
-      .required("Price type is required"),
-    lbpType: yup.mixed<LBP_TYPE>(),
-    startTime: yup.date().required("Start time is required"),
-    endTime: yup.date().required("End time is required"),
-    tokenClaimDelayHours: yup.number(),
-    tokenClaimDelayMinutes: yup.number(),
-    tokenClaimDelay: yup.date().required(),
-  });
-
   const {
     control,
-    handleSubmit,
     formState: { errors },
-    reset,
     setValue,
     watch,
-  } = useForm<SalesStructureForm>({
-    resolver: yupResolver(salesStructureSchema),
-    defaultValues: {
-      priceType: PRICE_TYPE.LBP,
-      lbpType: undefined,
-      startTime: new Date(),
-      endTime: new Date(),
-      tokenClaimDelayHours: undefined,
-      tokenClaimDelayMinutes: undefined,
-      tokenClaimDelay: new Date(),
-    },
-  });
+  } = useFormContext();
 
   const isPriceLbp = watch("priceType") === PRICE_TYPE.LBP;
 
@@ -98,7 +49,7 @@ const SalesStructure = () => {
                   selectedKeys={[field.value]}
                   onChange={(e) => field.onChange(e.target.value)}
                   isInvalid={!!errors.priceType}
-                  errorMessage={errors.priceType?.message}
+                  errorMessage={errors.priceType?.message?.toString()}
                 >
                   {PRICE_TYPE_OPTIONS.map((price) => (
                     <SelectItem key={price.key} value={price.value}>
@@ -119,7 +70,7 @@ const SalesStructure = () => {
                     selectedKeys={field.value ? [field.value] : undefined}
                     onChange={(e) => field.onChange(e.target.value)}
                     isInvalid={!!errors.lbpType}
-                    errorMessage={errors.lbpType?.message}
+                    errorMessage={errors.lbpType?.message?.toString()}
                   >
                     {LBP_TYPE_OPTIONS.map((price) => (
                       <SelectItem key={price.key} value={price.value}>
@@ -141,17 +92,15 @@ const SalesStructure = () => {
             name="startTime"
             control={control}
             render={({ field }) => (
-              <WrappedNextDatePicker
+              <DatePickerField
                 label="Starting Date & Time"
-                variant="bordered"
-                hideTimeZone
-                showMonthAndYearPickers
-                className="w-fit mt-3"
-                labelPlacement="outside"
+                minValue={today(getLocalTimeZone())}
                 value={parseAbsoluteToLocal(field.value.toISOString())}
                 onChange={(value: DateValue) => {
-                  setValue("startTime", value.toDate(getLocalTimeZone()));
+                  field.onChange(value.toDate(getLocalTimeZone()));
                 }}
+                isInvalid={!!errors?.startTime}
+                errorMessage={errors?.startTime?.message?.toString()}
               />
             )}
           />
@@ -160,17 +109,15 @@ const SalesStructure = () => {
             name="endTime"
             control={control}
             render={({ field }) => (
-              <WrappedNextDatePicker
+              <DatePickerField
                 label="Ending Date & Time"
-                variant="bordered"
-                hideTimeZone
-                showMonthAndYearPickers
-                className="w-fit mt-3"
-                labelPlacement="outside"
+                minValue={today(getLocalTimeZone())}
                 value={parseAbsoluteToLocal(field.value.toISOString())}
                 onChange={(value: DateValue) => {
-                  setValue("endTime", value.toDate(getLocalTimeZone()));
+                  field.onChange(value.toDate(getLocalTimeZone()));
                 }}
+                isInvalid={!!errors?.endTime}
+                errorMessage={errors?.endTime?.message?.toString()}
               />
             )}
           />
@@ -190,23 +137,15 @@ const SalesStructure = () => {
                 name="tokenClaimDelayHours"
                 control={control}
                 render={({ field }) => (
-                  <NumericFormat
-                    customInput={Input}
+                  <NumberField
                     value={field.value}
                     onValueChange={(values) =>
                       field.onChange(Number(values.floatValue))
                     }
                     label="Hours"
                     placeholder="0"
-                    labelPlacement="outside"
-                    classNames={{
-                      label: "text-white text-xs opacity-50",
-                      input: "font-semibold",
-                      inputWrapper:
-                        "bg-[#3E2A0FC4] rounded-xl border border-[#F7931AA8] group-data-[focus=true]:bg-[#3E2A0F] data-[hover=true]:bg-[#3E2A0F]",
-                    }}
-                    allowNegative={false}
-                    thousandSeparator=","
+                    isInvalid={!!errors?.tokenClaimDelayHours}
+                    errorMessage={errors?.tokenClaimDelayHours?.message?.toString()}
                   />
                 )}
               />
@@ -214,23 +153,15 @@ const SalesStructure = () => {
                 name="tokenClaimDelayMinutes"
                 control={control}
                 render={({ field }) => (
-                  <NumericFormat
-                    customInput={Input}
+                  <NumberField
                     value={field.value}
                     onValueChange={(values) =>
                       field.onChange(Number(values.floatValue))
                     }
                     label="Minutes"
                     placeholder="0"
-                    labelPlacement="outside"
-                    classNames={{
-                      label: "text-white text-xs opacity-50",
-                      input: "font-semibold",
-                      inputWrapper:
-                        "bg-[#3E2A0FC4] rounded-xl border border-[#F7931AA8] group-data-[focus=true]:bg-[#3E2A0F] data-[hover=true]:bg-[#3E2A0F]",
-                    }}
-                    allowNegative={false}
-                    thousandSeparator=","
+                    isInvalid={!!errors?.tokenClaimDelayMinutes}
+                    errorMessage={errors?.tokenClaimDelayMinutes?.message?.toString()}
                   />
                 )}
               />
@@ -242,16 +173,13 @@ const SalesStructure = () => {
               name="tokenClaimDelay"
               control={control}
               render={({ field }) => (
-                <WrappedNextDatePicker
-                  variant="bordered"
-                  hideTimeZone
-                  showMonthAndYearPickers
-                  className="w-fit mt-3"
-                  labelPlacement="outside"
+                <DatePickerField
                   value={parseAbsoluteToLocal(field.value.toISOString())}
                   onChange={(value: DateValue) => {
-                    setValue("endTime", value.toDate(getLocalTimeZone()));
+                    field.onChange(value.toDate(getLocalTimeZone()));
                   }}
+                  isInvalid={!!errors?.tokenClaimDelay}
+                  errorMessage={errors?.tokenClaimDelay?.message?.toString()}
                 />
               )}
             />

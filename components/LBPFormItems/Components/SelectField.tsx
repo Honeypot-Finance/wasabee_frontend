@@ -1,40 +1,24 @@
-import { select, Select, SelectProps } from "@nextui-org/react";
-import clsx from "clsx";
-import React from "react";
+import { Select, SelectProps } from "@nextui-org/react";
+import { cn } from "@/lib/tailwindcss";
 
-type Props = {
-  label?: string;
-  items?: Iterable<object>;
-  children: any;
-  className?: string;
-} & SelectProps;
-
-const SelectField = ({
-  label,
-  items,
-  className,
-  children,
-  ...selectProps
-}: Props) => {
+const SelectField = <T extends object>(props: SelectProps<T>) => {
   return (
     <div className="flex flex-col gap-2 w-fit">
-      <div className="font-medium text-base leading-5">{label}</div>
+      <label className="font-medium text-base leading-5">{props.label}</label>
       <Select
+        aria-label="Select"
         size="md"
         classNames={{
-          base: "bg-[#3E2A0FC4] rounded-xl border border-[#F7931AA8]",
-          mainWrapper: "bg-[#3E2A0FC4] rounded-xl",
-          innerWrapper: "bg-[#3E2A0FC4] rounded-xl",
-          trigger: "bg-[#3E2A0FC4] rounded-xl data-[hover=true]:bg-[#3E2A0FC4]",
-          listboxWrapper: "bg-[#3E2A0FC4]",
+          trigger:
+            "bg-bistre/80 rounded-xl border border-[#F7931AA8] data-[hover=true]:bg-bistre/80",
+          listboxWrapper: "bg-bistre/80",
           popoverContent: "bg-[#35230E]",
+          label: "text-white text-base text-left text-nowrap",
         }}
-        className={clsx("min-w-32", className)}
-        items={items}
-        {...selectProps}
-      >
-        {children}
-      </Select>
+        className={cn("min-w-40", props.className)}
+        {...props}
+        label={undefined}
+      />
     </div>
   );
 };
