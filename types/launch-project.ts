@@ -31,6 +31,8 @@ export type SalesStructureForm = {
 export type TokenomicsAndPreviewForm = {
   projectTokenQuantity: number;
   assetTokenType: string;
+  assetTokenName: string;
+  assetTokenLogo: string;
   assetTokenQuantity: number;
   customTotalSupplyType: boolean;
   customTotalSupply?: number;
@@ -66,4 +68,22 @@ export type ProjectInfoForm = {
   projectLink: string;
   blockedCountry: string[];
   investmentRound: InvestmentRound[];
+};
+
+export type SocialCommunityForm = {};
+
+// 6.Socials & Community
+
+// 7.Review
+export enum REVIEW_RIGHT {
+  PAUSE_LBP = "pause-lbp",
+  UNPAUSE_LBP = "unpause-lbp",
+}
+export type ReviewForm = {
+  rights: REVIEW_RIGHT[];
+};
+
+// 8.Terms & Conditions
+export type TermsAndConditionsForm = {
+  isConfirmTerms: boolean;
 };

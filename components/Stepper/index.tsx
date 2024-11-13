@@ -8,6 +8,7 @@ export type VerticalStepProps = {
   className?: string;
   description?: React.ReactNode;
   title?: React.ReactNode;
+  isValid?: boolean;
 };
 
 const STEP_SPACE = 46;
@@ -129,6 +130,7 @@ const VerticalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
                       "relative group flex w-fit cursor-pointer items-center justify-center gap-4 rounded-large",
                       stepClassName
                     )}
+                    onClick={() => step.isValid && setCurrentStep(stepIdx)}
                     {...props}
                   >
                     <div className="flex h-full items-center">
@@ -163,7 +165,7 @@ const VerticalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
                             }}
                           >
                             <div className="flex items-center justify-center">
-                              {status === "complete" ? (
+                              {status === "complete" || step.isValid ? (
                                 <CheckIcon className="h-7 w-7 text-black" />
                               ) : (
                                 <span className="text-black text-[25px]">

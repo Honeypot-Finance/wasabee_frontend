@@ -15,18 +15,15 @@ import {
 import SearchIcon from "../svg/SearchIcon";
 import { berachainBartioTestnetNetwork } from "@/services/chain";
 import Image from "next/image";
+import { useReadContract } from "wagmi";
+import { ERC20ABI } from "@/lib/abis/erc20";
 
 type AssetTokenData = {
   tokenName: string;
   tokenIcon: string;
 };
 
-type AssetTokenModalProps = {
-  onSelect: (value: AssetTokenData | undefined) => void;
-};
-
-const AssetTokenModal = (props: AssetTokenModalProps) => {
-  const { onSelect } = props;
+const AssetTokenModal = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [searchValue, setSearchValue] = React.useState("");
 
@@ -58,10 +55,8 @@ const AssetTokenModal = (props: AssetTokenModalProps) => {
       (item) => item.symbol === assetTokenType
     );
     setValue("assetTokenType", assetTokenType);
-    onSelect({
-      tokenName: selectedToken?.name ?? "",
-      tokenIcon: selectedToken?.logoURI ?? "",
-    });
+    setValue("assetTokenName", selectedToken?.name);
+    setValue("assetTokenLogo", selectedToken?.logoURI);
   };
 
   return (
@@ -157,26 +152,24 @@ const AssetTokenModal = (props: AssetTokenModalProps) => {
 };
 
 const TokenomicsAndPreview = () => {
-  const [selectedAssetToken, setSelectedAssetToken] =
-    useState<AssetTokenData>();
-  console.log(
-    "😻 ~ TokenomicsAndPreview ~ selectedAssetToken:",
-    selectedAssetToken
-  );
   const {
     control,
     formState: { errors },
     setValue,
+    getValues,
     watch,
   } = useFormContext();
 
-  const projectToken = watch("projectToken");
-  const projectTokenLogo = watch("projectTokenLogo");
-  const isCustomTotalSupply = watch("customTotalSupplyType");
+  const projectTokenLogo = getValues("projectTokenLogo");
+  const isCustomTotalSupply = getValues("customTotalSupplyType");
+  const assetTokenName = getValues("assetTokenName");
+  const assetTokenLogo = getValues("assetTokenLogo");
 
-  const handleSelectedToken = (selected?: AssetTokenData) => {
-    setSelectedAssetToken(selected);
-  };
+  const { data: projectTokenName, isLoading } = useReadContract({
+    abi: ERC20ABI,
+    address: getValues("projectToken"),
+    functionName: "name",
+  });
 
   return (
     <div>
@@ -206,11 +199,14 @@ const TokenomicsAndPreview = () => {
                 <div className="flex items-center gap-1">
                   <img
                     src={projectTokenLogo}
-                    alt={projectToken}
+                    alt={projectTokenName}
                     width={18}
                     height={18}
                   />
-                  <span className="text-sm">{projectToken}</span>
+                  <span className="text-sm">{projectTokenName}</span>
+                  {isLoading && (
+                    <span className="h-2.5 w-8 bg-neutral-400 rounded-full animate-pulse"></span>
+                  )}
                 </div>
               }
               classNames={{
@@ -238,10 +234,10 @@ const TokenomicsAndPreview = () => {
               }
               label="Asset Token"
               placeholder="0"
-              isInvalid={!!errors.projectTokenQuantity}
-              errorMessage={errors.projectTokenQuantity?.message?.toString()}
+              isInvalid={!!errors.assetTokenQuantity}
+              errorMessage={errors.assetTokenQuantity?.message?.toString()}
               className="max-w-[400px]"
-              startContent={<AssetTokenModal onSelect={handleSelectedToken} />}
+              startContent={<AssetTokenModal />}
               classNames={{
                 input: "text-right flex-1",
               }}
@@ -301,10 +297,10 @@ const TokenomicsAndPreview = () => {
           render={({ field }) => (
             <SliderField
               label="Start Weight"
-              firstTokenName={projectToken}
+              firstTokenName={projectTokenName}
               firstTokenIcon={projectTokenLogo}
-              secondTokenName={selectedAssetToken?.tokenName}
-              secondTokenIcon={selectedAssetToken?.tokenIcon}
+              secondTokenName={assetTokenName}
+              secondTokenIcon={assetTokenLogo}
               value={field.value}
               onChange={(value) => field.onChange(Number(value))}
             />
@@ -317,10 +313,10 @@ const TokenomicsAndPreview = () => {
           render={({ field }) => (
             <SliderField
               label="End Weight"
-              firstTokenName={projectToken}
+              firstTokenName={projectTokenName}
               firstTokenIcon={projectTokenLogo}
-              secondTokenName={selectedAssetToken?.tokenName}
-              secondTokenIcon={selectedAssetToken?.tokenIcon}
+              secondTokenName={assetTokenName}
+              secondTokenIcon={assetTokenLogo}
               value={field.value}
               onChange={(value) => field.onChange(Number(value))}
             />

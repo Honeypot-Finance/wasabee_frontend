@@ -14,15 +14,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CreateAndBrandingForm,
   ProjectInfoForm,
+  ReviewForm,
   SalesStructureForm,
+  SocialCommunityForm,
+  TermsAndConditionsForm,
   TokenomicsAndPreviewForm,
   TokenVestingForm,
 } from "@/types/launch-project";
 import {
+  confirmationSchema,
   createAndBrandingSchema,
   DEFAULT_LAUNCH_PROJECT_FORM,
   projectInfoFormSchema,
+  reviewSchema,
   salesStructureSchema,
+  socialCommunitySchema,
+  termsAndConditionsSchema,
   tokenomicsAndPreviewSchema,
   tokenVestingSchema,
 } from "@/constants/launch-project";
@@ -62,10 +69,16 @@ type LaunchProjectForm = CreateAndBrandingForm &
   SalesStructureForm &
   TokenomicsAndPreviewForm &
   TokenVestingForm &
-  ProjectInfoForm;
+  ProjectInfoForm &
+  SocialCommunityForm &
+  ReviewForm &
+  TermsAndConditionsForm;
 
 const LaunchProject = () => {
-  const [currentStep, setCurrentStep] = useState<number>(3);
+  const [stepData, setStepData] = useState(
+    STEP_DATA.map((item) => ({ ...item, isValid: false }))
+  );
+  const [currentStep, setCurrentStep] = useState<number>(0);
 
   const validationSchema = [
     createAndBrandingSchema,
@@ -73,12 +86,17 @@ const LaunchProject = () => {
     tokenomicsAndPreviewSchema,
     tokenVestingSchema,
     projectInfoFormSchema,
+    socialCommunitySchema,
+    reviewSchema,
+    termsAndConditionsSchema,
+    confirmationSchema,
   ];
 
   const methods = useForm<LaunchProjectForm>({
     resolver: zodResolver(validationSchema[currentStep]),
     defaultValues: DEFAULT_LAUNCH_PROJECT_FORM,
     mode: "onChange",
+    shouldUnregister: false,
   });
 
   const CurrentStep = () => {
@@ -96,7 +114,7 @@ const LaunchProject = () => {
       case 5:
         return <SocialsAndCommunity />;
       case 6:
-        return <Review />;
+        return <Review changeStep={setCurrentStep} />;
       case 7:
         return <TermsConditions />;
       case 8:
@@ -108,43 +126,52 @@ const LaunchProject = () => {
 
   const handleNextStep = async () => {
     const isValid = await methods.trigger();
-    console.log("😻 ~ handleNextStep ~ isValid:", isValid);
-    if (isValid) {
+    if (isValid && currentStep < STEP_DATA.length - 1) {
       setCurrentStep((prevStep) => prevStep + 1);
+      const step = [...stepData];
+      step[currentStep].isValid = true;
+      setStepData(step);
     }
   };
 
-  const onSubmit = (data: LaunchProjectForm) => {
-    console.log("😻 ~ onSubmit ~ data:", data);
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep((prevStep) => prevStep - 1);
+    }
+  };
+
+  const onSubmit = () => {
+    console.log("😻 ~ onSubmit ~ data:", methods.getValues());
   };
 
   return (
     <div className="md:p-6 md:max-w-full xl:max-w-[1440px] mx-auto mb-[30vh] grid grid-cols-3 gap-12">
       <div className="col-span-1 bg-[#271A0C] py-[60px] rounded-[28px] justify-center px-10">
         <Stepper
-          steps={STEP_DATA}
+          steps={stepData}
           currentStep={currentStep}
           onStepChange={setCurrentStep}
         />
       </div>
       <div className="col-span-2 py-20 pl-9">
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form onSubmit={(e) => e.preventDefault()}>
             <CurrentStep />
             <div className="mt-12 flex items-center gap-8">
               {currentStep !== 0 && (
-                <LBPButton type="button" onClick={handleNextStep}>
+                <LBPButton type="button" onClick={handleBack}>
                   Back
                 </LBPButton>
               )}
-              <LBPButton
-                type={currentStep === 8 ? "submit" : "button"}
-                onClick={handleNextStep}
-              >
-                {currentStep === 8
-                  ? "Submit"
-                  : `Continue to ${STEP_DATA[currentStep + 1].title}`}
-              </LBPButton>
+              {currentStep === 8 ? (
+                <LBPButton type="submit" onClick={onSubmit}>
+                  Submit
+                </LBPButton>
+              ) : (
+                <LBPButton type="button" onClick={handleNextStep}>
+                  {`Continue to ${STEP_DATA[currentStep + 1].title}`}
+                </LBPButton>
+              )}
             </div>
           </form>
         </FormProvider>

@@ -6,6 +6,7 @@ const SelectField = <T extends object>(props: SelectProps<T>) => {
     <div className="flex flex-col gap-2 w-fit">
       <label className="font-medium text-base leading-5">{props.label}</label>
       <Select
+        aria-label="Select"
         size="md"
         classNames={{
           trigger:

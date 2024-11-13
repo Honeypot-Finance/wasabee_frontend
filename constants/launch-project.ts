@@ -4,7 +4,10 @@ import {
   PRICE_TYPE,
   PROJECT_CATEGORY_TYPE,
   ProjectInfoForm,
+  REVIEW_RIGHT,
+  ReviewForm,
   SalesStructureForm,
+  TermsAndConditionsForm,
   TokenomicsAndPreviewForm,
   TokenVestingForm,
 } from "@/types/launch-project";
@@ -43,6 +46,11 @@ export const DEFAULT_LAUNCH_PROJECT_FORM = {
   projectLink: "",
   blockedCountry: [],
   investmentRound: [],
+  // 6.Socials & Community
+  // 7.Review
+  rights: [],
+  // 8.Terms & Conditions
+  isConfirmTerms: false,
 };
 
 export const createAndBrandingSchema: ZodType<CreateAndBrandingForm> = z.object(
@@ -118,6 +126,8 @@ export const tokenomicsAndPreviewSchema: ZodType<TokenomicsAndPreviewForm> = z
       .number()
       .min(1, "Project token quantity is required"),
     assetTokenType: z.string().min(1, "Asset token type is required"),
+    assetTokenName: z.string().min(1, "Asset token name is required"),
+    assetTokenLogo: z.string().min(1, "Asset token logo is required"),
     assetTokenQuantity: z.number().min(1, "Asset token quantity is required"),
     customTotalSupplyType: z.boolean(),
     customTotalSupply: z.number().optional(),
@@ -170,8 +180,28 @@ export const projectInfoFormSchema: ZodType<ProjectInfoForm> = z.object({
   ]),
   lbpDescription: z.string().min(1, "LBP Description cannot be empty"),
   projectLink: z.string().url("Invalid URL format"),
-  blockedCountry: z
-    .array(z.string())
-    .min(1, "At least one country must be blocked"), // Assuming string array of country codes
+  blockedCountry: z.array(z.string()),
   investmentRound: z.array(investmentRoundSchema),
 });
+
+// 6. Socials & Community
+export const socialCommunitySchema = z.object({});
+
+// 7. Review
+const REVIEW_RIGHT_ZOD = z.enum([
+  REVIEW_RIGHT.PAUSE_LBP,
+  REVIEW_RIGHT.UNPAUSE_LBP,
+]);
+export const reviewSchema: ZodType<ReviewForm> = z.object({
+  rights: z.array(REVIEW_RIGHT_ZOD),
+});
+
+// 8. Terms & Conditions
+export const termsAndConditionsSchema: ZodType<TermsAndConditionsForm> =
+  z.object({
+    isConfirmTerms: z.boolean().refine((val) => val, {
+      message: "You must confirm the terms and conditions",
+    }),
+  });
+
+export const confirmationSchema = z.object({});
