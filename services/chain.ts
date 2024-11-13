@@ -360,7 +360,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/memewar2/Bera_Goat.png",
     },
-    "0x96d62fbd15608ef087219f20986735a1d65a22a4": {
+    "0x5c648D0Fd479cAFB9638eB94dB50aAA4d6A58c33": {
       name: "Bera Moo Deng",
       symbol: "BERA Moo Deng",
       decimals: 18,
@@ -372,7 +372,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/memewar2/Bera_Retadrio.png",
     },
-    "0x5a42fefa75b0adebd63d3078c2f1e3e9a6c39177": {
+    "0x96d62fbd15608ef087219f20986735a1d65a22a4": {
       name: "Bera Apu",
       symbol: "BERA APU",
       decimals: 18,
