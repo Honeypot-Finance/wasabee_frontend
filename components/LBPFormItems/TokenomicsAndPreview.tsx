@@ -57,6 +57,7 @@ const AssetTokenModal = () => {
     setValue("assetTokenType", assetTokenType);
     setValue("assetTokenName", selectedToken?.name);
     setValue("assetTokenLogo", selectedToken?.logoURI);
+    setValue("assetTokenAddress", selectedToken?.address);
   };
 
   return (

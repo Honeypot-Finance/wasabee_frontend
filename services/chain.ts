@@ -8,7 +8,7 @@ import {
   //sepolia,
 } from "@/lib/chain";
 export class Network {
-  get chainId() {
+  get chainId () {
     return this.chain.id;
   }
   contracts!: {
@@ -54,7 +54,7 @@ export class Network {
     if (args) {
     }
   }
-  init() {
+  init () {
     this.nativeToken = Token.getToken(this.nativeToken);
     this.nativeToken.init().then(() => {
       console.log("this.nativeToken", this.nativeToken.name);
@@ -403,3 +403,6 @@ export const networksMap = networks.reduce(
   },
   {} as Record<number | string, Network>
 );
+
+
+export const LiquidityBootstrapPoolFactoryAddress = "0xe2957CeAe8d267C493ad41e5CF7BBc274B969711"
