@@ -6,12 +6,10 @@ import { FactoryContract } from "./contract/factory-contract";
 import { FtoFactoryContract } from "./contract/ftofactory-contract";
 import { FtoFacadeContract } from "./contract/ftofacade-contract";
 import { makeAutoObservable, reaction } from "mobx";
-import { Token } from "./contract/token";
 import { createPublicClientByChain } from "@/lib/client";
-import { AsyncState, StorageState } from "./utils";
+import { StorageState } from "./utils";
 import { MemeFactoryContract } from "./contract/memefactory-contract";
 import { MEMEFacadeContract } from "./contract/memefacade-contract";
-import { init } from "next/dist/compiled/webpack/webpack";
 
 export class Wallet {
   account: string = "";
@@ -25,8 +23,9 @@ export class Wallet {
     factory: FactoryContract;
     ftofactory: FtoFactoryContract;
     ftofacade: FtoFacadeContract;
-    memeFactory: MemeFactoryContract;
+    memeFactory: MemeFactoryContract;      
     memeFacade: MEMEFacadeContract;
+    
   } = {} as any;
   publicClient!: PublicClient;
   isInit = false;

@@ -16,10 +16,17 @@ import { config } from "@/config/wagmi";
 import { trpc, trpcQueryClient } from "../lib/trpc";
 import { useEffect } from "react";
 import { wallet } from "@/services/wallet";
+import { DM_Sans, Inter } from "next/font/google";
 import { Inspector, InspectParams } from "react-dev-inspector";
 import { Analytics } from "@vercel/analytics/react";
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
+
+const dmSans = DM_Sans({
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin", "latin-ext"],
+  variable: "--dm_sans",
+});
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
   const { data: walletClient } = useWalletClient({
@@ -60,7 +67,7 @@ export default function App({
                     );
                   }}
                 ></Inspector>
-                <ComponentLayout className={"[font-family:MEMEP]"}>
+                <ComponentLayout className={`${dmSans.className}`}>
                   <Component {...pageProps} />
                 </ComponentLayout>
               </Provider>

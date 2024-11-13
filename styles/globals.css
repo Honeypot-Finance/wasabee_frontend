@@ -6,6 +6,10 @@
 @tailwind variants;
 
 :root {
+  --bg-active: 255 205 77;
+  --text-active: 0 0 0;
+  --bg-inactive: 147 140 133;
+  --text-inactive: 73 70 67;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -44,7 +48,6 @@ body {
   @apply bg-default text-default;
 }
 
-
 [aria-label="clear input"] {
   @apply right-0;
 }
@@ -66,6 +69,14 @@ body {
 .next-tab button[data-selected="true"] > span {
   @apply bg-transparent;
 }
+
+.next-tab-lbp button[data-selected="true"] {
+  @apply bg-[#E18A2066] border-1 border-[#E18A2066] text-white;
+}
+
+.next-tab-lbp button[data-selected="true"] > span {
+  @apply bg-transparent;
+}
 .next-card {
   @apply [background:#1D1407] rounded-[20px];
 }
@@ -82,4 +93,117 @@ input[type="number"]::-webkit-outer-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+*::-webkit-scrollbar {
+  height: 18px;
+  width: 6px;
+  background-color: #140e06;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #b66e16;
+  border-radius: 1rem;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #b66e16;
+}
+
+*::-webkit-scrollbar-thumb:horizontal {
+  background-color: #b66e16;
+}
+
+/* Date picker */
+.date-picker-wrapper div[data-slot="input-wrapper"] {
+  background-color: #3b2712;
+  color: #ffffff;
+  border: 1px solid #f7931aa8;
+}
+
+.date-picker-wrapper
+  div[data-slot="input-wrapper"]
+  button[data-slot="selector-button"] {
+  color: #ffffff;
+}
+
+.date-picker-wrapper span[data-slot="label"] {
+  color: #ffffff;
+  opacity: 50%;
+  font-size: 12px;
+}
+
+.date-picker-calendar div[data-slot="header-wrapper"] {
+  background-color: #3b2712;
+}
+
+.date-picker-calendar tr[data-slot="grid-header-row"] {
+  background-color: #3b2712;
+  color: #ffffff;
+}
+
+.date-picker-calendar
+  div[data-slot="header-wrapper"]
+  button[data-slot="prev-button"] {
+  color: #ffffff;
+}
+
+.date-picker-calendar
+  div[data-slot="header-wrapper"]
+  button[data-slot="next-button"] {
+  color: #ffffff;
+}
+
+.date-picker-calendar
+  div[data-slot="header-wrapper"]
+  button[data-slot="header"] {
+  background-color: #3b2712;
+  color: #ffffff;
+}
+
+.date-picker-calendar
+  div[data-slot="header-wrapper"]
+  button[data-slot="header"]
+  span[data-slot="title"] {
+  color: #ffffff;
+}
+
+.date-picker-calendar div[data-slot="header-wrapper"]::after {
+  background-color: #3b2712;
+}
+
+.date-picker-calendar div[data-slot="base"] div[data-slot="input-wrapper"] {
+  background-color: #3b2712;
+  color: #ffffff;
+}
+
+.date-picker-calendar
+  tbody[data-slot="grid-body"]
+  td[data-slot="cell"]
+  span[role="button"]
+  > span {
+  padding-top: 4px;
+}
+
+.date-picker-calendar
+  tbody[data-slot="grid-body"]
+  td[data-slot="cell"]
+  span[data-selected="true"] {
+  background-color: #f7931a;
+  color: #39260f;
+}
+.date-picker-calendar
+  div[data-slot="input-wrapper"]
+  div[data-slot="inner-wrapper"]
+  div[data-slot="input"]
+  div[data-slot="segment"] {
+  padding-top: 4px;
+}
+
+.date-picker-calendar
+  div[data-slot="input-wrapper"]
+  div[data-slot="inner-wrapper"]
+  div[data-slot="input"]
+  div[data-slot="segment"]:focus {
+  background-color: #f7931a4d;
 }

@@ -347,11 +347,24 @@ const MemePadInstruction = () => {
           {steps.map((step, idx) => (
             <li key={idx} className="flex relative">
               <div className="flex flex-col items-center ">
-                {idx !== 0 && <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>}
+                {idx !== 0 && (
+                  <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>
+                )}
                 <InstructionMarker />
-                {idx !== steps.length - 1 && <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>}
+                {idx !== steps.length - 1 && (
+                  <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>
+                )}
               </div>
-              <div className={cn("bg-[#3e2a0f]   px-5 py-2 ml-8 rounded-[2rem] relative overflow-visible", (idx !== 0 && idx !== steps.length - 1) ? 'my-2' : (idx === 0 ? 'mb-2' : 'mt-2'))}>
+              <div
+                className={cn(
+                  "bg-[#3e2a0f]   px-5 py-2 ml-8 rounded-[2rem] relative overflow-visible",
+                  idx !== 0 && idx !== steps.length - 1
+                    ? "my-2"
+                    : idx === 0
+                    ? "mb-2"
+                    : "mt-2"
+                )}
+              >
                 {step.content}
               </div>
             </li>
