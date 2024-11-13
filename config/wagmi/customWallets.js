@@ -4,23 +4,21 @@
 import { Wallet } from "@rainbow-me/rainbowkit";
 import { createConnector } from "wagmi";
 import { injected } from "wagmi/connectors";
-export interface MyWalletOptions {
-  projectId: string;
-}
 
 
-function getExplicitInjectedProvider(flag: string | number) {
+function getExplicitInjectedProvider(flag) {
   if (typeof window === "undefined" || typeof window.ethereum === "undefined")
     return;
   const providers = window.ethereum.providers;
   return providers
-    ? providers.find((provider: { [x: string]: any; }) => provider[flag])
+    ? providers.find((provider) => provider[flag])
     : window.ethereum[flag]
     ? window.ethereum
     : void 0;
 }
-function getWindowProviderNamespace(namespace:string) {
-  const providerSearch = (provider: Window & typeof globalThis & any, namespace2:string) => {
+function getWindowProviderNamespace(namespace) {
+  const providerSearch = (provider 
+    , namespace2) => {
     const [property, ...path] = namespace2.split(".");
     const _provider = provider[property];
     if (_provider) {
@@ -31,7 +29,7 @@ function getWindowProviderNamespace(namespace:string) {
   if (typeof window !== "undefined") return providerSearch(window, namespace);
 }
 
-function getInjectedProvider({ flag, namespace }: { flag?: any; namespace: string }) {
+function getInjectedProvider({ flag, namespace }) {
   var _a;
   if (typeof window === "undefined") return;
   if (namespace) {
@@ -47,8 +45,8 @@ function getInjectedProvider({ flag, namespace }: { flag?: any; namespace: strin
     return providers[0];
   return window.ethereum;
 }
-function createInjectedConnector(provider: any) {
-  return (walletDetails:any) => {
+function createInjectedConnector(provider) {
+  return (walletDetails) => {
     const injectedConfig = provider
       ? {
           target: () => ({
@@ -68,16 +66,12 @@ function getInjectedConnector({
   flag,
   namespace,
   target,
-}: {
-  flag?: any;
-  namespace: string;
-  target?: any;
 }) {
   const provider = target ? target : getInjectedProvider({ flag, namespace });
   return createInjectedConnector(provider);
 }
 
-export const holdstationWallet = ({ projectId }: MyWalletOptions): Wallet => ({
+export const holdstationWallet = ({ projectId }) => ({
   id: "holdstation",
   name: "Holdstation",
   iconUrl: "/images/partners/holdstation.png",
@@ -93,7 +87,7 @@ export const holdstationWallet = ({ projectId }: MyWalletOptions): Wallet => ({
     getUri: void 0,
   },
   qrCode: {
-    getUri: (uri: string) => uri,
+    getUri: (uri) => uri,
     instructions: {
       learnMoreUrl: "https://holdstation.com/",
       steps: [
