@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { CallReturnContext } from "ethereum-multicall";
 
 export interface Pool {
     asset: string;
@@ -65,3 +66,29 @@ export const formatLBPPoolData = (data: any[]) => {
 
     return result as Pool;
 }
+
+export function formatErc20Data(data: CallReturnContext[]) {
+    if(data.length === 0) return {}
+    let decimals = 1; // Default to 1 if decimals are not found
+  
+    // First, extract decimals from the data
+    data.forEach((item) => {
+      if (item.returnValues.length === 0) {
+        throw new Error("Invalid ERC20 token address");
+      }
+  
+      if (item.reference === "decimals") {
+        decimals = Math.pow(10, item.returnValues[0]);
+      }
+    });
+  
+    return data.reduce((formattedData: {[key: string]: any}, item) => {
+        if(typeof item.returnValues[0] === 'object'){
+          formattedData[item.reference] =  BigInt(item.returnValues[0].hex)
+        }else{
+          formattedData[item.reference] = item.returnValues[0];
+        }
+      
+      return formattedData;
+    }, {});
+  }

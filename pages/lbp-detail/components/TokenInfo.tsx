@@ -7,60 +7,12 @@ import { formatUnits, parseEther, parseUnits } from "viem";
 
 type Props = {
   tokenAddress ?: string
+  token: {
+    [key: string]: any;
+  }
 };
 
-function formatErc20Data(data: CallReturnContext[]): { [key: string]: any } {
-  if(data.length === 0) return {}
-  let decimals = 1; // Default to 1 if decimals are not found
-
-  // First, extract decimals from the data
-  data.forEach((item) => {
-    if (item.returnValues.length === 0) {
-      throw new Error("Invalid ERC20 token address");
-    }
-
-    if (item.reference === "decimals") {
-      decimals = Math.pow(10, item.returnValues[0]);
-    }
-  });
-
-  return data.reduce((formattedData: {[key: string]: any}, item) => {
-    
-      formattedData[item.reference] = item.returnValues[0];
-    
-    return formattedData;
-  }, {});
-}
-
-const TokenInfo = ({tokenAddress}: Props) => {
-
-  const  {data} = useMulticall3({
-    args: [
-      {
-        reference: "erc20",
-        contractAddress: "0xF9a97b37d9f7d9f7968f267ad266b1f71f2B511D",
-        abi: ERC20ABI,
-        calls: [
-          { reference: "name", methodName: "name", methodParameters: [] },
-          { reference: "symbol", methodName: "symbol", methodParameters: [] },
-          {
-            reference: "decimals",
-            methodName: "decimals",
-            methodParameters: [],
-          },
-          {
-            reference: "totalSupply",
-            methodName: "totalSupply",
-            methodParameters: [],
-          },
-        ],
-      },
-    ]
-  })
-
-  const tokenInfo = formatErc20Data(data?.results.erc20.callsReturnContext ?? [])
-
-
+const TokenInfo = ({tokenAddress,token}: Props) => {
 
   return (
     <div className="">
@@ -71,7 +23,7 @@ const TokenInfo = ({tokenAddress}: Props) => {
             Token Name
           </div>
           <div className="uppercase text-xl font-medium text-white">
-            {tokenInfo?.name ?? "Token Name"}
+            {token?.name ?? "Token Name"}
           </div>
         </div>
         <Divider className="my-2" />
@@ -80,7 +32,7 @@ const TokenInfo = ({tokenAddress}: Props) => {
             Token Symbol
           </div>
           <div className="uppercase text-xl font-medium text-white">
-            {tokenInfo?.symbol ?? "Token Symbol"}
+            {token?.symbol ?? "Token Symbol"}
           </div>
         </div>
         <Divider className="my-2" />
@@ -89,7 +41,7 @@ const TokenInfo = ({tokenAddress}: Props) => {
             Total Supply
           </div>
           <div className="uppercase text-xl font-medium text-white">
-            {new Intl.NumberFormat('en-DE').format(Number(formatUnits(BigInt(tokenInfo?.totalSupply?.hex ?? '0') , tokenInfo?.decimals ?? 18 )))}
+            {new Intl.NumberFormat('en-DE').format(Number(formatUnits(BigInt(token?.totalSupply?.hex ?? '0') , token?.decimals ?? 18 )))}
           </div>
         </div>
         <Divider className="my-2" />

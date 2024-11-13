@@ -22,33 +22,35 @@ function clientToProvider(client: Client<Transport, Chain>) {
     return new providers.JsonRpcProvider(transport.url, network)
   }
 
-// type Select<T> = (data: any) => T;
-type Payload = {args: ContractCallContext[], select?: (data: any) => any }
+type Payload = {
+  queryKey: any[],
+  enabled?: boolean
+  contractCallContext: ContractCallContext[],
+  select?: (data: any) => any,
+}
 
-const useMulticall3 = ( {args,select}: Payload) => {   
+const useMulticall3 = ( {queryKey,contractCallContext, select, enabled = true}: Payload) => {  
+  
     const client = getClient(config, {chainId: config.chains[0].id})
 
-    console.log(client)
-
     const data = useQuery({
-        queryKey: ['multicall3', args],
+        queryKey: ['multicall3', ...queryKey],
         queryFn: async () => {
             const multicall = new Multicall({
                 ethersProvider: clientToProvider(client!),
                 multicallCustomContractAddress: MULTICALL_ADDRESS
             })
 
-            const result = await multicall.call(args)
-            console.log(result)
+            const result = await multicall.call(contractCallContext)
             return result
         },
-       enabled: Boolean(client),
-       select(data) {
-           if(data && select){
+       enabled: Boolean(client) && enabled,
+       select:select ? (data) =>{
+         if(data && select){
             return select(data.results)
            }
            return data
-       },
+       }: undefined
     })
 
     return data
