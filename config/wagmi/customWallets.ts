@@ -1,3 +1,4 @@
+
 import { Wallet } from "@rainbow-me/rainbowkit";
 import { createConnector } from "wagmi";
 import { injected } from "wagmi/connectors";
@@ -5,18 +6,19 @@ export interface MyWalletOptions {
   projectId: string;
 }
 
-function getExplicitInjectedProvider(flag:any) {
+
+function getExplicitInjectedProvider(flag: string | number) {
   if (typeof window === "undefined" || typeof window.ethereum === "undefined")
     return;
   const providers = window.ethereum.providers;
   return providers
-    ? providers.find((provider:any) => provider[flag])
+    ? providers.find((provider: { [x: string]: any; }) => provider[flag])
     : window.ethereum[flag]
     ? window.ethereum
     : void 0;
 }
 function getWindowProviderNamespace(namespace:string) {
-  const providerSearch = (provider:any, namespace2:string) => {
+  const providerSearch = (provider: Window & typeof globalThis & any, namespace2:string) => {
     const [property, ...path] = namespace2.split(".");
     const _provider = provider[property];
     if (_provider) {
@@ -44,7 +46,7 @@ function getInjectedProvider({ flag, namespace }: { flag?: any; namespace: strin
   return window.ethereum;
 }
 function createInjectedConnector(provider: any) {
-  return (walletDetails: any) => {
+  return (walletDetails:any) => {
     const injectedConfig = provider
       ? {
           target: () => ({
