@@ -21,7 +21,7 @@ import { Inspector, InspectParams } from "react-dev-inspector";
 import { StorageState } from "@/services/utils";
 import { Analytics } from "@vercel/analytics/react";
 import { ApolloProvider } from "@apollo/client";
-import { infoClient } from "@/lib/algebra/graphql";
+import { infoClient } from "@/lib/algebra/graphql/clients";
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
 

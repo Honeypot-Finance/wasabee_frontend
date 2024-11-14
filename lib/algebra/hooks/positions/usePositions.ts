@@ -8,7 +8,7 @@ import { useAccount, useContractReads } from "wagmi";
 import { Address } from "viem";
 import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
 import { DEFAULT_CHAIN_ID } from "@/data/algebra/default-chain-id";
-import { farmingClient } from "../../graphql";
+import { farmingClient } from "../../graphql/clients";
 import { useDepositsQuery } from "../../graphql/generated/graphql";
 import { useReadAlgebraPositionManagerBalanceOf } from "@/wagmi-generated";
 

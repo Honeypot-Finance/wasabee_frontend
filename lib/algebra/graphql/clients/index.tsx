@@ -1,16 +1,20 @@
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloClient, InMemoryCache } from "@apollo/client";
+
+const INFO_GRAPH = process.env.NEXT_PUBLIC_INFO_GRAPH;
+const BLOCKS_GRAPH = process.env.NEXT_PUBLIC_BLOCKS_GRAPH;
+const FARMING_GRAPH = process.env.NEXT_PUBLIC_FARMING_GRAPH;
 
 export const infoClient = new ApolloClient({
-    uri: import.meta.env.VITE_INFO_GRAPH,
-    cache: new InMemoryCache(),
+  uri: INFO_GRAPH,
+  cache: new InMemoryCache(),
 });
 
 export const blocksClient = new ApolloClient({
-    uri: import.meta.env.VITE_BLOCKS_GRAPH,
-    cache: new InMemoryCache(),
+  uri: BLOCKS_GRAPH,
+  cache: new InMemoryCache(),
 });
 
 export const farmingClient = new ApolloClient({
-    uri: import.meta.env.VITE_FARMING_GRAPH,
-    cache: new InMemoryCache(),
+  uri: FARMING_GRAPH,
+  cache: new InMemoryCache(),
 });

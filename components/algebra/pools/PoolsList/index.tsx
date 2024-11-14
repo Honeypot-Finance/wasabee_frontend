@@ -11,7 +11,7 @@ import {
   POOL_AVG_APR_API,
   ETERNAL_FARMINGS_API,
 } from "@/data/algebra/api";
-import { farmingClient } from "@/lib/algebra/graphql";
+import { farmingClient } from "@/lib/algebra/graphql/clients";
 import {
   usePoolsListQuery,
   useActiveFarmingsQuery,

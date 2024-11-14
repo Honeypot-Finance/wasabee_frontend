@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import CurrencyLogo from "@/components/algebra/common/CurrencyLogo";
 import Loader from "@/components/algebra/common/Loader";
 import { DynamicFeePluginIcon } from "@/components/algebra/common/PluginIcons";
