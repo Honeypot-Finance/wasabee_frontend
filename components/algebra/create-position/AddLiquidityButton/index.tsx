@@ -73,8 +73,6 @@ export const AddLiquidityButton = ({
     });
   }, [mintInfo, account, txDeadline, useNative]);
 
-  console.log("calldata", calldata);
-
   const { approvalState: approvalStateA, approvalCallback: approvalCallbackA } =
     useApprove(
       mintInfo.parsedAmounts[Field.CURRENCY_A],
@@ -107,8 +105,6 @@ export const AddLiquidityButton = ({
     );
   }, [mintInfo, approvalStateA, approvalStateB]);
 
-  console.log("isReady", isReady);
-
   const { data: addLiquidityConfig, error } =
     useSimulateAlgebraPositionManagerMulticall({
       args: calldata && [calldata as `0x${string}`[]],
@@ -117,9 +113,6 @@ export const AddLiquidityButton = ({
       },
       value: BigInt(value || 0),
     });
-
-  console.log("addLiquidityConfig", addLiquidityConfig);
-  console.log("error", error);
 
   const { data: addLiquidityData, writeContract: addLiquidity } =
     useContractWrite();
@@ -179,6 +172,7 @@ export const AddLiquidityButton = ({
         console.log("addLiquidityConfig", addLiquidityConfig);
         addLiquidityConfig && addLiquidity(addLiquidityConfig.request);
       }}
+      className="whitespace-nowrap w-full text-black rounded-md border-6 border-[rgba(225,138,32,0.40)] bg-gradient-to-b from-[rgba(232,211,124,0.13)] to-[#FCD729] bg-[#F7931A]"
     >
       {isAddingLiquidityLoading ? <Loader /> : "Create Position"}
     </Button>

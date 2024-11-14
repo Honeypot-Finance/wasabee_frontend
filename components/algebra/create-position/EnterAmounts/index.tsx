@@ -86,7 +86,7 @@ const EnterAmounts = ({
   }, []);
 
   return (
-    <div className="flex flex-col md:flex-row lg:flex-col gap-2">
+    <div className="flex flex-col lg:flex-col gap-2">
       <div className="flex w-full relative">
         <EnterAmountCard
           currency={currencyA}

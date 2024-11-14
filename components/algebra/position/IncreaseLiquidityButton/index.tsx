@@ -181,6 +181,7 @@ export const IncreaseLiquidityButton = ({
         increaseLiquidityConfig &&
         increaseLiquidity(increaseLiquidityConfig.request)
       }
+      className="whitespace-nowrap w-full text-black rounded-md border-6 border-[rgba(225,138,32,0.40)] bg-gradient-to-b from-[rgba(232,211,124,0.13)] to-[#FCD729] bg-[#F7931A]"
     >
       {isIncreaseLiquidityLoading ? <Loader /> : "Add Liquidity"}
     </Button>

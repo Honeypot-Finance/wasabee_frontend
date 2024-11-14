@@ -171,7 +171,7 @@ const RemoveLiquidityModal = ({ positionId }: RemoveLiquidityModalProps) => {
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="min-w-[500px] rounded-3xl bg-card-dark"
+        className="min-w-[500px] rounded-3xl bg-[#322111] border-none"
         style={{ borderRadius: "32px" }}
       >
         <DialogHeader>
@@ -205,12 +205,13 @@ const RemoveLiquidityModal = ({ positionId }: RemoveLiquidityModalProps) => {
             defaultValue={sliderValue}
             step={1}
             onValueChange={(v) => setSliderValue(v)}
-            className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4"
+            className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4 bg-[#9D5E28]/20 rounded-lg"
             aria-label="Liquidity Percent"
             disabled={isRemoveLoading}
           />
 
           <Button
+            className="w-full rounded-md border-2 border-[rgba(225,138,32,0.40)] bg-[rgba(225,138,32,0.40)] backdrop-blur-sm"
             disabled={isDisabled}
             onClick={() =>
               removeLiquidityConfig &&

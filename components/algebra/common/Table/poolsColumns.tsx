@@ -16,6 +16,8 @@ import { TokenFieldsFragment } from "@/lib/algebra/graphql/generated/graphql";
 import { formatPercent } from "@/lib/algebra/utils/common/formatPercent";
 import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { ReactNode } from "react";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
+import { Token } from "@/services/contract/token";
 
 interface Pair {
   token0: TokenFieldsFragment;
@@ -46,8 +48,22 @@ const PoolPair = ({ pair, fee }: Pool) => {
   return (
     <div className="flex items-center gap-4 ml-2">
       <div className="flex">
-        <CurrencyLogo currency={currencyA} size={30} />
-        <CurrencyLogo currency={currencyB} size={30} className="-ml-2" />
+        <div className="z-10">
+          <TokenLogo
+            size={30}
+            token={Token.getToken({
+              address: (currencyA as any)?.address ?? "",
+            })}
+          />
+        </div>
+        <div className="-ml-3">
+          <TokenLogo
+            size={30}
+            token={Token.getToken({
+              address: (currencyB as any)?.address ?? "",
+            })}
+          />
+        </div>
       </div>
 
       {currencyA && currencyB ? (

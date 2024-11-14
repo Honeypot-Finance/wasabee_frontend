@@ -95,7 +95,7 @@ const CreatePoolForm = () => {
   const { data: createPoolData, writeContract: createPool } =
     useContractWrite();
 
-  const { isLoading,isError,isSuccess} = useTransactionAwait(
+  const { isLoading, isError, isSuccess } = useTransactionAwait(
     createPoolData,
     {
       title: "Create Pool",
@@ -107,12 +107,11 @@ const CreatePoolForm = () => {
   );
 
   const createPoolToast = useToastify({
-    title:"Create Pool",
+    title: "Create Pool",
     isLoading,
     isSuccess,
     isError,
-    message: isLoading?"Pending":(isSuccess?"Success":"Failed"),
-    
+    message: isLoading ? "Pending" : isSuccess ? "Success" : "Failed",
   });
 
   useEffect(() => {
@@ -128,7 +127,7 @@ const CreatePoolForm = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-1 p-2 bg-card border border-card-border rounded-3xl">
+    <div className="flex flex-col gap-1 p-2 bg-[#271A0C] rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all">
       <h2 className="font-semibold text-xl text-left ml-2 mt-2">Select Pair</h2>
       <SelectPair
         mintInfo={mintInfo}

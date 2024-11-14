@@ -7,6 +7,7 @@ import WBTCLogo from "@/assets/algebra/tokens/wbtc.svg";
 import EtherLogo from "@/assets/algebra/tokens/ether.svg";
 import { cn } from "@/lib/tailwindcss";
 import { Skeleton } from "@/components/algebra/ui/skeleton";
+import Image from "next/image";
 
 interface CurrencyLogoProps {
   currency: Currency | undefined | null;
@@ -65,7 +66,7 @@ const CurrencyLogo = ({
 
   if (address in specialTokens) {
     return (
-      <img
+      <Image
         src={specialTokens[address].logo}
         alt={specialTokens[address].symbol}
         width={size}
@@ -78,7 +79,7 @@ const CurrencyLogo = ({
 
   if (currency.isNative) {
     return (
-      <img
+      <Image
         src={WBTCLogo}
         alt={"ETH"}
         width={size}

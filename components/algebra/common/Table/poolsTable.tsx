@@ -23,6 +23,8 @@ import { LoadingState } from "./loadingState";
 import { Input } from "@/components/algebra/ui/input";
 import { Search, Plus, LayoutGrid } from "lucide-react";
 import { Switch } from "@/components/algebra/ui/switch";
+import Link from "next/link";
+import { cn } from "@/lib/tailwindcss";
 
 interface PoolsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -92,8 +94,8 @@ const PoolsTable = <TData, TValue>({
   return (
     <div>
       {searchID && (
-        <div className="flex gap-4 w-full justify-between items-center py-4">
-          <div className="flex items-center gap-x-6 w-fit">
+        <div className="flex flex-col xl:flex-row gap-4 w-full xl:justify-between xl:items-center py-4">
+          <div className="flex items-center xl:gap-x-6 w-full xl:w-fit justify-between">
             <div className="flex items-center">
               {filters.map((filter) => (
                 <button
@@ -135,12 +137,15 @@ const PoolsTable = <TData, TValue>({
             </div>
           </div>
           <div className="flex items-center gap-x-5">
-            <button
-              className={`flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]`}
+            <Link
+              className={cn(
+                "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
+              )}
+              href="/pool"
             >
               <Plus />
               <span>Create Pool</span>
-            </button>
+            </Link>
             <div className="flex gap-2 max-md:gap-4 items-center w-fit ml-auto max-sm:hidden">
               <label
                 className="flex gap-2 items-center"

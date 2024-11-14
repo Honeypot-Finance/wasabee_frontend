@@ -161,7 +161,10 @@ const MyPositionsTable = <TData, TValue>({
     <Table>
       <TableHeader className="[&_tr]:border-b [&_tr]:border-opacity-30">
         {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id} className="hover:bg-transparent">
+          <TableRow
+            key={headerGroup.id}
+            className="hover:bg-transparent border-[#D9D7E0]/5"
+          >
             {headerGroup.headers.map((header) => (
               <TableHead
                 key={header.id}
