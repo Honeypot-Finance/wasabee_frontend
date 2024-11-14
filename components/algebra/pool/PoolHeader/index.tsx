@@ -1,10 +1,12 @@
 import CurrencyLogo from "@/components/algebra/common/CurrencyLogo";
 import PageTitle from "@/components/algebra/common/PageTitle";
 import { Skeleton } from "@/components/algebra/ui/skeleton";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
 import { formatPercent } from "@/lib/algebra/utils/common/formatPercent";
 import { Pool } from "@cryptoalgebra/sdk";
 import { Address } from "viem";
+import { Token } from "@/services/contract/token";
 
 interface PoolHeaderProps {
   pool: Pool | null;
@@ -21,8 +23,26 @@ const PoolHeader = ({ pool }: PoolHeaderProps) => {
   return (
     <div className="flex items-center w-full gap-3.5">
       <div className="flex">
-        <CurrencyLogo currency={currencyA} size={40} className="z-10" />
-        <CurrencyLogo currency={currencyB} size={40} className="-ml-2" />
+        <div className="z-10">
+          {(currencyA as any)?.address && (
+            <TokenLogo
+              size={40}
+              token={Token.getToken({
+                address: (currencyA as any).address,
+              })}
+            />
+          )}
+        </div>
+        <div className="-ml-4">
+          {(currencyB as any)?.address && (
+            <TokenLogo
+              size={40}
+              token={Token.getToken({
+                address: (currencyB as any).address,
+              })}
+            />
+          )}
+        </div>
       </div>
 
       {/* TODO: bg color  */}

@@ -54,6 +54,17 @@ const EnterAmountCard = ({
             {currency ? currency.symbol : "Select a token"}
           </span>
         </div>
+      </div>
+
+      <div className="flex flex-col items-end w-full gap-2">
+        <Input
+          value={value}
+          id={`amount-${currency?.symbol}`}
+          onUserInput={(v) => handleInput(v)}
+          className={`text-right border-none text-xl font-bold w-full p-2`}
+          placeholder={"0.0"}
+          maxDecimals={currency?.decimals}
+        />
         {currency && account && (
           <div className={"flex text-sm whitespace-nowrap"}>
             <div>
@@ -65,17 +76,6 @@ const EnterAmountCard = ({
             </button>
           </div>
         )}
-      </div>
-
-      <div className="flex flex-col items-end w-full">
-        <Input
-          value={value}
-          id={`amount-${currency?.symbol}`}
-          onUserInput={(v) => handleInput(v)}
-          className={`text-right border-none text-xl font-bold w-9/12 p-0`}
-          placeholder={"0.0"}
-          maxDecimals={currency?.decimals}
-        />
         {/* <div className="text-sm">{fiatValue && formatUSD.format(fiatValue)}</div> */}
       </div>
     </div>

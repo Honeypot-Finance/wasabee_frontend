@@ -2,9 +2,9 @@ import { Button } from "@/components/algebra/ui/button";
 import { formatPlural } from "@/lib/algebra/utils/common/formatPlural";
 import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { Address } from "viem";
-import FilterPopover from "../FilterPopover";
-import { Link, SlidersHorizontal } from "lucide-react";
 import { FormattedPosition } from "@/types/algebra/types/formatted-position";
+import Link from "next/link";
+import { cn } from "@/lib/tailwindcss";
 
 interface MyPositionsToolbar {
   positionsData: FormattedPosition[];
@@ -36,13 +36,18 @@ const MyPositionsToolbar = ({ positionsData, poolId }: MyPositionsToolbar) => {
           myFeesUSD || 0
         )} Fees`}</div>
       </div>
-      <div className="flex w-full md:w-fit mt-4 md:mt-0 gap-4 hidden">
-        <FilterPopover>
+      <div className="flex w-full md:w-fit mt-4 md:mt-0 gap-4">
+        {/* <FilterPopover>
           <SlidersHorizontal size={20} />
-        </FilterPopover>
-        <Button size={"md"} className="font-semibold" asChild>
-          <Link to={`/pool/${poolId}/new-position`}>Create Position</Link>
-        </Button>
+        </FilterPopover> */}
+        <Link
+          className={cn(
+            "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
+          )}
+          href={`/new-position/${poolId}`}
+        >
+          <span>Create Position</span>
+        </Link>
       </div>
     </div>
   );

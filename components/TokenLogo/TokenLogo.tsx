@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface TokenLogoProps {
+  size?: number;
   token: Token;
   addtionalClasses?: string;
   disableLink?: boolean;
@@ -14,6 +15,7 @@ interface TokenLogoProps {
 
 export const TokenLogo = observer(
   ({
+    size,
     token,
     addtionalClasses,
     disableLink,
@@ -49,8 +51,8 @@ export const TokenLogo = observer(
                 : "/images/icons/tokens/unknown-token-icon.png"
             }
             alt=""
-            width={24}
-            height={24}
+            width={size || 24}
+            height={size || 24}
           />
         </Link>
       </Tooltip>

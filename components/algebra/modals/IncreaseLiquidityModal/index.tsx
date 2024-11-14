@@ -42,7 +42,7 @@ export function IncreaseLiquidityModal({
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="max-w-[500px] rounded-3xl bg-card"
+        className="max-w-[500px] rounded-3xl bg-[#322111] border-none"
         style={{ borderRadius: "32px" }}
       >
         <DialogHeader>
