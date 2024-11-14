@@ -53,6 +53,9 @@ const PoolPage = () => {
   const { data: bundles } = useNativePriceQuery();
   const nativePrice = bundles?.bundles[0].maticPriceUSD;
 
+  console.log("poolId:", poolId);
+  console.log("poolInfo:", poolInfo);
+
   const { farmingInfo, deposits, isFarmingLoading, areDepositsLoading } =
     useActiveFarming({
       poolId: poolId,
@@ -265,12 +268,12 @@ const PoolPage = () => {
 };
 
 const NoPositions = ({ poolId }: { poolId: Address }) => (
-  <div className="flex flex-col items-start animate-fade-in mt-10">
-    <div>
+  <div className="flex flex-col items-start animate-fade-in mt-10 font-bold">
+    <div className="flex items-center gap-x-[18px] text-xl">
       <div className="p-2.5">My Positions</div>
       <div className="p-2.5">1 position</div>
       <div className="p-2.5">$203.34 TVL</div>
-      <div className="p-2.5">$0 Fees</div>
+      <div className="p-2.5 text-[#4BDF81]">$0 Fees</div>
     </div>
     <h2 className="text-2xl font-bold">
       {`You don't have positions for this pool`}

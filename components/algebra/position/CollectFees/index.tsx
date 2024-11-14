@@ -64,14 +64,12 @@ const CollectFees = ({
     positionFeesUSD === "$0" && !zeroRewards ? "< $0.001" : positionFeesUSD;
 
   return (
-    <div className="flex w-full justify-between bg-card-dark p-4 rounded-xl">
+    <div className="flex w-full justify-between rounded-xl">
       <div className="text-left">
-        <div className="font-bold text-xs">EARNED FEES</div>
+        {/* <div className="font-bold text-xs">EARNED FEES</div> */}
         <div className="font-semibold text-2xl">
           {collectedFees ? (
-            <span className="text-cyan-300 drop-shadow-cyan">
-              {collectedFees}
-            </span>
+            <div className="text-[#479FFF]">{collectedFees}</div>
           ) : (
             <Skeleton className="w-[100px] h-[30px]" />
           )}
@@ -82,7 +80,14 @@ const CollectFees = ({
         disabled={!collect || zeroRewards || isLoading || !collectConfig}
         onClick={() => collectConfig && collect(collectConfig.request)}
       >
-        {isLoading ? <Loader /> : "Collect fees"}
+        {isLoading ? (
+          <Loader />
+        ) : (
+          // FIXME: color white
+          <div className="text-white rounded-lg border-2 border-[rgba(225,138,32,0.40)] bg-[rgba(225,138,32,0.40)] backdrop-blur-sm p-2.5">
+            Collect fees
+          </div>
+        )}
       </Button>
     </div>
   );

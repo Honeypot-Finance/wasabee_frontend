@@ -76,7 +76,7 @@ const PositionCard = ({
   if (!selectedPosition || loading) return;
 
   return (
-    <div className="flex flex-col gap-6 bg-card border border-card-border rounded-3xl p-4 animate-fade-in">
+    <div className="flex flex-col gap-6 rounded-3xl p-4 animate-fade-in bg-[#211708]">
       <div className="relative flex w-full justify-end text-right">
         <div className="absolute left-0 top-0">
           <PositionNFT positionId={selectedPosition.id} />
@@ -85,10 +85,10 @@ const PositionCard = ({
           <h2 className="scroll-m-20 text-2xl font-bold tracking-tight lg:text-2xl">{`Position #${selectedPosition?.id}`}</h2>
           <div className="flex flex-col gap-4">
             <div>
-              <div className="font-bold text-xs">LIQUIDITY</div>
+              <div className="text-xs">LIQUIDITY</div>
               <div className="font-semibold text-2xl">
                 {positionLiquidityUSD ? (
-                  <span className="text-cyan-300 drop-shadow-cyan">
+                  <span className="text-[#479FFF] drop-shadow-cyan">
                     {positionLiquidityUSD}
                   </span>
                 ) : (
@@ -100,9 +100,7 @@ const PositionCard = ({
               <div className="font-bold text-xs">APR</div>
               <div className="font-semibold text-2xl">
                 {positionAPR ? (
-                  <span className="text-fuchsia-400 drop-shadow-pink">
-                    {positionAPR}
-                  </span>
+                  <span className="text-[#F4AB36]">{positionAPR}</span>
                 ) : (
                   <Skeleton className="w-[100px] h-[30px]" />
                 )}
@@ -111,14 +109,12 @@ const PositionCard = ({
           </div>
         </div>
       </div>
-
       <CollectFees
         positionFeesUSD={positionFeesUSD}
         mintInfo={mintInfo}
         positionId={selectedPosition.id}
       />
       <TokenRatio mintInfo={mintInfo} />
-
       {positionEntity && (
         <div className="flex justify-between font-semibold">
           <div>
@@ -129,10 +125,11 @@ const PositionCard = ({
           </div>
         </div>
       )}
-      {pool && positionEntity && (
-        <PositionRangeChart pool={pool} position={positionEntity} />
-      )}
-
+      <div className="w-full px-4">
+        {pool && positionEntity && (
+          <PositionRangeChart pool={pool} position={positionEntity} />
+        )}
+      </div>
       {positionEntity && (
         <div className="flex gap-4 w-full whitespace-nowrap">
           <IncreaseLiquidityModal

@@ -26,20 +26,17 @@ const MyPositionsToolbar = ({ positionsData, poolId }: MyPositionsToolbar) => {
     <div className="flex flex-col md:flex-row items-center justify-between w-full mb-6">
       <div className="flex items-center gap-4 flex-wrap">
         <h3 className="font-semibold text-xl text-left">My Positions</h3>
-        <div className="self-center w-[1px] h-[20px] border border-card-border/40"></div>
         <div className="text-gray-300 font-semibold">{`${
           positionsData?.length
         } ${formatPlural(positionsData.length, "position", "positions")}`}</div>
-        <div className="self-center w-[1px] h-[20px] border border-card-border/40"></div>
         <div className="text-cyan-300 font-semibold">{`${formatUSD.format(
           myLiquidityUSD || 0
         )} TVL`}</div>
-        <div className="self-center w-[1px] h-[20px] border border-card-border/40"></div>
         <div className="text-green-300 font-semibold">{`${formatUSD.format(
           myFeesUSD || 0
         )} Fees`}</div>
       </div>
-      <div className="flex w-full md:w-fit mt-4 md:mt-0 gap-4">
+      <div className="flex w-full md:w-fit mt-4 md:mt-0 gap-4 hidden">
         <FilterPopover>
           <SlidersHorizontal size={20} />
         </FilterPopover>

@@ -163,7 +163,10 @@ const RemoveLiquidityModal = ({ positionId }: RemoveLiquidityModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant={"outline"} className="w-full">
+        <Button
+          variant={"outline"}
+          className="w-full rounded-md border-2 border-[rgba(225,138,32,0.40)] bg-[rgba(225,138,32,0.40)] backdrop-blur-sm"
+        >
           Remove Liquidity
         </Button>
       </DialogTrigger>
