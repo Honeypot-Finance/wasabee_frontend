@@ -186,15 +186,9 @@ const LaunchProject = () => {
                   Back
                 </LBPButton>
               )}
-              {currentStep === 8 ? (
-                <LBPButton type="submit" onClick={onSubmit}>
-                  Submit
-                </LBPButton>
-              ) : (
                 <LBPButton type="button" onClick={handleNextStep}>
                   {`Continue to ${STEP_DATA[currentStep + 1].title}`}
                 </LBPButton>
-              )}
             </div>
           </form>
         </FormProvider>

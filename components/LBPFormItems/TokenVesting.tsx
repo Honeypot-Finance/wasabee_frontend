@@ -36,6 +36,8 @@ const TokenVesting = () => {
   const endTime = getValues("endTime");
   const delayHours = getValues("tokenClaimDelayHours");
   const delayMinutes = getValues("tokenClaimDelayMinutes");
+  const vestingCliffTime = watch("vestingCliffTime")
+  
 
   const vestingStartTime = dayjs(endTime)
     .add(delayHours, "hours")
@@ -129,7 +131,7 @@ const TokenVesting = () => {
                 render={({ field }) => (
                   <DatePickerField
                     label="Vesting Cliff Time"
-                    minValue={today(getLocalTimeZone())}
+                    minValue={parseAbsoluteToLocal(endTime.toISOString())}
                     value={parseAbsoluteToLocal(field.value.toISOString())}
                     onChange={(value: DateValue) => {
                       field.onChange(value.toDate(getLocalTimeZone()));
@@ -154,7 +156,7 @@ const TokenVesting = () => {
                 render={({ field }) => (
                   <DatePickerField
                     label="Ending Date & Time"
-                    minValue={today(getLocalTimeZone())}
+                    minValue={parseAbsoluteToLocal(vestingCliffTime.toISOString())}
                     value={parseAbsoluteToLocal(field.value.toISOString())}
                     onChange={(value: DateValue) => {
                       field.onChange(value.toDate(getLocalTimeZone()));

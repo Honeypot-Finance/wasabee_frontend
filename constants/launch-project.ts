@@ -39,6 +39,7 @@ export const DEFAULT_LAUNCH_PROJECT_FORM = {
   // 4.Token Vesting
   isTokenVestingEnabled: true,
   isVestingCliffTimeEnabled: true,
+  vestingCliffTime: new Date(),
   vestingEndTime: new Date(),
   // 5.Project Info
   category: PROJECT_CATEGORY_TYPE.GAMING,

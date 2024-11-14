@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "../button";
 import { useFormContext } from "react-hook-form";
-import { useAccount, useWriteContract } from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import {
   decodeEventLog,
@@ -61,36 +61,7 @@ const ApprovalsCard = ({
   );
 };
 
-const data = [
-  {
-    title: "Swap Fee",
-    value: "2%",
-  },
-  {
-    title: "Platform Fee",
-    value: "3%",
-  },
-  {
-    title: "Project Token Quantity",
-    value: "1USDC",
-  },
-  {
-    title: "Collateral Token Quantity",
-    value: "10M DAI",
-  },
-  {
-    title: "Start Time",
-    value: "10/24/2024, 12:00 AM",
-  },
-  {
-    title: "End Time",
-    value: "10/31/2024, 12:00 AM",
-  },
-  {
-    title: "Duration",
-    value: "7 days",
-  },
-];
+
 
 const Confirm = (props: Props) => {
   const { getValues } = useFormContext();
@@ -107,17 +78,56 @@ const Confirm = (props: Props) => {
   const [createPoolLoading, setPoolLoading] = useState(false);
   const router = useRouter();
 
-  console.log(getValues());
+console.log(getValues())
 
+const {startTime, endTime,projectTokenQuantity,customTotalSupplyType ,customTotalSupply} = getValues()
+
+const {data}=  useReadContract({
+  abi: LiquidityBootstrapPoolFactoryABI,
+  address:LiquidityBootstrapPoolFactoryAddress,
+  functionName: "factorySettings",
+})
+
+const [, platformFee, swapFee] = data ?? []
+
+const SummaryItemData = [
+  {
+    title: "Swap Fee",
+    value: `${swapFee ? swapFee / 1000 : 0}%`,
+  },
+  {
+    title: "Platform Fee",
+    value: `${platformFee ? platformFee / 1000 : 0}%`,
+  },
+  {
+    title: "Project Token Quantity",
+    value: projectTokenQuantity,
+  },
+  {
+    title: "Collateral Token Quantity",
+    value: customTotalSupplyType ? customTotalSupply : 0,
+  },
+  {
+    title: "Start Time",
+    value: dayjs(startTime).format("MM/DD/YYYY HH:mm"),
+  },
+  {
+    title: "End Time",
+    value: dayjs(endTime).format("MM/DD/YYYY HH:mm"),
+  },
+  {
+    title: "Duration",
+    value: `${(dayjs(endTime).unix() - dayjs(startTime).unix() / 86400).toFixed(2)}  Days`
+  },
+];
 
   const handleApprovalTokens = async () => {
     const { assetTokenAddress, projectToken } = getValues();
-    console.log(assetTokenAddress, projectToken);
     try {
       setApprovalTokenStatus((prev) => ({...prev, loading: true, status: 'pending'}));
       const txHash1 = await writeContractAsync({
         abi: ERC20ABI,
-        address: "0xF9a97b37d9f7d9f7968f267ad266b1f71f2B511D",
+        address: assetTokenAddress,
         functionName: "approve",
         args: [LiquidityBootstrapPoolFactoryAddress, maxUint256],
       });
@@ -155,37 +165,15 @@ const Confirm = (props: Props) => {
       projectTokenQuantity,
       assetTokenQuantity,
       vestingEndTime,
+      vestingCliffTime,
       tokenClaimDelayHours,
-      tokenClaimDelayMinutes
+      tokenClaimDelayMinutes,
+      isVestingCliffTimeEnabled
     } = getValues();
     const sellingAllowed = lbpType === "buy-sell";
     if (account.address) {
       try {
         setPoolLoading(true);
-
-        console.log({
-          asset: '0xF9a97b37d9f7d9f7968f267ad266b1f71f2B511D',
-          share: projectToken,
-          creator: account.address,
-          whitelistMerkleRoot:
-            "0x0000000000000000000000000000000000000000000000000000000000000000",
-          sellingAllowed: sellingAllowed,
-          saleStart: dayjs(startTime).unix(),
-          saleEnd: dayjs(endTime).unix(),
-          minAssetsIn: BigInt(0),
-          minPercAssetsSeeding: 0,
-          minSharesSeeding: BigInt(0),
-          redemptionDelay: tokenClaimDelayHours * 60 * 60 + tokenClaimDelayMinutes * 60,
-          weightStart: parseEther(`${startWeight}`),
-          weightEnd: parseEther(`${endWeight}`),
-          maxSharePrice: BigInt("0"),
-          maxTotalAssetsIn: BigInt("0"),
-          maxSharesOut: BigInt("0"),
-          maxTotalAssetsInDeviation: 0,
-          vestCliff: 0,
-          vestEnd:0,
-          virtualAssets: BigInt(0),
-        })
 
         const txHash = await writeContractAsync({
           abi: LiquidityBootstrapPoolFactoryABI,
@@ -194,7 +182,7 @@ const Confirm = (props: Props) => {
           
           args: [
             {
-              asset: '0xF9a97b37d9f7d9f7968f267ad266b1f71f2B511D',
+              asset: assetTokenAddress,
               share: projectToken,
               creator: account.address,
               whitelistMerkleRoot:
@@ -212,8 +200,8 @@ const Confirm = (props: Props) => {
               maxTotalAssetsIn: BigInt("0"),
               maxSharesOut: BigInt("0"),
               maxTotalAssetsInDeviation: 0,
-              vestCliff: 0,
-              vestEnd:0,
+              vestCliff: isVestingCliffTimeEnabled ? dayjs(vestingCliffTime).unix() : 0,
+              vestEnd:isVestingCliffTimeEnabled ? dayjs(vestingEndTime).unix() : 0,
               virtualAssets: BigInt(0),
             },
             parseUnits(`${projectTokenQuantity}`, 18),
@@ -255,7 +243,7 @@ const Confirm = (props: Props) => {
       <div className="text-xl font-medium">Quick Summary</div>
       <div className="flex flex-col gap-9">
         <div className="mt-3 flex flex-wrap gap-8 p-[10px]">
-          {data.map((d) => (
+          {SummaryItemData.map((d) => (
             <SummaryItem title={d.title} value={d.value} key={d.value} />
           ))}
         </div>

@@ -5,6 +5,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { REVIEW_RIGHT } from "@/types/launch-project";
 import { useReadContract } from "wagmi";
 import { ERC20ABI } from "@/lib/abis/erc20";
+import dayjs from "dayjs";
 
 const EditBtn = ({ onClick }: { onClick: () => void }) => {
   return (
@@ -67,14 +68,27 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
     formState: { errors },
     setValue,
     watch,
+    getValues,
   } = useFormContext();
 
+  console.log(getValues())
+
+  const {projectTokenQuantity,assetTokenName, endWeight,startWeight, endTime,startTime} = getValues()
+
   const projectToken = watch("projectToken");
+
+  const duration = (dayjs(endTime).unix() - dayjs(startTime).unix()) / 86400;
 
   const { data: projectTokenName, isLoading } = useReadContract({
     abi: ERC20ABI,
     address: projectToken,
     functionName: "name",
+  });
+
+  const { data: projectTokenSym, isLoading: isLoadingSymbol} = useReadContract({
+    abi: ERC20ABI,
+    address: projectToken,
+    functionName: "symbol",
   });
 
   return (
@@ -100,37 +114,37 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
             />
           </div>
           <div className="flex-1">
-            <Content title={"Token Name"} value={"Token Ticker"} />
+            <Content title={"Token Ticker"} value={projectTokenSym} isLoading={isLoadingSymbol}/>
           </div>
         </div>
       </div>
       <div className="flex flex-col gap-2">
         <EditBtn onClick={() => changeStep(2)} />
         <div className="flex gap-8">
-          <Content title={"Project Token Quantity"} value={"1USDC"} />
-          <Content title={"Collateral Token Quantity"} value={"10M DAI "} />
+          <Content title={"Project Token Quantity"} value={`${projectTokenQuantity} ${projectTokenSym}`} />
+          {/* <Content title={"Collateral Token Quantity"} value={"10M DAI "} /> */}
         </div>
         <div className="flex gap-8">
           <Content
             title={"Price Range"}
-            value={"$989,670,141.9 - $6,126,990.125806"}
+            value={""}
           />
-          <Content title={"Liquidity"} value={"$1"} />
+          <Content title={"Liquidity"} value={"1"} />
         </div>
         <div className="flex gap-8">
-          <Content title={"Starting Weigh"} value={"99% USDC 1% DAI"} />
-          <Content title={"End Weight"} value={"38% USDC 62% DAI"} />
+          <Content title={"Starting Weigh"} value={`${startWeight}% ${projectTokenSym} ${100 - startWeight}% ${assetTokenName}`} />
+          <Content title={"End Weight"} value={`${endWeight}% ${projectTokenSym} ${100 - endWeight}% ${assetTokenName}`} />
         </div>
         <div className="flex gap-8">
           <Content title={"Token Claim Time"} value={"2024/10/31 00:00:00"} />
         </div>
         <div className="flex gap-8">
           <Content title={"Start Time"} value={"10/24/2024,12:00 AM"} />
-          <Content title={"End Time Weight"} value={"10/31/2024,12:00 AM"} />
-          <Content title={"Duration"} value={"in7days"} />
+          <Content title={"End Time"} value={"10/31/2024,12:00 AM"} />
+          <Content title={"Duration"} value={`in${duration}days`} />
         </div>
         <div className="flex gap-8">
-          <Content title={"Platform Fee"} value={"3%"} />
+          <Content title={"Platform Fee"} value={"0.3%"} />
         </div>
       </div>
       <div className="flex flex-col gap-2">
