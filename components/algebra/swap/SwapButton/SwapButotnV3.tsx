@@ -37,11 +37,22 @@ const SwapButtonV3 = () => {
     execute: onWrap,
     loading: isWrapLoading,
     inputError: wrapInputError,
+    isSuccess: isWrapSuccess,
   } = useWrapCallback(
     currencies[SwapField.INPUT],
     currencies[SwapField.OUTPUT],
     typedValue
   );
+
+  const wrapToast = useToastify({
+    title: wrapType === WrapType.WRAP ? "Wrap" : "Unwrap",
+    message: isWrapLoading ? " Pending":(isWrapSuccess?" Success":" Failed"),
+    isError: false,
+    isLoading: isWrapLoading??false,
+    isSuccess: isWrapSuccess??false,
+   });
+
+
 
   const showWrap = wrapType !== WrapType.NOT_APPLICABLE;
 

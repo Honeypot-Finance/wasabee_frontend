@@ -10,7 +10,11 @@ interface useToastifyArgs {
   title?: React.ReactNode;
   icon?: React.ReactNode;
   options?: ToastOptions;
+  txnHash?: string;
 }
+
+type contractToastState = "isLoading" | "isSuccess" | "isError";
+
 export const useToastify = (transactionState: useToastifyArgs) => {
   const { isLoading, isSuccess, isError } = transactionState;
   const [pendingToast, setPendingToast] = useState<React.ReactText | null>(
@@ -23,6 +27,7 @@ export const useToastify = (transactionState: useToastifyArgs) => {
       setPendingToast(null);
     }
   };
+
 
   useEffect(() => {
     if (isLoading) {

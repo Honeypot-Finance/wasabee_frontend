@@ -24,6 +24,7 @@ import {
 } from "@/lib/algebra/state/swapStore";
 import { SwapField } from "@/types/algebra/types/swap-field";
 import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
+import { useToastify } from "@/lib/hooks/useContractToastify";
 
 const CreatePoolForm = () => {
   const { currencies } = useDerivedSwapInfo();
@@ -94,7 +95,7 @@ const CreatePoolForm = () => {
   const { data: createPoolData, writeContract: createPool } =
     useContractWrite();
 
-  const { isLoading } = useTransactionAwait(
+  const { isLoading,isError,isSuccess} = useTransactionAwait(
     createPoolData,
     {
       title: "Create Pool",
@@ -104,6 +105,15 @@ const CreatePoolForm = () => {
     },
     "/pools"
   );
+
+  const createPoolToast = useToastify({
+    title:"Create Pool",
+    isLoading,
+    isSuccess,
+    isError,
+    message: isLoading?"Pending":(isSuccess?"Success":"Failed"),
+    
+  });
 
   useEffect(() => {
     selectCurrency(SwapField.INPUT, undefined);
