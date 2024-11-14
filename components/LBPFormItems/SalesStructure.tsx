@@ -16,7 +16,7 @@ const PRICE_TYPE_OPTIONS = [
 
 const LBP_TYPE_OPTIONS = [
   { key: "buy-sell", value: LBP_TYPE.BUY_SELL, label: "Buy & Sell" },
-  { key: "sell-only", value: LBP_TYPE.SELL_ONLY, label: "Sell Only" },
+  { key: "buy-only", value: LBP_TYPE.SELL_ONLY, label: "Buy Only" },
 ];
 
 const SalesStructure = () => {

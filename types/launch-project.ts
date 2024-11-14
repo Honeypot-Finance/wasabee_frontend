@@ -15,7 +15,7 @@ export enum PRICE_TYPE {
 
 export enum LBP_TYPE {
   BUY_SELL = "buy-sell",
-  SELL_ONLY = "sell-only",
+  SELL_ONLY = "buy-only",
 }
 export type SalesStructureForm = {
   priceType: PRICE_TYPE;

@@ -35,12 +35,14 @@ const ApprovalsCard = ({
   buttonTitle,
   onClick,
   isLoading,
+  status
 }: {
   step: number;
   title: string;
   buttonTitle: string;
   onClick: () => void;
   isLoading: boolean;
+  status?: 'idle' | 'pending' |'success' | 'error'
 }) => {
   return (
     <div className="py-5 px-7 flex flex-col gap-4 items-center bg-[#211708] border border-[#F7931A1A] rounded-[20px]">
@@ -95,40 +97,51 @@ const Confirm = (props: Props) => {
   const account = useAccount();
 
   const { writeContractAsync } = useWriteContract();
-  const [isApprovalLoading, setIsApprovalLoading] = useState(false);
+  const [approvalTokenStatus, setApprovalTokenStatus] = useState<{
+    loading: boolean,
+    status: 'idle' | 'pending' |'success' | 'error'
+  }>({
+    loading: false,
+    status: 'idle'
+  });
   const [createPoolLoading, setPoolLoading] = useState(false);
   const router = useRouter();
+
+  console.log(getValues());
+
 
   const handleApprovalTokens = async () => {
     const { assetTokenAddress, projectToken } = getValues();
     console.log(assetTokenAddress, projectToken);
     try {
-      setIsApprovalLoading(true);
+      setApprovalTokenStatus((prev) => ({...prev, loading: true, status: 'pending'}));
       const txHash1 = await writeContractAsync({
         abi: ERC20ABI,
-        address: assetTokenAddress,
+        address: "0xF9a97b37d9f7d9f7968f267ad266b1f71f2B511D",
         functionName: "approve",
         args: [LiquidityBootstrapPoolFactoryAddress, maxUint256],
       });
 
       await waitForTransactionReceipt(config, { hash: txHash1 });
 
-      await writeContractAsync({
+      const txHash2 = await writeContractAsync({
         abi: ERC20ABI,
         address: projectToken,
         functionName: "approve",
         args: [LiquidityBootstrapPoolFactoryAddress, maxUint256],
       });
 
-      await waitForTransactionReceipt(config, { hash: txHash1 });
+      await waitForTransactionReceipt(config, { hash: txHash2 });
+      setApprovalTokenStatus((prev) => ({ loading: false, status: 'success' }));
+
     } catch (error) {
       console.log(error);
+      setApprovalTokenStatus((prev) => ({ loading: false, status: 'error' }));
+
     }
     WrappedToastify.success({ message: "Approved Token Successfully " });
-    setIsApprovalLoading(false);
   };
 
-  console.log(getValues());
 
   const handleCreatePool = async () => {
     const {
@@ -142,18 +155,46 @@ const Confirm = (props: Props) => {
       projectTokenQuantity,
       assetTokenQuantity,
       vestingEndTime,
+      tokenClaimDelayHours,
+      tokenClaimDelayMinutes
     } = getValues();
     const sellingAllowed = lbpType === "buy-sell";
     if (account.address) {
       try {
         setPoolLoading(true);
+
+        console.log({
+          asset: '0xF9a97b37d9f7d9f7968f267ad266b1f71f2B511D',
+          share: projectToken,
+          creator: account.address,
+          whitelistMerkleRoot:
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+          sellingAllowed: sellingAllowed,
+          saleStart: dayjs(startTime).unix(),
+          saleEnd: dayjs(endTime).unix(),
+          minAssetsIn: BigInt(0),
+          minPercAssetsSeeding: 0,
+          minSharesSeeding: BigInt(0),
+          redemptionDelay: tokenClaimDelayHours * 60 * 60 + tokenClaimDelayMinutes * 60,
+          weightStart: parseEther(`${startWeight}`),
+          weightEnd: parseEther(`${endWeight}`),
+          maxSharePrice: BigInt("0"),
+          maxTotalAssetsIn: BigInt("0"),
+          maxSharesOut: BigInt("0"),
+          maxTotalAssetsInDeviation: 0,
+          vestCliff: 0,
+          vestEnd:0,
+          virtualAssets: BigInt(0),
+        })
+
         const txHash = await writeContractAsync({
           abi: LiquidityBootstrapPoolFactoryABI,
           address: LiquidityBootstrapPoolFactoryAddress,
           functionName: "createLiquidityBootstrapPool",
+          
           args: [
             {
-              asset: assetTokenAddress,
+              asset: '0xF9a97b37d9f7d9f7968f267ad266b1f71f2B511D',
               share: projectToken,
               creator: account.address,
               whitelistMerkleRoot:
@@ -164,15 +205,15 @@ const Confirm = (props: Props) => {
               minAssetsIn: BigInt(0),
               minPercAssetsSeeding: 0,
               minSharesSeeding: BigInt(0),
-              redemptionDelay: 0,
-              weightStart: parseEther(`${startWeight}`),
-              weightEnd: parseEther(`${endWeight}`),
-              maxSharePrice: parseEther("0"),
-              maxTotalAssetsIn: parseEther("0"),
-              maxSharesOut: parseEther("0"),
+              redemptionDelay: tokenClaimDelayHours * 60 * 60 + tokenClaimDelayMinutes * 60,
+              weightStart: parseEther(`${startWeight/100}`),
+              weightEnd: parseEther(`${endWeight/100}`),
+              maxSharePrice: BigInt("1"),
+              maxTotalAssetsIn: BigInt("0"),
+              maxSharesOut: BigInt("0"),
               maxTotalAssetsInDeviation: 0,
               vestCliff: 0,
-              vestEnd: dayjs(vestingEndTime).unix(),
+              vestEnd:0,
               virtualAssets: BigInt(0),
             },
             parseUnits(`${projectTokenQuantity}`, 18),
@@ -182,6 +223,8 @@ const Confirm = (props: Props) => {
         });
 
         const res = await waitForTransactionReceipt(config, { hash: txHash });
+
+        console.log(res)
 
         res.logs.forEach((log) => {
           try {
@@ -199,11 +242,12 @@ const Confirm = (props: Props) => {
           }
         });
 
-        setPoolLoading(false);
         router.push(`/lpb-detail/`);
       } catch (error) {
         console.log(error);
       }
+      setPoolLoading(false);
+
     }
   };
   return (
@@ -225,10 +269,11 @@ const Confirm = (props: Props) => {
               title={"Approve"}
               buttonTitle="Approve"
               onClick={handleApprovalTokens}
-              isLoading={isApprovalLoading}
+              isLoading={approvalTokenStatus.loading}
+              status={approvalTokenStatus.status}
             />
             <ApprovalsCard
-              isLoading={false}
+              isLoading={createPoolLoading}
               onClick={handleCreatePool}
               step={2}
               title={"Schedule Sale "}
