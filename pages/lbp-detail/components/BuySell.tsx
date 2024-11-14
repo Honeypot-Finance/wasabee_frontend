@@ -1,6 +1,7 @@
 import { Button } from "@/components/button";
 import useMulticall3 from "@/components/hooks/useMulticall3";
 import ArrowAltSvg from "@/components/svg/ArrowAlt";
+import { useDebouncedCallback } from "@/hooks";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { LiquidityBootstrapPoolABI } from "@/lib/abis/LiquidityBootstrapPoolAbi";
 import { cn } from "@/lib/tailwindcss";
@@ -8,7 +9,8 @@ import { WrappedToastify } from "@/lib/wrappedToastify";
 import { formatErc20Data } from "@/services/lib/helper";
 import { Input, Spinner } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
-import { Address, formatUnits, maxUint256, parseUnits } from "viem";
+import { NumericFormat } from "react-number-format";
+import { Address, maxUint256, parseUnits } from "viem";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 
 type AssetToken = {
@@ -34,15 +36,155 @@ const BuySellTabs = [
   { title: "Sell", key: "sell" },
 ];
 
+type SwapToken = {
+  from?: number;
+  to?: number;
+};
+
 const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
   const [actionTab, setActionTab] = useState<"buy" | "sell">("buy");
   const account = useAccount();
   const [isTxLoading, setIsTxLoading] = useState(false);
-
-  const [amounts, setAmounts] = useState({
-    from: "",
-    to: "",
+  const [swapToken, setSwapToken] = useState<SwapToken>({
+    from: undefined,
+    to: undefined,
   });
+
+  const {
+    data: buyFromData,
+    refetch: buyFromRefetch,
+    isLoading: isBuyFromLoading,
+  } = useReadContract({
+    address: poolAddress as Address,
+    abi: LiquidityBootstrapPoolABI,
+    functionName: "previewSharesOut",
+    args: [BigInt(swapToken?.from || 0)],
+    query: {
+      enabled: poolAddress && Boolean(swapToken.from),
+    },
+  });
+
+  const {
+    data: buyToData,
+    refetch: buyToRefetch,
+    isLoading: isBuyToLoading,
+  } = useReadContract({
+    address: poolAddress as Address,
+    abi: LiquidityBootstrapPoolABI,
+    functionName: "previewAssetsIn",
+    args: [BigInt(swapToken?.to || 0)],
+    query: {
+      enabled: poolAddress && Boolean(swapToken.to),
+    },
+  });
+
+  const {
+    data: sellFromData,
+    refetch: sellFromRefetch,
+    isLoading: isSellFromLoading,
+  } = useReadContract({
+    address: poolAddress as Address,
+    abi: LiquidityBootstrapPoolABI,
+    functionName: "previewAssetsOut",
+    args: [BigInt(swapToken?.from || 0)],
+    query: {
+      enabled: allowSell && poolAddress && Boolean(swapToken.from),
+    },
+  });
+
+  const {
+    data: sellToData,
+    refetch: sellToRefetch,
+    isLoading: isSellToLoading,
+  } = useReadContract({
+    address: poolAddress as Address,
+    abi: LiquidityBootstrapPoolABI,
+    functionName: "previewSharesIn",
+    args: [BigInt(swapToken?.to || 0)],
+    query: {
+      enabled: allowSell && poolAddress && Boolean(swapToken.to),
+    },
+  });
+
+  const handleChangeTokenValue = useDebouncedCallback(
+    (value: number | undefined, type: "from" | "to") => {
+      if (actionTab === "buy" && type === "from") {
+        setSwapToken((prev) => ({
+          ...prev,
+          from: value,
+        }));
+        buyFromRefetch();
+      }
+      if (actionTab === "buy" && type === "to") {
+        setSwapToken((prev) => ({
+          ...prev,
+          to: value,
+        }));
+        buyToRefetch();
+      }
+
+      if (actionTab === "sell" && type === "from") {
+        setSwapToken((prev) => ({
+          ...prev,
+          from: value,
+        }));
+        sellFromRefetch();
+      }
+
+      if (actionTab === "sell" && type === "to") {
+        setSwapToken((prev) => ({
+          ...prev,
+          to: value,
+        }));
+        sellToRefetch();
+      }
+    },
+    500
+  );
+
+  useEffect(() => {
+    if (!isBuyFromLoading) {
+      console.log("buyFromData:::", buyFromData);
+      setSwapToken((prev) => ({
+        ...prev,
+        to: Number(buyFromData) || 0,
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isBuyFromLoading]);
+
+  useEffect(() => {
+    if (!isBuyToLoading) {
+      console.log("buyToData:::", buyToData);
+      setSwapToken((prev) => ({
+        ...prev,
+        from: Number(buyToData) || 0,
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isBuyToLoading]);
+
+  useEffect(() => {
+    if (!isSellFromLoading) {
+      console.log("sellFromData:::", sellFromData);
+      setSwapToken((prev) => ({
+        ...prev,
+        to: Number(sellFromData) || 0,
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSellFromLoading]);
+
+  useEffect(() => {
+    if (!isSellToLoading) {
+      console.log("sellToData:::", sellToData);
+      setSwapToken((prev) => ({
+        ...prev,
+        from: Number(sellToData) || 0,
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSellToLoading]);
 
   const [tokens, setTokens] = useState<{
     asset: AssetToken;
@@ -61,9 +203,12 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
           address: poolAddress,
           functionName: "swapAssetsForExactShares",
           args: [
-            parseUnits(amounts.to, tokens!.share.decimals),
-            parseUnits(amounts.from, tokens!.asset.decimals),
-            account.address,
+            parseUnits(swapToken?.to?.toString() || "", tokens!.share.decimals),
+            parseUnits(
+              swapToken?.from?.toString() || "",
+              tokens!.asset.decimals
+            ),
+            account.address as Address,
           ],
         });
       } else {
@@ -72,9 +217,12 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
           address: poolAddress,
           functionName: "swapSharesForExactAssets",
           args: [
-            parseUnits(amounts.to, tokens!.share.decimals),
-            parseUnits(amounts.from, tokens!.asset.decimals),
-            account.address,
+            parseUnits(swapToken?.to?.toString() || "", tokens!.share.decimals),
+            parseUnits(
+              swapToken?.from?.toString() || "",
+              tokens!.asset.decimals
+            ),
+            account.address as Address,
           ],
         });
       }
@@ -108,7 +256,6 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
   });
   const userAsset =
     data?.results && formatErc20Data(data.results.erc20.callsReturnContext);
-  console.log(userAsset);
 
   useEffect(() => {
     setTokens({
@@ -118,7 +265,7 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
   }, [asset.name && share.name]);
 
   const handleChangeTab = (key: "buy" | "sell") => {
-    if (key == "sell") {
+    if (key === "sell") {
       setTokens({
         asset: share,
         share: asset,
@@ -130,15 +277,6 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
         share: share,
       });
       setActionTab(key);
-    }
-  };
-
-  const handleOnChangeAmount = (amount: string, type: "from" | "to") => {
-    if (type == "from") {
-      setAmounts((prev) => ({ ...prev, from: amount }));
-    }
-    if (type == "to") {
-      setAmounts((prev) => ({ ...prev, to: amount }));
     }
   };
 
@@ -180,7 +318,7 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
               onClick={() => handleChangeTab(key as "buy" | "sell")}
               className={cn(
                 "font-bold text-[22px] leading-[30px] w-fit bg-gradient-to-b from-[#F7931A] to-[#FCD729] text-transparent bg-clip-text opacity-50 cursor-pointer",
-                { "opacity-100": actionTab == key }
+                { "opacity-100": actionTab === key }
               )}
             >
               {title}
@@ -194,15 +332,18 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
             <div className="text-sm leading-3 font-normal text-white/50">
               From
             </div>
-            <Input
-              value={amounts.from}
+            <NumericFormat
+              customInput={Input}
               placeholder="0.0"
               classNames={{
                 inputWrapper:
                   "px-0 bg-transparent data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent",
                 input: "leading-6 text-[21px] font-bold",
               }}
-              onChange={(e) => handleOnChangeAmount(e.target.value, "from")}
+              value={swapToken.from}
+              onValueChange={({ floatValue }) =>
+                handleChangeTokenValue(floatValue, "from")
+              }
             />
           </div>
           <div className="my-3 py-2.5">
@@ -226,15 +367,18 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
             <div className="text-sm leading-3 font-normal text-white/50">
               To
             </div>
-            <Input
+            <NumericFormat
+              customInput={Input}
               placeholder="0.0"
-              value={amounts.to}
               classNames={{
                 inputWrapper:
                   "px-0 bg-transparent data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent",
                 input: "leading-6 text-[21px] font-bold",
               }}
-              onChange={(e) => handleOnChangeAmount(e.target.value, "to")}
+              value={swapToken.to}
+              onValueChange={({ floatValue }) =>
+                handleChangeTokenValue(floatValue, "to")
+              }
             />
           </div>
           <div className="my-3 py-2.5">

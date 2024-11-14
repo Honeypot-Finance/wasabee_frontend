@@ -10,7 +10,6 @@ import TokenInfo from "./components/TokenInfo";
 import BuySell from "./components/BuySell";
 import { useRouter } from "next/router";
 import { Address, formatUnits, isAddress } from "viem";
-import { useReadContract } from "wagmi";
 import { LiquidityBootstrapPoolABI } from "@/lib/abis/LiquidityBootstrapPoolAbi";
 import { BigNumber } from "ethers";
 import useMulticall3 from "@/components/hooks/useMulticall3";
@@ -21,6 +20,7 @@ import {
 } from "@/services/lib/helper";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import dayjs from "dayjs";
+import { useReadContract } from "wagmi";
 
 const RankProjectData = [
   { icon: "🚀", value: 10 },
@@ -39,11 +39,12 @@ const LBPDetail = () => {
   const router = useRouter();
   const { pair: pairAddress } = router.query;
 
+  // lay co buy sell tu contract
   const { data } = useMulticall3({
     queryKey: [pairAddress],
     contractCallContext: [
       {
-        abi: LiquidityBootstrapPoolABI,
+        abi: LiquidityBootstrapPoolABI as any,
         reference: "LiquidityBootstrapPool",
         contractAddress: pairAddress as Address,
         calls: [
@@ -152,7 +153,7 @@ const LBPDetail = () => {
     }
   };
 
-  console.log(data);
+  console.log("data:::::", data);
 
   const percentOfTokenSold =
     data?.args?.maxTotalAssetsIn && data?.totalAssetsIn
@@ -377,7 +378,7 @@ const LBPDetail = () => {
               address: data?.args?.share as Address,
             }}
             poolAddress={pairAddress as Address}
-            allowSell={false}
+            allowSell={Boolean(data?.args?.sellingAllowed)}
           />
         </div>
       </div>
