@@ -43,8 +43,9 @@ export type TokenomicsAndPreviewForm = {
 // 4.Token Vesting
 export type TokenVestingForm = {
   isTokenVestingEnabled: boolean;
-  isVestingCliffTimeEnabled: boolean;
-  vestingEndTime: Date;
+  isVestingCliffTimeEnabled?: boolean;
+  vestingCliffTime?: Date;
+  vestingEndTime?: Date;
 };
 
 // 5.Project Info

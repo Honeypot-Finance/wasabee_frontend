@@ -162,9 +162,9 @@ const TokenomicsAndPreview = () => {
   } = useFormContext();
 
   const projectTokenLogo = getValues("projectTokenLogo");
-  const isCustomTotalSupply = getValues("customTotalSupplyType");
   const assetTokenName = getValues("assetTokenName");
   const assetTokenLogo = getValues("assetTokenLogo");
+  const isCustomTotalSupply = watch("customTotalSupplyType");
 
   const { data: projectTokenName, isLoading } = useReadContract({
     abi: ERC20ABI,

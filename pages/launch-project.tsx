@@ -35,6 +35,7 @@ import {
   tokenVestingSchema,
 } from "@/constants/launch-project";
 import { LBPButton } from "@/components/LBPFormItems/Components";
+import dayjs from "dayjs";
 
 const STEP_DATA = [
   {
@@ -127,6 +128,27 @@ const LaunchProject = () => {
 
   const handleNextStep = async () => {
     const isValid = await methods.trigger();
+    if (currentStep === 3) {
+      const isTokenVestingEnabled = methods.getValues("isTokenVestingEnabled");
+      const isVestingCliffTimeEnabled = methods.getValues(
+        "isVestingCliffTimeEnabled"
+      );
+      const endTime = methods.getValues("endTime");
+      const vestingCliffTime = methods.getValues("vestingCliffTime");
+
+      if (
+        isTokenVestingEnabled &&
+        isVestingCliffTimeEnabled &&
+        vestingCliffTime &&
+        dayjs(vestingCliffTime).isBefore(endTime)
+      ) {
+        methods.setError("vestingCliffTime", {
+          type: "manual",
+          message: "Vesting cliff time should be greater than end time",
+        });
+        return;
+      }
+    }
     if (isValid && currentStep < STEP_DATA.length - 1) {
       setCurrentStep((prevStep) => prevStep + 1);
       const step = [...stepData];

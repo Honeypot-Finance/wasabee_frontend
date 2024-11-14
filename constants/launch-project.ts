@@ -147,13 +147,53 @@ export const tokenomicsAndPreviewSchema: ZodType<TokenomicsAndPreviewForm> = z
     }
   );
 
-export const tokenVestingSchema: ZodType<TokenVestingForm> = z.object({
-  isTokenVestingEnabled: z.boolean(),
-  isVestingCliffTimeEnabled: z.boolean(),
-  vestingEndTime: z.date().refine((val) => !isNaN(val.getTime()), {
-    message: "Vesting end time is required",
-  }),
-});
+export const tokenVestingSchema: ZodType<TokenVestingForm> = z
+  .object({
+    isTokenVestingEnabled: z.boolean(),
+    isVestingCliffTimeEnabled: z.boolean(),
+    vestingCliffTime: z.date().optional(),
+    vestingEndTime: z.date().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.isTokenVestingEnabled) {
+        return data.vestingCliffTime !== undefined;
+      }
+      return true;
+    },
+    {
+      message: "Vesting cliff time is required",
+      path: ["vestingCliffTime"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.isTokenVestingEnabled) {
+        return data.vestingEndTime !== undefined;
+      }
+      return true;
+    },
+    {
+      message: "Vesting end time is required",
+      path: ["vestingEndTime"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (
+        data.isTokenVestingEnabled &&
+        data.vestingCliffTime &&
+        data.vestingEndTime
+      ) {
+        return data.vestingCliffTime < data.vestingEndTime;
+      }
+      return true;
+    },
+    {
+      message: "Vesting end time must be after vesting cliff time",
+      path: ["vestingEndTime"],
+    }
+  );
 
 const investmentRoundSchema = z.object({
   raiseAmount: z.number().min(0, "Raise amount must be a positive number"),

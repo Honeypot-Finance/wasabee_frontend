@@ -130,7 +130,10 @@ const VerticalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
                       "relative group flex w-fit cursor-pointer items-center justify-center gap-4 rounded-large",
                       stepClassName
                     )}
-                    onClick={() => step.isValid && setCurrentStep(stepIdx)}
+                    onClick={() =>
+                      (step.isValid || steps?.[stepIdx - 1]?.isValid) &&
+                      setCurrentStep(stepIdx)
+                    }
                     {...props}
                   >
                     <div className="flex h-full items-center">
