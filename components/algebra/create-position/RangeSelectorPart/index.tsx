@@ -76,7 +76,7 @@ const RangeSelectorPart = ({
           size={"sm"}
           onClick={handleDecrement}
           disabled={decrementDisabled || disabled}
-          className="border border-card-border rounded-xl rounded-r-none"
+          className="border rounded-xl rounded-r-none honeypot-button"
         >
           -
         </Button>
@@ -92,7 +92,7 @@ const RangeSelectorPart = ({
             updateSelectedPreset(null);
           }}
           placeholder={"0.00"}
-          className="w-full bg-card-dark border-y border-x-0 border-card-border rounded-none text-sm h-[36px]"
+          className="w-full border-y border-x-0 rounded-none text-sm h-[36px] honeypot-input"
         />
 
         <Button
@@ -100,7 +100,7 @@ const RangeSelectorPart = ({
           size={"sm"}
           onClick={handleIncrement}
           disabled={incrementDisabled || disabled}
-          className="border border-card-border rounded-xl rounded-l-none"
+          className="border rounded-xl rounded-l-none honeypot-button"
         >
           +
         </Button>

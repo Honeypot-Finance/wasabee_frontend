@@ -44,7 +44,6 @@ body {
   @apply bg-default text-default;
 }
 
-
 [aria-label="clear input"] {
   @apply right-0;
 }
@@ -82,4 +81,16 @@ input[type="number"]::-webkit-outer-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+.honeypot-card {
+  @apply bg-[#271A0C] rounded-3xl border-3 border-solid border-[#F7931A]/10 hover:border-[#F7931A] transition-all;
+}
+
+.honeypot-input {
+  @apply border-[#E18A20]/40 bg-[#E18A20]/40 placeholder:text-[#9E9DA3];
+}
+
+.honeypot-button {
+  @apply border-[#E18A20]/40 bg-[#E18A20]/40;
 }

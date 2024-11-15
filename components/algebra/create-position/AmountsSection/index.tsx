@@ -56,7 +56,7 @@ const AmountsSection = ({
         <HoverCardTrigger>
           <TokenRatio mintInfo={mintInfo} />
         </HoverCardTrigger>
-        <HoverCardContent className="flex flex-col gap-2 bg-card rounded-3xl border border-card-border text-white w-fit">
+        <HoverCardContent className="flex flex-col gap-2 honeypot-button">
           <div className="flex items-center">
             <span className="font-bold">Token Ratio</span>
           </div>
@@ -76,23 +76,25 @@ const AmountsSection = ({
           </div>
         </div>
       </div>
-      {manageLiquidity === ManageLiquidity.INCREASE && (
-        <IncreaseLiquidityButton
-          tokenId={tokenId}
-          baseCurrency={currencyA}
-          quoteCurrency={currencyB}
-          mintInfo={mintInfo}
-          handleCloseModal={handleCloseModal}
-        />
-      )}
-      {manageLiquidity === ManageLiquidity.ADD && (
-        <AddLiquidityButton
-          baseCurrency={currencyA}
-          quoteCurrency={currencyB}
-          mintInfo={mintInfo}
-          poolAddress={poolAddress}
-        />
-      )}
+      <div className="py-2 px-2 flex items-center justify-center">
+        {manageLiquidity === ManageLiquidity.INCREASE && (
+          <IncreaseLiquidityButton
+            tokenId={tokenId}
+            baseCurrency={currencyA}
+            quoteCurrency={currencyB}
+            mintInfo={mintInfo}
+            handleCloseModal={handleCloseModal}
+          />
+        )}
+        {manageLiquidity === ManageLiquidity.ADD && (
+          <AddLiquidityButton
+            baseCurrency={currencyA}
+            quoteCurrency={currencyB}
+            mintInfo={mintInfo}
+            poolAddress={poolAddress}
+          />
+        )}
+      </div>
     </>
   );
 };

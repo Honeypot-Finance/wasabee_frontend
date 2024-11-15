@@ -1,5 +1,4 @@
 import { useNeedAllowance } from "@/lib/algebra/hooks/common/useNeedAllowance";
-
 import { Currency, Field } from "@cryptoalgebra/sdk";
 import { useEffect, useMemo } from "react";
 import EnterAmountCard from "../EnterAmountsCard";
@@ -87,7 +86,7 @@ const EnterAmounts = ({
 
   return (
     <div className="flex flex-col lg:flex-col gap-2">
-      <div className="flex w-full relative">
+      <div className="flex w-full relative flex-col">
         <EnterAmountCard
           currency={currencyA}
           value={formattedAmounts[Field.CURRENCY_A]}
@@ -97,12 +96,12 @@ const EnterAmounts = ({
           error={currencyAError}
         />
         {mintInfo.depositADisabled && (
-          <div className="absolute left-0 top-0 flex items-center justify-center w-full h-full bg-card-dark/70 rounded-3xl">
+          <div className="flex items-center justify-center w-full h-full bg-card-dark/70 rounded-3xl">
             For selected range this deposit is disabled
           </div>
         )}
       </div>
-      <div className="flex w-full relative">
+      <div className="flex w-full relative flex-col">
         <EnterAmountCard
           currency={currencyB}
           value={formattedAmounts[Field.CURRENCY_B]}
@@ -112,7 +111,7 @@ const EnterAmounts = ({
           error={currencyBError}
         />
         {mintInfo.depositBDisabled && (
-          <div className="absolute left-0 top-0 flex items-center justify-center w-full h-full bg-card-dark/70 rounded-3xl">
+          <div className="flex items-center justify-center w-full h-full bg-card-dark/70 rounded-3xl">
             For selected range this deposit is disabled
           </div>
         )}

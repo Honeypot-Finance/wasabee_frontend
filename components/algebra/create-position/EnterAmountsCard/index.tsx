@@ -5,6 +5,8 @@ import { useCallback, useMemo } from "react";
 import { useAccount, useBalance } from "wagmi";
 import { Address } from "viem";
 import { formatCurrency } from "@/lib/algebra/utils/common/formatCurrency";
+import { Token } from "@/services/contract/token";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
 
 interface EnterAmountsCardProps {
   currency: Currency | undefined;
@@ -46,22 +48,29 @@ const EnterAmountCard = ({
   }
 
   return (
-    <div className="flex w-full bg-card-dark p-3 rounded-2xl">
+    <div className="flex w-full bg-card-dark p-3 rounded-2xl gap-x-4">
       <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-4">
-          <CurrencyLogo currency={currency} size={35} />
-          <span className="font-bold text-lg">
+        <div className="flex items-center gap-2 xs:gap-4">
+          {currency && (
+            <TokenLogo
+              addtionalClasses="w-8 sm:w-10"
+              token={Token.getToken({
+                address: (currency as any).address,
+              })}
+            />
+          )}
+          <span className="font-bold text-sm sm:text-lg">
             {currency ? currency.symbol : "Select a token"}
           </span>
         </div>
       </div>
 
-      <div className="flex flex-col items-end w-full gap-2">
+      <div className="flex flex-col items-end gap-2 flex-1">
         <Input
           value={value}
           id={`amount-${currency?.symbol}`}
           onUserInput={(v) => handleInput(v)}
-          className={`text-right border-none text-xl font-bold w-full p-2`}
+          className={`text-right border text-xl font-bold p-2 honeypot-input w-full max-w-[300px]`}
           placeholder={"0.0"}
           maxDecimals={currency?.decimals}
         />

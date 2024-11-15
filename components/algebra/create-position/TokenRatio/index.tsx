@@ -1,4 +1,5 @@
-import CurrencyLogo from "@/components/algebra/common/CurrencyLogo";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
+import { Token } from "@/services/contract/token";
 import { IDerivedMintInfo } from "@/state/mintStore";
 import { useMemo } from "react";
 
@@ -58,31 +59,34 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
   }, [mintInfo, tickLowerAtLimit, tickUpperAtLimit]);
 
   return (
-    <div className="relative flex h-[30px] bg-card-dark rounded-xl">
+    <div className="relative flex h-[30px] bg-card-dark rounded-xl px-2">
+      {/* FIXME： remove honeypot-button */}
       <div className="flex w-full h-full font-semibold">
         {Number(token0Ratio) > 0 && (
           <div
             className={`flex items-center justify-end pl-1 pr-2 h-full bg-[#143e65] border border-[#36f] duration-300 ${Number(token0Ratio) === 100 ? "rounded-2xl" : "rounded-l-2xl"}`}
             style={{ width: `${token0Ratio}%` }}
           >
-            <CurrencyLogo
-              currency={currencyA}
-              size={26}
-              className="absolute left-1"
+            <TokenLogo
+              addtionalClasses="w-8 absolute left-2 top-0"
+              token={Token.getToken({
+                address: (currencyA as any).address,
+              })}
             />
             {`${Number(token0Ratio).toFixed()}%`}
           </div>
         )}
         {Number(token1Ratio) > 0 && (
           <div
-            className={`flex items-center pr-1 pl-2 h-full bg-[#351d6b] border border-[#996cff] duration-300 ${Number(token1Ratio) === 100 ? "rounded-2xl" : "rounded-r-2xl"}`}
+            className={`flex items-center pr-1 pl-2 h-full honeypot-button border duration-300 relative ${Number(token1Ratio) === 100 ? "rounded-2xl" : "rounded-r-2xl"}`}
             style={{ width: `${token1Ratio}%` }}
           >
             {`${Number(token1Ratio).toFixed()}%`}
-            <CurrencyLogo
-              currency={currencyB}
-              size={26}
-              className="absolute right-1"
+            <TokenLogo
+              addtionalClasses="w-8 absolute right-0 top-0"
+              token={Token.getToken({
+                address: (currencyB as any).address,
+              })}
             />
           </div>
         )}

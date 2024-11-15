@@ -33,6 +33,7 @@ export const TokenLogo = observer(
         closeDelay={0}
       >
         <Link
+          className="shrink-0"
           href={
             disableLink
               ? "#"
