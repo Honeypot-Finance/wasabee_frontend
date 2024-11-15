@@ -80,8 +80,8 @@ const CreatePoolForm = () => {
     );
   }, [mintInfo?.pool]);
 
-  const { data: createPoolConfig } = useSimulateAlgebraPositionManagerMulticall(
-    {
+  const { data: createPoolConfig, error } =
+    useSimulateAlgebraPositionManagerMulticall({
       args: Array.isArray(calldata)
         ? [calldata as Address[]]
         : [[calldata] as Address[]],
@@ -89,8 +89,10 @@ const CreatePoolForm = () => {
       query: {
         enabled: Boolean(calldata),
       },
-    }
-  );
+    });
+
+  console.log(error);
+  console.log(error);
 
   const { data: createPoolData, writeContract: createPool } =
     useContractWrite();

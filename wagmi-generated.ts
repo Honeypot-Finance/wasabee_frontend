@@ -1187,7 +1187,7 @@ export const algebraEternalFarmingAbi = [
 ] as const
 
 export const algebraEternalFarmingAddress =
-  '0x38A5C36FA8c8c9E4649b51FCD61810B14e7ce047' as const
+  '0xceBcf56cCdFB7cC05fE9368953784065fc3fe73e' as const
 
 export const algebraEternalFarmingConfig = {
   address: algebraEternalFarmingAddress,
@@ -1820,7 +1820,7 @@ export const algebraFactoryAbi = [
 ] as const
 
 export const algebraFactoryAddress =
-  '0xab49321DF952315E208a2B7046A00d2015E39cba' as const
+  '0xB21b59d368e04b6a55ca7Fb78DEaF0c82fD289cC' as const
 
 export const algebraFactoryConfig = {
   address: algebraFactoryAddress,
@@ -3192,7 +3192,7 @@ export const algebraPositionManagerAbi = [
 ] as const
 
 export const algebraPositionManagerAddress =
-  '0xAbAc6f23fdf1313FC2E9C9244f666157CcD32990' as const
+  '0x29a738deAFdd2c6806e2f66891D812A311799828' as const
 
 export const algebraPositionManagerConfig = {
   address: algebraPositionManagerAddress,
@@ -3306,7 +3306,7 @@ export const algebraQuoterAbi = [
 ] as const
 
 export const algebraQuoterAddress =
-  '0x6AD6A4f233F1E33613e996CCc17409B93fF8bf5f' as const
+  '0xF9C80f3675D7fd8E97cb5DA17970D291ff6c63D0' as const
 
 export const algebraQuoterConfig = {
   address: algebraQuoterAddress,
@@ -3600,7 +3600,7 @@ export const algebraRouterAbi = [
 ] as const
 
 export const algebraRouterAddress =
-  '0xB4F9b6b019E75CBe51af4425b2Fc12797e2Ee2a1' as const
+  '0xb920d17DF1D14Fde86052CC571729a18Da7D72ED' as const
 
 export const algebraRouterConfig = {
   address: algebraRouterAddress,
@@ -4039,7 +4039,7 @@ export const algerbaQuoterV2Abi = [
 ] as const
 
 export const algerbaQuoterV2Address =
-  '0x69D57B9D705eaD73a5d2f2476C30c55bD755cc2F' as const
+  '0x57f60FaFce4C6E4326814137fB3dE52567C2527C' as const
 
 export const algerbaQuoterV2Config = {
   address: algerbaQuoterV2Address,
@@ -4298,7 +4298,7 @@ export const farmingCenterAbi = [
 ] as const
 
 export const farmingCenterAddress =
-  '0x83D4a9Ea77a4dbA073cD90b30410Ac9F95F93E7C' as const
+  '0x4798623CcE373b33E7263f88fE133ad34bcD864F' as const
 
 export const farmingCenterConfig = {
   address: farmingCenterAddress,
