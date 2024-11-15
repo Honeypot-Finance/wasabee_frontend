@@ -1,5 +1,4 @@
 import { poolsColumns } from "@/components/algebra/common/Table/poolsColumns";
-
 import { useMemo } from "react";
 import { Address } from "viem";
 import useSWR from "swr";
@@ -16,6 +15,7 @@ import {
   usePoolsListQuery,
   useActiveFarmingsQuery,
 } from "@/lib/algebra/graphql/generated/graphql";
+import PoolCardList from "./PoolCardList";
 
 const PoolsList = () => {
   const { data: pools, loading: isPoolsListLoading } = usePoolsListQuery();
@@ -113,15 +113,20 @@ const PoolsList = () => {
   ]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <PoolsTable
-        columns={poolsColumns}
-        data={formattedPools}
-        defaultSortingID={"tvlUSD"}
-        link={"pooldetail"}
-        showPagination={true}
-        loading={isLoading}
-      />
+    <div>
+      <div className="hidden xl:block">
+        <PoolsTable
+          columns={poolsColumns}
+          data={formattedPools}
+          defaultSortingID={"tvlUSD"}
+          link={"pooldetail"}
+          showPagination={true}
+          loading={isLoading}
+        />
+      </div>
+      <div className="block xl:hidden">
+        <PoolCardList data={formattedPools} />
+      </div>
     </div>
   );
 };

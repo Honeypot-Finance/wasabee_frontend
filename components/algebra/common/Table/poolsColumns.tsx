@@ -1,7 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { HeaderItem } from "./common";
 import { Address } from "viem";
-import CurrencyLogo from "../CurrencyLogo";
 import { DynamicFeePluginIcon } from "../PluginIcons";
 import { usePoolPlugins } from "@/lib/algebra/hooks/pools/usePoolPlugins";
 import { Skeleton } from "@/components/algebra/ui/skeleton";
@@ -38,7 +37,7 @@ interface Pool {
   hasActiveFarming: boolean;
 }
 
-const PoolPair = ({ pair, fee }: Pool) => {
+const PoolPair = ({ pair, fee }: Pool) => {  
   const token0 = pair.token0.id as Address;
   const token1 = pair.token1.id as Address;
 
@@ -77,7 +76,7 @@ const PoolPair = ({ pair, fee }: Pool) => {
   );
 };
 
-const Plugins = ({ poolId }: { poolId: Address }) => {
+export const Plugins = ({ poolId }: { poolId: Address }) => {
   const { dynamicFeePlugin, farmingPlugin } = usePoolPlugins(poolId);
 
   return (
@@ -88,7 +87,7 @@ const Plugins = ({ poolId }: { poolId: Address }) => {
   );
 };
 
-const AvgAPR = ({
+export const AvgAPR = ({
   children,
   avgApr,
   farmApr,
