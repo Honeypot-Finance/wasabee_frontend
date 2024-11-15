@@ -44,7 +44,6 @@ body {
   @apply bg-default text-default;
 }
 
-
 [aria-label="clear input"] {
   @apply right-0;
 }
@@ -57,6 +56,19 @@ body {
 
 .border-bottom {
   @apply after:content-[''] after:h-[1px] after:bg-[rgba(255,255,255,0.1)] after:absolute after:bottom-[0] after:left-[0] after:w-full after:z-[100];
+}
+
+.next-tab {
+  @apply w-full;
+}
+
+.next-tab div[role="tablist"] {
+  @apply flex-wrap md:flex-nowrap;
+}
+
+.next-tab div[role="tablist"] > a,
+.next-tab div[role="tablist"] > button {
+  @apply w-fit;
 }
 
 .next-tab button[data-selected="true"] {
