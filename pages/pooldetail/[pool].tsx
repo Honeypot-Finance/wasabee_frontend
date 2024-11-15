@@ -15,7 +15,7 @@ import { getPositionFees } from "@/lib/algebra/utils/positions/getPositionFees";
 import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
 import { Position, ZERO } from "@cryptoalgebra/sdk";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { MoveRightIcon } from "lucide-react";
+import { MoveRightIcon, Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
@@ -28,6 +28,7 @@ import {
 import { FormattedPosition } from "@/types/algebra/types/formatted-position";
 import { Address } from "viem";
 import { useParams } from "next/navigation";
+import { cn } from "@/lib/tailwindcss";
 
 const PoolPage = () => {
   const { address: account } = useAccount();
@@ -263,20 +264,19 @@ const PoolPage = () => {
 
 const NoPositions = ({ poolId }: { poolId: Address }) => (
   <div className="flex flex-col items-start animate-fade-in mt-10 font-bold">
-    <div className="flex items-center gap-x-[18px] text-xl">
-      <div className="p-2.5">My Positions</div>
-      <div className="p-2.5">1 position</div>
-      <div className="p-2.5">$203.34 TVL</div>
-      <div className="p-2.5 text-[#4BDF81]">$0 Fees</div>
-    </div>
     <h2 className="text-2xl font-bold">
       {`You don't have positions for this pool`}
     </h2>
     <p className="text-md font-semibold my-4">{`Let's create one!`}</p>
     <Button className="gap-2" asChild>
-      <Link href={`/new-position/${poolId}`}>
-        Create Position
-        <MoveRightIcon />
+      <Link
+        className={cn(
+          "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
+        )}
+        href={`/new-position/${poolId}`}
+      >
+        <Plus />
+        <span>Create Position</span>
       </Link>
     </Button>
   </div>

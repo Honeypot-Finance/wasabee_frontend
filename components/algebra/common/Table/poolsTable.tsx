@@ -170,10 +170,11 @@ const PoolsTable = <TData, TValue>({
           </div>
         </div>
       )}
-      <Table>
-        <TableHeader className="[&_tr]:border-b [&_tr]:border-opacity-30 border-t border-opacity-60">
+      {/* FIXME: border radius display */}
+      <Table className="bg-[#271A0C] rounded-[30px]">
+        <TableHeader className="[&_tr]:border-b border-[#D9D7E4]/5 [&_tr]:border-opacity-30 border-t border-opacity-60">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="hover:bg-transparent">
+            <TableRow key={headerGroup.id} className="hover:bg-transparent border-[#D9D7E4]/5">
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
@@ -192,7 +193,7 @@ const PoolsTable = <TData, TValue>({
         </TableHeader>
         <TableBody className="hover:bg-transparent text-[16px]">
           {!table.getRowModel().rows.length ? (
-            <TableRow className="hover:bg-card h-full">
+            <TableRow className="hover:bg-card border-[#D9D7E4]/5 h-full">
               <TableCell colSpan={columns.length} className="h-24 text-center">
                 No results.
               </TableCell>
@@ -203,7 +204,7 @@ const PoolsTable = <TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="border-card-border/40 bg-card-dark hover:bg-card-hover cursor-pointer"
+                  className="border-card-border/40 bg-card-dark hover:bg-card-hover cursor-pointer border-[#D9D7E4]/5"
                   onClick={() => {
                     if (action) {
                       action(row.original.id);
