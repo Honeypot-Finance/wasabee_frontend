@@ -50,7 +50,6 @@ const TokenInfo = ({tokenAddress,token}: Props) => {
             Initial Supply
           </div>
           <div className="uppercase text-xl font-medium text-white">
-            2000
           </div>
         </div>
         <Divider className="my-2" />
@@ -59,7 +58,6 @@ const TokenInfo = ({tokenAddress,token}: Props) => {
           Initial Market Cap
           </div>
           <div className="uppercase text-xl font-medium text-white">
-            $394,039
           </div>
         </div>
         <Divider className="my-2" />

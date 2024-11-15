@@ -1,18 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SelectItem } from "@nextui-org/react";
 import { InputField, SelectField } from "./Components";
 import { Controller, useFormContext } from "react-hook-form";
 import EthereumIcon from "../svg/EthereumIcon";
+import { useAccount, useReadContract } from "wagmi";
+import { ERC20ABI } from "@/lib/abis/erc20";
 
 const ECOSYSTEM_OPTIONS = [
-  { key: "ethereum", value: 1, label: "Ethereum" },
-  { key: "ethereum1", value: 2, label: "Ethereum" },
-  { key: "ethereum3", value: 3, label: "Ethereum" },
+  { key: "evm", value: 1, label: "EVM" },
+  
 ];
 
 const TARGET_NETWORK_OPTIONS = [
-  { key: "ethereum", value: 1, label: "Ethereum", icon: <EthereumIcon /> },
-  { key: "ethereum1", value: 2, label: "Ethereum", icon: <EthereumIcon /> },
+  { key: "berachain", value: 1, label: "Berachain", icon: <EthereumIcon /> },
 ];
 
 const CreateAndBranding = () => {
@@ -20,9 +20,34 @@ const CreateAndBranding = () => {
     control,
     formState: { errors },
     setValue,
+    setError,
     watch,
   } = useFormContext();
-  console.log("😻 ~ CreateAndBranding ~ errors:", errors);
+
+  const account = useAccount()
+
+  const projectToken = watch('projectToken')
+
+  const {data, refetch, isLoading} = useReadContract({
+    abi: ERC20ABI,
+    address: projectToken,
+    functionName: 'balanceOf',
+    args: [account.address!]
+  })
+
+
+  useEffect(() => {
+    if(projectToken && !errors?.projectToken){
+      console.log('refetching project')
+      refetch()
+    }
+  }, [projectToken])
+
+  if(data == undefined && projectToken && !errors?.projectToken && !isLoading){
+    setError("projectToken", {message: "Invalid ERC20 address"})
+  }
+
+  // console.log(projectToken)
   return (
     <div>
       <div className="font-medium">
@@ -45,6 +70,7 @@ const CreateAndBranding = () => {
               onChange={(e) => field.onChange(e.target.value)}
               isInvalid={!!errors?.ecosystem}
               errorMessage={errors.ecosystem?.message?.toString()}
+              isDisabled={true}
             >
               {ECOSYSTEM_OPTIONS.map((ecosystem) => (
                 <SelectItem key={ecosystem.key} value={ecosystem.value}>
@@ -75,6 +101,7 @@ const CreateAndBranding = () => {
                 onChange={(e) => field.onChange(e.target.value)}
                 isInvalid={!!errors?.targetNetwork}
                 errorMessage={errors?.targetNetwork?.message?.toString()}
+                isDisabled={true}
               >
                 {(targetNetwork) => (
                   <SelectItem
@@ -92,12 +119,25 @@ const CreateAndBranding = () => {
           />
         </div>
         <Controller
+          name="projectName"
+          control={control}
+          render={({ field }) => (
+            <InputField
+              {...field}
+              label="3. Project Name"
+              placeholder="Enter Project Name"
+              isInvalid={!!errors?.projectName}
+              errorMessage={errors?.projectName?.message?.toString()}
+            />
+          )}
+        />
+        <Controller
           name="projectToken"
           control={control}
           render={({ field }) => (
             <InputField
               {...field}
-              label="3. Project Token"
+              label="4. Project Token"
               placeholder="Enter token"
               isInvalid={!!errors?.projectToken}
               errorMessage={errors?.projectToken?.message?.toString()}
@@ -110,7 +150,7 @@ const CreateAndBranding = () => {
           render={({ field }) => (
             <InputField
               {...field}
-              label="4. Project Token Logo"
+              label="5. Project Token Logo"
               placeholder="Paste URL here"
               isInvalid={!!errors?.projectTokenLogo}
               errorMessage={errors?.projectTokenLogo?.message?.toString()}
@@ -123,7 +163,7 @@ const CreateAndBranding = () => {
           render={({ field }) => (
             <InputField
               {...field}
-              label="5. Sale Banner"
+              label="6. Sale Banner"
               placeholder="Paste URL here"
               isInvalid={!!errors?.saleBanner}
               errorMessage={errors?.saleBanner?.message?.toString()}

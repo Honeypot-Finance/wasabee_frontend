@@ -13,10 +13,12 @@ import {
 } from "@/types/launch-project";
 import { z, ZodType } from "zod";
 
+
 export const DEFAULT_LAUNCH_PROJECT_FORM = {
   // 1.Create and Branding
-  ecosystem: "",
-  targetNetwork: "",
+  ecosystem: 'evm',
+  targetNetwork: 'berachain',
+  projectName:'',
   projectToken: "",
   projectTokenLogo: "",
   saleBanner: "",
@@ -30,12 +32,15 @@ export const DEFAULT_LAUNCH_PROJECT_FORM = {
   tokenClaimDelay: new Date(),
   // 3.Tokenomics & Preview
   projectTokenQuantity: 0,
-  assetTokenType: "",
   assetTokenQuantity: 0,
   customTotalSupplyType: true,
   customTotalSupply: undefined,
   startWeight: 50,
   endWeight: 50,
+  assetTokenType: "tHPOT",
+  assetTokenName:"T-HPOT",
+  assetTokenLogo: "/images/icons/tokens/thpot-token-icon.jpg",
+  assetTokenAddress: "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
   // 4.Token Vesting
   isTokenVestingEnabled: true,
   isVestingCliffTimeEnabled: true,
@@ -58,7 +63,10 @@ export const createAndBrandingSchema: ZodType<CreateAndBrandingForm> = z.object(
   {
     ecosystem: z.string().min(1, "Ecosystem is required."),
     targetNetwork: z.string().min(1, "Target network is required."),
-    projectToken: z.string().min(1, "Project token is required."),
+    projectName: z.string().min(1, "Project token is required."),
+    projectToken: z.string().min(1, "Project token is required.").regex(/^0x[a-fA-F0-9]{40}$/, {
+      message: "Invalid Ethereum address",
+    }),
     projectTokenLogo: z.string().url("Project token logo must be a valid URL."),
     saleBanner: z.string().url("Sale banner must be a valid URL."),
   }

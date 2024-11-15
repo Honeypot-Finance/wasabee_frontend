@@ -163,9 +163,7 @@ const LaunchProject = () => {
     }
   };
 
-  const onSubmit = () => {
-    console.log("😻 ~ onSubmit ~ data:", methods.getValues());
-  };
+  console.log(currentStep)
 
   return (
     <div className="md:p-6 md:max-w-full xl:max-w-[1440px] mx-auto mb-[30vh] grid grid-cols-3 gap-12">
@@ -181,14 +179,15 @@ const LaunchProject = () => {
           <form onSubmit={(e) => e.preventDefault()}>
             <CurrentStep />
             <div className="mt-12 flex items-center gap-8">
+              
               {currentStep !== 0 && (
                 <LBPButton type="button" onClick={handleBack}>
                   Back
                 </LBPButton>
               )}
-                <LBPButton type="button" onClick={handleNextStep}>
-                  {`Continue to ${STEP_DATA[currentStep + 1].title}`}
-                </LBPButton>
+                {currentStep !== STEP_DATA.length -1 && <LBPButton type="button" onClick={handleNextStep}>
+                  {`Continue to ${STEP_DATA[currentStep + 1]?.title}`}
+                </LBPButton>}
             </div>
           </form>
         </FormProvider>

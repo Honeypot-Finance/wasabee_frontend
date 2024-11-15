@@ -70,7 +70,6 @@ export const formatLBPPoolData = (data: any[]) => {
 export function formatErc20Data(data: CallReturnContext[]) {
     if(data.length === 0) return {}
     let decimals = 1; // Default to 1 if decimals are not found
-  
     // First, extract decimals from the data
     data.forEach((item) => {
       if (item.returnValues.length === 0) {

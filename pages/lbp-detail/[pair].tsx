@@ -20,7 +20,6 @@ import {
 } from "@/services/lib/helper";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import dayjs from "dayjs";
-import { useReadContract } from "wagmi";
 
 const RankProjectData = [
   { icon: "🚀", value: 10 },
@@ -83,7 +82,7 @@ const LBPDetail = () => {
     contractCallContext: [
       {
         reference: "erc20",
-        contractAddress: "0x3E70A4Ca1295DaA7E8Ca2204b0fBcaDE69B9C43e",
+        contractAddress: data?.args?.shares,
         abi: ERC20ABI as any,
         calls: [
           { reference: "name", methodName: "name", methodParameters: [] },
@@ -109,7 +108,7 @@ const LBPDetail = () => {
     contractCallContext: [
       {
         reference: "erc20",
-        contractAddress: "0xF9a97b37d9f7d9f7968f267ad266b1f71f2B511D",
+        contractAddress: data?.args?.asset,
         abi: ERC20ABI as any,
         calls: [
           { reference: "name", methodName: "name", methodParameters: [] },
@@ -153,7 +152,6 @@ const LBPDetail = () => {
     }
   };
 
-  console.log("data:::::", data);
 
   const percentOfTokenSold =
     data?.args?.maxTotalAssetsIn && data?.totalAssetsIn
@@ -386,7 +384,7 @@ const LBPDetail = () => {
         <div className="flex justify-between">
           <div className="text-[28px] leading-9 font-bold">Project Details</div>
           <div className="text-[28px] leading-8 font-normal text-[#FFCD4D]">
-            HUNNY PROTOCOL
+ PROTOCOL
           </div>
         </div>
         <div className="mt-12">

@@ -54,6 +54,7 @@ const AssetTokenModal = () => {
     const selectedToken = listToken.find(
       (item) => item.symbol === assetTokenType
     );
+
     setValue("assetTokenType", assetTokenType);
     setValue("assetTokenName", selectedToken?.name);
     setValue("assetTokenLogo", selectedToken?.logoURI);
@@ -69,6 +70,7 @@ const AssetTokenModal = () => {
         {selectedToken ? (
           <>
             <img
+            className="size-[18px] rounded-full"
               src={selectedToken?.logoURI}
               alt="Asset token"
               width={18}
@@ -132,6 +134,7 @@ const AssetTokenModal = () => {
                       >
                         <div className="flex items-center gap-3">
                           <Image
+                            className="rounded-full"
                             src={token.logoURI}
                             alt={token.name}
                             width={18}
@@ -165,6 +168,7 @@ const TokenomicsAndPreview = () => {
   const assetTokenName = getValues("assetTokenName");
   const assetTokenLogo = getValues("assetTokenLogo");
   const isCustomTotalSupply = watch("customTotalSupplyType");
+  const [isFetchImageError, setIsFetchImageError] = useState(false)
 
   const { data: projectTokenName, isLoading } = useReadContract({
     abi: ERC20ABI,
@@ -199,10 +203,14 @@ const TokenomicsAndPreview = () => {
               startContent={
                 <div className="flex items-center gap-1">
                   <img
-                    src={projectTokenLogo}
+                  className="size-[18px] rounded-full "
+                    src={isFetchImageError ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png": projectTokenLogo}
                     alt={projectTokenName}
                     width={18}
                     height={18}
+                    onError={e => {console.log(e)
+                      setIsFetchImageError(true)
+                    }}
                   />
                   <span className="text-sm">{projectTokenName}</span>
                   {isLoading && (
@@ -299,7 +307,7 @@ const TokenomicsAndPreview = () => {
             <SliderField
               label="Start Weight"
               firstTokenName={projectTokenName}
-              firstTokenIcon={projectTokenLogo}
+              firstTokenIcon={isFetchImageError ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png": projectTokenLogo}
               secondTokenName={assetTokenName}
               secondTokenIcon={assetTokenLogo}
               value={field.value}
@@ -315,7 +323,7 @@ const TokenomicsAndPreview = () => {
             <SliderField
               label="End Weight"
               firstTokenName={projectTokenName}
-              firstTokenIcon={projectTokenLogo}
+              firstTokenIcon={isFetchImageError ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png": projectTokenLogo}
               secondTokenName={assetTokenName}
               secondTokenIcon={assetTokenLogo}
               value={field.value}

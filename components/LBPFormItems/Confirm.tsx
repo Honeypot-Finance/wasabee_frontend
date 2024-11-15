@@ -179,7 +179,6 @@ const SummaryItemData = [
           abi: LiquidityBootstrapPoolFactoryABI,
           address: LiquidityBootstrapPoolFactoryAddress,
           functionName: "createLiquidityBootstrapPool",
-          
           args: [
             {
               asset: assetTokenAddress,

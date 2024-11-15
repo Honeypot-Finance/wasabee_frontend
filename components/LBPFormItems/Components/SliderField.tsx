@@ -25,13 +25,15 @@ const SliderField = (props: SliderFieldProps) => {
       <div className="w-full flex items-center justify-between mt-2">
         {firstTokenName && (
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <img
-                src={firstTokenIcon}
-                alt={firstTokenName}
-                width={18}
-                height={18}
-              />
+            <div className="flex items-center gap-2 ">
+              <div className="rounded-full overflow-hidden">
+                <img
+                  src={firstTokenIcon}
+                  alt={firstTokenName}
+                  width={18}
+                  height={18}
+                />
+              </div>
               <span className="text-sm">{firstTokenName}</span>
             </div>
             <NumberField
@@ -72,13 +74,15 @@ const SliderField = (props: SliderFieldProps) => {
               }}
             />
             <div className="flex items-center gap-2">
+              <div className="rounded-full overflow-hidden">
+                <img
+                  src={secondTokenIcon}
+                  alt={secondTokenName}
+                  width={18}
+                  height={18}
+                />
+              </div>
               <span className="text-sm">{secondTokenName}</span>
-              <img
-                src={secondTokenIcon}
-                alt={secondTokenName}
-                width={18}
-                height={18}
-              />
             </div>
           </div>
         )}

@@ -10,7 +10,7 @@ import { formatErc20Data } from "@/services/lib/helper";
 import { Input, Spinner } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
-import { Address, maxUint256, parseUnits } from "viem";
+import { Address, formatUnits, maxUint256, parseUnits } from "viem";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 
 type AssetToken = {
@@ -46,9 +46,14 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
   const account = useAccount();
   const [isTxLoading, setIsTxLoading] = useState(false);
   const [swapToken, setSwapToken] = useState<SwapToken>({
-    from: undefined,
-    to: undefined,
+    from: 0,
+    to: 0,
   });
+  
+  const [tokens, setTokens] = useState<{
+    asset: AssetToken;
+    share: AssetToken;
+  }>();
 
   const {
     data: buyFromData,
@@ -186,10 +191,7 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSellToLoading]);
 
-  const [tokens, setTokens] = useState<{
-    asset: AssetToken;
-    share: AssetToken;
-  }>();
+ 
 
   const { writeContractAsync } = useWriteContract();
 
@@ -236,7 +238,7 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
     contractCallContext: [
       {
         abi: ERC20ABI as any,
-        contractAddress: "0xF9a97b37d9f7d9f7968f267ad266b1f71f2B511D",
+        contractAddress: tokens?.asset.address!,
         reference: "erc20",
         calls: [
           {
@@ -248,6 +250,11 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
             methodName: "allowance",
             reference: "allowance",
             methodParameters: [account?.address, poolAddress],
+          },
+          {
+            methodName: "decimals",
+            reference: "decimals",
+            methodParameters: [],
           },
         ],
       },
@@ -280,7 +287,8 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
     }
   };
 
-  const isSufficientBalance = false;
+
+  const isSufficientBalance = +formatUnits(userAsset?.balanceOf ?? 0, userAsset?.decimals ?? 0) - swapToken.from! > 0;
 
   const isApproved = userAsset?.allowance === BigInt(0);
 
@@ -290,7 +298,7 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
         setIsTxLoading(true);
         await writeContractAsync({
           abi: ERC20ABI,
-          address: "0xF9a97b37d9f7d9f7968f267ad266b1f71f2B511D",
+          address: tokens?.asset.address,
           functionName: "approve",
           args: [poolAddress, maxUint256],
         });
