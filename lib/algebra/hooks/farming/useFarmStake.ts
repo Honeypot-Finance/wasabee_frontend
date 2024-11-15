@@ -7,7 +7,7 @@ import { useTransactionAwait } from "../common/useTransactionAwait";
 import { Address } from "viem";
 import { FARMING_CENTER } from "@/data/algebra/addresses";
 import { farmingCenterABI } from "@/lib/abis/algebra-contracts/ABIs";
-import { farmingClient } from "../../graphql";
+import { farmingClient } from "../../graphql/clients";
 import { Deposit } from "../../graphql/generated/graphql";
 import { TransactionType } from "../../state/pendingTransactionsStore";
 

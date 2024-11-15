@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/algebra/ui/dialog";
 import { Slider } from "@/components/algebra/ui/slider";
-import { farmingClient } from "@/lib/algebra/graphql";
+import { farmingClient } from "@/lib/algebra/graphql/clients";
 import { Deposit } from "@/lib/algebra/graphql/generated/graphql";
 import { useTransactionAwait } from "@/lib/algebra/hooks/common/useTransactionAwait";
 import {
