@@ -27,20 +27,16 @@ export class Wallet {
     ftofacade: FtoFacadeContract;
     memeFactory: MemeFactoryContract;
     memeFacade: MEMEFacadeContract;
-    //Algebra
-    algebraFactory: AlgebraFactoryContract;
+
     //algebraPoolDeployer: AlgebraPoolDeployerContract;
   } = {} as any;
   publicClient!: PublicClient;
   isInit = false;
   get networksMap() {
-    return this.networks.reduce(
-      (acc, network) => {
-        acc[network.chainId] = network;
-        return acc;
-      },
-      {} as Record<number, Network>
-    );
+    return this.networks.reduce((acc, network) => {
+      acc[network.chainId] = network;
+      return acc;
+    }, {} as Record<number, Network>);
   }
 
   get currentChain() {
@@ -88,13 +84,6 @@ export class Wallet {
       memeFacade: new MEMEFacadeContract({
         address: this.currentChain.contracts.memeFacade,
       }),
-      //Algebra
-      algebraFactory: new AlgebraFactoryContract({
-        address: this.currentChain.contracts.algebraFactory,
-      }),
-      // algebraPoolDeployer: new AlgebraPoolDeployerContract({
-      //   address: this.currentChain.contracts.algebraPoolDeployer,
-      // }),
     };
     this.publicClient = createPublicClientByChain(this.currentChain.chain);
     this.walletClient = walletClient;
