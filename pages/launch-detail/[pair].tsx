@@ -410,7 +410,7 @@ const FtoView = observer(() => {
   }
 
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
+    <div className="md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
       {state.pair.value && (
         <Modal
           isOpen={isOpen}
@@ -859,7 +859,7 @@ const MemeView = observer(() => {
   const pair = useMemo(() => state.pair.value, [state.pair.value]);
 
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
+    <div className="md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
       {state.pair.value && (
         <Modal
           isOpen={isOpen}
