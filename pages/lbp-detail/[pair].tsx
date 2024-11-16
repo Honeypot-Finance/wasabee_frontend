@@ -71,18 +71,16 @@ const LBPDetail = () => {
         }
       });
 
-      console.log(result);
-
       return result;
     },
   });
 
   const { data: tokenData } = useMulticall3({
-    queryKey: ["erc20", data?.args?.shares],
+    queryKey: ["erc20", data?.args?.share],
     contractCallContext: [
       {
         reference: "erc20",
-        contractAddress: data?.args?.shares,
+        contractAddress: data?.args?.share,
         abi: ERC20ABI as any,
         calls: [
           { reference: "name", methodName: "name", methodParameters: [] },
@@ -152,7 +150,6 @@ const LBPDetail = () => {
     }
   };
 
-
   const percentOfTokenSold =
     data?.args?.maxTotalAssetsIn && data?.totalAssetsIn
       ? (+formatUnits(data.args.maxTotalAssetsIn, assetToken.decimals) /
@@ -184,50 +181,52 @@ const LBPDetail = () => {
               Ends In
             </div>
             <div>
-              <Countdown
-                date={BigNumber.from(data?.args?.saleEnd ?? 0).toString()}
-                renderer={({ days, hours, minutes, seconds, completed }) => {
-                  return (
-                    <div className="font-bold text-[28px] flex items-center gap-5">
-                      <div className="flex flex-col text-center gap-[5px]">
-                        <span className="leading-[36px]">
-                          {days > 0 ? days : "00"}
-                        </span>
-                        <span className="text-[12px] leading-4 text-[#FFFFFF70]">
-                          {days > 1 ? "Days" : "Day"}
-                        </span>
+              {data?.args?.saleEnd && (
+                <Countdown
+                  date={data.args.saleEnd}
+                  renderer={({ days, hours, minutes, seconds, completed }) => {
+                    return (
+                      <div className="font-bold text-[28px] flex items-center gap-5">
+                        <div className="flex flex-col text-center gap-[5px]">
+                          <span className="leading-[36px]">
+                            {days > 0 ? days : "00"}
+                          </span>
+                          <span className="text-[12px] leading-4 text-[#FFFFFF70]">
+                            {days > 1 ? "Days" : "Day"}
+                          </span>
+                        </div>
+                        <div>:</div>
+                        <div className="flex flex-col text-center gap-[5px]">
+                          <span className="leading-[36px]">
+                            {hours > 0 ? hours : "00"}
+                          </span>
+                          <span className="text-[12px] leading-4 text-[#FFFFFF70]">
+                            {hours > 1 ? "Hours" : "Hour"}
+                          </span>
+                        </div>
+                        <div>:</div>
+                        <div className="flex flex-col text-center gap-[5px]">
+                          <span className="leading-[36px]">
+                            {minutes > 0 ? minutes : "00"}
+                          </span>
+                          <span className="text-[12px] leading-4 text-[#FFFFFF70]">
+                            {minutes > 1 ? "Minutes" : "Minute"}
+                          </span>
+                        </div>
+                        <div>:</div>
+                        <div className="flex flex-col text-center gap-[5px]">
+                          <span className="leading-[36px]">
+                            {seconds > 0 ? seconds : "00"}
+                          </span>
+                          <span className="text-[12px] leading-4 text-[#FFFFFF70]">
+                            {seconds > 1 ? "Secs" : "Sec"}
+                          </span>
+                        </div>
                       </div>
-                      <div>:</div>
-                      <div className="flex flex-col text-center gap-[5px]">
-                        <span className="leading-[36px]">
-                          {hours > 0 ? hours : "00"}
-                        </span>
-                        <span className="text-[12px] leading-4 text-[#FFFFFF70]">
-                          {hours > 1 ? "Hours" : "Hour"}
-                        </span>
-                      </div>
-                      <div>:</div>
-                      <div className="flex flex-col text-center gap-[5px]">
-                        <span className="leading-[36px]">
-                          {minutes > 0 ? minutes : "00"}
-                        </span>
-                        <span className="text-[12px] leading-4 text-[#FFFFFF70]">
-                          {minutes > 1 ? "Minutes" : "Minute"}
-                        </span>
-                      </div>
-                      <div>:</div>
-                      <div className="flex flex-col text-center gap-[5px]">
-                        <span className="leading-[36px]">
-                          {seconds > 0 ? seconds : "00"}
-                        </span>
-                        <span className="text-[12px] leading-4 text-[#FFFFFF70]">
-                          {seconds > 1 ? "Secs" : "Sec"}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                }}
-              />
+                    );
+                  }}
+                />
+              )}
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -384,7 +383,7 @@ const LBPDetail = () => {
         <div className="flex justify-between">
           <div className="text-[28px] leading-9 font-bold">Project Details</div>
           <div className="text-[28px] leading-8 font-normal text-[#FFCD4D]">
- PROTOCOL
+            PROTOCOL
           </div>
         </div>
         <div className="mt-12">

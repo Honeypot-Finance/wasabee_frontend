@@ -1,6 +1,7 @@
 import { Button } from "@/components/button";
 import useMulticall3 from "@/components/hooks/useMulticall3";
 import ArrowAltSvg from "@/components/svg/ArrowAlt";
+import { config } from "@/config/wagmi";
 import { useDebouncedCallback } from "@/hooks";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { LiquidityBootstrapPoolABI } from "@/lib/abis/LiquidityBootstrapPoolAbi";
@@ -8,6 +9,7 @@ import { cn } from "@/lib/tailwindcss";
 import { WrappedToastify } from "@/lib/wrappedToastify";
 import { formatErc20Data } from "@/services/lib/helper";
 import { Input, Spinner } from "@nextui-org/react";
+import { waitForTransactionReceipt } from "@wagmi/core";
 import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { Address, formatUnits, maxUint256, parseUnits } from "viem";
@@ -49,7 +51,7 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
     from: 0,
     to: 0,
   });
-  
+
   const [tokens, setTokens] = useState<{
     asset: AssetToken;
     share: AssetToken;
@@ -191,8 +193,6 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSellToLoading]);
 
- 
-
   const { writeContractAsync } = useWriteContract();
 
   const handleWriteContract = async () => {
@@ -233,7 +233,7 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
     }
   };
 
-  const { data } = useMulticall3({
+  const { data, refetch } = useMulticall3({
     queryKey: ["tokens", tokens?.asset.address],
     contractCallContext: [
       {
@@ -287,8 +287,10 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
     }
   };
 
-
-  const isSufficientBalance = +formatUnits(userAsset?.balanceOf ?? 0, userAsset?.decimals ?? 0) - swapToken.from! > 0;
+  const isSufficientBalance =
+    +formatUnits(userAsset?.balanceOf ?? 0, userAsset?.decimals ?? 0) -
+      swapToken.from! >
+    0;
 
   const isApproved = userAsset?.allowance === BigInt(0);
 
@@ -296,12 +298,20 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
     if (tokens?.asset) {
       try {
         setIsTxLoading(true);
-        await writeContractAsync({
+        const txHash = await writeContractAsync({
           abi: ERC20ABI,
           address: tokens?.asset.address,
           functionName: "approve",
           args: [poolAddress, maxUint256],
         });
+
+        await waitForTransactionReceipt(config, {
+          hash: txHash,
+          confirmations: 2,
+          timeout: 1000 * 60 * 5,
+        });
+
+        await refetch();
       } catch (e: any) {
         console.log(e);
         WrappedToastify.error(e.message);
@@ -402,7 +412,7 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
       <div className="mt-5 flex flex-col gap-4">
         {isApproved ? (
           <Button className="w-full" onClick={handleApproval}>
-            Approval
+            {isTxLoading ? "Approving" : "Approval"}
           </Button>
         ) : (
           <Button
