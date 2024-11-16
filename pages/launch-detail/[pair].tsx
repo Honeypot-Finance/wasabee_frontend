@@ -408,7 +408,7 @@ const FtoView = observer(() => {
   }
 
   return (
-    <div className="md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
+    <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
       {state.pair.value && (
         <Modal
           isOpen={isOpen}
@@ -598,7 +598,7 @@ const FtoView = observer(() => {
             />
           </div>
 
-          <div className="grid grid-cols-4 *:margin">
+          <div className="grid grid-cols-2 md:grid-cols-4 *:margin">
             <div className="flex flex-col items-center">
               <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
                 Token Price
@@ -857,7 +857,7 @@ const MemeView = observer(() => {
   const pair = useMemo(() => state.pair.value, [state.pair.value]);
 
   return (
-    <div className="md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
+    <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
       {state.pair.value && (
         <Modal
           isOpen={isOpen}
@@ -1007,10 +1007,16 @@ const MemeView = observer(() => {
               <div>
                 <span className="text-[#FFCD4D]">
                   {pair?.ftoStatusDisplay?.status === "success"
-                    ? (pair?.raisedTokenMinCap ?? BigNumber(0))
-                        .div(10 ** (pair?.raiseToken?.decimals ?? 0))
-                        .toFixed()
-                    : (pair?.depositedRaisedToken ?? BigNumber(0)).toFixed()}
+                    ? amountFormatted(pair?.raisedTokenMinCap, {
+                        decimals: pair?.raiseToken?.decimals,
+                        fixed: 3,
+                        prefix: "$",
+                      })
+                    : amountFormatted(pair?.depositedRaisedToken, {
+                        decimals: 0,
+                        fixed: 3,
+                        prefix: "$",
+                      })}
                 </span>
                 <span className="text-xs">
                   /
@@ -1046,7 +1052,7 @@ const MemeView = observer(() => {
             />
           </div>
 
-          <div className="grid grid-cols-4 *:margin">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 *:margin">
             <div className="flex flex-col items-center">
               <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
                 Token Price

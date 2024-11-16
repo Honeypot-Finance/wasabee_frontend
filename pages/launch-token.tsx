@@ -211,7 +211,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                             ref={ref}
                             hideTimeZone
                             onChange={onChange} // send value to hook form
-                            minValue={now(getLocalTimeZone())}
+                            minValue={now(getLocalTimeZone()) as any}
                             onBlur={onBlur} // notify when input is touched/blur
                             value={value}
                             variant="bordered"

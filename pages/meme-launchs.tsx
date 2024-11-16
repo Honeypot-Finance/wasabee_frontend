@@ -70,7 +70,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
+    <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
       <div className="flex w-full justify-end gap-2">
         <Button className="scale-[0.8] sm:scale-100">
           <Link
@@ -84,7 +84,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
       {mostSuccessProjects && mostSuccessProjects.length > 0 && (
         <>
-          <h2 className="w-full text-center text-[3rem] [font-family:MEMEH] font-bold">
+          <h2 className="w-full text-center py-2 md:py-0 text-[1.5rem] md:text-[3rem] [font-family:MEMEH] font-bold">
             Trending MEMEs
           </h2>
           <motion.div
@@ -102,7 +102,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 }
               >
                 <motion.div
-                  className="absolute  top-0 left-0 z-10"
+                  className="absolute top-0 left-0 z-10"
                   initial={{
                     rotate: 0,
                   }}
@@ -115,13 +115,13 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                   }}
                 >
                   {idx === 0 && (
-                    <FaCrown className="absolute top-0 left-2 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[500%] fill-yellow-300" />
+                    <FaCrown className="absolute top-0 left-2 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[300%] md:scale-[500%] fill-yellow-300" />
                   )}
                   {idx === 1 && (
-                    <FaCrown className="absolute top-0 left-1 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[300%] fill-gray-300" />
+                    <FaCrown className="absolute top-0 left-1 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] md:scale-[300%] fill-gray-300" />
                   )}
                   {idx === 2 && (
-                    <FaCrown className="absolute top-0 left-0 rotate-[-30deg] translate-x-[-30%] translate-y-[-50%] scale-[100%] fill-amber-800" />
+                    <FaCrown className="absolute top-0 left-0 rotate-[-30deg] translate-x-[-30%] translate-y-[-50%] md:scale-[100%] fill-amber-800" />
                   )}
                 </motion.div>
                 <LaunchCard
@@ -137,7 +137,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
       )}
 
       <div>
-        <div id="filter" className="flex flex-col sm:flex-row gap-2">
+        <div id="filter" className="flex flex-col sm:flex-row items-center gap-2 my-4 sm:my-0">
           <WarppedNextInputSearchBar
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
@@ -298,13 +298,12 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             }
           />
           <Tab
-            href="/memewar"
             title={
-              <div className="flex items-center text-rose-600">
+              <Link href="/memewar" className="flex items-center text-rose-600">
                 <span className="flex items-center justify-center gap-2">
                   Meme War ⚔️
                 </span>
-              </div>
+              </Link>
             }
           />
         </Tabs>
