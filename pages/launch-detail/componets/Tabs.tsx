@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { truncate } from "@/lib/format";
+import { amountFormatted, truncate } from "@/lib/format";
 import { chart } from "@/services/chart";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
@@ -119,9 +119,10 @@ const Tabs = ({
                   INITIAL MARKET CAP
                 </span>
                 <span className="text-white md:text-xl">
-                  {(pair as MemePairContract)?.raisedTokenMinCap
-                    ?.div(10 ** (pair?.raiseToken?.decimals ?? 0))
-                    .toFixed()}
+                  {amountFormatted(pair?.depositedRaisedToken, {
+                    decimals: 0,
+                    fixed: 3,
+                  })}
                 </span>
               </div>
               <div className="flex items-center justify-between py-4">
@@ -154,12 +155,13 @@ const Tabs = ({
           </div>
         )}
         {tab === "comment" && (
-          <div className="flex justify-center">
-            <div className="w-full">
-              {pair && (
-                <DiscussionArea pairDatabaseId={pair.databaseId ?? -1} />
-              )}
-            </div>
+          <div className="w-full">
+            {pair && (
+              <DiscussionArea
+                pairDatabaseId={pair.databaseId ?? -1}
+                classNames={{ container: "border-none" }}
+              />
+            )}
           </div>
         )}
         {tab === "priceChart" && (

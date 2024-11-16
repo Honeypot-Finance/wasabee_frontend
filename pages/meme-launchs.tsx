@@ -224,7 +224,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         </div>
       </div>
 
-      <div>
+      <div className="w-full">
         <Tabs
           // destroyInactiveTabPanel={false}
           aria-label="Options"
@@ -285,7 +285,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             title={
               <div className="flex items-center text-yellow-400">
                 <Image
-                  className="h-4"
+                  className="size-4"
                   src="/images/partners/yeet_icon.png"
                   alt=""
                   width={100}

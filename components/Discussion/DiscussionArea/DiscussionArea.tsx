@@ -8,9 +8,6 @@ import { wallet } from "@/services/wallet";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { useEffect, useState } from "react";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
-import { after, before, set } from "lodash";
-import { MemePairContract } from "@/services/contract/memepair-contract";
-
 import { useRouter } from "next/router";
 import { cn } from "@/lib/tailwindcss";
 import dayjs from "dayjs";
@@ -145,7 +142,8 @@ export function DiscussionArea(props: DiscussionAreaProps) {
             label="Leave a Comment!"
             classNames={{
               base: "w-full h-full bg-[#2F200B]",
-              inputWrapper: "w-full !h-full bg-[#2F200B] hover:bg-[#2F200B] z-1",
+              inputWrapper:
+                "w-full !h-full bg-[#2F200B] hover:bg-[#2F200B] z-1",
               input: "w-full h-full",
               mainWrapper: "w-full h-full bg-[#2F200B] hover:bg-[#2F200B] z-1",
               label: "text-[#FFCD4D] text-base font-bold leading-[normal] z-1",
