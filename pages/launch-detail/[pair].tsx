@@ -50,8 +50,6 @@ import BigNumber from "bignumber.js";
 
 import Action from "./componets/Action";
 import Tabs from "./componets/Tabs";
-import PriceFeedGraph from "@/components/PriceFeedGraph/PriceFeedGraph";
-import { swap } from "@/services/swap";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {

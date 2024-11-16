@@ -6,19 +6,23 @@ import {
   bitgetWallet,
   okxWallet,
   walletConnectWallet,
+  metaMaskWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { injected, safe } from "wagmi/connectors";
 import { mock } from "wagmi/connectors";
-import { holdstationWallet } from "./customWallets";
+import { holdstationWallet } from "./holdstationWallet";
+//import { capsuleWallet } from "./capsualWallet";
 
 const pId = "1d1c8b5204bfbd57502685fc0934a57d";
 //for users without bitget wallet
 let customWallets = [
+  metaMaskWallet,
   rainbowWallet,
   walletConnectWallet,
   bitgetWallet,
   okxWallet,
   holdstationWallet,
+  //capsuleWallet
 ];
 // if(!window.bitkeep){
 //   customWallets.unshift(bitgetWallet);

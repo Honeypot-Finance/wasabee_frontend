@@ -13,7 +13,7 @@ import { IoClose } from "react-icons/io5";
 import { Token } from "@/services/contract/token";
 import { Observer, observer, useLocalObservable } from "mobx-react-lite";
 import { liquidity } from "@/services/liquidity";
-import { useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { isEthAddress } from "@/lib/address";
 import { useOnce } from "@/lib/hooks";
 import { useAccount } from "wagmi";
@@ -32,10 +32,17 @@ import { motion } from "framer-motion";
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
   value?: Token | null;
+  extraTokenActions?: ReactNode[];
+  disableChange?: boolean;
 };
 
 export const TokenSelector = observer(
-  ({ onSelect, value }: TokenSelectorProps) => {
+  ({
+    onSelect,
+    value,
+    extraTokenActions,
+    disableChange,
+  }: TokenSelectorProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isConnected } = useAccount();
     const state = useLocalObservable(() => ({
@@ -104,6 +111,9 @@ export const TokenSelector = observer(
       >
         {value && (
           <>
+            {extraTokenActions?.map((action, idx) => {
+              return action;
+            })}
             <Link
               href={`${wallet.currentChain?.chain.blockExplorers?.default.url}/token/${value.address}`}
               target="_blank"
@@ -114,6 +124,7 @@ export const TokenSelector = observer(
           </>
         )}
         <Popover
+          isTriggerDisabled={disableChange}
           isOpen={isOpen}
           onOpenChange={(isOpen) => {
             isOpen ? onOpen() : onClose();

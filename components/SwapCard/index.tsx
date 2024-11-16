@@ -54,8 +54,14 @@ export const SwapCard = observer(() => {
   };
 
   useEffect(() => {
+    if (!wallet.isInit) {
+      return;
+    }
+    liquidity.initPool();
+  }, [wallet.isInit]);
+
+  useEffect(() => {
     if (!isInit) {
-      liquidity.initPool();
       return;
     }
 
@@ -87,7 +93,7 @@ export const SwapCard = observer(() => {
         })
       );
     }
-  }, [inputCurrency, outputCurrency, liquidity.isInit, wallet.isInit]);
+  }, [inputCurrency, outputCurrency, isInit]);
 
   useInterval(() => {
     swap.onFromAmountChange();

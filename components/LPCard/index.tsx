@@ -22,6 +22,7 @@ import { ItemSelect, SelectState } from "../ItemSelect";
 import { SelectItem } from "../ItemSelect/index";
 import _ from "lodash";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
+import Pagination from "../Pagination/Pagination";
 
 const AddLiquidity = observer(() => {
   return (
@@ -298,58 +299,28 @@ export const RemoveLiquidity = observer(
         </div>
       </div>
     ) : (
-      liquidity.myPairPage.pageItems.value && (
-        <div className="flex flex-col justify-center items-center gap-5">
-          {liquidity.myPairPage.pageItems.value.map((item) => (
-            <div
-              key={item.address}
-              className="flex w-full justify-between items-center hover:brightness-125 hover:bg-white/50 transition-all p-2 rounded-[10px]"
-            >
-              <div>{item.poolName}</div>
-              <div>
-                {item.myLiquidityDisplay.reserve0} /{" "}
-                {item.myLiquidityDisplay.reserve1}
-              </div>
-              <NextButton
-                onClick={() => {
-                  liquidity.setCurrentRemovePair(item);
-                }}
-              >
-                Remove
-              </NextButton>
+      <Pagination
+        paginationState={liquidity.myPairPage}
+        render={(pair) => (
+          <div
+            key={pair.address}
+            className="flex w-full justify-between items-center hover:brightness-125 hover:bg-white/50 transition-all p-2 rounded-[10px]"
+          >
+            <div>{pair.poolName}</div>
+            <div>
+              {pair.myLiquidityDisplay.reserve0} /{" "}
+              {pair.myLiquidityDisplay.reserve1}
             </div>
-          ))}
-        </div>
-        // <Table
-        //   rowKey="address"
-        //   columns={[
-        //     {
-        //       title: "Pool Name",
-        //       dataKey: "poolName",
-        //     },
-        //     {
-        //       title: "Self Liquidity",
-        //       dataKey: "myLiquidityDisplay",
-        //     },
-        //     {
-        //       title: "Action",
-        //       key: "action",
-        //       render: (value, record) => {
-        //         return (
-        //           <Button
-        //             onClick={() => {
-        //               liquidity.setCurrentRemovePair(record);
-        //             }}
-        //           >
-        //             Remove
-        //           </Button>
-        //         );
-        //       },
-        //     },
-        //   ]}
-        //   datasource={liquidity.myPairPage.pageItems.value}
-        // ></Table>
-      )
+            <NextButton
+              onClick={() => {
+                liquidity.setCurrentRemovePair(pair);
+              }}
+            >
+              Remove
+            </NextButton>
+          </div>
+        )}
+      />
     );
   }
 );

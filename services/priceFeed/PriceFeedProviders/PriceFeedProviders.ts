@@ -61,8 +61,9 @@ export class DefinedPriceFeed implements PriceFeedProvider {
       }
     }`;
 
-    const data =
-      await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(query);
+    const data = await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(
+      query
+    );
 
     if (!data || data.status === "error") {
       return {
@@ -100,8 +101,9 @@ export class DefinedPriceFeed implements PriceFeedProvider {
       }
     }`;
 
-    const data =
-      await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(query);
+    const data = await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(
+      query
+    );
 
     if (!data || data.status === "error") {
       return {
@@ -114,8 +116,8 @@ export class DefinedPriceFeed implements PriceFeedProvider {
         data: data.data.getTokenPrices.map((price, index) => {
           return {
             address: addresses[index],
-            price: price.priceUsd,
-            lastUpdated: price.timestamp,
+            price: price?.priceUsd ?? 0,
+            lastUpdated: price?.timestamp ?? 0,
           };
         }),
         message: "Success",
@@ -153,8 +155,9 @@ export class DefinedPriceFeed implements PriceFeedProvider {
     }
 `;
 
-    const data =
-      await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(query);
+    const data = await this.callDefinedApi<getTokenCurrentPriceTypeDataType>(
+      query
+    );
 
     if (!data || data.status === "error") {
       return {

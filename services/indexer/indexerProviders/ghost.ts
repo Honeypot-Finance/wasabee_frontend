@@ -388,16 +388,8 @@ export class GhostIndexer {
         status: "success",
         message: "Success",
         data: {
-          pairs: ((res.data as any).pairs?.items as GhostPoolPair[]) ?? [],
-          pageInfo: ((res.data as any).pairs?.pageInfo as PageInfo) ?? {
-            pairs: [],
-            pageInfo: {
-              hasNextPage: true,
-              hasPreviousPage: false,
-              startCursor: "",
-              endCursor: "",
-            },
-          },
+          pairs: (res.data as any).pairs?.items as GhostPoolPair[],
+          pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
         },
       };
     }
@@ -549,14 +541,8 @@ export class GhostIndexer {
         status: "success",
         message: "Success",
         data: {
-          holdingPairs:
-            ((res.data as any).holdingPairs?.items as holdingPairs[]) ?? [],
-          pageInfo: ((res.data as any).holdingPairs?.pageInfo as PageInfo) ?? {
-            hasNextPage: true,
-            hasPreviousPage: false,
-            startCursor: "",
-            endCursor: "",
-          },
+          holdingPairs: (res.data as any).holdingPairs?.items as holdingPairs[],
+          pageInfo: (res.data as any).holdingPairs?.pageInfo as PageInfo,
         },
       };
     }
@@ -820,13 +806,8 @@ export class GhostIndexer {
         status: "success",
         message: "Success",
         data: {
-          pairs: ((res.data as any).pairs?.items as GhostPoolPair[]) ?? [],
-          pageInfo: ((res.data as any).pairs?.pageInfo as PageInfo) ?? {
-            hasNextPage: true,
-            hasPreviousPage: false,
-            startCursor: "",
-            endCursor: "",
-          },
+          pairs: (res.data as any).pairs?.items as GhostPoolPair[],
+          pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
         },
       };
     }
@@ -900,13 +881,8 @@ export class GhostIndexer {
         status: "success",
         message: "Success",
         data: {
-          pairs: ((res.data as any).pairs?.items as GhostPoolPair[]) ?? [],
-          pageInfo: ((res.data as any).pairs?.pageInfo as PageInfo) ?? {
-            hasNextPage: true,
-            hasPreviousPage: false,
-            startCursor: "",
-            endCursor: "",
-          },
+          pairs: (res.data as any).pairs?.items as GhostPoolPair[],
+          pageInfo: (res.data as any).pairs?.pageInfo as PageInfo,
         },
       };
     }
