@@ -1,10 +1,6 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable */
-
-import { Wallet } from "@rainbow-me/rainbowkit";
 import { createConnector } from "wagmi";
 import { injected } from "wagmi/connectors";
-
 
 function getExplicitInjectedProvider(flag) {
   if (typeof window === "undefined" || typeof window.ethereum === "undefined")
@@ -17,8 +13,7 @@ function getExplicitInjectedProvider(flag) {
     : void 0;
 }
 function getWindowProviderNamespace(namespace) {
-  const providerSearch = (provider 
-    , namespace2) => {
+  const providerSearch = (provider, namespace2) => {
     const [property, ...path] = namespace2.split(".");
     const _provider = provider[property];
     if (_provider) {
@@ -62,11 +57,7 @@ function createInjectedConnector(provider) {
     }));
   };
 }
-function getInjectedConnector({
-  flag,
-  namespace,
-  target,
-}) {
+function getInjectedConnector({ flag, namespace, target }) {
   const provider = target ? target : getInjectedProvider({ flag, namespace });
   return createInjectedConnector(provider);
 }

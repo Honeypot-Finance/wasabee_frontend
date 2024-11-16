@@ -23,7 +23,6 @@ class Swap {
   deadline: number = 20;
   price: BigNumber | null = null;
   needApprove: boolean = false;
-
   routerToken: Token[] | undefined = undefined;
 
   getRouterToken = async () => {
