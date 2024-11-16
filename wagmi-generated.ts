@@ -3189,6 +3189,44 @@ export const algebraPositionManagerAbi = [
     stateMutability: 'payable',
   },
   { type: 'receive', stateMutability: 'payable' },
+  { type: 'error', inputs: [], name: 'alreadyInitialized' },
+  { type: 'error', inputs: [], name: 'arithmeticError' },
+  { type: 'error', inputs: [], name: 'bottomTickLowerThanMIN' },
+  { type: 'error', inputs: [], name: 'dynamicFeeActive' },
+  { type: 'error', inputs: [], name: 'dynamicFeeDisabled' },
+  { type: 'error', inputs: [], name: 'flashInsufficientPaid0' },
+  { type: 'error', inputs: [], name: 'flashInsufficientPaid1' },
+  { type: 'error', inputs: [], name: 'incorrectPluginFee' },
+  { type: 'error', inputs: [], name: 'insufficientInputAmount' },
+  { type: 'error', inputs: [], name: 'invalidAmountRequired' },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'expectedSelector', internalType: 'bytes4', type: 'bytes4' },
+    ],
+    name: 'invalidHookResponse',
+  },
+  { type: 'error', inputs: [], name: 'invalidLimitSqrtPrice' },
+  { type: 'error', inputs: [], name: 'invalidNewCommunityFee' },
+  { type: 'error', inputs: [], name: 'invalidNewTickSpacing' },
+  { type: 'error', inputs: [], name: 'liquidityAdd' },
+  { type: 'error', inputs: [], name: 'liquidityOverflow' },
+  { type: 'error', inputs: [], name: 'liquiditySub' },
+  { type: 'error', inputs: [], name: 'locked' },
+  { type: 'error', inputs: [], name: 'notAllowed' },
+  { type: 'error', inputs: [], name: 'notInitialized' },
+  { type: 'error', inputs: [], name: 'pluginIsNotConnected' },
+  { type: 'error', inputs: [], name: 'priceOutOfRange' },
+  { type: 'error', inputs: [], name: 'tickInvalidLinks' },
+  { type: 'error', inputs: [], name: 'tickIsNotInitialized' },
+  { type: 'error', inputs: [], name: 'tickIsNotSpaced' },
+  { type: 'error', inputs: [], name: 'tickOutOfRange' },
+  { type: 'error', inputs: [], name: 'topTickAboveMAX' },
+  { type: 'error', inputs: [], name: 'topTickLowerOrEqBottomTick' },
+  { type: 'error', inputs: [], name: 'transferFailed' },
+  { type: 'error', inputs: [], name: 'zeroAmountRequired' },
+  { type: 'error', inputs: [], name: 'zeroLiquidityActual' },
+  { type: 'error', inputs: [], name: 'zeroLiquidityDesired' },
 ] as const
 
 export const algebraPositionManagerAddress =
@@ -3597,6 +3635,44 @@ export const algebraRouterAbi = [
     stateMutability: 'payable',
   },
   { type: 'receive', stateMutability: 'payable' },
+  { type: 'error', inputs: [], name: 'alreadyInitialized' },
+  { type: 'error', inputs: [], name: 'arithmeticError' },
+  { type: 'error', inputs: [], name: 'bottomTickLowerThanMIN' },
+  { type: 'error', inputs: [], name: 'dynamicFeeActive' },
+  { type: 'error', inputs: [], name: 'dynamicFeeDisabled' },
+  { type: 'error', inputs: [], name: 'flashInsufficientPaid0' },
+  { type: 'error', inputs: [], name: 'flashInsufficientPaid1' },
+  { type: 'error', inputs: [], name: 'incorrectPluginFee' },
+  { type: 'error', inputs: [], name: 'insufficientInputAmount' },
+  { type: 'error', inputs: [], name: 'invalidAmountRequired' },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'expectedSelector', internalType: 'bytes4', type: 'bytes4' },
+    ],
+    name: 'invalidHookResponse',
+  },
+  { type: 'error', inputs: [], name: 'invalidLimitSqrtPrice' },
+  { type: 'error', inputs: [], name: 'invalidNewCommunityFee' },
+  { type: 'error', inputs: [], name: 'invalidNewTickSpacing' },
+  { type: 'error', inputs: [], name: 'liquidityAdd' },
+  { type: 'error', inputs: [], name: 'liquidityOverflow' },
+  { type: 'error', inputs: [], name: 'liquiditySub' },
+  { type: 'error', inputs: [], name: 'locked' },
+  { type: 'error', inputs: [], name: 'notAllowed' },
+  { type: 'error', inputs: [], name: 'notInitialized' },
+  { type: 'error', inputs: [], name: 'pluginIsNotConnected' },
+  { type: 'error', inputs: [], name: 'priceOutOfRange' },
+  { type: 'error', inputs: [], name: 'tickInvalidLinks' },
+  { type: 'error', inputs: [], name: 'tickIsNotInitialized' },
+  { type: 'error', inputs: [], name: 'tickIsNotSpaced' },
+  { type: 'error', inputs: [], name: 'tickOutOfRange' },
+  { type: 'error', inputs: [], name: 'topTickAboveMAX' },
+  { type: 'error', inputs: [], name: 'topTickLowerOrEqBottomTick' },
+  { type: 'error', inputs: [], name: 'transferFailed' },
+  { type: 'error', inputs: [], name: 'zeroAmountRequired' },
+  { type: 'error', inputs: [], name: 'zeroLiquidityActual' },
+  { type: 'error', inputs: [], name: 'zeroLiquidityDesired' },
 ] as const
 
 export const algebraRouterAddress =
@@ -3932,8 +4008,8 @@ export const algerbaQuoterV2Abi = [
     ],
     name: 'quoteExactInput',
     outputs: [
-      { name: 'amountOut', internalType: 'uint256', type: 'uint256' },
-      { name: 'amountIn', internalType: 'uint256', type: 'uint256' },
+      { name: 'amountOutList', internalType: 'uint256[]', type: 'uint256[]' },
+      { name: 'amountInList', internalType: 'uint256[]', type: 'uint256[]' },
       {
         name: 'sqrtPriceX96AfterList',
         internalType: 'uint160[]',
@@ -3988,8 +4064,8 @@ export const algerbaQuoterV2Abi = [
     ],
     name: 'quoteExactOutput',
     outputs: [
-      { name: 'amountOut', internalType: 'uint256', type: 'uint256' },
-      { name: 'amountIn', internalType: 'uint256', type: 'uint256' },
+      { name: 'amountOutList', internalType: 'uint256[]', type: 'uint256[]' },
+      { name: 'amountInList', internalType: 'uint256[]', type: 'uint256[]' },
       {
         name: 'sqrtPriceX96AfterList',
         internalType: 'uint160[]',
@@ -4069,19 +4145,19 @@ export const farmingCenterAbi = [
   },
   {
     type: 'function',
-    inputs: [
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'liquidityDelta', internalType: 'int256', type: 'int256' },
-    ],
-    name: 'applyLiquidityDelta',
-    outputs: [],
-    stateMutability: 'nonpayable',
+    inputs: [],
+    name: 'algebraPoolDeployer',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
   },
   {
     type: 'function',
-    inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
-    name: 'burnPosition',
-    outputs: [{ name: 'success', internalType: 'bool', type: 'bool' }],
+    inputs: [
+      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'int256', type: 'int256' },
+    ],
+    name: 'applyLiquidityDelta',
+    outputs: [],
     stateMutability: 'nonpayable',
   },
   {
@@ -4096,7 +4172,9 @@ export const farmingCenterAbi = [
       { name: 'amountRequested', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'claimReward',
-    outputs: [{ name: 'reward', internalType: 'uint256', type: 'uint256' }],
+    outputs: [
+      { name: 'rewardBalanceBefore', internalType: 'uint256', type: 'uint256' },
+    ],
     stateMutability: 'nonpayable',
   },
   {
@@ -4137,29 +4215,39 @@ export const farmingCenterAbi = [
   {
     type: 'function',
     inputs: [
-      { name: 'pool', internalType: 'contract IAlgebraPool', type: 'address' },
       { name: 'newVirtualPool', internalType: 'address', type: 'address' },
+      {
+        name: 'plugin',
+        internalType: 'contract IFarmingPlugin',
+        type: 'address',
+      },
     ],
-    name: 'connectVirtualPool',
+    name: 'connectVirtualPoolToPlugin',
     outputs: [],
     stateMutability: 'nonpayable',
   },
   {
     type: 'function',
-    inputs: [
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'liquidityDelta', internalType: 'uint256', type: 'uint256' },
+    inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
+    name: 'deposits',
+    outputs: [
+      { name: 'incentiveId', internalType: 'bytes32', type: 'bytes32' },
     ],
-    name: 'decreaseLiquidity',
-    outputs: [{ name: 'success', internalType: 'bool', type: 'bool' }],
-    stateMutability: 'nonpayable',
+    stateMutability: 'view',
   },
   {
     type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'deposits',
-    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
-    stateMutability: 'view',
+    inputs: [
+      { name: 'virtualPool', internalType: 'address', type: 'address' },
+      {
+        name: 'plugin',
+        internalType: 'contract IFarmingPlugin',
+        type: 'address',
+      },
+    ],
+    name: 'disconnectVirtualPoolFromPlugin',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -4240,7 +4328,7 @@ export const farmingCenterAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    inputs: [{ name: 'incentiveId', internalType: 'bytes32', type: 'bytes32' }],
     name: 'incentiveKeys',
     outputs: [
       {
@@ -4257,16 +4345,6 @@ export const farmingCenterAbi = [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
     ],
     stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'liquidityDelta', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'increaseLiquidity',
-    outputs: [],
-    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -4290,9 +4368,11 @@ export const farmingCenterAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    inputs: [{ name: 'poolAddress', internalType: 'address', type: 'address' }],
     name: 'virtualPoolAddresses',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [
+      { name: 'virtualPoolAddress', internalType: 'address', type: 'address' },
+    ],
     stateMutability: 'view',
   },
 ] as const
@@ -8440,6 +8520,16 @@ export const readFarmingCenter = /*#__PURE__*/ createReadContract({
 })
 
 /**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"algebraPoolDeployer"`
+ */
+export const readFarmingCenterAlgebraPoolDeployer =
+  /*#__PURE__*/ createReadContract({
+    abi: farmingCenterAbi,
+    address: farmingCenterAddress,
+    functionName: 'algebraPoolDeployer',
+  })
+
+/**
  * Wraps __{@link readContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"deposits"`
  */
 export const readFarmingCenterDeposits = /*#__PURE__*/ createReadContract({
@@ -8507,17 +8597,6 @@ export const writeFarmingCenterApplyLiquidityDelta =
   })
 
 /**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"burnPosition"`
- */
-export const writeFarmingCenterBurnPosition = /*#__PURE__*/ createWriteContract(
-  {
-    abi: farmingCenterAbi,
-    address: farmingCenterAddress,
-    functionName: 'burnPosition',
-  },
-)
-
-/**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"claimReward"`
  */
 export const writeFarmingCenterClaimReward = /*#__PURE__*/ createWriteContract({
@@ -8537,23 +8616,23 @@ export const writeFarmingCenterCollectRewards =
   })
 
 /**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"connectVirtualPool"`
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"connectVirtualPoolToPlugin"`
  */
-export const writeFarmingCenterConnectVirtualPool =
+export const writeFarmingCenterConnectVirtualPoolToPlugin =
   /*#__PURE__*/ createWriteContract({
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
-    functionName: 'connectVirtualPool',
+    functionName: 'connectVirtualPoolToPlugin',
   })
 
 /**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"decreaseLiquidity"`
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"disconnectVirtualPoolFromPlugin"`
  */
-export const writeFarmingCenterDecreaseLiquidity =
+export const writeFarmingCenterDisconnectVirtualPoolFromPlugin =
   /*#__PURE__*/ createWriteContract({
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
-    functionName: 'decreaseLiquidity',
+    functionName: 'disconnectVirtualPoolFromPlugin',
   })
 
 /**
@@ -8575,16 +8654,6 @@ export const writeFarmingCenterExitFarming = /*#__PURE__*/ createWriteContract({
   address: farmingCenterAddress,
   functionName: 'exitFarming',
 })
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"increaseLiquidity"`
- */
-export const writeFarmingCenterIncreaseLiquidity =
-  /*#__PURE__*/ createWriteContract({
-    abi: farmingCenterAbi,
-    address: farmingCenterAddress,
-    functionName: 'increaseLiquidity',
-  })
 
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"multicall"`
@@ -8614,16 +8683,6 @@ export const simulateFarmingCenterApplyLiquidityDelta =
   })
 
 /**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"burnPosition"`
- */
-export const simulateFarmingCenterBurnPosition =
-  /*#__PURE__*/ createSimulateContract({
-    abi: farmingCenterAbi,
-    address: farmingCenterAddress,
-    functionName: 'burnPosition',
-  })
-
-/**
  * Wraps __{@link simulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"claimReward"`
  */
 export const simulateFarmingCenterClaimReward =
@@ -8644,23 +8703,23 @@ export const simulateFarmingCenterCollectRewards =
   })
 
 /**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"connectVirtualPool"`
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"connectVirtualPoolToPlugin"`
  */
-export const simulateFarmingCenterConnectVirtualPool =
+export const simulateFarmingCenterConnectVirtualPoolToPlugin =
   /*#__PURE__*/ createSimulateContract({
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
-    functionName: 'connectVirtualPool',
+    functionName: 'connectVirtualPoolToPlugin',
   })
 
 /**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"decreaseLiquidity"`
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"disconnectVirtualPoolFromPlugin"`
  */
-export const simulateFarmingCenterDecreaseLiquidity =
+export const simulateFarmingCenterDisconnectVirtualPoolFromPlugin =
   /*#__PURE__*/ createSimulateContract({
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
-    functionName: 'decreaseLiquidity',
+    functionName: 'disconnectVirtualPoolFromPlugin',
   })
 
 /**
@@ -8681,16 +8740,6 @@ export const simulateFarmingCenterExitFarming =
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
     functionName: 'exitFarming',
-  })
-
-/**
- * Wraps __{@link simulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"increaseLiquidity"`
- */
-export const simulateFarmingCenterIncreaseLiquidity =
-  /*#__PURE__*/ createSimulateContract({
-    abi: farmingCenterAbi,
-    address: farmingCenterAddress,
-    functionName: 'increaseLiquidity',
   })
 
 /**
@@ -12914,6 +12963,16 @@ export const useReadFarmingCenter = /*#__PURE__*/ createUseReadContract({
 })
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"algebraPoolDeployer"`
+ */
+export const useReadFarmingCenterAlgebraPoolDeployer =
+  /*#__PURE__*/ createUseReadContract({
+    abi: farmingCenterAbi,
+    address: farmingCenterAddress,
+    functionName: 'algebraPoolDeployer',
+  })
+
+/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"deposits"`
  */
 export const useReadFarmingCenterDeposits = /*#__PURE__*/ createUseReadContract(
@@ -12983,16 +13042,6 @@ export const useWriteFarmingCenterApplyLiquidityDelta =
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"burnPosition"`
- */
-export const useWriteFarmingCenterBurnPosition =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: farmingCenterAbi,
-    address: farmingCenterAddress,
-    functionName: 'burnPosition',
-  })
-
-/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"claimReward"`
  */
 export const useWriteFarmingCenterClaimReward =
@@ -13013,23 +13062,23 @@ export const useWriteFarmingCenterCollectRewards =
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"connectVirtualPool"`
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"connectVirtualPoolToPlugin"`
  */
-export const useWriteFarmingCenterConnectVirtualPool =
+export const useWriteFarmingCenterConnectVirtualPoolToPlugin =
   /*#__PURE__*/ createUseWriteContract({
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
-    functionName: 'connectVirtualPool',
+    functionName: 'connectVirtualPoolToPlugin',
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"decreaseLiquidity"`
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"disconnectVirtualPoolFromPlugin"`
  */
-export const useWriteFarmingCenterDecreaseLiquidity =
+export const useWriteFarmingCenterDisconnectVirtualPoolFromPlugin =
   /*#__PURE__*/ createUseWriteContract({
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
-    functionName: 'decreaseLiquidity',
+    functionName: 'disconnectVirtualPoolFromPlugin',
   })
 
 /**
@@ -13050,16 +13099,6 @@ export const useWriteFarmingCenterExitFarming =
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
     functionName: 'exitFarming',
-  })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"increaseLiquidity"`
- */
-export const useWriteFarmingCenterIncreaseLiquidity =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: farmingCenterAbi,
-    address: farmingCenterAddress,
-    functionName: 'increaseLiquidity',
   })
 
 /**
@@ -13090,16 +13129,6 @@ export const useSimulateFarmingCenterApplyLiquidityDelta =
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"burnPosition"`
- */
-export const useSimulateFarmingCenterBurnPosition =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: farmingCenterAbi,
-    address: farmingCenterAddress,
-    functionName: 'burnPosition',
-  })
-
-/**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"claimReward"`
  */
 export const useSimulateFarmingCenterClaimReward =
@@ -13120,23 +13149,23 @@ export const useSimulateFarmingCenterCollectRewards =
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"connectVirtualPool"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"connectVirtualPoolToPlugin"`
  */
-export const useSimulateFarmingCenterConnectVirtualPool =
+export const useSimulateFarmingCenterConnectVirtualPoolToPlugin =
   /*#__PURE__*/ createUseSimulateContract({
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
-    functionName: 'connectVirtualPool',
+    functionName: 'connectVirtualPoolToPlugin',
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"decreaseLiquidity"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"disconnectVirtualPoolFromPlugin"`
  */
-export const useSimulateFarmingCenterDecreaseLiquidity =
+export const useSimulateFarmingCenterDisconnectVirtualPoolFromPlugin =
   /*#__PURE__*/ createUseSimulateContract({
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
-    functionName: 'decreaseLiquidity',
+    functionName: 'disconnectVirtualPoolFromPlugin',
   })
 
 /**
@@ -13157,16 +13186,6 @@ export const useSimulateFarmingCenterExitFarming =
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
     functionName: 'exitFarming',
-  })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"increaseLiquidity"`
- */
-export const useSimulateFarmingCenterIncreaseLiquidity =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: farmingCenterAbi,
-    address: farmingCenterAddress,
-    functionName: 'increaseLiquidity',
   })
 
 /**

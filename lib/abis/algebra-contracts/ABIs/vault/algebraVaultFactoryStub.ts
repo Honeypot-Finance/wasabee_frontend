@@ -1,9 +1,9 @@
-export const algebraPoolDeployerABI = [
+export const algebraVaultFactoryStubABI = [
   {
     inputs: [
       {
         internalType: "address",
-        name: "_factory",
+        name: "_algebraCommunityVault",
         type: "address",
       },
     ],
@@ -14,58 +14,67 @@ export const algebraPoolDeployerABI = [
     inputs: [
       {
         internalType: "address",
-        name: "plugin",
+        name: "",
         type: "address",
       },
       {
         internalType: "address",
-        name: "token0",
+        name: "",
         type: "address",
       },
       {
         internalType: "address",
-        name: "token1",
+        name: "",
         type: "address",
       },
       {
         internalType: "address",
-        name: "deployer",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "",
         type: "address",
       },
     ],
-    name: "deploy",
+    name: "createVaultForPool",
     outputs: [
       {
         internalType: "address",
-        name: "pool",
+        name: "",
         type: "address",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
-    name: "getDeployParameters",
+    name: "defaultAlgebraCommunityVault",
     outputs: [
       {
         internalType: "address",
-        name: "_plugin",
+        name: "",
         type: "address",
       },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
       {
         internalType: "address",
-        name: "_factory",
+        name: "",
         type: "address",
       },
+    ],
+    name: "getVaultForPool",
+    outputs: [
       {
         internalType: "address",
-        name: "_token0",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_token1",
+        name: "",
         type: "address",
       },
     ],

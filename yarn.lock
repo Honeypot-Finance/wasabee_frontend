@@ -562,9 +562,9 @@
     preact "^10.16.0"
 
 "@cryptoalgebra/sdk@npm:@rabbitblood/intergral-sdk-hpot":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@rabbitblood/intergral-sdk-hpot/-/intergral-sdk-hpot-1.0.6.tgz#85ba40adae905e6e9e7c9936efd05723eba02022"
-  integrity sha512-GAv+jLhPU9sSIuqATykOkAU6F8dfEaro5iGxecWiGpVo+a3S6lycbYev1jPPiW9a1l/nLRNDBSAOS47uSFmTIQ==
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@rabbitblood/intergral-sdk-hpot/-/intergral-sdk-hpot-1.0.8.tgz#7e101e230cdcc393bbd0ef6a6756a4e3004012af"
+  integrity sha512-FwXd0Yp8XzG6D8Xa1JJqt9df8XO2VkqmzLVrisiIT7vSuUcS9sX93a01pZXuZL570NHxUdR8ArJfMa5yBD0uZA==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/address" "^5.7.0"
