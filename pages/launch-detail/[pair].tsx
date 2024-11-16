@@ -914,8 +914,8 @@ const MemeView = observer(() => {
             <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
               <Image
                 alt={state.pair.value?.launchedToken?.name || "honey"}
-                width={44}
-                height={44}
+                width={state.pair.value?.logoUrl ? 77 : 44}
+                height={state.pair.value?.logoUrl ? 77 : 44}
                 className="rounded-full hidden md:inline-block"
                 src={
                   !!state.pair.value?.logoUrl
