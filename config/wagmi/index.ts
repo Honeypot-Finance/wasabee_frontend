@@ -1,5 +1,6 @@
 import { networks } from "@/services/chain";
 import { connectorsForWallets, getDefaultConfig } from "@rainbow-me/rainbowkit";
+import { berasigWallet } from "./berasigWallet";
 
 import {
   rainbowWallet,
@@ -14,7 +15,6 @@ import { holdstationWallet } from "./holdstationWallet";
 //import { capsuleWallet } from "./capsualWallet";
 
 const pId = "1d1c8b5204bfbd57502685fc0934a57d";
-//for users without bitget wallet
 let customWallets = [
   metaMaskWallet,
   rainbowWallet,
@@ -22,6 +22,7 @@ let customWallets = [
   bitgetWallet,
   okxWallet,
   holdstationWallet,
+  berasigWallet,
   //capsuleWallet
 ];
 // if(!window.bitkeep){

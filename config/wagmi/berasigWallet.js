@@ -57,32 +57,22 @@ function createInjectedConnector(provider) {
     }));
   };
 }
+
 function getInjectedConnector({ flag, namespace, target }) {
   const provider = target ? target : getInjectedProvider({ flag, namespace });
   return createInjectedConnector(provider);
 }
 
-export const holdstationWallet = ({ projectId }) => ({
-  id: "holdstation",
-  name: "Holdstation",
-  iconUrl: "/images/partners/holdstation.png",
-  iconBackground: "#0c2f78",
+export const berasigWallet = ({ projectId }) => ({
+  id: "berasig",
+  name: "BeraSig",
+  iconUrl:
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRB7Gd87ZokN5jI0VaRS2XEzM6C2m5KKHLrng&s",
+  iconBackground: "#000000",
+  installed: typeof window !== "undefined" && !!window.berasig,
   downloadUrls: {
-    android:
-      "https://play.google.com/store/apps/details?id=io.holdstation&pli=1",
-    ios: "https://apps.apple.com/us/app/holdstation-web3-wallet/id6444925618",
-    qrCode:
-      "https://holdstation.com/_next/image?url=%2Flogo%2Flogo-scan.png&w=3840&q=75",
+    chrome:
+      "https://chromewebstore.google.com/detail/berasig/ckedkkegjbflcfblcjklibnedmfjppbj",
   },
-  mobile: {
-    getUri: void 0,
-  },
-  qrCode: {
-    getUri: (uri) => uri,
-    instructions: {
-      learnMoreUrl: "https://holdstation.com/",
-      steps: [],
-    },
-  },
-  createConnector: getInjectedConnector({ namespace: "ethereum" }),
+  createConnector: getInjectedConnector({ namespace: "berasig.ethereum" }),
 });
