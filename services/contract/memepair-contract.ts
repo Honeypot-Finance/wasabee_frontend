@@ -12,12 +12,13 @@ import { trpcClient } from "@/lib/trpc";
 import { ZodError } from "zod";
 import { statusTextToNumber } from "../launchpad";
 import { BaseLaunchContract } from "./base-launch-contract";
+import { pot2PumpPairABI } from "@/lib/abis/Pot2Pump/pot2PumpPair";
 
 export class MemePairContract implements BaseLaunchContract {
   databaseId: number | undefined = undefined;
   address = "";
   name: string = "";
-  abi = MemePairABI.abi;
+  abi = pot2PumpPairABI;
   raiseToken: Token | undefined = undefined;
   launchedToken: Token | undefined = undefined;
   depositedRaisedTokenWithoutDecimals: BigNumber | null = null;
