@@ -120,9 +120,8 @@ export const SwapCard = observer(() => {
                   max: swap.fromToken?.balance.toNumber(),
                   min: 0,
                   isInvalid:
-                    (Number(swap.fromAmount) >
-                      (swap.fromToken as Token)?.balance?.toNumber() ??
-                      0) ||
+                    Number(swap.fromAmount) >
+                      (swap.fromToken as Token)?.balance?.toNumber() ||
                     Number(swap.fromAmount) < 0,
                   errorMessage: "Insufficient balance",
                   onClear: () => {
