@@ -7,27 +7,18 @@ import { Button } from "@/components/button";
 import { Token } from "@/services/contract/token";
 import { SpinnerContainer } from "../Spinner";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { isEthAddress } from "@/lib/address";
-import { useAccount } from "wagmi";
 import { wallet } from "@/services/wallet";
 import { amountFormatted } from "../../lib/format";
 import { AmountFormat } from "../AmountFormat";
 import ChartData from "../svg/chartData";
 import { liquidity } from "@/services/liquidity";
 import { chart } from "@/services/chart";
-import LoadingDisplay, {
-  LoadingContainer,
-} from "../LoadingDisplay/LoadingDisplay";
-import { trpc, trpcClient } from "@/lib/trpc";
-import { GhostLaunchPair } from "@/services/indexer/indexerTypes";
+import { LoadingContainer } from "../LoadingDisplay/LoadingDisplay";
 import { ItemSelect, SelectItem, SelectState } from "../ItemSelect";
-import { Input, Slider, Tooltip } from "@nextui-org/react";
+import { Slider } from "@nextui-org/react";
 import Image from "next/image";
-import { delay } from "lodash";
-import { LuOption } from "react-icons/lu";
-import { IoOptions } from "react-icons/io5";
-import { SlOptions } from "react-icons/sl";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import TokenLogo from "../TokenLogo/TokenLogo";
 import { Slippage } from "./Slippage";
@@ -101,7 +92,7 @@ export const SwapCard = observer(() => {
 
   return (
     <SpinnerContainer
-      className="flex flex-1 justify-around items-center max-w-[574px]"
+      className="flex flex-1 justify-around items-center lg:max-w-[574px]"
       isLoading={false}
     >
       <div className=" flex flex-1 flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all">

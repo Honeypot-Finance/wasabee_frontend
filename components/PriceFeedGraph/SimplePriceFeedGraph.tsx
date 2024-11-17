@@ -1,25 +1,15 @@
-import { trpcClient } from "@/lib/trpc";
-import { ChartData } from "@/public/static/charting_library/charting_library";
-import { chart, chartColorThemes, chartTimeRanges } from "@/services/chart";
+import { chart, chartTimeRanges } from "@/services/chart";
 import { PairContract } from "@/services/contract/pair-contract";
-import { Token } from "@/services/contract/token";
-import { liquidity } from "@/services/liquidity";
 import { swap } from "@/services/swap";
-import { wallet } from "@/services/wallet";
 import { Button, cn } from "@nextui-org/react";
 import { ApexOptions } from "apexcharts";
 import dayjs from "dayjs";
-import { set } from "lodash";
 import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { FaSortDown, FaSortUp, FaSpinner } from "react-icons/fa";
-import CardContianer from "../CardContianer/CardContianer";
-import { BiDownArrow, BiDownArrowAlt, BiDownvote } from "react-icons/bi";
-import { IoArrowDown, IoCaretDown, IoCaretUp } from "react-icons/io5";
+import { FaSpinner } from "react-icons/fa";
+import { IoCaretDown, IoCaretUp } from "react-icons/io5";
 import HoneyStickSvg from "../svg/HoneyStick";
-import Link from "next/link";
-import Image from "next/image";
 import TokenLogo from "../TokenLogo/TokenLogo";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
@@ -27,9 +17,7 @@ const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-interface Props {}
-
-export const SimplePriceFeedGraph = observer((props: Props) => {
+export const SimplePriceFeedGraph = observer(() => {
   const [state, setState] = useState<{
     options: ApexOptions;
     series: ApexAxisChartSeries;
@@ -213,7 +201,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
         });
       });
     }
-  }, [chart.chartTarget, chart.range, chart.chartLabel]);
+  }, [state]);
 
   return (
     <>

@@ -1,8 +1,7 @@
 import { useEffect } from "react";
-import { Footer } from "./footer";
 import { Header } from "./header";
 import { useRouter } from "next/router";
-import { useAccount, useConnectorClient } from "wagmi";
+import { useAccount } from "wagmi";
 import { networksMap } from "@/services/chain";
 import LaunchHeader from "./LaunchHeader";
 import { cn } from "@/lib/tailwindcss";
@@ -11,7 +10,6 @@ import ConfettiComponent from "../atoms/Confetti/Confetti";
 import PopOverModal from "../PopOverModal/PopOverModal";
 import { trpcClient } from "@/lib/trpc";
 import { popmodal } from "@/services/popmodal";
-import Link from "next/link";
 import { metadata } from "@/config/metadata";
 
 export const Layout = ({
