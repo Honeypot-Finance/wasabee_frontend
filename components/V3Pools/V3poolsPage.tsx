@@ -1,4 +1,3 @@
-import { algebraFactoryABI } from "@/lib/abis/algebra-contracts/ABIs";
 import pools from "@/pages/pools";
 import { wallet } from "@/services/wallet";
 import { useEffect, useState } from "react";
@@ -6,7 +5,8 @@ import { parseAbiItem, decodeEventLog } from "viem";
 import { usePublicClient } from "wagmi";
 import PoolLiquidityCardV3 from "../PoolLiquidityCard/PoolLiquidityCardV3";
 import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
-
+import { algebraFactoryABI } from "@/lib/abis/algebra-contracts/ABIs";
+import { algebraFactoryAddress } from "@/wagmi-generated";
 export function V3PoolsPage() {
   const pools = usePoolsList();
   return (
@@ -27,11 +27,10 @@ export function usePoolsList() {
 
   useEffect(() => {
     if (!wallet.isInit || !publicClient) return;
-    console.log(wallet.currentChain.contracts.algebraFactory);
 
     publicClient
       .getContractEvents({
-        address: wallet.currentChain.contracts.algebraFactory as `0x${string}`,
+        address: algebraFactoryAddress,
         eventName: "Pool",
         abi: algebraFactoryABI,
         fromBlock: "earliest",
