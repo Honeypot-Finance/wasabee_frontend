@@ -87,9 +87,9 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
       yaxis: {
         labels: {
           formatter: function (val) {
-            return val?.toFixed(5);
+            return val?.toFixed(3);
           },
-          align: "right",
+          // align: "right",
         },
         tickAmount: 4,
       },
@@ -230,10 +230,10 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
             </div>
             {chart.chartLabel}
           </span>
-          <div className="grid w-full gap-2 grid-cols-3 lg:grid-cols-6  items-center flex-wrap">
+          <div className="grid w-full gap-2 grid-cols-5 sm:grid-cols-3 lg:grid-cols-6  items-center flex-wrap">
             {Object.values(chartTimeRanges).map((range) => (
               <Button
-                className="min-w-[1rem] disabled:border-[red_2px_solid] "
+                className="min-w-[1rem] disabled:border-[red_2px_solid] text-xs sm:text-base p-0"
                 key={range.value}
                 isDisabled={chart.range === range.label || chart.isLoading}
                 onClick={() => {
@@ -247,8 +247,8 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
         </div>
         {chart.chartTarget ? (
           <>
-            <div className="w-full pl-4">
-              <span className="mr-2 text-[2rem]">
+            <div className="w-full pl-4 mt-4">
+              <span className="mr-2 text-[1rem] sm:text-[2rem]">
                 {(chart.currentPrice ?? 0) < 0.004 && "<"}
                 {chart.currentPrice?.toFixed(2)}
               </span>
