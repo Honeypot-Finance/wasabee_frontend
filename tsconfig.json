@@ -17,9 +17,15 @@
     "paths": {
       "@/*": ["./*"],
       "~/*": ["./*"],
-      "~/static/*": ["./public/*"] 
+      "~/static/*": ["./public/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "config/wagmi/holdstationWallet.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "config/wagmi/holdstationWallet.js",
+    "components/beravote/components/NewSpace/Steps/Step1.jsx"
+  ],
   "exclude": ["node_modules"]
 }

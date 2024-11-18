@@ -20,6 +20,8 @@ import { useAccount } from "wagmi";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { WrappedToastify } from "@/lib/wrappedToastify";
 import { SwapCard } from "@/components/SwapCard/MemeSwap";
+import { popmodal } from "@/services/popmodal";
+import Step1 from "@/components/beravote/components/NewSpace/Steps/Step1";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -233,6 +235,12 @@ const UpdateProjectModal = observer(
 
 const SuccessAction = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+    const openCreateVotingSpaceModal = () => {
+      popmodal.openModal({
+        content: <Step1 currentStep={1} steps={1} handleNext={undefined} />,
+      });
+    };
+
     return (
       // <div className="flex gap-[16px] justify-center items-center flex-col lg:flex-row">
       //   {wallet.account != pair.provider && (
@@ -266,11 +274,21 @@ const SuccessAction = observer(
       //     </Button>{" "}
       //   </Link>
       // </div>
-      <SwapCard
-        noBoarder
-        inputAddress={pair.raiseToken?.address ?? ""}
-        outputAddress={pair.launchedToken?.address}
-      />
+      <>
+        <SwapCard
+          noBoarder
+          inputAddress={pair.raiseToken?.address ?? ""}
+          outputAddress={pair.launchedToken?.address}
+        />
+        <Button
+          className="w-full"
+          onClick={() => {
+            openCreateVotingSpaceModal();
+          }}
+        >
+          Create Voting Space
+        </Button>
+      </>
     );
   }
 );
