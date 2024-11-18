@@ -26,8 +26,8 @@ import BigNumber from "bignumber.js";
 import { useInterval } from "@/lib/hooks";
 
 export const SwapCard = observer(() => {
-  // const isInit = wallet.isInit && liquidity.isInit;
-  const isInit = true;
+  const isInit = wallet.isInit && liquidity.isInit;
+  // const isInit = true;
   const router = useRouter();
   const state = useLocalObservable(() => ({
     selectState: new SelectState({
@@ -57,34 +57,34 @@ export const SwapCard = observer(() => {
       return;
     }
 
-    // if (inputCurrency && isEthAddress(inputCurrency)) {
-    //   swap.setFromToken(
-    //     Token.getToken({
-    //       address: inputCurrency,
-    //     })
-    //   );
-    // } else {
-    //   swap.setFromToken(
-    //     Token.getToken({
-    //       address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
-    //       isNative: true,
-    //     })
-    //   );
-    // }
+    if (inputCurrency && isEthAddress(inputCurrency)) {
+      swap.setFromToken(
+        Token.getToken({
+          address: inputCurrency,
+        })
+      );
+    } else {
+      swap.setFromToken(
+        Token.getToken({
+          address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
+          isNative: true,
+        })
+      );
+    }
 
-    // if (outputCurrency && isEthAddress(outputCurrency)) {
-    //   swap.setToToken(
-    //     Token.getToken({
-    //       address: outputCurrency,
-    //     })
-    //   );
-    // } else {
-    //   swap.setToToken(
-    //     Token.getToken({
-    //       address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
-    //     })
-    //   );
-    // }
+    if (outputCurrency && isEthAddress(outputCurrency)) {
+      swap.setToToken(
+        Token.getToken({
+          address: outputCurrency,
+        })
+      );
+    } else {
+      swap.setToToken(
+        Token.getToken({
+          address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
+        })
+      );
+    }
   }, [inputCurrency, outputCurrency, isInit]);
 
   useInterval(() => {
@@ -97,7 +97,7 @@ export const SwapCard = observer(() => {
       isLoading={false}
     >
       <div className=" flex flex-1 flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all">
-        <LoadingContainer isLoading={!isInit}>
+        <LoadingContainer isLoading={false}>
           <>
             <div className="flex items-center justify-between w-full  text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px]">
               <span
