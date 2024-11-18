@@ -54,6 +54,9 @@ export const Layout = ({
     });
   }, []);
 
+  const allowedPaths = ["/swap"];
+  const currentPath = router.pathname;
+
   return (
     <div
       className={cn(
@@ -69,7 +72,7 @@ export const Layout = ({
       ) : (
         <Header />
       )}
-      {currentChain ? (
+      {currentChain || allowedPaths.includes(currentPath) ? (
         <div className=" px-[12px] sm:pt-[72px] pt-[24px] flex-1">
           {children}
         </div>

@@ -31,6 +31,8 @@ export class Wallet {
   publicClient!: PublicClient;
   isInit = false;
   get networksMap() {
+    console.log("networks", this.networks);
+
     return this.networks.reduce((acc, network) => {
       acc[network.chainId] = network;
       return acc;

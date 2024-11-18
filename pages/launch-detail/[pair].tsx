@@ -9,9 +9,6 @@ import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { wallet } from "@/services/wallet";
 import { Button } from "@/components/button";
 import Image from "next/image";
-import { amountFormatted, truncate } from "@/lib/format";
-import { Copy } from "@/components/copy";
-import { Skeleton } from "@nextui-org/skeleton";
 import {
   Modal,
   ModalBody,
@@ -27,14 +24,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { trpcClient } from "@/lib/trpc";
 import ProjectStatus from "@/components/atoms/TokenStatusDisplay/TokenStatus";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
-import { VscCopy } from "react-icons/vsc";
 import { useAccount } from "wagmi";
 import { chart } from "@/services/chart";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { WrappedToastify } from "@/lib/wrappedToastify";
-import Countdown from "react-countdown";
-import ProgressBar from "@/components/atoms/ProgressBar/ProgressBar";
-import BigNumber from "bignumber.js";
 import Action from "./componets/Action";
 import Tabs from "./componets/Tabs";
 import CountdownTimer from "./componets/Countdown";
@@ -43,6 +36,7 @@ import TokenRaised from "./componets/TokenRaised";
 import SaleProgress from "./componets/SaleProgress";
 import TokenAddress from "./componets/TokenAddress";
 import TokenDetails from "./componets/TokenDetails";
+import RankProject from "./componets/RankProject";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -484,38 +478,12 @@ const FtoView = observer(() => {
           />
 
           <hr />
-          <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
-          <div className="flex gap-5">
-            {Object.entries(votes).map(([key, value]) => {
-              return (
-                <div
-                  key={key}
-                  onClick={() => {
-                    if (!wallet.account || !state.pair.value?.address) return;
-
-                    trpcClient.projects.createOrUpdateProjectVotes
-                      .mutate({
-                        project_pair: state.pair.value?.address,
-                        wallet_address: wallet.account,
-                        vote: key.split("_")[0],
-                      })
-                      .then(() => {
-                        refreshVotes();
-                      });
-                  }}
-                  className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
-                >
-                  <p>
-                    {(key.split("_")[0] === "rocket" && "🚀") ||
-                      (key.split("_")[0] === "fire" && "🔥") ||
-                      (key.split("_")[0] === "poo" && "💩") ||
-                      (key.split("_")[0] === "flag" && "🚩")}
-                  </p>
-                  <p>{value}</p>
-                </div>
-              );
-            })}
-          </div>
+          <RankProject
+            votes={votes}
+            walletAccount={wallet.account}
+            projectAddress={pair?.address}
+            refreshVotes={refreshVotes}
+          />
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
           {pair && <Action pair={pair} />}
@@ -636,6 +604,8 @@ const MemeView = observer(() => {
     router,
   ]);
 
+  const pair = useMemo(() => state.pair.value, [state.pair.value]);
+
   useEffect(() => {
     if (!wallet.isInit || !pairAddress) {
       return;
@@ -648,15 +618,14 @@ const MemeView = observer(() => {
   }, [wallet.isInit, pairAddress]);
 
   useEffect(() => {
-    if (!state.pair.value?.launchedToken) {
+    if (!pair?.launchedToken) {
       return;
     }
     chart.setCurrencyCode("USD");
     chart.setTokenNumber(0);
-    chart.setChartTarget(state.pair.value.launchedToken);
-    chart.setChartLabel(state.pair.value.launchedToken?.displayName + "/USD");
-    console.log("chart", chart);
-  }, [state.pair.value?.launchedToken]);
+    chart.setChartTarget(pair.launchedToken);
+    chart.setChartLabel(pair.launchedToken?.displayName + "/USD");
+  }, [pair?.launchedToken]);
 
   function refreshVotes() {
     trpcClient.projects.getProjectVotes
@@ -665,8 +634,6 @@ const MemeView = observer(() => {
         setVotes(data);
       });
   }
-
-  const pair = useMemo(() => state.pair.value, [state.pair.value]);
 
   return (
     <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
@@ -752,38 +719,13 @@ const MemeView = observer(() => {
           />
 
           <hr />
-          <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
-          <div className="flex gap-5">
-            {Object.entries(votes).map(([key, value]) => {
-              return (
-                <div
-                  key={key}
-                  onClick={() => {
-                    if (!wallet.account || !state.pair.value?.address) return;
 
-                    trpcClient.projects.createOrUpdateProjectVotes
-                      .mutate({
-                        project_pair: state.pair.value?.address,
-                        wallet_address: wallet.account,
-                        vote: key.split("_")[0],
-                      })
-                      .then(() => {
-                        refreshVotes();
-                      });
-                  }}
-                  className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
-                >
-                  <p>
-                    {(key.split("_")[0] === "rocket" && "🚀") ||
-                      (key.split("_")[0] === "fire" && "🔥") ||
-                      (key.split("_")[0] === "poo" && "💩") ||
-                      (key.split("_")[0] === "flag" && "🚩")}
-                  </p>
-                  <p>{value}</p>
-                </div>
-              );
-            })}
-          </div>
+          <RankProject
+            votes={votes}
+            walletAccount={wallet.account}
+            projectAddress={pair?.address}
+            refreshVotes={refreshVotes}
+          />
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
           {pair && <Action pair={pair} />}

@@ -16,6 +16,7 @@ import { add, debounce, forEach } from "lodash";
 import dayjs from "dayjs";
 import { PageRequest, PairFilter } from "./indexer/indexerTypes";
 import { Address, zeroAddress } from "viem";
+import NetworkManager from "./network";
 
 class Liquidity {
   pairPage = new IndexerPaginationState<PairFilter, PairContract>({
@@ -215,11 +216,17 @@ class Liquidity {
   // });
 
   get tokens() {
+    const networkManager = NetworkManager.getInstance();
+    const currentChain = wallet.isInit
+      ? wallet.currentChain
+      : networkManager.getSelectedNetwork();
     const tokensMap = {
-      ...wallet.currentChain.validatedTokensInfo,
+      ...(currentChain?.validatedTokensInfo ?? {}),
     };
     const tokens = Object.values(tokensMap);
-    tokens.push(wallet.currentChain.nativeToken);
+    if (currentChain?.nativeToken) {      
+      tokens.push(currentChain.nativeToken);
+    }
     const sortedTokens = tokens.sort((a, b) => {
       const diff = b.priority - a.priority;
       if (diff === 0) {

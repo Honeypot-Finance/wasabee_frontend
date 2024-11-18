@@ -26,7 +26,8 @@ import BigNumber from "bignumber.js";
 import { useInterval } from "@/lib/hooks";
 
 export const SwapCard = observer(() => {
-  const isInit = wallet.isInit && liquidity.isInit;
+  // const isInit = wallet.isInit && liquidity.isInit;
+  const isInit = true;
   const router = useRouter();
   const state = useLocalObservable(() => ({
     selectState: new SelectState({
@@ -56,34 +57,34 @@ export const SwapCard = observer(() => {
       return;
     }
 
-    if (inputCurrency && isEthAddress(inputCurrency)) {
-      swap.setFromToken(
-        Token.getToken({
-          address: inputCurrency,
-        })
-      );
-    } else {
-      swap.setFromToken(
-        Token.getToken({
-          address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
-          isNative: true,
-        })
-      );
-    }
+    // if (inputCurrency && isEthAddress(inputCurrency)) {
+    //   swap.setFromToken(
+    //     Token.getToken({
+    //       address: inputCurrency,
+    //     })
+    //   );
+    // } else {
+    //   swap.setFromToken(
+    //     Token.getToken({
+    //       address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
+    //       isNative: true,
+    //     })
+    //   );
+    // }
 
-    if (outputCurrency && isEthAddress(outputCurrency)) {
-      swap.setToToken(
-        Token.getToken({
-          address: outputCurrency,
-        })
-      );
-    } else {
-      swap.setToToken(
-        Token.getToken({
-          address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
-        })
-      );
-    }
+    // if (outputCurrency && isEthAddress(outputCurrency)) {
+    //   swap.setToToken(
+    //     Token.getToken({
+    //       address: outputCurrency,
+    //     })
+    //   );
+    // } else {
+    //   swap.setToToken(
+    //     Token.getToken({
+    //       address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
+    //     })
+    //   );
+    // }
   }, [inputCurrency, outputCurrency, isInit]);
 
   useInterval(() => {

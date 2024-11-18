@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import { chart } from "./chart";
 import { zeroAddress } from "viem";
 import { networksMap } from "./chain";
+import NetworkManager from "./network";
 
 class Swap {
   fromToken: Token | undefined = undefined;
@@ -648,7 +649,11 @@ class Swap {
   };
 
   loadTokenRouterPairs = async (token: Token) => {
-    const routerTokens = Object.entries(wallet.currentChain.validatedTokensInfo)
+    const networkManager = NetworkManager.getInstance();
+    const currentChain = wallet.isInit
+      ? wallet.currentChain
+      : networkManager.getSelectedNetwork();
+    const routerTokens = Object.entries(currentChain?.validatedTokensInfo ?? {})
       .filter(([address, token]) => {
         return token.isRouterToken;
       })
