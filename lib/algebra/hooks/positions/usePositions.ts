@@ -58,6 +58,7 @@ function usePositionsFromTokenIds(tokenIds: any[] | undefined): {
 
   const positions = useMemo(() => {
     if (!isLoading && !isError && tokenIds && !error) {
+      // @ts-ignore
       return results
         ?.filter((v) => !v.error)
         .map((call, i) => {
@@ -87,6 +88,7 @@ function usePositionsFromTokenIds(tokenIds: any[] | undefined): {
         });
     }
     return undefined;
+    // @ts-ignore
   }, [isLoading, isError, error, results, tokenIds, account, refetch]);
 
   return useMemo(() => {

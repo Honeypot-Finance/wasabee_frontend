@@ -19,18 +19,17 @@ import {
   encodeSqrtRatioX96,
   TickMath,
 } from "@cryptoalgebra/sdk";
-
 import { getTickToPrice } from "@cryptoalgebra/sdk";
-
 import { useCallback, useMemo } from "react";
-import { Address, useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import { create } from "zustand";
 import {
   PoolState,
   PoolStateType,
   usePool,
 } from "@/lib/algebra/hooks/pools/usePool";
-import { PresetsType } from "@/types/presets";
+import { Address } from "viem";
+import { PresetsType } from "@/types/algebra/types/presets";
 
 export type FullRange = true;
 
@@ -255,12 +254,12 @@ export function useDerivedMintInfo(
   const { data: token0Balance } = useBalance({
     address: account,
     token: addressA,
-    watch: true,
+    //watch: true,
   });
   const { data: token1Balance } = useBalance({
     address: account,
     token: addressB,
-    watch: true,
+    //watch: true,
   });
 
   const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = {

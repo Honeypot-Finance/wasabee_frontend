@@ -118,10 +118,12 @@ const PresetTabs = ({ currencyA, currencyB, mintInfo }: RangeSidebarProps) => {
     <div className="flex h-fit w-fit bg-card rounded-3xl p-1">
       {presets.map((range) => (
         <Button
-          variant={preset === range.type ? "iconActive" : "icon"}
+          variant={preset === range.type.toString() ? "iconActive" : "icon"}
           size={"sm"}
           key={`preset-range-${range.title}`}
-          onClick={() => onPresetSelect(range)}
+          onClick={() =>
+            onPresetSelect({ ...range, type: range.type.toString() })
+          }
         >
           {range.title}
         </Button>

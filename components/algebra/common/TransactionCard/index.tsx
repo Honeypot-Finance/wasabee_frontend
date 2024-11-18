@@ -1,13 +1,16 @@
 import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
-import { truncateHash } from "@/utils/common/truncateHash";
 import { Address } from "viem";
 import CurrencyLogo from "../CurrencyLogo";
 import EtherScanLogo from "@/assets/etherscan-logo-circle.svg";
 import { Check, ExternalLinkIcon, X } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Transaction, TransactionType } from "@/state/pendingTransactionsStore";
 import Loader from "../Loader";
-import { FarmingPositionImg } from "@/components/farming/FarmingPositionImg";
+import { FarmingPositionImg } from "@/components/algebra/farming/FarmingPositionImg";
+import Link from "next/link";
+import {
+  TransactionType,
+  Transaction,
+} from "@/lib/algebra/state/pendingTransactionsStore";
+import { truncateHash } from "@/lib/algebra/utils/common/truncateHash";
 
 export const TransactionCard = ({
   hash,
@@ -22,7 +25,7 @@ export const TransactionCard = ({
   const txType = transaction.data.type;
 
   return (
-    <Link to={`https://holesky.etherscan.io/tx/${hash}`} target={"_blank"}>
+    <Link href={`https://holesky.etherscan.io/tx/${hash}`} target={"_blank"}>
       <li
         className="flex group h-16 justify-between items-center gap-4 w-full bg-card-dark rounded-3xl p-4 border border-border/60 hover:border-border hover:bg-card-dark/60 transition-all duration-200"
         key={hash}

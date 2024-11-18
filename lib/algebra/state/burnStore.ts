@@ -11,8 +11,9 @@ import {
   unwrappedToken,
 } from "@cryptoalgebra/sdk";
 import { useCallback, useMemo } from "react";
-import { Address, useAccount } from "wagmi";
+import { useAccount } from "wagmi";
 import { create } from "zustand";
+import { Address } from "viem";
 
 interface BurnState {
   readonly percent: number;

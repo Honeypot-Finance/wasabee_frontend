@@ -155,19 +155,19 @@ const LiquidityChart = ({
   useEffect(() => {
     if (preset === null) return;
     switch (preset) {
-      case Presets.FULL:
+      case Presets.FULL.toString():
         setZoom(10);
         break;
-      case Presets.NORMAL:
+      case Presets.NORMAL.toString():
         setZoom(25);
         break;
-      case Presets.RISK:
+      case Presets.RISK.toString():
         setZoom(30);
         break;
-      case Presets.SAFE:
+      case Presets.SAFE.toString():
         setZoom(15);
         break;
-      case Presets.STABLE:
+      case Presets.STABLE.toString():
         setZoom(40);
         break;
     }

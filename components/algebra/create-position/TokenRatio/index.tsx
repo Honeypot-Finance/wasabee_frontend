@@ -1,6 +1,6 @@
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
-import { IDerivedMintInfo } from "@/state/mintStore";
+import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
 import { useMemo } from "react";
 
 interface TokenRatioProps {

@@ -1,18 +1,18 @@
 import { useEffect } from "react";
-import { Farming } from "@/types/farming-info";
 import { ADDRESS_ZERO } from "@cryptoalgebra/sdk";
 import { useFarmHarvest } from "@/lib/algebra/hooks/farming/useFarmHarvest";
 import { useFarmUnstake } from "@/lib/algebra/hooks/farming/useFarmStake";
 import { useAccount } from "wagmi";
 import { Button } from "@/components/algebra/ui/button";
 import Loader from "@/components/algebra/common/Loader";
-import { Deposit } from "@/graphql/generated/graphql";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/algebra/ui/hover-card";
 import { useFarmingDepositRewardsEarned } from "@/lib/algebra/hooks/farming/useFarmingDepositRewardsEarned";
+import { Deposit } from "@/lib/algebra/graphql/generated/graphql";
+import { Farming } from "@/types/algebra/types/farming-info";
 
 interface ActiveFarmingCardProps {
   farming: Farming;
@@ -60,12 +60,12 @@ const ActiveFarmingCard = ({
     isSuccess: isHarvested,
   } = useFarmHarvest(farmingArgs);
 
-  const { onUnstake, isLoading: isUnstaking } = useFarmUnstake(farmingArgs);
+  const { isLoading: isUnstaking, onUnstakes } = useFarmUnstake(farmingArgs);
 
   const handleUnstake = async () => {
     if (!account) return;
-    if (!onUnstake) return;
-    onUnstake();
+    if (!onUnstakes) return;
+    onUnstakes();
   };
 
   const handleHarvest = async () => {

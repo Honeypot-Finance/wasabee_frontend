@@ -28,6 +28,7 @@ import {
 } from "@cryptoalgebra/sdk";
 import { ChevronDownIcon, ChevronRightIcon, ZapIcon } from "lucide-react";
 import { Fragment, useEffect, useMemo, useState } from "react";
+import { Address } from "viem";
 
 const SwapParams = () => {
   const {
@@ -51,12 +52,11 @@ const SwapParams = () => {
   const { dynamicFeePlugin } = usePoolPlugins(poolAddress);
 
   useEffect(() => {
-    if (!trade || !tradeState.fee) return undefined;
+    if (!trade || !trade.swaps || !tradeState.fee) return undefined;
 
     async function getFees() {
       const fees = [];
-
-      for (const route of trade.swaps) {
+      for (const route of trade!.swaps) {
         for (const pool of route.route.pools) {
           const address = computePoolAddress({
             tokenA: pool.token0,
@@ -81,15 +81,18 @@ const SwapParams = () => {
                 [
                   ALGEBRA_ROUTER,
                   ADDRESS_ZERO,
-                  isZeroToOne,
-                  trade.tradeType === TradeType.EXACT_INPUT
-                    ? trade?.inputAmount
-                    : trade?.outputAmount,
+                  //isZeroToOne,
+                  false,
+                  BigInt(
+                    trade!.tradeType === TradeType.EXACT_INPUT
+                      ? (trade?.inputAmount?.toExact() ?? 0)
+                      : (trade?.outputAmount?.toExact() ?? 0)
+                  ),
                   MAX_UINT128,
                   false,
                   "0x",
                 ],
-                { account: address }
+                { account: address as Address }
               )
               .then((v) => v.result as [string, number, number]);
           } catch (error) {

@@ -1,12 +1,12 @@
 import {
-    EternalFarming,
-    SinglePoolQuery,
-    TokenFieldsFragment,
-} from '@/graphql/generated/graphql';
+  EternalFarming,
+  SinglePoolQuery,
+  TokenFieldsFragment,
+} from "@/lib/algebra/graphql/generated/graphql";
 
 export interface Farming {
-    farming: EternalFarming;
-    rewardToken: TokenFieldsFragment;
-    bonusRewardToken: TokenFieldsFragment | null;
-    pool: SinglePoolQuery['pool'];
+  farming: EternalFarming;
+  rewardToken: TokenFieldsFragment;
+  bonusRewardToken: TokenFieldsFragment | null;
+  pool: SinglePoolQuery["pool"];
 }

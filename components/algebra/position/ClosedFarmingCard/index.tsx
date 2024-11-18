@@ -5,11 +5,11 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/algebra/ui/hover-card";
-import { EternalFarming } from "@/graphql/generated/graphql";
+import { EternalFarming } from "@/lib/algebra/graphql/generated/graphql";
 import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
 import { useFarmUnstake } from "@/lib/algebra/hooks/farming/useFarmStake";
 import { useFarmingDepositRewardsEarned } from "@/lib/algebra/hooks/farming/useFarmingDepositRewardsEarned";
-import { FormattedPosition } from "@/types/formatted-position";
+import { FormattedPosition } from "@/types/algebra/types/formatted-position";
 import { ADDRESS_ZERO } from "@cryptoalgebra/sdk";
 import { useAccount } from "wagmi";
 
@@ -62,7 +62,7 @@ const ClosedFarmingCard = ({
       ADDRESS_ZERO.toLowerCase() ||
     positionInEndedFarming.bonusRewardToken === null;
 
-  const { onUnstake, isLoading: isUnstaking } = useFarmUnstake(farmingArgs);
+  const { onUnstakes, isLoading: isUnstaking } = useFarmUnstake(farmingArgs);
 
   return (
     <div className="flex flex-col gap-6">
@@ -109,7 +109,7 @@ const ClosedFarmingCard = ({
           Ended
         </Button>
       </div>
-      <Button onClick={onUnstake} disabled={isUnstaking}>
+      <Button onClick={onUnstakes} disabled={isUnstaking}>
         {isUnstaking ? <Loader /> : "Exit from farming"}
       </Button>
     </div>

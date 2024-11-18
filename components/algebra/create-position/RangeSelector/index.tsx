@@ -1,6 +1,6 @@
-import { IDerivedMintInfo } from "@/state/mintStore";
+import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
 import { Bound, Currency, Price, Token } from "@cryptoalgebra/sdk";
-import { useMemo } from 'react';
+import { useMemo } from "react";
 import RangeSelectorPart from "../RangeSelectorPart";
 
 export interface RangeSelectorProps {
@@ -47,15 +47,14 @@ const RangeSelector = ({
     return isSorted ? priceUpper : priceLower?.invert();
   }, [isSorted, priceUpper, priceLower]);
 
-
   return (
     <>
       <div className="flex gap-4">
         <RangeSelectorPart
           value={
             mintInfo.ticksAtLimit[Bound.LOWER]
-              ? '0'
-              : leftPrice?.toSignificant(5) ?? ''
+              ? "0"
+              : (leftPrice?.toSignificant(5) ?? "")
           }
           onUserInput={onLeftRangeInput}
           width="100%"
@@ -63,23 +62,23 @@ const RangeSelector = ({
           increment={isSorted ? getIncrementLower : getDecrementUpper}
           decrementDisabled={mintInfo.ticksAtLimit[Bound.LOWER]}
           incrementDisabled={mintInfo.ticksAtLimit[Bound.LOWER]}
-          label={leftPrice ? `${currencyB?.symbol}` : '-'}
+          label={leftPrice ? `${currencyB?.symbol}` : "-"}
           initialPrice={mintInfo.price}
           disabled={disabled}
-          title={'Min price'}
+          title={"Min price"}
         />
         <RangeSelectorPart
           value={
             mintInfo.ticksAtLimit[Bound.UPPER]
-              ? '∞'
-              : rightPrice?.toSignificant(5) ?? ''
+              ? "∞"
+              : (rightPrice?.toSignificant(5) ?? "")
           }
           onUserInput={onRightRangeInput}
           decrement={isSorted ? getDecrementUpper : getIncrementLower}
           increment={isSorted ? getIncrementUpper : getDecrementLower}
           incrementDisabled={mintInfo.ticksAtLimit[Bound.UPPER]}
           decrementDisabled={mintInfo.ticksAtLimit[Bound.UPPER]}
-          label={rightPrice ? `${currencyB?.symbol}` : '-'}
+          label={rightPrice ? `${currencyB?.symbol}` : "-"}
           initialPrice={mintInfo.price}
           disabled={disabled}
           title={`Max price`}

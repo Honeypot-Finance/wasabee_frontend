@@ -32,7 +32,8 @@ export function useAllTokens(showNativeToken: boolean = true) {
           derivedMatic: 0,
         });
       }
-      return [...tokens].map(([, token]) => ({ ...token }));
+      // return [...tokens].map(([, token]) => ({ ...token }));
+      return Object.values(tokens).map((token) => ({ ...token }));
     }
 
     if (showNativeToken)
@@ -59,7 +60,8 @@ export function useAllTokens(showNativeToken: boolean = true) {
       });
     }
 
-    return [...tokens].map(([, token]) => ({ ...token }));
+    //return [...tokens].map(([, token]) => ({ ...token }));
+    return Object.values(tokens).map((token) => ({ ...token }));
   }, [allTokens, importedTokens, tokensBlackList, chainId, showNativeToken]);
 
   return useMemo(

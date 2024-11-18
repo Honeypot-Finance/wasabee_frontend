@@ -3,7 +3,6 @@ import CardContianer from "@/components/CardContianer/CardContianer";
 import { Layout } from "@/components/layout";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { LPCard } from "@/components/LPCard";
-import { LPCardv3 } from "@/components/LPCardv3";
 import { Swap } from "@/components/swap";
 import { liquidity } from "@/services/liquidity";
 import { wallet } from "@/services/wallet";
