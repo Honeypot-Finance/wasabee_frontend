@@ -6,7 +6,7 @@ import { ApexOptions } from "apexcharts";
 import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { IoCaretDown, IoCaretUp } from "react-icons/io5";
 import HoneyStickSvg from "../svg/HoneyStick";
@@ -41,6 +41,7 @@ export const SimplePriceFeedGraph = observer(() => {
         type: "area",
         zoom: {
           autoScaleYaxis: true,
+          allowMouseWheelZoom: false,
         },
         foreColor: chart.chartColors.textColor,
         toolbar: {
@@ -125,6 +126,19 @@ export const SimplePriceFeedGraph = observer(() => {
     },
   });
 
+  //update chart data once 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (chart.chartTarget) {
+        chart.updateCurrentPrice().then(() => {
+          updateChartData();
+        });
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [chart.chartTarget, chart.range, chart.chartLabel]);
+
   useEffect(() => {
     if (chart.chartTarget) {
       const tokenNum =
@@ -139,69 +153,79 @@ export const SimplePriceFeedGraph = observer(() => {
       chart.setTokenNumber(tokenNum);
       chart.setCurrencyCode(currencyCode);
 
-      chart.chartData.call().then(() => {
-        const chartColor =
-          chart.chartPricePercentageChange >= 0 ? "green" : "red";
-        chart.setChartColors(chartColor);
-
-        setState({
-          ...state,
-          series: [
-            {
-              data:
-                chart.chartData.value?.getBars?.c.map((price, index) => {
-                  return [
-                    (chart.chartData.value?.getBars.t[index] as number) * 1000,
-                    price as number,
-                  ];
-                }) ?? [],
-              color: chart.chartColors.labelColor,
-              name: "price",
-            },
-          ],
-          options: {
-            ...state.options,
-            xaxis: {
-              ...state.options.xaxis,
-              min: chart.timestampsByRange * 1000,
-              max: dayjs().unix() * 1000,
-              tickAmount: 6,
-            },
-            tooltip: {
-              ...state.options.tooltip,
-              x: {
-                ...state.options.tooltip?.x,
-                format: chart.range === "1D" ? "dd MMM HH" : "dd MMM HH:mm",
-              },
-            },
-            fill: {
-              ...state.options.fill,
-              gradient: {
-                ...state.options.fill?.gradient,
-                colorStops: [
-                  {
-                    offset: 0,
-                    color: chart.chartColors.labelColor,
-                    opacity: 1,
-                  },
-                  {
-                    offset: 70,
-                    color: chart.chartColors.labelColor,
-                    opacity: 0.5,
-                  },
-                  {
-                    offset: 100,
-                    color: chart.chartColors.labelColor,
-                    opacity: 0,
-                  },
-                ],
-              },
-            },
-          },
-        });
-      });
+      updateChartData();
     }
   }, [chart.chartTarget, chart.range, chart.chartLabel]);
+
+  const updateChartData = useCallback(() => {
+    chart.chartData.call().then(() => {
+      const chartColor =
+        chart.chartPricePercentageChange >= 0 ? "green" : "red";
+      chart.setChartColors(chartColor);
+
+      setState({
+        ...state,
+        series: [
+          {
+            data:
+              chart.chartData.value?.getBars?.c.map((price, index) => {
+                return [
+                  (chart.chartData.value?.getBars.t[index] as number) * 1000,
+                  price as number,
+                ];
+              }) ?? [],
+            color: chart.chartColors.labelColor,
+            name: "price",
+          },
+        ],
+        options: {
+          ...state.options,
+          xaxis: {
+            ...state.options.xaxis,
+            min: chart.timestampsByRange * 1000,
+            max: dayjs().unix() * 1000,
+            tickAmount: 6,
+          },
+          tooltip: {
+            ...state.options.tooltip,
+            x: {
+              ...state.options.tooltip?.x,
+              format: chart.range === "1D" ? "dd MMM HH" : "dd MMM HH:mm",
+            },
+          },
+          fill: {
+            ...state.options.fill,
+            gradient: {
+              ...state.options.fill?.gradient,
+              colorStops: [
+                {
+                  offset: 0,
+                  color: chart.chartColors.labelColor,
+                  opacity: 1,
+                },
+                {
+                  offset: 70,
+                  color: chart.chartColors.labelColor,
+                  opacity: 0.5,
+                },
+                {
+                  offset: 100,
+                  color: chart.chartColors.labelColor,
+                  opacity: 0,
+                },
+              ],
+            },
+          },
+        },
+      });
+    });
+  }, [
+    chart.chartTarget,
+    chart.range,
+    chart.chartLabel,
+    chart.chartData.value,
+    state,
+  ]);
 
   return (
     <>
