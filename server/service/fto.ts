@@ -177,6 +177,7 @@ export const ftoService = {
     projectName?: string;
     pair: string;
     chain_id: number;
+    beravote_space_id?: string;
     creator_api_key: string;
   }) => {
     if (
@@ -194,6 +195,7 @@ export const ftoService = {
       pair: data.pair,
       chain_id: data.chain_id,
       creator_api_key: data.creator_api_key,
+      beravote_space_id: data.beravote_space_id ?? "",
     });
   },
   createOrUpdateProjectVotes: async (data: {
@@ -284,7 +286,9 @@ export const ftoService = {
     token: string;
     chain_id: number;
   }) => {
-    return await pg`SELECT * FROM fto_project WHERE provider = ${data.token.toLowerCase()} and chain_id = ${data.chain_id}`;
+    return await pg`SELECT * FROM fto_project WHERE provider = ${data.token.toLowerCase()} and chain_id = ${
+      data.chain_id
+    }`;
   },
 };
 
@@ -315,10 +319,9 @@ const updateFtoProject = async (data: {
   creator_api_key: string;
   project_type?: string;
   provider?: string;
+  beravote_space_id?: string;
 }) => {
   try {
-    //console.log("data: ", data);
-
     const fieldsToUpdate = Object.entries(data)
       .filter(([key, value]) => {
         if (key === "creator_api_key" || key === "pair" || key === "chain_id") {
@@ -351,7 +354,9 @@ const revalidateProject = async (data: {
   creator_api_key?: string;
 }) => {
   const res =
-    await pg`SELECT * FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${data.chain_id}`;
+    await pg`SELECT * FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
+      data.chain_id
+    }`;
 
   const publicClient = createPublicClientByChain(chainsMap[data.chain_id]);
 
@@ -488,8 +493,9 @@ const selectFtoProject = async (data: { pair: string; chain_id: number }) => {
       provider: string;
       project_type: string;
       banner_url: string;
+      beravote_space_id: string;
     }[]
-  >`SELECT id,twitter,logo_url, telegram, website,description,name, provider, project_type,banner_url  FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
+  >`SELECT * FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
     data.chain_id
   }`;
   console.log("res: ", res);

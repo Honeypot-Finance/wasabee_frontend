@@ -7,13 +7,21 @@ import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { DiscussionArea } from "@/components/Discussion/DiscussionArea/DiscussionArea";
 import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
+import { Button } from "@/components/button";
+import BeraVoteForm from "@/components/beravote/components/NewSpace/Steps/BeraVoteForm";
+import { popmodal } from "@/services/popmodal";
+import Link from "next/link";
 
-const menuItems = [
+const defaultMenuItems = [
   { key: "info", label: "Token Info" },
   { key: "about", label: "About the Project" },
   { key: "txs", label: "Transactions" },
   { key: "comment", label: "Comments" },
-  // { key: "priceChart", label: "Price Chart" },
+];
+
+const successMenuItems = [
+  { key: "priceChart", label: "Price Chart" },
+  { key: "votingspace", label: "Voting Space" },
 ];
 
 const Tabs = ({
@@ -21,19 +29,20 @@ const Tabs = ({
 }: {
   pair: FtoPairContract | MemePairContract | null;
 }) => {
-  const [tab, setTab] = useState(menuItems[0].key);
+  const [tab, setTab] = useState(defaultMenuItems[0].key);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  if (
-    pair?.ftoStatusDisplay?.status === "success" &&
-    !menuItems.find((item) => item.key === "priceChart")
-  ) {
-    menuItems.push({ key: "priceChart", label: "Price Chart" });
+  if (pair?.ftoStatusDisplay?.status === "success") {
+    successMenuItems.forEach((item) => {
+      if (!defaultMenuItems.find((i) => i.key === item.key)) {
+        defaultMenuItems.push(item);
+      }
+    });
   }
   return (
     <>
       <div className="hidden sm:flex items-center gap-x-1 md:text-xs ml-3">
-        {menuItems.map((item) => (
+        {defaultMenuItems.map((item) => (
           <button
             key={item.key}
             onClick={() => setTab(item.key)}
@@ -55,7 +64,7 @@ const Tabs = ({
           onClick={() => setIsMenuOpen((isMenuOpen) => !isMenuOpen)}
           className="inline-flex justify-center w-full rounded-md shadow-sm px-4 py-2 bg-[#3B2712] text-[#A46617] text-sm font-medium hover:bg-[#9D5E28] hover:text-white focus:outline-none mb-2"
         >
-          {menuItems.find((item) => item.key === tab)?.label}
+          {defaultMenuItems.find((item) => item.key === tab)?.label}
         </button>
         <motion.div
           initial={{ height: 0, opacity: 0 }}
@@ -67,7 +76,7 @@ const Tabs = ({
           className="absolute left-0 w-56 rounded-md overflow-hidden z-10"
         >
           <div className="py-1 rounded-md z-10">
-            {menuItems.map((item) => (
+            {defaultMenuItems.map((item) => (
               <button
                 key={item.key}
                 onClick={() => {
@@ -89,7 +98,7 @@ const Tabs = ({
       </div>
 
       {/** Comment section */}
-      <CardContianer addtionalClassName={"block"}>
+      <CardContianer addtionalClassName={"block min-h-[50vh]"}>
         {tab === "info" && (
           <div className="flex flex-col w-full px-2 md:px-10">
             <h1 className="text-lg xl:text-4xl xl:py-16">Token Info</h1>
@@ -169,6 +178,39 @@ const Tabs = ({
             <div className="w-full">
               {chart.chartTarget && <SimplePriceFeedGraph />}
             </div>
+          </div>
+        )}
+        {tab === "votingspace" && (
+          <div className="flex flex-col justify-center items-center gap-2">
+            {pair &&
+              (pair.beravoteSpaceId ? (
+                <>
+                  <iframe
+                    className="w-full aspect-video"
+                    src={`https://beravote.com/space/${pair.beravoteSpaceId}`}
+                  >
+                    {" "}
+                  </iframe>
+                  <Link
+                    href={`https://beravote.com/space/${pair.beravoteSpaceId}`}
+                  >
+                    <Button className="w-full">View On Beravote</Button>
+                  </Link>
+                </>
+              ) : pair.isProvider ? (
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    popmodal.openModal({
+                      content: <BeraVoteForm pair={pair} />,
+                    });
+                  }}
+                >
+                  Create Voting Space
+                </Button>
+              ) : (
+                <h3>this project does not have voting space</h3>
+              ))}
           </div>
         )}
       </CardContianer>

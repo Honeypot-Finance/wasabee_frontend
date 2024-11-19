@@ -236,59 +236,13 @@ const UpdateProjectModal = observer(
 
 const SuccessAction = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    const openCreateVotingSpaceModal = () => {
-      popmodal.openModal({
-        content: <BeraVoteForm />,
-      });
-    };
-
     return (
-      // <div className="flex gap-[16px] justify-center items-center flex-col lg:flex-row">
-      //   {wallet.account != pair.provider && (
-      //     <Button
-      //       className="w-full"
-      //       isLoading={pair.claimLP.loading}
-      //       onClick={() => {
-      //         pair.claimLP.call();
-      //       }}
-      //       isDisabled={!pair.canClaimLP}
-      //     >
-      //       {pair.canClaimLP ? "Claim LP" : "Claim LP (Not available)"}
-      //     </Button>
-      //   )}
-
-      //   <Link
-      //     href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
-      //     className="text-black font-bold w-full"
-      //   >
-      //     <Button className="w-full">
-      //       <p>BUY Token</p>
-      //       <p>
-      //         <Copy
-      //           onClick={(e) => {
-      //             e.preventDefault();
-      //           }}
-      //           className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-      //           value={`${window.location.origin}/swap?inputCurrency=${pair.raiseToken?.address}&outputCurrency=${pair.launchedToken?.address}`}
-      //         ></Copy>
-      //       </p>
-      //     </Button>{" "}
-      //   </Link>
-      // </div>
       <>
         <SwapCard
           noBoarder
           inputAddress={pair.raiseToken?.address ?? ""}
           outputAddress={pair.launchedToken?.address}
         />
-        <Button
-          className="w-full"
-          onClick={() => {
-            openCreateVotingSpaceModal();
-          }}
-        >
-          Create Voting Space
-        </Button>
       </>
     );
   }

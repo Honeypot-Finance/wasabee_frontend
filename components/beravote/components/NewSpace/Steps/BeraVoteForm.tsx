@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { StyledButton } from "../../styled";
@@ -11,22 +11,17 @@ import { ethers } from "ethers";
 import APIAccessPayment from "@/lib/abis/beravote/abi/APIAccessPayment.json";
 import { wallet } from "@/services/wallet";
 import { WrappedToastify } from "@/lib/wrappedToastify";
+import { FtoPairContract } from "@/services/contract/ftopair-contract";
+import { MemePairContract } from "@/services/contract/memepair-contract";
+import Link from "next/link";
+import { observer } from "mobx-react-lite";
+import { trpcClient } from "@/lib/trpc";
 
 const payContract = "0x7833fE2A60123b1873a6EB3277506df1416F829a";
 const ethersProvider =
   typeof window !== "undefined" && window.ethereum
     ? new ethers.providers.Web3Provider(window.ethereum)
     : null;
-
-const validationSchema = Yup.object({
-  name: Yup.string()
-    .max(20, "The space name cannot exceed 20 characters")
-    .required("Name is required"),
-  description: Yup.string().required("Description is required"),
-  website: Yup.string().url("Please enter a valid website URL"),
-  twitter: Yup.string().url("Please enter a valid Twitter URL"),
-  forum: Yup.string().url("Please enter a valid forum URL"),
-});
 
 const createDaoSpace = async (requestBody: {
   data: {
@@ -98,7 +93,8 @@ const handleYes = async (
     twitter: any;
   },
   signer: ethers.Signer,
-  paymentFee: any
+  paymentFee: any,
+  pair: FtoPairContract | MemePairContract
 ) => {
   console.log("Form Data:", values);
   console.log("paymentFee", paymentFee);
@@ -115,6 +111,10 @@ const handleYes = async (
   const receipt = await tx.wait();
   if (receipt.status === 1) {
     console.log("Transaction succeeded:", receipt);
+    if (!pair.launchedToken) {
+      console.error("pair.launchedToken is undefined");
+      return;
+    }
     const timestamp = parseInt((Date.now() / 1000).toString());
     const pubkey = address;
 
@@ -129,14 +129,14 @@ const handleYes = async (
       twitter: values.twitter,
       assets: [
         {
-          symbol: values.ticker,
-          decimals: 8, // usually 18, WBTC is 8 decimals
-          votingThreshold: "100000000", // "1000000000000000000", // voting threshold 1 token (18 decimals)
+          symbol: pair.launchedToken.symbol,
+          decimals: pair.launchedToken.decimals,
+          votingThreshold: Math.pow(10, pair.launchedToken.decimals).toFixed(), // "1000000000000000000", // voting threshold 1 token (18 decimals)
           type: "erc20",
-          contract: "0x286F1C3f0323dB9c91D1E8f45c8DF2d065AB5fae",
+          contract: pair.launchedToken.address,
           chain: "berachain-b2",
           votingWeight: 1,
-          name: values.ticker,
+          name: pair.launchedToken.name,
           ss58Format: 80084,
         },
       ],
@@ -178,6 +178,16 @@ const handleYes = async (
         title: "Governance Space created: ",
         message: "https://beravote.com/space/" + result.data.spaceId,
       });
+      trpcClient.projects.createOrUpdateProjectInfo
+        .mutate({
+          chain_id: wallet.currentChainId,
+          pair: pair.address,
+          beravote_space_id: result.data.spaceId,
+        })
+        .then(() => {
+          //refresh page
+          window.location.reload();
+        });
     } else {
       WrappedToastify.error({ message: "Failed to create Governance space" });
       console.error("Failed to create DAO space:", result.error);
@@ -187,146 +197,108 @@ const handleYes = async (
   }
 };
 
-// Show confirmation dialog
-const showConfirmation = async (values: any) => {
-  // @ts-ignore
-  const signer = ethersProvider.getSigner();
-  const paymentContract = new ethers.Contract(
-    payContract,
-    APIAccessPayment,
-    signer
-  );
-  console.log(paymentContract);
-  const paymentFee = await paymentContract.accessFee();
-  confirmAlert({
-    title: "Allow governance for [" + values.name + "]",
-    buttons: [
-      {
-        label: "Create a Dao Space",
-        onClick: () => handleYes(values, signer, paymentFee),
-      },
-    ],
-  });
-};
+const BeraVoteForm = observer(
+  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+    const [logoBase64, setLogoBase64] = useState("");
+    const [paymentFee, setPaymentFee] = useState("");
 
-const BeraVoteForm = () => {
-  const [logoBase64, setLogoBase64] = useState("");
-  const handleImageUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64String = reader.result;
-      setLogoBase64(base64String?.toString() ?? "");
-    };
-    reader.readAsDataURL(file);
-  };
-  return (
-    <Formik
-      initialValues={{
-        name: "",
-        ticker: "",
-        description: "",
-        website: "",
-        twitter: "",
-        github: "",
-        doc: "",
-        forum: "",
-        logo: "",
-        createDaoSpace: true,
-      }}
-      validationSchema={validationSchema}
-      onSubmit={(values) => {
-        if (values.createDaoSpace === true) {
-          values.logo = logoBase64;
-          values.ticker = "WBTC"; // for example we override ticker, as ticker should came from the contract address, 0x286F1C3f0323dB9c91D1E8f45c8DF2d065AB5fae in our example
-          showConfirmation(values);
-        }
-      }}
-    >
-      {({ setFieldValue, values }) => (
-        <FormContainer>
-          <Form>
-            {/* Name */}
-            <FormInput
-              label="Name"
-              name="name"
-              placeholder="Please enter the name of space"
-            />
+    const signer = ethersProvider?.getSigner();
 
-            {/* Ticker */}
-            <FormInput
-              label="Ticker"
-              name="ticker"
-              placeholder="Please enter the meme token ticker"
-            />
+    //convert pair.logoUrl to base64
+    useEffect(() => {
+      if (pair.logoUrl) {
+        toDataURL(pair.logoUrl as string, (dataUrl: string) => {
+          console.log(dataUrl);
+          setLogoBase64(dataUrl);
+        });
+      }
+    }, [pair.logoUrl]);
 
-            {/* Description */}
-            <FormInput
-              label="Description"
-              name="description"
-              as="textarea"
-              placeholder="Please enter the project description"
-            />
+    useEffect(() => {
+      if (!signer) {
+        return;
+      }
+      const fetchPaymentFee = async () => {
+        const paymentContract = new ethers.Contract(
+          payContract,
+          APIAccessPayment,
+          signer
+        );
+        const fee = await paymentContract.accessFee();
+        setPaymentFee(fee);
+      };
+      fetchPaymentFee();
+    }, [signer]);
 
-            <LogoUploader
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                const file = event.currentTarget.files?.[0]
-                  ? event.currentTarget.files[0]
-                  : null;
-                setFieldValue("logo", file);
-                file && handleImageUpload(file);
-              }}
-              title="Image"
-            />
+    return (
+      <Formik
+        initialValues={{
+          name: pair.projectName ?? pair.launchedToken?.name,
+          ticker: pair.launchedToken?.symbol,
+          description: pair.description,
+          website: pair.website,
+          twitter: pair.twitter,
+          github: "",
+          doc: "",
+          forum: "",
+          logo: logoBase64,
+          createDaoSpace: true,
+        }}
+        onSubmit={(values) => {
+          console.log("Form Data:", values);
+          if (values.createDaoSpace === true) {
+            values.logo = logoBase64;
+            signer && handleYes(values, signer, paymentFee, pair);
+          }
+        }}
+      >
+        {({ setFieldValue, values }) => (
+          <FormContainer>
+            <Form>
+              <h2>What is voting space?</h2>
+              <p>
+                Voting space is a decentralized autonomous organization (DAO)
+                where users can vote on proposals and make decisions on the
+                project.{" "}
+                <Link href={"https://quicksnap.gitbook.io/beravote"}>
+                  learn more on beravote
+                </Link>
+              </p>
+              <p>
+                cost of dao creation:{" "}
+                {paymentFee && ethers.utils.formatEther(paymentFee)}
+                Bera
+              </p>
 
-            {/* Twitter (Optional) */}
-            <FormInput
-              label="Twitter Link"
-              name="twitter"
-              placeholder="Please enter the Twitter account URL"
-              type="url"
-            />
+              <pre>{JSON.stringify(values)}</pre>
 
-            {/* Forum (Optional) */}
-            <FormInput
-              label="Telegram Link"
-              name="forum"
-              placeholder="Please enter the forum link"
-              type="url"
-            />
-
-            {/* Website (Optional) */}
-            <FormInput
-              label="Website"
-              name="website"
-              placeholder="Please enter the website URL"
-              type="url"
-            />
-
-            {/* Create Dao Space Checkbox */}
-            <div style={{ marginTop: "20px" }}>
-              <Field
-                hidden
-                id="createDaoSpace"
-                name="createDaoSpace"
-                type="checkbox"
-                checked={true}
-              />
-              {/* <label htmlFor="createDaoSpace">
-                Create Dao Space (Optional)
-              </label> */}
-            </div>
-
-            {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
-
-            {/* Submit Button */}
-            <BtnWrapper>
-              <StyledButton type="submit">Create Coin</StyledButton>
-            </BtnWrapper>
-          </Form>
-        </FormContainer>
-      )}
-    </Formik>
-  );
-};
+              <BtnWrapper>
+                <StyledButton type="submit">Create Coin</StyledButton>
+              </BtnWrapper>
+            </Form>
+          </FormContainer>
+        )}
+      </Formik>
+    );
+  }
+);
 
 export default BeraVoteForm;
+
+function toDataURL(src: string, callback: (arg0: string) => void) {
+  var image = new Image();
+  image.crossOrigin = "Anonymous";
+  image.onload = function () {
+    var canvas = document.createElement("canvas");
+    var context = canvas.getContext("2d");
+    // @ts-ignore
+    canvas.height = this.naturalHeight;
+    // @ts-ignore
+    canvas.width = this.naturalWidth;
+    // @ts-ignore
+    context.drawImage(this, 0, 0);
+    var dataURL = canvas.toDataURL("image/jpeg");
+    callback(dataURL);
+  };
+  image.src = src;
+}
