@@ -22,6 +22,7 @@ import { WrappedToastify } from "@/lib/wrappedToastify";
 import { SwapCard } from "@/components/SwapCard/MemeSwap";
 import { popmodal } from "@/services/popmodal";
 import Step1 from "@/components/beravote/components/NewSpace/Steps/Step1";
+import BeraVoteForm from "@/components/beravote/components/NewSpace/Steps/BeraVoteForm";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -237,7 +238,7 @@ const SuccessAction = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     const openCreateVotingSpaceModal = () => {
       popmodal.openModal({
-        content: <Step1 currentStep={1} steps={1} handleNext={undefined} />,
+        content: <BeraVoteForm />,
       });
     };
 

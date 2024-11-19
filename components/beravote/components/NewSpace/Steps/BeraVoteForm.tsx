@@ -7,10 +7,10 @@ import { BtnWrapper, FormContainer } from "./styled";
 import LogoUploader from "../../logoUploader";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { ethers } from "ethers";
 import APIAccessPayment from "@/lib/abis/beravote/abi/APIAccessPayment.json";
+import { wallet } from "@/services/wallet";
+import { WrappedToastify } from "@/lib/wrappedToastify";
 
 const payContract = "0x7833fE2A60123b1873a6EB3277506df1416F829a";
 const ethersProvider =
@@ -28,7 +28,36 @@ const validationSchema = Yup.object({
   forum: Yup.string().url("Please enter a valid forum URL"),
 });
 
-const createDaoSpace = async (requestBody) => {
+const createDaoSpace = async (requestBody: {
+  data: {
+    name: any;
+    description: any;
+    symbol: any;
+    decimals: number; // usually 18, WBTC is 8 decimals
+    logo: any;
+    website: any;
+    forum: any;
+    twitter: any;
+    assets: {
+      symbol: any;
+      decimals: number; // usually 18, WBTC is 8 decimals
+      votingThreshold: string; // "1000000000000000000", // voting threshold 1 token (18 decimals)
+      type: string;
+      contract: string;
+      chain: string;
+      votingWeight: number;
+      name: any;
+      ss58Format: number;
+    }[];
+    weightStrategy: string[];
+    proposalThreshold: string;
+    pubkey: string;
+    address: string;
+    timestamp: number;
+  };
+  address: string;
+  signature: any;
+}) => {
   const cloudflareCorsProxy =
     "https://white-mud-e962.forgingblock.workers.dev/corsproxy/?apiurl=";
   try {
@@ -58,7 +87,19 @@ const createDaoSpace = async (requestBody) => {
   }
 };
 
-const handleYes = async (values, signer, paymentFee, handleNext) => {
+const handleYes = async (
+  values: {
+    name: any;
+    description: any;
+    ticker: any;
+    logo: any;
+    website: any;
+    forum: any;
+    twitter: any;
+  },
+  signer: ethers.Signer,
+  paymentFee: any
+) => {
   console.log("Form Data:", values);
   console.log("paymentFee", paymentFee);
   const address = await signer.getAddress();
@@ -73,17 +114,8 @@ const handleYes = async (values, signer, paymentFee, handleNext) => {
   });
   const receipt = await tx.wait();
   if (receipt.status === 1) {
-    toast.success("Transaction succeeded: Sign to create Governance Space", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
     console.log("Transaction succeeded:", receipt);
-    const timestamp = parseInt(Date.now() / 1000);
+    const timestamp = parseInt((Date.now() / 1000).toString());
     const pubkey = address;
 
     const data = {
@@ -119,7 +151,7 @@ const handleYes = async (values, signer, paymentFee, handleNext) => {
       ...data,
       timestamp: timestamp,
     });
-    function stringToHex(str) {
+    function stringToHex(str: string) {
       return (
         "0x" +
         Array.from(str)
@@ -142,48 +174,22 @@ const handleYes = async (values, signer, paymentFee, handleNext) => {
 
     if (result.success) {
       console.log("https://beravote.com/space/" + result.data.spaceId);
-      toast.success(
-        "Governance Space created: " +
-          "https://beravote.com/space/" +
-          result.data.spaceId,
-        {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        }
-      );
-    } else {
-      toast.error("Failed to create Governance space", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+      WrappedToastify.success({
+        title: "Governance Space created: ",
+        message: "https://beravote.com/space/" + result.data.spaceId,
       });
+    } else {
+      WrappedToastify.error({ message: "Failed to create Governance space" });
       console.error("Failed to create DAO space:", result.error);
     }
   } else {
-    toast.error("Transaction failed!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
     console.log("Transaction failed:", receipt);
   }
 };
 
 // Show confirmation dialog
-const showConfirmation = async (values, handleNext) => {
+const showConfirmation = async (values: any) => {
+  // @ts-ignore
   const signer = ethersProvider.getSigner();
   const paymentContract = new ethers.Contract(
     payContract,
@@ -194,33 +200,22 @@ const showConfirmation = async (values, handleNext) => {
   const paymentFee = await paymentContract.accessFee();
   confirmAlert({
     title: "Allow governance for [" + values.name + "]",
-    message: (
-      <div>
-        Tip: while optional, creating DAO space can boost engagement.
-        <br />
-        Creation Price is {ethers.utils.formatEther(paymentFee)} BERA
-      </div>
-    ),
     buttons: [
       {
         label: "Create a Dao Space",
-        onClick: () => handleYes(values, signer, paymentFee, handleNext),
+        onClick: () => handleYes(values, signer, paymentFee),
       },
-      // {
-      //   label: 'No',
-      //   onClick: () => console.log("User canceled")
-      // }
     ],
   });
 };
 
-const Step1 = ({ currentStep, steps }) => {
-  const [logoBase64, setLogoBase64] = useState(null);
-  const handleImageUpload = (file) => {
+const BeraVoteForm = () => {
+  const [logoBase64, setLogoBase64] = useState("");
+  const handleImageUpload = (file: File) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result;
-      setLogoBase64(base64String);
+      setLogoBase64(base64String?.toString() ?? "");
     };
     reader.readAsDataURL(file);
   };
@@ -235,25 +230,15 @@ const Step1 = ({ currentStep, steps }) => {
         github: "",
         doc: "",
         forum: "",
-        logo: null,
-        createDaoSpace: false,
+        logo: "",
+        createDaoSpace: true,
       }}
       validationSchema={validationSchema}
       onSubmit={(values) => {
         if (values.createDaoSpace === true) {
           values.logo = logoBase64;
           values.ticker = "WBTC"; // for example we override ticker, as ticker should came from the contract address, 0x286F1C3f0323dB9c91D1E8f45c8DF2d065AB5fae in our example
-          //showConfirmation(values, handleNext);
-        } else {
-          toast.error("We do nothing since user did not activated checkmark", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+          showConfirmation(values);
         }
       }}
     >
@@ -283,10 +268,12 @@ const Step1 = ({ currentStep, steps }) => {
             />
 
             <LogoUploader
-              onChange={(event) => {
-                const file = event.currentTarget.files[0];
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                const file = event.currentTarget.files?.[0]
+                  ? event.currentTarget.files[0]
+                  : null;
                 setFieldValue("logo", file);
-                handleImageUpload(file);
+                file && handleImageUpload(file);
               }}
               title="Image"
             />
@@ -318,27 +305,23 @@ const Step1 = ({ currentStep, steps }) => {
             {/* Create Dao Space Checkbox */}
             <div style={{ marginTop: "20px" }}>
               <Field
+                hidden
                 id="createDaoSpace"
                 name="createDaoSpace"
                 type="checkbox"
+                checked={true}
               />
-              <label htmlFor="createDaoSpace">
+              {/* <label htmlFor="createDaoSpace">
                 Create Dao Space (Optional)
-              </label>
+              </label> */}
             </div>
 
-            <pre>{JSON.stringify(values, null, 2)}</pre>
+            {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
 
             {/* Submit Button */}
             <BtnWrapper>
-              <StyledButton
-                type="submit"
-                enabled={currentStep === steps.length - 1}
-              >
-                Create Coin
-              </StyledButton>
+              <StyledButton type="submit">Create Coin</StyledButton>
             </BtnWrapper>
-            <ToastContainer />
           </Form>
         </FormContainer>
       )}
@@ -346,4 +329,4 @@ const Step1 = ({ currentStep, steps }) => {
   );
 };
 
-export default Step1;
+export default BeraVoteForm;

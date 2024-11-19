@@ -1,6 +1,5 @@
 import { Field } from "formik";
 import styled from "styled-components";
-import { p_14_normal } from "../../styles/textStyles";
 
 export const InputWrapper = styled.div`
   margin-bottom: 20px;
@@ -15,7 +14,6 @@ export const StyledLabel = styled.label`
 `;
 
 export const StyledField = styled(Field)`
-   ${p_14_normal};
   color: var(--white);
   box-sizing: border-box;
   padding: 12px 0;
