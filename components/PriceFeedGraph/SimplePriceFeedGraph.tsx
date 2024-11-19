@@ -201,7 +201,7 @@ export const SimplePriceFeedGraph = observer(() => {
         });
       });
     }
-  }, [state]);
+  }, [chart.chartTarget, chart.range, chart.chartLabel]);
 
   return (
     <>
