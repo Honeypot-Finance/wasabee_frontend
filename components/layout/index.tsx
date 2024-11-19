@@ -64,7 +64,7 @@ export const Layout = ({
         className
       )}
     >
-      <div className="w-full bg-[#F7931A]/40">
+      {/* <div className="w-full bg-[#F7931A]/40">
         <div className="mx-auto flex items-center justify-center gap-x-1">
           <span className="text-[#F7931A]">PHISHING WARNING: </span>
           <span>Please follow our X</span>
@@ -72,7 +72,7 @@ export const Layout = ({
             https://x.com/honeypotfinance
           </a>
         </div>
-      </div>
+      </div> */}
       <ConfettiComponent />
       <PopOverModal />
       {router.pathname.startsWith("/launch") ||
