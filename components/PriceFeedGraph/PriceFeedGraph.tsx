@@ -31,7 +31,7 @@ export default function PriceFeedGraph() {
             />
           </button>
         </div>
-        <div className="relative w-full h-full">
+        <div className="relative w-full h-full min-h-[425px]">
           {graph === "simple" && <SimplePriceFeedGraph />}
           {graph === "advanced" && <AdvancedPriceFeedGraph />}
         </div>
