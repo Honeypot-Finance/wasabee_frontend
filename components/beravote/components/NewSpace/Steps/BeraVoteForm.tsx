@@ -255,23 +255,29 @@ const BeraVoteForm = observer(
         {({ setFieldValue, values }) => (
           <FormContainer>
             <Form>
-              <h2>What is voting space?</h2>
-              <p>
-                Voting space is a decentralized autonomous organization (DAO)
-                where users can vote on proposals and make decisions on the
-                project.{" "}
-                <Link href={"https://quicksnap.gitbook.io/beravote"}>
-                  learn more on beravote
-                </Link>
-              </p>
-              <p>
-                cost of dao creation:{" "}
-                {paymentFee && ethers.utils.formatEther(paymentFee)}
-                Bera
-              </p>
+              <div className="flex flex-col w-full justify-center items-center gap-2">
+                <h2 className="text-xl">What is voting space?</h2>
+                <p>
+                  Voting space is a decentralized autonomous organization (DAO)
+                  where users can vote on proposals and make decisions on the
+                  project.{" "}
+                </p>
+                <p>
+                  <Link
+                    href={"https://quicksnap.gitbook.io/beravote"}
+                    className="text-yellow underline"
+                  >
+                    learn more on beravote
+                  </Link>
+                </p>
+                <p>
+                  cost of dao creation:{" "}
+                  {paymentFee && ethers.utils.formatEther(paymentFee)}
+                  Bera
+                </p>
 
-              <pre>{JSON.stringify(values)}</pre>
-
+                {/* <pre>{JSON.stringify(values)}</pre> */}
+              </div>
               <BtnWrapper>
                 <StyledButton type="submit">Create Coin</StyledButton>
               </BtnWrapper>
