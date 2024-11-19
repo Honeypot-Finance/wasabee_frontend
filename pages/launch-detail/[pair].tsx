@@ -50,6 +50,7 @@ import BigNumber from "bignumber.js";
 
 import Action from "./componets/Action";
 import Tabs from "./componets/Tabs";
+import RankProject from "./componets/RankProject";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
