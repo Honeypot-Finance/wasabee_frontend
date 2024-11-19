@@ -14,6 +14,7 @@ import { Input, Spinner } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
 import { share } from "@trpc/server/observable";
 import { waitForTransactionReceipt } from "@wagmi/core";
+import { hash } from "crypto";
 import { type } from "os";
 import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
@@ -36,6 +37,7 @@ type Props = {
   share: AssetToken;
   allowSell: boolean;
   poolAddress: Address;
+  refetchArgs: () => void;
 };
 
 const BuySellTabs = [
@@ -50,7 +52,13 @@ type SwapToken = {
 
 const client = createPublicClientByChain(berachainBartioTestnet);
 
-const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
+const BuySell = ({
+  asset,
+  share,
+  allowSell,
+  poolAddress,
+  refetchArgs,
+}: Props) => {
   const [actionTab, setActionTab] = useState<"buy" | "sell">("buy");
   const account = useAccount();
   const [isTxLoading, setIsTxLoading] = useState(false);
@@ -58,8 +66,6 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
     from: undefined,
     to: undefined,
   });
-
-  console.log(swapToken);
 
   const [tokens, setTokens] = useState<{
     asset: AssetToken;
@@ -195,44 +201,6 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
 
   const { writeContractAsync } = useWriteContract();
 
-  const handleWriteContract = async () => {
-    try {
-      let response;
-
-      if (actionTab === "buy") {
-        response = await writeContractAsync({
-          abi: LiquidityBootstrapPoolABI,
-          address: poolAddress,
-          functionName: "swapAssetsForExactShares",
-          args: [
-            parseUnits(swapToken?.to?.toString() || "", tokens!.share.decimals),
-            parseUnits(
-              swapToken?.from?.toString() || "",
-              tokens!.asset.decimals
-            ),
-            account.address as Address,
-          ],
-        });
-      } else {
-        response = await writeContractAsync({
-          abi: LiquidityBootstrapPoolABI,
-          address: poolAddress,
-          functionName: "swapSharesForExactAssets",
-          args: [
-            parseUnits(swapToken?.to?.toString() || "", tokens!.share.decimals),
-            parseUnits(
-              swapToken?.from?.toString() || "",
-              tokens!.asset.decimals
-            ),
-            account.address as Address,
-          ],
-        });
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
-  };
-
   const { data, refetch } = useMulticall3({
     queryKey: ["tokens", tokens?.asset.address],
     contractCallContext: [
@@ -289,7 +257,7 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
 
   const isSufficientBalance =
     +formatUnits(userAsset?.balanceOf ?? 0, userAsset?.decimals ?? 0) -
-      swapToken.from! >
+      (swapToken?.from ?? 0) >
     0;
 
   const isApproved = userAsset?.allowance === BigInt(0);
@@ -312,12 +280,67 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
         });
 
         await refetch();
+        WrappedToastify.success({ message: "Approved successfully" });
       } catch (e: any) {
         console.log(e);
-        WrappedToastify.error(e.message);
+        WrappedToastify.error({ message: "Approval Failed" });
       }
     }
     setIsTxLoading(false);
+  };
+
+  const handleWriteContract = async () => {
+    setIsTxLoading(true);
+    try {
+      let hash;
+
+      if (actionTab === "buy") {
+        hash = await writeContractAsync({
+          abi: LiquidityBootstrapPoolABI,
+          address: poolAddress,
+          functionName: "swapExactAssetsForShares",
+          args: [
+            parseUnits(
+              swapToken?.from?.toString() || "",
+              tokens!.asset.decimals
+            ),
+            parseUnits(swapToken?.to?.toString() || "", tokens!.share.decimals),
+            account.address as Address,
+          ],
+        });
+      } else {
+        hash = await writeContractAsync({
+          abi: LiquidityBootstrapPoolABI,
+          address: poolAddress,
+          functionName: "swapExactAssetsForShares",
+          args: [
+            parseUnits(
+              swapToken?.from?.toString() || "",
+              tokens!.asset.decimals
+            ),
+            parseUnits(swapToken?.to?.toString() || "", tokens!.share.decimals),
+            account.address as Address,
+          ],
+        });
+      }
+      if (hash) {
+        await waitForTransactionReceipt(config, {
+          hash: hash,
+          confirmations: 2,
+          timeout: 1000 * 60 * 5,
+        });
+
+        WrappedToastify.success({ message: "Transaction Successfully" });
+      }
+    } catch (error: any) {
+      console.log(error);
+      WrappedToastify.error({
+        message: "Something went wrong! Please try again!",
+      });
+    }
+    setIsTxLoading(false);
+    refetchArgs();
+    setSwapToken({ from: undefined, to: undefined });
   };
 
   return (
@@ -358,7 +381,7 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
                   "px-0 bg-transparent data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent",
                 input: "leading-6 text-[21px] font-bold",
               }}
-              value={swapToken.from}
+              value={swapToken.from ?? ""}
               onChange={({ target }) =>
                 handleChangeTokenValue(Number(target.value), "from")
               }
@@ -393,7 +416,7 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
                   "px-0 bg-transparent data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent",
                 input: "leading-6 text-[21px] font-bold",
               }}
-              value={swapToken.to}
+              value={swapToken.to ?? ""}
               onChange={({ target }) =>
                 handleChangeTokenValue(Number(target.value), "to")
               }
@@ -424,7 +447,7 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
           </Button>
         )}
         <div className="text-sm cursor-pointer leading-3 font-normal text-center text-white/50">
-          Add token name to wallet
+          {/* Add token name to wallet */}
         </div>
       </div>
     </div>

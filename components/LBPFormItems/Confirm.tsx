@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { Button } from "../button";
 import { useFormContext } from "react-hook-form";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useReadContract,
+  useTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import {
   decodeEventLog,
@@ -21,6 +26,7 @@ import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import useMulticall3 from "../hooks/useMulticall3";
 import { formatErc20Data } from "@/services/lib/helper";
+import { result } from "lodash";
 type FomatedTokenType = {
   allowance: bigint;
   balanceOf: bigint;
@@ -225,8 +231,6 @@ const Confirm = (props: Props) => {
       projectTokenQuantity >=
     0;
 
-  console.log(isProjectTokenApproved, isAssetTokenApproved);
-
   const handleApprovalTokens = async () => {
     const { assetTokenAddress, projectToken } = getValues();
     try {
@@ -235,11 +239,6 @@ const Confirm = (props: Props) => {
         loading: true,
         status: "pending",
       }));
-
-      console.log(
-        formatUnits(formatedAssetToken.allowance, formatedAssetToken.decimals)
-      );
-
       if (!isAssetTokenApproved) {
         const txHash1 = await writeContractAsync({
           abi: ERC20ABI,
@@ -272,7 +271,7 @@ const Confirm = (props: Props) => {
 
   const handleCreatePool = async () => {
     const {
-      assetTokenAddress,
+      // assetTokenAddress,
       projectToken,
       lbpType,
       startTime,
@@ -288,6 +287,8 @@ const Confirm = (props: Props) => {
     if (account.address) {
       try {
         setPoolLoading(true);
+
+        const salt = projectToken + assetTokenAddress;
 
         const txHash = await writeContractAsync({
           abi: LiquidityBootstrapPoolFactoryABI,
@@ -311,31 +312,41 @@ const Confirm = (props: Props) => {
               weightStart: parseEther(`${startWeight / 100}`),
               weightEnd: parseEther(`${endWeight / 100}`),
               maxSharePrice: maxUint256,
-              maxTotalAssetsIn: maxUint256,
+              maxTotalAssetsIn: BigInt(0),
               maxSharesOut: maxUint256,
-              maxTotalAssetsInDeviation: 0,
+              maxTotalAssetsInDeviation: 10,
               vestCliff: 0,
               vestEnd: 0,
               virtualAssets: BigInt(0),
             },
-            parseUnits(`${projectTokenQuantity}`, 18),
-            parseUnits(`${assetTokenQuantity}`, 18),
-            keccak256(projectToken),
+            parseUnits(
+              `${projectTokenQuantity}`,
+              formatedProjectToken?.decimals ?? 18
+            ),
+            parseUnits(
+              `${assetTokenQuantity}`,
+              formatedAssetToken?.decimals ?? 18
+            ),
+            keccak256(salt as `0x${string}`),
           ],
         });
 
         const res = await waitForTransactionReceipt(config, { hash: txHash });
 
+        console.log(res);
+
         res.logs.forEach((log) => {
-          const decode = decodeEventLog({
-            abi: LiquidityBootstrapPoolFactoryABI,
-            data: log.data,
-            topics: log.topics,
-          });
-          if (decode.eventName == "PoolCreated") {
-            const poolAddress = decode.args.pool;
-            router.push(`/lpb-detail/${poolAddress}`);
-          }
+          try {
+            const decode = decodeEventLog({
+              abi: LiquidityBootstrapPoolFactoryABI,
+              data: log.data,
+              topics: log.topics,
+            });
+            if (decode.eventName == "PoolCreated") {
+              const poolAddress = decode.args.pool;
+              router.push(`/lpb-detail/${poolAddress}`);
+            }
+          } catch (error) {}
         });
       } catch (error) {
         console.log(error);
@@ -346,6 +357,7 @@ const Confirm = (props: Props) => {
       setPoolLoading(false);
     }
   };
+
   return (
     <div>
       <div className="text-xl font-medium">Quick Summary</div>
