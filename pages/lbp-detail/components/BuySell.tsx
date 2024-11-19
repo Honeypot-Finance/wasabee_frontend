@@ -5,11 +5,16 @@ import { config } from "@/config/wagmi";
 import { useDebouncedCallback } from "@/hooks";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { LiquidityBootstrapPoolABI } from "@/lib/abis/LiquidityBootstrapPoolAbi";
+import { berachainBartioTestnet } from "@/lib/chain";
+import { createPublicClientByChain } from "@/lib/client";
 import { cn } from "@/lib/tailwindcss";
 import { WrappedToastify } from "@/lib/wrappedToastify";
 import { formatErc20Data } from "@/services/lib/helper";
 import { Input, Spinner } from "@nextui-org/react";
+import { useMutation } from "@tanstack/react-query";
+import { share } from "@trpc/server/observable";
 import { waitForTransactionReceipt } from "@wagmi/core";
+import { type } from "os";
 import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { Address, formatUnits, maxUint256, parseUnits } from "viem";
@@ -43,155 +48,150 @@ type SwapToken = {
   to?: number;
 };
 
+const client = createPublicClientByChain(berachainBartioTestnet);
+
 const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
   const [actionTab, setActionTab] = useState<"buy" | "sell">("buy");
   const account = useAccount();
   const [isTxLoading, setIsTxLoading] = useState(false);
   const [swapToken, setSwapToken] = useState<SwapToken>({
-    from: 0,
-    to: 0,
+    from: undefined,
+    to: undefined,
   });
+
+  console.log(swapToken);
 
   const [tokens, setTokens] = useState<{
     asset: AssetToken;
     share: AssetToken;
   }>();
 
-  const {
-    data: buyFromData,
-    refetch: buyFromRefetch,
-    isLoading: isBuyFromLoading,
-  } = useReadContract({
-    address: poolAddress as Address,
-    abi: LiquidityBootstrapPoolABI,
-    functionName: "previewSharesOut",
-    args: [BigInt(swapToken?.from || 0)],
-    query: {
-      enabled: poolAddress && Boolean(swapToken.from),
+  const { mutateAsync: previewSharesOut } = useMutation({
+    mutationKey: ["previewSharesOut", poolAddress],
+    mutationFn: async (value: bigint) => {
+      const res = await client.readContract({
+        address: poolAddress as Address,
+        abi: LiquidityBootstrapPoolABI,
+        functionName: "previewSharesOut",
+        args: [value],
+      });
+      return res;
     },
   });
 
-  const {
-    data: buyToData,
-    refetch: buyToRefetch,
-    isLoading: isBuyToLoading,
-  } = useReadContract({
-    address: poolAddress as Address,
-    abi: LiquidityBootstrapPoolABI,
-    functionName: "previewAssetsIn",
-    args: [BigInt(swapToken?.to || 0)],
-    query: {
-      enabled: poolAddress && Boolean(swapToken.to),
+  const { mutateAsync: previewAssetsIn } = useMutation({
+    mutationKey: ["previewAssetsIn", poolAddress],
+    mutationFn: async (value: bigint) => {
+      const res = await client.readContract({
+        address: poolAddress as Address,
+        abi: LiquidityBootstrapPoolABI,
+        functionName: "previewAssetsIn",
+        args: [value],
+      });
+      return res;
     },
   });
 
-  const {
-    data: sellFromData,
-    refetch: sellFromRefetch,
-    isLoading: isSellFromLoading,
-  } = useReadContract({
-    address: poolAddress as Address,
-    abi: LiquidityBootstrapPoolABI,
-    functionName: "previewAssetsOut",
-    args: [BigInt(swapToken?.from || 0)],
-    query: {
-      enabled: allowSell && poolAddress && Boolean(swapToken.from),
+  const { mutateAsync: previewAssetsOut } = useMutation({
+    mutationKey: ["previewAssetsOut", poolAddress],
+    mutationFn: async (value: bigint) => {
+      const res = await client.readContract({
+        address: poolAddress as Address,
+        abi: LiquidityBootstrapPoolABI,
+        functionName: "previewAssetsOut",
+        args: [value],
+      });
+      return res;
     },
   });
 
-  const {
-    data: sellToData,
-    refetch: sellToRefetch,
-    isLoading: isSellToLoading,
-  } = useReadContract({
-    address: poolAddress as Address,
-    abi: LiquidityBootstrapPoolABI,
-    functionName: "previewSharesIn",
-    args: [BigInt(swapToken?.to || 0)],
-    query: {
-      enabled: allowSell && poolAddress && Boolean(swapToken.to),
+  const { mutateAsync: previewSharesIn } = useMutation({
+    mutationKey: ["previewSharesIn", poolAddress],
+    mutationFn: async (value: bigint) => {
+      const res = await client.readContract({
+        address: poolAddress as Address,
+        abi: LiquidityBootstrapPoolABI,
+        functionName: "previewSharesIn",
+        args: [value],
+      });
+      return res;
     },
   });
 
   const handleChangeTokenValue = useDebouncedCallback(
-    (value: number | undefined, type: "from" | "to") => {
-      if (actionTab === "buy" && type === "from") {
-        setSwapToken((prev) => ({
-          ...prev,
-          from: value,
-        }));
-        buyFromRefetch();
-      }
-      if (actionTab === "buy" && type === "to") {
-        setSwapToken((prev) => ({
-          ...prev,
-          to: value,
-        }));
-        buyToRefetch();
-      }
+    async (value: number | undefined, type: "from" | "to") => {
+      console.log(value);
+      if (value) {
+        try {
+          if (actionTab === "buy" && type === "from") {
+            const data = await previewSharesOut(
+              parseUnits(`${value}`, tokens?.asset.decimals ?? 18)
+            );
 
-      if (actionTab === "sell" && type === "from") {
-        setSwapToken((prev) => ({
-          ...prev,
-          from: value,
-        }));
-        sellFromRefetch();
-      }
+            const formatedData = data
+              ? +formatUnits(data, tokens?.share.decimals ?? 18)
+              : 0;
 
-      if (actionTab === "sell" && type === "to") {
-        setSwapToken((prev) => ({
-          ...prev,
-          to: value,
-        }));
-        sellToRefetch();
+            setSwapToken((prev) => ({
+              ...prev,
+              from: value,
+              to: formatedData,
+            }));
+          }
+          if (actionTab === "buy" && type === "to") {
+            const data = await previewAssetsIn(
+              parseUnits(`${value}`, tokens?.share.decimals ?? 18)
+            );
+            const formatedData = data
+              ? +formatUnits(data, tokens?.asset.decimals ?? 18)
+              : 0;
+            setSwapToken((prev) => ({
+              ...prev,
+              to: value,
+              from: formatedData,
+            }));
+          }
+
+          if (actionTab === "sell" && type === "from") {
+            const data = await previewAssetsOut(
+              parseUnits(`${value}`, tokens?.share.decimals ?? 18)
+            );
+
+            const formatedData = data
+              ? +formatUnits(data, tokens?.asset.decimals ?? 18)
+              : 0;
+
+            setSwapToken((prev) => ({
+              ...prev,
+              from: value,
+              to: formatedData,
+            }));
+          }
+
+          if (actionTab === "sell" && type === "to") {
+            const data = await previewSharesIn(
+              parseUnits(`${value}`, tokens?.asset.decimals ?? 18)
+            );
+
+            const formatedData = data
+              ? +formatUnits(data, tokens?.share.decimals ?? 18)
+              : 0;
+            setSwapToken((prev) => ({
+              ...prev,
+              from: formatedData,
+              to: value,
+            }));
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        console.log("Else");
+        setSwapToken({ from: undefined, to: undefined });
       }
     },
     500
   );
-
-  useEffect(() => {
-    if (!isBuyFromLoading) {
-      console.log("buyFromData:::", buyFromData);
-      setSwapToken((prev) => ({
-        ...prev,
-        to: Number(buyFromData) || 0,
-      }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isBuyFromLoading]);
-
-  useEffect(() => {
-    if (!isBuyToLoading) {
-      console.log("buyToData:::", buyToData);
-      setSwapToken((prev) => ({
-        ...prev,
-        from: Number(buyToData) || 0,
-      }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isBuyToLoading]);
-
-  useEffect(() => {
-    if (!isSellFromLoading) {
-      console.log("sellFromData:::", sellFromData);
-      setSwapToken((prev) => ({
-        ...prev,
-        to: Number(sellFromData) || 0,
-      }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSellFromLoading]);
-
-  useEffect(() => {
-    if (!isSellToLoading) {
-      console.log("sellToData:::", sellToData);
-      setSwapToken((prev) => ({
-        ...prev,
-        from: Number(sellToData) || 0,
-      }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSellToLoading]);
 
   const { writeContractAsync } = useWriteContract();
 
@@ -359,8 +359,8 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
                 input: "leading-6 text-[21px] font-bold",
               }}
               value={swapToken.from}
-              onValueChange={({ floatValue }) =>
-                handleChangeTokenValue(floatValue, "from")
+              onChange={({ target }) =>
+                handleChangeTokenValue(Number(target.value), "from")
               }
             />
           </div>
@@ -394,8 +394,8 @@ const BuySell = ({ asset, share, allowSell, poolAddress }: Props) => {
                 input: "leading-6 text-[21px] font-bold",
               }}
               value={swapToken.to}
-              onValueChange={({ floatValue }) =>
-                handleChangeTokenValue(floatValue, "to")
+              onChange={({ target }) =>
+                handleChangeTokenValue(Number(target.value), "to")
               }
             />
           </div>

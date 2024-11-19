@@ -79,7 +79,7 @@ const LBPDetail = () => {
     queryKey: ["erc20", data?.args?.share],
     contractCallContext: [
       {
-        reference: "erc20",
+        reference: "shareToken",
         contractAddress: data?.args?.share,
         abi: ERC20ABI as any,
         calls: [
@@ -97,15 +97,8 @@ const LBPDetail = () => {
           },
         ],
       },
-    ],
-    enabled: Boolean(data?.args?.shares),
-  });
-
-  const { data: assetTokenData } = useMulticall3({
-    queryKey: ["assetTokenData", data?.args?.asset],
-    contractCallContext: [
       {
-        reference: "erc20",
+        reference: "assetToken",
         contractAddress: data?.args?.asset,
         abi: ERC20ABI as any,
         calls: [
@@ -124,22 +117,22 @@ const LBPDetail = () => {
         ],
       },
     ],
-    enabled: Boolean(data?.args?.asset),
+    enabled: Boolean(data?.args?.shares && data?.args?.asset),
   });
 
   const token = formatErc20Data(
-    tokenData?.results?.erc20?.callsReturnContext ?? []
+    tokenData?.results?.shareToken?.callsReturnContext ?? []
   );
 
   const assetToken = formatErc20Data(
-    assetTokenData?.results?.erc20?.callsReturnContext ?? []
+    tokenData?.results?.assetToken?.callsReturnContext ?? []
   );
 
   useEffect(() => {
     if (!isAddress((pairAddress as Address) ?? "")) {
       router.push("/");
     }
-  }, [pairAddress]);
+  }, [pairAddress, router]);
   const [activeProjectDetailTab, setActiveProjectDetailTab] = useState<
     1 | 2 | 3
   >(1);
@@ -300,7 +293,11 @@ const LBPDetail = () => {
                 Funds Raised
               </div>
               <div className="text-base leading-5 font-medium">
-                {Number(data?.totalAssetsIn ?? 0)}
+                {formatUnits(
+                  data?.totalAssetsIn ?? 0,
+                  assetToken?.decimals || 18
+                )}{" "}
+                {assetToken.symbol}
               </div>
             </div>
             <div className="text-center flex flex-col gap-2">
