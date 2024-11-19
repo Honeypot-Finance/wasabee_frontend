@@ -54,7 +54,8 @@ export const Layout = ({
     });
   }, []);
 
-  const allowedPaths = ["/swap"];
+  // const allowedPaths = ["/swap"];
+  const allowedPaths = [""];
   const currentPath = router.pathname;
 
   return (

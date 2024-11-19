@@ -55,7 +55,7 @@ export const WalletConnect = () => {
               if (!connected) {
                 return (
                   <div className="flex items-center gap-x-2">
-                    <NetworkSelect />
+                    {/* <NetworkSelect /> */}
                     <ConnectButtonCustom
                       onClick={() => {
                         if (process.env.NEXT_PUBLIC_MOCK === "true") {

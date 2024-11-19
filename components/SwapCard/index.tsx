@@ -97,7 +97,7 @@ export const SwapCard = observer(() => {
       isLoading={false}
     >
       <div className=" flex flex-1 flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all">
-        <LoadingContainer isLoading={false}>
+        <LoadingContainer isLoading={!isInit}>
           <>
             <div className="flex items-center justify-between w-full  text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px]">
               <span
