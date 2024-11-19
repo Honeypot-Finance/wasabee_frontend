@@ -11,6 +11,7 @@ import { Button } from "@/components/button";
 import BeraVoteForm from "@/components/beravote/components/NewSpace/Steps/BeraVoteForm";
 import { popmodal } from "@/services/popmodal";
 import Link from "next/link";
+import Image from "next/image";
 
 const defaultMenuItems = [
   { key: "info", label: "Token Info" },
@@ -197,19 +198,30 @@ const Tabs = ({
                     <Button className="w-full">View On Beravote</Button>
                   </Link>
                 </>
-              ) : pair.isProvider ? (
-                <Button
-                  className="w-full"
-                  onClick={() => {
-                    popmodal.openModal({
-                      content: <BeraVoteForm pair={pair} />,
-                    });
-                  }}
-                >
-                  Create Voting Space
-                </Button>
               ) : (
-                <h3>this project does not have voting space</h3>
+                <>
+                  <Image
+                    src={"/images/partners/beravote.avif"}
+                    width={500}
+                    height={500}
+                    alt="beravote logo"
+                    className="w-full"
+                  />
+                  {pair.isProvider ? (
+                    <Button
+                      className="w-full"
+                      onClick={() => {
+                        popmodal.openModal({
+                          content: <BeraVoteForm pair={pair} />,
+                        });
+                      }}
+                    >
+                      Create Voting Space
+                    </Button>
+                  ) : (
+                    <h3>this project does not have voting space</h3>
+                  )}
+                </>
               ))}
           </div>
         )}
