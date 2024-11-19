@@ -284,7 +284,7 @@ const ProjectInfo = () => {
             )}
           />
         </div>
-        <div>
+        {/* <div>
           <div className="flex items-center gap-[18px]">
             <div className="text-base leading-5 font-medium">
               Geo-blocked Countries
@@ -311,8 +311,8 @@ const ProjectInfo = () => {
               )}
             </div>
           </div>
-        </div>
-        <div>
+        </div> */}
+        {/* <div>
           <div className="flex items-center gap-[18px]">
             <div className="text-base leading-5 font-medium">
               Previous Investment Round Details
@@ -453,7 +453,7 @@ const ProjectInfo = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

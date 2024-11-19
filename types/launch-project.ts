@@ -67,8 +67,8 @@ export type ProjectInfoForm = {
   category: PROJECT_CATEGORY_TYPE;
   lbpDescription: string;
   projectLink: string;
-  blockedCountry: string[];
-  investmentRound: InvestmentRound[];
+  // blockedCountry: string[];
+  // investmentRound: InvestmentRound[];
 };
 
 export type SocialCommunityForm = {};

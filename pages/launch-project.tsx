@@ -47,9 +47,9 @@ const STEP_DATA = [
   {
     title: "Tokenomics & Preview",
   },
-  {
-    title: "Token Vesting",
-  },
+  // {
+  //   title: "Token Vesting",
+  // },
   {
     title: "Project Info",
   },
@@ -70,7 +70,7 @@ const STEP_DATA = [
 type LaunchProjectForm = CreateAndBrandingForm &
   SalesStructureForm &
   TokenomicsAndPreviewForm &
-  TokenVestingForm &
+  // TokenVestingForm &
   ProjectInfoForm &
   SocialCommunityForm &
   ReviewForm &
@@ -86,7 +86,7 @@ const LaunchProject = () => {
     createAndBrandingSchema,
     salesStructureSchema,
     tokenomicsAndPreviewSchema,
-    tokenVestingSchema,
+    // tokenVestingSchema,
     projectInfoFormSchema,
     socialCommunitySchema,
     reviewSchema,
@@ -109,17 +109,17 @@ const LaunchProject = () => {
         return <SalesStructure />;
       case 2:
         return <TokenomicsAndPreview />;
+      // case 3:
+      //   return <TokenVesting />;
       case 3:
-        return <TokenVesting />;
-      case 4:
         return <ProjectInfo />;
-      case 5:
+      case 4:
         return <SocialsAndCommunity />;
-      case 6:
+      case 5:
         return <Review changeStep={setCurrentStep} />;
-      case 7:
+      case 6:
         return <TermsConditions />;
-      case 8:
+      case 7:
         return <Confirm />;
       default:
         return <div />;
@@ -129,25 +129,25 @@ const LaunchProject = () => {
   const handleNextStep = async () => {
     const isValid = await methods.trigger();
     if (currentStep === 3) {
-      const isTokenVestingEnabled = methods.getValues("isTokenVestingEnabled");
-      const isVestingCliffTimeEnabled = methods.getValues(
-        "isVestingCliffTimeEnabled"
-      );
+      // const isTokenVestingEnabled = methods.getValues("isTokenVestingEnabled");
+      // const isVestingCliffTimeEnabled = methods.getValues(
+      //   "isVestingCliffTimeEnabled"
+      // );
       const endTime = methods.getValues("endTime");
-      const vestingCliffTime = methods.getValues("vestingCliffTime");
+      // const vestingCliffTime = methods.getValues("vestingCliffTime");
 
-      if (
-        isTokenVestingEnabled &&
-        isVestingCliffTimeEnabled &&
-        vestingCliffTime &&
-        dayjs(vestingCliffTime).isBefore(endTime)
-      ) {
-        methods.setError("vestingCliffTime", {
-          type: "manual",
-          message: "Vesting cliff time should be greater than end time",
-        });
-        return;
-      }
+      // if (
+      //   isTokenVestingEnabled &&
+      //   isVestingCliffTimeEnabled &&
+      //   vestingCliffTime &&
+      //   dayjs(vestingCliffTime).isBefore(endTime)
+      // ) {
+      //   methods.setError("vestingCliffTime", {
+      //     type: "manual",
+      //     message: "Vesting cliff time should be greater than end time",
+      //   });
+      //   return;
+      // }
     }
     if (isValid && currentStep < STEP_DATA.length - 1) {
       setCurrentStep((prevStep) => prevStep + 1);
@@ -163,8 +163,6 @@ const LaunchProject = () => {
     }
   };
 
-  console.log(currentStep)
-
   return (
     <div className="md:p-6 md:max-w-full xl:max-w-[1440px] mx-auto mb-[30vh] grid grid-cols-3 gap-12">
       <div className="col-span-1 bg-[#271A0C] py-[60px] rounded-[28px] justify-center px-10">
@@ -179,15 +177,16 @@ const LaunchProject = () => {
           <form onSubmit={(e) => e.preventDefault()}>
             <CurrentStep />
             <div className="mt-12 flex items-center gap-8">
-              
               {currentStep !== 0 && (
                 <LBPButton type="button" onClick={handleBack}>
                   Back
                 </LBPButton>
               )}
-                {currentStep !== STEP_DATA.length -1 && <LBPButton type="button" onClick={handleNextStep}>
+              {currentStep !== STEP_DATA.length - 1 && (
+                <LBPButton type="button" onClick={handleNextStep}>
                   {`Continue to ${STEP_DATA[currentStep + 1]?.title}`}
-                </LBPButton>}
+                </LBPButton>
+              )}
             </div>
           </form>
         </FormProvider>

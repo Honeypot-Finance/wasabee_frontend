@@ -18,7 +18,7 @@ export const DEFAULT_LAUNCH_PROJECT_FORM = {
   // 1.Create and Branding
   ecosystem: 'evm',
   targetNetwork: 'berachain',
-  projectName:'',
+  projectName: '',
   projectToken: "",
   projectTokenLogo: "",
   saleBanner: "",
@@ -38,20 +38,20 @@ export const DEFAULT_LAUNCH_PROJECT_FORM = {
   startWeight: 50,
   endWeight: 50,
   assetTokenType: "tHPOT",
-  assetTokenName:"T-HPOT",
+  assetTokenName: "T-HPOT",
   assetTokenLogo: "/images/icons/tokens/thpot-token-icon.jpg",
   assetTokenAddress: "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
   // 4.Token Vesting
-  isTokenVestingEnabled: true,
-  isVestingCliffTimeEnabled: true,
-  vestingCliffTime: new Date(),
-  vestingEndTime: new Date(),
+  // isTokenVestingEnabled: true,
+  // isVestingCliffTimeEnabled: true,
+  // vestingCliffTime: new Date(),
+  // vestingEndTime: new Date(),
   // 5.Project Info
   category: PROJECT_CATEGORY_TYPE.GAMING,
   lbpDescription: "",
   projectLink: "",
-  blockedCountry: [],
-  investmentRound: [],
+  // blockedCountry: [],
+  // investmentRound: [],
   // 6.Socials & Community
   // 7.Review
   rights: [],
@@ -229,8 +229,8 @@ export const projectInfoFormSchema: ZodType<ProjectInfoForm> = z.object({
   ]),
   lbpDescription: z.string().min(1, "LBP Description cannot be empty"),
   projectLink: z.string().url("Invalid URL format"),
-  blockedCountry: z.array(z.string()),
-  investmentRound: z.array(investmentRoundSchema),
+  // blockedCountry: z.array(z.string()),
+  // investmentRound: z.array(investmentRoundSchema),
 });
 
 // 6. Socials & Community
