@@ -11,6 +11,8 @@ import PopOverModal from "../PopOverModal/PopOverModal";
 import { trpcClient } from "@/lib/trpc";
 import { popmodal } from "@/services/popmodal";
 import { metadata } from "@/config/metadata";
+import AnnouncementBar from "./AnnouncementBar";
+import Link from "next/link";
 
 export const Layout = ({
   children,
@@ -33,7 +35,9 @@ export const Layout = ({
       popmodal.openModal({
         content: (
           <div className="min-h-[300px] line-[24px]">
-            <p className="text-center  font-bold text-[30px]">Announcement</p>
+            <div className="text-center  font-bold text-[30px]">
+              Announcement
+            </div>
             <h1 className="mt-[24px]">
               This version is outdated, please check our newest link:&nbsp;{" "}
               <a
@@ -58,6 +62,24 @@ export const Layout = ({
   const allowedPaths = [""];
   const currentPath = router.pathname;
 
+  const slogans = [
+    <>
+      <Link href="/memewar" className="flex items-center ">
+        <span> Participate in the: </span> &nbsp;
+        <span className="flex items-center justify-center gap-2 text-rose-600">
+          Meme War ⚔️
+        </span>
+      </Link>
+    </>,
+    <>
+      <Link href="/launch-token?launchType=meme" className="flex items-center">
+        <span className="flex items-center justify-center gap-2">
+          Launch a new meme token within 5 seconds 🚀
+        </span>
+      </Link>
+    </>,
+  ];
+
   return (
     <div
       className={cn(
@@ -65,17 +87,8 @@ export const Layout = ({
         className
       )}
     >
-      {/* 
-        <div className="w-full bg-[#F7931A]/40">
-          <div className="mx-auto flex items-center justify-center gap-x-1">
-            <span className="text-[#F7931A]">PHISHING WARNING: </span>
-            <span>Please follow our X</span>
-            <a href="https://x.com/honeypotfinance" className="underline">
-              https://x.com/honeypotfinance
-            </a>
-          </div>
-        </div> 
-      */}
+      <AnnouncementBar slogans={slogans} interval={5000} />
+
       <ConfettiComponent />
       <PopOverModal />
       {router.pathname.startsWith("/launch") ||
