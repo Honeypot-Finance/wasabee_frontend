@@ -44,7 +44,7 @@ const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
-              className="flex items-center justify-center gap-x-4 px-4 py-2 sm:p-0"
+              className="flex relative items-center justify-center gap-x-4 px-4 py-2 sm:p-0"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -53,7 +53,10 @@ const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
               <div className="text-xs sm:text-base">
                 {slogans[currentIndex]}
               </div>
-              <button onClick={handleClose} className="text-[#523914] hover:text-[#F7931A]/[37] text-2xl pt-1.5">
+              <button
+                onClick={handleClose}
+                className="absolute text-[#523914] hover:text-[#F7931A]/[37] text-2xl pt-1.5 right-2"
+              >
                 &times;
               </button>
             </motion.div>

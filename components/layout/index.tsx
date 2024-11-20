@@ -12,6 +12,7 @@ import { trpcClient } from "@/lib/trpc";
 import { popmodal } from "@/services/popmodal";
 import { metadata } from "@/config/metadata";
 import AnnouncementBar from "./AnnouncementBar";
+import Link from "next/link";
 
 export const Layout = ({
   children,
@@ -34,7 +35,9 @@ export const Layout = ({
       popmodal.openModal({
         content: (
           <div className="min-h-[300px] line-[24px]">
-            <div className="text-center  font-bold text-[30px]">Announcement</div>
+            <div className="text-center  font-bold text-[30px]">
+              Announcement
+            </div>
             <h1 className="mt-[24px]">
               This version is outdated, please check our newest link:&nbsp;{" "}
               <a
@@ -61,18 +64,11 @@ export const Layout = ({
 
   const slogans = [
     <>
-      <span className="text-[#F7931A]">PHISHING WARNING: </span>
-      <span>Please follow our X</span>
-      <a href="https://x.com/honeypotfinance" className="underline">
-        https://x.com/honeypotfinance
-      </a>
-    </>,
-    <>
-      <span className="text-[#F7931A]">SECURITY ALERT: </span>
-      <span>Check our latest updates on X</span>
-      <a href="https://x.com/securityupdates" className="underline">
-        https://x.com/securityupdates
-      </a>
+      <Link href="/memewar" className="flex items-center text-rose-600">
+        <span className="flex items-center justify-center gap-2">
+          Meme War ⚔️
+        </span>
+      </Link>
     </>,
   ];
 
