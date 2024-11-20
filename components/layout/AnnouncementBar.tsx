@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import style from "./AnnouncementBar.module.css";
+import announceIcon from "@/public/images/icons/announcement-icon.png";
+import Image from "next/image";
+import { cn } from "@/lib/tailwindcss";
 
 interface AnnouncementBarProps {
   slogans: React.ReactNode[];
@@ -35,7 +39,7 @@ const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="w-full bg-[#F7931A]/40 relative"
+          className="w-full bg-[#FFCD4D]/80 relative p-2"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -44,13 +48,19 @@ const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
-              className="flex relative items-center justify-center gap-x-4 px-4 py-2 sm:p-0"
+              className="flex relative items-center justify-center gap-x-4 "
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="text-xs sm:text-base">
+              <Image src={announceIcon} alt="" width={60} height={60} />
+              <div
+                className={cn(
+                  style["arrow_box"],
+                  "hover:scale-105 transition-all"
+                )}
+              >
                 {slogans[currentIndex]}
               </div>
               <button

@@ -64,9 +64,17 @@ export const Layout = ({
 
   const slogans = [
     <>
-      <Link href="/memewar" className="flex items-center text-rose-600">
-        <span className="flex items-center justify-center gap-2">
+      <Link href="/memewar" className="flex items-center ">
+        <span> Participate in the: </span> &nbsp;
+        <span className="flex items-center justify-center gap-2 text-rose-600">
           Meme War ⚔️
+        </span>
+      </Link>
+    </>,
+    <>
+      <Link href="/launch-token?launchType=meme" className="flex items-center">
+        <span className="flex items-center justify-center gap-2">
+          Launch a new meme token within 5 seconds 🚀
         </span>
       </Link>
     </>,
