@@ -208,16 +208,7 @@ const Tabs = ({
                     className="w-full"
                   />
                   {pair.isProvider ? (
-                    <Button
-                      className="w-full"
-                      onClick={() => {
-                        popmodal.openModal({
-                          content: <BeraVoteForm pair={pair} />,
-                        });
-                      }}
-                    >
-                      Create Voting Space
-                    </Button>
+                    <BeraVoteForm pair={pair} />
                   ) : (
                     <h3>this project does not have voting space</h3>
                   )}

@@ -24,8 +24,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "config/wagmi/holdstationWallet.js",
-    "components/beravote/components/NewSpace/Steps/Step1.jsx"
+    "config/wagmi/holdstationWallet.js"
   ],
   "exclude": ["node_modules"]
 }

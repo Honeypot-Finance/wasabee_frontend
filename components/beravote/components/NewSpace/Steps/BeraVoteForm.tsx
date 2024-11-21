@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { StyledButton } from "../../styled";
@@ -16,12 +16,33 @@ import { MemePairContract } from "@/services/contract/memepair-contract";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { trpcClient } from "@/lib/trpc";
+import { debounce } from "lodash";
+import { toast } from "react-toastify";
+import { createSiweMessage } from "@/lib/siwe";
 
 const payContract = "0x7833fE2A60123b1873a6EB3277506df1416F829a";
 const ethersProvider =
   typeof window !== "undefined" && window.ethereum
     ? new ethers.providers.Web3Provider(window.ethereum)
     : null;
+
+function toDataURL(src: string, callback: (arg0: string) => void) {
+  var image = new Image();
+  image.crossOrigin = "Anonymous";
+  image.onload = function () {
+    var canvas = document.createElement("canvas");
+    var context = canvas.getContext("2d");
+    // @ts-ignore
+    canvas.height = this.naturalHeight;
+    // @ts-ignore
+    canvas.width = this.naturalWidth;
+    // @ts-ignore
+    context.drawImage(this, 0, 0);
+    var dataURL = canvas.toDataURL("image/jpeg");
+    callback(dataURL);
+  };
+  image.src = src;
+}
 
 const createDaoSpace = async (requestBody: {
   data: {
@@ -105,11 +126,24 @@ const handleYes = async (
     APIAccessPayment,
     signer
   );
+
+  const createSpaceToast = WrappedToastify.pending({
+    title: "Creating Governance Space",
+    message: "Please wait...",
+  });
+
   const tx = await paymentContract.purchaseAccessFor(address, {
     value: paymentFee,
   });
+
   const receipt = await tx.wait();
+
+  toast.dismiss(createSpaceToast);
   if (receipt.status === 1) {
+    WrappedToastify.success({
+      title: "Payment successful",
+      message: "Creating Governance Space",
+    });
     console.log("Transaction succeeded:", receipt);
     if (!pair.launchedToken) {
       console.error("pair.launchedToken is undefined");
@@ -160,17 +194,50 @@ const handleYes = async (
       );
     }
     const hex = stringToHex(msg);
-    const signature = await window.ethereum.request({
-      method: "personal_sign",
-      params: [hex, address],
+    const signatureToastr = WrappedToastify.pending({
+      title: "Sign message",
+      message: "Please sign the message to create Governance space",
     });
-    console.log(signature);
+    const signature = await window.ethereum
+      .request({
+        method: "personal_sign",
+        params: [hex, address],
+      })
+      .then((result: any) => {
+        toast.dismiss(signatureToastr);
+
+        console.log("Signature:", result);
+        if (result) {
+          WrappedToastify.success({
+            title: "Message signed",
+            message: "Creating Governance space",
+          });
+        }
+
+        return result;
+      })
+      .catch((error: any) => {
+        toast.dismiss(signatureToastr);
+        WrappedToastify.error({
+          title: "Failed to sign message",
+          message: "Failed to create Governance space",
+        });
+        console.error("Failed to sign message:", error);
+      });
+
     const requestBody = {
       data,
       address: pubkey,
       signature: signature,
     };
+
+    const saveSpaceToast = WrappedToastify.pending({
+      title: "Saving Governance Space",
+      message: "Please wait...",
+    });
     const result = await createDaoSpace(requestBody);
+
+    toast.dismiss(saveSpaceToast);
 
     if (result.success) {
       console.log("https://beravote.com/space/" + result.data.spaceId);
@@ -178,6 +245,12 @@ const handleYes = async (
         title: "Governance Space created: ",
         message: "https://beravote.com/space/" + result.data.spaceId,
       });
+      await createSiweMessage(
+        wallet.account,
+        "Sign In With Honeypot",
+        wallet.walletClient
+      );
+
       trpcClient.projects.createOrUpdateProjectInfo
         .mutate({
           chain_id: wallet.currentChainId,
@@ -193,6 +266,8 @@ const handleYes = async (
       console.error("Failed to create DAO space:", result.error);
     }
   } else {
+    WrappedToastify.error({ message: "Failed to create Governance space" });
+
     console.log("Transaction failed:", receipt);
   }
 };
@@ -201,8 +276,20 @@ const BeraVoteForm = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     const [logoBase64, setLogoBase64] = useState("");
     const [paymentFee, setPaymentFee] = useState("");
-
+    const [formSpaceId, setFormSpaceId] = useState(pair.projectName);
     const signer = ethersProvider?.getSigner();
+    const [allCreatedSpaces, setAllCreatedSpaces] = useState<string[]>([]);
+
+    useEffect(() => {
+      const fetchAllSpaces = async () => {
+        const response = await fetch(
+          "https://beravote.com/api/spaces-without-filter"
+        );
+        const data = await response.json();
+        setAllCreatedSpaces(Object.keys(data).map((key) => data[key].name));
+      };
+      fetchAllSpaces();
+    }, []);
 
     //convert pair.logoUrl to base64
     useEffect(() => {
@@ -272,15 +359,38 @@ const BeraVoteForm = observer(
                 </p>
                 <p>
                   cost of dao creation:{" "}
-                  {paymentFee && ethers.utils.formatEther(paymentFee)}
-                  Bera
+                  {paymentFee && ethers.utils.formatEther(paymentFee)} Bera
                 </p>
-
-                {/* <pre>{JSON.stringify(values)}</pre> */}
               </div>
+
+              <FormInput
+                label="Your Space Id"
+                name="name"
+                placeholder="Please enter the website URL"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setFieldValue("name", e.target.value);
+                  setFormSpaceId(e.target.value);
+                }}
+              />
+
+              {allCreatedSpaces.includes(formSpaceId) && (
+                <div className="text-red-500">
+                  This space id is already taken
+                </div>
+              )}
+
               <BtnWrapper>
-                <StyledButton type="submit">Create Coin</StyledButton>
+                <StyledButton
+                  disabled={allCreatedSpaces.includes(formSpaceId)}
+                  type="submit"
+                >
+                  Create Coin
+                </StyledButton>
               </BtnWrapper>
+
+              {/* <pre className="w-full max-w-full text-wrap">
+                  {JSON.stringify(values).replace(",", ",\n")}
+                </pre> */}
             </Form>
           </FormContainer>
         )}
@@ -290,21 +400,3 @@ const BeraVoteForm = observer(
 );
 
 export default BeraVoteForm;
-
-function toDataURL(src: string, callback: (arg0: string) => void) {
-  var image = new Image();
-  image.crossOrigin = "Anonymous";
-  image.onload = function () {
-    var canvas = document.createElement("canvas");
-    var context = canvas.getContext("2d");
-    // @ts-ignore
-    canvas.height = this.naturalHeight;
-    // @ts-ignore
-    canvas.width = this.naturalWidth;
-    // @ts-ignore
-    context.drawImage(this, 0, 0);
-    var dataURL = canvas.toDataURL("image/jpeg");
-    callback(dataURL);
-  };
-  image.src = src;
-}
