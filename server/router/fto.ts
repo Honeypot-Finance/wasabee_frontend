@@ -44,6 +44,7 @@ export const ftoRouter = router({
           provider: z.string(),
           project_type: z.string().or(z.null()),
           banner_url: z.string().or(z.null()),
+          beravote_space_id: z.string().or(z.null()),
         })
         .or(z.null())
     )
@@ -75,14 +76,15 @@ export const ftoRouter = router({
   createOrUpdateProjectInfo: authProcedure
     .input(
       z.object({
-        twitter: z.string(),
-        telegram: z.string(),
-        website: z.string(),
-        description: z.string(),
-        projectName: z.string(),
+        twitter: z.string().optional(),
+        telegram: z.string().optional(),
+        website: z.string().optional(),
+        description: z.string().optional(),
+        projectName: z.string().optional(),
         pair: z.string(),
         chain_id: z.number(),
         project_type: z.string().optional(),
+        beravote_space_id: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {

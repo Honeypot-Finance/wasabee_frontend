@@ -17,9 +17,14 @@
     "paths": {
       "@/*": ["./*"],
       "~/*": ["./*"],
-      "~/static/*": ["./public/*"] 
+      "~/static/*": ["./public/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "config/wagmi/holdstationWallet.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "config/wagmi/holdstationWallet.js"
+  ],
   "exclude": ["node_modules"]
 }
