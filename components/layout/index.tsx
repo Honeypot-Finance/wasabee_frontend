@@ -13,6 +13,7 @@ import { popmodal } from "@/services/popmodal";
 import { metadata } from "@/config/metadata";
 import AnnouncementBar from "./AnnouncementBar";
 import Link from "next/link";
+import GuideModal from "../Instruction/GuideModal";
 
 export const Layout = ({
   children,
@@ -88,6 +89,7 @@ export const Layout = ({
       )}
     >
       <AnnouncementBar slogans={slogans} interval={5000} />
+      <GuideModal />
 
       <ConfettiComponent />
       <PopOverModal />
