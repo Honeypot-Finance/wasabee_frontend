@@ -130,6 +130,7 @@ const handleYes = async (
   const createSpaceToast = WrappedToastify.pending({
     title: "Creating Governance Space",
     message: "Please wait...",
+    options: { autoClose: false },
   });
 
   const tx = await paymentContract.purchaseAccessFor(address, {
@@ -197,6 +198,7 @@ const handleYes = async (
     const signatureToastr = WrappedToastify.pending({
       title: "Sign message",
       message: "Please sign the message to create Governance space",
+      options: { autoClose: false },
     });
     const signature = await window.ethereum
       .request({
@@ -234,6 +236,7 @@ const handleYes = async (
     const saveSpaceToast = WrappedToastify.pending({
       title: "Saving Governance Space",
       message: "Please wait...",
+      options: { autoClose: false },
     });
     const result = await createDaoSpace(requestBody);
 
