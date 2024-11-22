@@ -308,6 +308,7 @@ const SuccessAction = observer(
     );
   }
 );
+
 const FailAction = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
@@ -338,26 +339,6 @@ const FailAction = observer(
           </Button>
         )}
       </div>
-    );
-  }
-);
-
-const PauseAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    return pair.isProvider ? (
-      <div className="flex flex-col gap-[16px]">
-        <Button
-          className="w-full"
-          isLoading={pair.resume.loading}
-          onClick={() => {
-            pair.resume.call();
-          }}
-        >
-          Resume
-        </Button>
-      </div>
-    ) : (
-      <></>
     );
   }
 );
@@ -717,7 +698,7 @@ const FtoView = observer(() => {
                         </Link>
                       </div>
                     );
-                  })}
+                  })} 
                 </div>
               </div>
               {state.pair.value?.launchedToken?.address && (
