@@ -107,8 +107,8 @@ export const berachainBartioTestnetNetwork = new Network({
     factory: "0x7A962f6E45100b8cC560C7d2c248ec704623fb53",
     ftoFactory: "0x7E0CCe2C9Ff537f8301dd40c652A03479B18dAef",
     ftoFacade: "0x0264D933F13eE993270591668CfF87b8D35Dd3b4",
-    memeFactory: "0x459D974F5913b5200798D924E29300E21aD27219",
-    memeFacade: "0x424cba5a531A31b27a34E9DdA06e19326022e529",
+    memeFactory: "0x30DbCcdFE17571c2Cec5caB61736a5AF194b1593",
+    memeFacade: "0x29F4D4511dA9771F0529872923fb48F4ACfEDcc2",
     ftoTokens: [
       {
         address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E".toLowerCase(),
