@@ -1,13 +1,13 @@
-import { algebraQuoterV2ABI } from "@/lib/abis/algebra-contracts/ABIs";
-import { ALGEBRA_QUOTER_V2 } from "@/data/algebra/addresses";
 import {
   Currency,
   CurrencyAmount,
   encodeRouteToPath,
-} from "@cryptoalgebra/custom-pools-sdk";
+} from "@cryptoalgebra/sdk";
 import { useMemo } from "react";
 import { useContractReads } from "wagmi";
 import { useAllRoutes } from "./useAllRoutes";
+import { ALGEBRA_QUOTER_V2 } from "@/data/algebra/addresses";
+import { algebraQuoterV2ABI } from "@/lib/abis/algebra-contracts/ABIs";
 
 export function useQuotesResults({
   exactInput,
@@ -53,6 +53,8 @@ export function useQuotesResults({
       functionName: functionName,
       args: quote,
     })),
+    // watch: true,
+    // cacheTime: 5_000,
   });
 
   return {

@@ -554,9 +554,7 @@ const FtoView = observer(() => {
     chart.setCurrencyCode("USD");
     chart.setTokenNumber(0);
     chart.setChartTarget(state.pair.value?.launchedToken ?? undefined);
-    chart.setChartLabel(
-      state.pair.value?.launchedToken?.displayName + "/USD" ?? ""
-    );
+    chart.setChartLabel(state.pair.value?.launchedToken?.displayName + "/USD");
   }, [state.pair.value]);
 
   // useEffect(() => {
@@ -1048,9 +1046,7 @@ const MemeView = observer(() => {
     chart.setCurrencyCode("USD");
     chart.setTokenNumber(0);
     chart.setChartTarget(state.pair.value?.launchedToken ?? undefined);
-    chart.setChartLabel(
-      state.pair.value?.launchedToken?.displayName + "/USD" ?? ""
-    );
+    chart.setChartLabel(state.pair.value?.launchedToken?.displayName + "/USD");
   }, [state.pair.value]);
 
   function refreshVotes() {

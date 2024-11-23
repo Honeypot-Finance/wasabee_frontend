@@ -123,7 +123,13 @@ export function DiscussionArea(props: DiscussionAreaProps) {
 
   return (
     <CardContianer>
-      <div className="flex-col w-full">
+      <div
+        className={cn(
+          "flex-col w-full ",
+          props.isSide &&
+            " max-h-[100vh] grid grid-rows-[100px_300px_1fr] gap-2"
+        )}
+      >
         <h2 className="text-[2rem] font-bold">Discussion Board</h2>
         <div
           className={cn(
@@ -209,10 +215,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
           </div>
         ) : (
           <div
-            className={cn(
-              "w-full my-2",
-              props.isSide && " max-h-[30vh] overflow-y-scroll"
-            )}
+            className={cn("w-full my-2", props.isSide && "overflow-y-scroll")}
           >
             {/** comment cards */}
             {comments?.map((comment) => (

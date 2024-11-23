@@ -1,14 +1,12 @@
-import {
-  Currency,
-  Token,
-  computePoolAddress,
-} from "@cryptoalgebra/custom-pools-sdk";
+import { Currency, Token, computePoolAddress } from "@cryptoalgebra/sdk";
 import { useEffect, useMemo, useState } from "react";
 import { useAllCurrencyCombinations } from "./useAllCurrencyCombinations";
-import { Address, zeroAddress } from "viem";
+import { Address } from "viem";
 import { DEFAULT_CHAIN_ID } from "@/data/algebra/default-chain-id";
-import { TokenFieldsFragment } from "@/types/algebra/types/graphql";
-import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
+import {
+  TokenFieldsFragment,
+  useMultiplePoolsLazyQuery,
+} from "../../graphql/generated/graphql";
 
 /**
  * Returns all the existing pools that should be considered for swapping between an input currency and an output currency
@@ -27,7 +25,6 @@ export function useSwapPools(
       price: string;
       tick: string;
       fee: string;
-      deployer: string;
       token0: TokenFieldsFragment;
       token1: TokenFieldsFragment;
     };
@@ -41,6 +38,8 @@ export function useSwapPools(
     currencyOut
   );
 
+  const [getMultiplePools] = useMultiplePoolsLazyQuery();
+
   useEffect(() => {
     async function getPools() {
       const poolsAddresses = allCurrencyCombinations.map(
@@ -51,23 +50,28 @@ export function useSwapPools(
           }) as Address
       );
 
-      const poolsData: AlgebraPoolContract[] = [];
+      const poolsData = await getMultiplePools({
+        variables: {
+          poolIds: poolsAddresses.map((address) => address.toLowerCase()),
+        },
+      });
 
-      for (const address of poolsAddresses) {
-        const poolData = AlgebraPoolContract.getPool({ address });
-        await poolData?.init();
-        if (poolData) poolsData.push(poolData);
-      }
+      // const poolsLiquidities = await Promise.allSettled(poolsAddresses.map(address => getAlgebraPool({
+      //     address
+      // }).read.liquidity()))
+
+      // const poolsGlobalStates = await Promise.allSettled(poolsAddresses.map(address => getAlgebraPool({
+      //     address
+      // }).read.globalState()))
 
       const pools =
-        poolsData &&
-        poolsData.map((pool) => ({
-          address: pool.address,
+        poolsData.data &&
+        poolsData.data.pools.map((pool) => ({
+          address: pool.id,
           liquidity: pool.liquidity,
-          price: pool.globalState.value?.[0],
-          tick: pool.globalState.value?.[1],
-          fee: pool.globalState.value?.[2],
-          deployer: zeroAddress,
+          price: pool.sqrtPrice,
+          tick: pool.tick,
+          fee: pool.fee,
           token0: pool.token0,
           token1: pool.token1,
         }));

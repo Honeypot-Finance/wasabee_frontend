@@ -1,20 +1,19 @@
-import { ExternalLinkIcon } from "lucide-react";
-import { useEffect } from "react";
-import Link from "next/link";
-import { useAccount, useTransactionReceipt } from "wagmi";
-import { Address } from "viem";
 import { ToastAction } from "@/components/algebra/ui/toast";
+import { useToast } from "@/components/algebra/ui/use-toast";
+import { ExternalLinkIcon, Link } from "lucide-react";
+import { useEffect } from "react";
+import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import {
   TransactionInfo,
   usePendingTransactionsStore,
-} from "@/services/algebra/state/pendingTransactionsStore";
-import { useToast } from "@/components/algebra/ui/use-toast";
+} from "../../state/pendingTransactionsStore";
+import { Address } from "viem";
 
 export const ViewTxOnExplorer = ({ hash }: { hash: Address | undefined }) =>
   hash ? (
     <ToastAction altText="View on explorer" asChild>
       <Link
-        href={`https://holesky.etherscan.io/tx/${hash}`}
+        to={`https://holesky.etherscan.io/tx/${hash}`}
         target={"_blank"}
         className="border-none gap-2 hover:bg-transparent hover:text-blue-400"
       >
@@ -39,7 +38,7 @@ export function useTransactionAwait(
     actions: { addPendingTransaction, updatePendingTransaction },
   } = usePendingTransactionsStore();
 
-  const { data, isError, isLoading, isSuccess } = useTransactionReceipt({
+  const { data, isError, isLoading, isSuccess } = useWaitForTransactionReceipt({
     hash,
   });
 

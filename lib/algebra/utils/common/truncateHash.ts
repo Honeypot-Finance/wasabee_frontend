@@ -1,7 +1,7 @@
-import { Address } from "wagmi";
+import { Address } from "viem";
 
 export function truncateHash(address: Address, startLength = 4, endLength = 4) {
-    if (!address) return '';
+  if (!address) return "";
 
-    return `${address.substring(0, startLength)}...${address.substring(address.length - endLength)}`;
-};
+  return `${address.substring(0, startLength)}...${address.substring(address.length - endLength)}`;
+}

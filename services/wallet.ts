@@ -27,8 +27,6 @@ export class Wallet {
     ftofacade: FtoFacadeContract;
     memeFactory: MemeFactoryContract;
     memeFacade: MEMEFacadeContract;
-
-    //algebraPoolDeployer: AlgebraPoolDeployerContract;
   } = {} as any;
   publicClient!: PublicClient;
   isInit = false;

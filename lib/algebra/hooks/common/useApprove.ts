@@ -1,38 +1,27 @@
-import { useMemo } from "react";
+import { formatBalance } from "@/lib/algebra/utils/common/formatBalance";
 import {
   Currency,
   CurrencyAmount,
   Percent,
   Trade,
   TradeType,
-} from "@cryptoalgebra/custom-pools-sdk";
-import {
-  Currency as CurrencyBN,
-  CurrencyAmount as CurrencyAmountBN,
-  Percent as PercentBN,
-  SmartRouter,
-  SmartRouterTrade,
-} from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
-import {
-  Address,
-  erc20ABI,
-  useContractWrite,
-  usePrepareContractWrite,
-} from "wagmi";
-
-import { ALGEBRA_ROUTER } from "@/constants/addresses";
-import { ApprovalState, ApprovalStateType } from "@/types/approve-state";
-
+} from "@cryptoalgebra/sdk";
 import { useNeedAllowance } from "./useNeedAllowance";
+import { useMemo } from "react";
 import { useTransactionAwait } from "./useTransactionAwait";
-import { TransactionType } from "@/state/pendingTransactionsStore.ts";
-import { formatBalance } from "@/utils/common/formatBalance.ts";
+import { ALGEBRA_ROUTER } from "@/data/algebra/addresses";
+import {
+  ApprovalStateType,
+  ApprovalState,
+} from "@/types/algebra/types/approve-state";
+import { TransactionType } from "../../state/pendingTransactionsStore";
+import { Address } from "viem";
+import { useContractWrite, useSimulateContract } from "wagmi";
+import { erc20Abi } from "viem";
+import { useToastify } from "@/lib/hooks/useContractToastify";
 
 export function useApprove(
-  amountToApprove:
-    | CurrencyAmount<Currency>
-    | CurrencyAmountBN<CurrencyBN>
-    | undefined,
+  amountToApprove: CurrencyAmount<Currency> | undefined,
   spender: Address
 ) {
   const token = amountToApprove?.currency?.isToken
@@ -47,11 +36,11 @@ export function useApprove(
     return needAllowance ? ApprovalState.NOT_APPROVED : ApprovalState.APPROVED;
   }, [amountToApprove, needAllowance, spender]);
 
-  const { config } = usePrepareContractWrite({
+  const { data: config } = useSimulateContract({
     address: amountToApprove
       ? (amountToApprove.currency.wrapped.address as Address)
       : undefined,
-    abi: erc20ABI,
+    abi: erc20Abi,
     functionName: "approve",
     args: [
       spender,
@@ -59,23 +48,30 @@ export function useApprove(
     ] as [Address, bigint],
   });
 
-  const { data: approvalData, writeAsync: approve } = useContractWrite(config);
+  const { data: approvalData, writeContractAsync: approve } =
+    useContractWrite();
 
-  const { isLoading, isSuccess } = useTransactionAwait(approvalData?.hash, {
-    title: `Approve ${formatBalance(
-      amountToApprove?.toSignificant() as string
-    )} ${amountToApprove?.currency.symbol}`,
+  const { isLoading, isSuccess, isError } = useTransactionAwait(approvalData, {
+    title: `Approve ${formatBalance(amountToApprove?.toSignificant() as string)} ${amountToApprove?.currency.symbol}`,
     tokenA: token?.address as Address,
     type: TransactionType.SWAP,
+  });
+
+  useToastify({
+    title: `Approve ${formatBalance(amountToApprove?.toSignificant() as string)} ${amountToApprove?.currency.symbol}`,
+    message: "Approve",
+    isError: isError,
+    isLoading: isLoading,
+    isSuccess: isSuccess,
   });
 
   return {
     approvalState: isLoading
       ? ApprovalState.PENDING
       : isSuccess && approvalState === ApprovalState.APPROVED
-      ? ApprovalState.APPROVED
-      : approvalState,
-    approvalCallback: approve,
+        ? ApprovalState.APPROVED
+        : approvalState,
+    approvalCallback: () => config && approve(config?.request),
   };
 }
 
@@ -90,29 +86,5 @@ export function useApproveCallbackFromTrade(
         : undefined,
     [trade, allowedSlippage]
   );
-  return useApprove(amountToApprove, ALGEBRA_ROUTER);
-}
-
-export function useApproveCallbackFromSmartTrade(
-  trade: SmartRouterTrade<TradeType> | undefined,
-  allowedSlippage: Percent
-) {
-  const allowedSlippageBN = useMemo(
-    () =>
-      new PercentBN(
-        BigInt(allowedSlippage.numerator.toString()),
-        BigInt(allowedSlippage.denominator.toString())
-      ),
-    [allowedSlippage]
-  );
-
-  const amountToApprove = useMemo(
-    () =>
-      trade && trade.inputAmount.currency.isToken
-        ? SmartRouter.maximumAmountIn(trade, allowedSlippageBN)
-        : undefined,
-    [trade, allowedSlippageBN]
-  );
-
   return useApprove(amountToApprove, ALGEBRA_ROUTER);
 }

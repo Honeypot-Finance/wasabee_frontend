@@ -1,10 +1,6 @@
 import { Address } from "viem";
-import {
-  Currency,
-  ExtendedNative,
-  WNATIVE,
-} from "@cryptoalgebra/custom-pools-sdk";
-import { ADDRESS_ZERO } from "@cryptoalgebra/custom-pools-sdk";
+import { Currency, ExtendedNative, WNATIVE } from "@cryptoalgebra/sdk";
+import { ADDRESS_ZERO } from "@cryptoalgebra/sdk";
 import { useAlgebraToken } from "./useAlgebraToken";
 import {
   DEFAULT_CHAIN_ID,
@@ -18,8 +14,7 @@ export function useCurrency(
   withNative?: boolean
 ): Currency | ExtendedNative | undefined {
   const isWNative =
-    address?.toLowerCase() ===
-    "0x7507c1dc16935b82698e4c63f2746a2fcf994df8".toLowerCase();
+    address?.toLowerCase() === WNATIVE[DEFAULT_CHAIN_ID].address.toLowerCase();
 
   const isNative = address === ADDRESS_ZERO;
 

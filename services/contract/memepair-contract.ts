@@ -73,7 +73,8 @@ export class MemePairContract implements BaseLaunchContract {
 
   get depositedRaisedToken() {
     if (!this.raiseToken) {
-      throw new Error("token is not initialized");
+      console.log("token is not initialized");
+      return undefined;
     }
 
     return this.depositedRaisedTokenWithoutDecimals && this.raiseToken.decimals
@@ -366,6 +367,10 @@ export class MemePairContract implements BaseLaunchContract {
       this.getUserParticipated(),
     ]).catch((error) => {
       console.error(error, `init-memepair-error-${this.address}`);
+      trpcClient.projects.revalidateProjectType.mutate({
+        chain_id: wallet.currentChainId,
+        pair: this.address,
+      });
       return;
     });
 

@@ -1,11 +1,6 @@
-import { useUserSlippageToleranceWithDefault } from "@/services/algebra/state/userStore";
-import {
-  Currency,
-  Percent,
-  Trade,
-  TradeType,
-} from "@cryptoalgebra/custom-pools-sdk";
+import { Currency, Percent, Trade, TradeType } from "@cryptoalgebra/sdk";
 import { useMemo } from "react";
+import { useUserSlippageToleranceWithDefault } from "../../state/userStore";
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000); // .50%
 const ONE_TENTHS_PERCENT = new Percent(10, 10_000); // .10%

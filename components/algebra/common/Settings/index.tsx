@@ -1,12 +1,17 @@
-import { useUserState } from "@/services/algebra/state/userStore";
-import { Percent } from "@cryptoalgebra/custom-pools-sdk";
-import { Popover, PopoverTrigger, PopoverContent } from "../../ui/popover";
-import { Button } from "../../ui/button";
-import { Switch } from "../../ui/switch";
+import { Button } from "@/components/algebra/ui/button";
+import { Input } from "@/components/algebra/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/algebra/ui/popover";
+import { Separator } from "@/components/algebra/ui/separator";
+import { Switch } from "@/components/algebra/ui/switch";
+import CardContianer from "@/components/CardContianer/CardContianer";
+import { useUserState } from "@/lib/algebra/state/userStore";
+import { Percent } from "@cryptoalgebra/sdk";
 import { SettingsIcon } from "lucide-react";
-import { Input } from "../../ui/input";
 import { useState } from "react";
-import { Separator } from "../../ui/separator";
 
 const Settings = () => {
   return (
@@ -16,17 +21,15 @@ const Settings = () => {
           <SettingsIcon />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        align={"end"}
-        className="flex flex-col gap-4 p-6 w-fit bg-card rounded-3xl border border-card-border text-white"
-      >
-        <div className="text-md font-bold">Transaction Settings</div>
-        <Separator orientation={"horizontal"} className="bg-border" />
-        <SlippageTolerance />
-        <TransactionDeadline />
-        <Multihop />
-        <SplitTrade />
-        <ExpertMode />
+      <PopoverContent className=" z-20">
+        <CardContianer addtionalClassName="flex-col gap-2">
+          <div className="text-md font-bold">Transaction Settings</div>
+          <Separator orientation={"horizontal"} className="bg-border" />
+          <SlippageTolerance />
+          <TransactionDeadline />
+          <Multihop />
+          <ExpertMode />
+        </CardContianer>
       </PopoverContent>
     </Popover>
   );
@@ -241,25 +244,6 @@ const Multihop = () => {
       </div>
       <p className="whitespace-break-spaces">
         Optimized trades across multiple liquidity pools.
-      </p>
-    </div>
-  );
-};
-
-const SplitTrade = () => {
-  const {
-    isSplit,
-    actions: { setIsSplit },
-  } = useUserState();
-
-  return (
-    <div className="flex flex-col gap-2 max-w-[332px]">
-      <div className="flex justify-between items-center gap-2 text-md font-semibold">
-        <label htmlFor="split">Split trade</label>
-        <Switch id="split" checked={isSplit} onCheckedChange={setIsSplit} />
-      </div>
-      <p className="whitespace-break-spaces">
-        Split trades across identical pools with different plugins.
       </p>
     </div>
   );

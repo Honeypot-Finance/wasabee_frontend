@@ -1,31 +1,29 @@
+import { useMemo } from "react";
+import { formatUnits } from "viem";
 import {
-    TokenFieldsFragment,
-    useNativePriceQuery,
-} from '@/graphql/generated/graphql';
-import { useMemo } from 'react';
-import { formatUnits } from 'viem';
+  TokenFieldsFragment,
+  useNativePriceQuery,
+} from "../../graphql/generated/graphql";
 
 export function useRewardEarnedUSD({
-    token,
-    reward,
+  token,
+  reward,
 }: {
-    token: TokenFieldsFragment | null;
-    reward: bigint;
+  token: TokenFieldsFragment | null | undefined;
+  reward: bigint;
 }): number {
-    const { data: nativePrice } = useNativePriceQuery();
+  const { data: nativePrice } = useNativePriceQuery();
 
-    return useMemo(() => {
-        if (!token || !nativePrice) return 0;
+  return useMemo(() => {
+    if (!token || !nativePrice) return 0;
 
-        const formattedRewardEarned = Number(
-            formatUnits(reward, token.decimals)
-        );
+    const formattedRewardEarned = Number(formatUnits(reward, token.decimals));
 
-        const rewardUSD =
-            token.derivedMatic *
-            formattedRewardEarned *
-            nativePrice.bundles[0].maticPriceUSD;
+    const rewardUSD =
+      token.derivedMatic *
+      formattedRewardEarned *
+      nativePrice.bundles[0].maticPriceUSD;
 
-        return rewardUSD;
-    }, [nativePrice, token, reward]);
+    return rewardUSD;
+  }, [nativePrice, token, reward]);
 }

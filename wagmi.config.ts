@@ -20,7 +20,7 @@ import {
   algebraEternalFarmingABI,
   farmingCenterABI,
   wNativeABI,
-  algebraCustomPoolDeployerABI,
+  algebraVirtualPoolABI,
 } from "./lib/abis/algebra-contracts/ABIs";
 
 const contracts: ContractConfig[] = [
@@ -68,8 +68,8 @@ const contracts: ContractConfig[] = [
     name: "FarmingCenter",
   },
   {
-    abi: algebraCustomPoolDeployerABI,
-    name: "AlgebraCustomPoolDeployer",
+    abi: algebraVirtualPoolABI,
+    name: "AlgebraVirtualPool",
   },
   {
     abi: wNativeABI,
@@ -78,7 +78,15 @@ const contracts: ContractConfig[] = [
 ];
 
 export default defineConfig({
-  out: "wagmi-generated.ts",
+  out: "./wagmi-generated.ts",
   contracts,
-  plugins: [actions({}), react({})],
+  plugins: [
+    actions({
+      //watchContractEvent: false,
+    }),
+    react({
+      // useContractEvent: false,
+      //useContractItemEvent: false,
+    }),
+  ],
 });

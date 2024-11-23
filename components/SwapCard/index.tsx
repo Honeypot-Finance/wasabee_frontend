@@ -14,7 +14,6 @@ import { wallet } from "@/services/wallet";
 import { amountFormatted } from "../../lib/format";
 import { AmountFormat } from "../AmountFormat";
 import ChartData from "../svg/chartData";
-import SwapPriceFeedGraph from "../PriceFeedGraph/SwapPriceFeedGraph";
 import { liquidity } from "@/services/liquidity";
 import { chart } from "@/services/chart";
 import LoadingDisplay, {
@@ -121,9 +120,8 @@ export const SwapCard = observer(() => {
                   max: swap.fromToken?.balance.toNumber(),
                   min: 0,
                   isInvalid:
-                    (Number(swap.fromAmount) >
-                      (swap.fromToken as Token)?.balance?.toNumber() ??
-                      0) ||
+                    Number(swap.fromAmount) >
+                      (swap.fromToken as Token)?.balance?.toNumber() ||
                     Number(swap.fromAmount) < 0,
                   errorMessage: "Insufficient balance",
                   onClear: () => {
@@ -250,7 +248,7 @@ export const SwapCard = observer(() => {
               </div>
             </div>
             {!!swap.price && (
-              <div className="flex  w-full lg:w-[529px] max-w-full h-[71px] justify-between items-center border [background:#291C0A] px-5 py-2.5 rounded-2xl border-solid border-[rgba(247,147,26,0.20)]">
+              <div className="flex w-full lg:w-[529px] max-w-full h-[71px] justify-between items-center border [background:#291C0A] px-5 py-2.5 rounded-2xl border-solid border-[rgba(247,147,26,0.20)]">
                 <div>
                   <div>
                     <AmountFormat amount={swap.price?.toFixed()}></AmountFormat>

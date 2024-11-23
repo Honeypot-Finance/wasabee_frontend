@@ -1,10 +1,12 @@
-import CurrencyLogo from "@/components/common/CurrencyLogo";
-import { Input } from "@/components/ui/input";
-import { formatCurrency } from "@/utils/common/formatCurrency";
-import { Currency, CurrencyAmount } from "@cryptoalgebra/custom-pools-sdk";
+import CurrencyLogo from "@/components/algebra/common/CurrencyLogo";
+import { Input } from "@/components/algebra/ui/input";
+import { Currency, CurrencyAmount } from "@cryptoalgebra/sdk";
 import { useCallback, useMemo } from "react";
-import { Address, useAccount, useBalance } from "wagmi";
-
+import { useAccount, useBalance } from "wagmi";
+import { Address } from "viem";
+import { formatCurrency } from "@/lib/algebra/utils/common/formatCurrency";
+import { Token } from "@/services/contract/token";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
 
 interface EnterAmountsCardProps {
   currency: Currency | undefined;
@@ -24,15 +26,16 @@ const EnterAmountCard = ({
 
   const { data: balance, isLoading } = useBalance({
     address: account,
-    token: currency?.isNative ? undefined : currency?.wrapped.address as Address,
-    watch: true
+    token: currency?.isNative
+      ? undefined
+      : (currency?.wrapped.address as Address),
+    // watch: true,
   });
 
   const balanceString = useMemo(() => {
     if (isLoading || !balance) return "Loading...";
 
-    return formatCurrency.format(Number(balance.formatted))
-
+    return formatCurrency.format(Number(balance.formatted));
   }, [balance, isLoading]);
 
   const handleInput = useCallback((value: string) => {
@@ -41,40 +44,51 @@ const EnterAmountCard = ({
   }, []);
 
   function setMax() {
-    handleChange(balance?.formatted || '0');
+    handleChange(balance?.formatted || "0");
   }
 
-  return <div className="flex w-full bg-card-dark p-3 rounded-2xl">
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-4">
-        <CurrencyLogo currency={currency} size={35} />
-        <span className="font-bold text-lg">{currency ? currency.symbol : "Select a token"}</span>
-      </div>
-      {currency && account && (
-        <div className={"flex text-sm whitespace-nowrap"}>
-          <div>
-            <span className="font-semibold">Balance: </span>
-            <span>{balanceString}</span>
-          </div>
-          <button className="ml-2 text-[#63b4ff]" onClick={setMax}>
-            Max
-          </button>
+  return (
+    <div className="flex w-full bg-card-dark p-3 rounded-2xl gap-x-4">
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2 xs:gap-4">
+          {currency && (
+            <TokenLogo
+              addtionalClasses="w-8 sm:w-10"
+              token={Token.getToken({
+                address: (currency as any).address,
+              })}
+            />
+          )}
+          <span className="font-bold text-sm sm:text-lg">
+            {currency ? currency.symbol : "Select a token"}
+          </span>
         </div>
-      )}
-    </div>
+      </div>
 
-    <div className="flex flex-col items-end w-full">
-      <Input 
-        value={value} 
-        id={`amount-${currency?.symbol}`} 
-        onUserInput={v => handleInput(v)}
-        className={`text-right border-none text-xl font-bold w-9/12 p-0`} 
-        placeholder={'0.0'}
-        maxDecimals={currency?.decimals}
-       />
-      {/* <div className="text-sm">{fiatValue && formatUSD.format(fiatValue)}</div> */}
+      <div className="flex flex-col items-end gap-2 flex-1">
+        <Input
+          value={value}
+          id={`amount-${currency?.symbol}`}
+          onUserInput={(v) => handleInput(v)}
+          className={`text-right border text-xl font-bold p-2 honeypot-input w-full max-w-[300px]`}
+          placeholder={"0.0"}
+          maxDecimals={currency?.decimals}
+        />
+        {currency && account && (
+          <div className={"flex text-sm whitespace-nowrap"}>
+            <div>
+              <span className="font-semibold">Balance: </span>
+              <span>{balanceString}</span>
+            </div>
+            <button className="ml-2 text-[#63b4ff]" onClick={setMax}>
+              Max
+            </button>
+          </div>
+        )}
+        {/* <div className="text-sm">{fiatValue && formatUSD.format(fiatValue)}</div> */}
+      </div>
     </div>
-  </div>
+  );
 
   // return (
   //   <div

@@ -1,15 +1,16 @@
 import {
+  ADDRESS_ZERO,
   Currency,
   DEFAULT_TICK_SPACING,
   Pool,
   Route,
   Token,
-} from "@cryptoalgebra/custom-pools-sdk";
+} from "@cryptoalgebra/sdk";
 import { useMemo } from "react";
 import { useSwapPools } from "./useSwapPools";
 import { useChainId } from "wagmi";
-import { useUserState } from "@/services/algebra/state/userStore";
 import { Address } from "viem";
+import { useUserState } from "../../state/userStore";
 
 /**
  * Returns true if poolA is equivalent to poolB
@@ -34,7 +35,6 @@ function computeAllRoutes(
       price: string;
       tick: string;
       fee: string;
-      deployer: string;
     };
   }[],
   chainId: number,
@@ -51,14 +51,14 @@ function computeAllRoutes(
   for (const pool of pools) {
     const [tokenA, tokenB] = pool.tokens;
 
-    const { liquidity, price, tick, fee, deployer } = pool.pool;
+    const { liquidity, price, tick, fee } = pool.pool;
 
     const newPool = new Pool(
       tokenA,
       tokenB,
-      +fee,
+      +fee as unknown as 100,
       price,
-      deployer,
+      ADDRESS_ZERO,
       liquidity,
       Number(tick),
       DEFAULT_TICK_SPACING

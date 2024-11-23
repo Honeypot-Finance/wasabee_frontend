@@ -168,7 +168,7 @@ export const RocketSvg = ({ className }: { className?: string }) => {
           y2="67.342"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset=".401" stopColor="#E8D37C" stop-opacity=".13" />
+          <stop offset=".401" stopColor="#E8D37C" stopOpacity=".13" />
           <stop offset="1" stopColor="#FCD729" />
         </linearGradient>
         <linearGradient

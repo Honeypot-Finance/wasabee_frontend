@@ -4,12 +4,11 @@ import {
   Route,
   Trade,
   TradeType,
-} from "@cryptoalgebra/custom-pools-sdk";
+} from "@cryptoalgebra/sdk";
 import { useMemo } from "react";
 import { useAllRoutes } from "./useAllRoutes";
-import { TradeState, TradeStateType } from "@/types/algebra/types/trade-state";
 import { useQuotesResults } from "./useQuotesResults";
-
+import { TradeStateType, TradeState } from "@/types/algebra/types/trade-state";
 // const DEFAULT_GAS_QUOTE = 2_000_000
 
 /**
@@ -75,14 +74,14 @@ export function useBestTradeExactIn(
         if (currentBest.amountOut === null) {
           return {
             bestRoute: routes[i],
-            amountOut: result[0][result[0].length - 1],
+            amountOut: result[0],
             fee: result[5],
             priceAfterSwap: result[2],
           };
         } else if (currentBest.amountOut < result[0]) {
           return {
             bestRoute: routes[i],
-            amountOut: result[0][result[0].length - 1],
+            amountOut: result[0],
             fee: result[5],
             priceAfterSwap: result[2],
           };
@@ -198,14 +197,14 @@ export function useBestTradeExactOut(
         if (currentBest.amountIn === null) {
           return {
             bestRoute: routes[i],
-            amountIn: result[1][result[1].length - 1],
+            amountIn: result[1],
             fee: result[5],
             priceAfterSwap: result[2],
           };
         } else if (currentBest.amountIn > result[0]) {
           return {
             bestRoute: routes[i],
-            amountIn: result[1][result[1].length - 1],
+            amountIn: result[1],
             fee: result[5],
             priceAfterSwap: result[2],
           };

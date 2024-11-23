@@ -1,73 +1,88 @@
-import { STABLECOINS } from "@/constants/tokens"
-import { useNativePriceQuery, useSingleTokenQuery } from "@/graphql/generated/graphql"
-import { Currency, CurrencyAmount, Price, tryParseAmount } from "@cryptoalgebra/custom-pools-sdk"
-import { useMemo } from "react"
+import { STABLECOINS } from "@/data/algebra/tokens";
+import {
+  Currency,
+  CurrencyAmount,
+  Price,
+  tryParseAmount,
+} from "@cryptoalgebra/sdk";
+import { useMemo } from "react";
+import {
+  useNativePriceQuery,
+  useSingleTokenQuery,
+} from "../../graphql/generated/graphql";
 
 export function useUSDCPrice(currency: Currency | undefined) {
+  const { data: bundles } = useNativePriceQuery();
 
-    const { data: bundles } = useNativePriceQuery()
+  const { data: token } = useSingleTokenQuery({
+    variables: {
+      tokenId: currency ? currency.wrapped.address.toLowerCase() : "",
+    },
+  });
 
-    const { data: token } = useSingleTokenQuery({
-        variables: {
-            tokenId: currency ? currency.wrapped.address.toLowerCase() : ''
-        }
-    })
+  return useMemo(() => {
+    if (!currency || !bundles?.bundles?.[0] || !token?.token)
+      return {
+        price: undefined,
+        formatted: 0,
+      };
 
-    return useMemo(() => {
+    if (
+      STABLECOINS.USDT.address.toLowerCase() ===
+      currency.wrapped.address.toLowerCase()
+    )
+      return {
+        price: new Price(STABLECOINS.USDT, STABLECOINS.USDT, "1", "1"),
+        formatted: 1,
+      };
 
-        if (!currency || !bundles?.bundles?.[0] || !token?.token) return {
-            price: undefined,
-            formatted: 0
-        }
+    const tokenUSDValue =
+      Number(token.token.derivedMatic) *
+      Number(bundles.bundles[0].maticPriceUSD);
 
-        if (STABLECOINS.USDT.address.toLowerCase() === currency.wrapped.address.toLowerCase()) return {
-            price: new Price(STABLECOINS.USDT, STABLECOINS.USDT, '1', '1'),
-            formatted: 1
-        }
+    const usdAmount = tryParseAmount(tokenUSDValue.toString(), currency);
 
-        const tokenUSDValue = Number(token.token.derivedMatic) * Number(bundles.bundles[0].maticPriceUSD)
+    if (usdAmount) {
+      return {
+        price: new Price(
+          currency,
+          STABLECOINS.USDT,
+          usdAmount.denominator,
+          usdAmount.numerator
+        ),
+        formatted: Number(usdAmount.toSignificant()),
+      };
+    }
 
-        const usdAmount = tryParseAmount(tokenUSDValue.toString(), currency)
-
-        if (usdAmount) {
-            return {
-                price: new Price(currency, STABLECOINS.USDT, usdAmount.denominator, usdAmount.numerator),
-                formatted: Number(usdAmount.toSignificant())
-            }
-        }
-
-        return {
-            price: undefined,
-            formatted: 0
-        }
-
-    }, [currency, bundles, token])
-
+    return {
+      price: undefined,
+      formatted: 0,
+    };
+  }, [currency, bundles, token]);
 }
 
-export function useUSDCValue(currencyAmount: CurrencyAmount<Currency> | undefined | null) {
+export function useUSDCValue(
+  currencyAmount: CurrencyAmount<Currency> | undefined | null
+) {
+  const { price, formatted } = useUSDCPrice(currencyAmount?.currency);
 
-    const { price, formatted } = useUSDCPrice(currencyAmount?.currency)
+  return useMemo(() => {
+    if (!price || !currencyAmount)
+      return {
+        price: null,
+        formatted: null,
+      };
 
-    return useMemo(() => {
-
-        if (!price || !currencyAmount) return {
-            price: null,
-            formatted: null
-        }
-
-        try {
-            return {
-                price: price.quote(currencyAmount),
-                formatted: Number(currencyAmount.toSignificant()) * formatted
-            }
-        } catch {
-            return {
-                price: null,
-                formatted: null
-            }
-        }
-
-    }, [currencyAmount, price])
-
+    try {
+      return {
+        price: price.quote(currencyAmount),
+        formatted: Number(currencyAmount.toSignificant()) * formatted,
+      };
+    } catch {
+      return {
+        price: null,
+        formatted: null,
+      };
+    }
+  }, [currencyAmount, price]);
 }

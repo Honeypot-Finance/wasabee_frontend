@@ -1,23 +1,32 @@
-import { Currency, CurrencyAmount } from "@cryptoalgebra/custom-pools-sdk";
+import { Currency, CurrencyAmount } from "@cryptoalgebra/sdk";
+import { Address } from "viem";
 import {
-  Currency as CurrencyBN,
-  CurrencyAmount as CurrencyAmountBN,
-} from "@cryptoalgebra/router-custom-pools-and-sliding-fee";
-import { erc20ABI, useAccount, useContractRead } from "wagmi";
-
+  useAccount,
+  useContractRead,
+  useReadContract,
+  useWatchBlockNumber,
+} from "wagmi";
+import { erc20Abi } from "viem";
 export function useNeedAllowance(
-  currency: Currency | CurrencyBN | null | undefined,
-  amount: CurrencyAmount<Currency> | CurrencyAmountBN<CurrencyBN> | undefined,
-  spender: Account | undefined
+  currency: Currency | null | undefined,
+  amount: CurrencyAmount<Currency> | undefined,
+  spender: Address | undefined
 ) {
   const { address: account } = useAccount();
 
-  const { data: allowance } = useContractRead({
-    address: currency?.wrapped.address as Account,
-    abi: erc20ABI,
+  const { data: allowance, refetch } = useReadContract({
+    address: currency?.wrapped.address as Address,
+    abi: erc20Abi,
     functionName: "allowance",
-    watch: true,
     args: account && spender && [account, spender],
+    //watch:true
+  });
+
+  //watch block number
+  const watch = useWatchBlockNumber({
+    onBlockNumber: () => {
+      refetch();
+    },
   });
 
   return Boolean(

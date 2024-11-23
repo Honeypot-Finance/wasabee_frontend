@@ -31,7 +31,7 @@ export const WarningSvg = ({ className }: { className?: string }) => {
           y2="24.1052"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.401038" stop-color="#E8D37C" stop-opacity="0.13" />
+          <stop offset="0.401038" stop-color="#E8D37C" stopOpacity="0.13" />
           <stop offset="1" stop-color="#FCD729" />
         </linearGradient>
       </defs>

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { cn } from "@nextui-org/theme";
+import { cn } from "@/lib/tailwindcss";
 import { useMediaQuery } from "@/lib/algebra/hooks/common/useMediaQuery";
 import {
   Dialog,

@@ -1,4 +1,4 @@
-import { Token } from "@cryptoalgebra/integral-sdk";
+import { Token } from "@cryptoalgebra/sdk";
 import { DEFAULT_CHAIN_ID } from "./default-chain-id";
 
 export const STABLECOINS = {
@@ -8,5 +8,12 @@ export const STABLECOINS = {
     6,
     "USDT",
     "USDT"
+  ),
+  THPOT: new Token(
+    DEFAULT_CHAIN_ID,
+    "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E",
+    18,
+    "Test Honeypot Finance",
+    "tHPOT"
   ),
 };

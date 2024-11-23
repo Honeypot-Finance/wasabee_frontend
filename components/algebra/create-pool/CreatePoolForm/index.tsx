@@ -1,51 +1,32 @@
-import { Button } from "@/components/ui/button";
-import { useDerivedSwapInfo, useSwapState } from "@/state/swapStore";
-import { useEffect, useMemo, useState } from "react";
-import { SwapField } from "@/types/swap-field";
+import { Button } from "@/components/algebra/ui/button";
+import { useEffect, useMemo } from "react";
 import {
-  computePoolAddress,
-  computeCustomPoolAddress,
-  NonfungiblePositionManager,
   ADDRESS_ZERO,
-  INITIAL_POOL_FEE,
-} from "@cryptoalgebra/custom-pools-sdk";
-import {
-  usePrepareAlgebraCustomPoolDeployerCreateCustomPool,
-  usePrepareAlgebraPositionManagerMulticall,
-} from "@/generated";
-import { useTransactionAwait } from "@/hooks/common/useTransactionAwait";
-import { Address, useAccount, useContractWrite } from "wagmi";
-import { useDerivedMintInfo, useMintState } from "@/state/mintStore";
-import Loader from "@/components/common/Loader";
-import { PoolState, usePool } from "@/hooks/pools/usePool";
+  NonfungiblePositionManager,
+  computePoolAddress,
+} from "@cryptoalgebra/sdk";
+import { useTransactionAwait } from "@/lib/algebra/hooks/common/useTransactionAwait";
+import { useContractWrite } from "wagmi";
+import { Address } from "viem";
+import Loader from "@/components/algebra/common/Loader";
+import { PoolState, usePool } from "@/lib/algebra/hooks/pools/usePool";
 import Summary from "../Summary";
 import SelectPair from "../SelectPair";
-import { STABLECOINS } from "@/constants/tokens";
-import { TransactionType } from "@/state/pendingTransactionsStore";
-import { cn } from "@/lib/tailwindcss";
+import { STABLECOINS } from "@/data/algebra/tokens";
 import {
-  CUSTOM_POOL_DEPLOYER_BLANK,
-  CUSTOM_POOL_DEPLOYER_FEE_CHANGER,
-  CUSTOM_POOL_BASE,
-} from "@/constants/addresses";
-
-const POOL_DEPLOYER = {
-  BASE: "Base",
-  FEE_CHANGER: "Fee Changer",
-  BLANK: "Blank",
-};
-
-type PoolDeployerType = (typeof POOL_DEPLOYER)[keyof typeof POOL_DEPLOYER];
-
-const customPoolDeployerAddresses = {
-  [POOL_DEPLOYER.BASE]: CUSTOM_POOL_BASE,
-  [POOL_DEPLOYER.BLANK]: CUSTOM_POOL_DEPLOYER_BLANK,
-  [POOL_DEPLOYER.FEE_CHANGER]: CUSTOM_POOL_DEPLOYER_FEE_CHANGER,
-};
+  useMintState,
+  useDerivedMintInfo,
+} from "@/lib/algebra/state/mintStore";
+import { TransactionType } from "@/lib/algebra/state/pendingTransactionsStore";
+import {
+  useDerivedSwapInfo,
+  useSwapState,
+} from "@/lib/algebra/state/swapStore";
+import { SwapField } from "@/types/algebra/types/swap-field";
+import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
+import { useToastify } from "@/lib/hooks/useContractToastify";
 
 const CreatePoolForm = () => {
-  const { address: account } = useAccount();
-
   const { currencies } = useDerivedSwapInfo();
 
   const {
@@ -56,10 +37,6 @@ const CreatePoolForm = () => {
     startPriceTypedValue,
     actions: { typeStartPriceInput },
   } = useMintState();
-
-  const [poolDeployer, setPoolDeployer] = useState<PoolDeployerType>(
-    POOL_DEPLOYER.BASE
-  );
 
   const currencyA = currencies[SwapField.INPUT];
   const currencyB = currencies[SwapField.OUTPUT];
@@ -77,40 +54,15 @@ const CreatePoolForm = () => {
         }) as Address)
       : undefined;
 
-  const customPoolsAddresses =
-    areCurrenciesSelected && !isSameToken
-      ? [CUSTOM_POOL_DEPLOYER_BLANK, CUSTOM_POOL_DEPLOYER_FEE_CHANGER].map(
-          (customPoolDeployer) =>
-            computeCustomPoolAddress({
-              tokenA: currencyA.wrapped,
-              tokenB: currencyB.wrapped,
-              customPoolDeployer,
-            }) as Address
-        )
-      : [];
-
   const [poolState] = usePool(poolAddress);
 
-  // TODO
-  const [poolState0] = usePool(customPoolsAddresses[0]);
-  const [poolState1] = usePool(customPoolsAddresses[1]);
-
-  const isPoolExists =
-    poolState === PoolState.EXISTS && poolDeployer === POOL_DEPLOYER.BASE;
-  const isPool0Exists =
-    poolState0 === PoolState.EXISTS && poolDeployer === POOL_DEPLOYER.BLANK;
-  const isPool1Exists =
-    poolState1 === PoolState.EXISTS &&
-    poolDeployer === POOL_DEPLOYER.FEE_CHANGER;
-
-  const isSelectedCustomPoolExists =
-    isPoolExists || isPool0Exists || isPool1Exists;
+  const isPoolExists = poolState === PoolState.EXISTS;
 
   const mintInfo = useDerivedMintInfo(
     currencyA ?? undefined,
     currencyB ?? undefined,
     poolAddress ?? undefined,
-    INITIAL_POOL_FEE,
+    100,
     currencyA ?? undefined,
     undefined
   );
@@ -124,26 +76,31 @@ const CreatePoolForm = () => {
 
     return NonfungiblePositionManager.createCallParameters(
       mintInfo.pool,
-      customPoolDeployerAddresses[poolDeployer]
+      ADDRESS_ZERO
     );
-  }, [mintInfo?.pool, poolDeployer]);
+  }, [mintInfo?.pool]);
 
-  const { config: createBasePoolConfig } =
-    usePrepareAlgebraPositionManagerMulticall({
+  const { data: createPoolConfig, error } =
+    useSimulateAlgebraPositionManagerMulticall({
       args: Array.isArray(calldata)
         ? [calldata as Address[]]
         : [[calldata] as Address[]],
       value: BigInt(value || 0),
-      enabled: Boolean(calldata),
+      query: {
+        enabled: Boolean(calldata),
+      },
     });
 
-  const { data: createBasePoolData, write: createBasePool } =
-    useContractWrite(createBasePoolConfig);
+  console.log(error);
+  console.log(error);
 
-  const { isLoading: isBasePoolLoading } = useTransactionAwait(
-    createBasePoolData?.hash,
+  const { data: createPoolData, writeContract: createPool } =
+    useContractWrite();
+
+  const { isLoading, isError, isSuccess } = useTransactionAwait(
+    createPoolData,
     {
-      title: "Create Base Pool",
+      title: "Create Pool",
       tokenA: currencyA?.wrapped.address as Address,
       tokenB: currencyB?.wrapped.address as Address,
       type: TransactionType.POOL,
@@ -151,47 +108,13 @@ const CreatePoolForm = () => {
     "/pools"
   );
 
-  const isCustomPoolDeployerReady =
-    account && mintInfo.pool && poolDeployer !== POOL_DEPLOYER.BASE;
-
-  const { config: createCustomPoolConfig } =
-    usePrepareAlgebraCustomPoolDeployerCreateCustomPool({
-      address: isCustomPoolDeployerReady
-        ? customPoolDeployerAddresses[poolDeployer]
-        : undefined,
-      args: isCustomPoolDeployerReady
-        ? [
-            customPoolDeployerAddresses[poolDeployer],
-            account,
-            mintInfo.pool?.token0.address as Address,
-            mintInfo.pool?.token1.address as Address,
-            "0x0",
-          ]
-        : undefined,
-      enabled: Boolean(isCustomPoolDeployerReady),
-    });
-
-  console.log(
-    "createCustomPoolConfig",
-    isCustomPoolDeployerReady,
-    customPoolDeployerAddresses[poolDeployer]
-  );
-
-  const { data: createCustomPoolData, write: createCustomPool } =
-    useContractWrite(createCustomPoolConfig);
-
-  const { isLoading: isCustomPoolLoading } = useTransactionAwait(
-    createCustomPoolData?.hash,
-    {
-      title: "Create Custom Pool",
-      tokenA: currencyA?.wrapped.address as Address,
-      tokenB: currencyB?.wrapped.address as Address,
-      type: TransactionType.POOL,
-    },
-    "/pools"
-  );
-
-  const isLoading = isCustomPoolLoading || isBasePoolLoading;
+  const createPoolToast = useToastify({
+    title: "Create Pool",
+    isLoading,
+    isSuccess,
+    isError,
+    message: isLoading ? "Pending" : isSuccess ? "Success" : "Failed",
+  });
 
   useEffect(() => {
     selectCurrency(SwapField.INPUT, undefined);
@@ -200,34 +123,13 @@ const CreatePoolForm = () => {
 
     return () => {
       selectCurrency(SwapField.INPUT, ADDRESS_ZERO);
-      selectCurrency(SwapField.OUTPUT, STABLECOINS.USDT.address as Account);
+      selectCurrency(SwapField.OUTPUT, STABLECOINS.USDT.address);
       typeStartPriceInput("");
     };
   }, []);
 
-  const handlePoolDeployerChange = (poolDeployer: PoolDeployerType) => {
-    setPoolDeployer(poolDeployer);
-  };
-
-  const handleCreatePool = () => {
-    if (poolDeployer === POOL_DEPLOYER.BASE) {
-      if (!createBasePool) return;
-      createBasePool();
-    }
-    if (!createCustomPool) return;
-    createCustomPool();
-  };
-
-  const isDisabled = Boolean(
-    isLoading ||
-      isSelectedCustomPoolExists ||
-      !startPriceTypedValue ||
-      !areCurrenciesSelected ||
-      isSameToken
-  );
-
   return (
-    <div className="flex flex-col gap-1 p-2 bg-card border border-card-border rounded-3xl">
+    <div className="flex flex-col gap-1 p-2 bg-[#271A0C] rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all">
       <h2 className="font-semibold text-xl text-left ml-2 mt-2">Select Pair</h2>
       <SelectPair
         mintInfo={mintInfo}
@@ -235,36 +137,30 @@ const CreatePoolForm = () => {
         currencyB={currencyB}
       />
 
-      {areCurrenciesSelected && !isSameToken && !isSelectedCustomPoolExists && (
+      {areCurrenciesSelected && !isSameToken && !isPoolExists && (
         <Summary currencyA={currencyA} currencyB={currencyB} />
       )}
 
-      <div className="text-left font-bold">
-        <div>Plugin</div>
-        <div className="grid grid-cols-2 w-100 gap-4 my-2">
-          {Object.entries(POOL_DEPLOYER).map(([, v]) => (
-            <button
-              key={v}
-              onClick={() => handlePoolDeployerChange(v)}
-              className={cn(
-                "px-3 py-2 rounded-lg border",
-                poolDeployer === v ? "border-blue-500" : "border-gray-600"
-              )}
-            >
-              {v}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <Button className="mt-2" disabled={isDisabled} onClick={handleCreatePool}>
+      <Button
+        className="mt-2"
+        disabled={
+          isLoading ||
+          isPoolExists ||
+          !startPriceTypedValue ||
+          !areCurrenciesSelected ||
+          isSameToken
+        }
+        onClick={() =>
+          createPoolConfig && createPool(createPoolConfig?.request)
+        }
+      >
         {isLoading ? (
           <Loader />
         ) : isSameToken ? (
           "Select another pair"
         ) : !areCurrenciesSelected ? (
           "Select currencies"
-        ) : isSelectedCustomPoolExists ? (
+        ) : isPoolExists ? (
           "Pool already exists"
         ) : !startPriceTypedValue ? (
           "Enter initial price"
@@ -272,16 +168,6 @@ const CreatePoolForm = () => {
           "Create Pool"
         )}
       </Button>
-
-      {poolDeployer !== POOL_DEPLOYER.BASE && (
-        <Button
-          disabled={isDisabled}
-          onClick={() => createBasePool && createBasePool()}
-          className="mt-2"
-        >
-          {isBasePoolLoading ? <Loader /> : "Initialize"}
-        </Button>
-      )}
     </div>
   );
 };

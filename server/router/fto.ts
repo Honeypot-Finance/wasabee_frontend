@@ -156,4 +156,14 @@ export const ftoRouter = router({
         async () => ftoService.getProjectVotes(input)
       );
     }),
+  revalidateProjectType: publicProcedure
+    .input(
+      z.object({
+        pair: z.string(),
+        chain_id: z.number(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await ftoService.revalidateProject(input);
+    }),
 });
