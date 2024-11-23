@@ -8,11 +8,10 @@ import { AsyncState } from "@/services/utils";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { wallet } from "@/services/wallet";
 import { Button } from "@/components/button";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import Image from "next/image";
 import { amountFormatted, truncate } from "@/lib/format";
 import { Copy } from "@/components/copy";
-import { LuFileEdit } from "react-icons/lu";
+import { Skeleton } from "@nextui-org/skeleton";
 import {
   Modal,
   ModalBody,
@@ -23,34 +22,27 @@ import {
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BiLinkExternal } from "react-icons/bi";
-import PopUp from "@/components/PopUp/PopUp";
-import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { trpcClient } from "@/lib/trpc";
 import ProjectStatus from "@/components/atoms/TokenStatusDisplay/TokenStatus";
-import ProjectStatusDisplay from "@/components/atoms/TokenStatusDisplay/TokenStatusDisplay";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
-import {
-  OptionsDropdown,
-  optionsPresets,
-} from "@/components/OptionsDropdown/OptionsDropdown";
 import { VscCopy } from "react-icons/vsc";
 import { useAccount } from "wagmi";
-import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
 import { chart } from "@/services/chart";
-import { DiscussionArea } from "@/components/Discussion/DiscussionArea/DiscussionArea";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { WrappedToastify } from "@/lib/wrappedToastify";
 import Countdown from "react-countdown";
 import ProgressBar from "@/components/atoms/ProgressBar/ProgressBar";
 import BigNumber from "bignumber.js";
-
 import Action from "./componets/Action";
 import Tabs from "./componets/Tabs";
-import RankProject from "./componets/RankProject";
+import CountdownTimer from "./componets/Countdown";
+import ProjectTitle from "./componets/ProjectTitle";
+import TokenRaised from "./componets/TokenRaised";
+import SaleProgress from "./componets/SaleProgress";
+import TokenAddress from "./componets/TokenAddress";
+import TokenDetails from "./componets/TokenDetails";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -448,237 +440,82 @@ const FtoView = observer(() => {
                 }
               />
             </div>
-            <div className="flex flex-col gap-x-[7.5px] md:text-2xl">
-              <div>{state.pair.value?.launchedToken?.name}</div>
-              <div>{state.pair.value?.launchedToken?.displayName}</div>
-            </div>
+            <ProjectTitle
+              name={pair?.launchedToken?.name}
+              displayName={pair?.launchedToken?.displayName}
+            />
           </div>
           <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
-            <div className="flex flex-col gap-y-2.5">
-              {/* TODO: gradient color */}
-              <div className="text-[#F7931A] xs:text-lg md:text-xl">
-                Ends In
-              </div>
-              {state.pair.value?.endTime && (
-                <Countdown
-                  date={Number(state.pair.value?.endTime) * 1000}
-                  renderer={({ days, hours, minutes, seconds, completed }) => {
-                    if (completed || state.pair.value?.ftoState !== 3) {
-                      return state.pair.value?.endTimeDisplay;
-                    } else {
-                      return (
-                        <div className="flex items-start md:gap-x-2">
-                          <div className="flex flex-col items-center gap-y-1.5">
-                            <span className="text-base">{days}</span>
-                            <span className="text-xs text-white/45">Days</span>
-                          </div>
-
-                          <div>:</div>
-
-                          <div className="flex flex-col items-center gap-y-1.5">
-                            <span className="text-base">{hours}</span>
-                            <span className="text-xs text-white/45">Hours</span>
-                          </div>
-
-                          <div>:</div>
-
-                          <div className="flex flex-col items-center gap-y-1.5">
-                            <span className="text-base">{minutes}</span>
-                            <span className="text-xs text-white/45">
-                              Minutes
-                            </span>
-                          </div>
-
-                          <div>:</div>
-
-                          <div className="flex flex-col items-center gap-y-1.5">
-                            <span className="text-base">{seconds}</span>
-                            <span className="text-xs text-white/45">
-                              Seconds
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    }
-                  }}
-                />
-              )}
-            </div>
+            <CountdownTimer
+              endTime={pair?.endTime}
+              ftoState={state.pair.value?.ftoState}
+              endTimeDisplay={state.pair.value?.endTimeDisplay}
+            />
             {/* TODO: update style */}
-            <ProjectStatus pair={state.pair.value} />
+            <ProjectStatus
+              isValidated={pair?.isValidated}
+              ftoStatusDisplayColor={pair?.ftoStatusDisplay?.color}
+              ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+            />
           </div>
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-          {/* Token Raised */}
-          <div className="flex flex-col gap-y-2">
-            <div className="text-white md:text-base text-sm font-bold leading-[normal]">
-              Token Raised
-            </div>
-            <div className="text-[color:var(--Button-Gradient,var(--card-stroke,#F7931A))]">
-              <span className="font-bold">
-                $
-                {(pair?.depositedRaisedToken ?? BigNumber(0))
-                  .multipliedBy(pair?.raiseToken?.derivedUSD ?? 1)
-                  .toFixed(3)}
-              </span>
-              <span className="text-sm">
-                / $
-                {(pair?.raiseToken?.balance ?? BigNumber(0))
-                  .multipliedBy(pair?.raiseToken?.derivedUSD ?? BigNumber(1))
-                  .toFixed(3)}
-              </span>
-            </div>
-          </div>
-          {/* raised progress */}
-          <div className="space-y-2">
-            <div className="text-white text-sm font-bold leading-[normal]">
-              Sale progress
-            </div>
-            <ProgressBar
-              label={
-                pair?.ftoStatusDisplay?.status === "success"
-                  ? "100%"
-                  : (
-                      ((pair?.depositedRaisedToken ?? BigNumber(0)).toNumber() /
-                        ((
-                          pair?.raiseToken?.balance ?? BigNumber(1)
-                        ).toNumber() /
-                          Math.pow(10, 18))) *
-                      100
-                    ).toFixed(2) + "%"
-              }
-              value={
-                pair?.ftoStatusDisplay?.status === "success"
-                  ? 100
-                  : ((pair?.depositedRaisedToken ?? BigNumber(0)).toNumber() /
-                      ((pair?.raiseToken?.balance ?? BigNumber(1)).toNumber() /
-                        Math.pow(10, 18))) *
-                    100
-              }
-            />
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-[#FFCD4D]">
-                  {pair?.ftoStatusDisplay?.status === "success"
-                    ? (pair?.raiseToken?.balance ?? BigNumber(0))
-                        .div(10 ** (pair?.raiseToken?.decimals ?? 0))
-                        .toFixed()
-                    : (pair?.depositedRaisedToken ?? BigNumber(0)).toFixed()}
-                </span>
-                <span className="text-xs">
-                  /
-                  {(pair?.raiseToken?.balance ?? BigNumber(0))
-                    .div(10 ** (pair?.raiseToken?.decimals ?? 0))
-                    .toFixed()}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Token Address */}
-          <div>
-            <div className="text-white text-sm font-medium leading-[normal]">
-              Token address
-            </div>
-
-            <Copy
-              className={"w-full"}
-              content="Copy address"
-              value={state.pair.value?.launchedToken?.address ?? ""}
-              displayContent={
-                <div className="relative">
-                  <span className="mt-[8px] flex  h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px] cursor-pointer hover:brightness-150 active:brightness-75 select-none">
-                    {truncate(
-                      state.pair.value?.launchedToken?.address || "",
-                      28
-                    )}
-                  </span>
-                  <VscCopy className="size-4 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer" />
-                </div>
-              }
-            />
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 *:margin">
-            <div className="flex flex-col items-center">
-              <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
-                Token Price
-              </div>
-              <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
-                {amountFormatted(state.pair.value?.price, {
-                  decimals: 0,
-                  fixed: 3,
-                  prefix: "$",
-                })}
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
-                Funds Raised
-              </div>
-              <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
-                {amountFormatted(pair?.depositedRaisedToken, {
-                  decimals: 0,
-                  fixed: 3,
-                  prefix: "$",
-                })}
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="flex items-center gap-[4px] text-white text-xs font-bold leading-[normal]">
-                {/* TODO: fix different size display */}
-                <Image
-                  width={12}
-                  height={12}
-                  alt="Start Date"
-                  src="/images/calendar.png"
-                />
-                <span>Start Date</span>
-              </div>
-              <div className="text-[#FFCD4D]  text-xs font-medium leading-[normal] mt-[4px]">
-                {pair?.startTimeDisplay && pair?.startTimeDisplay !== "-"
-                  ? new Date(pair.startTimeDisplay).toLocaleDateString()
-                  : "--"}
-                <br />
-                {pair?.startTimeDisplay && pair?.startTimeDisplay !== "-"
-                  ? new Date(pair.startTimeDisplay).toLocaleTimeString()
-                  : "--"}
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="flex gap-1 text-white text-xs font-bold leading-[normal]">
-                <Image
-                  width={12}
-                  height={12}
-                  alt="End Date"
-                  src="/images/calendar.png"
-                />
-                <span>End Date</span>
-              </div>
-              <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
-                {pair?.endTimeDisplay && pair?.endTimeDisplay !== "-"
-                  ? new Date(pair?.endTimeDisplay).toLocaleDateString()
-                  : "--"}
-                <br />
-                {state.pair.value?.endTimeDisplay &&
-                pair?.endTimeDisplay !== "-"
-                  ? new Date(
-                      state.pair.value?.endTimeDisplay
-                    ).toLocaleTimeString()
-                  : "--"}
-              </div>
-            </div>
-          </div>
-          <hr />
-          <RankProject
-            votes={votes}
-            walletAccount={wallet.account}
-            projectAddress={pair?.address}
-            refreshVotes={refreshVotes}
+          <TokenRaised
+            depositedRaisedToken={pair?.depositedRaisedToken}
+            raiseTokenDerivedUSD={pair?.raiseToken?.derivedUSD}
+            raisedTokenMinCap={pair?.raiseToken?.balance}
+            raiseTokenDecimals={pair?.raiseToken?.decimals}
           />
+
+          <SaleProgress
+            ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+            raiseTokenBalance={pair?.raiseToken?.balance}
+            raiseTokenDecimals={pair?.raiseToken?.decimals}
+            depositedRaisedToken={pair?.depositedRaisedToken}
+          />
+
+          <TokenAddress address={pair?.launchedToken?.address} />
+
+          <TokenDetails
+            price={pair?.price}
+            depositedRaisedToken={pair?.depositedRaisedToken}
+            startTimeDisplay={pair?.startTimeDisplay}
+            endTimeDisplay={pair?.endTimeDisplay}
+          />
+
+          <hr />
+          <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
+          <div className="flex gap-5">
+            {Object.entries(votes).map(([key, value]) => {
+              return (
+                <div
+                  key={key}
+                  onClick={() => {
+                    if (!wallet.account || !state.pair.value?.address) return;
+
+                    trpcClient.projects.createOrUpdateProjectVotes
+                      .mutate({
+                        project_pair: state.pair.value?.address,
+                        wallet_address: wallet.account,
+                        vote: key.split("_")[0],
+                      })
+                      .then(() => {
+                        refreshVotes();
+                      });
+                  }}
+                  className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
+                >
+                  <p>
+                    {(key.split("_")[0] === "rocket" && "🚀") ||
+                      (key.split("_")[0] === "fire" && "🔥") ||
+                      (key.split("_")[0] === "poo" && "💩") ||
+                      (key.split("_")[0] === "flag" && "🚩")}
+                  </p>
+                  <p>{value}</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
           {pair && <Action pair={pair} />}
@@ -799,8 +636,6 @@ const MemeView = observer(() => {
     router,
   ]);
 
-  const pair = useMemo(() => state.pair.value, [state.pair.value]);
-
   useEffect(() => {
     if (!wallet.isInit || !pairAddress) {
       return;
@@ -813,14 +648,15 @@ const MemeView = observer(() => {
   }, [wallet.isInit, pairAddress]);
 
   useEffect(() => {
-    if (!pair?.launchedToken) {
+    if (!state.pair.value?.launchedToken) {
       return;
     }
     chart.setCurrencyCode("USD");
     chart.setTokenNumber(0);
-    chart.setChartTarget(pair.launchedToken);
-    chart.setChartLabel(pair.launchedToken?.displayName + "/USD");
-  }, [pair?.launchedToken]);
+    chart.setChartTarget(state.pair.value.launchedToken);
+    chart.setChartLabel(state.pair.value.launchedToken?.displayName + "/USD");
+    console.log("chart", chart);
+  }, [state.pair.value?.launchedToken]);
 
   function refreshVotes() {
     trpcClient.projects.getProjectVotes
@@ -829,6 +665,8 @@ const MemeView = observer(() => {
         setVotes(data);
       });
   }
+
+  const pair = useMemo(() => state.pair.value, [state.pair.value]);
 
   return (
     <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
@@ -870,243 +708,82 @@ const MemeView = observer(() => {
                 }
               />
             </div>
-            <div className="flex flex-col gap-x-[7.5px] md:text-2xl">
-              <div>{state.pair.value?.launchedToken?.name}</div>
-              <div>{state.pair.value?.launchedToken?.displayName}</div>
-            </div>
+            <ProjectTitle
+              name={pair?.launchedToken?.name}
+              displayName={pair?.launchedToken?.displayName}
+            />
           </div>
           <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
-            <div className="flex flex-col gap-y-2.5">
-              {/* TODO: gradient color */}
-              <div className="text-[#F7931A] xs:text-lg md:text-xl">
-                Ends In
-              </div>
-              {state.pair.value?.endTime && (
-                <Countdown
-                  date={Number(state.pair.value?.endTime) * 1000}
-                  renderer={({ days, hours, minutes, seconds, completed }) => {
-                    if (completed || state.pair.value?.ftoState !== 3) {
-                      return state.pair.value?.endTimeDisplay;
-                    } else {
-                      return (
-                        <div className="flex items-start md:gap-x-2">
-                          <div className="flex flex-col items-center gap-y-1.5">
-                            <span className="text-base">{days}</span>
-                            <span className="text-xs text-white/45">Days</span>
-                          </div>
-
-                          <div>:</div>
-
-                          <div className="flex flex-col items-center gap-y-1.5">
-                            <span className="text-base">{hours}</span>
-                            <span className="text-xs text-white/45">Hours</span>
-                          </div>
-
-                          <div>:</div>
-
-                          <div className="flex flex-col items-center gap-y-1.5">
-                            <span className="text-base">{minutes}</span>
-                            <span className="text-xs text-white/45">
-                              Minutes
-                            </span>
-                          </div>
-
-                          <div>:</div>
-
-                          <div className="flex flex-col items-center gap-y-1.5">
-                            <span className="text-base">{seconds}</span>
-                            <span className="text-xs text-white/45">
-                              Seconds
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    }
-                  }}
-                />
-              )}
-            </div>
+            <CountdownTimer
+              endTime={pair?.endTime}
+              ftoState={state.pair.value?.ftoState}
+              endTimeDisplay={state.pair.value?.endTimeDisplay}
+            />
             {/* TODO: update style */}
-            <ProjectStatus pair={state.pair.value} />
+            <ProjectStatus
+              isValidated={pair?.isValidated}
+              ftoStatusDisplayColor={pair?.ftoStatusDisplay?.color}
+              ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+            />
           </div>
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-          {/* Token Raised */}
-          <div className="flex flex-col gap-y-2">
-            <div className="text-white md:text-base text-sm font-bold leading-[normal]">
-              Token Raised
-            </div>
-            <div className="text-[color:var(--Button-Gradient,var(--card-stroke,#F7931A))]">
-              <span className="font-bold">
-                $
-                {(pair?.depositedRaisedToken ?? BigNumber(0))
-                  .multipliedBy(pair?.raiseToken?.derivedUSD ?? 1)
-                  .toFixed(3)}
-              </span>
-              <span className="text-sm">
-                / $
-                {(pair?.raisedTokenMinCap ?? BigNumber(0))
-                  .div(10 ** (pair?.raiseToken?.decimals ?? 0))
-                  .multipliedBy(pair?.raiseToken?.derivedUSD ?? BigNumber(1))
-                  .toFixed(3)}
-              </span>
-            </div>
-          </div>
-          {/* raised progress */}
-          <div className="space-y-2">
-            <div className="text-white text-sm font-bold leading-[normal]">
-              Sale progress
-            </div>
-            <ProgressBar
-              label={
-                pair?.ftoStatusDisplay?.status === "success"
-                  ? "100%"
-                  : (
-                      ((pair?.depositedRaisedToken ?? BigNumber(0)).toNumber() /
-                        ((pair?.raisedTokenMinCap ?? BigNumber(1)).toNumber() /
-                          Math.pow(10, 18))) *
-                      100
-                    ).toFixed(2) + "%"
-              }
-              value={
-                pair?.ftoStatusDisplay?.status === "success"
-                  ? 100
-                  : ((pair?.depositedRaisedToken ?? BigNumber(0)).toNumber() /
-                      ((pair?.raisedTokenMinCap ?? BigNumber(1)).toNumber() /
-                        Math.pow(10, 18))) *
-                    100
-              }
-            />
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-[#FFCD4D]">
-                  {pair?.ftoStatusDisplay?.status === "success"
-                    ? amountFormatted(pair?.raisedTokenMinCap, {
-                        decimals: pair?.raiseToken?.decimals,
-                        fixed: 3,
-                        prefix: "$",
-                      })
-                    : amountFormatted(pair?.depositedRaisedToken, {
-                        decimals: 0,
-                        fixed: 3,
-                        prefix: "$",
-                      })}
-                </span>
-                <span className="text-xs">
-                  /
-                  {(pair?.raisedTokenMinCap ?? BigNumber(0))
-                    .div(10 ** (pair?.raiseToken?.decimals ?? 0))
-                    .toFixed()}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Token Address */}
-          <div>
-            <div className="text-white text-sm font-medium leading-[normal]">
-              Token address
-            </div>
-
-            <Copy
-              className={"w-full"}
-              content="Copy address"
-              value={state.pair.value?.launchedToken?.address ?? ""}
-              displayContent={
-                <div className="relative">
-                  <span className="mt-[8px] flex  h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px] cursor-pointer hover:brightness-150 active:brightness-75 select-none">
-                    {truncate(
-                      state.pair.value?.launchedToken?.address || "",
-                      28
-                    )}
-                  </span>
-                  <VscCopy className="size-4 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer" />
-                </div>
-              }
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 *:margin">
-            <div className="flex flex-col items-center">
-              <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
-                Token Price
-              </div>
-              <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
-                {amountFormatted(state.pair.value?.price, {
-                  decimals: 0,
-                  fixed: 3,
-                  prefix: "$",
-                })}
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
-                Funds Raised
-              </div>
-              <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
-                {amountFormatted(pair?.depositedRaisedToken, {
-                  decimals: 0,
-                  fixed: 3,
-                  prefix: "$",
-                })}
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="flex items-center gap-[4px] text-white text-xs font-bold leading-[normal]">
-                {/* TODO: fix different size display */}
-                <Image
-                  width={12}
-                  height={12}
-                  alt="Start Date"
-                  src="/images/calendar.png"
-                />
-                <span>Start Date</span>
-              </div>
-              <div className="text-[#FFCD4D]  text-xs font-medium leading-[normal] mt-[4px]">
-                {pair?.startTimeDisplay && pair?.startTimeDisplay !== "-"
-                  ? new Date(pair.startTimeDisplay).toLocaleDateString()
-                  : "--"}
-                <br />
-                {pair?.startTimeDisplay && pair?.startTimeDisplay !== "-"
-                  ? new Date(pair.startTimeDisplay).toLocaleTimeString()
-                  : "--"}
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="flex gap-1 text-white text-xs font-bold leading-[normal]">
-                <Image
-                  width={12}
-                  height={12}
-                  alt="End Date"
-                  src="/images/calendar.png"
-                />
-                <span>End Date</span>
-              </div>
-              <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
-                {pair?.endTimeDisplay && pair?.endTimeDisplay !== "-"
-                  ? new Date(pair?.endTimeDisplay).toLocaleDateString()
-                  : "--"}
-                <br />
-                {state.pair.value?.endTimeDisplay &&
-                pair?.endTimeDisplay !== "-"
-                  ? new Date(
-                      state.pair.value?.endTimeDisplay
-                    ).toLocaleTimeString()
-                  : "--"}
-              </div>
-            </div>
-          </div>
-          <hr />
-
-          <RankProject
-            votes={votes}
-            walletAccount={wallet.account}
-            projectAddress={pair?.address}
-            refreshVotes={refreshVotes}
+          <TokenRaised
+            depositedRaisedToken={pair?.depositedRaisedToken}
+            raiseTokenDerivedUSD={pair?.raiseToken?.derivedUSD}
+            raisedTokenMinCap={pair?.raisedTokenMinCap}
+            raiseTokenDecimals={pair?.raiseToken?.decimals}
           />
+
+          <SaleProgress
+            ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+            raiseTokenBalance={pair?.raisedTokenMinCap}
+            raiseTokenDecimals={pair?.raiseToken?.decimals}
+            depositedRaisedToken={pair?.depositedRaisedToken}
+          />
+
+          <TokenAddress address={pair?.launchedToken?.address} />
+
+          <TokenDetails
+            price={pair?.price}
+            depositedRaisedToken={pair?.depositedRaisedToken}
+            startTimeDisplay={pair?.startTimeDisplay}
+            endTimeDisplay={pair?.endTimeDisplay}
+          />
+
+          <hr />
+          <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
+          <div className="flex gap-5">
+            {Object.entries(votes).map(([key, value]) => {
+              return (
+                <div
+                  key={key}
+                  onClick={() => {
+                    if (!wallet.account || !state.pair.value?.address) return;
+
+                    trpcClient.projects.createOrUpdateProjectVotes
+                      .mutate({
+                        project_pair: state.pair.value?.address,
+                        wallet_address: wallet.account,
+                        vote: key.split("_")[0],
+                      })
+                      .then(() => {
+                        refreshVotes();
+                      });
+                  }}
+                  className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
+                >
+                  <p>
+                    {(key.split("_")[0] === "rocket" && "🚀") ||
+                      (key.split("_")[0] === "fire" && "🔥") ||
+                      (key.split("_")[0] === "poo" && "💩") ||
+                      (key.split("_")[0] === "flag" && "🚩")}
+                  </p>
+                  <p>{value}</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
           {pair && <Action pair={pair} />}
