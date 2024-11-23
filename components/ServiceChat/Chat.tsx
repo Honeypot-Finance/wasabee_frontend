@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Send, X, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,12 +36,20 @@ export default function CustomerServiceChat({
   const [isPresetExpanded, setIsPresetExpanded] = useState(true);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const scrollArea = scrollAreaRef.current;
-    if (scrollArea) {
-      scrollArea.scrollTop = scrollArea.scrollHeight;
+  const scrollToBottom = useCallback(() => {
+    if (scrollAreaRef.current) {
+      const scrollContainer = scrollAreaRef.current.querySelector(
+        "[data-radix-scroll-area-viewport]"
+      );
+      if (scrollContainer) {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      }
     }
-  }, [messages]);
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
 
   const handleSendMessage = (text: string) => {
     if (text.trim() === "") return;
@@ -63,12 +71,6 @@ export default function CustomerServiceChat({
         sender: "agent",
       };
       setMessages((prevMessages) => [...prevMessages, agentReply]);
-
-      // Scroll to bottom
-      const scrollArea = scrollAreaRef.current;
-      if (scrollArea) {
-        scrollArea.scrollTop = scrollArea.scrollHeight;
-      }
     }, 1000);
   };
 
@@ -86,8 +88,8 @@ export default function CustomerServiceChat({
           <span className="sr-only">Close chat</span>
         </Button>
       </div>
-      <ScrollArea className="flex-grow">
-        <div className="p-3" ref={scrollAreaRef}>
+      <ScrollArea className="flex-grow" ref={scrollAreaRef}>
+        <div className="p-3">
           <Card
             className={`mb-4 bg-[#5D4B2C] border-[#FFCD4D] border transition-all duration-300 ${
               isPresetExpanded ? "max-h-[210px]" : "h-[48px]"
