@@ -63,7 +63,7 @@ export const guideConfigs = [
     path: ["/pool", "/pools"],
     title: "Tips for Liquidity Pools",
     desc: "If you’re providing liquidity to earn fees and rewards, here’s what you need to know:",
-    stepTitle: "Steps to Provide Liquidity",
+    stepTitle: "",
     buttonText: "Start Providing Liquidity",
     steps: [
       {

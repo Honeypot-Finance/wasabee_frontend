@@ -16,9 +16,12 @@ const GuideModal: React.FC & { openInstructionModal?: () => void } = observer(
 
     useEffect(() => {
       if (config) {
-        const notice_read = store.get(
-          "pot2pump_notice_read" + "_" + config.path
-        );
+        const notice_read = Array.isArray(config.path)
+          ? config.path.some((path) =>
+              store.get("pot2pump_notice_read" + "_" + path)
+            )
+          : store.get("pot2pump_notice_read" + "_" + config.path);
+
         if (!notice_read && config) {
           openInstructionModal();
         }
