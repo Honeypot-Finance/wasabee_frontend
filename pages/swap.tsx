@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import React from "react";
 import { itemPopUpVariants } from "@/lib/animation";
 import PriceFeedGraph from "@/components/PriceFeedGraph/PriceFeedGraph";
+import GuideModal from "@/components/Instruction/GuideModal";
 
 const SwapPage = observer(() => {
   return (
