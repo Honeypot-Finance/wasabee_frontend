@@ -452,11 +452,7 @@ const FtoView = observer(() => {
               endTimeDisplay={state.pair.value?.endTimeDisplay}
             />
             {/* TODO: update style */}
-            <ProjectStatus
-              isValidated={pair?.isValidated}
-              ftoStatusDisplayColor={pair?.ftoStatusDisplay?.color}
-              ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
-            />
+            <ProjectStatus pair={pair} />
           </div>
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
@@ -720,11 +716,7 @@ const MemeView = observer(() => {
               endTimeDisplay={state.pair.value?.endTimeDisplay}
             />
             {/* TODO: update style */}
-            <ProjectStatus
-              isValidated={pair?.isValidated}
-              ftoStatusDisplayColor={pair?.ftoStatusDisplay?.color}
-              ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
-            />
+            <ProjectStatus pair={pair} />
           </div>
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
