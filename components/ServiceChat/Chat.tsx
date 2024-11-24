@@ -65,6 +65,71 @@ const presetQuestions: presetQuestionType[] = [
       </ol>
     ),
   },
+  {
+    // Processing State (Deposits Open)
+    // During this phase, users can deposit the raise token (e.g., ETH, USDT) into the project.
+    // Deposits accumulate until the project's minimum cap is reached.
+    // You can monitor the total raised amount in real time on the project detail page.
+    // Key Action: Deposit tokens to participate in the Meme Token launch.
+
+    quesiton: "Meme Launch Processing State",
+    answer: (
+      <ol className="list-decimal *:ml-5">
+        <li>
+          During this phase, users can deposit the raise token (e.g., ETH, USDT)
+          into the project.
+        </li>
+        <li>
+          Deposits accumulate until the project&apos;s minimum cap is reached.
+        </li>
+        <li>
+          You can monitor the total raised amount in real time on the project
+          detail page.
+        </li>
+        <li>
+          Key Action: Deposit tokens to participate in the Meme Token launch.
+        </li>
+      </ol>
+    ),
+  },
+  {
+    quesiton: "Meme Launch Success State",
+    answer: (
+      <ol className="list-decimal *:ml-5">
+        <li>
+          Once the project hits its minimum cap, the state changes to
+          &quot;Success.&quot;
+        </li>
+        <li>At this point:</li>
+        <li>Deposits are locked.</li>
+        <li>
+          Users can visit the project detail page to claim their LP tokens
+          (representing their share of the Meme Token liquidity pool) in
+          exchange for their deposited raise tokens.
+        </li>
+        <li>Key Action: Claim your LP tokens on the detail page.</li>
+      </ol>
+    ),
+  },
+  {
+    quesiton: "Meme Launch Failed State",
+    answer: (
+      <ol className="list-decimal *:ml-5">
+        <li>
+          If the project does not meet its minimum cap before the end time, the
+          launch moves to the &quot;Failed&quot; state.
+        </li>
+        <li>In this case:</li>
+        <li>
+          Depositors are eligible for a full refund of their raise tokens.
+        </li>
+        <li>
+          Refunds can be initiated and claimed on the project detail page.
+        </li>
+        <li>Key Action: Refund your deposit on the detail page.</li>
+      </ol>
+    ),
+  },
 ];
 
 export default function CustomerServiceChat({
