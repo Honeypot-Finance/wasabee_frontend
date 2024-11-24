@@ -591,7 +591,8 @@ class LaunchPad {
               raisedToken: raisedToken as `0x${string}`,
               name: tokenName,
               symbol: tokenSymbol,
-              swapHandler: wallet.currentChain.contracts.routerV3 as `0x${string}`,
+              swapHandler: wallet.currentChain.contracts
+                .routerV3 as `0x${string}`,
             },
           ]);
         }

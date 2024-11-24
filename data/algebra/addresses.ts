@@ -27,10 +27,10 @@ import { Address } from "viem";
   FarmingCenter deployed to: 0x4798623CcE373b33E7263f88fE133ad34bcD864F
 */
 
-
 export const NATIVE_TOKEN_WRAPPED: Address =
   "0x7507c1dc16935b82698e4c63f2746a2fcf994df8";
 
+  
 export const POOL_INIT_CODE_HASH: Address =
   "0xb3fc09be5eb433d99b1ec89fd8435aaf5ffea75c1879e19028aa2414a14b3c85";
 

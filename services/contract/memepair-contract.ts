@@ -381,7 +381,7 @@ export class MemePairContract implements BaseLaunchContract {
   }
 
   async getRaisedTokenMinCap() {
-    const res = await this.contract.read.getRaisedTokenMinCap();
+    const res = await this.contract.read.raisedTokenMinCap();
 
     this.raisedTokenMinCap = new BigNumber(res.toString());
   }

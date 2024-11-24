@@ -28,17 +28,7 @@ export const pot2PumpPairABI = [
       { name: "tokenDeployer", type: "uint256", internalType: "uint256" },
       { name: "honeypotFee", type: "uint16", internalType: "uint16" },
       { name: "burnAllocation", type: "uint16", internalType: "uint16" },
-      { name: "extraIncentive", type: "uint256", internalType: "uint256" },
     ],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "calculateTokenDeployerIncentive",
-    inputs: [
-      { name: "_memeTokenPrice", type: "uint256", internalType: "uint256" },
-    ],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
   {
@@ -88,23 +78,16 @@ export const pot2PumpPairABI = [
   },
   {
     type: "function",
-    name: "dexRouter",
+    name: "dexPool",
     inputs: [],
     outputs: [{ name: "", type: "address", internalType: "address" }],
     stateMutability: "view",
   },
   {
     type: "function",
-    name: "earlyDepositedToken",
+    name: "dexRouter",
     inputs: [],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "earlyRaisedTokenDeposit",
-    inputs: [{ name: "", type: "address", internalType: "address" }],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    outputs: [{ name: "", type: "address", internalType: "address" }],
     stateMutability: "view",
   },
   {
@@ -123,39 +106,6 @@ export const pot2PumpPairABI = [
   },
   {
     type: "function",
-    name: "getIncentiveTiers",
-    inputs: [],
-    outputs: [
-      {
-        name: "",
-        type: "tuple[]",
-        internalType: "struct IMemeFactory.IncentiveTier[]",
-        components: [
-          { name: "threshold", type: "uint256", internalType: "uint256" },
-          { name: "percentage", type: "uint256", internalType: "uint256" },
-        ],
-      },
-    ],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "getMemeTokenPrice",
-    inputs: [],
-    outputs: [
-      { name: "memeTokenPrice", type: "uint256", internalType: "uint256" },
-    ],
-    stateMutability: "pure",
-  },
-  {
-    type: "function",
-    name: "getRaisedTokenMinCap",
-    inputs: [],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
     name: "initialize",
     inputs: [
       { name: "_tokenDeployer", type: "address", internalType: "address" },
@@ -163,6 +113,7 @@ export const pot2PumpPairABI = [
       { name: "_launchedToken", type: "address", internalType: "address" },
       { name: "_dexRouter", type: "address", internalType: "address" },
       { name: "_launchCycle", type: "uint256", internalType: "uint256" },
+      { name: "_raisedTokenMinCap", type: "uint256", internalType: "uint256" },
       {
         name: "_allocation",
         type: "tuple",
@@ -176,24 +127,6 @@ export const pot2PumpPairABI = [
           { name: "burnAllocation", type: "uint16", internalType: "uint16" },
           { name: "honeypotFee", type: "uint16", internalType: "uint16" },
           { name: "tokenDeployer", type: "uint16", internalType: "uint16" },
-          { name: "extraIncentive", type: "uint16", internalType: "uint16" },
-        ],
-      },
-      {
-        name: "_raisedTokenInfo",
-        type: "tuple",
-        internalType: "struct IMemeFactory.RaisedTokenInfo",
-        components: [
-          {
-            name: "tiers",
-            type: "tuple[]",
-            internalType: "struct IMemeFactory.IncentiveTier[]",
-            components: [
-              { name: "threshold", type: "uint256", internalType: "uint256" },
-              { name: "percentage", type: "uint256", internalType: "uint256" },
-            ],
-          },
-          { name: "minCap", type: "uint256", internalType: "uint256" },
         ],
       },
     ],
@@ -231,7 +164,7 @@ export const pot2PumpPairABI = [
       { name: "", type: "bytes", internalType: "bytes" },
     ],
     outputs: [{ name: "", type: "bytes4", internalType: "bytes4" }],
-    stateMutability: "pure",
+    stateMutability: "nonpayable",
   },
   {
     type: "function",
@@ -249,9 +182,9 @@ export const pot2PumpPairABI = [
   },
   {
     type: "function",
-    name: "raisedTokenInfo",
+    name: "raisedTokenMinCap",
     inputs: [],
-    outputs: [{ name: "minCap", type: "uint256", internalType: "uint256" }],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
   {
