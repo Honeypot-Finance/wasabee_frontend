@@ -9,7 +9,7 @@ export default function ChatWidget() {
   const toggleChat = () => setIsOpen(!isOpen);
 
   return (
-    <div className="z-10">
+    <div className="z-20">
       {isOpen ? (
         <div className="fixed bottom-0 right-0 w-full sm:w-[450px] md:w-[550px]">
           <CustomerServiceChat onClose={() => setIsOpen(false)} />
