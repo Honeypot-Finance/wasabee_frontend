@@ -12,12 +12,13 @@ import { trpcClient } from "@/lib/trpc";
 import { ZodError } from "zod";
 import { statusTextToNumber } from "../launchpad";
 import { BaseLaunchContract } from "./base-launch-contract";
+import { pot2PumpPairABI } from "@/lib/abis/Pot2Pump/pot2PumpPair";
 
 export class MemePairContract implements BaseLaunchContract {
   databaseId: number | undefined = undefined;
   address = "";
   name: string = "";
-  abi = MemePairABI.abi;
+  abi = pot2PumpPairABI;
   raiseToken: Token | undefined = undefined;
   launchedToken: Token | undefined = undefined;
   depositedRaisedTokenWithoutDecimals: BigNumber | null = null;
@@ -206,7 +207,6 @@ export class MemePairContract implements BaseLaunchContract {
     });
 
     await this.facadeContract.deposit.call([
-      this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
       BigInt(amount),
     ]);
@@ -236,36 +236,9 @@ export class MemePairContract implements BaseLaunchContract {
     }
 
     await this.facadeContract.claimLP.call([
-      this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
     ]);
     this.canClaimLP = false;
-  });
-
-  resume = new AsyncState(async () => {
-    if (!this.raiseToken || !this.launchedToken) {
-      throw new Error("token is not initialized");
-    }
-
-    await this.factoryContract.resume.call([
-      this.raiseToken.address as `0x${string}`,
-      this.launchedToken.address as `0x${string}`,
-    ]);
-
-    await this.getState();
-  });
-
-  pause = new AsyncState(async () => {
-    if (!this.raiseToken || !this.launchedToken) {
-      throw new Error("token is not initialized");
-    }
-
-    await this.factoryContract.pause.call([
-      this.raiseToken.address as `0x${string}`,
-      this.launchedToken.address as `0x${string}`,
-    ]);
-
-    await this.getState();
   });
 
   get withdraw() {
@@ -463,7 +436,7 @@ export class MemePairContract implements BaseLaunchContract {
       this.launchedToken = launchedToken;
       this.launchedToken.init();
     } else {
-      const res = (await this.contract.read.memeToken()) as `0x${string}`;
+      const res = (await this.contract.read.launchedToken()) as `0x${string}`;
       this.launchedToken = Token.getToken({ address: res });
       this.launchedToken.init();
     }
@@ -482,7 +455,7 @@ export class MemePairContract implements BaseLaunchContract {
     if (amount && Number(amount) !== 0) {
       this.depositedLaunchedTokenWithoutDecimals = new BigNumber(amount);
     } else {
-      const res = (await this.contract.read.depositedmemeToken()) as bigint;
+      const res = (await this.contract.read.depositedLaunchedToken()) as bigint;
       this.depositedLaunchedTokenWithoutDecimals = new BigNumber(
         res.toString()
       );

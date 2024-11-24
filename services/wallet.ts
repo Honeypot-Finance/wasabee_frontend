@@ -6,13 +6,11 @@ import { FactoryContract } from "./contract/factory-contract";
 import { FtoFactoryContract } from "./contract/ftofactory-contract";
 import { FtoFacadeContract } from "./contract/ftofacade-contract";
 import { makeAutoObservable, reaction } from "mobx";
-import { Token } from "./contract/token";
 import { createPublicClientByChain } from "@/lib/client";
 import { AsyncState, StorageState } from "./utils";
 import { MemeFactoryContract } from "./contract/memefactory-contract";
 import { MEMEFacadeContract } from "./contract/memefacade-contract";
-import { init } from "next/dist/compiled/webpack/webpack";
-import { AlgebraFactoryContract } from "./contract/algebra/algebra-factory-contract";
+
 export class Wallet {
   account: string = "";
   accountShort = "";
@@ -31,13 +29,10 @@ export class Wallet {
   publicClient!: PublicClient;
   isInit = false;
   get networksMap() {
-    return this.networks.reduce(
-      (acc, network) => {
-        acc[network.chainId] = network;
-        return acc;
-      },
-      {} as Record<number, Network>
-    );
+    return this.networks.reduce((acc, network) => {
+      acc[network.chainId] = network;
+      return acc;
+    }, {} as Record<number, Network>);
   }
 
   get currentChain() {

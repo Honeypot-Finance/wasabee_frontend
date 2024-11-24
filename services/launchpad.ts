@@ -11,10 +11,7 @@ import {
 } from "./utils";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { createSiweMessage } from "@/lib/siwe";
-import { Address } from "viem";
 import { Token } from "./contract/token";
-import { getTransactionReceipt, reset } from "viem/actions";
-import { debounce, initial } from "lodash";
 import { parseEventLogs } from "viem";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { MemePairContract } from "./contract/memepair-contract";
@@ -585,7 +582,7 @@ class LaunchPad {
             tokenName,
             tokenSymbol,
             BigInt(new BigNumber(tokenAmount).multipliedBy(1e18).toFixed()),
-            poolHandler as `0x${string}`,
+            wallet.currentChain.contracts.routerV3 as `0x${string}`,
             BigInt(raisingCycle),
           ]);
         } else {
@@ -594,8 +591,8 @@ class LaunchPad {
               raisedToken: raisedToken as `0x${string}`,
               name: tokenName,
               symbol: tokenSymbol,
-              swapHandler: poolHandler as `0x${string}`,
-              launchCycle: BigInt(86400),
+              swapHandler: wallet.currentChain.contracts
+                .routerV3 as `0x${string}`,
             },
           ]);
         }
