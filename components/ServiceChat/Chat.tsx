@@ -22,7 +22,7 @@ const presetQuestions: presetQuestionType[] = [
   {
     quesiton: "How to Swap Tokens?",
     answer: (
-      <ol>
+      <ol className="list-decimal *:ml-5">
         <li>
           Select &quot;From&quot; Token: Choose the token you want to sell from
           the dropdown menu.
@@ -50,7 +50,7 @@ const presetQuestions: presetQuestionType[] = [
   {
     quesiton: "Tips for Liquidity Pools",
     answer: (
-      <ol>
+      <ol className="list-decimal *:ml-5">
         <li>
           Understanding Liquidity Pools: Liquidity pools allow you to earn
           rewards by providing pairs of tokens (e.g., Token A and Token B). In
@@ -72,13 +72,7 @@ export default function CustomerServiceChat({
 }: {
   onClose: () => void;
 }) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      text: "Hello! I'm the customer service assistant. How can I help you today?",
-      sender: "agent",
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isPresetExpanded, setIsPresetExpanded] = useState(true);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -99,6 +93,7 @@ export default function CustomerServiceChat({
   }, [messages, scrollToBottom]);
 
   const handelQuestionClick = (question: presetQuestionType) => {
+    handleClearChat();
     handleSendMessage(question.answer);
   };
 
@@ -113,16 +108,10 @@ export default function CustomerServiceChat({
 
     setMessages((prevMessages) => [...prevMessages, newUserMessage]);
     setInputMessage("");
+  };
 
-    // Simulate agent reply
-    setTimeout(() => {
-      const agentReply: Message = {
-        id: messages.length + 2,
-        text: "Thank you for your question. We're processing your inquiry, please wait a moment.",
-        sender: "agent",
-      };
-      setMessages((prevMessages) => [...prevMessages, agentReply]);
-    }, 1000);
+  const handleClearChat = () => {
+    setMessages([]);
   };
 
   return (
