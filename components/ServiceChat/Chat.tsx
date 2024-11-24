@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Send, X, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,15 +9,62 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type Message = {
   id: number;
-  text: string;
+  text: string | React.ReactNode;
   sender: "user" | "agent";
 };
 
-const presetQuestions = [
-  "How do I reset my password?",
-  "What are your business hours?",
-  "How can I track my order?",
-  "Do you offer refunds?",
+type presetQuestionType = {
+  quesiton: string;
+  answer: React.ReactNode;
+};
+
+const presetQuestions: presetQuestionType[] = [
+  {
+    quesiton: "How to Swap Tokens?",
+    answer: (
+      <ol>
+        <li>
+          Select &quot;From&quot; Token: Choose the token you want to sell from
+          the dropdown menu.
+        </li>
+        <li>Select &quot;To&quot; Token: Pick the token you want to buy.</li>
+        <li>
+          Confirm Amount: Input the desired amount to swap, and double-check the
+          details.
+        </li>
+        <li>
+          Approve &amp; Swap: Confirm the transaction in your wallet and
+          initiate the swap.
+        </li>
+        <li>
+          Wait for Confirmation: The transaction will process on-chain. This may
+          take a few moments depending on network activity.
+        </li>
+        <li>
+          Receive Tokens: Once completed, your new tokens will be credited to
+          your wallet!
+        </li>
+      </ol>
+    ),
+  },
+  {
+    quesiton: "Tips for Liquidity Pools",
+    answer: (
+      <ol>
+        <li>
+          Understanding Liquidity Pools: Liquidity pools allow you to earn
+          rewards by providing pairs of tokens (e.g., Token A and Token B). In
+          return, you receive LP (Liquidity Provider) tokens, which represent
+          your share in the pool.
+        </li>
+        <li>
+          Providing Liquidity: Select the token pair and input equal value
+          amounts for both tokens. Confirm and approve the transaction in your
+          wallet. Stake the LP tokens to earn additional rewards if applicable.
+        </li>
+      </ol>
+    ),
+  },
 ];
 
 export default function CustomerServiceChat({
@@ -51,8 +98,12 @@ export default function CustomerServiceChat({
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  const handleSendMessage = (text: string) => {
-    if (text.trim() === "") return;
+  const handelQuestionClick = (question: presetQuestionType) => {
+    handleSendMessage(question.answer);
+  };
+
+  const handleSendMessage = (text: string | React.ReactNode) => {
+    if (typeof text === "string" && text.trim() === "") return;
 
     const newUserMessage: Message = {
       id: messages.length + 1,
@@ -127,10 +178,10 @@ export default function CustomerServiceChat({
                       key={index}
                       variant="outline"
                       size="sm"
-                      onClick={() => handleSendMessage(question)}
+                      onClick={() => handelQuestionClick(question)}
                       className="justify-start bg-[#7A6236] text-[#F5E6D3] hover:bg-[#8F7A4F] border-[#FFCD4D] whitespace-normal text-left h-auto py-1.5 px-2 text-xs"
                     >
-                      {question}
+                      {question.quesiton}
                     </Button>
                   ))}
                 </div>
@@ -159,7 +210,7 @@ export default function CustomerServiceChat({
           </div>
         </div>
       </ScrollArea>
-      <div className="p-4 border-t border-[#FFCD4D]">
+      {/* <div className="p-4 border-t border-[#FFCD4D]">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -183,7 +234,7 @@ export default function CustomerServiceChat({
             <span className="sr-only">Send message</span>
           </Button>
         </form>
-      </div>
+      </div> */}
     </div>
   );
 }

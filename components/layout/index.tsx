@@ -90,7 +90,7 @@ export const Layout = ({
       )}
     >
       <AnnouncementBar slogans={slogans} interval={5000} />
-      <GuideModal />
+      {/* <GuideModal /> */}
       <ChatWidget />
 
       <ConfettiComponent />
