@@ -27,8 +27,8 @@ export const DEFAULT_LAUNCH_PROJECT_FORM = {
   lbpType: undefined,
   startTime: new Date(),
   endTime: new Date(),
-  tokenClaimDelayHours: undefined,
-  tokenClaimDelayMinutes: undefined,
+  tokenClaimDelayHours: 0,
+  tokenClaimDelayMinutes: 0,
   tokenClaimDelay: new Date(),
   // 3.Tokenomics & Preview
   projectTokenQuantity: 0,

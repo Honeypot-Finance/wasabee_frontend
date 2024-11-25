@@ -52,6 +52,7 @@ const ApprovalsCard = ({
   isLoading,
   status,
   disabled,
+  isApproved,
 }: {
   step: number;
   title: string;
@@ -60,20 +61,32 @@ const ApprovalsCard = ({
   isLoading: boolean;
   status?: "idle" | "pending" | "success" | "error";
   disabled?: boolean;
+  isApproved: boolean;
 }) => {
   return (
     <div className="py-5 px-7 flex flex-col gap-4 items-center bg-[#211708] border border-[#F7931A1A] rounded-[20px]">
       <div className="text-[12px] leading-4">Step {step}</div>
       <div>{title}</div>
       <div className="w-36 h-[2px] bg-[#37240A]" />
-      <Button
-        styleMode="plain"
-        className="rounded-full outline-0 border-0"
-        isDisabled={isLoading || disabled}
-        onClick={onClick}
-      >
-        {!isLoading ? buttonTitle : "Loading..."}
-      </Button>
+      {isApproved && title == "Approve" ? (
+        <Button
+          styleMode="plain"
+          className="rounded-full outline-0 border-0"
+          isDisabled={true}
+          onClick={onClick}
+        >
+          Approved
+        </Button>
+      ) : (
+        <Button
+          styleMode="plain"
+          className="rounded-full outline-0 border-0"
+          isDisabled={isLoading || disabled}
+          onClick={onClick}
+        >
+          {!isLoading ? buttonTitle : "Loading..."}
+        </Button>
+      )}
     </div>
   );
 };
@@ -209,8 +222,8 @@ const Confirm = (props: Props) => {
     {
       title: "Duration",
       value: `${(
-        dayjs(endTime).unix() -
-        dayjs(startTime).unix() / 86400
+        (dayjs(endTime).unix() - dayjs(startTime).unix()) /
+        86400
       ).toFixed(2)}  Days`,
     },
   ];
@@ -358,6 +371,22 @@ const Confirm = (props: Props) => {
     }
   };
 
+  const isBothTokenApproved = isProjectTokenApproved && isAssetTokenApproved;
+  const isBothSufficientBalance =
+    +formatUnits(
+      formatedAssetToken?.balanceOf || BigInt(0),
+      formatedAssetToken?.decimals || 18
+    ) -
+      assetTokenQuantity >=
+      0 &&
+    +formatUnits(
+      formatedProjectToken?.balanceOf || BigInt(0),
+      formatedProjectToken?.decimals || 18
+    ) -
+      projectTokenQuantity >=
+      0;
+
+  console.log(isBothTokenApproved);
   return (
     <div>
       <div className="text-xl font-medium">Quick Summary</div>
@@ -379,14 +408,22 @@ const Confirm = (props: Props) => {
               onClick={handleApprovalTokens}
               isLoading={approvalTokenStatus.loading || tokensDataLoading}
               status={approvalTokenStatus.status}
+              isApproved={isBothTokenApproved}
             />
             <ApprovalsCard
-              disabled={!isAssetTokenApproved || !isProjectTokenApproved}
+              disabled={
+                !isAssetTokenApproved ||
+                !isProjectTokenApproved ||
+                !isBothSufficientBalance
+              }
               isLoading={createPoolLoading}
               onClick={handleCreatePool}
               step={2}
               title={"Schedule Sale "}
-              buttonTitle="Approve"
+              buttonTitle={
+                !isBothSufficientBalance ? "Insufficient balance" : "Approve"
+              }
+              isApproved={isBothTokenApproved}
             />
           </div>
         </div>
