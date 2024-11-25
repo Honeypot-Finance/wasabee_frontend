@@ -384,6 +384,12 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/memewar2/trumpot.jpg",
     },
+    "0xc87e5a73781e09d831d41e32991d9fc943517feb": {
+      name: "Bera Coral",
+      symbol: "BERA CORAL",
+      decimals: 18,
+      logoURI: "/images/memewar2/BERA_CORAL.png",
+    },
   },
   validatedFtoAddresses: [
     "0x2c504e661750e03aa9252c67e771dc059a521863".toLowerCase(),
@@ -396,10 +402,7 @@ export const networks = [
   berachainBartioTestnetNetwork,
   //sepoliaNetwork,
 ];
-export const networksMap = networks.reduce(
-  (acc, network) => {
-    acc[network.chainId] = network;
-    return acc;
-  },
-  {} as Record<number | string, Network>
-);
+export const networksMap = networks.reduce((acc, network) => {
+  acc[network.chainId] = network;
+  return acc;
+}, {} as Record<number | string, Network>);

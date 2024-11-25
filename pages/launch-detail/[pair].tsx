@@ -43,6 +43,11 @@ import TokenRaised from "./componets/TokenRaised";
 import SaleProgress from "./componets/SaleProgress";
 import TokenAddress from "./componets/TokenAddress";
 import TokenDetails from "./componets/TokenDetails";
+import {
+  OptionsDropdown,
+  optionsPresets,
+} from "@/components/OptionsDropdown/OptionsDropdown";
+import { LuFileEdit } from "react-icons/lu";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -720,12 +725,53 @@ const MemeView = observer(() => {
           </div>
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-          <TokenRaised
-            depositedRaisedToken={pair?.depositedRaisedToken}
-            raiseTokenDerivedUSD={pair?.raiseToken?.derivedUSD}
-            raisedTokenMinCap={pair?.raisedTokenMinCap}
-            raiseTokenDecimals={pair?.raiseToken?.decimals}
-          />
+          <div className="flex justify-between items-start">
+            <TokenRaised
+              depositedRaisedToken={pair?.depositedRaisedToken}
+              raiseTokenDerivedUSD={pair?.raiseToken?.derivedUSD}
+              raisedTokenMinCap={pair?.raisedTokenMinCap}
+              raiseTokenDecimals={pair?.raiseToken?.decimals}
+            />{" "}
+            <OptionsDropdown
+              className="p-0 m-0"
+              options={[
+                optionsPresets.copy({
+                  copyText: state.pair?.value?.launchedToken?.address ?? "",
+                  displayText: "Copy Token address",
+                  copysSuccessText: "Token address copied",
+                }),
+                optionsPresets.share({
+                  shareUrl: `${window.location.origin}/launch-detail/${state.pair?.value?.address}`,
+                  displayText: "Share this project",
+                  shareText:
+                    "Checkout this Token: " + state.pair?.value?.projectName,
+                }),
+                optionsPresets.importTokenToWallet({
+                  token: state.pair?.value?.launchedToken,
+                }),
+                optionsPresets.viewOnExplorer({
+                  address: state.pair?.value?.address ?? "",
+                }),
+                {
+                  icon: <LuFileEdit />,
+                  display: "Update Project",
+                  onClick: () => {
+                    if (!state.pair.value) return;
+
+                    if (
+                      state.pair.value.provider.toLowerCase() !==
+                      wallet.account.toLowerCase()
+                    ) {
+                      toast.warning("You are not the owner of this project");
+                      return;
+                    }
+
+                    onOpen();
+                  },
+                },
+              ]}
+            />
+          </div>
 
           <SaleProgress
             ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
