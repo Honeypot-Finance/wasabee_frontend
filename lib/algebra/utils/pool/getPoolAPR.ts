@@ -1,11 +1,13 @@
 import { Address } from "viem";
-
-const apiOrigin = process.env.NEXT_PUBLIC_APR_HOST;
+import { fetcher } from "@/data/algebra/api";
+import { apiOrigin } from "@/data/algebra/api";
 
 export async function getPoolAPR(poolId: Address) {
   if (!poolId) return;
 
-  const poolsAPR = await fetch(`${apiOrigin}/api/APR/pools/?network=berachain`)
+  const poolsAPR = await fetcher(
+    `${apiOrigin}/api/APR/pools/?network=berachain`
+  )
     .then((v) => v.json())
     .catch((e) => console.error("Failed to fetch pools APR", e));
 
