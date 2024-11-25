@@ -388,7 +388,6 @@ export const berachainBartioTestnetNetwork = new Network({
       name: "Bera Coral",
       symbol: "BERA CORAL",
       decimals: 18,
-      logoURI: "/images/memewar2/BERA_CORAL.png",
     },
   },
   validatedFtoAddresses: [
