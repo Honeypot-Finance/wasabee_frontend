@@ -1,6 +1,4 @@
-import { Layout } from "@/components/layout";
 import { LPCard } from "@/components/LPCard";
-import { Swap } from "@/components/swap";
 
 const Pool = () => {
   return (

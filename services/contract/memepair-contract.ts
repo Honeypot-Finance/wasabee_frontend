@@ -47,6 +47,7 @@ export class MemePairContract implements BaseLaunchContract {
   logoUrl = "";
   bannerUrl = "";
   participantsCount = new BigNumber(0);
+  beravoteSpaceId = "";
 
   constructor(args: Partial<MemePairContract>) {
     Object.assign(this, args);
@@ -345,6 +346,9 @@ export class MemePairContract implements BaseLaunchContract {
     if (res.banner_url) {
       this.bannerUrl = res.banner_url;
     }
+    if (res.beravote_space_id) {
+      this.beravoteSpaceId = res.beravote_space_id;
+    }
   }
 
   async init({
@@ -419,7 +423,7 @@ export class MemePairContract implements BaseLaunchContract {
       }
 
       const claimed = await this.contract.read.claimedLp([wallet.account] as [
-        `0x${string}`,
+        `0x${string}`
       ]);
 
       console.log("claimed", claimed);

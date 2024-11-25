@@ -25,6 +25,15 @@ const tHpotAddress = "0xfc5e3743e9fac8bb60408797607352e24db7d65e";
 class MemewarStore {
   memewarState: EventState = "active";
   memewarParticipants: Record<string, MemeWarParticipant> = {
+    BERACORAL: {
+      type: "meme",
+      participantName: "Bera Coral",
+      pairAddress: "0x93bcbaa67220c9de2a18aaeb6b77beb117dfb90e",
+      tokenAddress: "0xc87e5a73781e09d831d41e32991d9fc943517feb",
+      iconUrl: "",
+      currentScore: new BigNumber(0),
+      finalScore: new BigNumber(0),
+    },
     BERANEIRO: {
       type: "meme",
       participantName: "Bera Neiro",

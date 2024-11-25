@@ -22,6 +22,7 @@ import { ItemSelect, SelectState } from "../ItemSelect";
 import { SelectItem } from "../ItemSelect/index";
 import _ from "lodash";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
+import Pagination from "../Pagination/Pagination";
 
 const AddLiquidity = observer(() => {
   return (
@@ -40,7 +41,8 @@ const AddLiquidity = observer(() => {
               min: 0,
               isInvalid:
                 Number(liquidity.fromAmount) >
-                  (liquidity.fromToken as Token)?.balance?.toNumber() ||
+                  (liquidity.fromToken as Token)?.balance.toNumber() ||
+                0 ||
                 Number(liquidity.fromAmount) < 0,
               errorMessage: "Insufficient balance",
               onClear: () => {
@@ -95,9 +97,10 @@ const AddLiquidity = observer(() => {
               max: liquidity.toToken?.balance.toNumber(),
               min: 0,
               isInvalid:
-                Number(liquidity.fromAmount) >
-                  (liquidity.fromToken as Token)?.balance?.toNumber() ||
-                Number(liquidity.fromAmount) < 0,
+                Number(liquidity.toAmount) >
+                  (liquidity.toToken as Token)?.balance?.toNumber() ||
+                0 ||
+                Number(liquidity.toAmount) < 0,
               errorMessage: "Insufficient balance",
               onClear: () => {
                 liquidity.setToAmount("");
@@ -186,168 +189,115 @@ export const RemoveLiquidity = observer(
     }));
 
     return liquidity.currentRemovePair ? (
-      <div className="flex justify-center">
-        <div className="flex flex-col gap-[24px] items-center lg:w-[400px]">
-          <div className="w-full"></div>
-          <Slider
-            value={Number(state.selectState.value)}
-            onChange={(value) => {
-              state.selectState.value = Number(value);
-            }}
-            minValue={0}
-            maxValue={1}
-            step={0.01}
-            marks={[
-              {
-                value: 0,
-                label: "0%",
-              },
-              {
-                value: 0.25,
-                label: "25%",
-              },
-              {
-                value: 0.5,
-                label: "50%",
-              },
-              {
-                value: 0.75,
-                label: "75%",
-              },
-              {
-                value: 1,
-                label: "100%",
-              },
-            ]}
-          />
-          <ItemSelect
-            selectState={state.selectState}
-            className="gap-[16px] justify-around w-full grid grid-cols-2 lg:grid-cols-4"
-          >
-            <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
-              25%
-            </SelectItem>
-            <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
-              50%
-            </SelectItem>
-            <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
-              75%
-            </SelectItem>
-            <SelectItem className="rounded-[30px] px-[24px]" value={1}>
-              100%
-            </SelectItem>
-          </ItemSelect>
-          <div className="w-full">
-            <div className="flex justify-between">
-              <div>{liquidity.currentRemovePair?.token0.displayName}</div>
-              <div>
-                {liquidity.currentRemovePair?.token0LpBalance
-                  .multipliedBy(state.selectState.value as number)
-                  .toFixed(3)}
-              </div>
-            </div>
-            <div className="mt-[16px] flex justify-between">
-              <div>{liquidity.currentRemovePair?.token1.displayName}</div>
-              <div>
-                {liquidity.currentRemovePair?.token1LpBalance
-                  .multipliedBy(state.selectState.value as number)
-                  .toFixed(3)}
-              </div>
+      <div className="flex flex-col gap-[24px] items-center w-full lg:w-[400px] mx-auto py-4 px-6">
+        <Slider
+          className="w-full"
+          size="sm"
+          value={Number(state.selectState.value)}
+          onChange={(value) => {
+            state.selectState.value = Number(value);
+          }}
+          minValue={0}
+          maxValue={1}
+          step={0.01}
+        />
+        <ItemSelect
+          selectState={state.selectState}
+          className="gap-[16px] justify-around w-full grid grid-cols-2 lg:grid-cols-4"
+        >
+          <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
+            25%
+          </SelectItem>
+          <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
+            50%
+          </SelectItem>
+          <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
+            75%
+          </SelectItem>
+          <SelectItem className="rounded-[30px] px-[24px]" value={1}>
+            100%
+          </SelectItem>
+        </ItemSelect>
+        <div className="w-full">
+          <div className="flex justify-between">
+            <div>{liquidity.currentRemovePair?.token0.displayName}</div>
+            <div>
+              {liquidity.currentRemovePair?.token0LpBalance
+                .multipliedBy(state.selectState.value as number)
+                .toFixed(3)}
             </div>
           </div>
-          <div className="flex w-full gap-[16px] justify-between">
-            {!noCancelButton && (
-              <Button
-                className="flex-1"
-                onClick={(e) => {
-                  liquidity.setCurrentRemovePair(null);
-                }}
-              >
-                Cancel
-              </Button>
-            )}
+          <div className="mt-[16px] flex justify-between">
+            <div>{liquidity.currentRemovePair?.token1.displayName}</div>
+            <div>
+              {liquidity.currentRemovePair?.token1LpBalance
+                .multipliedBy(state.selectState.value as number)
+                .toFixed(3)}
+            </div>
+          </div>
+        </div>
+        <div className="flex w-full gap-[16px] justify-between">
+          {!noCancelButton && (
             <Button
               className="flex-1"
-              isLoading={liquidity.currentRemovePair?.removeLiquidity.loading}
-              onClick={async () => {
-                await liquidity.currentRemovePair?.removeLiquidity.call(
-                  state.selectState.value as number
-                );
-
-                await Promise.all([
-                  await liquidity.currentRemovePair?.token.getBalance(),
-                  await liquidity.currentRemovePair?.token.getTotalSupply(),
-                  await liquidity.currentRemovePair?.token0.getBalance(),
-                  await liquidity.currentRemovePair?.token1.getBalance(),
-                  await liquidity.currentRemovePair?.getReserves(),
-                ]);
-
-                if (
-                  liquidity.currentRemovePair &&
-                  liquidity.currentRemovePair.token0LpBalance.eq(0)
-                ) {
-                  liquidity.myPairPage.removeItem(liquidity.currentRemovePair);
-                }
+              onClick={(e) => {
+                liquidity.setCurrentRemovePair(null);
               }}
             >
-              Remove
+              Cancel
             </Button>
-          </div>
+          )}
+          <Button
+            className="flex-1"
+            isLoading={liquidity.currentRemovePair?.removeLiquidity.loading}
+            onClick={async () => {
+              await liquidity.currentRemovePair?.removeLiquidity.call(
+                state.selectState.value as number
+              );
+
+              await Promise.all([
+                await liquidity.currentRemovePair?.token.getBalance(),
+                await liquidity.currentRemovePair?.token.getTotalSupply(),
+                await liquidity.currentRemovePair?.token0.getBalance(),
+                await liquidity.currentRemovePair?.token1.getBalance(),
+                await liquidity.currentRemovePair?.getReserves(),
+              ]);
+
+              if (
+                liquidity.currentRemovePair &&
+                liquidity.currentRemovePair.token0LpBalance.eq(0)
+              ) {
+                liquidity.myPairPage.removeItem(liquidity.currentRemovePair);
+              }
+            }}
+          >
+            Remove
+          </Button>
         </div>
       </div>
     ) : (
-      liquidity.myPairPage.pageItems.value && (
-        <div className="flex flex-col justify-center items-center gap-5">
-          {liquidity.myPairPage.pageItems.value.map((item) => (
-            <div
-              key={item.address}
-              className="flex w-full justify-between items-center hover:brightness-125 hover:bg-white/50 transition-all p-2 rounded-[10px]"
-            >
-              <div>{item.poolName}</div>
-              <div>
-                {item.myLiquidityDisplay.reserve0} /{" "}
-                {item.myLiquidityDisplay.reserve1}
-              </div>
-              <NextButton
-                onClick={() => {
-                  liquidity.setCurrentRemovePair(item);
-                }}
-              >
-                Remove
-              </NextButton>
+      <Pagination
+        paginationState={liquidity.myPairPage}
+        render={(pair) => (
+          <div
+            key={pair.address}
+            className="flex w-full justify-between items-center hover:brightness-125 hover:bg-white/50 transition-all p-2 rounded-[10px]"
+          >
+            <div>{pair.poolName}</div>
+            <div>
+              {pair.myLiquidityDisplay.reserve0} /{" "}
+              {pair.myLiquidityDisplay.reserve1}
             </div>
-          ))}
-        </div>
-        // <Table
-        //   rowKey="address"
-        //   columns={[
-        //     {
-        //       title: "Pool Name",
-        //       dataKey: "poolName",
-        //     },
-        //     {
-        //       title: "Self Liquidity",
-        //       dataKey: "myLiquidityDisplay",
-        //     },
-        //     {
-        //       title: "Action",
-        //       key: "action",
-        //       render: (value, record) => {
-        //         return (
-        //           <Button
-        //             onClick={() => {
-        //               liquidity.setCurrentRemovePair(record);
-        //             }}
-        //           >
-        //             Remove
-        //           </Button>
-        //         );
-        //       },
-        //     },
-        //   ]}
-        //   datasource={liquidity.myPairPage.pageItems.value}
-        // ></Table>
-      )
+            <NextButton
+              onClick={() => {
+                liquidity.setCurrentRemovePair(pair);
+              }}
+            >
+              Remove
+            </NextButton>
+          </div>
+        )}
+      />
     );
   }
 );

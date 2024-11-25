@@ -1,5 +1,6 @@
 import { networks } from "@/services/chain";
 import { connectorsForWallets, getDefaultConfig } from "@rainbow-me/rainbowkit";
+import { berasigWallet } from "./berasigWallet";
 
 import {
   rainbowWallet,
@@ -10,10 +11,10 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 import { injected, safe } from "wagmi/connectors";
 import { mock } from "wagmi/connectors";
-import { holdstationWallet } from "./customWallets";
+import { holdstationWallet } from "./holdstationWallet";
+//import { capsuleWallet } from "./capsualWallet";
 
 const pId = "1d1c8b5204bfbd57502685fc0934a57d";
-//for users without bitget wallet
 let customWallets = [
   metaMaskWallet,
   rainbowWallet,
@@ -21,6 +22,8 @@ let customWallets = [
   bitgetWallet,
   okxWallet,
   holdstationWallet,
+  berasigWallet,
+  //capsuleWallet
 ];
 // if(!window.bitkeep){
 //   customWallets.unshift(bitgetWallet);

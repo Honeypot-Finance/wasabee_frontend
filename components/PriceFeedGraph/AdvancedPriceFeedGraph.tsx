@@ -39,13 +39,13 @@ export const AdvancedPriceFeedGraph = observer(() => {
       chart.chartTarget instanceof Token
         ? tokenToTicker(chart.chartTarget, chainId as number)
         : chart.chartTarget instanceof PairContract
-          ? pairToTicker(chart.chartTarget, chainId as number)
-          : tokenToTicker(
-              Token.getToken({
-                address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e", //thpot
-              }),
-              chainId as number
-            ),
+        ? pairToTicker(chart.chartTarget, chainId as number)
+        : tokenToTicker(
+            Token.getToken({
+              address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e", //thpot
+            }),
+            chainId as number
+          ),
     interval: "1D" as ResolutionString,
     library_path: "/static/charting_library/charting_library/",
     locale: "en",
@@ -68,13 +68,13 @@ export const AdvancedPriceFeedGraph = observer(() => {
           chart.chartTarget instanceof Token
             ? tokenToTicker(chart.chartTarget, chainId as number)
             : chart.chartTarget instanceof PairContract
-              ? pairToTicker(chart.chartTarget, chainId as number)
-              : tokenToTicker(
-                  Token.getToken({
-                    address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e", //thpot
-                  }),
-                  chainId as number
-                ),
+            ? pairToTicker(chart.chartTarget, chainId as number)
+            : tokenToTicker(
+                Token.getToken({
+                  address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e", //thpot
+                }),
+                chainId as number
+              ),
       };
     });
   }, [chainId, chart.chartTarget]);
