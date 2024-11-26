@@ -2,6 +2,7 @@ import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
 import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
 import { useMemo } from "react";
+import { zeroAddress } from "viem";
 
 interface TokenRatioProps {
   mintInfo: IDerivedMintInfo;
@@ -70,7 +71,7 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
             <TokenLogo
               addtionalClasses="w-8 absolute left-2 top-0"
               token={Token.getToken({
-                address: (currencyA as any).address,
+                address: currencyA ? currencyA.wrapped.address : zeroAddress,
               })}
             />
             {`${Number(token0Ratio).toFixed()}%`}
@@ -85,7 +86,7 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
             <TokenLogo
               addtionalClasses="w-8 absolute right-0 top-0"
               token={Token.getToken({
-                address: (currencyB as any).address,
+                address: currencyB ? currencyB.wrapped.address : zeroAddress,
               })}
             />
           </div>

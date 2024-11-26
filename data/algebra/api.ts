@@ -9,6 +9,7 @@ export const fetcher = (url: string) =>
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
     },
+    mode: "no-cors",
   }).then((res) => res.json());
 
 export const ETERNAL_FARMINGS_API =

@@ -114,6 +114,9 @@ export const AddLiquidityButton = ({
       value: BigInt(value || 0),
     });
 
+  console.log("addLiquidityConfig", addLiquidityConfig);
+  console.log("error", error);
+
   const { data: addLiquidityData, writeContract: addLiquidity } =
     useContractWrite();
 

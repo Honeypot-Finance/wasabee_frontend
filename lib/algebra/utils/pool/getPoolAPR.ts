@@ -11,7 +11,7 @@ export async function getPoolAPR(poolId: Address) {
     .then((v) => v.json())
     .catch((e) => console.error("Failed to fetch pools APR", e));
 
-  if (poolsAPR[poolId.toLowerCase()]) {
+  if (poolsAPR?.[poolId?.toLowerCase()]) {
     return poolsAPR[poolId.toLowerCase()];
   }
 

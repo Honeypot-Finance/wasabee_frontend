@@ -37,7 +37,7 @@ interface Pool {
   hasActiveFarming: boolean;
 }
 
-const PoolPair = ({ pair, fee }: Pool) => {  
+const PoolPair = ({ pair, fee }: Pool) => {
   const token0 = pair.token0.id as Address;
   const token1 = pair.token1.id as Address;
 
@@ -51,7 +51,7 @@ const PoolPair = ({ pair, fee }: Pool) => {
           <TokenLogo
             size={30}
             token={Token.getToken({
-              address: (currencyA as any)?.address ?? "",
+              address: token0,
             })}
           />
         </div>
@@ -59,7 +59,7 @@ const PoolPair = ({ pair, fee }: Pool) => {
           <TokenLogo
             size={30}
             token={Token.getToken({
-              address: (currencyB as any)?.address ?? "",
+              address: token1,
             })}
           />
         </div>

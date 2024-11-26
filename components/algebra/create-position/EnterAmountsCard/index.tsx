@@ -55,7 +55,7 @@ const EnterAmountCard = ({
             <TokenLogo
               addtionalClasses="w-8 sm:w-10"
               token={Token.getToken({
-                address: (currency as any).address,
+                address: currency.wrapped.address,
               })}
             />
           )}

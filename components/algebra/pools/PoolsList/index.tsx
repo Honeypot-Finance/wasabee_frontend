@@ -38,7 +38,6 @@ const PoolsList = () => {
     ETERNAL_FARMINGS_API,
     fetcher
   );
-
   const isLoading =
     isPoolsListLoading ||
     isPoolsMaxAprLoading ||
