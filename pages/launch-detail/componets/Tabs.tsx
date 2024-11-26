@@ -170,9 +170,12 @@ const Tabs = ({
                 pair?.ftoStatusDisplay?.status === "success" && (
                   <SimplePriceFeedGraph />
                 )}
-              {pair?.launchedToken?.address &&
+              {pair?.launchedToken &&
                 pair?.ftoStatusDisplay?.status === "Processing" && (
-                  <LaunchChart tokenAddress={pair.launchedToken.address} />
+                  <LaunchChart
+                    tokenAddress={pair.launchedToken.address}
+                    decimals={pair.launchedToken.decimals}
+                  />
                 )}
             </div>
           </div>

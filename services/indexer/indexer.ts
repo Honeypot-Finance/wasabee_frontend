@@ -10,6 +10,7 @@ import {
   GhostPoolPairResponse,
   GhostToken,
   IndexerProvider,
+  LaunchTokenData,
   PageRequest,
   TrendingMEMEs,
 } from "./indexerTypes";
@@ -170,7 +171,7 @@ export default class Indexer<T extends IndexerProvider> {
 
   getMemeGraphData = async (
     tokenAddress: string
-  ): Promise<ApiResponseType<GhostToken>> => {
+  ): Promise<ApiResponseType<LaunchTokenData[]>> => {
     return await this.dataProvider.getMemeGraphData(tokenAddress);
   };
 }

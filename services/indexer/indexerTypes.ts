@@ -98,6 +98,15 @@ export type GhostToken = {
   swapCount?: string;
 };
 
+export interface LaunchTokenData {
+  id: string;
+  launchId: string;
+  amount: string;
+  currentAmount: string;
+  timestamp: string;
+  txHash: string;
+}
+
 export type GhostPoolPair = {
   id: string;
   trackedReserveETH: string;
