@@ -172,10 +172,7 @@ const Tabs = ({
                 )}
               {pair?.launchedToken &&
                 pair?.ftoStatusDisplay?.status === "Processing" && (
-                  <LaunchChart
-                    tokenAddress={pair.launchedToken.address}
-                    decimals={pair.launchedToken.decimals}
-                  />
+                  <LaunchChart decimals={pair.launchedToken.decimals} />
                 )}
             </div>
           </div>

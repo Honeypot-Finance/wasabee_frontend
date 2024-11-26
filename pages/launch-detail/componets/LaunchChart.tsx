@@ -1,13 +1,13 @@
 import { trpcClient } from "@/lib/trpc";
-import React, { useEffect, useState, useCallback, use } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import dayjs from "dayjs";
 import { LaunchTokenData } from "@/services/indexer/indexerTypes";
+import { useRouter } from "next/router";
 
 interface LaunchChartProps {
   decimals: number;
-  tokenAddress: string;
 }
 
 const Chart = dynamic(() => import("react-apexcharts"), {
@@ -15,10 +15,9 @@ const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-const LaunchChart: React.FC<LaunchChartProps> = ({
-  decimals,
-  tokenAddress,
-}) => {
+const LaunchChart: React.FC<LaunchChartProps> = ({ decimals }) => {
+  const router = useRouter();
+  const { pair: pairAddress } = router.query;
   const [state, setState] = useState<{
     options: ApexOptions;
     series: ApexAxisChartSeries;
@@ -26,7 +25,7 @@ const LaunchChart: React.FC<LaunchChartProps> = ({
     series: [
       {
         data: [],
-        color: "white",
+        color: "#43D9A3",
         name: "amount",
       },
     ],
@@ -45,7 +44,7 @@ const LaunchChart: React.FC<LaunchChartProps> = ({
         },
       },
       dataLabels: {
-        enabled: true,
+        enabled: false,
         textAnchor: "end",
         formatter: function (val, opts) {
           if (opts.dataPointIndex === opts.w.config.series[0].data.length - 1) {
@@ -95,6 +94,11 @@ const LaunchChart: React.FC<LaunchChartProps> = ({
         x: {
           format: "dd MMM HH:mm",
         },
+        y: {
+          formatter: function (val) {
+            return val?.toFixed(3);
+          },
+        },
         theme: "dark",
         fillSeriesColor: true,
         fixed: {
@@ -142,8 +146,8 @@ const LaunchChart: React.FC<LaunchChartProps> = ({
       parseFloat(item.currentAmount) / Math.pow(10, decimals),
     ]);
 
-    setState({
-      ...state,
+    setState((prevState) => ({
+      ...prevState,
       series: [
         {
           data: chartData,
@@ -152,27 +156,29 @@ const LaunchChart: React.FC<LaunchChartProps> = ({
         },
       ],
       options: {
-        ...state.options,
+        ...prevState.options,
         xaxis: {
-          ...state.options.xaxis,
+          ...prevState.options.xaxis,
           min: Math.min(...data.map((item) => parseInt(item.timestamp))) * 1000,
           max: Math.max(...data.map((item) => parseInt(item.timestamp))) * 1000,
           tickAmount: 6,
         },
       },
-    });
-  }, [data, state]);
+    }));
+  }, [data, decimals]);
 
   useEffect(() => {
-    trpcClient.indexerFeedRouter.getMemeGraphData
-      .query({
-        tokenAddress,
-      })
-      .then((data) => {
-        console.log("chart data", data);
-        setData(data as any);
-      });
-  }, [tokenAddress]);
+    if (pairAddress) {
+      trpcClient.indexerFeedRouter.getMemeGraphData
+        .query({
+          tokenAddress: pairAddress as string,
+        })
+        .then((data) => {
+          console.log("chart data", data);
+          setData(data as any);
+        });
+    }
+  }, [pairAddress]);
 
   useEffect(() => {
     updateChartData();

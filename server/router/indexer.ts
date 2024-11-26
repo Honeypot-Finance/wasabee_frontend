@@ -287,7 +287,7 @@ export const indexerFeedRouter = router({
     )
     .query(async ({ input }): Promise<ApiResponseType<LaunchTokenData[]>> => {
       return cacheProvider.getOrSet(
-        getCacheKey("getPairTokenData", input),
+        getCacheKey("getMemeGraphData", input),
         async () => {
           return await indexer.getMemeGraphData(input.tokenAddress);
         }
