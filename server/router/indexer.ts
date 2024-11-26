@@ -297,21 +297,4 @@ export const indexerFeedRouter = router({
           .optional(),
       })
     )
-    .query(
-      async ({ input }): Promise<ApiResponseType<GhostAlgebraPairResponse>> => {
-        return cacheProvider.getOrSet(
-          getCacheKey("getAlgebraPairs", input),
-          async () => {
-            const res = await indexer.getAlgebraDexPools(
-              input.filter,
-              input.chainId,
-              input.provider,
-              input.pageRequest as PageRequest
-            );
-
-            return res;
-          }
-        );
-      }
-    ),
 });

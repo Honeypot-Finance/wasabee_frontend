@@ -169,19 +169,6 @@ export default class Indexer<T extends IndexerProvider> {
     return this.dataProvider.getPairTokensData(tokenAddresses);
   };
 
-  getAlgebraDexPools = async (
-    filter: Partial<PairFilter>,
-    chainId: string,
-    provider?: string,
-    pageRequest?: PageRequest
-  ): Promise<ApiResponseType<GhostAlgebraPairResponse>> => {
-    return await this.dataProvider.getAlgebraDexPools(
-      filter,
-      chainId,
-      provider,
-      pageRequest
-    );
-  };
 }
 
 const ghostIndexer = new GhostIndexer(
