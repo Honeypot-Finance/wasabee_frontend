@@ -278,23 +278,4 @@ export const indexerFeedRouter = router({
         }
       );
     }),
-  getAlgebraPairs: publicProcedure
-    .input(
-      z.object({
-        filter: z.object({
-          searchString: z.string().optional(),
-          limit: z.number().optional(),
-          sortingTarget: z.string().optional(),
-          sortingDirection: z.string().optional(),
-        }),
-        chainId: z.string(),
-        provider: z.string().optional(),
-        pageRequest: z
-          .object({
-            direction: z.string(z.enum(["next", "prev"])),
-            cursor: z.string().optional(),
-          })
-          .optional(),
-      })
-    )
 });
