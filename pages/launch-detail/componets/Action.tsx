@@ -140,6 +140,36 @@ const ProcessingAction = observer(
           ></Input>
           <div className="flex items-center gap-[8px]">
             <div>Balance: {pair.raiseToken.balance.toFormat(5)}</div>
+            {pair.raiseToken?.balance.gte(10) && (
+              <div
+                onClick={() => {
+                  state.setDepositAmount("10");
+                }}
+                className="cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline"
+              >
+                10 {pair.raiseToken?.displayName}
+              </div>
+            )}
+            {pair.raiseToken?.balance.gte(100) && (
+              <div
+                onClick={() => {
+                  state.setDepositAmount("100");
+                }}
+                className="cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline"
+              >
+                100 {pair.raiseToken?.displayName}
+              </div>
+            )}
+            {pair.raiseToken?.balance.gte(1000) && (
+              <div
+                onClick={() => {
+                  state.setDepositAmount("1000");
+                }}
+                className="cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline"
+              >
+                1000 {pair.raiseToken?.displayName}
+              </div>
+            )}
             <div
               onClick={() => {
                 state.setDepositAmount(
@@ -147,7 +177,7 @@ const ProcessingAction = observer(
                 );
                 pair.raiseToken?.getBalance();
               }}
-              className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline"
+              className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline"
             >
               Max
             </div>
