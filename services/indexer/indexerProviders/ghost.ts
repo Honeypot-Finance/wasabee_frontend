@@ -499,7 +499,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
-                swapCount
+                holderCount
               }
               token1 {
                 id
@@ -508,7 +508,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
-                swapCount
+                holderCount
               }
           }
         }
@@ -771,7 +771,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
-                swapCount
+                holderCount
               }
               token1 {
                 id
@@ -780,7 +780,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
-                swapCount
+                holderCount
               }
             }
             pageInfo {
@@ -855,7 +855,7 @@ export class GhostIndexer {
             decimals
             derivedETH
             derivedUSD
-            swapCount
+            holderCount
           }
           token1{
             id
@@ -864,7 +864,7 @@ export class GhostIndexer {
             decimals
             derivedETH
             derivedUSD
-            swapCount
+            holderCount
           }
         }
       }
@@ -901,7 +901,7 @@ export class GhostIndexer {
           decimals
           derivedETH
           derivedUSD
-          swapCount
+          holderCount
           symbol
           name
           }
@@ -935,7 +935,7 @@ export class GhostIndexer {
           decimals
           derivedETH
           derivedUSD
-          swapCount
+          holderCount
           symbol
           name
         }
@@ -1026,7 +1026,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
-        swapCount
+        holderCount
       }
       token1{
         address: id
@@ -1035,7 +1035,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
-        swapCount
+        holderCount
       }
       reserve0
       reserve1
@@ -1054,7 +1054,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
-        swapCount
+        holderCount
       }
       token1{
         address: id
@@ -1063,7 +1063,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
-        swapCount
+        holderCount
       }
       reserve0
       reserve1
