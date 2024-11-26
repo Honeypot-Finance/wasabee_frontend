@@ -9,9 +9,6 @@ import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { wallet } from "@/services/wallet";
 import { Button } from "@/components/button";
 import Image from "next/image";
-import { amountFormatted, truncate } from "@/lib/format";
-import { Copy } from "@/components/copy";
-import { Skeleton } from "@nextui-org/skeleton";
 import {
   Modal,
   ModalBody,
@@ -27,14 +24,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { trpcClient } from "@/lib/trpc";
 import ProjectStatus from "@/components/atoms/TokenStatusDisplay/TokenStatus";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
-import { VscCopy } from "react-icons/vsc";
 import { useAccount } from "wagmi";
 import { chart } from "@/services/chart";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { WrappedToastify } from "@/lib/wrappedToastify";
-import Countdown from "react-countdown";
-import ProgressBar from "@/components/atoms/ProgressBar/ProgressBar";
-import BigNumber from "bignumber.js";
 import Action from "./componets/Action";
 import Tabs from "./componets/Tabs";
 import CountdownTimer from "./componets/Countdown";
@@ -549,6 +542,13 @@ const MemeView = observer(() => {
     poo_count: 0,
     flag_count: 0,
   });
+  // trpcClient.indexerFeedRouter.getMemeGraphData
+  //   .query({
+  //     tokenAddress: pairAddress as string,
+  //   })
+  //   .then((data) => {
+  //     console.log("chart data", data);
+  //   });
   const state = useLocalObservable(() => ({
     pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
       const pair = new MemePairContract({ address: pairAddress as string });
@@ -699,8 +699,8 @@ const MemeView = observer(() => {
               />
               <Image
                 alt={state.pair.value?.launchedToken?.name || "honey"}
-                width={20}
-                height={20}
+                width={state.pair.value?.logoUrl ? 40 : 20}
+                height={state.pair.value?.logoUrl ? 40 : 20}
                 className="rounded-full md:hidden"
                 src={
                   !!state.pair.value?.logoUrl

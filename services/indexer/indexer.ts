@@ -136,36 +136,42 @@ export default class Indexer<T extends IndexerProvider> {
     tokenAddress: string,
     chainId: string
   ): Promise<ApiResponseType<GhostToken>> => {
-    const data = await this.getPairTokensDataLoader.load(tokenAddress)
+    const data = await this.getPairTokensDataLoader.load(tokenAddress);
     return {
-      status: 'success',
-      message: 'Success',
-      data
-    }
+      status: "success",
+      message: "Success",
+      data,
+    };
   };
 
   getPairTokensDataLoader = new DataLoader<string, GhostToken>(
     async (tokenAddresses) => {
       const res = await this.getPairTokensData(tokenAddresses);
-      const data = (res as any).data as GhostToken[]
+      const data = (res as any).data as GhostToken[];
       const dataMap = data.reduce((acc, token) => {
-        acc[token.id.toLowerCase()] = token
-        return acc
-      }, {} as Record<string, GhostToken>)
-      return tokenAddresses.map(address => dataMap[address.toLowerCase()])
+        acc[token.id.toLowerCase()] = token;
+        return acc;
+      }, {} as Record<string, GhostToken>);
+      return tokenAddresses.map((address) => dataMap[address.toLowerCase()]);
     },
     {
       batchScheduleFn: (cb) => {
-        setTimeout(cb, 300)
+        setTimeout(cb, 300);
       },
-      maxBatchSize: 30
+      maxBatchSize: 30,
     }
   );
 
   getPairTokensData = async (
-    tokenAddresses: readonly string[],
+    tokenAddresses: readonly string[]
   ): Promise<ApiResponseType<GhostToken[]>> => {
     return this.dataProvider.getPairTokensData(tokenAddresses);
+  };
+
+  getMemeGraphData = async (
+    tokenAddress: string
+  ): Promise<ApiResponseType<GhostToken>> => {
+    return await this.dataProvider.getMemeGraphData(tokenAddress);
   };
 }
 

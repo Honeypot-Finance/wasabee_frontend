@@ -277,4 +277,20 @@ export const indexerFeedRouter = router({
         }
       );
     }),
+
+  getMemeGraphData: publicProcedure
+    .input(
+      z.object({
+        tokenAddress: z.string(),
+      })
+    )
+    .query(async ({ input }): Promise<ApiResponseType<GhostToken>> => {
+      return cacheProvider.getOrSet(
+        getCacheKey("getPairTokenData", input),
+        async () => {
+          const res = await indexer.getMemeGraphData(input.tokenAddress);
+          return res;
+        }
+      );
+    }),
 });
