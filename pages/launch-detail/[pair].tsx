@@ -542,13 +542,7 @@ const MemeView = observer(() => {
     poo_count: 0,
     flag_count: 0,
   });
-  // trpcClient.indexerFeedRouter.getMemeGraphData
-  //   .query({
-  //     tokenAddress: pairAddress as string,
-  //   })
-  //   .then((data) => {
-  //     console.log("chart data", data);
-  //   });
+
   const state = useLocalObservable(() => ({
     pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
       const pair = new MemePairContract({ address: pairAddress as string });

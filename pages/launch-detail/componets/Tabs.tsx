@@ -8,13 +8,14 @@ import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { DiscussionArea } from "@/components/Discussion/DiscussionArea/DiscussionArea";
 import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
+import LaunchChart from "./LaunchChart";
 
 const menuItems = [
   { key: "info", label: "Token Info" },
   { key: "about", label: "About the Project" },
   { key: "txs", label: "Transactions" },
   { key: "comment", label: "Comments" },
-  // { key: "priceChart", label: "Price Chart" },
+  { key: "priceChart", label: "Price Chart" },
 ];
 
 const Tabs = ({
@@ -25,12 +26,8 @@ const Tabs = ({
   const [tab, setTab] = useState(menuItems[0].key);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  if (
-    pair?.ftoStatusDisplay?.status === "success" &&
-    !menuItems.find((item) => item.key === "priceChart")
-  ) {
-    menuItems.push({ key: "priceChart", label: "Price Chart" });
-  }
+  console.log("status", pair?.ftoStatusDisplay?.status);
+
   return (
     <>
       <div className="hidden sm:flex items-center gap-x-1 md:text-xs ml-3">
@@ -169,7 +166,14 @@ const Tabs = ({
         {tab === "priceChart" && (
           <div className="flex justify-center">
             <div className="w-full">
-              {chart.chartTarget && <SimplePriceFeedGraph />}
+              {chart.chartTarget &&
+                pair?.ftoStatusDisplay?.status === "success" && (
+                  <SimplePriceFeedGraph />
+                )}
+              {pair?.launchedToken?.address &&
+                pair?.ftoStatusDisplay?.status === "Processing" && (
+                  <LaunchChart tokenAddress={pair.launchedToken.address} />
+                )}
             </div>
           </div>
         )}
