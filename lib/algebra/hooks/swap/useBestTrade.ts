@@ -106,6 +106,8 @@ export function useBestTradeExactIn(
       };
     }
 
+    console.log("amountOut", amountOut);
+
     return {
       state: TradeState.VALID,
       fee,
@@ -115,7 +117,7 @@ export function useBestTradeExactIn(
         inputAmount: amountIn,
         outputAmount: CurrencyAmount.fromRawAmount(
           currencyOut,
-          amountOut.toString()
+          (amountOut as BigInt[]).sort()[0].toString()
         ),
       }),
       priceAfterSwap,

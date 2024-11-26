@@ -2,6 +2,13 @@ import { Token } from "@cryptoalgebra/sdk";
 import { DEFAULT_CHAIN_ID } from "./default-chain-id";
 
 export const STABLECOINS = {
+  USDC: new Token(
+    DEFAULT_CHAIN_ID,
+    "0xd6d83af58a19cd14ef3cf6fe848c9a4d21e5727c",
+    6,
+    "USDC",
+    "USDC"
+  ),
   USDT: new Token(
     DEFAULT_CHAIN_ID,
     "0x05d0dd5135e3ef3ade32a9ef9cb06e8d37a6795d",
