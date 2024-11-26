@@ -8,6 +8,7 @@ import {
   //sepolia,
 } from "@/lib/chain";
 import { algebraRouterAddress } from "@/wagmi-generated";
+import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
 export class Network {
   get chainId() {
     return this.chain.id;
@@ -102,7 +103,7 @@ export const berachainBartioTestnetNetwork = new Network({
     requirements: "You can claim 100 BERA tokens every 24 hours.",
   },
   contracts: {
-    routerV3: algebraRouterAddress,
+    routerV3: ALGEBRA_POSITION_MANAGER,
     routerV2: "0x8aBc3a7bAC442Ae449B07fd0C2152364C230DA9A",
     factory: "0x7A962f6E45100b8cC560C7d2c248ec704623fb53",
     ftoFactory: "0x7E0CCe2C9Ff537f8301dd40c652A03479B18dAef",

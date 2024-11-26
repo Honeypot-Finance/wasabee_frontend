@@ -223,7 +223,9 @@ export class MemePairContract implements BaseLaunchContract {
 
     await new ContractWrite(this.contract.write.refundRaisedToken, {
       action: "Refund",
-    }).call();
+    }).call([
+      wallet.account as `0x${string}`,
+    ]);
 
     await this.raiseToken?.getBalance();
 
