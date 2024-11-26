@@ -357,7 +357,7 @@ const Confirm = (props: Props) => {
             });
             if (decode.eventName == "PoolCreated") {
               const poolAddress = decode.args.pool;
-              router.push(`/lpb-detail/${poolAddress}`);
+              router.push(`/lbp-detail/${poolAddress}`);
             }
           } catch (error) {}
         });

@@ -2,7 +2,7 @@ import { DatePickerProps, DatePicker } from "@nextui-org/react";
 
 const DatePickerField = (props: DatePickerProps) => {
   return (
-    <div className="date-picker-wrapper ">
+    <div className="date-picker-wrapper">
       <DatePicker
         classNames={{
           calendarContent: "bg-bistre",

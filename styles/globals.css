@@ -233,6 +233,14 @@ input[type="number"] {
   color: #ffffff;
 }
 
+.date-picker-calendar div[data-slot="grid-wrapper"] {
+  background-color: #3b2712;
+}
+
+.date-picker-calendar div[data-slot="base"] {
+  background-color: #3b2712;
+}
+
 .date-picker-calendar div[data-slot="header-wrapper"]::after {
   background-color: #3b2712;
 }

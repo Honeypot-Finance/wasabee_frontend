@@ -72,57 +72,61 @@ const BuySell = ({
     share: AssetToken;
   }>();
 
-  const { mutateAsync: previewSharesOut } = useMutation({
-    mutationKey: ["previewSharesOut", poolAddress],
-    mutationFn: async (value: bigint) => {
-      const res = await client.readContract({
-        address: poolAddress as Address,
-        abi: LiquidityBootstrapPoolABI,
-        functionName: "previewSharesOut",
-        args: [value],
-      });
-      return res;
-    },
-  });
+  const { mutateAsync: previewSharesOut, error: previewSharesOutError } =
+    useMutation({
+      mutationKey: ["previewSharesOut", poolAddress],
+      mutationFn: async (value: bigint) => {
+        const res = await client.readContract({
+          address: poolAddress as Address,
+          abi: LiquidityBootstrapPoolABI,
+          functionName: "previewSharesOut",
+          args: [value],
+        });
+        return res;
+      },
+    });
 
-  const { mutateAsync: previewAssetsIn } = useMutation({
-    mutationKey: ["previewAssetsIn", poolAddress],
-    mutationFn: async (value: bigint) => {
-      const res = await client.readContract({
-        address: poolAddress as Address,
-        abi: LiquidityBootstrapPoolABI,
-        functionName: "previewAssetsIn",
-        args: [value],
-      });
-      return res;
-    },
-  });
+  const { mutateAsync: previewAssetsIn, error: previewAssetsInError } =
+    useMutation({
+      mutationKey: ["previewAssetsIn", poolAddress],
+      mutationFn: async (value: bigint) => {
+        const res = await client.readContract({
+          address: poolAddress as Address,
+          abi: LiquidityBootstrapPoolABI,
+          functionName: "previewAssetsIn",
+          args: [value],
+        });
+        return res;
+      },
+    });
 
-  const { mutateAsync: previewAssetsOut } = useMutation({
-    mutationKey: ["previewAssetsOut", poolAddress],
-    mutationFn: async (value: bigint) => {
-      const res = await client.readContract({
-        address: poolAddress as Address,
-        abi: LiquidityBootstrapPoolABI,
-        functionName: "previewAssetsOut",
-        args: [value],
-      });
-      return res;
-    },
-  });
+  const { mutateAsync: previewAssetsOut, error: previewAssetsOutError } =
+    useMutation({
+      mutationKey: ["previewAssetsOut", poolAddress],
+      mutationFn: async (value: bigint) => {
+        const res = await client.readContract({
+          address: poolAddress as Address,
+          abi: LiquidityBootstrapPoolABI,
+          functionName: "previewAssetsOut",
+          args: [value],
+        });
+        return res;
+      },
+    });
 
-  const { mutateAsync: previewSharesIn } = useMutation({
-    mutationKey: ["previewSharesIn", poolAddress],
-    mutationFn: async (value: bigint) => {
-      const res = await client.readContract({
-        address: poolAddress as Address,
-        abi: LiquidityBootstrapPoolABI,
-        functionName: "previewSharesIn",
-        args: [value],
-      });
-      return res;
-    },
-  });
+  const { mutateAsync: previewSharesIn, error: previewSharesInError } =
+    useMutation({
+      mutationKey: ["previewSharesIn", poolAddress],
+      mutationFn: async (value: bigint) => {
+        const res = await client.readContract({
+          address: poolAddress as Address,
+          abi: LiquidityBootstrapPoolABI,
+          functionName: "previewSharesIn",
+          args: [value],
+        });
+        return res;
+      },
+    });
 
   const handleChangeTokenValue = useDebouncedCallback(
     async (value: number | undefined, type: "from" | "to") => {
@@ -343,6 +347,13 @@ const BuySell = ({
     setSwapToken({ from: undefined, to: undefined });
   };
 
+  const isInValidInput = Boolean(
+    previewSharesOutError ||
+      previewAssetsInError ||
+      previewAssetsOutError ||
+      previewSharesInError
+  );
+
   return (
     <div className={cn("relative p-5")}>
       {isTxLoading && (
@@ -432,14 +443,21 @@ const BuySell = ({
           </div>
         </div>
       </div>
+      {isInValidInput && (
+        <span className="text-[12px] text-red-800">Input amount too large</span>
+      )}
       <div className="mt-5 flex flex-col gap-4">
         {isApproved ? (
-          <Button className="w-full" onClick={handleApproval}>
+          <Button
+            className="w-full"
+            onClick={handleApproval}
+            isDisabled={isInValidInput}
+          >
             {isTxLoading ? "Approving" : "Approval"}
           </Button>
         ) : (
           <Button
-            isDisabled={!isSufficientBalance}
+            isDisabled={!isSufficientBalance || isInValidInput}
             className="w-full"
             onClick={handleWriteContract}
           >

@@ -1,19 +1,15 @@
-import useMulticall3 from "@/components/hooks/useMulticall3";
-import { ERC20ABI } from "@/lib/abis/erc20";
 import { Divider } from "@nextui-org/react";
-import { CallReturnContext } from "ethereum-multicall";
 import React from "react";
-import { formatUnits, parseEther, parseUnits } from "viem";
+import { formatUnits } from "viem";
 
 type Props = {
-  tokenAddress ?: string
+  tokenAddress?: string;
   token: {
     [key: string]: any;
-  }
+  };
 };
 
-const TokenInfo = ({tokenAddress,token}: Props) => {
-
+const TokenInfo = ({ tokenAddress, token }: Props) => {
   return (
     <div className="">
       <div className="text-[34px] leading-[48px] font-bold">Token Info</div>
@@ -41,7 +37,14 @@ const TokenInfo = ({tokenAddress,token}: Props) => {
             Total Supply
           </div>
           <div className="uppercase text-xl font-medium text-white">
-            {new Intl.NumberFormat('en-DE').format(Number(formatUnits(BigInt(token?.totalSupply?.hex ?? '0') , token?.decimals ?? 18 )))}
+            {new Intl.NumberFormat("en-DE").format(
+              Number(
+                formatUnits(
+                  BigInt(token?.totalSupply ?? "0"),
+                  token?.decimals ?? 18
+                )
+              )
+            )}
           </div>
         </div>
         <Divider className="my-2" />
@@ -49,25 +52,21 @@ const TokenInfo = ({tokenAddress,token}: Props) => {
           <div className="uppercase text-sm font-bold text-[#F0A64A]">
             Initial Supply
           </div>
-          <div className="uppercase text-xl font-medium text-white">
-          </div>
+          <div className="uppercase text-xl font-medium text-white"></div>
         </div>
         <Divider className="my-2" />
         <div className="flex justify-between px-7 items-center">
           <div className="uppercase text-sm font-bold text-[#F0A64A]">
-          Initial Market Cap
+            Initial Market Cap
           </div>
-          <div className="uppercase text-xl font-medium text-white">
-          </div>
+          <div className="uppercase text-xl font-medium text-white"></div>
         </div>
         <Divider className="my-2" />
         <div className="flex justify-between px-7 items-center">
           <div className="uppercase text-sm font-bold text-[#F0A64A]">
             Token Type
           </div>
-          <div className="uppercase text-xl font-medium text-white">
-            Erc20
-          </div>
+          <div className="uppercase text-xl font-medium text-white">Erc20</div>
         </div>
         <Divider className="my-2" />
         <div className="flex justify-between px-7 items-center">

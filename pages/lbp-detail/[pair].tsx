@@ -9,7 +9,14 @@ import { cn } from "@/lib/tailwindcss";
 import TokenInfo from "./components/TokenInfo";
 import BuySell from "./components/BuySell";
 import { useRouter } from "next/router";
-import { Address, formatUnits, isAddress, parseUnits } from "viem";
+import {
+  Address,
+  formatEther,
+  formatUnits,
+  isAddress,
+  parseEther,
+  parseUnits,
+} from "viem";
 import { LiquidityBootstrapPoolABI } from "@/lib/abis/LiquidityBootstrapPoolAbi";
 import { BigNumber } from "ethers";
 import useMulticall3 from "@/components/hooks/useMulticall3";
@@ -19,8 +26,8 @@ import {
   Pool,
 } from "@/services/lib/helper";
 import { ERC20ABI } from "@/lib/abis/erc20";
-import dayjs from "dayjs";
 import { useReadContract } from "wagmi";
+import dayjs from "dayjs";
 
 const RankProjectData = [
   { icon: "🚀", value: 10 },
@@ -128,6 +135,8 @@ const LBPDetail = () => {
     tokenData?.results?.shareToken?.callsReturnContext ?? []
   );
 
+  console.log(token);
+
   const assetToken = formatErc20Data(
     tokenData?.results?.assetToken?.callsReturnContext ?? []
   );
@@ -166,6 +175,9 @@ const LBPDetail = () => {
         )
       : 0;
 
+  const isStart =
+    data?.args?.saleStart && dayjs().unix() - data?.args?.saleStart > 0;
+
   return (
     <div className="mx-auto max-w-7xl px-1 flex flex-col">
       {isErc20Loading || isArgsLoading ? (
@@ -193,18 +205,16 @@ const LBPDetail = () => {
             <div className="flex-1 px-5 gap-4 sm:gap-20 flex max-sm:flex-col ">
               <div className="flex flex-col gap-2">
                 <div className="font-bold text-[21px] leading-[26px] bg-gradient-to-b from-[#F7931A] to-[#FCD729] w-fit text-transparent bg-clip-text">
-                  Ends In
+                  {isStart ? "Ends In" : "Start In"}
                 </div>
                 <div>
                   <Countdown
-                    date={data.args.saleEnd * 1000}
-                    renderer={({
-                      days,
-                      hours,
-                      minutes,
-                      seconds,
-                      completed,
-                    }) => {
+                    date={
+                      isStart
+                        ? data.args.saleEnd * 1000
+                        : data.args.saleStart * 1000
+                    }
+                    renderer={({ days, hours, minutes, seconds }) => {
                       return (
                         <div className="font-bold text-[28px] flex items-center gap-5">
                           <div className="flex flex-col text-center gap-[5px]">
@@ -249,10 +259,22 @@ const LBPDetail = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex items-center justify-center bg-[#43D9A31A] size-9 rounded-full">
-                  <div className="bg-[#43D9A3] size-4 rounded-full" />
+                <div
+                  className={cn(
+                    "flex items-center justify-center  size-9 rounded-full",
+                    { "bg-[#43D9A31A]": isStart, "bg-[#F7941D1A]": !isStart }
+                  )}
+                >
+                  <div
+                    className={cn(" size-4 rounded-full", {
+                      "bg-[#43D9A3]": isStart,
+                      "bg-[#F7941D]": !isStart,
+                    })}
+                  />
                 </div>
-                <div className="text-[22px] leading-7 font-bold">Live Now</div>
+                <div className="text-[22px] leading-7 font-bold">
+                  {isStart ? "Live Now" : "Coming Soon"}
+                </div>
               </div>
             </div>
           </div>
@@ -348,7 +370,7 @@ const LBPDetail = () => {
                     Full Diluted Value
                   </div>
                   <div className="text-base leading-5 font-medium">
-                    {data?.args?.maxTotalAssetsInDeviation}
+                    {formatUnits(data?.args?.maxTotalAssetsInDeviation, 14)}
                   </div>
                 </div>
                 <div className="text-left flex flex-col gap-2">
@@ -360,7 +382,7 @@ const LBPDetail = () => {
                   </div>
                   <div className="text-base leading-5 font-medium">
                     {dayjs
-                      .unix(Number(data?.args?.saleEnd ?? 0))
+                      .unix(Number(data?.args?.saleStart ?? 0))
                       .format("MMMM D, YYYY")}
                   </div>
                 </div>

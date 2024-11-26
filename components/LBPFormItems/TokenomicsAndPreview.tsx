@@ -17,13 +17,18 @@ import { berachainBartioTestnetNetwork } from "@/services/chain";
 import Image from "next/image";
 import { useReadContract } from "wagmi";
 import { ERC20ABI } from "@/lib/abis/erc20";
+import { symbol } from "zod";
 
 type AssetTokenData = {
   tokenName: string;
   tokenIcon: string;
 };
 
-const AssetTokenModal = () => {
+const AssetTokenModal = ({
+  projectTokenAddress,
+}: {
+  projectTokenAddress: `0x${string}`;
+}) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [searchValue, setSearchValue] = React.useState("");
 
@@ -36,10 +41,12 @@ const AssetTokenModal = () => {
 
   const listToken = Object.keys(
     berachainBartioTestnetNetwork.validatedTokensInfo
-  ).map((address) => ({
-    addr: address,
-    ...berachainBartioTestnetNetwork.validatedTokensInfo[address],
-  }));
+  )
+    .map((address) => ({
+      addr: address,
+      ...berachainBartioTestnetNetwork.validatedTokensInfo[address],
+    }))
+    .filter((item) => item.addr !== projectTokenAddress);
 
   const filteredList = listToken.filter((token) =>
     token.symbol.toLowerCase().includes(searchValue.toLowerCase())
@@ -70,7 +77,7 @@ const AssetTokenModal = () => {
         {selectedToken ? (
           <>
             <img
-            className="size-[18px] rounded-full"
+              className="size-[18px] rounded-full"
               src={selectedToken?.logoURI}
               alt="Asset token"
               width={18}
@@ -164,11 +171,14 @@ const TokenomicsAndPreview = () => {
     watch,
   } = useFormContext();
 
+  console.log(getValues());
+
   const projectTokenLogo = getValues("projectTokenLogo");
   const assetTokenName = getValues("assetTokenName");
   const assetTokenLogo = getValues("assetTokenLogo");
+  const projectTokenAddress = getValues("projectToken");
   const isCustomTotalSupply = watch("customTotalSupplyType");
-  const [isFetchImageError, setIsFetchImageError] = useState(false)
+  const [isFetchImageError, setIsFetchImageError] = useState(false);
 
   const { data: projectTokenName, isLoading } = useReadContract({
     abi: ERC20ABI,
@@ -203,13 +213,18 @@ const TokenomicsAndPreview = () => {
               startContent={
                 <div className="flex items-center gap-1">
                   <img
-                  className="size-[18px] rounded-full "
-                    src={isFetchImageError ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png": projectTokenLogo}
+                    className="size-[18px] rounded-full "
+                    src={
+                      isFetchImageError
+                        ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
+                        : projectTokenLogo
+                    }
                     alt={projectTokenName}
                     width={18}
                     height={18}
-                    onError={e => {console.log(e)
-                      setIsFetchImageError(true)
+                    onError={(e) => {
+                      console.log(e);
+                      setIsFetchImageError(true);
                     }}
                   />
                   <span className="text-sm">{projectTokenName}</span>
@@ -246,7 +261,9 @@ const TokenomicsAndPreview = () => {
               isInvalid={!!errors.assetTokenQuantity}
               errorMessage={errors.assetTokenQuantity?.message?.toString()}
               className="max-w-[400px]"
-              startContent={<AssetTokenModal />}
+              startContent={
+                <AssetTokenModal projectTokenAddress={projectTokenAddress} />
+              }
               classNames={{
                 input: "text-right flex-1",
               }}
@@ -307,7 +324,11 @@ const TokenomicsAndPreview = () => {
             <SliderField
               label="Start Weight"
               firstTokenName={projectTokenName}
-              firstTokenIcon={isFetchImageError ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png": projectTokenLogo}
+              firstTokenIcon={
+                isFetchImageError
+                  ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
+                  : projectTokenLogo
+              }
               secondTokenName={assetTokenName}
               secondTokenIcon={assetTokenLogo}
               value={field.value}
@@ -323,7 +344,11 @@ const TokenomicsAndPreview = () => {
             <SliderField
               label="End Weight"
               firstTokenName={projectTokenName}
-              firstTokenIcon={isFetchImageError ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png": projectTokenLogo}
+              firstTokenIcon={
+                isFetchImageError
+                  ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
+                  : projectTokenLogo
+              }
               secondTokenName={assetTokenName}
               secondTokenIcon={assetTokenLogo}
               value={field.value}
