@@ -28,8 +28,7 @@ import dayjs from "dayjs";
 
 const memeGraphHandle = "5e83143f-8481-4564-afc2-7b7a766afef9/ghostgraph";
 const ftoGraphHandle = "df583977-1412-4c0a-9b3a-ebea68604f3a/ghostgraph";
-const pairGraphHandle = "e6aa7476-9d4b-4ee0-8b20-5a98725b5580/ghostgraph";
-const algebraDexGraphHandle = "4ca3d1de-cce4-483f-a6c1-2947f865449e/ghostgraph";
+const pairGraphHandle = "45ac3e88-9001-4355-99ab-b24750e20341/ghostgraph";
 
 function getTimeStampToDayNow() {
   return Math.floor(dayjs().unix() / 86400);
@@ -1065,79 +1064,4 @@ export class GhostIndexer {
     return res;
   }
 
-  //-----------------------------------Algebra----------------------------------
-  getAlgebraDexPools = async (
-    filter: Partial<PairFilter>,
-    chainId: string,
-    provider?: string,
-    pageRequest?: PageRequest
-  ): Promise<ApiResponseType<GhostAlgebraPairResponse>> => {
-    const dirCondition = pageRequest?.cursor
-      ? pageRequest?.direction === "next"
-        ? `after:"${pageRequest?.cursor}"`
-        : `before:"${pageRequest?.cursor}"`
-      : "";
-
-    const query = `
-      {
-        pools(
-            ${filter.sortingTarget ? `orderBy: "${filter.sortingTarget}",` : ""}
-            ${
-              filter.sortingDirection
-                ? `orderDirection: "${filter.sortingDirection}",`
-                : ""
-            }
-            where: {
-            }
-            limit: ${filter.limit}
-            ${dirCondition}
-          ){
-          items{
-            id
-            token0{
-              id
-              symbol
-              name
-            }
-            token1{
-              id
-              symbol
-              name
-            }
-            timestamp 
-            block
-            txHash
-            token0name
-            token1name
-            token0symbol
-            token1symbol
-            searchString
-          }
-          pageInfo {
-            hasPreviousPage
-            hasNextPage
-            startCursor
-            endCursor
-          }
-        }
-      }
-    `;
-
-    const res = await this.callIndexerApi(query, {
-      apiHandle: algebraDexGraphHandle,
-    });
-
-    if (res.status === "error") {
-      return res;
-    } else {
-      return {
-        status: "success",
-        message: "Success",
-        data: {
-          pairs: (res.data as any).pools?.items as GhostAlgebraPoolPair[],
-          pageInfo: (res.data as any).pools?.pageInfo as PageInfo,
-        },
-      };
-    }
-  };
 }
