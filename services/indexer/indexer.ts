@@ -2,7 +2,6 @@ import { providers } from "ethers";
 import { PairFilter } from "../launchpad";
 import { GhostIndexer } from "./indexerProviders/ghost";
 import {
-  GhostAlgebraPairResponse,
   GhostBundleResponse,
   GhostFtoPairResponse,
   GhostFtoTokensResponse,

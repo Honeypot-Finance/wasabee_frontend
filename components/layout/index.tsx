@@ -26,7 +26,6 @@ export const Layout = ({
   const router = useRouter();
   const { chainId } = useAccount();
   const currentChain = chainId ? networksMap[chainId] : null;
-  console.log("currentChain", currentChain);
 
   useEffect(() => {
     trpcClient.metadata.getServerMetadata.query().then((res) => {

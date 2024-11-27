@@ -3,12 +3,12 @@ import { wallet } from "../wallet";
 import { getContract } from "viem";
 import { makeAutoObservable } from "mobx";
 import { ContractWrite } from "../utils";
-import { pot2PumpFacadeABI } from "@/lib/abis/Pot2Pump/pot2PumpFacade";
+import { MemeFacadeABI } from "@/lib/abis/MemeFacade";
 
 export class MEMEFacadeContract implements BaseContract {
   address = "";
   name: string = "";
-  abi = pot2PumpFacadeABI;
+  abi = MemeFacadeABI.abi;
 
   constructor(args: Partial<MEMEFacadeContract>) {
     Object.assign(this, args);

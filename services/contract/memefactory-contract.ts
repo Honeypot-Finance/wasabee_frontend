@@ -4,12 +4,11 @@ import { Address, getContract } from "viem";
 import { makeAutoObservable } from "mobx";
 import { ContractWrite, AsyncState } from "../utils";
 import { MemeFactoryABI } from "@/lib/abis/MemeFactory";
-import { pot2PumpFactoryABI } from "@/lib/abis/Pot2Pump/pot2PumpFactory";
 
 export class MemeFactoryContract implements BaseContract {
   address = "";
   name: string = "";
-  abi = pot2PumpFactoryABI;
+  abi = MemeFactoryABI.abi;
   constructor(args: Partial<MemeFactoryContract>) {
     Object.assign(this, args);
     makeAutoObservable(this);
@@ -36,5 +35,20 @@ export class MemeFactoryContract implements BaseContract {
 
   get allPairsLength(): AsyncState {
     return new AsyncState(this.contract.read.allPairsLength);
+  }
+
+  get allPairs() {
+    return new AsyncState(this.contract.read.allPairs);
+  }
+
+  get resume() {
+    return new ContractWrite(this.contract.write.resume, {
+      action: "Resume",
+    });
+  }
+  get pause() {
+    return new ContractWrite(this.contract.write.pause, {
+      action: "Pause",
+    });
   }
 }

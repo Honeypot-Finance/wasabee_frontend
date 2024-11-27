@@ -1,5 +1,4 @@
 import { visualEffects } from "@/services/visualeffects";
-import { wallet } from "@/services/wallet";
 
 export default function TestPage() {
   return (
@@ -7,16 +6,11 @@ export default function TestPage() {
       <h1>Test Page</h1>
       <button
         onClick={() => {
-          wallet.contracts.memeFactory.contract.write.addRaisedToken(
-            ["0xfc5e3743e9fac8bb60408797607352e24db7d65e"
-              ,BigInt(Math.pow(
-            10,
-            18+2
-          ))
-        ],{
-            account:wallet.account as `0x${string}`,
-            chain:wallet.currentChain.chain
-          })
+          if (visualEffects.confetti_run === false) {
+            visualEffects.confetti_run = true;
+          } else {
+            visualEffects.confetti_numberOfPieces += 200;
+          }
         }}
       >
         Start Confetti

@@ -10,7 +10,6 @@ import {
   GhostBundleResponse,
   GhostToken,
   LaunchTokenData,
-  GhostAlgebraPairResponse,
 } from "@/services/indexer/indexerTypes";
 import { cacheProvider, getCacheKey } from "@/lib/server/cache";
 
