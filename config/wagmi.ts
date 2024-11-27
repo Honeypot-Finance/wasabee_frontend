@@ -1,29 +1,21 @@
 import { networks } from "@/services/chain";
 import { connectorsForWallets, getDefaultConfig } from "@rainbow-me/rainbowkit";
-import { berasigWallet } from "./berasigWallet";
 
 import {
   rainbowWallet,
   bitgetWallet,
   okxWallet,
   walletConnectWallet,
-  metaMaskWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { injected, safe } from "wagmi/connectors";
 import { mock } from "wagmi/connectors";
-import { holdstationWallet } from "./holdstationWallet";
-//import { capsuleWallet } from "./capsualWallet";
 
-const pId = "1d1c8b5204bfbd57502685fc0934a57d";
+//for users without bitget wallet
 let customWallets = [
-  metaMaskWallet,
   rainbowWallet,
   walletConnectWallet,
   bitgetWallet,
   okxWallet,
-  holdstationWallet,
-  berasigWallet,
-  //capsuleWallet
 ];
 // if(!window.bitkeep){
 //   customWallets.unshift(bitgetWallet);
@@ -40,7 +32,7 @@ const connectors = [
     ],
     {
       appName: "Honypot Finance",
-      projectId: pId,
+      projectId: "1d1c8b5204bfbd57502685fc0934a57d",
     }
   ),
 ];

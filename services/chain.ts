@@ -364,7 +364,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/memewar2/Bera_Goat.png",
     },
-    "0x5c648D0Fd479cAFB9638eB94dB50aAA4d6A58c33": {
+    "0x96d62fbd15608ef087219f20986735a1d65a22a4": {
       name: "Bera Moo Deng",
       symbol: "BERA Moo Deng",
       decimals: 18,
@@ -376,22 +376,11 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/memewar2/Bera_Retadrio.png",
     },
-    "0x96d62fbd15608ef087219f20986735a1d65a22a4": {
+    "0x5a42fefa75b0adebd63d3078c2f1e3e9a6c39177": {
       name: "Bera Apu",
       symbol: "BERA APU",
       decimals: 18,
       logoURI: "/images/memewar2/BERA_APU.png",
-    },
-    "0xc06b8ee779d065061c2087c5c78c1ef774850041": {
-      name: "Trumpot",
-      symbol: "TRUMPOT",
-      decimals: 18,
-      logoURI: "/images/memewar2/trumpot.jpg",
-    },
-    "0xc87e5a73781e09d831d41e32991d9fc943517feb": {
-      name: "Bera Coral",
-      symbol: "BERA CORAL",
-      decimals: 18,
     },
   },
   validatedFtoAddresses: [
@@ -405,7 +394,10 @@ export const networks = [
   berachainBartioTestnetNetwork,
   //sepoliaNetwork,
 ];
-export const networksMap = networks.reduce((acc, network) => {
-  acc[network.chainId] = network;
-  return acc;
-}, {} as Record<number | string, Network>);
+export const networksMap = networks.reduce(
+  (acc, network) => {
+    acc[network.chainId] = network;
+    return acc;
+  },
+  {} as Record<number | string, Network>
+);

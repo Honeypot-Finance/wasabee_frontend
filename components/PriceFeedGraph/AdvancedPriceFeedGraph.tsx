@@ -21,13 +21,13 @@ import { chart } from "@/services/chart";
 import { PairContract } from "@/services/contract/pair-contract";
 import { observer } from "mobx-react-lite";
 
-const TVChartContainer = dynamic(
-  () =>
-    import("@/components/AdvancedChart/TVChartContainer/TVChartContainer").then(
-      (mod) => mod.TVChartContainer
-    ),
-  { ssr: false }
-);
+// const TVChartContainer = dynamic(
+//   () =>
+//     import("@/components/AdvancedChart/TVChartContainer/TVChartContainer").then(
+//       (mod) => mod.TVChartContainer
+//     ),
+//   { ssr: false }
+// );
 
 export const AdvancedPriceFeedGraph = observer(() => {
   const [isScriptReady, setIsScriptReady] = useState(false);
@@ -59,8 +59,6 @@ export const AdvancedPriceFeedGraph = observer(() => {
   });
 
   useEffect(() => {
-    console.log("chart.chartTarget", chart.chartTarget);
-    if (!chainId || !chart.chartTarget) return;
     console.log("chart.chartTarget", chart.chartTarget);
     if (!chainId || !chart.chartTarget) return;
     setDefaultWidgetProps((prev) => {

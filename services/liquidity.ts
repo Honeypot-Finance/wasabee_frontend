@@ -16,7 +16,6 @@ import { add, debounce, forEach } from "lodash";
 import dayjs from "dayjs";
 import { PageRequest, PairFilter } from "./indexer/indexerTypes";
 import { Address, zeroAddress } from "viem";
-import NetworkManager from "./network";
 
 class Liquidity {
   pairPage = new IndexerPaginationState<PairFilter, PairContract>({
@@ -215,17 +214,11 @@ class Liquidity {
   // });
 
   get tokens() {
-    const networkManager = NetworkManager.getInstance();
-    const currentChain = wallet.isInit
-      ? wallet.currentChain
-      : networkManager.getSelectedNetwork();
     const tokensMap = {
-      ...(currentChain?.validatedTokensInfo ?? {}),
+      ...wallet.currentChain.validatedTokensInfo,
     };
     const tokens = Object.values(tokensMap);
-    if (currentChain?.nativeToken) {      
-      tokens.push(currentChain.nativeToken);
-    }
+    tokens.push(wallet.currentChain.nativeToken);
     const sortedTokens = tokens.sort((a, b) => {
       const diff = b.priority - a.priority;
       if (diff === 0) {
@@ -560,19 +553,17 @@ class Liquidity {
           }
         );
       } else if (this.toToken.isNative) {
-        await this.routerV2Contract.addLiquidityETH.call(
-          [
-            this.fromToken.address as `0x${string}`,
-            BigInt(token0AmountWithDec),
-            BigInt(token0MinAmountWithDec),
-            BigInt(token1MinAmountWithDec),
-            wallet.account as `0x${string}`,
-            BigInt(deadline),
-          ],
+        await this.routerV2Contract.addLiquidityETH.call([
+          this.fromToken.address as `0x${string}`,
+          BigInt(token0AmountWithDec),
+          BigInt(token0MinAmountWithDec),
+          BigInt(token1MinAmountWithDec),
+          wallet.account as `0x${string}`,
+          BigInt(deadline),
+        ]),
           {
             value: BigInt(token1AmountWithDec),
-          }
-        );
+          };
       } else {
         await this.routerV2Contract.addLiquidity.call([
           this.fromToken.address as `0x${string}`,

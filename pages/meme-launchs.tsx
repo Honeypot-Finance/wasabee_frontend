@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Observer, observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/button";
 import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
@@ -33,20 +33,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     MemePairContract[] | null
   >(null);
 
-  const updateMostSuccessProjects = useCallback(() => {
-    console.log("updating most success projects", mostSuccessProjects);
-    mostSuccessProjects?.forEach((pair) => {
-      pair.getDepositedRaisedToken();
-    });
-  }, [mostSuccessProjects]);
-
-  useEffect(() => {
-    const updateInterval = setInterval(() => {
-      updateMostSuccessProjects();
-    }, 2000);
-    return () => clearInterval(updateInterval);
-  }, [updateMostSuccessProjects]);
-
   useEffect(() => {
     if (!wallet.isInit) {
       return;
@@ -59,18 +45,13 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     // launchpad.participatedPairs.reloadPage();
 
     //loading most success projects
-    const startMostSuccessfulFtoPolling = () => {
-      launchpad.trendingMEMEs().then((data) => {
-        //if data is same as previous data then no need to update
-        setMostSuccessProjects(data);
-      });
-    };
-
-    startMostSuccessfulFtoPolling();
+    launchpad.trendingMEMEs().then((data) => {
+      setMostSuccessProjects(data);
+    });
   }, [wallet.isInit]);
 
   return (
-    <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
+    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
       <div className="flex w-full justify-end gap-2">
         <Button className="scale-[0.8] sm:scale-100">
           <Link
@@ -84,7 +65,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
       {mostSuccessProjects && mostSuccessProjects.length > 0 && (
         <>
-          <h2 className="w-full text-center py-2 md:py-0 text-[1.5rem] md:text-[3rem] [font-family:MEMEH] font-bold">
+          <h2 className="w-full text-center text-[3rem] [font-family:MEMEH] font-bold">
             Trending MEMEs
           </h2>
           <motion.div
@@ -102,7 +83,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 }
               >
                 <motion.div
-                  className="absolute top-0 left-0 z-10"
+                  className="absolute  top-0 left-0 z-10"
                   initial={{
                     rotate: 0,
                   }}
@@ -115,13 +96,13 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                   }}
                 >
                   {idx === 0 && (
-                    <FaCrown className="absolute top-0 left-2 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[300%] md:scale-[500%] fill-yellow-300" />
+                    <FaCrown className="absolute top-0 left-2 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[500%] fill-yellow-300" />
                   )}
                   {idx === 1 && (
-                    <FaCrown className="absolute top-0 left-1 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] md:scale-[300%] fill-gray-300" />
+                    <FaCrown className="absolute top-0 left-1 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[300%] fill-gray-300" />
                   )}
                   {idx === 2 && (
-                    <FaCrown className="absolute top-0 left-0 rotate-[-30deg] translate-x-[-30%] translate-y-[-50%] md:scale-[100%] fill-amber-800" />
+                    <FaCrown className="absolute top-0 left-0 rotate-[-30deg] translate-x-[-30%] translate-y-[-50%] scale-[100%] fill-amber-800" />
                   )}
                 </motion.div>
                 <LaunchCard
@@ -137,7 +118,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
       )}
 
       <div>
-        <div id="filter" className="flex flex-col sm:flex-row items-center gap-2 my-4 sm:my-0">
+        <div id="filter" className="flex flex-col sm:flex-row gap-2">
           <WarppedNextInputSearchBar
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
@@ -181,7 +162,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "all";
-                            onClose();
                           }}
                           className="w-[100px]"
                         >
@@ -190,7 +170,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "success";
-                            onClose();
                           }}
                           className="w-[100px]"
                         >
@@ -199,7 +178,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                         <NextButton
                           onClick={() => {
                             launchpad.pairFilterStatus = "fail";
-                            onClose();
                           }}
                           className="w-[100px]"
                         >
@@ -207,8 +185,8 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                         </NextButton>
                         <NextButton
                           onClick={() => {
+                            console.log("processing");
                             launchpad.pairFilterStatus = "processing";
-                            onClose();
                           }}
                           className="w-[100px]"
                         >
@@ -224,7 +202,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         </div>
       </div>
 
-      <div className="w-full">
+      <div>
         <Tabs
           // destroyInactiveTabPanel={false}
           aria-label="Options"
@@ -285,7 +263,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             title={
               <div className="flex items-center text-yellow-400">
                 <Image
-                  className="size-4"
+                  className="h-4"
                   src="/images/partners/yeet_icon.png"
                   alt=""
                   width={100}
@@ -295,15 +273,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                   Try Yeet Bond <FaExternalLinkAlt className="inline-block" />
                 </span>
               </div>
-            }
-          />
-          <Tab
-            title={
-              <Link href="/memewar" className="flex items-center text-rose-600">
-                <span className="flex items-center justify-center gap-2">
-                  Meme War ⚔️
-                </span>
-              </Link>
             }
           />
         </Tabs>

@@ -228,16 +228,17 @@ class LaunchPad {
                 address: pairAddress.token1.id,
               });
 
-        pair.init({
-          force: true,
-          raisedToken: raisedToken,
-          launchedToken: launchedToken,
-          depositedLaunchedToken: pairAddress.depositedLaunchedToken,
-          depositedRaisedToken: pairAddress.depositedRaisedToken,
-          startTime: pairAddress.createdAt,
-          endTime: pairAddress.endTime,
-          ftoState: Number(pairAddress.status),
-        });
+        if (!pair.isInit) {
+          pair.init({
+            raisedToken: raisedToken,
+            launchedToken: launchedToken,
+            depositedLaunchedToken: pairAddress.depositedLaunchedToken,
+            depositedRaisedToken: pairAddress.depositedRaisedToken,
+            startTime: pairAddress.createdAt,
+            endTime: pairAddress.endTime,
+            ftoState: Number(pairAddress.status),
+          });
+        }
 
         return pair;
       });

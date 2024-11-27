@@ -44,7 +44,6 @@ export class FtoPairContract implements BaseLaunchContract {
   logoUrl = "";
   bannerUrl = "";
   participantsCount = new BigNumber(0);
-  beravoteSpaceId = "";
 
   constructor(args: Partial<FtoPairContract>) {
     Object.assign(this, args);
@@ -344,13 +343,9 @@ export class FtoPairContract implements BaseLaunchContract {
     if (res.banner_url) {
       this.bannerUrl = res.banner_url;
     }
-    if (res.beravote_space_id) {
-      this.beravoteSpaceId = res.beravote_space_id;
-    }
   }
 
   async init({
-    force,
     raisedToken,
     launchedToken,
     depositedRaisedToken,
@@ -359,7 +354,6 @@ export class FtoPairContract implements BaseLaunchContract {
     endTime,
     ftoState,
   }: {
-    force?: boolean;
     raisedToken?: Token;
     launchedToken?: Token;
     depositedRaisedToken?: string;
@@ -368,7 +362,7 @@ export class FtoPairContract implements BaseLaunchContract {
     endTime?: string;
     ftoState?: number;
   } = {}) {
-    if (this.isInit && !force) {
+    if (this.isInit) {
       return;
     }
 
@@ -412,7 +406,7 @@ export class FtoPairContract implements BaseLaunchContract {
 
     try {
       const claimed = await this.contract.read.claimedLp([wallet.account] as [
-        `0x${string}`
+        `0x${string}`,
       ]);
 
       const claimable = await this.contract.read.claimableLP([

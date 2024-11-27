@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Button as NextButton } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import { itemSlideVariants } from "@/lib/animation";
-import { truncate } from "@/lib/format";
 
 interface CommentCardProps {
   commenterImageURL: string;
@@ -28,8 +27,7 @@ export function CommentCard(props: CommentCardProps) {
         ></Image>
         <div className="flex flex-col gap-1 overflow-hidden overflow-ellipsis break-words text-nowrap">
           <div className="text-[#FFCD4D] text-base font-bold leading-[normal]">
-            <span className="hidden sm:inline">{props.commenterName}</span>
-            <span className="inline sm:hidden">{truncate(props.commenterName, 10)}</span>
+            {props.commenterName}
           </div>
           <div className="text-[rgba(255,255,255,0.66)] text-sm font-medium leading-[normal]">
             {props.commentDate.toLocaleString()}

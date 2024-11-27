@@ -16,7 +16,9 @@ import { config } from "@/config/wagmi";
 import { trpc, trpcQueryClient } from "../lib/trpc";
 import { useEffect } from "react";
 import { wallet } from "@/services/wallet";
+import { DM_Sans } from "next/font/google";
 import { Inspector, InspectParams } from "react-dev-inspector";
+import { StorageState } from "@/services/utils";
 import { Analytics } from "@vercel/analytics/react";
 import { ApolloProvider } from "@apollo/client";
 import { infoClient } from "@/lib/algebra/graphql/clients";
@@ -47,28 +49,30 @@ export default function App({
       <Analytics></Analytics>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider>
-            <NextUIProvider>
-              <Provider>
-                <Inspector
-                  keys={["Ctrl", "Shift", "Z"]}
-                  onClickElement={({ codeInfo }: InspectParams) => {
-                    if (!codeInfo) {
-                      return;
-                    }
-                    window.open(
-                      `cursor://file/${codeInfo.absolutePath}:${codeInfo.lineNumber}:${codeInfo.columnNumber}`,
-                      "_blank"
-                    );
-                  }}
-                ></Inspector>
-                <ComponentLayout className={"[font-family:MEMEP]"}>
-                  <Component {...pageProps} />
-                </ComponentLayout>
-              </Provider>
-              <ToastContainer></ToastContainer>
-            </NextUIProvider>
-          </RainbowKitProvider>
+          <ApolloProvider client={infoClient}>
+            <RainbowKitProvider>
+              <NextUIProvider>
+                <Provider>
+                  <Inspector
+                    keys={["Ctrl", "Shift", "Z"]}
+                    onClickElement={({ codeInfo }: InspectParams) => {
+                      if (!codeInfo) {
+                        return;
+                      }
+                      window.open(
+                        `cursor://file/${codeInfo.absolutePath}:${codeInfo.lineNumber}:${codeInfo.columnNumber}`,
+                        "_blank"
+                      );
+                    }}
+                  ></Inspector>
+                  <ComponentLayout className={"[font-family:MEMEP]"}>
+                    <Component {...pageProps} />
+                  </ComponentLayout>
+                </Provider>
+                <ToastContainer></ToastContainer>
+              </NextUIProvider>
+            </RainbowKitProvider>
+          </ApolloProvider>
         </QueryClientProvider>
       </WagmiProvider>
     </trpc.Provider>

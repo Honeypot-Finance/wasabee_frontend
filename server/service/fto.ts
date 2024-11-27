@@ -19,22 +19,6 @@ const fto_api_key_list = [
   "b3a3a02a-a665-4fb5-bb17-153d05863efe", //bera boyz
 ];
 
-interface projectColumn {
-  id: number;
-  twitter: string;
-  telegram: string;
-  website: string;
-  description: string;
-  logo_url: string;
-  name: string;
-  provider: string;
-  project_type: string;
-  banner_url: string;
-  beravote_space_id: string;
-  launch_token: string;
-  raising_token: string;
-}
-
 export const ftoService = {
   createFtoProject: async (data: {
     pair: string;
@@ -193,9 +177,7 @@ export const ftoService = {
     projectName?: string;
     pair: string;
     chain_id: number;
-    beravote_space_id?: string;
     creator_api_key: string;
-    provider?: string;
   }) => {
     if (
       !fto_api_key_list.includes(data.creator_api_key) &&
@@ -203,7 +185,16 @@ export const ftoService = {
     ) {
       return false;
     }
-    return await updateFtoProject({ ...data });
+    return await updateFtoProject({
+      twitter: data.twitter ?? "",
+      telegram: data.telegram ?? "",
+      website: data.website ?? "",
+      description: data.description ?? "",
+      name: data.projectName ?? "",
+      pair: data.pair,
+      chain_id: data.chain_id,
+      creator_api_key: data.creator_api_key,
+    });
   },
   createOrUpdateProjectVotes: async (data: {
     project_pair: string;
@@ -290,17 +281,10 @@ export const ftoService = {
     return await revalidateProject(data);
   },
   selectProjectByLaunchToken: async (data: {
-    launch_token: string;
+    token: string;
     chain_id: number;
-  }): Promise<projectColumn[]> => {
-    const launch =
-      await pg`SELECT * FROM fto_project WHERE launch_token = ${data.launch_token.toLowerCase()} and chain_id = ${
-        data.chain_id
-      }`;
-    console.log(data.launch_token, launch);
-    return launch.map((item) => {
-      return item as projectColumn;
-    });
+  }) => {
+    return await pg`SELECT * FROM fto_project WHERE provider = ${data.token.toLowerCase()} and chain_id = ${data.chain_id}`;
   },
 };
 
@@ -331,11 +315,10 @@ const updateFtoProject = async (data: {
   creator_api_key: string;
   project_type?: string;
   provider?: string;
-  launch_token?: string;
-  raising_token?: string;
-  beravote_space_id?: string;
 }) => {
   try {
+    //console.log("data: ", data);
+
     const fieldsToUpdate = Object.entries(data)
       .filter(([key, value]) => {
         if (key === "creator_api_key" || key === "pair" || key === "chain_id") {
@@ -368,9 +351,7 @@ const revalidateProject = async (data: {
   creator_api_key?: string;
 }) => {
   const res =
-    await pg`SELECT * FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
-      data.chain_id
-    }`;
+    await pg`SELECT * FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${data.chain_id}`;
 
   const publicClient = createPublicClientByChain(chainsMap[data.chain_id]);
 
@@ -496,8 +477,19 @@ const revalidateProject = async (data: {
 
 const selectFtoProject = async (data: { pair: string; chain_id: number }) => {
   const res = await pg<
-    projectColumn[]
-  >`SELECT * FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
+    {
+      id: number;
+      twitter: string;
+      telegram: string;
+      website: string;
+      description: string;
+      logo_url: string;
+      name: string;
+      provider: string;
+      project_type: string;
+      banner_url: string;
+    }[]
+  >`SELECT id,twitter,logo_url, telegram, website,description,name, provider, project_type,banner_url  FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
     data.chain_id
   }`;
   console.log("res: ", res);
