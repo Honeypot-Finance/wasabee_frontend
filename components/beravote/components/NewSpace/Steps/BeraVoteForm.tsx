@@ -1,11 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Formik, Form, Field } from "formik";
-import * as Yup from "yup";
 import { StyledButton } from "../../styled";
 import FormInput from "../../Input";
 import { BtnWrapper, FormContainer } from "./styled";
-import LogoUploader from "../../logoUploader";
-import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { ethers } from "ethers";
 import APIAccessPayment from "@/lib/abis/beravote/abi/APIAccessPayment.json";

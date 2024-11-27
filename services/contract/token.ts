@@ -134,8 +134,6 @@ export class Token implements BaseContract {
       launch_token: this.address,
     });
 
-    console.log(this.address, launch);
-
     launch[0]?.logo_url && this.setLogoURI(launch[0].logo_url);
   }
 

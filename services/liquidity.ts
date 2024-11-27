@@ -224,7 +224,7 @@ class Liquidity {
       ...(currentChain?.validatedTokensInfo ?? {}),
     };
     const tokens = Object.values(tokensMap);
-    if (currentChain?.nativeToken) {      
+    if (currentChain?.nativeToken) {
       tokens.push(currentChain.nativeToken);
     }
     const sortedTokens = tokens.sort((a, b) => {
@@ -657,14 +657,11 @@ class Liquidity {
         return memoryPair;
       }
 
-      console.log("getPairByTokens", token0Address, token1Address);
       let pair = await trpcClient.pair.getPairByTokens.query({
         chainId: wallet.currentChainId,
         token0Address,
         token1Address,
       });
-
-      console.log("pair", pair);
 
       if (pair) {
         const pairContract = new PairContract({
