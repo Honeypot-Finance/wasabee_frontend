@@ -61,6 +61,8 @@ export const AdvancedPriceFeedGraph = observer(() => {
   useEffect(() => {
     console.log("chart.chartTarget", chart.chartTarget);
     if (!chainId || !chart.chartTarget) return;
+    console.log("chart.chartTarget", chart.chartTarget);
+    if (!chainId || !chart.chartTarget) return;
     setDefaultWidgetProps((prev) => {
       return {
         ...prev,

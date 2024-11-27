@@ -345,7 +345,6 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     tokenName: string;
     tokenSymbol: string;
     tokenAmount: number;
-    poolHandler: string;
     //raisingCycle: DateValue;
   }) => {
     try {
@@ -461,19 +460,6 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 />
                 {errors.tokenSymbol && (
                   <span className="text-red-500">Token Symbol is required</span>
-                )}
-              </div>
-              <div className="flex-col gap-4 hidden">
-                <label htmlFor="poolHandler">Pool Handler</label>
-                {wallet.currentChain?.contracts?.routerV2 && (
-                  <input
-                    defaultValue={wallet.currentChain?.contracts?.routerV2}
-                    value={wallet.currentChain?.contracts?.routerV2}
-                    // defaultValue={'0x1a12as1212'}
-                    type="text"
-                    {...register("poolHandler", {})}
-                    className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
-                  />
                 )}
               </div>
 

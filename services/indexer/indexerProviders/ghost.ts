@@ -19,15 +19,17 @@ import {
   GhostPoolPair,
   GhostPoolPairResponse,
   GhostBundleResponse,
+  GhostAlgebraPoolPair,
+  GhostAlgebraPairResponse,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 import dayjs from "dayjs";
 
-const memeGraphHandle = "93866c79-ad7e-4dfa-afb9-0b5a81d7d79f/ghostgraph";
+const memeGraphHandle = "5e83143f-8481-4564-afc2-7b7a766afef9/ghostgraph";
 const ftoGraphHandle = "df583977-1412-4c0a-9b3a-ebea68604f3a/ghostgraph";
 const memelaunchGraphHandle = "6250c399-1065-408f-9491-24a000b9d62d/ghostgraph";
-const pairGraphHandle = "45ac3e88-9001-4355-99ab-b24750e20341/ghostgraph";
+const pairGraphHandle = "c0bb4104-f7ae-4325-926a-e31bec273615/ghostgraph";
 
 function getTimeStampToDayNow() {
   return Math.floor(dayjs().unix() / 86400);
@@ -500,7 +502,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
-                holderCount
+                swapCount
               }
               token1 {
                 id
@@ -509,7 +511,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
-                holderCount
+                swapCount
               }
           }
         }
@@ -686,15 +688,7 @@ export class GhostIndexer {
       return {
         status: "success",
         message: "Success",
-        data: res.data ?? {
-          pairs: [],
-          pageInfo: {
-            hasNextPage: true,
-            hasPreviousPage: false,
-            startCursor: "",
-            endCursor: "",
-          },
-        },
+        data: res.data,
       };
     }
   };
@@ -772,7 +766,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
-                holderCount
+                swapCount
               }
               token1 {
                 id
@@ -781,7 +775,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
-                holderCount
+                swapCount
               }
             }
             pageInfo {
@@ -856,7 +850,7 @@ export class GhostIndexer {
             decimals
             derivedETH
             derivedUSD
-            holderCount
+            swapCount
           }
           token1{
             id
@@ -865,7 +859,7 @@ export class GhostIndexer {
             decimals
             derivedETH
             derivedUSD
-            holderCount
+            swapCount
           }
         }
       }
@@ -902,7 +896,7 @@ export class GhostIndexer {
           decimals
           derivedETH
           derivedUSD
-          holderCount
+          swapCount
           symbol
           name
           }
@@ -936,7 +930,7 @@ export class GhostIndexer {
           decimals
           derivedETH
           derivedUSD
-          holderCount
+          swapCount
           symbol
           name
         }
@@ -1027,7 +1021,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
-        holderCount
+        swapCount
       }
       token1{
         address: id
@@ -1036,7 +1030,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
-        holderCount
+        swapCount
       }
       reserve0
       reserve1
@@ -1055,7 +1049,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
-        holderCount
+        swapCount
       }
       token1{
         address: id
@@ -1064,7 +1058,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
-        holderCount
+        swapCount
       }
       reserve0
       reserve1

@@ -95,7 +95,7 @@ export type GhostToken = {
   decimals: number;
   derivedETH?: string;
   derivedUSD?: string;
-  holderCount?: string;
+  swapCount?: string;
 };
 
 export interface LaunchTokenData {
@@ -149,4 +149,24 @@ export type GhostBundleResponse = {
     totalETH: string;
     totalUSD: string;
   };
+};
+
+//---------------------------algebra---------------------------
+export type GhostAlgebraPairResponse = {
+  pairs: GhostAlgebraPoolPair[];
+  pageInfo: PageInfo;
+};
+
+export type GhostAlgebraPoolPair = {
+  id: string;
+  token0: GhostToken;
+  token1: GhostToken;
+  timestamp: number;
+  block: number;
+  txHash: string;
+  token0name: string;
+  token1name: string;
+  token0symbol: string;
+  token1symbol: string;
+  searchString: string;
 };
