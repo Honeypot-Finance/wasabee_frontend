@@ -18,8 +18,6 @@ import { useEffect } from "react";
 import { wallet } from "@/services/wallet";
 import { Inspector, InspectParams } from "react-dev-inspector";
 import { Analytics } from "@vercel/analytics/react";
-import { ApolloProvider } from "@apollo/client";
-import { infoClient } from "@/lib/algebra/graphql/clients";
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
 

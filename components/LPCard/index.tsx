@@ -41,7 +41,8 @@ const AddLiquidity = observer(() => {
               min: 0,
               isInvalid:
                 Number(liquidity.fromAmount) >
-                  (liquidity.fromToken as Token)?.balance?.toNumber() ||
+                  (liquidity.fromToken as Token)?.balance.toNumber() ||
+                0 ||
                 Number(liquidity.fromAmount) < 0,
               errorMessage: "Insufficient balance",
               onClear: () => {
@@ -98,6 +99,7 @@ const AddLiquidity = observer(() => {
               isInvalid:
                 Number(liquidity.toAmount) >
                   (liquidity.toToken as Token)?.balance?.toNumber() ||
+                0 ||
                 Number(liquidity.toAmount) < 0,
               errorMessage: "Insufficient balance",
               onClear: () => {

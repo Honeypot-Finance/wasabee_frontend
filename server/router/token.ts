@@ -6,37 +6,31 @@ import dayjs from "dayjs";
 import { LRUCache } from "lru-cache";
 import { createPublicClientByChain } from "@/lib/client";
 import BigNumber from "bignumber.js";
-import {
-  createWalletClient,
-  defineChain,
-  http,
-  parseGwei,
-  nonceManager,
-} from "viem";
+import { createWalletClient, defineChain, http, parseGwei } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { defichainEvm, mainnet } from "viem/chains";
 import { berachainBartioTestnet } from "@/lib/chain";
 import { z } from "zod";
+import { tryEach } from "ethcall/lib/call";
+import { createNonceManager, jsonRpc } from 'viem/nonce'
+ 
+const nonceManager = createNonceManager({
+  source: jsonRpc() 
+})
 
 const ethPublicClient = createPublicClientByChain({
-  ...mainnet,
-  rpcUrls: {
-    default: {
-      http: [
-        "https://cloudflare-eth.com",
-        "https://eth.llamarpc.com",
-        "https://rpc.ankr.com/eth",
-        "https://eth-pokt.nodies.app",
-        "ttps://eth-mainnet.public.blastapi.io",
-      ],
-    },
-  },
+    ...mainnet,
+    rpcUrls: {
+        default: {
+          http: ['https://cloudflare-eth.com', 'https://eth.llamarpc.com', "https://rpc.ankr.com/eth", "https://eth-pokt.nodies.app", "ttps://eth-mainnet.public.blastapi.io"],
+        },
+      },
 });
 const beraPublicClient = createPublicClientByChain(berachainBartioTestnet);
 const account = privateKeyToAccount(
   process.env.FAUCET_PRIVATE_KEY! as `0x${string}`,
   {
-    nonceManager,
+    nonceManager
   }
 );
 
@@ -52,29 +46,27 @@ const interval = 1000 * 60 * 60 * 24;
 const faucetAmount = 0.1;
 
 export const tokenRouter = router({
-  queryNativeFaucet: publicProcedure
-    .input(
-      z.object({
-        address: z.string(),
-      })
-    )
-    .query(async ({ input, ctx }) => {
-      const { req } = ctx;
-      // const ip = requestIp.getClientIp(req);
-      const cachedValue = await ipCache.get<{
-        claimableUntil: number;
-      }>(input.address);
-      if (!cachedValue) {
-        return {
-          claimable: true,
-        };
-      } else {
-        return {
-          claimable: false,
-          claimableUntil: cachedValue.claimableUntil,
-        };
-      }
-    }),
+  queryNativeFaucet: publicProcedure.input(
+    z.object({
+      address: z.string(),
+    })
+  ).query(async ({ input, ctx }) => {
+    const { req } = ctx;
+    // const ip = requestIp.getClientIp(req);
+    const cachedValue = await ipCache.get<{
+      claimableUntil: number;
+    }>(input.address);
+    if (!cachedValue) {
+      return {
+        claimable: true,
+      };
+    } else {
+      return {
+        claimable: false,
+        claimableUntil: cachedValue.claimableUntil,
+      };
+    }
+  }),
   applyNativeFaucet: publicProcedure
     .input(
       z.object({
@@ -99,14 +91,11 @@ export const tokenRouter = router({
         });
       }
       requestStatus[JSON.stringify(ip!)] = true;
-      const [ipCacheValue, addressCacheValue] = await Promise.all([
-        ipCache.get<{
-          claimableUntil: number;
-        }>(JSON.stringify(ip!)),
-        ipCache.get<{
-          claimableUntil: number;
-        }>(address),
-      ]);
+      const [ipCacheValue, addressCacheValue] = await Promise.all([ipCache.get<{
+        claimableUntil: number;
+      }>(JSON.stringify(ip!)), ipCache.get<{
+        claimableUntil: number;
+      }>(address)])
       if (ipCacheValue?.claimableUntil) {
         requestStatus[JSON.stringify(ip!)] = false;
         throw new TRPCError({
@@ -115,7 +104,9 @@ export const tokenRouter = router({
             ipCacheValue.claimableUntil
           ).toLocaleString()}`,
         });
-      } else if (addressCacheValue?.claimableUntil) {
+      } else if (
+        addressCacheValue?.claimableUntil
+      ) {
         requestStatus[JSON.stringify(ip!)] = false;
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -147,7 +138,7 @@ export const tokenRouter = router({
           sendRes = await beraPublicClient.waitForTransactionReceipt({
             hash: hash as `0x${string}`,
           });
-          console.log("sendRes", sendRes);
+          console.log('sendRes', sendRes)
         } catch (error) {
           console.error(error);
           requestStatus[JSON.stringify(ip!)] = false;

@@ -1,7 +1,6 @@
 import { chart, chartTimeRanges } from "@/services/chart";
 import { PairContract } from "@/services/contract/pair-contract";
 import { swap } from "@/services/swap";
-import { wallet } from "@/services/wallet";
 import { Button, cn } from "@nextui-org/react";
 import { ApexOptions } from "apexcharts";
 import dayjs from "dayjs";
@@ -233,7 +232,7 @@ export const SimplePriceFeedGraph = observer(() => {
       {chart.isLoading && (
         <FaSpinner className="animate-spin absolute top-1/2 left-1/2 z-50"></FaSpinner>
       )}
-      <div className="relative w-full h-full flex-col flex items-center justify-center">
+      <div className="relative w-full flex-col flex items-center justify-center">
         <div className="flex justify-between items-center w-full gap-5">
           <span className="lg:pl-4">
             <div className="flex">
@@ -243,10 +242,10 @@ export const SimplePriceFeedGraph = observer(() => {
             </div>
             {chart.chartLabel}
           </span>
-          <div className="grid w-full gap-2 grid-cols-3 lg:grid-cols-6  items-center flex-wrap">
+          <div className="grid w-full gap-2 grid-cols-5 sm:grid-cols-3 lg:grid-cols-6  items-center flex-wrap">
             {Object.values(chartTimeRanges).map((range) => (
               <Button
-                className="min-w-[1rem] disabled:border-[red_2px_solid] "
+                className="min-w-[1rem] disabled:border-[red_2px_solid] text-xs sm:text-base p-0"
                 key={range.value}
                 isDisabled={chart.range === range.label || chart.isLoading}
                 onClick={() => {
@@ -260,8 +259,8 @@ export const SimplePriceFeedGraph = observer(() => {
         </div>
         {chart.chartTarget ? (
           <>
-            <div className="w-full pl-4">
-              <span className="mr-2 text-[2rem]">
+            <div className="w-full pl-4 mt-4">
+              <span className="mr-2 text-[1rem] sm:text-[2rem]">
                 {(chart.currentPrice ?? 0) < 0.004 && "<"}
                 {chart.currentPrice?.toFixed(2)}
               </span>
