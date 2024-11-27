@@ -95,7 +95,7 @@ export type GhostToken = {
   decimals: number;
   derivedETH?: string;
   derivedUSD?: string;
-  swapCount?: string;
+  holderCount?: string;
 };
 
 export interface LaunchTokenData {
