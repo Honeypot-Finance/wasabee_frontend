@@ -2,18 +2,20 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { amountFormatted, truncate } from "@/lib/format";
 import { chart } from "@/services/chart";
+import { ChevronDown } from "lucide-react";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { DiscussionArea } from "@/components/Discussion/DiscussionArea/DiscussionArea";
 import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
+import LaunchChart from "./LaunchChart";
 
 const menuItems = [
   { key: "info", label: "Token Info" },
   { key: "about", label: "About the Project" },
   { key: "txs", label: "Transactions" },
   { key: "comment", label: "Comments" },
-  // { key: "priceChart", label: "Price Chart" },
+  { key: "priceChart", label: "Price Chart" },
 ];
 
 const Tabs = ({
@@ -24,12 +26,8 @@ const Tabs = ({
   const [tab, setTab] = useState(menuItems[0].key);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  if (
-    pair?.ftoStatusDisplay?.status === "success" &&
-    !menuItems.find((item) => item.key === "priceChart")
-  ) {
-    menuItems.push({ key: "priceChart", label: "Price Chart" });
-  }
+  console.log("status", pair?.ftoStatusDisplay?.status);
+
   return (
     <>
       <div className="hidden sm:flex items-center gap-x-1 md:text-xs ml-3">
@@ -53,9 +51,10 @@ const Tabs = ({
         <button
           onBlur={() => setIsMenuOpen(false)}
           onClick={() => setIsMenuOpen((isMenuOpen) => !isMenuOpen)}
-          className="inline-flex justify-center w-full rounded-md shadow-sm px-4 py-2 bg-[#3B2712] text-[#A46617] text-sm font-medium hover:bg-[#9D5E28] hover:text-white focus:outline-none mb-2"
+          className="inline-flex justify-center w-full rounded-md shadow-sm px-4 py-2 bg-[#3B2712] text-[#A46617] text-sm font-medium hover:bg-[#9D5E28] hover:text-white focus:outline-none mb-2 space-x-0.5"
         >
-          {menuItems.find((item) => item.key === tab)?.label}
+          <span>{menuItems.find((item) => item.key === tab)?.label}</span>
+          <ChevronDown className="size-4" />
         </button>
         <motion.div
           initial={{ height: 0, opacity: 0 }}
@@ -167,7 +166,14 @@ const Tabs = ({
         {tab === "priceChart" && (
           <div className="flex justify-center">
             <div className="w-full">
-              {chart.chartTarget && <SimplePriceFeedGraph />}
+              {chart.chartTarget &&
+                pair?.ftoStatusDisplay?.status === "success" && (
+                  <SimplePriceFeedGraph />
+                )}
+              {pair?.launchedToken &&
+                pair?.ftoStatusDisplay?.status === "Processing" && (
+                  <LaunchChart decimals={pair.launchedToken.decimals} />
+                )}
             </div>
           </div>
         )}
