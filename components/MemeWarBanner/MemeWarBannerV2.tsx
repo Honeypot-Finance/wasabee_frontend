@@ -199,7 +199,7 @@ export const MemeWarPariticipantRaceChart = observer(() => {
         name: participant.participantName,
         data: [
           {
-            x: Number(participant.token?.swapCount) ?? 0,
+            x: Number(participant.token?.holderCount) ?? 0,
             y: participant.currentScore.toNumber(),
             meta: { participant },
           },
