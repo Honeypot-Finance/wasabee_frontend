@@ -20,9 +20,6 @@ import { pairQueryOutput } from "@/types/pair";
 import { chart } from "@/services/chart";
 import { PairContract } from "@/services/contract/pair-contract";
 import { observer } from "mobx-react-lite";
-import { chart } from "@/services/chart";
-import { PairContract } from "@/services/contract/pair-contract";
-import { observer } from "mobx-react-lite";
 
 const TVChartContainer = dynamic(
   () =>
@@ -33,7 +30,6 @@ const TVChartContainer = dynamic(
 );
 
 export const AdvancedPriceFeedGraph = observer(() => {
-export const AdvancedPriceFeedGraph = observer(() => {
   const [isScriptReady, setIsScriptReady] = useState(false);
   const { chainId } = useAccount();
   const [defaultWidgetProps, setDefaultWidgetProps] = useState<
@@ -43,13 +39,13 @@ export const AdvancedPriceFeedGraph = observer(() => {
       chart.chartTarget instanceof Token
         ? tokenToTicker(chart.chartTarget, chainId as number)
         : chart.chartTarget instanceof PairContract
-        ? pairToTicker(chart.chartTarget, chainId as number)
-        : tokenToTicker(
-            Token.getToken({
-              address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e", //thpot
-            }),
-            chainId as number
-          ),
+          ? pairToTicker(chart.chartTarget, chainId as number)
+          : tokenToTicker(
+              Token.getToken({
+                address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e", //thpot
+              }),
+              chainId as number
+            ),
     interval: "1D" as ResolutionString,
     library_path: "/static/charting_library/charting_library/",
     locale: "en",
@@ -74,13 +70,13 @@ export const AdvancedPriceFeedGraph = observer(() => {
           chart.chartTarget instanceof Token
             ? tokenToTicker(chart.chartTarget, chainId as number)
             : chart.chartTarget instanceof PairContract
-            ? pairToTicker(chart.chartTarget, chainId as number)
-            : tokenToTicker(
-                Token.getToken({
-                  address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e", //thpot
-                }),
-                chainId as number
-              ),
+              ? pairToTicker(chart.chartTarget, chainId as number)
+              : tokenToTicker(
+                  Token.getToken({
+                    address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e", //thpot
+                  }),
+                  chainId as number
+                ),
       };
     });
   }, [chainId, chart.chartTarget]);
