@@ -28,6 +28,7 @@ import dayjs from "dayjs";
 
 const memeGraphHandle = "5e83143f-8481-4564-afc2-7b7a766afef9/ghostgraph";
 const ftoGraphHandle = "df583977-1412-4c0a-9b3a-ebea68604f3a/ghostgraph";
+const memelaunchGraphHandle = "6250c399-1065-408f-9491-24a000b9d62d/ghostgraph";
 const pairGraphHandle = "c0bb4104-f7ae-4325-926a-e31bec273615/ghostgraph";
 
 function getTimeStampToDayNow() {
@@ -1072,6 +1073,36 @@ export class GhostIndexer {
 
     if (res.status === "success") {
       return res.data.pairs0.items[0] || res.data.pairs1.items[0];
+    }
+    return res;
+  }
+
+  async getMemeGraphData(tokenAddress: string) {
+    const query = `
+      query {
+        raisedTokenDeposits(
+          orderBy: "timestamp"
+          orderDirection: "desc"
+          where: {launchId: "${tokenAddress}"}
+        ) {
+          items {
+            id
+            launchId
+            amount
+            currentAmount
+            timestamp
+            txHash
+          }
+        }
+      }
+    `;
+
+    const res = await this.callIndexerApi(query, {
+      apiHandle: memelaunchGraphHandle,
+    });
+
+    if (res.status === "success") {
+      return res.data.raisedTokenDeposits.items;
     }
     return res;
   }

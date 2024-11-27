@@ -9,6 +9,7 @@ import {
   TrendingMEMEs,
   GhostBundleResponse,
   GhostToken,
+  LaunchTokenData,
   GhostAlgebraPairResponse,
 } from "@/services/indexer/indexerTypes";
 import { cacheProvider, getCacheKey } from "@/lib/server/cache";
@@ -275,6 +276,21 @@ export const indexerFeedRouter = router({
             input.chainId
           );
           return res;
+        }
+      );
+    }),
+
+  getMemeGraphData: publicProcedure
+    .input(
+      z.object({
+        tokenAddress: z.string(),
+      })
+    )
+    .query(async ({ input }): Promise<ApiResponseType<LaunchTokenData[]>> => {
+      return cacheProvider.getOrSet(
+        getCacheKey("getMemeGraphData", input),
+        async () => {
+          return await indexer.getMemeGraphData(input.tokenAddress);
         }
       );
     }),
