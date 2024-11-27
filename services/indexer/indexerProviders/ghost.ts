@@ -19,12 +19,14 @@ import {
   GhostPoolPair,
   GhostPoolPairResponse,
   GhostBundleResponse,
+  GhostAlgebraPoolPair,
+  GhostAlgebraPairResponse,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 import dayjs from "dayjs";
 
-const memeGraphHandle = "93866c79-ad7e-4dfa-afb9-0b5a81d7d79f/ghostgraph";
+const memeGraphHandle = "5e83143f-8481-4564-afc2-7b7a766afef9/ghostgraph";
 const ftoGraphHandle = "df583977-1412-4c0a-9b3a-ebea68604f3a/ghostgraph";
 const memelaunchGraphHandle = "6250c399-1065-408f-9491-24a000b9d62d/ghostgraph";
 const pairGraphHandle = "c0bb4104-f7ae-4325-926a-e31bec273615/ghostgraph";
@@ -686,15 +688,7 @@ export class GhostIndexer {
       return {
         status: "success",
         message: "Success",
-        data: res.data ?? {
-          pairs: [],
-          pageInfo: {
-            hasNextPage: true,
-            hasPreviousPage: false,
-            startCursor: "",
-            endCursor: "",
-          },
-        },
+        data: res.data,
       };
     }
   };

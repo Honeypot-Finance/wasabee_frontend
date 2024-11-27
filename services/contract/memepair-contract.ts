@@ -12,12 +12,13 @@ import { trpcClient } from "@/lib/trpc";
 import { ZodError } from "zod";
 import { statusTextToNumber } from "../launchpad";
 import { BaseLaunchContract } from "./base-launch-contract";
+import { pot2PumpPairABI } from "@/lib/abis/Pot2Pump/pot2PumpPair";
 
 export class MemePairContract implements BaseLaunchContract {
   databaseId: number | undefined = undefined;
   address = "";
   name: string = "";
-  abi = MemePairABI.abi;
+  abi = pot2PumpPairABI;
   raiseToken: Token | undefined = undefined;
   launchedToken: Token | undefined = undefined;
   depositedRaisedTokenWithoutDecimals: BigNumber | null = null;
@@ -122,18 +123,30 @@ export class MemePairContract implements BaseLaunchContract {
 
   get price() {
     if (this.ftoState === 0) {
-      return this.launchedToken?.derivedUSD
-        ? new BigNumber(this.launchedToken.derivedUSD)
-        : new BigNumber(0);
+      return this.priceAfterSuccess;
     } else {
-      return this.depositedRaisedToken &&
-        this.depositedLaunchedToken &&
-        this.raiseToken?.derivedUSD
-        ? this.depositedRaisedToken
-            .multipliedBy(this.raiseToken.derivedUSD)
-            .div(this.depositedLaunchedToken)
-        : undefined;
+      return this.priceBeforeSuccess;
     }
+  }
+
+  get priceAfterSuccess(): BigNumber {
+    if (!(this.ftoState === 0)) {
+      return new BigNumber(0);
+    }
+
+    return this.launchedToken?.derivedUSD
+      ? new BigNumber(this.launchedToken.derivedUSD)
+      : new BigNumber(0);
+  }
+
+  get priceBeforeSuccess(): BigNumber {
+    return this.depositedRaisedToken &&
+      this.depositedLaunchedToken &&
+      this.raiseToken?.derivedUSD
+      ? this.depositedRaisedToken
+          .multipliedBy(this.raiseToken.derivedUSD)
+          .div(this.depositedLaunchedToken)
+      : new BigNumber(0);
   }
 
   get marketValue() {
@@ -195,7 +208,6 @@ export class MemePairContract implements BaseLaunchContract {
     });
 
     await this.facadeContract.deposit.call([
-      this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
       BigInt(amount),
     ]);
@@ -212,7 +224,9 @@ export class MemePairContract implements BaseLaunchContract {
 
     await new ContractWrite(this.contract.write.refundRaisedToken, {
       action: "Refund",
-    }).call();
+    }).call([
+      wallet.account as `0x${string}`,
+    ]);
 
     await this.raiseToken?.getBalance();
 
@@ -225,36 +239,9 @@ export class MemePairContract implements BaseLaunchContract {
     }
 
     await this.facadeContract.claimLP.call([
-      this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
     ]);
     this.canClaimLP = false;
-  });
-
-  resume = new AsyncState(async () => {
-    if (!this.raiseToken || !this.launchedToken) {
-      throw new Error("token is not initialized");
-    }
-
-    await this.factoryContract.resume.call([
-      this.raiseToken.address as `0x${string}`,
-      this.launchedToken.address as `0x${string}`,
-    ]);
-
-    await this.getState();
-  });
-
-  pause = new AsyncState(async () => {
-    if (!this.raiseToken || !this.launchedToken) {
-      throw new Error("token is not initialized");
-    }
-
-    await this.factoryContract.pause.call([
-      this.raiseToken.address as `0x${string}`,
-      this.launchedToken.address as `0x${string}`,
-    ]);
-
-    await this.getState();
   });
 
   get withdraw() {
@@ -482,7 +469,7 @@ export class MemePairContract implements BaseLaunchContract {
       this.launchedToken = launchedToken;
       this.launchedToken.init();
     } else {
-      const res = (await this.contract.read.memeToken()) as `0x${string}`;
+      const res = (await this.contract.read.launchedToken()) as `0x${string}`;
       this.launchedToken = Token.getToken({ address: res });
       this.launchedToken.init();
     }
@@ -501,7 +488,7 @@ export class MemePairContract implements BaseLaunchContract {
     if (amount && Number(amount) !== 0) {
       this.depositedLaunchedTokenWithoutDecimals = new BigNumber(amount);
     } else {
-      const res = (await this.contract.read.depositedmemeToken()) as bigint;
+      const res = (await this.contract.read.depositedLaunchedToken()) as bigint;
       this.depositedLaunchedTokenWithoutDecimals = new BigNumber(
         res.toString()
       );
