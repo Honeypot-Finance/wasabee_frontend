@@ -3,9 +3,7 @@ import { Logo } from "../svg/logo";
 import { WalletConnect, WalletConnectMobile } from "../walletconnect";
 import clsx from "clsx";
 import {
-  Dropdown,
   DropdownItem,
-  DropdownMenu,
   DropdownTrigger,
   Navbar,
   NavbarBrand,
@@ -20,8 +18,8 @@ import Link from "next/link";
 import { cn } from "@/lib/tailwindcss";
 import { Menu, appPathsList as menuList } from "@/data/allAppPath";
 import {
-  WarppedNextDropdownMenu,
   WarppedNextDropdown,
+  WarppedNextDropdownMenu,
 } from "../wrappedNextUI/Dropdown/Dropdown";
 
 export const Header = (props: HtmlHTMLAttributes<any>) => {
@@ -31,9 +29,8 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
   const listToNavbarItem = (list: Menu[], isSub?: boolean): React.ReactNode => {
     return list.map((m) =>
       m.path instanceof Array ? (
-        <>
+        <div key={m.title}>
           <NavbarMenuItem
-            key={m.title}
             className={cn(
               "p-[8px]",
               m.path.some((p) => router.pathname.includes(p.path))
@@ -46,7 +43,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
             {m.title}
           </NavbarMenuItem>
           {listToNavbarItem(m.path as Menu[], true)}
-        </>
+        </div>
       ) : (
         <NavbarMenuItem
           key={m.title}
@@ -84,7 +81,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
         <NavbarMenuToggle
           aria-setsize={1}
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden  text-[white] scale-75"
+          className="xl:hidden  text-[white] scale-75"
         />
         <NavbarBrand className="space-x-1 sm:space-x-2">
           <Link href="/">
@@ -101,7 +98,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden xl:flex gap-4" justify="center">
         <ListToElement list={menuList}></ListToElement>
       </NavbarContent>
       <NavbarContent justify="end">

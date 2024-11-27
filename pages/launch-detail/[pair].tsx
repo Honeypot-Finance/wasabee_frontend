@@ -1,64 +1,53 @@
 import { useRouter } from "next/router";
+import { Logo } from "@/components/svg/logo";
 import { observer, useLocalObservable } from "mobx-react-lite";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import launchpad from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { AsyncState } from "@/services/utils";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { wallet } from "@/services/wallet";
 import { Button } from "@/components/button";
-import { Input } from "@/components/input";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import Image from "next/image";
-import { amountFormatted } from "@/lib/format";
+import { amountFormatted, truncate } from "@/lib/format";
 import { Copy } from "@/components/copy";
-import { LuFileEdit } from "react-icons/lu";
+import { Skeleton } from "@nextui-org/skeleton";
 import {
-  Button as NextButton,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Textarea,
-  Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import TokenLogo from "@/components/TokenLogo/TokenLogo";
-import { BiLinkExternal, BiWallet } from "react-icons/bi";
-import { PopupActions } from "reactjs-popup/dist/types";
-import PopUp from "@/components/PopUp/PopUp";
-import { info } from "console";
-import ShareSocialMedialPopUp from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { trpcClient } from "@/lib/trpc";
-import ProjectStatusDisplay from "@/components/atoms/TokenStatusDisplay/TokenStatusDisplay";
-import { Provider } from "ethcall";
-import { WatchAsset } from "@/components/atoms/WatchAsset/WatchAsset";
+import ProjectStatus from "@/components/atoms/TokenStatusDisplay/TokenStatus";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
+import { VscCopy } from "react-icons/vsc";
+import { useAccount } from "wagmi";
+import { chart } from "@/services/chart";
+import { MemePairContract } from "@/services/contract/memepair-contract";
+import { WrappedToastify } from "@/lib/wrappedToastify";
+import Countdown from "react-countdown";
+import ProgressBar from "@/components/atoms/ProgressBar/ProgressBar";
+import BigNumber from "bignumber.js";
+import Action from "./componets/Action";
+import Tabs from "./componets/Tabs";
+import CountdownTimer from "./componets/Countdown";
+import ProjectTitle from "./componets/ProjectTitle";
+import TokenRaised from "./componets/TokenRaised";
+import SaleProgress from "./componets/SaleProgress";
+import TokenAddress from "./componets/TokenAddress";
+import TokenDetails from "./componets/TokenDetails";
 import {
   OptionsDropdown,
   optionsPresets,
 } from "@/components/OptionsDropdown/OptionsDropdown";
-import { SlShare } from "react-icons/sl";
-import { VscCopy } from "react-icons/vsc";
-import { Token } from "@/services/contract/token";
-import { useAccount } from "wagmi";
-import { useParams } from "next/navigation";
-import { useQueries } from "@tanstack/react-query";
-import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
-import { chart } from "@/services/chart";
-import CopyToClipboard from "react-copy-to-clipboard";
-import CardContianer from "@/components/CardContianer/CardContianer";
-import { CommentCard } from "@/components/Discussion/CommentCard/CommentCard";
-import { DiscussionArea } from "@/components/Discussion/DiscussionArea/DiscussionArea";
-import { MemePairContract } from "@/services/contract/memepair-contract";
-import { WrappedToastify } from "@/lib/wrappedToastify";
-import { title } from "process";
+import { LuFileEdit } from "react-icons/lu";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -270,164 +259,6 @@ const UpdateProjectModal = observer(
   }
 );
 
-const SuccessAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    return (
-      <div className="flex gap-[16px] justify-center items-center flex-col lg:flex-row">
-        {wallet.account != pair.provider && (
-          <Button
-            className="w-full"
-            isLoading={pair.claimLP.loading}
-            onClick={() => {
-              pair.claimLP.call();
-            }}
-            isDisabled={!pair.canClaimLP}
-          >
-            {pair.canClaimLP ? "Claim LP" : "Claim LP (Not available)"}
-          </Button>
-        )}
-
-        <Link
-          href={`/swap?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
-          className="text-black font-bold w-full"
-        >
-          <Button className="w-full">
-            <p>BUY Token</p>
-            <p>
-              <Copy
-                onClick={(e) => {
-                  e.preventDefault();
-                }}
-                className=" absolute ml-[8px] top-[50%] translate-y-[-50%]"
-                value={`${window.location.origin}/swap?inputCurrency=${pair.raiseToken?.address}&outputCurrency=${pair.launchedToken?.address}`}
-              ></Copy>
-            </p>
-          </Button>{" "}
-        </Link>
-      </div>
-    );
-  }
-);
-
-const FailAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    return (
-      <div className="flex flex-col gap-[16px]">
-        {pair instanceof FtoPairContract && pair.isProvider && (
-          <Button
-            className="w-full"
-            isLoading={pair.withdraw.loading}
-            onClick={() => {
-              pair.withdraw.call();
-            }}
-          >
-            Provider Withdraw
-          </Button>
-        )}
-        {pair instanceof MemePairContract && pair.canRefund && (
-          <Button
-            className="w-full"
-            onClick={() => {
-              pair.refund.call();
-            }}
-            isLoading={pair.refund.loading}
-            style={{
-              backgroundColor: "green",
-            }}
-          >
-            Refund LP
-          </Button>
-        )}
-      </div>
-    );
-  }
-);
-
-const ProcessingAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    const acc = useAccount();
-    const state = useLocalObservable(() => ({
-      depositAmount: "0",
-      setDepositAmount(val: string) {
-        this.depositAmount = val;
-      },
-    }));
-    return (
-      pair.raiseToken && (
-        <div className="flex flex-col gap-[16px]">
-          <Input
-            className="bg-[#2F200B] rounded-[10px]"
-            value={state.depositAmount}
-            placeholder="Deposit amount"
-            min={0}
-            type="number"
-            isClearable={false}
-            max={pair.raiseToken.balance.toFixed()}
-            onChange={(e) => {
-              state.setDepositAmount(e.target.value);
-            }}
-            onBlur={() => {
-              state.setDepositAmount(Number(state.depositAmount).toString());
-            }}
-            defaultValue="0"
-            endContent={
-              <div className="flex items-center">
-                <span className="mr-2">{pair.raiseToken.displayName}</span>
-                <TokenLogo token={pair.raiseToken} />
-              </div>
-            }
-          ></Input>
-          <div className="flex items-center gap-[8px]">
-            <div>Balance: {pair.raiseToken.balance.toFormat(5)}</div>
-            <div
-              onClick={() => {
-                state.setDepositAmount(
-                  pair.raiseToken?.balance.toFixed() ?? "0"
-                );
-                pair.raiseToken?.getBalance();
-              }}
-              className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base ml-[8px] font-bold leading-3 tracking-[0.16px] underline"
-            >
-              Max
-            </div>
-          </div>
-          <Button
-            className="w-full"
-            isDisabled={!Number(state.depositAmount)}
-            isLoading={pair.deposit.loading}
-            onClick={() => {
-              pair.deposit.call({
-                amount: state.depositAmount,
-              });
-            }}
-          >
-            Deposit
-          </Button>
-        </div>
-      )
-    );
-  }
-);
-
-const Action = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    switch (pair.ftoState) {
-      case 0:
-        return <SuccessAction pair={pair}></SuccessAction>;
-      case 1:
-        return <FailAction pair={pair}></FailAction>;
-      case 2:
-        // return <PauseAction pair={pair}></PauseAction>;
-        return <></>;
-      case 3:
-        if (pair.isCompleted) {
-          return <></>;
-        }
-        return <ProcessingAction pair={pair}></ProcessingAction>;
-    }
-  }
-);
-
 const FtoView = observer(() => {
   const router = useRouter();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -557,6 +388,8 @@ const FtoView = observer(() => {
     chart.setChartLabel(state.pair.value?.launchedToken?.displayName + "/USD");
   }, [state.pair.value]);
 
+  const pair = useMemo(() => state.pair.value, [state.pair.value]);
+
   // useEffect(() => {
   //   if (!state.pair.value) return;
   //   if (router.query.edit == "true" && state.pair.value?.isProvider) {
@@ -573,7 +406,7 @@ const FtoView = observer(() => {
   }
 
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
+    <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
       {state.pair.value && (
         <Modal
           isOpen={isOpen}
@@ -585,353 +418,129 @@ const FtoView = observer(() => {
           <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
         </Modal>
       )}
-      <Breadcrumbs
-        breadcrumbs={[
-          {
-            title: "Projects",
-            href: "/launch",
-          },
-          {
-            title: state.pair.value?.launchedToken?.displayName || "-",
-            href: "/launch-token",
-          },
-        ]}
-      ></Breadcrumbs>
-      <div className="flex justify-center mt-[24px]">
-        <div className="flex gap-[20px] flex-wrap min-h-[425px]">
-          <div className="flex-1 flex basis-full sm:basis-0 w-full sm:min-w-[500px] flex-col items-center  shrink-0 [background:#271B0C] rounded-2xl">
-            <div className="relative flex h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px] overflow-hidden">
-              {state.pair.value?.bannerUrl && (
-                <Image
-                  src={state.pair.value?.bannerUrl}
-                  alt="banner"
-                  layout="fill"
-                  objectFit="cover"
-                ></Image>
-              )}
-            </div>
-            <div className="relative flex-1 w-full h-full px-[29px] pb-[26px]">
-              <ProjectStatusDisplay pair={state.pair.value} />
-              <div className=" relative translate-y-[-50%] w-[65px] h-[65px] [background:#271B0C] rounded-[11.712px] overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center [background:#ECC94E] rounded-[11.712px] overflow-hidden">
-                  <Image
-                    src={
-                      !!state.pair.value?.logoUrl
-                        ? state.pair.value.logoUrl
-                        : "/images/project_honey.png"
-                    }
-                    alt="honey"
-                    fill
-                  ></Image>
-                </div>
-              </div>
-              <div className="flex flex-col gap-[16px]">
-                <div>
-                  <div>
-                    <div className="text-[rgba(255,255,255,0.66)] text-base font-medium leading-[normal]">
-                      {state.pair.value?.launchedToken?.displayName}
-                    </div>
-                    <div className="text-white text-[32px] font-medium leading-[normal]">
-                      {state.pair.value?.projectName}
-                    </div>
-                  </div>
-                  <div></div>
-                </div>
-                <div>{state.pair.value?.description}</div>
-                <div>
-                  {state.pair.value && (
-                    <Action pair={state.pair.value}></Action>
-                  )}
-                </div>
-                <div className="flex gap-[10px] justify-center">
-                  {state.pair.value?.socials.map((social) => {
-                    return social.name === "website" ? (
-                      <PopUp
-                        info="warning"
-                        trigger={
-                          <div key={social.name}>
-                            <span className="cursor-pointer">
-                              <Image
-                                src={social.icon}
-                                width={23}
-                                height={23}
-                                alt={social.name}
-                              ></Image>
-                            </span>
-                          </div>
-                        }
-                        contents={
-                          <div>
-                            <h2 className="text-red-500 text-[2rem]">
-                              Caution!
-                            </h2>
-                            <p>
-                              This project is not verified, are you sure you
-                              want to proceed to the website?
-                            </p>
-                            <div className="flex justify-end">
-                              <Link
-                                className="text-blue-500 text-right flex"
-                                href={social.link}
-                                target="_blank"
-                              >
-                                <Button>
-                                  Proceed
-                                  <BiLinkExternal />
-                                </Button>
-                              </Link>
-                            </div>
-                          </div>
-                        }
-                      ></PopUp>
-                    ) : (
-                      <div key={social.name}>
-                        <Link href={social.link} target="_blank">
-                          <Image
-                            src={social.icon}
-                            width={23}
-                            height={23}
-                            alt={social.name}
-                          ></Image>
-                        </Link>
-                      </div>
-                    );
-                  })} 
-                </div>
-              </div>
-              {state.pair.value?.launchedToken?.address && (
-                <span className="flex justify-end flex-row ml-2 absolute right-4 bottom-4">
-                  <ShareSocialMedialPopUp
-                    shareUrl={window.location.href}
-                    shareText={
-                      "Checkout our Token " + state.pair.value?.projectName
-                    }
-                    text="Share this project"
-                  />
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="text-left relative flex-1 flex basis-full w-full sm:basis-0 sm:min-w-[500px]  flex-col gap-[10px] shrink-0 [background:#271B0C] rounded-2xl py-[12px] px-[24px]">
-            <div className="flex absolute right-[24px] top-[12px]">
-              <OptionsDropdown
-                className=""
-                options={[
-                  optionsPresets.copy({
-                    copyText: state.pair?.value?.launchedToken?.address ?? "",
-                    displayText: "Copy Token address",
-                    copysSuccessText: "Token address copied",
-                  }),
-                  optionsPresets.share({
-                    shareUrl: `${window.location.origin}/launch-detail/${state.pair?.value?.address}`,
-                    displayText: "Share this project",
-                    shareText:
-                      "Checkout this Token: " + state.pair?.value?.projectName,
-                  }),
-                  optionsPresets.importTokenToWallet({
-                    token: state.pair?.value?.launchedToken,
-                  }),
-                  optionsPresets.viewOnExplorer({
-                    address: state.pair?.value?.address ?? "",
-                  }),
-                  {
-                    icon: <LuFileEdit />,
-                    display: "Update Project",
-                    onClick: () => {
-                      if (!state.pair.value) return;
-
-                      if (
-                        state.pair.value.provider.toLowerCase() !==
-                        wallet.account.toLowerCase()
-                      ) {
-                        WrappedToastify.warn({
-                          message: "You are not the owner of this project",
-                        });
-                        return;
-                      }
-
-                      onOpen();
-                    },
-                  },
-                ]}
+      <div className="grid grid-cols-2 gap-4 xl:w-[1170px]">
+        <div className="bg-[#271A0C] col-span-2 px-5 py-2.5 rounded-[30px] flex md:items-center md:justify-between md:flex-row flex-col gap-2 md:gap-0">
+          <div className="flex items-center gap-x-4 md:gap-x-[7.5px]">
+            <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
+              <Image
+                alt={state.pair.value?.launchedToken?.name || "honey"}
+                width={state.pair.value?.logoUrl ? 77 : 44}
+                height={state.pair.value?.logoUrl ? 77 : 44}
+                className="rounded-full hidden md:inline-block"
+                src={
+                  !!state.pair.value?.logoUrl
+                    ? state.pair.value.logoUrl
+                    : "/images/project_honey.png"
+                }
               />
-            </div>
-            <div>
-              <div className="text-[rgba(255,255,255,0.66)] text-[15.958px] font-bold leading-[normal]">
-                Token Raised
-              </div>{" "}
-              <div className="text-[color:var(--Button-Gradient,var(--card-stroke,#F7931A))] text-[16.727px] font-normal leading-[normal]">
-                {amountFormatted(state.pair.value?.depositedRaisedToken, {
-                  decimals: 0,
-                  fixed: 3,
-                })}{" "}
-                {state.pair.value?.raiseToken?.displayName}
-              </div>
-            </div>
-            {/* // TODO: raised progress */}
-            {/* <div></div> */}
-            <div>
-              <div className="text-[rgba(255,255,255,0.66)] text-sm font-medium leading-[normal]">
-                Token address
-              </div>
-
-              <Copy
-                className={"w-full"}
-                content="Copy address"
-                value={state.pair.value?.launchedToken?.address ?? ""}
-                displayContent={
-                  <span className="mt-[8px] flex  h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px] cursor-pointer hover:brightness-150 active:brightness-75 select-none">
-                    {state.pair.value?.launchedToken?.address}
-                  </span>
+              <Image
+                alt={state.pair.value?.launchedToken?.name || "honey"}
+                width={20}
+                height={20}
+                className="rounded-full md:hidden"
+                src={
+                  !!state.pair.value?.logoUrl
+                    ? state.pair.value.logoUrl
+                    : "/images/project_honey.png"
                 }
               />
             </div>
-
-            <div className="grid grid-cols-2">
-              <div>
-                <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
-                  <Image
-                    src="/images/wallet.png"
-                    alt="price"
-                    width={12}
-                    height={12}
-                  ></Image>
-                  Token Price
-                </div>
-                <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
-                  {amountFormatted(state.pair.value?.price, {
-                    decimals: 0,
-                    fixed: 3,
-                    prefix: "$",
-                  })}
-                </div>
-              </div>
-
-              <div>
-                <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
-                  <Image
-                    src="/images/wallet.png"
-                    alt="price"
-                    width={12}
-                    height={12}
-                  ></Image>
-                  {state.pair.value?.ftoState === 0
-                    ? "Market Cap"
-                    : "Est. Market Cap"}
-                </div>
-                <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
-                  {amountFormatted(state.pair.value?.marketValue, {
-                    decimals: 0,
-                    fixed: 3,
-                    prefix: "$",
-                  })}
-                </div>
-              </div>
-
-              <div>
-                <div className="flex gap-[4px] text-white  text-[12.165px] font-bold leading-[normal]">
-                  <Image
-                    src="/images/calendar.png"
-                    alt="price"
-                    width={12}
-                    height={12}
-                  ></Image>
-                  Start Date
-                </div>
-                <div className="text-[#FFCD4D] text-base font-medium leading-[normal] mt-[4px]">
-                  {state.pair.value?.startTimeDisplay
-                    ? new Date(
-                        state.pair.value?.startTimeDisplay
-                      ).toLocaleDateString()
-                    : "--"}
-                  <br />
-                  {state.pair.value?.startTimeDisplay
-                    ? new Date(
-                        state.pair.value?.startTimeDisplay
-                      ).toLocaleTimeString()
-                    : "--"}
-                </div>
-              </div>
-              <div>
-                <div className="flex gap-[4px] text-white  text-[12.165px] font-bold leading-[normal]">
-                  <Image
-                    src="/images/calendar.png"
-                    alt="price"
-                    width={12}
-                    height={12}
-                  ></Image>
-                  End Date
-                </div>
-                <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
-                  {state.pair.value?.endTimeDisplay
-                    ? new Date(
-                        state.pair.value?.endTimeDisplay
-                      ).toLocaleDateString()
-                    : "--"}
-                  <br />
-                  {state.pair.value?.endTimeDisplay
-                    ? new Date(
-                        state.pair.value?.endTimeDisplay
-                      ).toLocaleTimeString()
-                    : "--"}
-                </div>
-              </div>
-            </div>
-            <p>Token Vote</p>
-            <hr />
-            <div className="flex gap-5">
-              {Object.entries(votes).map(([key, value]) => {
-                return (
-                  <div
-                    key={key}
-                    onClick={() => {
-                      if (!wallet.account || !state.pair.value?.address) return;
-
-                      trpcClient.projects.createOrUpdateProjectVotes
-                        .mutate({
-                          project_pair: state.pair.value?.address,
-                          wallet_address: wallet.account,
-                          vote: key.split("_")[0],
-                        })
-                        .then(() => {
-                          refreshVotes();
-                        });
-                    }}
-                    className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
-                  >
-                    <p>
-                      {(key.split("_")[0] === "rocket" && "🚀") ||
-                        (key.split("_")[0] === "fire" && "🔥") ||
-                        (key.split("_")[0] === "poo" && "💩") ||
-                        (key.split("_")[0] === "flag" && "🚩")}
-                    </p>
-                    <p>{value}</p>
-                  </div>
-                );
-              })}
-            </div>
-            {state.pair.value?.ftoState === 0 && (
-              <SimplePriceFeedGraph></SimplePriceFeedGraph>
-            )}
+            <ProjectTitle
+              name={pair?.launchedToken?.name}
+              displayName={pair?.launchedToken?.displayName}
+            />
+          </div>
+          <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
+            <CountdownTimer
+              endTime={pair?.endTime}
+              ftoState={state.pair.value?.ftoState}
+              endTimeDisplay={state.pair.value?.endTimeDisplay}
+            />
+            {/* TODO: update style */}
+            <ProjectStatus pair={pair} />
           </div>
         </div>
-      </div>
-      {/** Comment section */}
-      <div className="flex justify-center mt-[24px] ">
-        <div className="w-[100vw] lg:w-full lg:min-w-[1000px] lg:max-w-[1000px]">
-          {state.pair.value && (
-            <DiscussionArea
-              pairDatabaseId={state.pair.value.databaseId ?? -1}
-            ></DiscussionArea>
-          )}
+        <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+          <TokenRaised
+            depositedRaisedToken={pair?.depositedRaisedToken}
+            raiseTokenDerivedUSD={pair?.raiseToken?.derivedUSD}
+            raisedTokenMinCap={pair?.raiseToken?.balance}
+            raiseTokenDecimals={pair?.raiseToken?.decimals}
+          />
+
+          <SaleProgress
+            ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+            raiseTokenBalance={pair?.raiseToken?.balance}
+            raiseTokenDecimals={pair?.raiseToken?.decimals}
+            depositedRaisedToken={pair?.depositedRaisedToken}
+          />
+
+          <TokenAddress address={pair?.launchedToken?.address} />
+
+          <TokenDetails
+            price={pair?.price}
+            depositedRaisedToken={pair?.depositedRaisedToken}
+            startTimeDisplay={pair?.startTimeDisplay}
+            endTimeDisplay={pair?.endTimeDisplay}
+          />
+
+          <hr />
+          <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
+          <div className="flex gap-5">
+            {Object.entries(votes).map(([key, value]) => {
+              return (
+                <div
+                  key={key}
+                  onClick={() => {
+                    if (!wallet.account || !state.pair.value?.address) return;
+
+                    trpcClient.projects.createOrUpdateProjectVotes
+                      .mutate({
+                        project_pair: state.pair.value?.address,
+                        wallet_address: wallet.account,
+                        vote: key.split("_")[0],
+                      })
+                      .then(() => {
+                        refreshVotes();
+                      });
+                  }}
+                  className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
+                >
+                  <p>
+                    {(key.split("_")[0] === "rocket" && "🚀") ||
+                      (key.split("_")[0] === "fire" && "🔥") ||
+                      (key.split("_")[0] === "poo" && "💩") ||
+                      (key.split("_")[0] === "flag" && "🚩")}
+                  </p>
+                  <p>{value}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+          {pair && <Action pair={pair} />}
         </div>
       </div>
+
+      <div className="w-full flex items-center justify-between my-4 md:my-12">
+        <div className="text-lg md:text-xl">Project Details</div>
+        <div className="flex items-center gap-x-1">
+          <Logo />
+          <span className='text-[#FFCD4D] [font-family:"Bebas_Neue"] text-lg md:text-3xl'>
+            Honeypot Finance
+          </span>
+        </div>
+      </div>
+
+      <Tabs pair={pair} />
     </div>
   );
 });
 
 const MemeView = observer(() => {
   const router = useRouter();
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { pair: pairAddress } = router.query;
   const [votes, setVotes] = useState({
@@ -1040,14 +649,15 @@ const MemeView = observer(() => {
   }, [wallet.isInit, pairAddress]);
 
   useEffect(() => {
-    if (!state.pair.value) {
+    if (!state.pair.value?.launchedToken) {
       return;
     }
     chart.setCurrencyCode("USD");
     chart.setTokenNumber(0);
-    chart.setChartTarget(state.pair.value?.launchedToken ?? undefined);
-    chart.setChartLabel(state.pair.value?.launchedToken?.displayName + "/USD");
-  }, [state.pair.value]);
+    chart.setChartTarget(state.pair.value.launchedToken);
+    chart.setChartLabel(state.pair.value.launchedToken?.displayName + "/USD");
+    console.log("chart", chart);
+  }, [state.pair.value?.launchedToken]);
 
   function refreshVotes() {
     trpcClient.projects.getProjectVotes
@@ -1057,8 +667,10 @@ const MemeView = observer(() => {
       });
   }
 
+  const pair = useMemo(() => state.pair.value, [state.pair.value]);
+
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
+    <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
       {state.pair.value && (
         <Modal
           isOpen={isOpen}
@@ -1070,326 +682,163 @@ const MemeView = observer(() => {
           <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
         </Modal>
       )}
-      <Breadcrumbs
-        breadcrumbs={[
-          {
-            title: "Projects",
-            href: "/meme-launchs",
-          },
-          {
-            title: state.pair.value?.launchedToken?.displayName || "-",
-            href: "",
-          },
-        ]}
-      ></Breadcrumbs>
-      <div className="flex justify-center mt-[24px]">
-        <div className="flex gap-[20px] flex-wrap min-h-[425px]">
-          <div className="flex-1 flex basis-full sm:basis-0 w-full sm:min-w-[500px] flex-col items-center  shrink-0 [background:#271B0C] rounded-2xl">
-            <div className="relative flex h-[119px] shrink-0 self-stretch [background:radial-gradient(50%_50%_at_50%_50%,#9D5E28_0%,#FFCD4D_100%)] rounded-[12px_12px_0px_0px] overflow-hidden">
-              {state.pair.value?.bannerUrl && (
-                <Image
-                  src={state.pair.value?.bannerUrl}
-                  alt="banner"
-                  layout="fill"
-                  objectFit="fill"
-                ></Image>
-              )}
-            </div>
-            <div className="relative flex-1 w-full h-full px-[29px] pb-[26px]">
-              <ProjectStatusDisplay pair={state.pair.value} />
-              <div className=" relative translate-y-[-50%] w-[65px] h-[65px] [background:#271B0C] rounded-[11.712px] overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center [background:#ECC94E] rounded-[11.712px] overflow-hidden">
-                  <Image
-                    src={
-                      !!state.pair.value?.logoUrl
-                        ? state.pair.value.logoUrl
-                        : "/images/project_honey.png"
-                    }
-                    alt="honey"
-                    fill
-                  ></Image>
-                </div>
-              </div>
-              <div className="flex flex-col gap-[16px]">
-                <div>
-                  <div>
-                    <div className="text-[rgba(255,255,255,0.66)] text-base font-medium leading-[normal]">
-                      {state.pair.value?.launchedToken?.displayName}
-                    </div>
-                    <div className="text-white text-[32px] font-medium leading-[normal]">
-                      {state.pair.value?.projectName}
-                    </div>
-                  </div>
-                  <div></div>
-                </div>
-                <div>{state.pair.value?.description}</div>
-                <div>
-                  {state.pair.value && (
-                    <Action pair={state.pair.value}></Action>
-                  )}
-                </div>
-                <div className="flex gap-[10px] justify-center">
-                  {state.pair.value?.socials.map((social) => {
-                    return social.name === "website" ? (
-                      <PopUp
-                        info="warning"
-                        trigger={
-                          <div key={social.name}>
-                            <span className="cursor-pointer">
-                              <Image
-                                src={social.icon}
-                                width={23}
-                                height={23}
-                                alt={social.name}
-                              ></Image>
-                            </span>
-                          </div>
-                        }
-                        contents={
-                          <div>
-                            <h2 className="text-red-500 text-[2rem]">
-                              Caution!
-                            </h2>
-                            <p>
-                              This project is not verified, are you sure you
-                              want to proceed to the website?
-                            </p>
-                            <div className="flex justify-end">
-                              <Link
-                                className="text-blue-500 text-right flex"
-                                href={social.link}
-                                target="_blank"
-                              >
-                                <Button>
-                                  Proceed
-                                  <BiLinkExternal />
-                                </Button>
-                              </Link>
-                            </div>
-                          </div>
-                        }
-                      ></PopUp>
-                    ) : (
-                      <div key={social.name}>
-                        <Link href={social.link} target="_blank">
-                          <Image
-                            src={social.icon}
-                            width={23}
-                            height={23}
-                            alt={social.name}
-                          ></Image>
-                        </Link>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              {state.pair.value?.launchedToken?.address && (
-                <span className="flex justify-end flex-row ml-2 absolute right-4 bottom-4">
-                  <ShareSocialMedialPopUp
-                    shareUrl={window.location.href}
-                    shareText={
-                      "My Meme FTO eats bonding burves for breakfast. Inflate and innovation with Boneypot. Den moon 🌙: " +
-                      state.pair?.value?.projectName
-                    }
-                    text="Share this project"
-                  />
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="text-left relative flex-1 flex basis-full w-full sm:basis-0 sm:min-w-[500px]  flex-col gap-[10px] shrink-0 [background:#271B0C] rounded-2xl py-[12px] px-[24px]">
-            <div className="flex absolute right-[24px] top-[12px]">
-              <OptionsDropdown
-                className=""
-                options={[
-                  optionsPresets.copy({
-                    copyText: state.pair?.value?.launchedToken?.address ?? "",
-                    displayText: "Copy Token address",
-                    copysSuccessText: "Token address copied",
-                  }),
-                  optionsPresets.share({
-                    shareUrl: `${window.location.origin}/launch-detail/${state.pair?.value?.address}`,
-                    displayText: "Share this project",
-                    shareText:
-                      "My Meme FTO eats bonding burves for breakfast. Inflate and innovation with Boneypot. Den moon 🌙: " +
-                      state.pair?.value?.projectName,
-                  }),
-                  optionsPresets.importTokenToWallet({
-                    token: state.pair?.value?.launchedToken,
-                  }),
-                  optionsPresets.viewOnExplorer({
-                    address: state.pair?.value?.address ?? "",
-                  }),
-                  {
-                    icon: <LuFileEdit />,
-                    display: "Update Project",
-                    onClick: () => {
-                      if (!state.pair.value) return;
-
-                      if (
-                        state.pair.value.provider.toLowerCase() !==
-                        wallet.account.toLowerCase()
-                      ) {
-                        WrappedToastify.warn({
-                          message: "You are not the owner of this project",
-                        });
-
-                        return;
-                      }
-
-                      onOpen();
-                    },
-                  },
-                ]}
+      <div className="grid grid-cols-2 gap-4 xl:w-[1170px]">
+        <div className="bg-[#271A0C] col-span-2 px-5 py-2.5 rounded-[30px] flex md:items-center md:justify-between md:flex-row flex-col gap-2 md:gap-0">
+          <div className="flex items-center gap-x-4 md:gap-x-[7.5px]">
+            <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
+              <Image
+                alt={state.pair.value?.launchedToken?.name || "honey"}
+                width={state.pair.value?.logoUrl ? 77 : 44}
+                height={state.pair.value?.logoUrl ? 77 : 44}
+                className="rounded-full hidden md:inline-block"
+                src={
+                  !!state.pair.value?.logoUrl
+                    ? state.pair.value.logoUrl
+                    : "/images/project_honey.png"
+                }
               />
-            </div>
-            <div>
-              <div className="text-[rgba(255,255,255,0.66)] text-[15.958px] font-bold leading-[normal]">
-                Token Raised
-              </div>{" "}
-              <div className="text-[color:var(--Button-Gradient,var(--card-stroke,#F7931A))] text-[16.727px] font-normal leading-[normal]">
-                {amountFormatted(state.pair.value?.depositedRaisedToken, {
-                  decimals: 0,
-                  fixed: 3,
-                })}{" "}
-                {state.pair.value?.raiseToken?.displayName}
-              </div>
-            </div>
-            {/* // TODO: raised progress */}
-            {/* <div></div> */}
-            <div>
-              <div className="text-[rgba(255,255,255,0.66)] text-sm font-medium leading-[normal]">
-                Token address
-              </div>
-
-              <Copy
-                className={"w-full"}
-                content="Copy address"
-                value={state.pair.value?.launchedToken?.address ?? ""}
-                displayContent={
-                  <span className="mt-[8px] flex  h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px] cursor-pointer hover:brightness-150 active:brightness-75 select-none">
-                    {state.pair.value?.launchedToken?.address}
-                  </span>
+              <Image
+                alt={state.pair.value?.launchedToken?.name || "honey"}
+                width={20}
+                height={20}
+                className="rounded-full md:hidden"
+                src={
+                  !!state.pair.value?.logoUrl
+                    ? state.pair.value.logoUrl
+                    : "/images/project_honey.png"
                 }
               />
             </div>
-
-            <div className="grid grid-cols-3 *:margin">
-              <div>
-                <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
-                  <Image
-                    src="/images/wallet.png"
-                    alt="price"
-                    width={12}
-                    height={12}
-                  ></Image>
-                  Token Price
-                </div>
-                <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
-                  {amountFormatted(state.pair.value?.price, {
-                    decimals: 0,
-                    fixed: 3,
-                    prefix: "$",
-                  })}
-                </div>
-              </div>
-
-              <div>
-                <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
-                  <Image
-                    src="/images/wallet.png"
-                    alt="price"
-                    width={12}
-                    height={12}
-                  ></Image>
-                  {state.pair.value?.ftoState === 0
-                    ? "Market Cap"
-                    : "Est. Market Cap"}
-                </div>
-                <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
-                  {amountFormatted(state.pair.value?.marketValue, {
-                    decimals: 0,
-                    fixed: 3,
-                    prefix: "$",
-                  })}
-                </div>
-              </div>
-
-              <div>
-                <div className="flex gap-[4px] text-white  text-[12.165px] font-bold leading-[normal]">
-                  <Image
-                    src="/images/calendar.png"
-                    alt="price"
-                    width={12}
-                    height={12}
-                  ></Image>
-                  End Date
-                </div>
-                <div className="text-[#FFCD4D]  text-base font-medium leading-[normal] mt-[4px]">
-                  {state.pair.value?.endTimeDisplay
-                    ? new Date(
-                        state.pair.value?.endTimeDisplay
-                      ).toLocaleDateString()
-                    : "--"}
-                  <br />
-                  {state.pair.value?.endTimeDisplay
-                    ? new Date(
-                        state.pair.value?.endTimeDisplay
-                      ).toLocaleTimeString()
-                    : "--"}
-                </div>
-              </div>
-            </div>
-            <p>Token Vote</p>
-            <hr />
-            <div className="flex gap-5">
-              {Object.entries(votes).map(([key, value]) => {
-                return (
-                  <div
-                    key={key}
-                    onClick={() => {
-                      if (!wallet.account || !state.pair.value?.address) return;
-
-                      trpcClient.projects.createOrUpdateProjectVotes
-                        .mutate({
-                          project_pair: state.pair.value?.address,
-                          wallet_address: wallet.account,
-                          vote: key.split("_")[0],
-                        })
-                        .then(() => {
-                          refreshVotes();
-                        });
-                    }}
-                    className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
-                  >
-                    <p>
-                      {(key.split("_")[0] === "rocket" && "🚀") ||
-                        (key.split("_")[0] === "fire" && "🔥") ||
-                        (key.split("_")[0] === "poo" && "💩") ||
-                        (key.split("_")[0] === "flag" && "🚩")}
-                    </p>
-                    <p>{value}</p>
-                  </div>
-                );
-              })}
-            </div>
-            {state.pair.value?.ftoState === 0 && chart.chartTarget && (
-              <SimplePriceFeedGraph></SimplePriceFeedGraph>
-            )}
+            <ProjectTitle
+              name={pair?.launchedToken?.name}
+              displayName={pair?.launchedToken?.displayName}
+            />
+          </div>
+          <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
+            <CountdownTimer
+              endTime={pair?.endTime}
+              ftoState={state.pair.value?.ftoState}
+              endTimeDisplay={state.pair.value?.endTimeDisplay}
+            />
+            {/* TODO: update style */}
+            <ProjectStatus pair={pair} />
           </div>
         </div>
-      </div>
-      {/** Comment section */}
-      <div className="flex justify-center mt-[24px] ">
-        <div className="w-[100vw] lg:w-full lg:min-w-[1000px] lg:max-w-[1000px]">
-          {state.pair.value && (
-            <DiscussionArea
-              pairDatabaseId={state.pair.value.databaseId ?? -1}
-            ></DiscussionArea>
-          )}
+        <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+          <div className="flex justify-between items-start">
+            <TokenRaised
+              depositedRaisedToken={pair?.depositedRaisedToken}
+              raiseTokenDerivedUSD={pair?.raiseToken?.derivedUSD}
+              raisedTokenMinCap={pair?.raisedTokenMinCap}
+              raiseTokenDecimals={pair?.raiseToken?.decimals}
+            />{" "}
+            <OptionsDropdown
+              className="p-0 m-0"
+              options={[
+                optionsPresets.copy({
+                  copyText: state.pair?.value?.launchedToken?.address ?? "",
+                  displayText: "Copy Token address",
+                  copysSuccessText: "Token address copied",
+                }),
+                optionsPresets.share({
+                  shareUrl: `${window.location.origin}/launch-detail/${state.pair?.value?.address}`,
+                  displayText: "Share this project",
+                  shareText:
+                    "Checkout this Token: " + state.pair?.value?.projectName,
+                }),
+                optionsPresets.importTokenToWallet({
+                  token: state.pair?.value?.launchedToken,
+                }),
+                optionsPresets.viewOnExplorer({
+                  address: state.pair?.value?.address ?? "",
+                }),
+                {
+                  icon: <LuFileEdit />,
+                  display: "Update Project",
+                  onClick: () => {
+                    if (!state.pair.value) return;
+
+                    if (
+                      state.pair.value.provider.toLowerCase() !==
+                      wallet.account.toLowerCase()
+                    ) {
+                      toast.warning("You are not the owner of this project");
+                      return;
+                    }
+
+                    onOpen();
+                  },
+                },
+              ]}
+            />
+          </div>
+
+          <SaleProgress
+            ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+            raiseTokenBalance={pair?.raisedTokenMinCap}
+            raiseTokenDecimals={pair?.raiseToken?.decimals}
+            depositedRaisedToken={pair?.depositedRaisedToken}
+          />
+
+          <TokenAddress address={pair?.launchedToken?.address} />
+
+          <TokenDetails
+            price={pair?.price}
+            depositedRaisedToken={pair?.depositedRaisedToken}
+            startTimeDisplay={pair?.startTimeDisplay}
+            endTimeDisplay={pair?.endTimeDisplay}
+          />
+
+          <hr />
+          <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
+          <div className="flex gap-5">
+            {Object.entries(votes).map(([key, value]) => {
+              return (
+                <div
+                  key={key}
+                  onClick={() => {
+                    if (!wallet.account || !state.pair.value?.address) return;
+
+                    trpcClient.projects.createOrUpdateProjectVotes
+                      .mutate({
+                        project_pair: state.pair.value?.address,
+                        wallet_address: wallet.account,
+                        vote: key.split("_")[0],
+                      })
+                      .then(() => {
+                        refreshVotes();
+                      });
+                  }}
+                  className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
+                >
+                  <p>
+                    {(key.split("_")[0] === "rocket" && "🚀") ||
+                      (key.split("_")[0] === "fire" && "🔥") ||
+                      (key.split("_")[0] === "poo" && "💩") ||
+                      (key.split("_")[0] === "flag" && "🚩")}
+                  </p>
+                  <p>{value}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+          {pair && <Action pair={pair} />}
         </div>
       </div>
+
+      <div className="w-full flex items-center justify-between my-4 md:my-12">
+        <div className="text-lg md:text-xl">Project Details</div>
+        <div className="flex items-center gap-x-1">
+          <Logo />
+          <span className='text-[#FFCD4D] [font-family:"Bebas_Neue"] text-lg md:text-3xl'>
+            Honeypot Finance
+          </span>
+        </div>
+      </div>
+
+      <Tabs pair={pair} />
     </div>
   );
 });

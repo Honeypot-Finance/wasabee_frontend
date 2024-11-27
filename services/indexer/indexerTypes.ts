@@ -95,6 +95,7 @@ export type GhostToken = {
   decimals: number;
   derivedETH?: string;
   derivedUSD?: string;
+  swapCount?: string;
 };
 
 export type GhostPoolPair = {

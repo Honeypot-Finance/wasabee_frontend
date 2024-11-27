@@ -22,9 +22,18 @@ export type MemeWarParticipant = {
 
 const tHpotAddress = "0xfc5e3743e9fac8bb60408797607352e24db7d65e";
 
-export class MemewarStore {
+class MemewarStore {
   memewarState: EventState = "active";
   memewarParticipants: Record<string, MemeWarParticipant> = {
+    BERACORAL: {
+      type: "meme",
+      participantName: "Bera Coral",
+      pairAddress: "0x93bcbaa67220c9de2a18aaeb6b77beb117dfb90e",
+      tokenAddress: "0xc87e5a73781e09d831d41e32991d9fc943517feb",
+      iconUrl: "",
+      currentScore: new BigNumber(0),
+      finalScore: new BigNumber(0),
+    },
     BERANEIRO: {
       type: "meme",
       participantName: "Bera Neiro",
@@ -111,6 +120,15 @@ export class MemewarStore {
       participantName: "Bera Apu",
       pairAddress: "0xf24438e67f9c5b9ee5284b6a7ee9e43b5f56e0f3",
       tokenAddress: "0x96d62fbd15608ef087219f20986735a1d65a22a4",
+      iconUrl: "",
+      currentScore: new BigNumber(0),
+      finalScore: new BigNumber(0),
+    },
+    TRUMPOT: {
+      type: "meme",
+      participantName: "TRUMPOT",
+      pairAddress: "0xcd7fb843f16c884fc87d913ae313bf4c61bedf5a",
+      tokenAddress: "0xc06b8ee779d065061c2087c5c78c1ef774850041",
       iconUrl: "",
       currentScore: new BigNumber(0),
       finalScore: new BigNumber(0),
@@ -213,6 +231,8 @@ export class MemewarStore {
 
     await poolPair?.init();
     await poolPair?.getReserves();
+    poolPair?.token0.getIndexerTokenData();
+    poolPair?.token1.getIndexerTokenData();
 
     const launchTokenReserve =
       poolPair?.token0.address.toLowerCase() === address.toLowerCase()

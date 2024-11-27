@@ -51,13 +51,22 @@ const LaunchPage: NextLayoutPage = observer(() => {
     launchpad.participatedPairs.reloadPage();
 
     //loading most success projects
-    launchpad.mostSuccessfulFtos().then((data) => {
-      setMostSuccessProjects(data);
-    });
+    const startMostSuccessfulFtoPolling = () => {
+      launchpad.mostSuccessfulFtos().then((data) => {
+        console.log("startMostSuccessfulFtoPolling");
+        setMostSuccessProjects(data);
+        setTimeout(() => {
+          console.log("startMostSuccessfulFtoPolling");
+          startMostSuccessfulFtoPolling();
+        }, 5000);
+      });
+    };
+
+    startMostSuccessfulFtoPolling();
   }, [wallet.isInit]);
 
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
+    <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
       <div className="w-full">
         <MemeWarBanner isEnd />
       </div>
@@ -339,6 +348,16 @@ const LaunchPage: NextLayoutPage = observer(() => {
                 />
                 <span className="flex items-center justify-center gap-2">
                   Try Yeet Bond <FaExternalLinkAlt className="inline-block" />
+                </span>
+              </div>
+            }
+          />
+          <Tab
+            href="/memewar"
+            title={
+              <div className="flex items-center text-yellow-400">
+                <span className="flex items-center justify-center gap-2">
+                  Meme War ⚔️
                 </span>
               </div>
             }

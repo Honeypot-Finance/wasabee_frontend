@@ -64,6 +64,11 @@ const nextConfig = {
           },
         ];
   },
+  transpilePackages: [
+    "@usecapsule/web-sdk",
+    "@usecapsule/react-sdk",
+    // Add any other Capsule-related packages here
+  ],
 };
 
 export default nextConfig;

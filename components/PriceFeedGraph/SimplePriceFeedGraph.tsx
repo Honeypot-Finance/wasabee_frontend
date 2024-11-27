@@ -1,25 +1,16 @@
-import { trpcClient } from "@/lib/trpc";
-import { ChartData } from "@/public/static/charting_library/charting_library";
-import { chart, chartColorThemes, chartTimeRanges } from "@/services/chart";
+import { chart, chartTimeRanges } from "@/services/chart";
 import { PairContract } from "@/services/contract/pair-contract";
-import { Token } from "@/services/contract/token";
-import { liquidity } from "@/services/liquidity";
 import { swap } from "@/services/swap";
 import { wallet } from "@/services/wallet";
 import { Button, cn } from "@nextui-org/react";
 import { ApexOptions } from "apexcharts";
 import dayjs from "dayjs";
-import { set } from "lodash";
 import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-import { FaSortDown, FaSortUp, FaSpinner } from "react-icons/fa";
-import CardContianer from "../CardContianer/CardContianer";
-import { BiDownArrow, BiDownArrowAlt, BiDownvote } from "react-icons/bi";
-import { IoArrowDown, IoCaretDown, IoCaretUp } from "react-icons/io5";
+import { useCallback, useEffect, useState } from "react";
+import { FaSpinner } from "react-icons/fa";
+import { IoCaretDown, IoCaretUp } from "react-icons/io5";
 import HoneyStickSvg from "../svg/HoneyStick";
-import Link from "next/link";
-import Image from "next/image";
 import TokenLogo from "../TokenLogo/TokenLogo";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
@@ -27,9 +18,7 @@ const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-interface Props {}
-
-export const SimplePriceFeedGraph = observer((props: Props) => {
+export const SimplePriceFeedGraph = observer(() => {
   const [state, setState] = useState<{
     options: ApexOptions;
     series: ApexAxisChartSeries;
@@ -53,6 +42,7 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
         type: "area",
         zoom: {
           autoScaleYaxis: true,
+          allowMouseWheelZoom: false,
         },
         foreColor: chart.chartColors.textColor,
         toolbar: {
@@ -87,19 +77,16 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
       yaxis: {
         labels: {
           formatter: function (val) {
-            return val?.toFixed(5);
+            return val?.toFixed(3);
           },
-          align: "right",
+          // align: "right",
         },
         tickAmount: 4,
       },
       tooltip: {
         enabled: true,
         x: {
-          format:
-            chart.range === "1D" || chart.range === "1H"
-              ? "dd MMM HH:mm"
-              : "dd MMM yyyy",
+          format: "dd MMM HH:mm",
         },
         theme: "dark",
         fillSeriesColor: true,
@@ -140,6 +127,19 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
     },
   });
 
+  //update chart data once 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (chart.chartTarget) {
+        chart.updateCurrentPrice().then(() => {
+          updateChartData();
+        });
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [chart.chartTarget, chart.range, chart.chartLabel]);
+
   useEffect(() => {
     if (chart.chartTarget) {
       const tokenNum =
@@ -154,72 +154,79 @@ export const SimplePriceFeedGraph = observer((props: Props) => {
       chart.setTokenNumber(tokenNum);
       chart.setCurrencyCode(currencyCode);
 
-      chart.chartData.call().then(() => {
-        const chartColor =
-          chart.chartPricePercentageChange >= 0 ? "green" : "red";
-        chart.setChartColors(chartColor);
-
-        setState({
-          ...state,
-          series: [
-            {
-              data:
-                chart.chartData.value?.getBars?.c.map((price, index) => {
-                  return [
-                    (chart.chartData.value?.getBars.t[index] as number) * 1000,
-                    price as number,
-                  ];
-                }) ?? [],
-              color: chart.chartColors.labelColor,
-              name: "price",
-            },
-          ],
-          options: {
-            ...state.options,
-            xaxis: {
-              ...state.options.xaxis,
-              min: chart.timestampsByRange * 1000,
-              max: dayjs().unix() * 1000,
-              tickAmount: 6,
-            },
-            tooltip: {
-              ...state.options.tooltip,
-              x: {
-                ...state.options.tooltip?.x,
-                format:
-                  chart.range === "1D" || chart.range === "1H"
-                    ? "dd MMM HH:mm"
-                    : "dd MMM yyyy",
-              },
-            },
-            fill: {
-              ...state.options.fill,
-              gradient: {
-                ...state.options.fill?.gradient,
-                colorStops: [
-                  {
-                    offset: 0,
-                    color: chart.chartColors.labelColor,
-                    opacity: 1,
-                  },
-                  {
-                    offset: 70,
-                    color: chart.chartColors.labelColor,
-                    opacity: 0.5,
-                  },
-                  {
-                    offset: 100,
-                    color: chart.chartColors.labelColor,
-                    opacity: 0,
-                  },
-                ],
-              },
-            },
-          },
-        });
-      });
+      updateChartData();
     }
   }, [chart.chartTarget, chart.range, chart.chartLabel]);
+
+  const updateChartData = useCallback(() => {
+    chart.chartData.call().then(() => {
+      const chartColor =
+        chart.chartPricePercentageChange >= 0 ? "green" : "red";
+      chart.setChartColors(chartColor);
+
+      setState({
+        ...state,
+        series: [
+          {
+            data:
+              chart.chartData.value?.getBars?.c.map((price, index) => {
+                return [
+                  (chart.chartData.value?.getBars.t[index] as number) * 1000,
+                  price as number,
+                ];
+              }) ?? [],
+            color: chart.chartColors.labelColor,
+            name: "price",
+          },
+        ],
+        options: {
+          ...state.options,
+          xaxis: {
+            ...state.options.xaxis,
+            min: chart.timestampsByRange * 1000,
+            max: dayjs().unix() * 1000,
+            tickAmount: 6,
+          },
+          tooltip: {
+            ...state.options.tooltip,
+            x: {
+              ...state.options.tooltip?.x,
+              format: chart.range === "1D" ? "dd MMM HH" : "dd MMM HH:mm",
+            },
+          },
+          fill: {
+            ...state.options.fill,
+            gradient: {
+              ...state.options.fill?.gradient,
+              colorStops: [
+                {
+                  offset: 0,
+                  color: chart.chartColors.labelColor,
+                  opacity: 1,
+                },
+                {
+                  offset: 70,
+                  color: chart.chartColors.labelColor,
+                  opacity: 0.5,
+                },
+                {
+                  offset: 100,
+                  color: chart.chartColors.labelColor,
+                  opacity: 0,
+                },
+              ],
+            },
+          },
+        },
+      });
+    });
+  }, [
+    chart.chartTarget,
+    chart.range,
+    chart.chartLabel,
+    chart.chartData.value,
+    state,
+  ]);
 
   return (
     <>

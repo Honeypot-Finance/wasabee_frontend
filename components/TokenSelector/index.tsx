@@ -13,18 +13,16 @@ import { IoClose } from "react-icons/io5";
 import { Token } from "@/services/contract/token";
 import { Observer, observer, useLocalObservable } from "mobx-react-lite";
 import { liquidity } from "@/services/liquidity";
-import { useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { isEthAddress } from "@/lib/address";
 import { useOnce } from "@/lib/hooks";
 import { useAccount } from "wagmi";
 import { Input } from "../input/index";
 import { SpinnerContainer } from "../Spinner";
 import { NoData } from "../table";
-import debounce from "lodash/debounce";
 import { Copy } from "../copy/index";
 import { BiLinkExternal } from "react-icons/bi";
 import { wallet } from "@/services/wallet";
-import Image from "next/image";
 import TokenLogo from "../TokenLogo/TokenLogo";
 import TruncateMarkup from "react-truncate-markup";
 import { motion } from "framer-motion";
@@ -32,10 +30,17 @@ import { motion } from "framer-motion";
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
   value?: Token | null;
+  extraTokenActions?: ReactNode[];
+  disableChange?: boolean;
 };
 
 export const TokenSelector = observer(
-  ({ onSelect, value }: TokenSelectorProps) => {
+  ({
+    onSelect,
+    value,
+    extraTokenActions,
+    disableChange,
+  }: TokenSelectorProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isConnected } = useAccount();
     const state = useLocalObservable(() => ({
@@ -92,6 +97,9 @@ export const TokenSelector = observer(
     useEffect(() => {
       state.filterTokensBySearch();
     }, [state.search]);
+
+    const isWalletInit = wallet.isInit; // 假设 wallet 有 isInit 属性
+
     return (
       <motion.div
         className="flex items-center group"
@@ -104,6 +112,9 @@ export const TokenSelector = observer(
       >
         {value && (
           <>
+            {extraTokenActions?.map((action, idx) => {
+              return action;
+            })}
             <Link
               href={`${wallet.currentChain?.chain.blockExplorers?.default.url}/token/${value.address}`}
               target="_blank"
@@ -114,6 +125,7 @@ export const TokenSelector = observer(
           </>
         )}
         <Popover
+          isTriggerDisabled={disableChange || !isWalletInit}
           isOpen={isOpen}
           onOpenChange={(isOpen) => {
             isOpen ? onOpen() : onClose();
@@ -133,10 +145,15 @@ export const TokenSelector = observer(
         >
           <PopoverTrigger
             onClick={() => {
-              state.setSearch("");
+              if (isWalletInit) {
+                state.setSearch("");
+              }
             }}
           >
-            <Button className="inline-flex max-w-full justify-between w-[124px] h-10 items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]">
+            <Button
+              className="inline-flex max-w-full justify-between w-[124px] h-10 items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]"
+              isDisabled={!isWalletInit}
+            >
               {value && (
                 <TokenLogo
                   addtionalClasses="min-w-[24px]"
