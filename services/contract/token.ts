@@ -54,6 +54,7 @@ export class Token implements BaseContract {
   derivedETH = "";
   derivedUSD = "";
   holderCount = "";
+  swapCount = "";
   indexerDataLoaded = false;
 
   // determines the order of the token in the list

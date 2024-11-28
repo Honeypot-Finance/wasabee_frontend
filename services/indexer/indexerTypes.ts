@@ -96,6 +96,7 @@ export type GhostToken = {
   derivedETH?: string;
   derivedUSD?: string;
   holderCount?: string;
+  swapCount?: string;
 };
 
 export interface LaunchTokenData {
