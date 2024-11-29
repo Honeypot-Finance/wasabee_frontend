@@ -167,7 +167,6 @@ class Liquidity {
     },
   });
 
-
   pairs: PairContract[] = [];
   pairsByToken: Record<string, PairContract> = {};
   tokensMap: Record<string, Token> = {};
@@ -645,14 +644,11 @@ class Liquidity {
         return memoryPair;
       }
 
-      console.log("getPairByTokens", token0Address, token1Address);
       let pair = await trpcClient.pair.getPairByTokens.query({
         chainId: wallet.currentChainId,
         token0Address,
         token1Address,
       });
-
-      console.log("pair", pair);
 
       if (pair) {
         const pairContract = new PairContract({

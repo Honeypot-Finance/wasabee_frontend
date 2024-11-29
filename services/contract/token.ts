@@ -53,6 +53,9 @@ export class Token implements BaseContract {
   isPopular = false;
   derivedETH = "";
   derivedUSD = "";
+  holderCount = "";
+  swapCount = "";
+  indexerDataLoaded = false;
 
   // determines the order of the token in the list
   get priority() {
@@ -120,6 +123,19 @@ export class Token implements BaseContract {
     return new ContractWrite(this.contract.write?.withdraw, {
       action: "Swap WBERA to BERA",
     });
+  }
+
+  async loadLogoURI() {
+    if (!!this.logoURI) {
+      return;
+    }
+
+    const launch = await trpcClient.projects.getProjectsByLaunchToken.query({
+      chain_id: wallet.currentChainId,
+      launch_token: this.address,
+    });
+
+    launch[0]?.logo_url && this.setLogoURI(launch[0].logo_url);
   }
 
   setLogoURI(logoURI: string) {
