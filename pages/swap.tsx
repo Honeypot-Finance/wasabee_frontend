@@ -54,14 +54,9 @@ const SwapPage = observer(() => {
             (chart.showChart ? "justify-start" : "")
           }
         >
-          <Tabs>
-            <Tab title="v3">
-              <V3SwapCard />
-            </Tab>
-            <Tab title="v2">
-              <SwapCard></SwapCard>
-            </Tab>
-          </Tabs>
+          <div>
+            <V3SwapCard />
+          </div>
         </motion.div>
       </div>
     </>
