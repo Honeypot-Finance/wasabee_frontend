@@ -207,8 +207,15 @@ const Tabs = observer(
           {tab === "priceChart" && (
             <div className="flex justify-center">
               <div className="w-full">
+                {console.log(
+                  "pair?.ftoStatusDisplay?.status",
+                  pair?.ftoStatusDisplay?.status
+                ) === undefined && <></>}
+
+                {console.log("chart.chartTarget", chart.chartTarget) ===
+                  undefined && <></>}
                 {chart.chartTarget &&
-                  pair?.ftoStatusDisplay?.status === "success" && (
+                  pair?.ftoStatusDisplay?.status == "success" && (
                     <SimplePriceFeedGraph />
                   )}
                 {pair?.launchedToken &&

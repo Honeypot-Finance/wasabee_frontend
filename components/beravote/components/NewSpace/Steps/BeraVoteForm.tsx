@@ -3,7 +3,6 @@ import { Formik, Form, Field } from "formik";
 import { StyledButton } from "../../styled";
 import FormInput from "../../Input";
 import { BtnWrapper, FormContainer } from "./styled";
-import "react-confirm-alert/src/react-confirm-alert.css";
 import { ethers } from "ethers";
 import APIAccessPayment from "@/lib/abis/beravote/abi/APIAccessPayment.json";
 import { wallet } from "@/services/wallet";
@@ -183,14 +182,14 @@ const handleYes = async (
       ...data,
       timestamp: timestamp,
     });
-    function stringToHex(str: string) {
+    const stringToHex = (str: string) => {
       return (
         "0x" +
         Array.from(str)
           .map((char) => char.charCodeAt(0).toString(16).padStart(2, "0"))
           .join("")
       );
-    }
+    };
     const hex = stringToHex(msg);
     const signatureToastr = WrappedToastify.pending({
       title: "Sign message",

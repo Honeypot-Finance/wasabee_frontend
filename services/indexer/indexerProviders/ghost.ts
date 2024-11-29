@@ -258,6 +258,9 @@ export class GhostIndexer {
           }
         }
       `;
+
+    console.log("getFilteredFtoPairs: ", query);
+
     const res = await this.callIndexerApi(query, {
       apiHandle: projectType === "meme" ? memeGraphHandle : ftoGraphHandle,
     });
@@ -792,7 +795,7 @@ export class GhostIndexer {
         }
       `;
 
-    console.log(query);
+    console.log("filtered pairs: ", query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,

@@ -48,6 +48,7 @@ export class MemePairContract implements BaseLaunchContract {
   logoUrl = "";
   bannerUrl = "";
   participantsCount = new BigNumber(0);
+  beravoteSpaceId = "";
 
   constructor(args: Partial<MemePairContract>) {
     Object.assign(this, args);
@@ -223,9 +224,7 @@ export class MemePairContract implements BaseLaunchContract {
 
     await new ContractWrite(this.contract.write.refundRaisedToken, {
       action: "Refund",
-    }).call([
-      wallet.account as `0x${string}`,
-    ]);
+    }).call([wallet.account as `0x${string}`]);
 
     await this.raiseToken?.getBalance();
 

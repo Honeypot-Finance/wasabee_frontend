@@ -84,26 +84,6 @@ const FailAction = observer(
   }
 );
 
-const PauseAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    return pair.isProvider ? (
-      <div className="flex flex-col gap-[16px]">
-        <Button
-          className="w-full"
-          isLoading={pair.resume.loading}
-          onClick={() => {
-            pair.resume.call();
-          }}
-        >
-          Resume
-        </Button>
-      </div>
-    ) : (
-      <></>
-    );
-  }
-);
-
 const ProcessingAction = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     const acc = useAccount();

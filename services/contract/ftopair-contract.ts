@@ -44,6 +44,7 @@ export class FtoPairContract implements BaseLaunchContract {
   logoUrl = "";
   bannerUrl = "";
   participantsCount = new BigNumber(0);
+  beravoteSpaceId = "";
 
   constructor(args: Partial<FtoPairContract>) {
     Object.assign(this, args);
