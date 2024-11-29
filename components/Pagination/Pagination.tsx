@@ -29,7 +29,6 @@ export const Pagination = observer(
           isInit={props.paginationState.isInit}
           hasData={!!props.paginationState.pageItems.value.length}
         >
-          {" "}
           {props.paginationState.isInit && (
             <div>
               <motion.div

@@ -31,9 +31,8 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
   const listToNavbarItem = (list: Menu[], isSub?: boolean): React.ReactNode => {
     return list.map((m) =>
       m.path instanceof Array ? (
-        <>
+        <div key={m.title}>
           <NavbarMenuItem
-            key={m.title}
             className={cn(
               "p-[8px]",
               m.path.some((p) => router.pathname.includes(p.path))
@@ -46,7 +45,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
             {m.title}
           </NavbarMenuItem>
           {listToNavbarItem(m.path as Menu[], true)}
-        </>
+        </div>
       ) : (
         <NavbarMenuItem
           key={m.title}
