@@ -23,7 +23,6 @@ export const appPathsList: Menu[] = [
   //   path: "/navigation",
   //   title: "Navigation",
   // },
-
   {
     path: [
       {

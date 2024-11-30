@@ -42,11 +42,38 @@ const SuccessAction = observer(
       //     </Button>{" "}
       //   </Link>
       // </div>
-      <SwapCard
-        noBoarder
-        inputAddress={pair.raiseToken?.address ?? ""}
-        outputAddress={pair.launchedToken?.address}
-      />
+      <>
+        <SwapCard
+          noBoarder
+          inputAddress={pair.raiseToken?.address ?? ""}
+          outputAddress={pair.launchedToken?.address}
+        />
+
+        {pair instanceof MemePairContract && pair.canClaimLP && (
+          <Button
+            className="w-full"
+            isLoading={pair.claimLP.loading}
+            onClick={() => {
+              pair.claimLP.call();
+            }}
+            isDisabled={!pair.canClaimLP}
+          >
+            Claim LP
+          </Button>
+        )}
+        {pair instanceof MemePairContract && pair.canClaimTokens && (
+          <Button
+            className="w-full"
+            onClick={() => {
+              pair.claimVaultTokens();
+            }}
+            isLoading={pair.claimLP.loading}
+            // isDisabled={!pair.canClaimLP}
+          >
+            Claim Tokens
+          </Button>
+        )}
+      </>
     );
   }
 );

@@ -13,6 +13,7 @@ import { ZodError } from "zod";
 import { statusTextToNumber } from "../launchpad";
 import { BaseLaunchContract } from "./base-launch-contract";
 import { pot2PumpPairABI } from "@/lib/abis/Pot2Pump/pot2PumpPair";
+import { ICHIVaultContract } from "./aquabera/ICHIVault-contract";
 
 export class MemePairContract implements BaseLaunchContract {
   databaseId: number | undefined = undefined;
@@ -49,6 +50,7 @@ export class MemePairContract implements BaseLaunchContract {
   bannerUrl = "";
   participantsCount = new BigNumber(0);
   beravoteSpaceId = "";
+  vaultBalance = BigInt(0);
 
   constructor(args: Partial<MemePairContract>) {
     Object.assign(this, args);
@@ -240,11 +242,13 @@ export class MemePairContract implements BaseLaunchContract {
       this.launchedToken.address as `0x${string}`,
     ]);
     this.canClaimLP = false;
+    this.getVaultBalance();
   });
 
   get withdraw() {
     return new ContractWrite(this.contract.write.claimLP, {
       action: "Withdraw",
+      isSuccessEffect: true,
     });
   }
 
@@ -366,6 +370,7 @@ export class MemePairContract implements BaseLaunchContract {
       this.getCanClaimLP(),
       this.getRaisedTokenMinCap(),
       this.getUserParticipated(),
+      this.getVaultBalance(),
     ]).catch((error) => {
       console.error(error, `init-memepair-error-${this.address}`);
       trpcClient.projects.revalidateProjectType.mutate({
@@ -532,5 +537,50 @@ export class MemePairContract implements BaseLaunchContract {
   async getLaunchedTokenProvider() {
     const res = await this.contract.read.tokenDeployer();
     this.launchedTokenProvider = res;
+  }
+
+  get canClaimTokens() {
+    return this.vaultBalance > BigInt(0);
+  }
+
+  async getVaultBalance() {
+    const lpTokenAddress = await this.contract.read.lpToken();
+    console.log("lpTokenAddress", lpTokenAddress);
+    const aquaberaVaultContract = new ICHIVaultContract({
+      address: lpTokenAddress,
+    });
+
+    const vaultBalance = await aquaberaVaultContract.contract.read.balanceOf([
+      wallet.account as `0x${string}`,
+    ]);
+
+    console.log("vaultBalance", vaultBalance.toString());
+    this.vaultBalance = vaultBalance;
+  }
+
+  async claimVaultTokens() {
+    //only work when state is success
+    if (this.ftoState !== 0) {
+      return;
+    }
+    //get lp token, lp token is going to be aquabera vault address
+    const lpTokenAddress = await this.contract.read.lpToken();
+    //console.log("lpTokenAddress", lpTokenAddress);
+    const aquaberaVaultContract = new ICHIVaultContract({
+      address: lpTokenAddress,
+    });
+
+    const vaultBalance = await aquaberaVaultContract.contract.read.balanceOf([
+      wallet.account as `0x${string}`,
+    ]);
+
+    console.log("vaultBalance", vaultBalance.toString());
+
+    await new ContractWrite(aquaberaVaultContract.contract.write.withdraw, {
+      action: "Claim Tokens",
+      isSuccessEffect: true,
+    }).call([this.vaultBalance, wallet.account as `0x${string}`]);
+
+    this.getVaultBalance();
   }
 }
