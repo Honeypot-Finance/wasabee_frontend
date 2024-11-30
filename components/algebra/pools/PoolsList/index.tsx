@@ -1,5 +1,5 @@
 import { poolsColumns } from "@/components/algebra/common/Table/poolsColumns";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Address } from "viem";
 import useSWR from "swr";
 import PoolsTable from "@/components/algebra/common/Table/poolsTable";
@@ -19,6 +19,12 @@ import PoolCardList from "./PoolCardList";
 
 const PoolsList = () => {
   const { data: pools, loading: isPoolsListLoading } = usePoolsListQuery();
+
+  useEffect(() => {
+    if (pools) {
+      console.log('Pools data:', pools);
+    }
+  }, [pools]);
 
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
