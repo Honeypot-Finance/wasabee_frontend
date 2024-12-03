@@ -327,6 +327,13 @@ export class MemePairContract implements BaseLaunchContract {
     }
     if (res.provider) {
       this.provider = res.provider;
+    } else {
+      await this.getLaunchedTokenProvider();
+      trpcClient.projects.createOrUpdateProjectInfo.mutate({
+        chain_id: wallet.currentChainId,
+        pair: this.address,
+        provider: this.launchedTokenProvider,
+      });
     }
     if (res.logo_url) {
       this.logoUrl = res.logo_url;
@@ -334,6 +341,25 @@ export class MemePairContract implements BaseLaunchContract {
     }
     if (res.banner_url) {
       this.bannerUrl = res.banner_url;
+    }
+    if (res.beravote_space_id) {
+      this.beravoteSpaceId = res.beravote_space_id;
+    }
+    if (!res.launch_token) {
+      await this.getLaunchedToken();
+      trpcClient.projects.createOrUpdateProjectInfo.mutate({
+        chain_id: wallet.currentChainId,
+        pair: this.address,
+        launch_token: this.launchedToken?.address ?? "",
+      });
+    }
+    if (!res.raising_token) {
+      await this.getRaisedToken();
+      trpcClient.projects.createOrUpdateProjectInfo.mutate({
+        chain_id: wallet.currentChainId,
+        pair: this.address,
+        raising_token: this.raiseToken?.address ?? "",
+      });
     }
   }
 
