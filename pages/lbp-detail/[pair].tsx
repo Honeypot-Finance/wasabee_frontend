@@ -1,22 +1,12 @@
-import { Divider, Progress, Spinner } from "@nextui-org/react";
+import { Spinner } from "@nextui-org/react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Countdown from "react-countdown";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import CopyIcon from "@/components/svg/CopyIcon";
-import CalenderIcon from "@/components/svg/CalenderIcon";
 import { cn } from "@/lib/tailwindcss";
 import TokenInfo from "./components/TokenInfo";
 import BuySell from "./components/BuySell";
 import { useRouter } from "next/router";
-import {
-  Address,
-  formatEther,
-  formatUnits,
-  isAddress,
-  parseEther,
-  parseUnits,
-} from "viem";
+import { Address, formatUnits, isAddress, parseUnits } from "viem";
 import { LiquidityBootstrapPoolABI } from "@/lib/abis/LiquidityBootstrapPoolAbi";
 import { BigNumber } from "ethers";
 import useMulticall3 from "@/components/hooks/useMulticall3";
@@ -28,6 +18,17 @@ import {
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { useReadContract } from "wagmi";
 import dayjs from "dayjs";
+import ProjectTitle from "./components/ProjectTitle";
+import ProjectStatus from "./components/ProjectStatus";
+import TokenRaised from "./components/TokenRaised";
+import SaleProgress from "./components/SaleProgress";
+import { amountFormatted } from "@/lib/format";
+import TokenAddress from "./components/TokenAddress";
+import TokenDetails from "./components/TokenDetails";
+import { Logo } from "@/components/svg/logo";
+import CountdownTimer from "./components/Countdown";
+import ProjectDetails from "./components/ProjectDetails";
+import Swap from "./components/Swap";
 
 const RankProjectData = [
   { icon: "🚀", value: 10 },
@@ -135,8 +136,6 @@ const LBPDetail = () => {
     tokenData?.results?.shareToken?.callsReturnContext ?? []
   );
 
-  console.log(token);
-
   const assetToken = formatErc20Data(
     tokenData?.results?.assetToken?.callsReturnContext ?? []
   );
@@ -160,12 +159,6 @@ const LBPDetail = () => {
     1 | 2 | 3
   >(1);
 
-  const onChangeTab = (tab: 1 | 2 | 3) => {
-    if (tab !== activeProjectDetailTab) {
-      setActiveProjectDetailTab(tab);
-    }
-  };
-
   const percentOfTokenSold =
     data?.args?.totalPurchased && data?.args?.shares
       ? Math.round(
@@ -179,303 +172,122 @@ const LBPDetail = () => {
     data?.args?.saleStart && dayjs().unix() - data?.args?.saleStart > 0;
 
   return (
-    <div className="mx-auto max-w-7xl px-1 flex flex-col">
+    <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
       {isErc20Loading || isArgsLoading ? (
         <div className="flex items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <>
-          <div className="flex flex-col gap-4 md:flex-row rounded-[30px] bg-[#271A0C] px-[20px] py-2.5 items-center">
-            <div className="flex gap-2 flex-1">
-              <div className="w-[78px] h-[78px] rounded-full relative">
-                <Image
-                  src="/images/icons/tokens/thpot-token-yellow-icon.png"
-                  alt="token image"
-                  fill
-                />
-              </div>
-              <div className="flex flex-col gap-2 justify-center">
-                <div className="text-2xl font-bold">{token?.name}</div>
-                <div className="text-2xl font-bold text-[#FFFFFF8C]">
-                  {token?.symbol}
-                </div>
-              </div>
-            </div>
-            <div className="flex-1 px-5 gap-4 sm:gap-20 flex max-sm:flex-col ">
-              <div className="flex flex-col gap-2">
-                <div className="font-bold text-[21px] leading-[26px] bg-gradient-to-b from-[#F7931A] to-[#FCD729] w-fit text-transparent bg-clip-text">
-                  {isStart ? "Ends In" : "Start In"}
-                </div>
-                <div>
-                  <Countdown
-                    date={
-                      isStart
-                        ? data.args.saleEnd * 1000
-                        : data.args.saleStart * 1000
-                    }
-                    renderer={({ days, hours, minutes, seconds }) => {
-                      return (
-                        <div className="font-bold text-[28px] flex items-center gap-5">
-                          <div className="flex flex-col text-center gap-[5px]">
-                            <span className="leading-[36px]">
-                              {days > 0 ? days : "00"}
-                            </span>
-                            <span className="text-[12px] leading-4 text-[#FFFFFF70]">
-                              {days > 1 ? "Days" : "Day"}
-                            </span>
-                          </div>
-                          <div>:</div>
-                          <div className="flex flex-col text-center gap-[5px]">
-                            <span className="leading-[36px]">
-                              {hours > 0 ? hours : "00"}
-                            </span>
-                            <span className="text-[12px] leading-4 text-[#FFFFFF70]">
-                              {hours > 1 ? "Hours" : "Hour"}
-                            </span>
-                          </div>
-                          <div>:</div>
-                          <div className="flex flex-col text-center gap-[5px]">
-                            <span className="leading-[36px]">
-                              {minutes > 0 ? minutes : "00"}
-                            </span>
-                            <span className="text-[12px] leading-4 text-[#FFFFFF70]">
-                              {minutes > 1 ? "Minutes" : "Minute"}
-                            </span>
-                          </div>
-                          <div>:</div>
-                          <div className="flex flex-col text-center gap-[5px]">
-                            <span className="leading-[36px]">
-                              {seconds > 0 ? seconds : "00"}
-                            </span>
-                            <span className="text-[12px] leading-4 text-[#FFFFFF70]">
-                              {seconds > 1 ? "Secs" : "Sec"}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    }}
+          <div className="grid grid-cols-2 gap-4 xl:w-[1170px]">
+            <div className="bg-[#271A0C] col-span-2 px-5 py-2.5 rounded-[30px] flex md:items-center md:justify-between md:flex-row flex-col gap-2 md:gap-0">
+              <div className="flex items-center gap-x-4 md:gap-x-[7.5px]">
+                <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
+                  <Image
+                    src="/images/icons/tokens/thpot-token-yellow-icon.png"
+                    alt={token?.name}
+                    width={77}
+                    height={77}
+                    className="rounded-full hidden md:inline-block"
                   />
                 </div>
+                <ProjectTitle name={token?.name} displayName={token?.symbol} />
               </div>
-              <div className="flex items-center gap-2">
-                <div
-                  className={cn(
-                    "flex items-center justify-center  size-9 rounded-full",
-                    { "bg-[#43D9A31A]": isStart, "bg-[#F7941D1A]": !isStart }
-                  )}
-                >
-                  <div
-                    className={cn(" size-4 rounded-full", {
-                      "bg-[#43D9A3]": isStart,
-                      "bg-[#F7941D]": !isStart,
-                    })}
-                  />
-                </div>
-                <div className="text-[22px] leading-7 font-bold">
-                  {isStart ? "Live Now" : "Coming Soon"}
-                </div>
+
+              <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
+                <CountdownTimer
+                  label={isStart ? "Ends In" : "Start In"}
+                  date={
+                    isStart
+                      ? data.args.saleEnd * 1000
+                      : data.args.saleStart * 1000
+                  }
+                />
+                <ProjectStatus isStart={isStart} />
               </div>
             </div>
-          </div>
-          <div className="flex flex-col md:flex-row mt-4 gap-4">
-            <div className="bg-[#271B0C] p-5 rounded-2xl flex-1  flex flex-col gap-2.5">
-              <div>
-                <div className="text-base leading-5 font-bold text-[#FFFFFFA8]">
-                  Total Raised
-                </div>
-                <div className="w-fit bg-gradient-to-b from-[#F7931A] to-[#FCD729] text-transparent bg-clip-text">
-                  <span className="leading-[30px] text-[23px] font-bold">
-                    {Number(
-                      formatUnits(data?.args?.totalPurchased, token.decimals)
-                    ).toFixed(3)}
-                  </span>
-                  <span className="font-normal text-[17px] leading-[22px]">
-                    /{Number(formatUnits(data?.args?.shares, token.decimals))}
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="text-sm leading-[18px] font-medium">
-                  Sale progress
-                </div>
-                <Progress
-                  size="md"
-                  aria-label="Loading..."
-                  value={+percentOfTokenSold}
-                  classNames={{
-                    track: "h-4 bg-[#9D5E28]",
-                    indicator: "bg-gradient-to-b from-[#F7931A] to-[#FCD729]",
-                  }}
-                />
-                <div className="flex justify-between items-center">
-                  <div>
-                    {Number(
-                      formatUnits(data?.args?.totalPurchased, token.decimals)
-                    ).toFixed(3)}{" "}
-                    of tokens sold
-                  </div>
-                  <div className="font-medium text-base leading-5 text-[#ffcd4d]">
-                    {Number(
-                      formatUnits(data?.args?.totalPurchased, token.decimals)
-                    ).toFixed(3)}
-                    <span className="text-[12px] leading-4 text-white">
-                      /{Number(formatUnits(data?.args?.shares, token.decimals))}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="text-sm leading-[18px] font-medium">
-                  Token address
-                </div>
-                <div className="flex justify-between p-3 bg-[#3B2912] text-[#FFFFFFA8] rounded-[10px] items-center">
-                  {data?.args?.share}
-                  <CopyToClipboard text={data?.args?.share}>
-                    <button>
-                      <CopyIcon />
-                    </button>
-                  </CopyToClipboard>
-                </div>
-              </div>
-              <div className="flex justify-around">
-                <div className="text-center flex flex-col gap-2">
-                  <div className="text-[12px] leading-4 font-normal">
-                    Token Price
-                  </div>
-                  <div className="text-base leading-5 font-medium">
-                    {assetToken.symbol}{" "}
-                    {Number(
-                      formatUnits(
-                        previewAssetsIn ?? BigInt(0),
-                        assetToken?.decimals ?? 18
-                      )
-                    ).toFixed(2)}
-                  </div>
-                </div>
-                <div className="text-center flex flex-col gap-2">
-                  <div className="text-[12px] leading-4 font-normal">
-                    Funds Raised
-                  </div>
-                  <div className="text-base leading-5 font-medium">
-                    {formatUnits(
-                      data?.totalAssetsIn ?? 0,
-                      assetToken?.decimals || 18
-                    )}{" "}
-                    {assetToken.symbol}
-                  </div>
-                </div>
-                <div className="text-center flex flex-col gap-2">
-                  <div className="text-[12px] leading-4 font-normal">
-                    Full Diluted Value
-                  </div>
-                  <div className="text-base leading-5 font-medium">
-                    {formatUnits(data?.args?.maxTotalAssetsInDeviation, 14)}
-                  </div>
-                </div>
-                <div className="text-left flex flex-col gap-2">
-                  <div className="flex gap-1">
-                    <CalenderIcon />{" "}
-                    <span className="text-[12px] leading-4 font-normal">
-                      Start Date
-                    </span>
-                  </div>
-                  <div className="text-base leading-5 font-medium">
-                    {dayjs
-                      .unix(Number(data?.args?.saleStart ?? 0))
-                      .format("MMMM D, YYYY")}
-                  </div>
-                </div>
-                <div className="text-left flex flex-col gap-2">
-                  <div className="flex gap-1 items-center">
-                    <CalenderIcon />{" "}
-                    <span className="text-[12px] leading-4 font-normal">
-                      End Date
-                    </span>
-                  </div>
-                  <div className="text-base leading-5 font-medium">
-                    {dayjs
-                      .unix(Number(data?.args?.saleEnd ?? 0))
-                      .format("MMMM D, YYYY")}
-                  </div>
-                </div>
-              </div>
-              <Divider />
-              <div className="flex flex-col gap-4">
-                <div className="text-sm leading-[18px] font-medium">
-                  Rank Project
-                </div>
-                <div className="flex gap-4">
-                  {RankProjectData.map((project, i) => (
+
+            <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+              <TokenRaised
+                depositedAmount={Number(
+                  formatUnits(data?.args?.totalPurchased, token.decimals)
+                ).toFixed(3)}
+                minCapAmount={Number(
+                  formatUnits(data?.args?.shares, token.decimals)
+                ).toFixed(3)}
+              />
+
+              <SaleProgress
+                progressValue={percentOfTokenSold}
+                progressLabel={`${percentOfTokenSold.toFixed(2)}%`}
+                depositedAmount={amountFormatted(data?.args?.totalPurchased, {
+                  decimals: token.decimals,
+                  fixed: 3,
+                  prefix: "$",
+                })}
+                raisedTokenMinCap={amountFormatted(data?.args?.shares, {
+                  decimals: token.decimals,
+                  fixed: 3,
+                  prefix: "$",
+                })}
+              />
+
+              <TokenAddress address={data?.args?.share} />
+
+              <TokenDetails
+                fullDiluted={formatUnits(
+                  data?.args?.maxTotalAssetsInDeviation,
+                  14
+                )}
+                price={formatUnits(
+                  previewAssetsIn ?? BigInt(0),
+                  assetToken?.decimals ?? 18
+                )}
+                fundsRaised={formatUnits(
+                  data?.totalAssetsIn ?? 0,
+                  assetToken?.decimals || 18
+                )}
+                startTimeDisplay={dayjs
+                  .unix(Number(data?.args?.saleStart ?? 0))
+                  .format("MMMM D, YYYY")}
+                endTimeDisplay={dayjs
+                  .unix(Number(data?.args?.saleEnd ?? 0))
+                  .format("MMMM D, YYYY")}
+              />
+
+              <hr />
+              <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
+              <div className="flex gap-5">
+                {RankProjectData.map((project, i) => {
+                  return (
                     <div
                       key={i}
-                      className="flex items-center justify-center bg-[#3B2912] rounded-lg h-[60px] flex-1 flex-col gap-[5px] "
+                      className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
                     >
-                      <div className="size-[19px]">{project.icon}</div>
-                      <div className="font-medium text-[10px] leading-[13px]">
-                        {project.value}
-                      </div>
+                      <p>{project.icon}</p>
+                      <p> {project.value}</p>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
             </div>
-            <div className="bg-[#271B0C] rounded-2xl flex-1 items-center">
-              <BuySell
-                asset={{
-                  decimals: assetToken.decimals,
-                  name: assetToken.name,
-                  symbol: assetToken.symbol,
-                  totalSupply: assetToken.totalSupply,
-                  address: data?.args?.asset as Address,
-                }}
-                share={{
-                  decimals: token.decimals,
-                  name: token.name,
-                  symbol: token.symbol,
-                  totalSupply: token.totalSupply,
-                  address: data?.args?.share as Address,
-                }}
-                poolAddress={pairAddress as Address}
-                allowSell={Boolean(data?.args?.sellingAllowed)}
-                refetchArgs={refetchArgs}
-              />
+
+            <div className="rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+              <Swap />
             </div>
           </div>
-          <div className="mt-12">
-            <div className="flex justify-between">
-              <div className="text-[28px] leading-9 font-bold">
-                Project Details
-              </div>
-              <div className="text-[28px] leading-8 font-normal text-[#FFCD4D]">
-                PROTOCOL
-              </div>
-            </div>
-            <div className="mt-12">
-              <div className="flex w-fit gap-1">
-                {ProjectDetailTabs.map((tab) => (
-                  <div
-                    key={tab.key}
-                    onClick={() => onChangeTab(tab.key as 1 | 2 | 3)}
-                    className={cn(
-                      "px-11 py-2 pb-[5px] bg-[#3B2712] text-base leading-5 font-normal text-[#A46617] rounded-t-2xl cursor-pointer",
-                      {
-                        "bg-[#9D5E28] text-white":
-                          activeProjectDetailTab === tab.key,
-                      }
-                    )}
-                  >
-                    {tab.title}
-                  </div>
-                ))}
-              </div>
-              <div className="bg-[#211708] rounded-b-[20px] rounded-e-[20px] h-[545px] px-[38px] py-[64px]">
-                {activeProjectDetailTab === 1 && (
-                  <TokenInfo token={token} tokenAddress={data?.args?.share} />
-                )}
-              </div>
+
+          <div className="w-full flex items-center justify-between my-4 md:my-12">
+            <div className="text-lg md:text-xl">Project Details</div>
+            <div className="flex items-center gap-x-1">
+              <Logo />
+              <span className='text-[#FFCD4D] [font-family:"Bebas_Neue"] text-lg md:text-3xl'>
+                Honeypot Finance
+              </span>
             </div>
           </div>
+
+          <ProjectDetails token={token} tokenAddress={data?.args?.share} />
         </>
       )}
     </div>

@@ -1,42 +1,34 @@
-import { Divider } from "@nextui-org/react";
 import React from "react";
 import { formatUnits } from "viem";
+import { truncate } from "@/lib/format";
 
-type Props = {
+export type TokenInfoProps = {
   tokenAddress?: string;
   token: {
     [key: string]: any;
   };
 };
 
-const TokenInfo = ({ tokenAddress, token }: Props) => {
+const TokenInfo = ({ tokenAddress, token }: TokenInfoProps) => {
   return (
-    <div className="">
-      <div className="text-[34px] leading-[48px] font-bold">Token Info</div>
-      <div className="mt-9">
-        <div className="flex justify-between px-7 items-center">
-          <div className="uppercase text-sm font-bold text-[#F0A64A]">
-            Token Name
-          </div>
-          <div className="uppercase text-xl font-medium text-white">
+    <div className="flex flex-col w-full px-2 md:px-10">
+      <h1 className="text-lg xl:text-4xl xl:py-16">Token Info</h1>
+      <div className="flex flex-col gap-x-2 divide-y-1 divide-[#F0A64A]">
+        <div className="flex items-center justify-between py-4">
+          <span className="text-[#F0A64A] text-sm">Token Name</span>
+          <span className="text-white md:text-xl">
             {token?.name ?? "Token Name"}
-          </div>
+          </span>
         </div>
-        <Divider className="my-2" />
-        <div className="flex justify-between px-7 items-center">
-          <div className="uppercase text-sm font-bold text-[#F0A64A]">
-            Token Symbol
-          </div>
-          <div className="uppercase text-xl font-medium text-white">
+        <div className="flex items-center justify-between py-4">
+          <span className="text-[#F0A64A] text-sm">Token Symbol</span>
+          <span className="text-white md:text-xl">
             {token?.symbol ?? "Token Symbol"}
-          </div>
+          </span>
         </div>
-        <Divider className="my-2" />
-        <div className="flex justify-between px-7 items-center">
-          <div className="uppercase text-sm font-bold text-[#F0A64A]">
-            Total Supply
-          </div>
-          <div className="uppercase text-xl font-medium text-white">
+        <div className="flex items-center justify-between py-4">
+          <span className="text-[#F0A64A] text-sm">Token supply</span>
+          <span className="text-white md:text-xl">
             {new Intl.NumberFormat("en-DE").format(
               Number(
                 formatUnits(
@@ -45,37 +37,21 @@ const TokenInfo = ({ tokenAddress, token }: Props) => {
                 )
               )
             )}
-          </div>
+          </span>
         </div>
-        <Divider className="my-2" />
-        <div className="flex justify-between px-7 items-center">
-          <div className="uppercase text-sm font-bold text-[#F0A64A]">
-            Initial Supply
-          </div>
-          <div className="uppercase text-xl font-medium text-white"></div>
+        <div className="flex items-center justify-between py-4">
+          <span className="text-[#F0A64A] text-sm">INITIAL MARKET CAP</span>
+          <span className="text-white md:text-xl">0</span>
         </div>
-        <Divider className="my-2" />
-        <div className="flex justify-between px-7 items-center">
-          <div className="uppercase text-sm font-bold text-[#F0A64A]">
-            Initial Market Cap
-          </div>
-          <div className="uppercase text-xl font-medium text-white"></div>
+        <div className="flex items-center justify-between py-4">
+          <span className="text-[#F0A64A] text-sm">Token Type</span>
+          <span className="text-white md:text-xl">Erc20</span>
         </div>
-        <Divider className="my-2" />
-        <div className="flex justify-between px-7 items-center">
-          <div className="uppercase text-sm font-bold text-[#F0A64A]">
-            Token Type
-          </div>
-          <div className="uppercase text-xl font-medium text-white">Erc20</div>
-        </div>
-        <Divider className="my-2" />
-        <div className="flex justify-between px-7 items-center">
-          <div className="uppercase text-sm font-bold text-[#F0A64A]">
-            Token Address
-          </div>
-          <div className="uppercase text-xl font-medium text-white">
-            {tokenAddress}
-          </div>
+        <div className="flex items-center justify-between py-4">
+          <span className="text-[#F0A64A] text-sm">Token Address</span>
+          <span className="text-white md:text-xl">
+            {truncate(tokenAddress ?? "", 16)}
+          </span>
         </div>
       </div>
     </div>
