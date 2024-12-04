@@ -53,6 +53,7 @@ export class Token implements BaseContract {
   isPopular = false;
   derivedETH = "";
   derivedUSD = "";
+  holderCount = "";
   swapCount = "";
   indexerDataLoaded = false;
 
@@ -86,7 +87,7 @@ export class Token implements BaseContract {
       client: { public: wallet.publicClient, wallet: wallet.walletClient },
     });
   }
-  get contract() {    
+  get contract() {
     return getContract({
       address: this.address as `0x${string}`,
       abi: this.abi,
@@ -124,6 +125,19 @@ export class Token implements BaseContract {
     });
   }
 
+  async loadLogoURI() {
+    if (!!this.logoURI) {
+      return;
+    }
+
+    const launch = await trpcClient.projects.getProjectsByLaunchToken.query({
+      chain_id: wallet.currentChainId,
+      launch_token: this.address,
+    });
+
+    launch[0]?.logo_url && this.setLogoURI(launch[0].logo_url);
+  }
+
   setLogoURI(logoURI: string) {
     this.logoURI = logoURI;
   }
@@ -159,8 +173,7 @@ export class Token implements BaseContract {
     const loadClaimed = options?.loadClaimed ?? false;
     const loadLogoURI = options?.loadLogoURI ?? true;
     const loadIndexerTokenData = options?.loadIndexerTokenData ?? false;
-    console.log("contract",this.contract);
-    
+
     await Promise.all([
       loadName && !this.name
         ? this.contract.read.name().then((name) => {
@@ -188,6 +201,7 @@ export class Token implements BaseContract {
           })
         : Promise.resolve(),
       loadIndexerTokenData ? this.getIndexerTokenData() : Promise.resolve(),
+      loadLogoURI ? this.loadLogoURI() : Promise.resolve(),
     ]).catch((e) => {
       console.log(e);
       return;
