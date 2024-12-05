@@ -4,12 +4,15 @@ import { Chain } from "viem/chains";
 import {
   berachainBartioTestnet,
   berachainTestnet,
+  movementTestnet,
   polygonMumbaiChain,
+  sprotoTestnet,
   //sepolia,
 } from "@/lib/chain";
-import { algebraRouterAddress } from "@/wagmi-generated";
 import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
+import { zeroAddress } from "viem";
 export class Network {
+  isActive: boolean = true;
   get chainId() {
     return this.chain.id;
   }
@@ -37,7 +40,7 @@ export class Network {
     logoURI?: string;
   }[];
   blacklist?: {
-    poolBlacklist: string[];
+    poolBlacklist?: string[];
   };
   validatedTokens: Token[] = [];
   validatedTokensInfo: Record<string, Token> = {};
@@ -390,9 +393,54 @@ export const berachainBartioTestnetNetwork = new Network({
   validatedMemeAddresses: [],
 });
 
+export const movementNetWork = new Network({
+  isActive: false,
+  chain: movementTestnet,
+  officialFaucets: [],
+  nativeToken: {},
+  contracts: {
+    routerV3: ALGEBRA_POSITION_MANAGER,
+    routerV2: zeroAddress,
+    factory: zeroAddress,
+    ftoFactory: zeroAddress,
+    ftoFacade: zeroAddress,
+    memeFactory: zeroAddress,
+    memeFacade: zeroAddress,
+    ftoTokens: [],
+  },
+  faucetTokens: [],
+  blacklist: {},
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
+export const sprotoNetWork = new Network({
+  isActive: false,
+  chain: sprotoTestnet,
+  officialFaucets: [],
+  nativeToken: {},
+  contracts: {
+    routerV3: ALGEBRA_POSITION_MANAGER,
+    routerV2: zeroAddress,
+    factory: zeroAddress,
+    ftoFactory: zeroAddress,
+    ftoFacade: zeroAddress,
+    memeFactory: zeroAddress,
+    memeFacade: zeroAddress,
+    ftoTokens: [],
+  },
+  faucetTokens: [],
+  blacklist: {},
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
 export const networks = [
   berachainBartioTestnetNetwork,
-  //sepoliaNetwork,
+  movementNetWork,
+  sprotoNetWork,
 ];
 export const networksMap = networks.reduce(
   (acc, network) => {

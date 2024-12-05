@@ -22,6 +22,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { capsuleClient, capsuleModalProps } from "@/config/wagmi/capsualWallet";
 import { ApolloProvider } from "@apollo/client";
 import { infoClient } from "@/lib/algebra/graphql/clients";
+
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
 
@@ -46,7 +47,7 @@ export default function App({
   const ComponentLayout = Component.Layout || Layout;
   return (
     <trpc.Provider client={trpcQueryClient} queryClient={queryClient}>
-      <Analytics></Analytics>
+      <Analytics />
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
           <ApolloProvider client={infoClient}>
