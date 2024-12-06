@@ -1,44 +1,165 @@
 import { gql } from "@apollo/client";
 import { infoClient } from ".";
+import { launchpadType, PairFilter } from "@/services/launchpad";
+import { PageRequest } from "@/services/indexer/indexerTypes";
 
-type WhitelistPool = {
+type SubgraphToken = {
   id: string;
+  name: string;
+  symbol: string;
+  decimals: string | number;
+};
+
+type Pot2Pump = {
+  id: string;
+  launchToken: SubgraphToken;
+  raisedToken: SubgraphToken;
+  DepositRaisedToken: string;
+  DepositLaunchToken: string;
+  createdAt: string;
+  endTime: string;
+  state: string;
+  participantsCount: string;
+  raisedTokenReachingMinCap: boolean;
 };
 
 type Token = {
   id: string;
   name: string;
   symbol: string;
-  Pot2PumpAddress: string;
-  poolCount: string;
-  whitelistPools: WhitelistPool[];
+  decimals: number;
 };
 
-type PairsListData = {
-  tokens: Token[];
+type Pot2PumpListData = {
+  pot2Pumps: Pot2Pump[];
 };
 
-export async function fetchPairsList(): Promise<PairsListData> {
-  const { data } = await infoClient.query<{ tokens: Token[] }>({
-    query: gql`
-      query PairsList {
-        tokens(
-          where: {
-            Pot2PumpAddress_not: "0x0000000000000000000000000000000000000000"
-          }
-        ) {
-          id
-          name
-          symbol
-          Pot2PumpAddress
-          poolCount
-          whitelistPools {
-            id
-          }
-        }
+type Pair = {
+  id: string;
+  token0Id: string;
+  token1Id: string;
+  depositedRaisedToken: string;
+  depositedLaunchedToken: string;
+  createdAt: string;
+  endTime: string;
+  status: string;
+  participantsCount: string;
+  token0: Token;
+  token1: Token;
+};
+
+type PageInfo = {
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+  startCursor: string;
+  endCursor: string;
+};
+
+type PairsListResponse = {
+  status: string;
+  message: string;
+  data: {
+    pairs: Pair[];
+    pageInfo: PageInfo;
+  };
+};
+
+export async function fetchPairsList({
+  filter,
+  pageRequest,
+}: {
+  chainId: string;
+  filter: PairFilter;
+  pageRequest: PageRequest;
+  projectType: launchpadType;
+}): Promise<PairsListResponse> {
+  let whereCondition = "";
+
+  if (filter.status === "success") {
+    whereCondition = `{ raisedTokenReachingMinCap: true }`;
+  } else if (filter.status === "fail") {
+    whereCondition = `{ raisedTokenReachingMinCap: false, endTime_lt: ${Math.floor(Date.now() / 1000)} }`;
+  } else if (filter.status === "processing") {
+    whereCondition = `{ raisedTokenReachingMinCap: false, endTime_gte: ${Math.floor(Date.now() / 1000)} }`;
+  }
+  const query = `
+  query PairsList {
+    pot2Pumps(
+      first: ${filter.limit || 1000},
+      skip: ${(pageRequest?.pageNum ?? 1 - 1) * filter.limit}
+      ${pageRequest ? `, orderBy: ${pageRequest.orderBy}` : ""}
+      ${pageRequest ? `, orderDirection: ${pageRequest.orderDirection}` : ""}
+      ${whereCondition ? `, where: ${whereCondition}` : ""}
+    ) {
+      id
+      launchToken {
+        id
+        name
+        symbol
+        decimals
       }
-    `,
+      raisedToken {
+        id
+        name
+        symbol
+        decimals
+      }
+      DepositRaisedToken
+      DepositLaunchToken
+      createdAt
+      endTime
+      state
+      participantsCount
+      raisedTokenReachingMinCap
+    }
+  }
+`;
+
+  const { data } = await infoClient.query<Pot2PumpListData>({
+    query: gql(query),
   });
 
-  return data;
+  function transformPairsListData(data: Pot2PumpListData): PairsListResponse {
+    const pairs = data.pot2Pumps.map((pot2Pump) => ({
+      id: pot2Pump.id,
+      token0Id: pot2Pump.launchToken.id,
+      token1Id: pot2Pump.raisedToken.id,
+      depositedRaisedToken: pot2Pump.DepositRaisedToken,
+      depositedLaunchedToken: pot2Pump.DepositLaunchToken,
+      createdAt: pot2Pump.createdAt,
+      endTime: pot2Pump.endTime,
+      status: pot2Pump.state,
+      participantsCount: pot2Pump.participantsCount,
+      token0: {
+        id: pot2Pump.raisedToken.id,
+        name: pot2Pump.raisedToken.name,
+        symbol: pot2Pump.raisedToken.symbol,
+        decimals: parseInt(pot2Pump.raisedToken.decimals.toString()),
+      },
+      token1: {
+        id: pot2Pump.launchToken.id,
+        name: pot2Pump.launchToken.name,
+        symbol: pot2Pump.launchToken.symbol,
+        decimals: parseInt(pot2Pump.launchToken.decimals.toString()),
+      },
+    }));
+
+    const pageInfo: PageInfo = {
+      hasPreviousPage: false,
+      hasNextPage: pairs.length === filter.limit,
+      startCursor: "",
+      endCursor: "",
+    };
+
+    return {
+      status: "success",
+      message: "Success",
+      data: {
+        pairs,
+        pageInfo,
+      },
+    };
+  }
+
+  return transformPairsListData(data);
 }

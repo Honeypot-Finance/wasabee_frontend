@@ -69,7 +69,7 @@ export const ftoRouter = router({
         getCacheKey("getProjectsByLaunchToken", input),
         async () => {
           const launchs = await ftoService.selectProjectByLaunchToken(input);
-          console.log("launchs", launchs);
+          // console.log("launchs", launchs);
           return launchs;
         }
       );

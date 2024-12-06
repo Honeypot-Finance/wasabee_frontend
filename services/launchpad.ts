@@ -16,10 +16,11 @@ import { parseEventLogs } from "viem";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { MemePairContract } from "./contract/memepair-contract";
 import { PageRequest } from "./indexer/indexerTypes";
+import { fetchPairsList } from "@/lib/algebra/graphql/clients/pair";
 
 const PAGE_LIMIT = 9;
 
-type launchpadType = "fto" | "meme";
+export type launchpadType = "fto" | "meme";
 
 export enum ProjectStatus {
   All = "all",
@@ -325,12 +326,23 @@ class LaunchPad {
   };
 
   LoadMoreProjectPage = async (pageRequest: PageRequest) => {
-    const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-      filter: this.projectsPage.filter,
-      chainId: String(wallet.currentChainId),
-      pageRequest: pageRequest,
-      projectType: this.currentLaunchpadType.value,
-    });
+    let res;
+
+    if (this.currentLaunchpadType.value === "meme") {
+      res = await fetchPairsList({
+        filter: this.projectsPage.filter,
+        chainId: String(wallet.currentChainId),
+        pageRequest: pageRequest,
+        projectType: this.currentLaunchpadType.value,
+      });
+    } else {
+      res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
+        filter: this.projectsPage.filter,
+        chainId: String(wallet.currentChainId),
+        pageRequest: pageRequest,
+        projectType: this.currentLaunchpadType.value,
+      });
+    }
 
     if (res.status === "success") {
       const data = {
@@ -408,8 +420,6 @@ class LaunchPad {
         type: this.currentLaunchpadType.value,
         walletAddress: wallet.account,
       });
-
-    console.log(res);
 
     if (res.status === "success") {
       const data = {
