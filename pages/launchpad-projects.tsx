@@ -27,6 +27,9 @@ import Pagination from "@/components/Pagination/Pagination";
 import Image from "next/image";
 import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 import LaunchPadProjectCard from "@/components/LaunchPadProjectCard";
+import { useQuery } from "@tanstack/react-query";
+import FjordHoneySdk from "@/services/fjord_honeypot_sdk";
+import pools from "./pools";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -34,6 +37,15 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     MemePairContract[] | null
   >(null);
   const [selectedTab, setSelectedTab] = useState<"all" | "my">("all");
+
+  const pools = useQuery({
+    queryKey: ["trendingMEMEs"],
+    queryFn: () => {
+      FjordHoneySdk.findManyPools({ page: 1, search: "" });
+    },
+  });
+
+  console.log(pools.data);
 
   useEffect(() => {
     if (!wallet.isInit) {
