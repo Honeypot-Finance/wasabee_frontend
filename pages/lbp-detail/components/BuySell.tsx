@@ -447,6 +447,7 @@ const BuySell = ({
         <span className="text-[12px] text-red-800">Input amount too large</span>
       )}
       <div className="mt-5 flex flex-col gap-4">
+        {" "}
         {isApproved ? (
           <Button
             className="w-full"

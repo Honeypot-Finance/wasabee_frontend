@@ -1,4 +1,4 @@
-import { FjordSdk, PoolCreateArgs } from "node_modules/@marigoldlabs/fjord-honeypot-sdk/dist/index.js";
+import { FjordSdk, PoolCreateArgs, Pool } from "node_modules/@marigoldlabs/fjord-honeypot-sdk/dist/index.js";
 
 const API_URL = "https://fjord-api-dev.fly.dev/api";
 const API_KEY = "x0cyKZA90n+ztKyluX2Zb+YSi5FCCp7h7702hlbZ4ps=";
@@ -94,8 +94,7 @@ class FjordHoneySdk {
 
         return pools
     }
-
-    static findPool = async (address: string) => {
+    static findPool = async (address: string): Pool | null => {
         const pool = await sdk.request.rest.findManyPools({
             where: {
                 address: address

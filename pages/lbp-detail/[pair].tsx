@@ -28,8 +28,9 @@ import TokenDetails from "./components/TokenDetails";
 import { Logo } from "@/components/svg/logo";
 import CountdownTimer from "./components/Countdown";
 import ProjectDetails from "./components/ProjectDetails";
-import Swap from "./components/Swap";
 import { useQuery } from "@tanstack/react-query";
+import FjordHoneySdk from "@/services/fjord_honeypot_sdk";
+import { SwapCard } from "./components/Swap";
 
 const RankProjectData = [
   { icon: "🚀", value: 10 },
@@ -48,8 +49,11 @@ const LBPDetail = () => {
   const router = useRouter();
   const { pair: pairAddress } = router.query;
 
-  useQuery({
+  const { data: pool } = useQuery({
     queryKey: ["lbp-detail", pairAddress],
+    queryFn: async () => {
+      return await FjordHoneySdk.findPool(pairAddress as string);
+    },
   });
 
   const {
@@ -136,6 +140,8 @@ const LBPDetail = () => {
     ],
     enabled: Boolean(data?.args?.shares && data?.args?.asset),
   });
+
+  console.log(data?.args);
 
   const token = formatErc20Data(
     tokenData?.results?.shareToken?.callsReturnContext ?? []
@@ -278,7 +284,25 @@ const LBPDetail = () => {
             </div>
 
             <div className="rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-              <Swap />
+              <SwapCard
+                asset={{
+                  decimals: assetToken.decimals,
+                  name: assetToken.name,
+                  symbol: assetToken.symbol,
+                  totalSupply: assetToken.totalSupply,
+                  address: data?.args?.asset as Address,
+                }}
+                share={{
+                  decimals: token.decimals,
+                  name: token.name,
+                  symbol: token.symbol,
+                  totalSupply: token.totalSupply,
+                  address: data?.args?.share as Address,
+                }}
+                poolAddress={pairAddress as Address}
+                allowSell={Boolean(data?.args?.sellingAllowed)}
+                refetchArgs={refetchArgs}
+              />
             </div>
           </div>
 
@@ -292,7 +316,11 @@ const LBPDetail = () => {
             </div>
           </div>
 
-          <ProjectDetails token={token} tokenAddress={data?.args?.share} />
+          <ProjectDetails
+            token={token}
+            tokenAddress={data?.args?.share}
+            description={pool?.description}
+          />
         </>
       )}
     </div>
