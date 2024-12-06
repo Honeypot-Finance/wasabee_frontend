@@ -3,6 +3,7 @@ import { formatUnits } from "viem";
 import { truncate } from "@/lib/format";
 
 export type TokenInfoProps = {
+  description?: string;
   tokenAddress?: string;
   token: {
     [key: string]: any;

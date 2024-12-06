@@ -29,6 +29,7 @@ import { Logo } from "@/components/svg/logo";
 import CountdownTimer from "./components/Countdown";
 import ProjectDetails from "./components/ProjectDetails";
 import Swap from "./components/Swap";
+import { useQuery } from "@tanstack/react-query";
 
 const RankProjectData = [
   { icon: "🚀", value: 10 },
@@ -46,6 +47,10 @@ const ProjectDetailTabs = [
 const LBPDetail = () => {
   const router = useRouter();
   const { pair: pairAddress } = router.query;
+
+  useQuery({
+    queryKey: ["lbp-detail", pairAddress],
+  });
 
   const {
     data,
