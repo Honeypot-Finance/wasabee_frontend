@@ -22,7 +22,7 @@ const PoolsList = () => {
 
   useEffect(() => {
     if (pools) {
-      console.log('Pools data:', pools);
+      console.log("Pools data:", pools);
     }
   }, [pools]);
 
@@ -44,13 +44,14 @@ const PoolsList = () => {
     ETERNAL_FARMINGS_API,
     fetcher
   );
+
   const isLoading =
     isPoolsListLoading ||
-    isPoolsMaxAprLoading ||
-    isPoolsAvgAprLoading ||
+    // isPoolsMaxAprLoading ||
+    // isPoolsAvgAprLoading ||
     isPositionsLoading ||
-    isFarmingsLoading ||
-    isFarmingsAPRLoading;
+    isFarmingsLoading;
+  // ||isFarmingsAPRLoading;
 
   const formattedPools = useMemo(() => {
     if (isLoading || !pools) return [];

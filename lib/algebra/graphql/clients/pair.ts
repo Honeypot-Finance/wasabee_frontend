@@ -8,6 +8,8 @@ type SubgraphToken = {
   name: string;
   symbol: string;
   decimals: string | number;
+  holderCount: string;
+  derivedMatic: string;
 };
 
 type Pot2Pump = {
@@ -64,6 +66,15 @@ type PairsListResponse = {
   };
 };
 
+const subgraphTokenQuery = `
+  id
+  name
+  symbol
+  decimals
+  holderCount
+  derivedMatic
+`;
+
 export async function fetchPairsList({
   filter,
   pageRequest,
@@ -102,16 +113,10 @@ export async function fetchPairsList({
       ) {
         id
         launchToken {
-          id
-          name
-          symbol
-          decimals
+        ${subgraphTokenQuery}
         }
         raisedToken {
-          id
-          name
-          symbol
-          decimals
+        ${subgraphTokenQuery}
         }
         DepositRaisedToken
         DepositLaunchToken
