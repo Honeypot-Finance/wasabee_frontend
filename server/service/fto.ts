@@ -45,6 +45,10 @@ export const ftoService = {
     projectName: string;
     project_logo?: string;
     banner_url?: string;
+    description?: string;
+    twitter?: string;
+    website?: string;
+    telegram?: string;
   }) => {
     if (
       !fto_api_key_list.includes(data.creator_api_key) &&
@@ -62,8 +66,13 @@ export const ftoService = {
       name: data.projectName,
       logo_url: data.project_logo ?? "",
       banner_url: data.banner_url ?? "",
+      description: data.description ?? "",
+      twitter: data.twitter ?? "",
+      website: data.website ?? "",
+      telegram: data.telegram ?? "",
     })}`;
   },
+
   getProjectInfo: async (data: {
     pair: string;
     chain_id: number;

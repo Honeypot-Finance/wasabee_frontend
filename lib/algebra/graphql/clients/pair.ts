@@ -82,38 +82,47 @@ export async function fetchPairsList({
   } else if (filter.status === "processing") {
     whereCondition = `{ raisedTokenReachingMinCap: false, endTime_gte: ${Math.floor(Date.now() / 1000)} }`;
   }
+
+  const queryParts = [
+    filter.limit ? `first: ${filter.limit}` : "",
+    pageRequest?.pageNum && filter.limit
+      ? `skip: ${(pageRequest?.pageNum - 1) * filter.limit}`
+      : "",
+    pageRequest.orderBy ? `orderBy: ${pageRequest.orderBy}` : "",
+    pageRequest.orderDirection
+      ? `orderDirection: ${pageRequest.orderDirection}`
+      : "",
+    whereCondition ? `where: ${whereCondition}` : "",
+  ].filter(Boolean);
+
   const query = `
-  query PairsList {
-    pot2Pumps(
-      first: ${filter.limit || 1000},
-      skip: ${(pageRequest?.pageNum ?? 1 - 1) * filter.limit}
-      ${pageRequest ? `, orderBy: ${pageRequest.orderBy}` : ""}
-      ${pageRequest ? `, orderDirection: ${pageRequest.orderDirection}` : ""}
-      ${whereCondition ? `, where: ${whereCondition}` : ""}
-    ) {
-      id
-      launchToken {
+    query PairsList {
+      pot2Pumps(
+        ${queryParts.join(", ")}
+      ) {
         id
-        name
-        symbol
-        decimals
+        launchToken {
+          id
+          name
+          symbol
+          decimals
+        }
+        raisedToken {
+          id
+          name
+          symbol
+          decimals
+        }
+        DepositRaisedToken
+        DepositLaunchToken
+        createdAt
+        endTime
+        state
+        participantsCount
+        raisedTokenReachingMinCap
       }
-      raisedToken {
-        id
-        name
-        symbol
-        decimals
-      }
-      DepositRaisedToken
-      DepositLaunchToken
-      createdAt
-      endTime
-      state
-      participantsCount
-      raisedTokenReachingMinCap
     }
-  }
-`;
+  `;
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),

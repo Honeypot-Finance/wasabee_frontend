@@ -574,6 +574,12 @@ class LaunchPad {
       tokenAmount,
       poolHandler,
       raisingCycle,
+      description,
+      twitter,
+      website,
+      telegram,
+      logoUrl,
+      bannerUrl,
     }: {
       launchType: "fto" | "meme";
       provider: string;
@@ -583,6 +589,12 @@ class LaunchPad {
       tokenAmount: number;
       poolHandler: string;
       raisingCycle: number;
+      description: string;
+      twitter: string;
+      website: string;
+      telegram: string;
+      logoUrl: string;
+      bannerUrl: string;
     }): Promise<string> => {
       const targetLaunchContractFunc = async () => {
         if (launchType === "fto") {
@@ -628,7 +640,8 @@ class LaunchPad {
       // use random default project logo
       const ICON_COUNT = 5;
       const randomIcon = Math.floor(Math.random() * ICON_COUNT) + 1;
-      const url = `/images/default-project-icons/${randomIcon}.png`;
+
+      const url = logoUrl || `/images/default-project-icons/${randomIcon}.png`;
 
       await trpcClient.projects.createProject.mutate({
         pair: pairAddress,
@@ -637,6 +650,11 @@ class LaunchPad {
         project_type: launchType,
         projectName: tokenName,
         project_logo: url,
+        banner_url: bannerUrl,
+        description,
+        twitter,
+        website,
+        telegram,
       });
 
       return pairAddress as string;

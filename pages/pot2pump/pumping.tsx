@@ -6,22 +6,8 @@ import { Button } from "@/components/button";
 import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { LaunchCard } from "@/components/LaunchCard";
-import {
-  Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Tab,
-  Tabs,
-  useDisclosure,
-  Button as NextButton,
-} from "@nextui-org/react";
-import { IoSearchOutline } from "react-icons/io5";
-import { SpinnerContainer } from "@/components/Spinner";
-import { DropdownSvg } from "@/components/svg/dropdown";
-import { motion } from "framer-motion";
-import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
-import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
+import { Tab, Tabs } from "@nextui-org/react";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import Pagination from "@/components/Pagination/Pagination";
 import Image from "next/image";
@@ -30,7 +16,6 @@ import { MemeWarPariticipantRaceChart } from "@/components/MemeWarBanner/MemeWar
 import { memewarStore } from "@/services/memewar";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
     MemePairContract[] | null
   >(null);
