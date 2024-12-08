@@ -50,7 +50,7 @@ export type TCreatePool = {
     learnMoreUrl?: string;
 }
 
-type TCreateSwap = {
+export type TCreateSwap = {
     poolId: string;
     txHash: string;
     type: "buy" | "sell" | "swap"; // Assuming the type field is limited to specific values

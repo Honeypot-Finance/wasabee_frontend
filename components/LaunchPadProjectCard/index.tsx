@@ -11,6 +11,9 @@ type ILaunchPadProjectCard = {
   status: IProjectCardStatus;
   coverImg: string | null;
   isShowCoverImage?: boolean;
+  endDate: number;
+  tokenName: string;
+  projectAuthor: string;
 };
 
 const ProjectCardStatus = observer(
@@ -159,10 +162,14 @@ const LaunchPadProjectBody = observer(
 );
 
 const LaunchPadProjectCard = observer(
-  ({ status, coverImg, isShowCoverImage = false }: ILaunchPadProjectCard) => {
-    const endDate =
-      status == "comming" ? Date.now() + 50000000 : Date.now() - 1000;
-
+  ({
+    status,
+    coverImg,
+    endDate,
+    isShowCoverImage = false,
+    tokenName,
+    projectAuthor,
+  }: ILaunchPadProjectCard) => {
     return (
       <div
         className={clsx(
@@ -184,8 +191,8 @@ const LaunchPadProjectCard = observer(
         <div className="p-[15px] pb-0">
           <TokenInfo
             symbol="/images/icons/tokens/thpot-token-yellow-icon.png"
-            name="Yellow Honey"
-            author="Huny"
+            name={tokenName}
+            author={projectAuthor}
             // description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry."
           />
           <LaunchPadProjectBody

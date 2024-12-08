@@ -1,5 +1,4 @@
 import { observer } from "mobx-react-lite";
-import { TokenSelector } from "@/components/TokenSelector";
 import { swap } from "@/services/swap";
 import { Button } from "@/components/button";
 import { useEffect, useState } from "react";
@@ -22,9 +21,11 @@ import { useDebouncedCallback } from "@/hooks";
 import { LiquidityBootstrapPoolABI } from "@/lib/abis/LiquidityBootstrapPoolAbi";
 import { WrappedToastify } from "@/lib/wrappedToastify";
 import { useMutation } from "@tanstack/react-query";
-import { waitForTransactionReceipt } from "viem/actions";
+import { waitForTransactionReceipt } from "@wagmi/core";
 import { config } from "@/config/wagmi";
 import { NumericFormat } from "react-number-format";
+import TokenSelected from "./TokenSelected";
+import FjordHoneySdk, { TCreateSwap } from "@/services/fjord_honeypot_sdk";
 
 type AssetToken = {
   name: string;
@@ -38,6 +39,8 @@ type AssetToken = {
 };
 
 type Props = {
+  sharePriceInAsset: string;
+  poolId: string;
   asset: AssetToken;
   share: AssetToken;
   allowSell: boolean;
@@ -57,7 +60,15 @@ type SwapToken = {
 
 const client = createPublicClientByChain(berachainBartioTestnet);
 export const SwapCard = observer(
-  ({ asset, share, allowSell, poolAddress, refetchArgs }: Props) => {
+  ({
+    asset,
+    share,
+    allowSell,
+    poolAddress,
+    poolId,
+    refetchArgs,
+    sharePriceInAsset,
+  }: Props) => {
     const isInit = wallet.isInit && liquidity.isInit;
     // const isInit = true;
 
@@ -80,6 +91,16 @@ export const SwapCard = observer(
       asset: AssetToken;
       share: AssetToken;
     }>();
+
+    const { mutateAsync: createSwapAsync } = useMutation({
+      mutationKey: ["createSwap", poolId],
+      mutationFn: async (data: TCreateSwap) => {
+        return await FjordHoneySdk.createSwap(data);
+      },
+      onError: (err) => {
+        console.log(err);
+      },
+    });
 
     const { mutateAsync: previewSharesOut, error: previewSharesOutError } =
       useMutation({
@@ -343,10 +364,40 @@ export const SwapCard = observer(
           });
         }
         if (hash) {
-          await waitForTransactionReceipt(config, {
+          const result = await waitForTransactionReceipt(config, {
             hash: hash,
             confirmations: 2,
             timeout: 1000 * 60 * 5,
+          });
+
+          await createSwapAsync({
+            txHash: hash,
+            poolId: poolId,
+            type: actionTab,
+            tokenIn: asset.address,
+            tokenInSym: asset.symbol,
+            tokenOut: share.address,
+            tokenOutSym: share.symbol,
+            tokenAmountIn: parseUnits(
+              swapToken?.from?.toString() || "",
+              tokens!.asset.decimals
+            ).toString(),
+            tokenAmountOut: parseUnits(
+              swapToken?.to?.toString() || "",
+              tokens!.share.decimals
+            ).toString(),
+            walletAddress: account.address as string,
+            blockHash: result.blockHash,
+            logIndex: 0,
+            status: result.status == "success" ? "success" : "failed",
+            assetPriceProxyRoundId: "",
+            assetPriceValue: "",
+            sharePriceInAsset: sharePriceInAsset,
+            sharePriceInUsd: "",
+            swapFee: "0.03",
+            chainIn: Number(result.chainId.toString()),
+            chainOut: Number(result.chainId.toString()),
+            blockNumber: Number(result.blockNumber.toString()),
           });
 
           WrappedToastify.success({ message: "Transaction Successfully" });
@@ -431,12 +482,10 @@ export const SwapCard = observer(
                     </div>
                   )}
                   <div className="my-3 py-2.5">
-                    <div className="px-[22px] py-2 flex items-center gap-1 bg-[#3E2A0F] border border-[#F7931A1A] rounded-[30px]">
-                      <div className="size-5 rounded-full bg-[#C8EE44]"></div>
-                      <div className="font-bold text-sm leading-6">
-                        {tokens?.share?.symbol}
-                      </div>
-                    </div>
+                    <TokenSelected
+                      address={tokens?.asset?.address ?? ""}
+                      symbol={tokens?.asset?.symbol ?? ""}
+                    />
                   </div>
                 </div>
               </div>
@@ -472,19 +521,12 @@ export const SwapCard = observer(
                   />
                 </div>
                 <div className="flex flex-col items-end w-full lg:w-[unset]">
-                  {!!swap.toToken && (
-                    <div className="flex items-center">
-                      <div className="text-sub">
-                        Balance: {swap.toToken.balanceFormatted}
-                      </div>
-                    </div>
-                  )}
-                  <TokenSelector
-                    value={swap.toToken}
-                    onSelect={(token) => {
-                      swap.setToToken(token);
-                    }}
-                  ></TokenSelector>
+                  <div className="my-3 py-2.5">
+                    <TokenSelected
+                      address={tokens?.share?.address ?? ""}
+                      symbol={tokens?.share?.symbol ?? ""}
+                    />
+                  </div>
                 </div>
               </div>
               <div className="mt-5 flex flex-col gap-4 w-full">

@@ -1,10 +1,6 @@
 import { Spinner } from "@nextui-org/react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import Countdown from "react-countdown";
-import { cn } from "@/lib/tailwindcss";
-import TokenInfo from "./components/TokenInfo";
-import BuySell from "./components/BuySell";
 import { useRouter } from "next/router";
 import { Address, formatUnits, isAddress, parseUnits } from "viem";
 import { LiquidityBootstrapPoolABI } from "@/lib/abis/LiquidityBootstrapPoolAbi";
@@ -140,8 +136,6 @@ const LBPDetail = () => {
     ],
     enabled: Boolean(data?.args?.shares && data?.args?.asset),
   });
-
-  console.log(data?.args);
 
   const token = formatErc20Data(
     tokenData?.results?.shareToken?.callsReturnContext ?? []
@@ -285,6 +279,8 @@ const LBPDetail = () => {
 
             <div className="rounded-2xl space-y-3 col-span-2 lg:col-span-1">
               <SwapCard
+                sharePriceInAsset={previewAssetsIn?.toString() ?? ""}
+                poolId={pool?.id ?? ""}
                 asset={{
                   decimals: assetToken.decimals,
                   name: assetToken.name,
