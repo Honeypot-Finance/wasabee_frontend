@@ -74,7 +74,7 @@ export function UploadImage(props: UploadImageProps): JSX.Element {
                   src={
                     !!props.imagePath
                       ? props.imagePath
-                      : "https://upload.wikimedia.org/wikipedia/commons/5/59/Empty.png"
+                      : "/images/empty-logo.png"
                   }
                   alt="icon"
                   className="rounded-[11.712px] hover:bg-[#ECC94E20] w-[3rem] h-[3rem] self-center cursor-pointer"

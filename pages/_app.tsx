@@ -6,9 +6,10 @@ import type { AppProps } from "next/app";
 import { Layout } from "@/components/layout";
 import { NextLayoutPage } from "@/types/nextjs";
 import { WagmiProvider, useWalletClient } from "wagmi";
-import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { RainbowKitProvider } from "@usecapsule/rainbowkit";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import "@rainbow-me/rainbowkit/styles.css";
+import "@usecapsule/rainbowkit/styles.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,12 +17,12 @@ import { config } from "@/config/wagmi";
 import { trpc, trpcQueryClient } from "../lib/trpc";
 import { useEffect } from "react";
 import { wallet } from "@/services/wallet";
-import { DM_Sans } from "next/font/google";
 import { Inspector, InspectParams } from "react-dev-inspector";
-import { StorageState } from "@/services/utils";
 import { Analytics } from "@vercel/analytics/react";
+import { capsuleClient, capsuleModalProps } from "@/config/wagmi/capsualWallet";
 import { ApolloProvider } from "@apollo/client";
 import { infoClient } from "@/lib/algebra/graphql/clients";
+
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
 
@@ -46,11 +47,14 @@ export default function App({
   const ComponentLayout = Component.Layout || Layout;
   return (
     <trpc.Provider client={trpcQueryClient} queryClient={queryClient}>
-      <Analytics></Analytics>
+      <Analytics />
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
           <ApolloProvider client={infoClient}>
-            <RainbowKitProvider>
+            <RainbowKitProvider
+              capsule={capsuleClient}
+              capsuleIntegratedProps={capsuleModalProps}
+            >
               <NextUIProvider>
                 <Provider>
                   <Inspector
@@ -72,7 +76,7 @@ export default function App({
                 <ToastContainer></ToastContainer>
               </NextUIProvider>
             </RainbowKitProvider>
-          </ApolloProvider>
+          </ApolloProvider>{" "}
         </QueryClientProvider>
       </WagmiProvider>
     </trpc.Provider>

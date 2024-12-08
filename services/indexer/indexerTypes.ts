@@ -1,5 +1,4 @@
 import { GhostIndexer } from "./indexerProviders/ghost";
-import Indexer from "./indexer";
 import { PageInfo } from "../utils";
 import { Address } from "viem";
 export type IndexerProvider = GhostIndexer;
@@ -86,6 +85,9 @@ export type GhostFtoTokensResponse = {
 export type PageRequest = {
   direction: "next" | "prev";
   cursor?: string;
+  pageNum?: number;
+  orderBy?: string;
+  orderDirection?: string;
 };
 
 export type GhostToken = {

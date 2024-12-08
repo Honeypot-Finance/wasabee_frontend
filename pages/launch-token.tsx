@@ -10,7 +10,6 @@ import { RocketSvg } from "@/components/svg/Rocket";
 import { PeddingSvg } from "@/components/svg/Pedding";
 import { DreampadSvg } from "@/components/svg/Dreampad";
 import { now, getLocalTimeZone, fromDate } from "@internationalized/date";
-// import { DatePicker } from "@/components/DatePicker";
 import { dayjs } from "@/lib/dayjs";
 import {
   Accordion,
@@ -40,6 +39,7 @@ import { FaQuestionCircle } from "react-icons/fa";
 import { popmodal } from "@/services/popmodal";
 import store from "store2";
 import { cn } from "@/lib/tailwindcss";
+import { UploadImage } from "@/components/UploadImage/UploadImage";
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
 const minimumTimePattern = /^(6[1-9]|[7-9][0-9]|[1-9][0-9]{2,})$/;
@@ -66,6 +66,13 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
     tokenAmount: number;
     poolHandler: string;
     raisingCycle: DateValue;
+    projectName: string;
+    description: string;
+    twitter: string;
+    website: string;
+    telegram: string;
+    logoUrl: string;
+    bannerUrl: string;
   }) => {
     try {
       const [pairAddress] = await launchpad.createLaunchProject.call({
@@ -347,11 +354,24 @@ const MemePadInstruction = () => {
           {steps.map((step, idx) => (
             <li key={idx} className="flex relative">
               <div className="flex flex-col items-center ">
-                {idx !== 0 && <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>}
+                {idx !== 0 && (
+                  <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>
+                )}
                 <InstructionMarker />
-                {idx !== steps.length - 1 && <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>}
+                {idx !== steps.length - 1 && (
+                  <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>
+                )}
               </div>
-              <div className={cn("bg-[#3e2a0f]   px-5 py-2 ml-8 rounded-[2rem] relative overflow-visible", (idx !== 0 && idx !== steps.length - 1) ? 'my-2' : (idx === 0 ? 'mb-2' : 'mt-2'))}>
+              <div
+                className={cn(
+                  "bg-[#3e2a0f]   px-5 py-2 ml-8 rounded-[2rem] relative overflow-visible",
+                  idx !== 0 && idx !== steps.length - 1
+                    ? "my-2"
+                    : idx === 0
+                      ? "mb-2"
+                      : "mt-2"
+                )}
+              >
                 {step.content}
               </div>
             </li>
@@ -391,7 +411,12 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     tokenName: string;
     tokenSymbol: string;
     tokenAmount: number;
-    //raisingCycle: DateValue;
+    description?: string;
+    twitter: string;
+    website: string;
+    telegram: string;
+    logoUrl: string;
+    bannerUrl: string;
   }) => {
     try {
       const [pairAddress] = await launchpad.createLaunchProject.call({
@@ -410,6 +435,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
       console.error(error);
     }
   };
+
   useEffect(() => {
     const notice_read = store.get("pot2pump_notice_read");
     if (!notice_read) {
@@ -420,15 +446,6 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
   const openInstructionModal = () => {
     popmodal.openModal({
       content: <MemePadInstruction />,
-      // actions: [
-      //   {
-      //     label: "Confirm",
-      //     onPress: () => {
-      //       popmodal.closeModal();
-      //       store.set("pot2pump_notice_read", true);
-      //     },
-      //   },
-      // ],
     });
   };
 
@@ -482,6 +499,41 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
               </div>
 
               <div className="flex flex-col gap-4">
+                <Controller
+                  control={control}
+                  name="logoUrl"
+                  render={({ field: { onChange, value } }) => (
+                    <UploadImage
+                      onUpload={onChange}
+                      imagePath={value}
+                      blobName="logo"
+                    />
+                  )}
+                />
+                <div className="text align opacity-50 text-center">
+                  Click icon to upload new token icon
+                </div>
+              </div>
+              <div className="relative w-full h-[5rem] border-dashed border-amber-950 hover:border-amber-500 border-3 rounded-2xl mb-5  transition-all text-white hover:text-amber-500">
+                <Controller
+                  control={control}
+                  name="bannerUrl"
+                  render={({ field: { onChange, value } }) => (
+                    <UploadImage
+                      blobName={"banner"}
+                      imagePath={value}
+                      onUpload={onChange}
+                      variant="banner"
+                    />
+                  )}
+                />
+
+                <h3 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold pointer-events-none">
+                  Upload Banner
+                </h3>
+              </div>
+
+              <div className="flex flex-col gap-4">
                 <div>Token Name</div>
                 <input
                   type="text"
@@ -502,6 +554,38 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 {errors.tokenSymbol && (
                   <span className="text-red-500">Token Symbol is required</span>
                 )}
+              </div>
+              <div className="flex flex-col gap-4">
+                <div>Description</div>
+                <input
+                  type="text"
+                  {...register("description")}
+                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                />
+              </div>
+              <div className="flex flex-col gap-4">
+                <div>Twitter</div>
+                <input
+                  type="text"
+                  {...register("twitter")}
+                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                />
+              </div>
+              <div className="flex flex-col gap-4">
+                <div>Website</div>
+                <input
+                  type="text"
+                  {...register("website")}
+                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                />
+              </div>
+              <div className="flex flex-col gap-4">
+                <div>Telegram</div>
+                <input
+                  type="text"
+                  {...register("telegram")}
+                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                />
               </div>
 
               {(state.pairAddress && (
@@ -569,6 +653,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
             <DropdownItem
               key={launch.key}
               onClick={() => setSelectedLaunch(launch.key as any)}
+              className={selectedLaunch === launch.key ? "bg-[#FFCD4D]" : ""}
             >
               {launch.label}
             </DropdownItem>

@@ -1,11 +1,10 @@
 import { Textarea } from "@nextui-org/react";
-import { Button } from "@/components/button";
+import { Button } from "@/components/button/button-next";
 import { CommentCard } from "../CommentCard/CommentCard";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import Image from "next/image";
 import { trpcClient } from "@/lib/trpc";
 import { wallet } from "@/services/wallet";
-import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { useEffect, useState } from "react";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import { useRouter } from "next/router";
@@ -122,7 +121,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
   };
 
   return (
-    <CardContianer addtionalClassName={cn(props.classNames?.container)}>
+    <CardContianer addtionalClassName={cn(props.classNames?.container,'bg-[#202020]')}>
       <div
         className={cn(
           "flex-col w-full ",
@@ -141,7 +140,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
             maxRows={15}
             label="Leave a Comment!"
             classNames={{
-              base: "w-full h-full bg-[#2F200B]",
+              base: "w-full h-full bg-[#262626] border border-[#FFCD4D] rounded-2xl overflow-hidden",
               inputWrapper:
                 "w-full !h-full bg-[#2F200B] hover:bg-[#2F200B] z-1",
               input: "w-full h-full",

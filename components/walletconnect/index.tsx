@@ -1,20 +1,12 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ConnectButton } from "@usecapsule/rainbowkit";
 import { Balance } from "../balance";
 import { BalanceSvg } from "../svg/balance";
 import { ButtonHTMLAttributes } from "react";
 import { WalletSvg } from "../svg/wallet";
-import { observer } from "mobx-react-lite";
-import { FaFaucet } from "react-icons/fa";
-import { wallet } from "@/services/wallet";
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@nextui-org/react";
-import Link from "next/link";
 import Image from "next/image";
 import { useConnect, useConnectors } from "wagmi";
+import NetworkSelect from "./NetworkSelect";
+
 const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   return (
     <button
@@ -25,9 +17,10 @@ const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   );
 };
 export const WalletConnect = () => {
-  const { connect } = useConnect()
-  const connectors = useConnectors()
-  const mockConnector = connectors.find(connector => connector.id === 'mock')
+  const { connect } = useConnect();
+  const connectors = useConnectors();
+
+  const mockConnector = connectors.find((connector) => connector.id === "mock");
   return (
     <ConnectButton.Custom>
       {({
@@ -61,18 +54,23 @@ export const WalletConnect = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <ConnectButtonCustom onClick={() => {
-                    if (process.env.NEXT_PUBLIC_MOCK === 'true') {
-                      connect({ connector: mockConnector! })
-                    } else {
-                      openConnectModal()
-                    }
-                  }}>
-                    <span className="flex w-[1rem] h-[1rem]">
-                      <WalletSvg></WalletSvg>
-                    </span>
-                    Connect Wallet
-                  </ConnectButtonCustom>
+                  <div className="flex items-center gap-x-2">
+                    {/* <NetworkSelect /> */}
+                    <ConnectButtonCustom
+                      onClick={() => {
+                        if (process.env.NEXT_PUBLIC_MOCK === "true") {
+                          connect({ connector: mockConnector! });
+                        } else {
+                          openConnectModal();
+                        }
+                      }}
+                    >
+                      <span className="flex w-[1rem] h-[1rem]">
+                        <WalletSvg></WalletSvg>
+                      </span>
+                      Connect Wallet
+                    </ConnectButtonCustom>
+                  </div>
                 );
               }
               if (chain.unsupported) {
@@ -84,37 +82,13 @@ export const WalletConnect = () => {
               }
               return (
                 <div className="flex gap-[12px] items-center relative">
-                  {/* {wallet.currentChain?.faucets?.length && (
-                    <Dropdown>
-                      <DropdownTrigger>
-                        <div className=" cursor-pointer"><FaFaucet
-                          width={"36px"}
-                          height={"36px"}
-                          className=" shrink-0"
-                        ></FaFaucet></div>
-                      </DropdownTrigger>
-                      <DropdownMenu classNames={{
-                      
-                      }} aria-label="Actions">
-                        {wallet.currentChain?.faucets?.map((faucet) => (
-                          <DropdownItem key={faucet.name}>
-                             <Link className="w-full inline-block" href={faucet.url} target="_blank">{faucet.name}</Link>
-                          </DropdownItem>
-                        ))}
-                
-                      </DropdownMenu>
-                    </Dropdown>
-                  )} */}
                   <Balance className="hidden md:flex min-w-[126px]">
-                    <>
-                      <BalanceSvg></BalanceSvg>{" "}
-                      <div className=" text-nowrap">
-                        {" "}
-                        {account.displayBalance
-                          ? `${account.displayBalance}`
-                          : "-"}
-                      </div>
-                    </>
+                    <BalanceSvg />
+                    <div className=" text-nowrap">
+                      {account.displayBalance
+                        ? `${account.displayBalance}`
+                        : "-"}
+                    </div>
                   </Balance>
                   <button
                     onClick={openChainModal}
@@ -157,9 +131,9 @@ export const WalletConnect = () => {
 };
 
 export const WalletConnectMobile = () => {
-  const { connect } = useConnect()
-  const connectors = useConnectors()
-  const mockConnector = connectors.find(connector => connector.id === 'mock')
+  const { connect } = useConnect();
+  const connectors = useConnectors();
+  const mockConnector = connectors.find((connector) => connector.id === "mock");
   return (
     <ConnectButton.Custom>
       {({
@@ -193,13 +167,15 @@ export const WalletConnectMobile = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <ConnectButtonCustom onClick={() => {
-                    if (process.env.NEXT_PUBLIC_MOCK === 'true') {
-                      connect({ connector: mockConnector! })
-                    } else {
-                      openConnectModal()
-                    }
-                  }}>
+                  <ConnectButtonCustom
+                    onClick={() => {
+                      if (process.env.NEXT_PUBLIC_MOCK === "true") {
+                        connect({ connector: mockConnector! });
+                      } else {
+                        openConnectModal();
+                      }
+                    }}
+                  >
                     <span className="flex w-[1rem] h-[1rem]">
                       <WalletSvg></WalletSvg>
                     </span>
@@ -244,7 +220,7 @@ export const WalletConnectMobile = () => {
                         }}
                       >
                         {chain.iconUrl && (
-                          <img
+                          <Image
                             alt={chain.name ?? "Chain icon"}
                             src={chain.iconUrl}
                             style={{ width: 12, height: 12 }}

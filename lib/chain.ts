@@ -25,6 +25,38 @@ export const berachainTestnet: Chain = {
   },
 };
 
+export const movementTestnet: Chain = {
+  id: 177,
+  name: "Movement Testnet",
+  nativeCurrency: {
+    decimals: 18,
+    name: "MOVE",
+    symbol: "MOVE",
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://aptos.testnet.porto.movementlabs.xyz/v1"],
+    },
+  },
+  testnet: true,
+};
+
+export const sprotoTestnet: Chain = {
+  id: 6231991,
+  name: "Sproto Testnet",
+  nativeCurrency: {
+    decimals: 18,
+    name: "ETH",
+    symbol: "ETH",
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://block-chain.alt.technology/"],
+    },
+  },
+  testnet: true,
+};
+
 export const berachainBartioTestnet: Chain = {
   id: 80084,
   name: "Berachain Bartio",
@@ -51,7 +83,7 @@ export const berachainBartioTestnet: Chain = {
   },
   fees: {
     defaultPriorityFee: parseGwei("50"),
-  }
+  },
 };
 
 // export const sepolia:Chain = {
@@ -71,7 +103,10 @@ export const chains = [
   polygonMumbaiChain,
 ];
 
-export const chainsMap = chains.reduce((acc, chain) => {
-  acc[chain.id] = chain;
-  return acc;
-}, {} as Record<number | string, Chain>);
+export const chainsMap = chains.reduce(
+  (acc, chain) => {
+    acc[chain.id] = chain;
+    return acc;
+  },
+  {} as Record<number | string, Chain>
+);

@@ -22,10 +22,12 @@ const TokenAddress: React.FC<TokenAddressProps> = ({ address }) => {
           value={address}
           displayContent={
             <div className="relative">
-              <span className="mt-[8px] flex h-[41px] justify-between items-center [background:#3B2912] px-3 py-0 rounded-[10px] cursor-pointer hover:brightness-150 active:brightness-75 select-none">
+              <span className="mt-[8px] flex h-[41px] justify-between items-center bg-[#F2C34A] px-3 py-0 rounded-[10px] cursor-pointer hover:brightness-150 active:brightness-75 select-none text-[#202020]">
                 {truncate(address, 28)}
               </span>
-              <VscCopy className="size-4 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer" />
+              <div className="size-6 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center bg-white text-[#202020] border border-[#202020] rounded-md">
+                <VscCopy className="size-4" />
+              </div>
             </div>
           }
         />

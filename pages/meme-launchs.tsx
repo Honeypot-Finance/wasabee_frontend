@@ -25,7 +25,7 @@ import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import Pagination from "@/components/Pagination/Pagination";
 import Image from "next/image";
-import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
+import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -119,7 +119,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
       <div>
         <div id="filter" className="flex flex-col sm:flex-row gap-2">
-          <WarppedNextInputSearchBar
+          <WrappedNextInputSearchBar
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
             }}

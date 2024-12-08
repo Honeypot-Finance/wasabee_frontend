@@ -20,6 +20,11 @@ export const ftoRouter = router({
         project_type: z.string().optional(),
         projectName: z.string(),
         project_logo: z.string().optional(),
+        banner_url: z.string().optional(),
+        description: z.string().optional(),
+        twitter: z.string().optional(),
+        website: z.string().optional(),
+        telegram: z.string().optional()
       })
     )
     .mutation(async ({ input }) => {
@@ -69,7 +74,7 @@ export const ftoRouter = router({
         getCacheKey("getProjectsByLaunchToken", input),
         async () => {
           const launchs = await ftoService.selectProjectByLaunchToken(input);
-          console.log("launchs", launchs);
+          // console.log("launchs", launchs);
           return launchs;
         }
       );

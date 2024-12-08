@@ -16,10 +16,11 @@ import { parseEventLogs } from "viem";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { MemePairContract } from "./contract/memepair-contract";
 import { PageRequest } from "./indexer/indexerTypes";
+import { fetchPairsList } from "@/lib/algebra/graphql/clients/pair";
 
 const PAGE_LIMIT = 9;
 
-type launchpadType = "fto" | "meme";
+export type launchpadType = "fto" | "meme";
 
 export enum ProjectStatus {
   All = "all",
@@ -29,9 +30,9 @@ export enum ProjectStatus {
 }
 
 export type PairFilter = {
-  search: string;
+  search?: string;
   status: "all" | "processing" | "success" | "fail";
-  showNotValidatedPairs: boolean;
+  showNotValidatedPairs?: boolean;
   limit: number;
 };
 
@@ -248,10 +249,22 @@ class LaunchPad {
   }
 
   async trendingMEMEs(): Promise<MemePairContract[]> {
-    const mostSuccessfulFtos =
-      await trpcClient.indexerFeedRouter.getTrendingMEMEPairs.query();
+    // const mostSuccessfulFtos =
+    //   await trpcClient.indexerFeedRouter.getTrendingMEMEPairs.query();
+    const mostSuccessfulFtos = await fetchPairsList({
+      filter: {
+        status: "processing",
+        limit: 5,
+      },
+      pageRequest: {
+        direction: "next",
+        orderDirection: "desc",
+        orderBy: "DepositRaisedToken",
+      },
+    });
+
     if (mostSuccessfulFtos.status === "success") {
-      return mostSuccessfulFtos.data?.pairs.items.map((pairAddress) => {
+      return mostSuccessfulFtos.data?.pairs.map((pairAddress) => {
         const pair = new MemePairContract({
           address: pairAddress.id,
         });
@@ -325,12 +338,28 @@ class LaunchPad {
   };
 
   LoadMoreProjectPage = async (pageRequest: PageRequest) => {
-    const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
-      filter: this.projectsPage.filter,
-      chainId: String(wallet.currentChainId),
-      pageRequest: pageRequest,
-      projectType: this.currentLaunchpadType.value,
-    });
+    let res;
+
+    if (this.currentLaunchpadType.value === "meme") {
+      res = await fetchPairsList({
+        filter: this.projectsPage.filter,
+        pageRequest: pageRequest,
+      });
+    } else {
+      res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
+        filter: this.projectsPage.filter,
+        chainId: String(wallet.currentChainId),
+        pageRequest: pageRequest,
+        projectType: this.currentLaunchpadType.value,
+      });
+    }
+
+    // const res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({
+    //   filter: this.projectsPage.filter,
+    //   chainId: String(wallet.currentChainId),
+    //   pageRequest: pageRequest,
+    //   projectType: this.currentLaunchpadType.value,
+    // });
 
     if (res.status === "success") {
       const data = {
@@ -408,8 +437,6 @@ class LaunchPad {
         type: this.currentLaunchpadType.value,
         walletAddress: wallet.account,
       });
-
-    console.log(res);
 
     if (res.status === "success") {
       const data = {
@@ -564,6 +591,12 @@ class LaunchPad {
       tokenAmount,
       poolHandler,
       raisingCycle,
+      description,
+      twitter,
+      website,
+      telegram,
+      logoUrl,
+      bannerUrl,
     }: {
       launchType: "fto" | "meme";
       provider: string;
@@ -573,6 +606,12 @@ class LaunchPad {
       tokenAmount: number;
       poolHandler: string;
       raisingCycle: number;
+      description: string;
+      twitter: string;
+      website: string;
+      telegram: string;
+      logoUrl: string;
+      bannerUrl: string;
     }): Promise<string> => {
       const targetLaunchContractFunc = async () => {
         if (launchType === "fto") {
@@ -618,7 +657,8 @@ class LaunchPad {
       // use random default project logo
       const ICON_COUNT = 5;
       const randomIcon = Math.floor(Math.random() * ICON_COUNT) + 1;
-      const url = `/images/default-project-icons/${randomIcon}.png`;
+
+      const url = logoUrl || `/images/default-project-icons/${randomIcon}.png`;
 
       await trpcClient.projects.createProject.mutate({
         pair: pairAddress,
@@ -627,6 +667,11 @@ class LaunchPad {
         project_type: launchType,
         projectName: tokenName,
         project_logo: url,
+        banner_url: bannerUrl,
+        description,
+        twitter,
+        website,
+        telegram,
       });
 
       return pairAddress as string;

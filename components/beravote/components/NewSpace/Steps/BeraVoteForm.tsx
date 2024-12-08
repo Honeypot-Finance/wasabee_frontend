@@ -383,7 +383,7 @@ const BeraVoteForm = observer(
                   disabled={allCreatedSpaces.includes(formSpaceId)}
                   type="submit"
                 >
-                  Create Coin
+                  Create Space
                 </StyledButton>
               </BtnWrapper>
 
