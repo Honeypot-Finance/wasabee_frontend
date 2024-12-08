@@ -14,6 +14,7 @@ import Image from "next/image";
 import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 import { MemeWarPariticipantRaceChart } from "@/components/MemeWarBanner/MemeWarBannerV2";
 import { memewarStore } from "@/services/memewar";
+import { Pot2PumpTracker } from "@/components/MemeWarBanner/Pot2PumpTracker";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
@@ -74,7 +75,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         </Button>
       </div>
 
-      <MemeWarPariticipantRaceChart />
+      <Pot2PumpTracker />
 
       <div>
         <div

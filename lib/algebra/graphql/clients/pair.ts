@@ -10,6 +10,7 @@ type SubgraphToken = {
   decimals: string | number;
   holderCount: string;
   derivedMatic: string;
+  totalSupply: string;
 };
 
 type Pot2Pump = {
@@ -30,13 +31,16 @@ type Token = {
   name: string;
   symbol: string;
   decimals: number;
+  holderCount: string;
+  derivedMatic: string;
+  totalSupply: string;
 };
 
 type Pot2PumpListData = {
   pot2Pumps: Pot2Pump[];
 };
 
-type Pair = {
+export type Pair = {
   id: string;
   token0Id: string;
   token1Id: string;
@@ -66,6 +70,14 @@ type PairsListResponse = {
   };
 };
 
+type MemetrackerListResponse = {
+  status: string;
+  message: string;
+  data: {
+    pairs: Pair[];
+  };
+};
+
 const subgraphTokenQuery = `
   id
   name
@@ -73,6 +85,24 @@ const subgraphTokenQuery = `
   decimals
   holderCount
   derivedMatic
+  totalSupply
+`;
+
+const pop2PumpQuery = `
+  launchToken {
+    ${subgraphTokenQuery}
+  }
+  raisedToken {
+    ${subgraphTokenQuery}
+  }
+  id
+  DepositRaisedToken
+  DepositLaunchToken
+  createdAt
+  endTime
+  state
+  participantsCount
+  raisedTokenReachingMinCap
 `;
 
 export async function fetchPairsList({
@@ -111,20 +141,7 @@ export async function fetchPairsList({
       pot2Pumps(
         ${queryParts.join(", ")}
       ) {
-        id
-        launchToken {
-        ${subgraphTokenQuery}
-        }
-        raisedToken {
-        ${subgraphTokenQuery}
-        }
-        DepositRaisedToken
-        DepositLaunchToken
-        createdAt
-        endTime
-        state
-        participantsCount
-        raisedTokenReachingMinCap
+        ${pop2PumpQuery}
       }
     }
   `;
@@ -149,12 +166,18 @@ export async function fetchPairsList({
         name: pot2Pump.raisedToken.name,
         symbol: pot2Pump.raisedToken.symbol,
         decimals: parseInt(pot2Pump.raisedToken.decimals.toString()),
+        holderCount: pot2Pump.raisedToken.holderCount,
+        derivedMatic: pot2Pump.raisedToken.derivedMatic,
+        totalSupply: pot2Pump.raisedToken.totalSupply,
       },
       token1: {
         id: pot2Pump.launchToken.id,
         name: pot2Pump.launchToken.name,
         symbol: pot2Pump.launchToken.symbol,
         decimals: parseInt(pot2Pump.launchToken.decimals.toString()),
+        holderCount: pot2Pump.launchToken.holderCount,
+        derivedMatic: pot2Pump.launchToken.derivedMatic,
+        totalSupply: pot2Pump.launchToken.totalSupply,
       },
     }));
 
@@ -171,6 +194,73 @@ export async function fetchPairsList({
       data: {
         pairs,
         pageInfo,
+      },
+    };
+  }
+
+  return transformPairsListData(data);
+}
+
+export async function fetchMemetrackerList({
+  chainId,
+}: {
+  chainId: string;
+}): Promise<MemetrackerListResponse> {
+  const query = `
+    query MemetrackerList {
+      pot2Pumps(
+        first: 100
+        where: {raisedTokenReachingMinCap: true}
+        orderBy: createdAt
+        orderDirection: desc
+      ) {
+        ${pop2PumpQuery}
+      }
+    }
+  `;
+
+  const { data } = await infoClient.query<Pot2PumpListData>({
+    query: gql(query),
+  });
+
+  function transformPairsListData(
+    data: Pot2PumpListData
+  ): MemetrackerListResponse {
+    const pairs = data.pot2Pumps.map((pot2Pump) => ({
+      id: pot2Pump.id,
+      token0Id: pot2Pump.launchToken.id,
+      token1Id: pot2Pump.raisedToken.id,
+      depositedRaisedToken: pot2Pump.DepositRaisedToken,
+      depositedLaunchedToken: pot2Pump.DepositLaunchToken,
+      createdAt: pot2Pump.createdAt,
+      endTime: pot2Pump.endTime,
+      status: pot2Pump.state,
+      participantsCount: pot2Pump.participantsCount,
+      token0: {
+        id: pot2Pump.launchToken.id,
+        name: pot2Pump.launchToken.name,
+        symbol: pot2Pump.launchToken.symbol,
+        decimals: parseInt(pot2Pump.launchToken.decimals.toString()),
+        holderCount: pot2Pump.launchToken.holderCount,
+        derivedMatic: pot2Pump.launchToken.derivedMatic,
+        totalSupply: pot2Pump.launchToken.totalSupply,
+      },
+      token1: {
+        id: pot2Pump.raisedToken.id,
+        name: pot2Pump.raisedToken.name,
+        symbol: pot2Pump.raisedToken.symbol,
+        decimals: parseInt(pot2Pump.raisedToken.decimals.toString()),
+        holderCount: pot2Pump.raisedToken.holderCount,
+        derivedMatic: pot2Pump.raisedToken.derivedMatic,
+        totalSupply: pot2Pump.raisedToken.totalSupply,
+      },
+    }));
+
+    return {
+      status: "success",
+      message: "Success",
+      data: {
+        pairs,
       },
     };
   }
