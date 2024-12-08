@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import { infoClient } from ".";
 import { launchpadType, PairFilter } from "@/services/launchpad";
 import { PageRequest } from "@/services/indexer/indexerTypes";
+import dayjs from "dayjs";
 
 type SubgraphToken = {
   id: string;
@@ -109,19 +110,17 @@ export async function fetchPairsList({
   filter,
   pageRequest,
 }: {
-  chainId: string;
   filter: PairFilter;
-  pageRequest: PageRequest;
-  projectType: launchpadType;
+  pageRequest?: PageRequest;
 }): Promise<PairsListResponse> {
   let whereCondition = "";
 
   if (filter.status === "success") {
     whereCondition = `{ raisedTokenReachingMinCap: true }`;
   } else if (filter.status === "fail") {
-    whereCondition = `{ raisedTokenReachingMinCap: false, endTime_lt: ${Math.floor(Date.now() / 1000)} }`;
+    whereCondition = `{ raisedTokenReachingMinCap: false, endTime_lte: ${dayjs().unix()} }`;
   } else if (filter.status === "processing") {
-    whereCondition = `{ raisedTokenReachingMinCap: false, endTime_gte: ${Math.floor(Date.now() / 1000)} }`;
+    whereCondition = `{ raisedTokenReachingMinCap: false, endTime_gt: ${dayjs().unix()} }`;
   }
 
   const queryParts = [
@@ -129,8 +128,8 @@ export async function fetchPairsList({
     pageRequest?.pageNum && filter.limit
       ? `skip: ${(pageRequest?.pageNum - 1) * filter.limit}`
       : "",
-    pageRequest.orderBy ? `orderBy: ${pageRequest.orderBy}` : "",
-    pageRequest.orderDirection
+    pageRequest?.orderBy ? `orderBy: ${pageRequest?.orderBy}` : "",
+    pageRequest?.orderDirection
       ? `orderDirection: ${pageRequest.orderDirection}`
       : "",
     whereCondition ? `where: ${whereCondition}` : "",

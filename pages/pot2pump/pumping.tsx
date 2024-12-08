@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Observer, observer } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/button";
@@ -12,29 +12,11 @@ import { MemePairContract } from "@/services/contract/memepair-contract";
 import Pagination from "@/components/Pagination/Pagination";
 import Image from "next/image";
 import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
-import { MemeWarPariticipantRaceChart } from "@/components/MemeWarBanner/MemeWarBannerV2";
 import { memewarStore } from "@/services/memewar";
 import { Pot2PumpTracker } from "@/components/MemeWarBanner/Pot2PumpTracker";
+import { LaunchCardV3 } from "@/components/LaunchCard/v3";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
-  const [mostSuccessProjects, setMostSuccessProjects] = useState<
-    MemePairContract[] | null
-  >(null);
-
-  const updateMostSuccessProjects = useCallback(() => {
-    console.log("updating most success projects", mostSuccessProjects);
-    mostSuccessProjects?.forEach((pair) => {
-      pair.getDepositedRaisedToken();
-    });
-  }, [mostSuccessProjects]);
-
-  useEffect(() => {
-    const updateInterval = setInterval(() => {
-      updateMostSuccessProjects();
-    }, 2000);
-    return () => clearInterval(updateInterval);
-  }, [updateMostSuccessProjects]);
-
   useEffect(() => {
     if (!wallet.isInit) {
       return;
@@ -50,16 +32,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
     // launchpad.projectsPage.reloadPage();
     // launchpad.participatedPairs.reloadPage();
-
-    //loading most success projects
-    const startMostSuccessfulFtoPolling = () => {
-      launchpad.trendingMEMEs().then((data) => {
-        //if data is same as previous data then no need to update
-        setMostSuccessProjects(data);
-      });
-    };
-
-    startMostSuccessfulFtoPolling();
   }, [wallet.isInit]);
 
   return (
@@ -117,7 +89,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           <Tab key="all" title="All MEMEs">
             <Pagination
               paginationState={launchpad.projectsPage}
-              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+              render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
               classNames={{
                 itemsContainer:
                   "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",

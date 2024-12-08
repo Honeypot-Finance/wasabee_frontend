@@ -505,7 +505,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                   render={({ field: { onChange, value } }) => (
                     <UploadImage
                       onUpload={onChange}
-                      imagePath={value || "/images/project_honey.png"}
+                      imagePath={value}
                       blobName="logo"
                     />
                   )}

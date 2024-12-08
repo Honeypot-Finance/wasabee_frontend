@@ -193,10 +193,11 @@ const ProcessingAction = observer(
             className="w-full"
             isDisabled={!Number(state.depositAmount)}
             isLoading={pair.deposit.loading}
-            onClick={() => {
-              pair.deposit.call({
+            onClick={async () => {
+              await pair.deposit.call({
                 amount: state.depositAmount,
               });
+              state.setDepositAmount("");
             }}
           >
             Deposit

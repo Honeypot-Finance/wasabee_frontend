@@ -30,9 +30,9 @@ export enum ProjectStatus {
 }
 
 export type PairFilter = {
-  search: string;
+  search?: string;
   status: "all" | "processing" | "success" | "fail";
-  showNotValidatedPairs: boolean;
+  showNotValidatedPairs?: boolean;
   limit: number;
 };
 
@@ -249,10 +249,20 @@ class LaunchPad {
   }
 
   async trendingMEMEs(): Promise<MemePairContract[]> {
-    const mostSuccessfulFtos =
-      await trpcClient.indexerFeedRouter.getTrendingMEMEPairs.query();
+    const mostSuccessfulFtos = await fetchPairsList({
+      filter: {
+        status: "processing",
+        limit: 5,
+      },
+      pageRequest: {
+        direction: "next",
+        orderDirection: "desc",
+        orderBy: "DepositRaisedToken",
+      },
+    });
+
     if (mostSuccessfulFtos.status === "success") {
-      return mostSuccessfulFtos.data?.pairs.items.map((pairAddress) => {
+      return mostSuccessfulFtos.data?.pairs.map((pairAddress) => {
         const pair = new MemePairContract({
           address: pairAddress.id,
         });
@@ -331,9 +341,7 @@ class LaunchPad {
     if (this.currentLaunchpadType.value === "meme") {
       res = await fetchPairsList({
         filter: this.projectsPage.filter,
-        chainId: String(wallet.currentChainId),
         pageRequest: pageRequest,
-        projectType: this.currentLaunchpadType.value,
       });
     } else {
       res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({

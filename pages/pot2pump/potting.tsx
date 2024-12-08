@@ -1,24 +1,12 @@
 import Link from "next/link";
-import { Observer, observer } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/button";
 import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { LaunchCard } from "@/components/LaunchCard";
-import {
-  Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Tab,
-  Tabs,
-  useDisclosure,
-  Button as NextButton,
-} from "@nextui-org/react";
-import { IoSearchOutline } from "react-icons/io5";
-import { SpinnerContainer } from "@/components/Spinner";
-import { DropdownSvg } from "@/components/svg/dropdown";
+import { Tab, Tabs, useDisclosure } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
@@ -26,9 +14,9 @@ import { MemePairContract } from "@/services/contract/memepair-contract";
 import Pagination from "@/components/Pagination/Pagination";
 import Image from "next/image";
 import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
+import { LaunchCardV3 } from "@/components/LaunchCard/v3";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
     MemePairContract[] | null
   >(null);
@@ -86,57 +74,78 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
       </div>
 
       {mostSuccessProjects && mostSuccessProjects.length > 0 && (
-        <>
-          <h2 className="w-full text-center py-2 md:py-0 text-[1.5rem] md:text-[3rem] [font-family:MEMEH] font-bold">
-            Trending MEMEs
-          </h2>
-          <motion.div
-            variants={defaultContainerVariants}
-            initial="hidden"
-            animate="visible"
-            className="w-full flex flex-col lg:flex-row gap-2 flex-grow-[1]"
-          >
-            {mostSuccessProjects.map((pair: MemePairContract, idx) => (
-              <motion.div
-                variants={itemPopUpVariants}
-                key={pair.address}
-                className={
-                  "relative flex-grow " + (idx !== 0 && "hidden lg:block")
-                }
-              >
+        <div className="flex flex-col">
+          <div className="relative flex flex-row items-end justify-between">
+            <Image
+              src={"/images/pumping/lying-bear.png"}
+              width={150}
+              height={0}
+              alt="lying bear"
+            />
+            <Image
+              src={"/images/pumping/Trading.png"}
+              width={180}
+              height={0}
+              alt="Trading"
+              className="mb-8 absolute left-1/2 transform -translate-x-1/2"
+            />
+            <Image
+              src={"/images/pumping/victory-bear.png"}
+              width={240}
+              height={0}
+              alt="lying bear"
+            />
+          </div>
+          <div className="border-3 border-[#FFCD4D] bg-[#FFCD4D] rounded-3xl overflow-hidden">
+            <div className="bg-[url('/images/pumping/outline-border.svg')] bg-top h-16"></div>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={defaultContainerVariants}
+              className="w-full flex flex-col lg:flex-row gap-2 flex-grow-[1] p-8"
+            >
+              {mostSuccessProjects.map((pair: MemePairContract, idx) => (
                 <motion.div
-                  className="absolute top-0 left-0 z-10"
-                  initial={{
-                    rotate: 0,
-                  }}
-                  whileHover={{
-                    rotate: [0, -10, 10, -10, 10, -10, 10, -10, 10, 0],
-                  }}
-                  transition={{
-                    times: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
-                    duration: 1,
-                  }}
+                  variants={itemPopUpVariants}
+                  key={pair.address}
+                  className={
+                    "relative flex-1 " + (idx !== 0 && "hidden lg:block")
+                  }
                 >
-                  {idx === 0 && (
-                    <FaCrown className="absolute top-0 left-2 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[300%] md:scale-[500%] fill-yellow-300" />
-                  )}
-                  {idx === 1 && (
-                    <FaCrown className="absolute top-0 left-1 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] md:scale-[300%] fill-gray-300" />
-                  )}
-                  {idx === 2 && (
-                    <FaCrown className="absolute top-0 left-0 rotate-[-30deg] translate-x-[-30%] translate-y-[-50%] md:scale-[100%] fill-amber-800" />
-                  )}
+                  <motion.div
+                    className="absolute top-0 left-0 z-10"
+                    initial={{
+                      rotate: 0,
+                    }}
+                    whileHover={{
+                      rotate: [0, -10, 10, -10, 10, -10, 10, -10, 10, 0],
+                    }}
+                    transition={{
+                      times: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+                      duration: 1,
+                    }}
+                  >
+                    {idx === 0 && (
+                      <FaCrown className="absolute top-0 left-2 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] scale-[300%] md:scale-[300%] fill-yellow-300" />
+                    )}
+                    {idx === 1 && (
+                      <FaCrown className="absolute top-0 left-1 rotate-[-30deg] translate-x-[-50%] translate-y-[-100%] md:scale-[200%] fill-gray-300" />
+                    )}
+                    {idx === 2 && (
+                      <FaCrown className="absolute top-0 left-0 rotate-[-30deg] translate-x-[-30%] translate-y-[-50%] md:scale-[100%] fill-amber-800" />
+                    )}
+                  </motion.div>
+                  <LaunchCardV3
+                    pair={pair}
+                    action={<></>}
+                    type="trending"
+                    className="p-0"
+                  />
                 </motion.div>
-                <LaunchCard
-                  pair={pair}
-                  action={<></>}
-                  type="trending"
-                  className="p-0"
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        </>
+              ))}
+            </motion.div>
+          </div>
+        </div>
       )}
 
       <div>
@@ -149,84 +158,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               launchpad.pairFilterSearch = e.target.value;
             }}
           />
-          {/* <Popover
-            shouldBlockScroll
-            isOpen={isOpen}
-            onOpenChange={(isOpen) => {
-              isOpen ? onOpen() : onClose();
-            }}
-            placement="bottom"
-            classNames={{
-              base: [
-                // arrow color
-                "before:bg-default-200",
-              ],
-              content: [
-                "py-3 px-4 border border-default-200",
-                "bg-gradient-to-br from-white to-default-300",
-                "dark:from-default-100 dark:to-default-50",
-              ],
-            }}
-          >
-            <PopoverTrigger>
-              <NextButton className="inline-flex w-full sm:w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)] text-white text-center">
-                <span className="flex-1">
-                  {launchpad.projectsPage.filter.status.toUpperCase()}
-                </span>
-                <DropdownSvg></DropdownSvg>
-              </NextButton>
-            </PopoverTrigger>
-            <PopoverContent className="flex lg:w-[352px] flex-col items-center gap-4 border border-[color:var(--card-stroke,#F7931A)] [background:var(--card-color,#271A0C)] rounded-xl border-solid">
-              <Observer>
-                {() => (
-                  <div className="w-full">
-                    <SpinnerContainer
-                      isLoading={launchpad.projectsPage.isLoading}
-                    >
-                      <div className="max-h-[300px] grid grid-cols-3 gap-2">
-                        <NextButton
-                          onClick={() => {
-                            launchpad.pairFilterStatus = "all";
-                            onClose();
-                          }}
-                          className="w-[100px]"
-                        >
-                          All
-                        </NextButton>
-                        <NextButton
-                          onClick={() => {
-                            launchpad.pairFilterStatus = "success";
-                            onClose();
-                          }}
-                          className="w-[100px]"
-                        >
-                          Success
-                        </NextButton>
-                        <NextButton
-                          onClick={() => {
-                            launchpad.pairFilterStatus = "fail";
-                            onClose();
-                          }}
-                          className="w-[100px]"
-                        >
-                          Failed
-                        </NextButton>
-                        <NextButton
-                          onClick={() => {
-                            launchpad.pairFilterStatus = "processing";
-                            onClose();
-                          }}
-                          className="w-[100px]"
-                        >
-                          Processing
-                        </NextButton>
-                      </div>
-                    </SpinnerContainer>
-                  </div>
-                )}
-              </Observer>
-            </PopoverContent>
-          </Popover> */}
         </div>
       </div>
 
@@ -257,7 +188,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           <Tab key="all" title="All MEMEs">
             <Pagination
               paginationState={launchpad.projectsPage}
-              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+              render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
               classNames={{
                 itemsContainer:
                   "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
@@ -267,7 +198,13 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           <Tab key="my" title="My MEMEs">
             <Pagination
               paginationState={launchpad.myLaunches}
-              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+              render={(pair) => (
+                <LaunchCard
+                  pair={pair}
+                  action={<></>}
+                  className="flex w-full h-full flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative overflow-hidden"
+                />
+              )}
               classNames={{
                 itemsContainer:
                   "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
