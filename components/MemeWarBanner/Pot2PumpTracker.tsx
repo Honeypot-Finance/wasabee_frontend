@@ -66,7 +66,7 @@ export const Pot2PumpTracker = observer(() => {
 
     options: {
       title: {
-        text: "Meme War Tracker",
+        text: "Meme Token Tracker",
         align: "center",
         style: {
           color: "white",
@@ -234,9 +234,6 @@ export const Pot2PumpTracker = observer(() => {
         type: "image",
         opacity: 1,
         image: {
-          //   src: memewarStore.sortedMemewarParticipants.map((participant) => {
-          //     return participant.iconUrl || participant.pair?.logoUrl || "";
-          //   }),
           src: chartSeriesData.map((pair) => {
             return pair.logoUrl || "";
           }),
