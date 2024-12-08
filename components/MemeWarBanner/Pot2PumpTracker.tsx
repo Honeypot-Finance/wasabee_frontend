@@ -80,10 +80,22 @@ export const Pot2PumpTracker = observer(() => {
           enabled: false,
         },
         zoom: {
-          enabled: false,
+          enabled: true,
+          type: "xy",
+          allowMouseWheelZoom: true,
+          autoScaleYaxis: true,
         },
         toolbar: {
-          show: false,
+          show: true,
+          tools: {
+            download: false,
+            selection: false,
+            zoom: true,
+            zoomin: true,
+            zoomout: true,
+            pan: true,
+            reset: true,
+          },
         },
         events: {
           markerClick(e, chart, options) {
