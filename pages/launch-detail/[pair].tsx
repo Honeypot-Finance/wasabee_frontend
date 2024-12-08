@@ -667,7 +667,7 @@ const MemeView = observer(() => {
   const pair = useMemo(() => state.pair.value, [state.pair.value]);
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-4 md:space-y-8">
       <div className="px-4 md:px-8 xl:max-w-[1200px] mx-auto pb-20 relative pt-[70px] bg-[#202020] border-3 border-[#F2C34A] rounded-3xl overflow-hidden">
         <div className="bg-[url('/images/pumping/inline-border.png')] bg-top h-[70px] absolute top-0 left-0 w-full bg-contain"></div>
         {state.pair.value && (
@@ -836,6 +836,15 @@ const MemeView = observer(() => {
 
         <Tabs pair={pair} />
       </div>
+      <footer>
+        <Image
+          src="/images/pumping/toast-bear.png"
+          width={1000}
+          height={0}
+          className="w-full h-auto mt-auto"
+          alt="toast bear"
+        />
+      </footer>
     </div>
   );
 });
