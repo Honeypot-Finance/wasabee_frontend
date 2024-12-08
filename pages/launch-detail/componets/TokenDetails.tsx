@@ -18,12 +18,12 @@ const TokenDetails: React.FC<TokenDetailsProps> = ({
   endTimeDisplay,
 }) => {
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-4 *:margin">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-4 py-5 border border-[#F2C34A] rounded-2xl">
       <div className="flex flex-col items-center">
-        <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
+        <div className="flex gap-[4px] text-white/[0.78] text-[12.165px] font-bold leading-[normal]">
           Token Price
         </div>
-        <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
+        <div className="text-white text-xs font-medium leading-[normal] mt-[4px]">
           {price !== undefined ? (
             amountFormatted(price, {
               decimals: 0,
@@ -37,10 +37,10 @@ const TokenDetails: React.FC<TokenDetailsProps> = ({
       </div>
 
       <div className="flex flex-col items-center">
-        <div className="flex gap-[4px] text-white text-[12.165px] font-bold leading-[normal]">
+        <div className="flex gap-[4px] text-white/[0.78] text-[12.165px] font-bold leading-[normal]">
           Funds Raised
         </div>
-        <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
+        <div className="text-white text-xs font-medium leading-[normal] mt-[4px]">
           {depositedRaisedToken !== undefined ? (
             amountFormatted(depositedRaisedToken, {
               decimals: 0,
@@ -54,7 +54,7 @@ const TokenDetails: React.FC<TokenDetailsProps> = ({
       </div>
 
       <div className="flex flex-col items-center">
-        <div className="flex items-center gap-[4px] text-white text-xs font-bold leading-[normal]">
+        <div className="flex items-center gap-[4px] text-white/[0.78] text-xs font-bold leading-[normal]">
           <Image
             width={12}
             height={12}
@@ -63,7 +63,7 @@ const TokenDetails: React.FC<TokenDetailsProps> = ({
           />
           <span>Start Date</span>
         </div>
-        <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
+        <div className="text-white text-xs font-medium leading-[normal] mt-[4px]">
           {startTimeDisplay ? (
             startTimeDisplay !== "-" ? (
               <>
@@ -81,7 +81,7 @@ const TokenDetails: React.FC<TokenDetailsProps> = ({
       </div>
 
       <div className="flex flex-col items-center">
-        <div className="flex gap-1 text-white text-xs font-bold leading-[normal]">
+        <div className="flex gap-1 text-white/[0.78] text-xs font-bold leading-[normal]">
           <Image
             width={12}
             height={12}
@@ -90,7 +90,7 @@ const TokenDetails: React.FC<TokenDetailsProps> = ({
           />
           <span>End Date</span>
         </div>
-        <div className="text-[#FFCD4D] text-xs font-medium leading-[normal] mt-[4px]">
+        <div className="text-white text-xs font-medium leading-[normal] mt-[4px]">
           {endTimeDisplay ? (
             endTimeDisplay !== "-" ? (
               <>

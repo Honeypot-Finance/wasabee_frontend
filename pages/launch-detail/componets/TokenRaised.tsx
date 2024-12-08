@@ -33,13 +33,13 @@ const TokenRaised: React.FC<TokenRaisedProps> = ({
       : null;
 
   return (
-    <div className="flex flex-col gap-y-2">
+    <div className="flex flex-col gap-y-2.5">
       <div className="text-white md:text-base text-sm font-bold leading-[normal]">
         Token Raised
       </div>
-      <div className="text-[color:var(--Button-Gradient,var(--card-stroke,#F7931A))] flex items-center gap-x-1">
+      <div className="text-[#FFCD4D] flex items-center gap-x-1">
         {depositedAmount ? (
-          <span className="font-bold">${depositedAmount}</span>
+          <span className="font-bold text-lg">${depositedAmount}</span>
         ) : (
           <Skeleton className="rounded-lg h-6 w-24" />
         )}

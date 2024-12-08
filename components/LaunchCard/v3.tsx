@@ -709,13 +709,12 @@ const TrendingLaunchCard = observer(
           <div className="flex flex-col gap-2 justify-center items-center flex-grow-[1] basis-1">
             <div className="w-14 flex items-center justify-center rounded-lg bg-gold-primary aspect-square overflow-hidden">
               <Image
-                src={
-                  !!pair?.logoUrl ? pair.logoUrl : "/images/project_honey.png"
-                }
+                src={!!pair?.logoUrl ? pair.logoUrl : "/images/empty-logo.png"}
                 alt="honey"
                 width={100}
                 height={100}
-                className="object-cover w-full h-full"
+                objectFit="cover"
+                className="w-full h-full"
               ></Image>
             </div>
             <h4 className="text-white text-center text-[1rem] font-bold flex items-center">

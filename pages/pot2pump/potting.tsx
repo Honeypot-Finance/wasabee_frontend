@@ -60,7 +60,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <>
+    <div className="w-full grow">
       <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
         {mostSuccessProjects && mostSuccessProjects.length > 0 && (
           <div className="flex flex-col">
@@ -152,7 +152,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         </div>
 
         <div className="w-full relative">
-          <div className="py-2 sm:absolute right-0 top-0">
+          <div className="py-2 sm:py-0 sm:absolute right-0 top-0">
             <Button className="w-full">
               <Link
                 href="/launch-token?launchType=meme"
@@ -260,11 +260,11 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           src="/images/pumping/toast-bear.png"
           width={1000}
           height={0}
-          className="w-full h-auto"
+          className="w-full h-auto mt-auto"
           alt="toast bear"
         />
       </footer>
-    </>
+    </div>
   );
 });
 
