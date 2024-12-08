@@ -1,10 +1,9 @@
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { observer } from "mobx-react-lite";
-import { Button } from "@/components/button";
+import { Button } from "@/components/button/button-next";
 import Link from "next/link";
 import { HTMLAttributes } from "react";
 import { cn } from "@/lib/tailwindcss";
-import ProjectStatusDisplay from "../atoms/TokenStatusDisplay/TokenStatusDisplay";
 import Image from "next/image";
 import {
   OptionsDropdown,
@@ -18,9 +17,7 @@ import { AmountFormat } from "../AmountFormat";
 import { LaunchType as projectType } from "@/pages/launch-token";
 import Countdown from "react-countdown";
 import CardContianer from "../CardContianer/CardContianer";
-import { FaCrown } from "react-icons/fa";
 import BigNumber from "bignumber.js";
-import { Heart } from "lucide-react";
 
 type launchCardVariants = "list" | "detail" | "trending";
 
@@ -50,12 +47,9 @@ const TimeLineComponent = observer(
 
     return (
       <ComponentContainer className="shrink-0 flex items-start">
-        <h6 className="text-xs">End Time</h6>
+        <h6 className="text-xs opacity-60">End Time</h6>
         <div className="flex items-center gap-2 text-sm">
           <span className="font-bold">
-            {
-              //pair?.remainTime
-            }
             {pair?.endTime && (
               <Countdown
                 date={Number(pair?.endTime) * 1000}
@@ -485,8 +479,8 @@ const DetailLaunchCard = observer(
             />
           </div>
 
-          <div className="space-y-1.5 mt-4 text-black">
-            <span className="text-sm text-[#202020]/80 space-x-1">
+          <div className="space-y-1.5 mt-4 text-[#202020]">
+            <span className="text-sm opacity-70 space-x-1">
               <span>Progress</span>
               <span className="font-bold">
                 (
@@ -556,11 +550,11 @@ const DetailLaunchCard = observer(
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4 py-2 text-black">
+        <div className="grid grid-cols-2 gap-4 text-black">
           <div>
-            <p className="text-xs text-muted-foreground">Total Raised Token</p>
+            <p className="text-xs opacity-60">Total Raised Token</p>
             <p className="font-semibold">
-              <span className="font-bold">
+              <span>
                 {pair?.depositedRaisedToken && pair.raiseToken
                   ? "$" +
                     pair.depositedRaisedToken
@@ -573,9 +567,9 @@ const DetailLaunchCard = observer(
             </p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-muted-foreground">Participants Count</p>
+            <p className="text-xs opacity-60">Participants Count</p>
             <p className="font-semibold">
-              <span className="font-bold">
+              <span>
                 {pair?.participantsCount
                   ? pair.participantsCount.toFormat(0)
                   : "-"}
@@ -623,7 +617,7 @@ const TrendingLaunchCard = observer(
           }
         />
         <div className="text-[#202020]">
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start mt-4">
             <div>
               <h3 className="font-bold text-xl">{pair?.launchedToken?.name}</h3>
               <p className="text-sm text-muted-foreground text-[#202020]/[0.67]">
@@ -773,6 +767,7 @@ export const LaunchCardV3 = observer(
         className={cn("w-full", className)}
       >
         {(!type || type === "detail") && pair && (
+          // FIXME: height issue
           <DetailLaunchCard
             pair={pair}
             action={action}

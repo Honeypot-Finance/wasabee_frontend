@@ -58,8 +58,16 @@ body {
   @apply after:content-[''] after:h-[1px] after:bg-[rgba(255,255,255,0.1)] after:absolute after:bottom-[0] after:left-[0] after:w-full after:z-[100];
 }
 
+.next-tab {
+  @apply w-full;
+}
+
+.next-tab button {
+  @apply text-sm p-2;
+}
+
 .next-tab button[data-selected="true"] {
-  @apply border-[color:var(--e-18-a-20,rgba(225,138,32,0.40))] [background:var(--e-18-a-20,rgba(225,138,32,0.40))];
+  @apply border border-[#FFCD4D] bg-[#42280F] shadow-[1px_2px_0px_0px_#9B7D2F];
 }
 
 .next-tab button[data-selected="true"] > span {

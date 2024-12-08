@@ -1,17 +1,15 @@
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/button";
 import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
-import { LaunchCard } from "@/components/LaunchCard";
 import { Tab, Tabs } from "@nextui-org/react";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import { MemePairContract } from "@/services/contract/memepair-contract";
 import Pagination from "@/components/Pagination/Pagination";
 import Image from "next/image";
-import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
+import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 import { memewarStore } from "@/services/memewar";
 import { Pot2PumpTracker } from "@/components/MemeWarBanner/Pot2PumpTracker";
 import { LaunchCardV3 } from "@/components/LaunchCard/v3";
@@ -54,7 +52,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           id="filter"
           className="flex flex-col sm:flex-row items-center gap-2 my-4 sm:my-0"
         >
-          <WarppedNextInputSearchBar
+          <WrappedNextInputSearchBar
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
             }}
@@ -99,7 +97,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           <Tab key="my" title="My MEMEs">
             <Pagination
               paginationState={launchpad.myLaunches}
-              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+              render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
               classNames={{
                 itemsContainer:
                   "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
@@ -109,7 +107,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           <Tab key="participated-launch" title="Participated MEMEs">
             <Pagination
               paginationState={launchpad.participatedPairs}
-              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+              render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
               classNames={{
                 itemsContainer:
                   "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
