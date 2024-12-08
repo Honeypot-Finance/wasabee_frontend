@@ -26,16 +26,6 @@ type Pot2Pump = {
   raisedTokenReachingMinCap: boolean;
 };
 
-type Token = {
-  id: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  holderCount: string;
-  derivedMatic: string;
-  totalSupply: string;
-};
-
 type Pot2PumpListData = {
   pot2Pumps: Pot2Pump[];
 };
@@ -50,8 +40,8 @@ export type Pair = {
   endTime: string;
   status: string;
   participantsCount: string;
-  token0: Token;
-  token1: Token;
+  token0: SubgraphToken;
+  token1: SubgraphToken;
 };
 
 type PageInfo = {
