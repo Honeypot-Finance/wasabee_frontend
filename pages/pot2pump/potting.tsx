@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+<<<<<<< HEAD
 import { motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
@@ -16,6 +17,14 @@ import { MemePairContract } from "@/services/contract/memepair-contract";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
+=======
+import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
+import { Pot2PumpPottingService } from "@/services/launchpad/pot2pump/potting";
+
+const MemeLaunchPage: NextLayoutPage = observer(() => {
+  const [pottingProjects, setPottingProjects] =
+    useState<Pot2PumpPottingService>();
+>>>>>>> algebra-full-implement
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
     MemePairContract[] | null
   >(null);
@@ -38,25 +47,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     if (!wallet.isInit) {
       return;
     }
-    launchpad.setCurrentLaunchpadType("meme");
-    launchpad.showNotValidatedPairs = true;
-    launchpad.myLaunches.reloadPage();
-    launchpad.projectsPage.updateFilter({
-      status: "processing",
-    });
-
-    // launchpad.projectsPage.reloadPage();
-    // launchpad.participatedPairs.reloadPage();
-
-    //loading most success projects
-    const startMostSuccessfulFtoPolling = () => {
-      launchpad.trendingMEMEs().then((data) => {
-        //if data is same as previous data then no need to update
-        setMostSuccessProjects(data);
-      });
-    };
-
-    startMostSuccessfulFtoPolling();
+    const newProjects = new Pot2PumpPottingService();
+    setPottingProjects(newProjects);
+    newProjects.projectsPage.reloadPage();
   }, [wallet.isInit]);
 
   return (
@@ -255,6 +248,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           </Tabs>
         </div>
       </div>
+<<<<<<< HEAD
       <footer>
         <Image
           src="/images/pumping/toast-bear.png"
@@ -264,6 +258,81 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           alt="toast bear"
         />
       </footer>
+=======
+
+      <div className="w-full">
+        <Tabs
+          // destroyInactiveTabPanel={false}
+          aria-label="Options"
+          classNames={{
+            tabList: "bg-transparent",
+            tab: "flex flex-col items-center gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
+          }}
+          className="next-tab"
+          onSelectionChange={(key) => {
+            launchpad.setCurrentLaunchpadType("meme");
+            if (key === "all") {
+              launchpad.projectsPage.setIsInit(false);
+              launchpad.pairFilterStatus = defaultPairFilters.all.status;
+            } else if (key === "my") {
+              launchpad.myLaunches.setIsInit(false);
+              launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
+            } else if (key === "participated-launch") {
+              launchpad.participatedPairs.setIsInit(false);
+              launchpad.pairFilterStatus =
+                defaultPairFilters.participatedPairs.status;
+            }
+          }}
+        >
+          <Tab key="all" title="All MEMEs">
+            {pottingProjects && (
+              <Pagination
+                paginationState={pottingProjects.projectsPage}
+                render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+                classNames={{
+                  itemsContainer:
+                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
+                }}
+              />
+            )}
+          </Tab>
+          <Tab key="my" title="My MEMEs" href="/profile" />
+          <Tab
+            key="participated-launch"
+            title="Participated MEMEs"
+            href="/profile"
+          />
+          {/* <Tab href="/launch" title="To Fto projects->" /> */}
+          <Tab
+            href="https://bartio.bonds.yeetit.xyz/"
+            target="_blank"
+            title={
+              <div className="flex items-center text-yellow-400">
+                <Image
+                  className="size-4"
+                  src="/images/partners/yeet_icon.png"
+                  alt=""
+                  width={100}
+                  height={100}
+                />
+                <span className="flex items-center justify-center gap-2">
+                  Try Yeet Bond <FaExternalLinkAlt className="inline-block" />
+                </span>
+              </div>
+            }
+          />
+          <Tab
+            title={
+              <Link href="/memewar" className="flex items-center text-rose-600">
+                <span className="flex items-center justify-center gap-2">
+                  Meme War ⚔️
+                </span>
+              </Link>
+            }
+          />
+        </Tabs>
+      </div>
+>>>>>>> algebra-full-implement
     </div>
   );
 });

@@ -210,7 +210,7 @@ const ProcessingAction = observer(
 
 const Action = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    switch (pair.ftoState) {
+    switch (pair.state) {
       case 0:
         return <SuccessAction pair={pair}></SuccessAction>;
       case 1:

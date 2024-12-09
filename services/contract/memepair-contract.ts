@@ -26,7 +26,6 @@ export class MemePairContract implements BaseLaunchContract {
   depositedLaunchedTokenWithoutDecimals: BigNumber | null = null;
   endTime: string = "";
   startTime: string = "";
-  ftoState: number = 3;
   launchedTokenProvider: string = "";
   projectName = "";
   description = "";
@@ -124,7 +123,7 @@ export class MemePairContract implements BaseLaunchContract {
   }
 
   get price() {
-    if (this.ftoState === 0) {
+    if (this.state === 0) {
       return this.priceAfterSuccess;
     } else {
       return this.priceBeforeSuccess;
@@ -132,7 +131,7 @@ export class MemePairContract implements BaseLaunchContract {
   }
 
   get priceAfterSuccess(): BigNumber {
-    if (!(this.ftoState === 0)) {
+    if (!(this.state === 0)) {
       return new BigNumber(0);
     }
 
@@ -253,7 +252,7 @@ export class MemePairContract implements BaseLaunchContract {
   }
 
   get ftoStatusDisplay() {
-    switch (this.ftoState) {
+    switch (this.state) {
       case 0:
         return {
           status: "success",
@@ -406,7 +405,6 @@ export class MemePairContract implements BaseLaunchContract {
       return;
     });
 
-    this.getState();
     this.getCanRefund();
 
     this.isInit = true;
@@ -508,7 +506,7 @@ export class MemePairContract implements BaseLaunchContract {
       !this.userParticipated ||
       !this.depositedRaisedToken ||
       !this.raisedTokenMinCap ||
-      (this.ftoState !== 1 && this.ftoState !== 2)
+      (this.state !== 1 && this.state !== 2)
     ) {
       this.canRefund = false;
       return;
@@ -533,30 +531,24 @@ export class MemePairContract implements BaseLaunchContract {
     this.userParticipated = res > 0;
   }
 
-  getState() {
+  get state(): number {
     if (
       !this.depositedRaisedToken ||
       !this.endTime ||
       !this.raisedTokenMinCap
     ) {
-      console.error(
-        this.depositedRaisedToken,
-        this.endTime,
-        this.raisedTokenMinCap
-      );
-      console.error("missing data for getState");
-      return;
+      return 3;
     }
 
     if (
       this.depositedRaisedToken.toNumber() >=
       this.raisedTokenMinCap.div(Math.pow(10, 18)).toNumber()
     ) {
-      this.ftoState = 0;
+      return 0;
     } else if (dayjs.unix(Number(this.endTime)).isBefore(dayjs())) {
-      this.ftoState = 1;
+      return 1;
     } else {
-      this.ftoState = 3;
+      return 3;
     }
   }
 
@@ -586,7 +578,7 @@ export class MemePairContract implements BaseLaunchContract {
 
   async claimVaultTokens() {
     //only work when state is success
-    if (this.ftoState !== 0) {
+    if (this.state !== 0) {
       return;
     }
     //get lp token, lp token is going to be aquabera vault address

@@ -24,7 +24,7 @@ export class FtoPairContract implements BaseLaunchContract {
   depositedLaunchedTokenWithoutDecimals: BigNumber | null = null;
   endTime: string = "";
   startTime: string = "";
-  ftoState: number = 3;
+  state: number = 3;
   launchedTokenProvider: string = "";
   userDepositedRaisedToken: BigNumber | null = null;
   projectName = "";
@@ -120,7 +120,7 @@ export class FtoPairContract implements BaseLaunchContract {
   }
 
   get price() {
-    if (this.ftoState === 0) {
+    if (this.state === 0) {
       return this.launchedToken?.derivedUSD
         ? new BigNumber(this.launchedToken.derivedUSD)
         : new BigNumber(0);
@@ -262,7 +262,7 @@ export class FtoPairContract implements BaseLaunchContract {
   }
 
   get ftoStatusDisplay() {
-    switch (this.ftoState) {
+    switch (this.state) {
       case 0:
         return {
           status: "success",
@@ -490,10 +490,10 @@ export class FtoPairContract implements BaseLaunchContract {
 
   async getFTOState(state?: number) {
     if (state) {
-      this.ftoState = state;
+      this.state = state;
     } else {
       const res = await this.contract.read.FTOState();
-      this.ftoState = res;
+      this.state = res;
     }
   }
   async getLaunchedTokenProvider() {

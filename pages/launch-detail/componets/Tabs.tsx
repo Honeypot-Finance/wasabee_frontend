@@ -50,7 +50,7 @@ const Tabs = observer(
               {item.label}
             </button>
           ))}
-          {pair?.ftoState === 0 &&
+          {pair?.state === 0 &&
             successMenuItems.map((item) => (
               <button
                 key={item.key}
@@ -108,7 +108,7 @@ const Tabs = observer(
               ))}
               {
                 // Show voting space only when the status is success
-                pair?.ftoState === 0 &&
+                pair?.state === 0 &&
                   successMenuItems.map((item) => (
                     <button
                       key={item.key}

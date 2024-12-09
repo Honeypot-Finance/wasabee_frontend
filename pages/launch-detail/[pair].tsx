@@ -446,7 +446,7 @@ const FtoView = observer(() => {
           <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
             <CountdownTimer
               endTime={pair?.endTime}
-              ftoState={state.pair.value?.ftoState}
+              ftoState={state.pair.value?.state}
               endTimeDisplay={state.pair.value?.endTimeDisplay}
             />
             {/* TODO: update style */}
@@ -704,7 +704,7 @@ const MemeView = observer(() => {
             </div>
             <CountdownTimer
               endTime={pair?.endTime}
-              ftoState={state.pair.value?.ftoState}
+              ftoState={state.pair.value?.state}
               endTimeDisplay={state.pair.value?.endTimeDisplay}
             />
             <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">

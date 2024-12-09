@@ -57,7 +57,7 @@ export const Pot2PumpTracker = observer(() => {
             y:
               Number(pair.token0.derivedMatic) *
               (Number(pair.token0.totalSupply) /
-                Math.pow(10, pair.token0.decimals)),
+                Math.pow(10, Number(pair.token0.decimals))),
             meta: { pair },
           },
         ],
@@ -80,10 +80,22 @@ export const Pot2PumpTracker = observer(() => {
           enabled: false,
         },
         zoom: {
-          enabled: false,
+          enabled: true,
+          type: "xy",
+          allowMouseWheelZoom: true,
+          autoScaleYaxis: true,
         },
         toolbar: {
-          show: false,
+          show: true,
+          tools: {
+            download: false,
+            selection: false,
+            zoom: true,
+            zoomin: true,
+            zoomout: true,
+            pan: true,
+            reset: true,
+          },
         },
         events: {
           markerClick(e, chart, options) {
@@ -209,7 +221,7 @@ export const Pot2PumpTracker = observer(() => {
                 <p>Market Cap: ${toCompactLocaleString(
                   Number(target.token0.derivedMatic) *
                     (Number(target.token0.totalSupply) /
-                      Math.pow(10, target.token0.decimals)),
+                      Math.pow(10, Number(target.token0.decimals))),
                   {
                     maximumFractionDigits: 3,
                   }

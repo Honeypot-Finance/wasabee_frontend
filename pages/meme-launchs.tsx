@@ -23,7 +23,7 @@ import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import { MemePairContract } from "@/services/contract/memepair-contract";
-import Pagination from "@/components/Pagination/Pagination";
+import Pagination from "@/components/Pagination/OldPagination";
 import Image from "next/image";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
