@@ -30,7 +30,7 @@ import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import MemeWarBanner from "@/components/MemeWarBanner/MemeWarBanner";
 import HoneyStickSvg from "@/components/svg/HoneyStick";
 import { set } from "lodash";
-import Pagination from "@/components/Pagination/Pagination";
+import Pagination from "@/components/Pagination/OldPagination";
 import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
 const LaunchPage: NextLayoutPage = observer(() => {

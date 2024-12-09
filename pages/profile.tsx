@@ -1,12 +1,14 @@
 import { LaunchCard } from "@/components/LaunchCard";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import Pagination from "@/components/Pagination/Pagination";
+import OldPagination from "@/components/Pagination/OldPagination";
 import PoolLiquidityCard from "@/components/PoolLiquidityCard/PoolLiquidityCard";
 import TokenBalanceCard from "@/components/TokenBalanceCard/TokenBalanceCard";
 import { Copy } from "@/components/copy";
 import { defaultContainerVariants, itemSlideVariants } from "@/lib/animation";
 import { truncate } from "@/lib/format";
 import launchpad, { defaultPairFilters } from "@/services/launchpad";
+import { Pot2PumpService } from "@/services/launchpad/pot2pump";
 import { liquidity } from "@/services/liquidity";
 import { wallet } from "@/services/wallet";
 import {
@@ -20,10 +22,21 @@ import { motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
 const MyLaunchTab = observer(() => {
+  const [myProjects, setMyProjects] = useState<Pot2PumpService>();
+
+  useEffect(() => {
+    if (!wallet.isInit) {
+      return;
+    }
+    const newPumpingProjects = new Pot2PumpService();
+    setMyProjects(newPumpingProjects);
+    newPumpingProjects.myLaunches.reloadPage();
+  }, [wallet.isInit]);
+
   return (
     <Card className="next-card">
       <CardBody>
@@ -57,23 +70,36 @@ const MyLaunchTab = observer(() => {
             MEME
           </NextButton>
         </div>
-        <Pagination
-          paginationState={launchpad.myLaunches}
-          render={(project) => (
-            <LaunchCard key={project.address} pair={project} action={<></>} />
-          )}
-          classNames={{
-            base: "",
-            itemsContainer: "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6",
-            item: "",
-          }}
-        />
+        {myProjects && (
+          <Pagination
+            paginationState={myProjects.myLaunches}
+            render={(project) => (
+              <LaunchCard key={project.address} pair={project} action={<></>} />
+            )}
+            classNames={{
+              base: "",
+              itemsContainer: "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6",
+              item: "",
+            }}
+          />
+        )}
       </CardBody>
     </Card>
   );
 });
 
 const ParticipatedLaunchTab = observer(() => {
+  const [myProjects, setMyProjects] = useState<Pot2PumpService>();
+
+  useEffect(() => {
+    if (!wallet.isInit) {
+      return;
+    }
+    const newPumpingProjects = new Pot2PumpService();
+    setMyProjects(newPumpingProjects);
+    newPumpingProjects.participatedPairs.reloadPage();
+  }, [wallet.isInit]);
+
   return (
     <Card className="next-card">
       <CardBody>
@@ -106,18 +132,20 @@ const ParticipatedLaunchTab = observer(() => {
           >
             MEME
           </NextButton>
-        </div>
-        <Pagination
-          paginationState={launchpad.participatedPairs}
-          render={(project) => (
-            <LaunchCard key={project.address} pair={project} action={<></>} />
-          )}
-          classNames={{
-            base: "",
-            itemsContainer: "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6",
-            item: "",
-          }}
-        />
+        </div>{" "}
+        {myProjects && (
+          <Pagination
+            paginationState={myProjects.participatedPairs}
+            render={(project) => (
+              <LaunchCard key={project.address} pair={project} action={<></>} />
+            )}
+            classNames={{
+              base: "",
+              itemsContainer: "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6",
+              item: "",
+            }}
+          />
+        )}
       </CardBody>
     </Card>
   );
@@ -155,7 +183,7 @@ const PoolsTab = observer(() => {
             </Link>
           </div>
         </div>
-        <Pagination
+        <OldPagination
           paginationState={liquidity.myPairPage}
           render={(pair) => (
             <PoolLiquidityCard

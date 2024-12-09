@@ -59,7 +59,7 @@ const TimeLineComponent = observer(
               <Countdown
                 date={Number(pair?.endTime) * 1000}
                 renderer={({ days, hours, minutes, seconds, completed }) => {
-                  if (completed || pair.ftoState !== 3) {
+                  if (completed || pair.state !== 3) {
                     return endedDisplay;
                   } else {
                     return (
@@ -263,7 +263,7 @@ const BuyToken = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
       <>
-        {pair.ftoState === 0 && (
+        {pair.state === 0 && (
           <Link
             href={`/swap?inputCurrency=${pair.raiseToken?.address}&outputCurrency=${pair.launchedToken?.address}`}
           >
@@ -279,7 +279,7 @@ const AddLP = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     return (
       <>
-        {pair.ftoState === 0 && (
+        {pair.state === 0 && (
           <Link
             href={`/pool?inputCurrency=${pair.launchedToken?.address}&outputCurrency=${pair.raiseToken?.address}`}
           >
@@ -294,11 +294,11 @@ const AddLP = observer(
 //-------------------------------------Launch Card-------------------------------------//
 const MemeProjectDetails = observer(
   ({ pair, type }: { pair: MemePairContract; type: launchCardVariants }) => {
-    console.log("pair.ftoState", pair.ftoState);
+    console.log("pair.ftoState", pair.state);
     return (
       <>
         <TimeLineComponent pair={pair} />
-        {pair.ftoState === 3 && (
+        {pair.state === 3 && (
           <>
             <LaunchProgress pair={pair} />
             <TotalRaised pair={pair} />
@@ -317,12 +317,12 @@ const FtoProjectDetails = observer(
         <TimeLineComponent pair={pair} />
         <TotalLaunched pair={pair} />
         <TotalRaised pair={pair} />
-        {pair.ftoState === 3 && (
+        {pair.state === 3 && (
           <>
             <UserDeposited pair={pair} />
           </>
         )}
-        {pair.ftoState === 0 && (
+        {pair.state === 0 && (
           <>
             <TokenPrice pair={pair} />
           </>

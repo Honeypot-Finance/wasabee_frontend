@@ -1,14 +1,17 @@
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 import { Button } from "../button";
 import { motion } from "framer-motion";
-import { IndexerPaginationState } from "@/services/utils";
+import {
+  IndexerPaginationState,
+  OldIndexerPaginationState,
+} from "@/services/utils";
 import { observer } from "mobx-react-lite";
 import HoneyStickSvg from "../svg/HoneyStick";
 import { cn } from "@nextui-org/react";
 import { DataContainer, DataContainerProps } from "../DataContainer";
 
 type PaginationProps<FilterT extends Record<string, any>, ItemT> = {
-  paginationState: IndexerPaginationState<FilterT, ItemT>;
+  paginationState: OldIndexerPaginationState<FilterT, ItemT>;
   render: (item: ItemT) => React.ReactNode;
   classNames?: {
     base?: string;
@@ -48,7 +51,7 @@ export const Pagination = observer(
                 ))}
               </motion.div>
               <div className="flex justify-around my-5">
-                {props.paginationState.filter.hasNextPage && (
+                {props.paginationState.pageInfo.hasNextPage && (
                   <Button
                     onClick={() => {
                       props.paginationState.loadMore();

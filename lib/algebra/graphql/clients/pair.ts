@@ -1,13 +1,20 @@
 import { gql } from "@apollo/client";
 import { infoClient } from ".";
-import { launchpadType, PairFilter } from "@/services/launchpad";
+import {
+  launchpadType,
+  PairFilter,
+  SubgraphProjectFilter,
+} from "@/services/launchpad";
 import { PageRequest } from "@/services/indexer/indexerTypes";
+import { MemePairContract } from "@/services/contract/memepair-contract";
+import BigNumber from "bignumber.js";
+import { Token } from "@/services/contract/token";
 
 type SubgraphToken = {
   id: string;
   name: string;
   symbol: string;
-  decimals: string | number;
+  decimals: string;
   holderCount: string;
   derivedMatic: string;
   totalSupply: string;
@@ -24,6 +31,8 @@ type Pot2Pump = {
   state: string;
   participantsCount: string;
   raisedTokenReachingMinCap: boolean;
+  raisedTokenMinCap: string;
+  creator: string;
 };
 
 type Pot2PumpListData = {
@@ -51,6 +60,12 @@ type PageInfo = {
   endCursor: string;
 };
 
+export type subgraphPageRequest = {
+  currentPage: number;
+  limit: number;
+  hasNextPage: boolean;
+};
+
 type PairsListResponse = {
   status: string;
   message: string;
@@ -65,6 +80,15 @@ type MemetrackerListResponse = {
   message: string;
   data: {
     pairs: Pair[];
+  };
+};
+
+type Pot2PumpListResponse = {
+  status: string;
+  message: string;
+  data: {
+    pairs: MemePairContract[];
+    filterUpdates: Partial<SubgraphProjectFilter>;
   };
 };
 
@@ -93,6 +117,8 @@ const pop2PumpQuery = `
   state
   participantsCount
   raisedTokenReachingMinCap
+  raisedTokenMinCap
+  creator
 `;
 
 export async function fetchPairsList({
@@ -155,7 +181,7 @@ export async function fetchPairsList({
         id: pot2Pump.raisedToken.id,
         name: pot2Pump.raisedToken.name,
         symbol: pot2Pump.raisedToken.symbol,
-        decimals: parseInt(pot2Pump.raisedToken.decimals.toString()),
+        decimals: pot2Pump.raisedToken.decimals,
         holderCount: pot2Pump.raisedToken.holderCount,
         derivedMatic: pot2Pump.raisedToken.derivedMatic,
         totalSupply: pot2Pump.raisedToken.totalSupply,
@@ -164,7 +190,7 @@ export async function fetchPairsList({
         id: pot2Pump.launchToken.id,
         name: pot2Pump.launchToken.name,
         symbol: pot2Pump.launchToken.symbol,
-        decimals: parseInt(pot2Pump.launchToken.decimals.toString()),
+        decimals: pot2Pump.launchToken.decimals,
         holderCount: pot2Pump.launchToken.holderCount,
         derivedMatic: pot2Pump.launchToken.derivedMatic,
         totalSupply: pot2Pump.launchToken.totalSupply,
@@ -230,7 +256,7 @@ export async function fetchMemetrackerList({
         id: pot2Pump.launchToken.id,
         name: pot2Pump.launchToken.name,
         symbol: pot2Pump.launchToken.symbol,
-        decimals: parseInt(pot2Pump.launchToken.decimals.toString()),
+        decimals: pot2Pump.launchToken.decimals,
         holderCount: pot2Pump.launchToken.holderCount,
         derivedMatic: pot2Pump.launchToken.derivedMatic,
         totalSupply: pot2Pump.launchToken.totalSupply,
@@ -239,7 +265,7 @@ export async function fetchMemetrackerList({
         id: pot2Pump.raisedToken.id,
         name: pot2Pump.raisedToken.name,
         symbol: pot2Pump.raisedToken.symbol,
-        decimals: parseInt(pot2Pump.raisedToken.decimals.toString()),
+        decimals: pot2Pump.raisedToken.decimals,
         holderCount: pot2Pump.raisedToken.holderCount,
         derivedMatic: pot2Pump.raisedToken.derivedMatic,
         totalSupply: pot2Pump.raisedToken.totalSupply,
@@ -251,6 +277,125 @@ export async function fetchMemetrackerList({
       message: "Success",
       data: {
         pairs,
+      },
+    };
+  }
+
+  return transformPairsListData(data);
+}
+
+export async function fetchPot2PumpList({
+  filter,
+}: {
+  chainId: string;
+  filter: SubgraphProjectFilter;
+}): Promise<Pot2PumpListResponse> {
+  let whereCondition: string[] = [];
+
+  if (filter.status === "success") {
+    whereCondition.push(` raisedTokenReachingMinCap: true `);
+  } else if (filter.status === "fail") {
+    whereCondition.push(
+      ` raisedTokenReachingMinCap: false, endTime_lt: ${Math.floor(Date.now() / 1000)} `
+    );
+  } else if (filter.status === "processing") {
+    whereCondition.push(
+      ` raisedTokenReachingMinCap: false, endTime_gte: ${Math.floor(Date.now() / 1000)} `
+    );
+  }
+
+  if (filter.creator) {
+    whereCondition.push(` creator: "${filter.creator}" `);
+  }
+
+  if (filter.participant) {
+    whereCondition.push(` participants_:{account:"${filter.participant}"}`);
+  }
+
+  const queryParts = [
+    filter.limit ? `first: ${filter.limit}` : "",
+    filter?.currentPage && filter.limit
+      ? `skip: ${filter?.currentPage * filter.limit}`
+      : "",
+    filter.orderBy ? `orderBy: ${filter.orderBy}` : "",
+    filter.orderDirection ? `orderDirection: ${filter.orderDirection}` : "",
+    whereCondition.length > 0
+      ? `where:{ ${whereCondition
+          .map((condition) => `${condition}`)
+          .join(",\n")}}`
+      : "",
+  ].filter(Boolean);
+
+  const query = `
+    query PairsList {
+      pot2Pumps(
+        ${queryParts.join(",\n")}
+      ) {
+        ${pop2PumpQuery}
+      }
+    }
+  `;
+
+  const { data } = await infoClient.query<Pot2PumpListData>({
+    query: gql(query),
+  });
+
+  function transformPairsListData(
+    data: Pot2PumpListData
+  ): Pot2PumpListResponse {
+    const pairs = data.pot2Pumps.map((pot2Pump) => {
+      const memePair = new MemePairContract({
+        address: pot2Pump.id,
+        launchedToken: new Token({
+          address: pot2Pump.launchToken.id,
+          name: pot2Pump.launchToken.name,
+          symbol: pot2Pump.launchToken.symbol,
+          decimals: Number(pot2Pump.launchToken.decimals),
+          holderCount: pot2Pump.launchToken.holderCount,
+          derivedETH: pot2Pump.launchToken.derivedMatic,
+          totalSupplyWithoutDecimals: BigNumber(
+            pot2Pump.launchToken.totalSupply
+          ),
+        }),
+        raiseToken: new Token({
+          address: pot2Pump.raisedToken.id,
+          name: pot2Pump.raisedToken.name,
+          symbol: pot2Pump.raisedToken.symbol,
+          decimals: Number(pot2Pump.raisedToken.decimals),
+          holderCount: pot2Pump.raisedToken.holderCount,
+          derivedETH: pot2Pump.raisedToken.derivedMatic,
+          totalSupplyWithoutDecimals: BigNumber(
+            pot2Pump.raisedToken.totalSupply
+          ),
+        }),
+        depositedRaisedTokenWithoutDecimals: BigNumber(
+          pot2Pump.DepositRaisedToken
+        ),
+        depositedLaunchedTokenWithoutDecimals: BigNumber(
+          pot2Pump.DepositLaunchToken
+        ),
+        startTime: pot2Pump.createdAt,
+        endTime: pot2Pump.endTime,
+        //state: pot2Pump.state,
+        participantsCount: new BigNumber(pot2Pump.participantsCount),
+        raisedTokenMinCap: BigNumber(pot2Pump.raisedTokenMinCap),
+        provider: pot2Pump.creator,
+      });
+
+      memePair.getProjectInfo();
+
+      return memePair;
+    });
+
+    return {
+      status: "success",
+      message: "Success",
+      data: {
+        pairs,
+        filterUpdates: {
+          currentPage: filter.currentPage + 1,
+          hasNextPage: pairs.length === filter.limit,
+        },
       },
     };
   }

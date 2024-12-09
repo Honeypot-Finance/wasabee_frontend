@@ -13,7 +13,7 @@ export interface BaseLaunchContract extends BaseContract {
   depositedLaunchedTokenWithoutDecimals: BigNumber | null;
   endTime: string;
   startTime: string;
-  ftoState: number;
+  state: number;
   launchedTokenProvider: string;
   projectName: string;
   description: string;

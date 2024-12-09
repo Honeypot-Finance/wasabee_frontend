@@ -9,6 +9,7 @@ import { makeAutoObservable, reaction, toJS, when } from "mobx";
 import {
   AsyncState,
   IndexerPaginationState,
+  OldIndexerPaginationState,
   StorageState,
   ValueState,
 } from "./utils";
@@ -18,7 +19,7 @@ import { PageRequest, PairFilter } from "./indexer/indexerTypes";
 import { Address, zeroAddress } from "viem";
 
 class Liquidity {
-  pairPage = new IndexerPaginationState<PairFilter, PairContract>({
+  pairPage = new OldIndexerPaginationState<PairFilter, PairContract>({
     LoadNextPageFunction: async (
       filter: PairFilter,
       pageRequest: PageRequest
@@ -88,7 +89,7 @@ class Liquidity {
     },
   });
 
-  myPairPage = new IndexerPaginationState<PairFilter, PairContract>({
+  myPairPage = new OldIndexerPaginationState<PairFilter, PairContract>({
     LoadNextPageFunction: async (filter, pageRequest: PageRequest) => {
       const pairs = await trpcClient.indexerFeedRouter.getHoldingsPairs.query({
         walletAddress: wallet.account,

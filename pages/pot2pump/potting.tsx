@@ -26,9 +26,11 @@ import { MemePairContract } from "@/services/contract/memepair-contract";
 import Pagination from "@/components/Pagination/Pagination";
 import Image from "next/image";
 import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
+import { Pot2PumpPottingService } from "@/services/launchpad/pot2pump/potting";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [pottingProjects, setPottingProjects] =
+    useState<Pot2PumpPottingService>();
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
     MemePairContract[] | null
   >(null);
@@ -51,25 +53,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     if (!wallet.isInit) {
       return;
     }
-    launchpad.setCurrentLaunchpadType("meme");
-    launchpad.showNotValidatedPairs = true;
-    launchpad.myLaunches.reloadPage();
-    launchpad.projectsPage.updateFilter({
-      status: "processing",
-    });
-
-    // launchpad.projectsPage.reloadPage();
-    // launchpad.participatedPairs.reloadPage();
-
-    //loading most success projects
-    const startMostSuccessfulFtoPolling = () => {
-      launchpad.trendingMEMEs().then((data) => {
-        //if data is same as previous data then no need to update
-        setMostSuccessProjects(data);
-      });
-    };
-
-    startMostSuccessfulFtoPolling();
+    const newProjects = new Pot2PumpPottingService();
+    setPottingProjects(newProjects);
+    newProjects.projectsPage.reloadPage();
   }, [wallet.isInit]);
 
   return (
@@ -255,35 +241,23 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           }}
         >
           <Tab key="all" title="All MEMEs">
-            <Pagination
-              paginationState={launchpad.projectsPage}
-              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
-              classNames={{
-                itemsContainer:
-                  "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-              }}
-            />
+            {pottingProjects && (
+              <Pagination
+                paginationState={pottingProjects.projectsPage}
+                render={(pair) => <LaunchCard pair={pair} action={<></>} />}
+                classNames={{
+                  itemsContainer:
+                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
+                }}
+              />
+            )}
           </Tab>
-          <Tab key="my" title="My MEMEs">
-            <Pagination
-              paginationState={launchpad.myLaunches}
-              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
-              classNames={{
-                itemsContainer:
-                  "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-              }}
-            />
-          </Tab>
-          <Tab key="participated-launch" title="Participated MEMEs">
-            <Pagination
-              paginationState={launchpad.participatedPairs}
-              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
-              classNames={{
-                itemsContainer:
-                  "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-              }}
-            />
-          </Tab>
+          <Tab key="my" title="My MEMEs" href="/profile" />
+          <Tab
+            key="participated-launch"
+            title="Participated MEMEs"
+            href="/profile"
+          />
           {/* <Tab href="/launch" title="To Fto projects->" /> */}
           <Tab
             href="https://bartio.bonds.yeetit.xyz/"
