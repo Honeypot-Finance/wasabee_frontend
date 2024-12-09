@@ -24,6 +24,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import { LaunchCardV3 } from "@/components/LaunchCard/v3";
 
 const MyLaunchTab = observer(() => {
   const [myProjects, setMyProjects] = useState<Pot2PumpService>();
@@ -74,7 +75,11 @@ const MyLaunchTab = observer(() => {
           <Pagination
             paginationState={myProjects.myLaunches}
             render={(project) => (
-              <LaunchCard key={project.address} pair={project} action={<></>} />
+              <LaunchCardV3
+                key={project.address}
+                pair={project}
+                action={<></>}
+              />
             )}
             classNames={{
               base: "",
@@ -137,7 +142,11 @@ const ParticipatedLaunchTab = observer(() => {
           <Pagination
             paginationState={myProjects.participatedPairs}
             render={(project) => (
-              <LaunchCard key={project.address} pair={project} action={<></>} />
+              <LaunchCardV3
+                key={project.address}
+                pair={project}
+                action={<></>}
+              />
             )}
             classNames={{
               base: "",

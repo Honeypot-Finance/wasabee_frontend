@@ -63,11 +63,15 @@ const SaleProgress: React.FC<SaleProgressProps> = ({
           .toNumber();
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <div className="text-white text-sm font-bold leading-[normal]">
         Sale progress
       </div>
-      <ProgressBar label={progressLabel} value={progressValue} />
+      <ProgressBar
+        label={progressLabel}
+        value={progressValue}
+        trackColor="bg-[#9D7C28]"
+      />
       <div className="flex items-center text-[#FFCD4D] gap-x-1">
         {depositedAmount ? (
           <span className="font-bold">{depositedAmount}</span>

@@ -6,6 +6,7 @@ import {
   SubgraphProjectFilter,
 } from "@/services/launchpad";
 import { PageRequest } from "@/services/indexer/indexerTypes";
+import dayjs from "dayjs";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import BigNumber from "bignumber.js";
 import { Token } from "@/services/contract/token";
@@ -125,19 +126,17 @@ export async function fetchPairsList({
   filter,
   pageRequest,
 }: {
-  chainId: string;
   filter: PairFilter;
-  pageRequest: PageRequest;
-  projectType: launchpadType;
+  pageRequest?: PageRequest;
 }): Promise<PairsListResponse> {
   let whereCondition = "";
 
   if (filter.status === "success") {
     whereCondition = `{ raisedTokenReachingMinCap: true }`;
   } else if (filter.status === "fail") {
-    whereCondition = `{ raisedTokenReachingMinCap: false, endTime_lt: ${Math.floor(Date.now() / 1000)} }`;
+    whereCondition = `{ raisedTokenReachingMinCap: false, endTime_lte: ${dayjs().unix()} }`;
   } else if (filter.status === "processing") {
-    whereCondition = `{ raisedTokenReachingMinCap: false, endTime_gte: ${Math.floor(Date.now() / 1000)} }`;
+    whereCondition = `{ raisedTokenReachingMinCap: false, endTime_gt: ${dayjs().unix()} }`;
   }
 
   const queryParts = [
@@ -145,8 +144,8 @@ export async function fetchPairsList({
     pageRequest?.pageNum && filter.limit
       ? `skip: ${(pageRequest?.pageNum - 1) * filter.limit}`
       : "",
-    pageRequest.orderBy ? `orderBy: ${pageRequest.orderBy}` : "",
-    pageRequest.orderDirection
+    pageRequest?.orderBy ? `orderBy: ${pageRequest?.orderBy}` : "",
+    pageRequest?.orderDirection
       ? `orderDirection: ${pageRequest.orderDirection}`
       : "",
     whereCondition ? `where: ${whereCondition}` : "",
@@ -305,11 +304,13 @@ export async function fetchPot2PumpList({
   }
 
   if (filter.creator) {
-    whereCondition.push(` creator: "${filter.creator}" `);
+    whereCondition.push(` creator: "${filter.creator.toLowerCase()}" `);
   }
 
   if (filter.participant) {
-    whereCondition.push(` participants_:{account:"${filter.participant}"}`);
+    whereCondition.push(
+      ` participants_:{account:"${filter.participant.toLowerCase()}"}`
+    );
   }
 
   const queryParts = [
@@ -335,6 +336,8 @@ export async function fetchPot2PumpList({
       }
     }
   `;
+
+  console.log(query);
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),

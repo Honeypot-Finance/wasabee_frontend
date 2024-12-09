@@ -1,13 +1,13 @@
 import { cn, Input, InputProps } from "@nextui-org/react";
 import { IoSearchOutline } from "react-icons/io5";
 
-interface WarppedNextInputSearchBarProps extends InputProps {}
+interface WrappedNextInputSearchBarProps extends InputProps {}
 
-export function WarppedNextInputSearchBar({
+export function WrappedNextInputSearchBar({
   classNames,
   className,
   ...props
-}: WarppedNextInputSearchBarProps) {
+}: WrappedNextInputSearchBarProps) {
   return (
     <Input
       startContent={<IoSearchOutline></IoSearchOutline>}

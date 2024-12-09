@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { amountFormatted, truncate } from "@/lib/format";
 import { chart } from "@/services/chart";
@@ -14,6 +14,9 @@ import Image from "next/image";
 import { Button } from "@/components/button";
 import BeraVoteForm from "@/components/beravote/components/NewSpace/Steps/BeraVoteForm";
 import { observer } from "mobx-react-lite";
+import TokenAddress from "./TokenAddress";
+import { VscCopy } from "react-icons/vsc";
+import { Copy } from "@/components/copy";
 
 const universalMenuItems = [
   { key: "info", label: "Token Info" },
@@ -129,63 +132,126 @@ const Tabs = observer(
         </div>
 
         {/** Comment section */}
-        <CardContianer addtionalClassName={"block"}>
+        <CardContianer
+          addtionalClassName={
+            "block bg-[#FFCD4D] relative overflow-hidden pt-12"
+          }
+        >
+          <div className="bg-[url('/images/pumping/outline-border.svg')] bg-top h-12 absolute top-0 left-0 w-full bg-contain"></div>
           {tab === "info" && (
-            <div className="flex flex-col w-full px-2 md:px-10">
-              <h1 className="text-lg xl:text-4xl xl:py-16">Token Info</h1>
-              <div className="flex flex-col gap-x-2 divide-y-1 divide-[#F0A64A]">
-                <div className="flex items-center justify-between py-4">
-                  <span className="text-[#F0A64A] text-sm">Token Name</span>
-                  <span className="text-white md:text-xl">
-                    {pair?.launchedToken?.name}
-                  </span>
+            <div className="flex items-center justify-center">
+              <div className="w-full overflow-hidden p-10 flex items-center justify-between">
+                <div>
+                  {/* TODO: add Gliker font */}
+                  <h1 className="text-[var(--Heading,#0D0D0D)] text-stroke-white webkit-text-stroke-[2px] webkit-text-stroke-color-[#FFF] font-gliker text-[64px] font-normal leading-[110%] tracking-[1.28px] mb-12 text-stroke-custom">
+                    Token Info
+                  </h1>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[34px] font-normal leading-[110%] tracking-[0.68px]">
+                        {pair?.launchedToken?.name}
+                      </div>
+                      <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
+                        Token Name
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[34px] font-normal leading-[110%] tracking-[0.68px]">
+                        {pair?.launchedToken?.symbol}
+                      </div>
+                      <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
+                        Token Symbol
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[34px] font-normal leading-[110%] tracking-[0.68px]">
+                        MEME
+                      </div>
+                      <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
+                        Token type
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between py-4">
-                  <span className="text-[#F0A64A] text-sm">Token Symbol</span>
-                  <span className="text-white md:text-xl">
-                    {pair?.launchedToken?.symbol}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-4">
-                  <span className="text-[#F0A64A] text-sm">Token supply</span>
-                  <span className="text-white md:text-xl">
-                    {(
-                      pair as MemePairContract
-                    )?.depositedLaunchedToken?.toNumber()}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-4">
-                  <span className="text-[#F0A64A] text-sm">
-                    INITIAL MARKET CAP
-                  </span>
-                  <span className="text-white md:text-xl">
-                    {amountFormatted(pair?.depositedRaisedToken, {
-                      decimals: 0,
-                      fixed: 3,
-                    })}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-4">
-                  <span className="text-[#F0A64A] text-sm">Token Type</span>
-                  <span className="text-white md:text-xl">MEME</span>
-                </div>
-                <div className="flex items-center justify-between py-4">
-                  <span className="text-[#F0A64A] text-sm">Token Address</span>
-                  <span className="text-white md:text-xl">
-                    {" "}
-                    {truncate(pair?.launchedToken?.address ?? "", 16)}
-                  </span>
+
+                <div className="flex flex-col items-center gap-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white rounded-3xl px-[60px] text-center border border-black shadow-[4px_4px_0px_0px_#D29A0D] space-y-4 py-[28.5px]">
+                      <div className="text-[34px] text-stroke-black text-shadow-custom">
+                        {(
+                          pair as MemePairContract
+                        )?.depositedLaunchedToken?.toNumber()}
+                      </div>
+                      <div className="text-lg text-[#0D0D0D]">Total Supply</div>
+                    </div>
+                    <div className="bg-white rounded-3xl px-[60px] text-center border border-black shadow-[4px_4px_0px_0px_#D29A0D] space-y-4 py-[28.5px]">
+                      <div className="text-[34px] text-stroke-black text-shadow-custom">
+                        ${" "}
+                        {amountFormatted(pair?.depositedRaisedToken, {
+                          decimals: 0,
+                          fixed: 3,
+                        })}
+                      </div>
+                      <div className="text-lg text-[#0D0D0D]">
+                        Initial Market Cap
+                      </div>
+                    </div>
+                  </div>
+                  <div className="rounded-[16px] border-[3px] border-white bg-[#EFC049] shadow-[4px_4px_0px_0px_#202020,-2px_4px_0px_0px_#202020] w-full flex items-center justify-between  relative">
+                    <Copy
+                      className={"w-full"}
+                      content="Copy address"
+                      value={pair?.launchedToken?.address || ""}
+                      displayContent={
+                        <div className="relative">
+                          <span className="px-4 py-2 flex h-[41px] justify-between items-center bg-[#F2C34A] rounded-[10px] cursor-pointer hover:brightness-150 active:brightness-75 select-none text-[#202020]">
+                            {truncate(pair?.launchedToken?.address || "", 28)}
+                          </span>
+                          <div className="size-6 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center bg-white text-[#202020] border border-[#202020] rounded-md">
+                            <VscCopy className="size-4" />
+                          </div>
+                        </div>
+                      }
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           )}
           {tab === "about" && (
-            <div>
-              <h2 className="text-xl sm:text-3xl">project description:</h2>
-              <p>
-                {!!pair?.description
-                  ? pair?.description
-                  : "this project does not have description info"}
+            <div className="space-y-4 w-full px-[60px]">
+              <h1 className="text-[var(--Heading,#0D0D0D)] text-center text-shadow-[2px_4px_0px_#AF7F3D] webkit-text-stroke-[2px] text-stroke-white font-gliker text-[64px] font-normal leading-[110%] tracking-[1.28px]">
+                About the Project
+              </h1>
+              <div className="mx-auto grid grid-cols-2 gap-8 w-fit">
+                <div className="space-y-4">
+                  <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[34px] font-normal leading-[110%] tracking-[0.68px]">
+                    {pair?.launchedToken?.name}
+                  </div>
+                  <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
+                    Token Name
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[34px] font-normal leading-[110%] tracking-[0.68px]">
+                    {pair?.launchedToken?.symbol}
+                  </div>
+                  <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
+                    Token Symbol
+                  </div>
+                </div>
+              </div>
+              <p className="text-center text-black">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Phasellus tincidunt nulla nec diam finibus, non faucibus dolor
+                venenatis. Integer pharetra nisi nec lorem volutpat, fringilla
+                arcu tincidunt. Morbi vehicula, justo in ultrices porttitor,
+                purus justo interdum nunc, sed elementum elit lacus ac turpis.
+                Proin lacinia tellus magna hendrerit, sed sodales erat
+                dignissim. Suspendisse potenti. Curabitur felis ut urna vehicula
+                volutpat. Vestibulum viverra arcu urna gravida suscipit. Donec
+                non ligula magna bibendum volutpat.
               </p>
             </div>
           )}

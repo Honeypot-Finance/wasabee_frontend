@@ -349,9 +349,7 @@ class LaunchPad {
     if (this.currentLaunchpadType.value === "meme") {
       res = await fetchPairsList({
         filter: this.projectsPage.filter,
-        chainId: String(wallet.currentChainId),
         pageRequest: pageRequest,
-        projectType: this.currentLaunchpadType.value,
       });
     } else {
       res = await trpcClient.indexerFeedRouter.getFilteredFtoPairs.query({

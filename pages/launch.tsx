@@ -30,8 +30,8 @@ import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import MemeWarBanner from "@/components/MemeWarBanner/MemeWarBanner";
 import HoneyStickSvg from "@/components/svg/HoneyStick";
 import { set } from "lodash";
+import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 import Pagination from "@/components/Pagination/OldPagination";
-import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -127,7 +127,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
 
       <div>
         <div id="filter" className="flex flex-col sm:flex-row gap-2">
-          <WarppedNextInputSearchBar
+          <WrappedNextInputSearchBar
             onChange={(e) => {
               launchpad.pairFilterSearch = e.target.value;
             }}

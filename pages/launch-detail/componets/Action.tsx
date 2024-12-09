@@ -1,6 +1,6 @@
 import { observer, useLocalObservable } from "mobx-react-lite";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
-import { Button } from "@/components/button";
+import { Button } from "@/components/button/button-next";
 import { Input } from "@/components/input";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { useAccount } from "wagmi";
@@ -152,7 +152,7 @@ const ProcessingAction = observer(
                 onClick={() => {
                   state.setDepositAmount("10");
                 }}
-                className="cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline"
+                className="cursor-pointer text-white text-base font-bold leading-3 tracking-[0.16px] underline"
               >
                 10 {pair.raiseToken?.displayName}
               </div>
@@ -162,7 +162,7 @@ const ProcessingAction = observer(
                 onClick={() => {
                   state.setDepositAmount("100");
                 }}
-                className="cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline"
+                className="cursor-pointer text-white text-base font-bold leading-3 tracking-[0.16px] underline"
               >
                 100 {pair.raiseToken?.displayName}
               </div>
@@ -172,7 +172,7 @@ const ProcessingAction = observer(
                 onClick={() => {
                   state.setDepositAmount("1000");
                 }}
-                className="cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline"
+                className="cursor-pointer text-white text-base font-bold leading-3 tracking-[0.16px] underline"
               >
                 1000 {pair.raiseToken?.displayName}
               </div>
@@ -184,7 +184,7 @@ const ProcessingAction = observer(
                 );
                 pair.raiseToken?.getBalance();
               }}
-              className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline"
+              className="  cursor-pointer text-white text-base font-bold leading-3 tracking-[0.16px] underline"
             >
               Max
             </div>
@@ -193,10 +193,11 @@ const ProcessingAction = observer(
             className="w-full"
             isDisabled={!Number(state.depositAmount)}
             isLoading={pair.deposit.loading}
-            onClick={() => {
-              pair.deposit.call({
+            onClick={async () => {
+              await pair.deposit.call({
                 amount: state.depositAmount,
               });
+              state.setDepositAmount("");
             }}
           >
             Deposit

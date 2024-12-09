@@ -965,6 +965,8 @@ export class GhostIndexer {
   };
 
   async getTrendingMEMEPairs(): Promise<ApiResponseType<TrendingMEMEs>> {
+    console.log("endtime", dayjs().unix());
+
     const query = `{
         pairs(
           where:{
@@ -996,6 +998,9 @@ export class GhostIndexer {
         }
       }
   `;
+
+    console.log("query", query);
+
     const res = await this.callIndexerApi(query, {
       apiHandle: memeGraphHandle,
     });
