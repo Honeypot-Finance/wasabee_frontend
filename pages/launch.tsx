@@ -30,13 +30,8 @@ import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import MemeWarBanner from "@/components/MemeWarBanner/MemeWarBanner";
 import HoneyStickSvg from "@/components/svg/HoneyStick";
 import { set } from "lodash";
-<<<<<<< HEAD
-import Pagination from "@/components/Pagination/Pagination";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
-=======
 import Pagination from "@/components/Pagination/OldPagination";
-import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
->>>>>>> algebra-full-implement
 
 const LaunchPage: NextLayoutPage = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();

@@ -1,13 +1,8 @@
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
-<<<<<<< HEAD
-import { useEffect } from "react";
-import { Button } from "@/components/button/button-next";
-=======
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/button";
->>>>>>> algebra-full-implement
 import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { Tab, Tabs } from "@nextui-org/react";
@@ -17,23 +12,18 @@ import Image from "next/image";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 import { memewarStore } from "@/services/memewar";
 import { Pot2PumpTracker } from "@/components/MemeWarBanner/Pot2PumpTracker";
-<<<<<<< HEAD
 import { LaunchCardV3 } from "@/components/LaunchCard/v3";
-
-const MemeLaunchPage: NextLayoutPage = observer(() => {
-=======
 import { Pot2PumpPumpingService } from "@/services/launchpad/pot2pump/pumping";
+import { LaunchCard } from "@/components/LaunchCard";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pumpingProjects, setPumpingProjects] =
     useState<Pot2PumpPumpingService>();
 
->>>>>>> algebra-full-implement
   useEffect(() => {
     if (!wallet.isInit) {
       return;
     }
-<<<<<<< HEAD
     launchpad.setCurrentLaunchpadType("meme");
     launchpad.showNotValidatedPairs = true;
     launchpad.myLaunches.reloadPage();
@@ -45,11 +35,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
     // launchpad.projectsPage.reloadPage();
     // launchpad.participatedPairs.reloadPage();
-=======
     const newPumpingProjects = new Pot2PumpPumpingService();
     setPumpingProjects(newPumpingProjects);
     newPumpingProjects.projectsPage.reloadPage();
->>>>>>> algebra-full-implement
   }, [wallet.isInit]);
 
   return (
@@ -92,50 +80,29 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             }}
             className="next-tab"
             onSelectionChange={(key) => {
-              launchpad.setCurrentLaunchpadType("meme");
               if (key === "all") {
-                launchpad.projectsPage.setIsInit(false);
-                launchpad.pairFilterStatus = defaultPairFilters.all.status;
-              } else if (key === "my") {
-                launchpad.myLaunches.setIsInit(false);
-                launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
-              } else if (key === "participated-launch") {
-                launchpad.participatedPairs.setIsInit(false);
-                launchpad.pairFilterStatus =
-                  defaultPairFilters.participatedPairs.status;
+                pumpingProjects?.projectsPage.reloadPage();
               }
             }}
           >
             <Tab key="all" title="All MEMEs">
-              <Pagination
-                paginationState={launchpad.projectsPage}
-                render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
-                classNames={{
-                  itemsContainer:
-                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-                }}
-              />
+              {pumpingProjects && (
+                <Pagination
+                  paginationState={pumpingProjects.projectsPage}
+                  render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
+                  classNames={{
+                    itemsContainer:
+                      "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
+                  }}
+                />
+              )}
             </Tab>
-            <Tab key="my" title="My MEMEs">
-              <Pagination
-                paginationState={launchpad.myLaunches}
-                render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
-                classNames={{
-                  itemsContainer:
-                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-                }}
-              />
-            </Tab>
-            <Tab key="participated-launch" title="Participated MEMEs">
-              <Pagination
-                paginationState={launchpad.participatedPairs}
-                render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
-                classNames={{
-                  itemsContainer:
-                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-                }}
-              />
-            </Tab>
+            <Tab key="my" title="My MEMEs" href="/profile" />
+            <Tab
+              key="participated-launch"
+              title="Participated MEMEs"
+              href="/profile"
+            />
             {/* <Tab href="/launch" title="To Fto projects->" /> */}
             <Tab
               href="https://bartio.bonds.yeetit.xyz/"
@@ -170,7 +137,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           </Tabs>
         </div>
       </div>
-<<<<<<< HEAD
+
       <footer>
         <Image
           src="/images/pumping/toast-bear.png"
@@ -180,72 +147,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           alt="toast bear"
         />
       </footer>
-=======
-
-      <div className="w-full">
-        <Tabs
-          // destroyInactiveTabPanel={false}
-          aria-label="Options"
-          classNames={{
-            tabList: "bg-transparent",
-            tab: "flex flex-col items-center gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
-          }}
-          className="next-tab"
-          onSelectionChange={(key) => {
-            if (key === "all") {
-              pumpingProjects?.projectsPage.reloadPage();
-            }
-          }}
-        >
-          <Tab key="all" title="All MEMEs">
-            {pumpingProjects && (
-              <Pagination
-                paginationState={pumpingProjects.projectsPage}
-                render={(pair) => <LaunchCard pair={pair} action={<></>} />}
-                classNames={{
-                  itemsContainer:
-                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-                }}
-              />
-            )}
-          </Tab>
-          <Tab key="my" title="My MEMEs" href="/profile" />
-          <Tab
-            key="participated-launch"
-            title="Participated MEMEs"
-            href="/profile"
-          />
-          {/* <Tab href="/launch" title="To Fto projects->" /> */}
-          <Tab
-            href="https://bartio.bonds.yeetit.xyz/"
-            target="_blank"
-            title={
-              <div className="flex items-center text-yellow-400">
-                <Image
-                  className="size-4"
-                  src="/images/partners/yeet_icon.png"
-                  alt=""
-                  width={100}
-                  height={100}
-                />
-                <span className="flex items-center justify-center gap-2">
-                  Try Yeet Bond <FaExternalLinkAlt className="inline-block" />
-                </span>
-              </div>
-            }
-          />
-          <Tab
-            title={
-              <Link href="/memewar" className="flex items-center text-rose-600">
-                <span className="flex items-center justify-center gap-2">
-                  Meme War ⚔️
-                </span>
-              </Link>
-            }
-          />
-        </Tabs>
-      </div>
->>>>>>> algebra-full-implement
     </div>
   );
 });

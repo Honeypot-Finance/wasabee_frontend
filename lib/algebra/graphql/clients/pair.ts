@@ -6,13 +6,10 @@ import {
   SubgraphProjectFilter,
 } from "@/services/launchpad";
 import { PageRequest } from "@/services/indexer/indexerTypes";
-<<<<<<< HEAD
 import dayjs from "dayjs";
-=======
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import BigNumber from "bignumber.js";
 import { Token } from "@/services/contract/token";
->>>>>>> algebra-full-implement
 
 type SubgraphToken = {
   id: string;
@@ -307,11 +304,13 @@ export async function fetchPot2PumpList({
   }
 
   if (filter.creator) {
-    whereCondition.push(` creator: "${filter.creator}" `);
+    whereCondition.push(` creator: "${filter.creator.toLowerCase()}" `);
   }
 
   if (filter.participant) {
-    whereCondition.push(` participants_:{account:"${filter.participant}"}`);
+    whereCondition.push(
+      ` participants_:{account:"${filter.participant.toLowerCase()}"}`
+    );
   }
 
   const queryParts = [
@@ -337,6 +336,8 @@ export async function fetchPot2PumpList({
       }
     }
   `;
+
+  console.log(query);
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),

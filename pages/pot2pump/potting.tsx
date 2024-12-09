@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-<<<<<<< HEAD
 import { motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
@@ -15,16 +14,12 @@ import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
-
-const MemeLaunchPage: NextLayoutPage = observer(() => {
-=======
-import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
+import { LaunchCard } from "@/components/LaunchCard";
 import { Pot2PumpPottingService } from "@/services/launchpad/pot2pump/potting";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pottingProjects, setPottingProjects] =
     useState<Pot2PumpPottingService>();
->>>>>>> algebra-full-implement
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
     MemePairContract[] | null
   >(null);
@@ -179,41 +174,23 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             }}
           >
             <Tab key="all" title="All MEMEs">
-              <Pagination
-                paginationState={launchpad.projectsPage}
-                render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
-                classNames={{
-                  itemsContainer:
-                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-                }}
-              />
+              {pottingProjects && (
+                <Pagination
+                  paginationState={pottingProjects.projectsPage}
+                  render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
+                  classNames={{
+                    itemsContainer:
+                      "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
+                  }}
+                />
+              )}
             </Tab>
-            <Tab key="my" title="My MEMEs">
-              <Pagination
-                paginationState={launchpad.myLaunches}
-                render={(pair) => (
-                  <LaunchCardV3
-                    pair={pair}
-                    action={<></>}
-                    className="flex w-full h-full flex-col justify-center items-center gap-2 border bg-[#1D1407] backdrop-blur-[13.5px] px-2.5 py-3 rounded-[20px] border-solid border-[rgba(247,147,26,0.10)] relative overflow-hidden"
-                  />
-                )}
-                classNames={{
-                  itemsContainer:
-                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-                }}
-              />
-            </Tab>
-            <Tab key="participated-launch" title="Participated MEMEs">
-              <Pagination
-                paginationState={launchpad.participatedPairs}
-                render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
-                classNames={{
-                  itemsContainer:
-                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-                }}
-              />
-            </Tab>
+            <Tab key="my" title="My MEMEs" href="/profile" />
+            <Tab
+              key="participated-launch"
+              title="Participated MEMEs"
+              href="/profile"
+            />
             {/* <Tab href="/launch" title="To Fto projects->" /> */}
             <Tab
               href="https://bartio.bonds.yeetit.xyz/"
@@ -248,7 +225,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           </Tabs>
         </div>
       </div>
-<<<<<<< HEAD
       <footer>
         <Image
           src="/images/pumping/toast-bear.png"
@@ -258,81 +234,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           alt="toast bear"
         />
       </footer>
-=======
-
-      <div className="w-full">
-        <Tabs
-          // destroyInactiveTabPanel={false}
-          aria-label="Options"
-          classNames={{
-            tabList: "bg-transparent",
-            tab: "flex flex-col items-center gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
-          }}
-          className="next-tab"
-          onSelectionChange={(key) => {
-            launchpad.setCurrentLaunchpadType("meme");
-            if (key === "all") {
-              launchpad.projectsPage.setIsInit(false);
-              launchpad.pairFilterStatus = defaultPairFilters.all.status;
-            } else if (key === "my") {
-              launchpad.myLaunches.setIsInit(false);
-              launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
-            } else if (key === "participated-launch") {
-              launchpad.participatedPairs.setIsInit(false);
-              launchpad.pairFilterStatus =
-                defaultPairFilters.participatedPairs.status;
-            }
-          }}
-        >
-          <Tab key="all" title="All MEMEs">
-            {pottingProjects && (
-              <Pagination
-                paginationState={pottingProjects.projectsPage}
-                render={(pair) => <LaunchCard pair={pair} action={<></>} />}
-                classNames={{
-                  itemsContainer:
-                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-                }}
-              />
-            )}
-          </Tab>
-          <Tab key="my" title="My MEMEs" href="/profile" />
-          <Tab
-            key="participated-launch"
-            title="Participated MEMEs"
-            href="/profile"
-          />
-          {/* <Tab href="/launch" title="To Fto projects->" /> */}
-          <Tab
-            href="https://bartio.bonds.yeetit.xyz/"
-            target="_blank"
-            title={
-              <div className="flex items-center text-yellow-400">
-                <Image
-                  className="size-4"
-                  src="/images/partners/yeet_icon.png"
-                  alt=""
-                  width={100}
-                  height={100}
-                />
-                <span className="flex items-center justify-center gap-2">
-                  Try Yeet Bond <FaExternalLinkAlt className="inline-block" />
-                </span>
-              </div>
-            }
-          />
-          <Tab
-            title={
-              <Link href="/memewar" className="flex items-center text-rose-600">
-                <span className="flex items-center justify-center gap-2">
-                  Meme War ⚔️
-                </span>
-              </Link>
-            }
-          />
-        </Tabs>
-      </div>
->>>>>>> algebra-full-implement
     </div>
   );
 });
