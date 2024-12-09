@@ -3,19 +3,17 @@ import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/button";
-import launchpad, { defaultPairFilters } from "@/services/launchpad";
+import launchpad from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { Tab, Tabs, Button as NextButton } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
-import Pagination from "@/components/Pagination/Pagination";
 import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 import LaunchPadProjectCard from "@/components/LaunchPadProjectCard";
-import { useQuery } from "@tanstack/react-query";
-import { useAccount } from "wagmi";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { DataContainer } from "@/components/DataContainer";
-import pools from "./pools";
-// import FjordHoneySdk from "@/services/fjord_honeypot_sdk";
+import FjordHoneySdk from "@/services/fjord_honeypot_sdk";
+import dayjs from "dayjs";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [selectedTab, setSelectedTab] = useState<"all" | "my">("all");
@@ -24,12 +22,23 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
   const owner = selectedTab == "my" ? wallet.account : "";
 
-  // const pools = useQuery({
-  //   queryKey: ["trendingMEMEs"],
-  //   queryFn: () => {
-  //     FjordHoneySdk.findManyPools({ page: 1, search: "" });
-  //   },
-  // });
+  const {
+    data: pools,
+    isLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: ["trendingMEMEs", search, page, owner],
+    queryFn: () => {
+      return FjordHoneySdk.findManyPools({
+        page: page,
+        search: search,
+        filters: { owner: owner },
+      });
+    },
+    placeholderData: keepPreviousData,
+  });
+
+  console.log({ isLoading, isFetching });
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -40,7 +49,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   console.log("launchpad.projectsPage", launchpad.projectsPage);
 
   const mostSuccessProjects: any[] = [];
-  const pools: any[] = [];
 
   return (
     <div className="px-7 xl:max-w-[1280px] mx-auto flex flex-col sm:gap-y-5">
@@ -61,6 +69,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               endDate={0}
               tokenName={""}
               projectAuthor={""}
+              startDate={0}
+              fundsRaised={0}
+              pairAddress={"0x"}
             />
             <LaunchPadProjectCard
               status="live"
@@ -68,6 +79,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               endDate={0}
               tokenName={""}
               projectAuthor={""}
+              startDate={0}
+              fundsRaised={0}
+              pairAddress={"0x0"}
             />
             <LaunchPadProjectCard
               status="live"
@@ -75,6 +89,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               endDate={0}
               tokenName={""}
               projectAuthor={""}
+              startDate={0}
+              fundsRaised={0}
+              pairAddress={"0x0"}
             />
             <LaunchPadProjectCard
               status="live"
@@ -82,6 +99,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               endDate={0}
               tokenName={""}
               projectAuthor={""}
+              startDate={0}
+              fundsRaised={0}
+              pairAddress={"0x0"}
             />
           </motion.div>
         </>
@@ -132,7 +152,10 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         </div>
       </div>
       <div>
-        <DataContainer hasData={pools.length > 0}>
+        <DataContainer
+          hasData={pools?.data && pools?.data?.length > 0}
+          isLoading={isLoading || isFetching}
+        >
           <div>
             <motion.div
               variants={defaultContainerVariants}
@@ -142,26 +165,37 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-x-4 xl:gap-y-5 xl:grid-cols-4"
               }
             >
-              {pools.map((pair, idx) => (
+              {pools?.data?.map((pair, idx) => (
                 <motion.div variants={itemPopUpVariants} key={idx}>
                   <LaunchPadProjectCard
-                    status={"live"}
-                    coverImg={""}
+                    status={
+                      dayjs(pair.startsAt).isAfter(dayjs()) ? "comming" : "live"
+                    }
+                    coverImg={pair.bannerUrl}
                     isShowCoverImage={true}
-                    endDate={0}
-                    tokenName={""}
-                    projectAuthor={"Hunny"}
+                    endDate={pair.endsAt}
+                    startDate={pair.startsAt}
+                    tokenName={pair.shareTokenName}
+                    projectAuthor={pair.owner}
+                    fundsRaised={pair.fundsRaised}
+                    assetTokenSymbol={pair.assetTokenSymbol}
+                    shareTokenSymbol={pair.imageUrl}
+                    pairAddress={pair.address}
                   />
                 </motion.div>
               ))}
             </motion.div>
-            <div className="flex justify-around my-5">
-              <Button onClick={() => {}}>
-                {true ? "Loading..." : "Load More"}
-              </Button>
-            </div>
           </div>
         </DataContainer>
+        <div className="flex justify-around my-5">
+          <Button
+            onClick={() => {
+              setPage((prev) => (prev += 1));
+            }}
+          >
+            {isFetching ? "Loading..." : "Load More"}
+          </Button>
+        </div>
       </div>
     </div>
   );

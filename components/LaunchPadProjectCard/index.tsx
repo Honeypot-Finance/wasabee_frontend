@@ -4,6 +4,9 @@ import React from "react";
 import Image from "next/image";
 import Countdown from "react-countdown";
 import { Button } from "@/components/button";
+import { shortenAddress } from "@/lib/format";
+import { Address } from "viem";
+import Link from "next/link";
 
 type IProjectCardStatus = "live" | "comming";
 
@@ -12,8 +15,13 @@ type ILaunchPadProjectCard = {
   coverImg: string | null;
   isShowCoverImage?: boolean;
   endDate: number;
+  startDate: number;
   tokenName: string;
   projectAuthor: string;
+  fundsRaised: number;
+  assetTokenSymbol?: string;
+  shareTokenSymbol?: string;
+  pairAddress: Address;
 };
 
 const ProjectCardStatus = observer(
@@ -60,14 +68,18 @@ const TokenInfo = observer(
       <div className="flex flex-col gap-[6px]">
         <div className="flex gap-[5px] items-center">
           <div className="w-[52px] h-[52px] rounded-full overflow-hidden relative">
-            <Image src={symbol} fill alt={name} />
+            <img
+              src={symbol}
+              alt={name}
+              className="w-full h-full object-cover rounded-full"
+            />
           </div>
           <div className="">
             <div className="text-base leading-[20px] font-bold text-white">
               {name}
             </div>
             <div className="text-base leading-[20px] font-bold text-[#FFFFFF8C]">
-              {author}
+              {shortenAddress(author as Address)}
             </div>
           </div>
         </div>
@@ -83,30 +95,34 @@ const TokenInfo = observer(
 
 type ILaunchPadProjectBody = {
   status: IProjectCardStatus;
-  totalRaised: number;
   symbol?: string;
   endDate: number;
+  startDate: number;
+  fundsRaised: number;
 };
 
 const LaunchPadProjectBody = observer(
   ({
     status,
-    totalRaised,
     endDate,
+    startDate,
     symbol = "tHpot",
+    fundsRaised,
   }: ILaunchPadProjectBody) => {
     return (
       <div className="my-[10px] py-[8px] flex items-center flex-col justify-between w-full bg-[#31220C] rounded-2xl gap-[18px]">
         <ProjectCardStatus status={status} />
 
         <Countdown
-          date={endDate}
+          date={status == "live" ? endDate : startDate}
           renderer={({ days, hours, minutes, seconds, completed }) => {
             if (completed) {
               return (
-                <div className="text-center font-bold">
-                  <div className="text-xl leading-[26px]">
-                    {totalRaised} {symbol}
+                <div className="text-center font-bold ">
+                  <div className="text-xl leading-[26px] ">
+                    <div className="w-48 overflow-hidden text-ellipsis whitespace-nowrap ">
+                      {fundsRaised} {symbol}
+                    </div>
                   </div>
                   <div className="mt-[5px] text-[9px] leading-[11px] text-[#FFFFFF70] ">
                     Total Raised
@@ -166,9 +182,14 @@ const LaunchPadProjectCard = observer(
     status,
     coverImg,
     endDate,
+    startDate,
     isShowCoverImage = false,
     tokenName,
     projectAuthor,
+    fundsRaised,
+    assetTokenSymbol,
+    shareTokenSymbol,
+    pairAddress,
   }: ILaunchPadProjectCard) => {
     return (
       <div
@@ -179,37 +200,45 @@ const LaunchPadProjectCard = observer(
         {isShowCoverImage && (
           <div className="h-[78px] relative w-full bg-[radial-gradient(at_center,#FFCD4D,#83C2E9)]">
             {coverImg && coverImg?.length > 0 && (
-              <Image
+              <img
                 alt="Cover Image"
                 src={coverImg}
-                className="object-fit "
-                fill={true}
+                className="object-cover h-[78px] w-full"
               />
             )}
           </div>
         )}
         <div className="p-[15px] pb-0">
           <TokenInfo
-            symbol="/images/icons/tokens/thpot-token-yellow-icon.png"
+            symbol={
+              shareTokenSymbol ||
+              "/images/icons/tokens/thpot-token-yellow-icon.png"
+            }
             name={tokenName}
             author={projectAuthor}
             // description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry."
           />
           <LaunchPadProjectBody
+            fundsRaised={fundsRaised}
             endDate={endDate}
+            startDate={startDate}
             status={status}
-            totalRaised={3389}
+            symbol={assetTokenSymbol}
           />
         </div>
         <div className="p-[10px]">
           {status === "live" ? (
-            <Button className="w-full outline-2">
-              <span className="font-bold text-[12px]">Buy Token</span>
-            </Button>
+            <Link href={`/lbp-detail/${pairAddress}`}>
+              <Button className="w-full outline-2">
+                <span className="font-bold text-[12px]">Buy Token</span>
+              </Button>
+            </Link>
           ) : (
-            <Button className="w-full outline-2">
-              <span className="font-bold text-[12px]">View Token</span>
-            </Button>
+            <Link href={`/lbp-detail/${pairAddress}`}>
+              <Button className="w-full outline-2">
+                <span className="font-bold text-[12px]">View Token</span>
+              </Button>
+            </Link>
           )}
         </div>
       </div>

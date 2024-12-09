@@ -83,16 +83,16 @@ class FjordHoneySdk {
         const where: any = {}
 
         if (search) {
-            where.OR = [{ name: search }, { address: search }]
+            where.shareTokenSymbol = search
         }
 
         if (filters?.owner) {
             where.owner = filters.owner
         }
 
-        const pools = await sdk.request.rest.findManyPools({ skip, take, where })
+        console.log(where)
 
-        return pools
+        return await sdk.request.rest.findManyPools({ skip, take, where }) as any as { data: Pool[] }
     }
     static findPool = async (address: string): Pool | null => {
         const pool = await sdk.request.rest.findManyPools({

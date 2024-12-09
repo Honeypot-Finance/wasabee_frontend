@@ -325,6 +325,8 @@ const Confirm = (props: Props) => {
       projectTokenLogo,
       saleBanner,
       projectLink,
+      lbpDescription,
+      projectName,
     } = getValues();
     const sellingAllowed = lbpType === "buy-sell";
     if (account.address) {
@@ -393,8 +395,8 @@ const Confirm = (props: Props) => {
         if (poolAddress) {
           await createPoolAsync({
             address: poolAddress,
-            name: name,
-            description: description,
+            name: projectName,
+            description: lbpDescription,
             chainId: berachainBartioTestnet.id,
             owner: account.address as string,
             endsAt: dayjs(endTime).toDate(),
