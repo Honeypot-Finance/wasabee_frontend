@@ -668,8 +668,8 @@ const MemeView = observer(() => {
 
   return (
     <div className="w-full space-y-4 md:space-y-8">
-      <div className="px-4 md:px-8 xl:max-w-[1200px] mx-auto pb-20 relative pt-[70px] bg-[#202020] border-3 border-[#F2C34A] rounded-3xl overflow-hidden">
-        <div className="bg-[url('/images/pumping/inline-border.png')] bg-top h-[70px] absolute top-0 left-0 w-full bg-contain"></div>
+      <div className="px-4 md:px-8 xl:max-w-[1200px] mx-auto pb-20 relative pt-[90px] bg-[#202020] border-3 border-[#F2C34A] rounded-3xl overflow-hidden">
+        <div className="bg-[url('/images/pumping/outline-border.png')] h-[90px] absolute top-0 left-0 w-full bg-contain bg-[left_-90px_top] bg-repeat-x"></div>
         {state.pair.value && (
           <Modal
             isOpen={isOpen}
@@ -681,7 +681,7 @@ const MemeView = observer(() => {
             <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
           </Modal>
         )}
-        <div className="grid grid-cols-2 gap-4 w-full">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-14 w-full">
           <div className="bg-white col-span-2 px-8 py-5 rounded-3xl flex md:items-center md:justify-between md:flex-row flex-col gap-2 md:gap-0 text-black">
             <div className="flex items-center justify-between gap-x-4 md:gap-x-[7.5px]">
               <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
@@ -712,8 +712,8 @@ const MemeView = observer(() => {
               <ProjectStatus pair={pair} />
             </div>
           </div>
-          <div className="bg-[#FFCD4D] p-4 pt-6 rounded-2xl space-y-3 col-span-2 lg:col-span-1 relative overflow-hidden">
-            <div className="bg-[url('/images/pumping/inline-border.png')] bg-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
+          <div className="bg-[#FFCD4D] p-4 py-6 rounded-2xl space-y-3 col-span-2 lg:col-span-1 relative overflow-hidden">
+            <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
             <div className="flex flex-col py-5 px-4 bg-[#202020] rounded-2xl gap-y-5">
               <div className="flex justify-between items-start \">
                 <TokenRaised
@@ -803,7 +803,7 @@ const MemeView = observer(() => {
                               refreshVotes();
                             });
                         }}
-                        className="mt-2 flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none border border-[#F2C34A] rounded-2xl"
+                        className="mt-2 flex-1 flex flex-col  justify-center items-center bg-[#202020] px-3 py-3 hover:bg-[#FFCD4D] active:[background:#F0A000] cursor-pointer select-none border border-[#F2C34A] rounded-2xl"
                       >
                         <p>
                           {(key.split("_")[0] === "rocket" && "🚀") ||
@@ -818,8 +818,10 @@ const MemeView = observer(() => {
                 </div>
               </div>
             </div>
+            <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-contain"></div>
           </div>
-          <div className="bg-[#F2C34A] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+          <div className="bg-transparent rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+            {/* <div className="bg-[url('/images/pumping/outline-border.png')] h-[50px] absolute top-0 left-0 w-full bg-repeat-x bg-[length:130%]"></div> */}
             {pair && <Action pair={pair} />}
           </div>
         </div>
@@ -880,14 +882,14 @@ const LaunchPage: NextLayoutPage = observer(() => {
   }, [pairAddress, wallet.isInit]);
 
   return (
-    <div>
+    <>
       {projectInfo && projectInfo?.project_type === "meme" && (
         <MemeView></MemeView>
       )}
       {projectInfo && projectInfo?.project_type === "fto" && (
         <FtoView></FtoView>
       )}
-    </div>
+    </>
   );
 });
 

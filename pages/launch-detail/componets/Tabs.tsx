@@ -17,6 +17,7 @@ import { observer } from "mobx-react-lite";
 import TokenAddress from "./TokenAddress";
 import { VscCopy } from "react-icons/vsc";
 import { Copy } from "@/components/copy";
+import { Trigger } from "@/components/Trigger";
 
 const universalMenuItems = [
   { key: "info", label: "Token Info" },
@@ -32,10 +33,14 @@ const Tabs = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract | null }) => {
     const [tab, setTab] = useState(universalMenuItems[0].key);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const options =
+      pair?.state === 0
+        ? [...universalMenuItems, ...successMenuItems]
+        : universalMenuItems;
 
     return (
-      <>
-        <div className="hidden sm:flex items-center gap-x-1 md:text-xs ml-3">
+      <div className="relative">
+        {/* <div className="hidden sm:flex items-center gap-x-1 md:text-xs ml-3">
           {universalMenuItems.map((item) => (
             <button
               key={item.key}
@@ -65,7 +70,14 @@ const Tabs = observer(
                 {item.label}
               </button>
             ))}
-        </div>
+        </div> */}
+        <Trigger
+          tab={tab}
+          setTab={setTab}
+          options={options.map((item) => item.key)}
+          className="px-2 md:px-8 pt-2 pb-1 rounded-t-2xl mx-auto max-w-[600px] absolute -top-8 z-10 left-1/2 -translate-x-1/2"
+          capitalize={true}
+        />
 
         <div className="relative sm:hidden inline-block text-left">
           <button
@@ -327,7 +339,7 @@ const Tabs = observer(
             </div>
           )}
         </CardContianer>
-      </>
+      </div>
     );
   }
 );

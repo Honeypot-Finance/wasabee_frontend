@@ -1,10 +1,6 @@
 import { gql } from "@apollo/client";
 import { infoClient } from ".";
-import {
-  launchpadType,
-  PairFilter,
-  SubgraphProjectFilter,
-} from "@/services/launchpad";
+import { PairFilter, SubgraphProjectFilter } from "@/services/launchpad";
 import { PageRequest } from "@/services/indexer/indexerTypes";
 import dayjs from "dayjs";
 import { MemePairContract } from "@/services/contract/memepair-contract";

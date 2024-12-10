@@ -15,7 +15,7 @@ export const SwapAmount = ({ label, inputProps }: SwapAmountProps) => {
       <Input
         type="number"
         placeholder="0.0"
-        className="mt-[8px] text-white text-right text-[21px] font-bold leading-6 placeholder:text-[rgba(255,255,255,0.50)]"
+        className="mt-[8px] text-white text-right text-[21px] font-bold leading-6 placeholder:text-[rgba(255,255,255,0.50)] bg-[#202020] rounded-3xl"
         classNames={{
           errorMessage: "self-start ",
         }}

@@ -55,7 +55,7 @@ export const Slippage = observer(({ ...props }: {} & Partial<PopoverProps>) => {
       {...props}
     >
       <PopoverTrigger>
-        <Button className="inline-flex h-10 justify-between items-center shrink-0 [background:rgba(247,147,26,0.05)] px-[14.369px] py-[7.184px] rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]">
+        <Button className="inline-flex h-10 justify-between items-center shrink-0 [background:rgba(247,147,26,0.05)] px-[14.369px] py-[7.184px] rounded-[30px] border-solid border-[rgba(247,147,26,0.10)] text-[#202020]">
           {`Slippage  ${swap.slippage}%`}
         </Button>
       </PopoverTrigger>

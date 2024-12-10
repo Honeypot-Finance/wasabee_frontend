@@ -22,6 +22,7 @@ const config: Config = {
       },
       fontFamily: {
         display: "Oswald, ui-serif", // Adds a new `font-display` class
+        gliker: ["Gliker", "sans-serif"],
       },
       backgroundColor: {
         default: "var(--bg,#140E06)",

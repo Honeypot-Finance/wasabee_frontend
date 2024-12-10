@@ -48,7 +48,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <div className="w-full grow flex flex-col">
+    <div className="w-full grow flex flex-col font-gliker">
       <div className="px-2 md:px-6 w-full xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
         {mostSuccessProjects && mostSuccessProjects.length > 0 && (
           <div className="flex flex-col">

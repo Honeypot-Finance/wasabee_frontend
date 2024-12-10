@@ -1,20 +1,19 @@
 import Link from "next/link";
+import Image from "next/image";
 import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Button } from "@/components/button";
-import launchpad, { defaultPairFilters } from "@/services/launchpad";
-import { NextLayoutPage } from "@/types/nextjs";
+import { useEffect, useState } from "react";
+import launchpad from "@/services/launchpad";
 import { Tab, Tabs } from "@nextui-org/react";
-import { FaExternalLinkAlt } from "react-icons/fa";
-import Pagination from "@/components/Pagination/Pagination";
-import Image from "next/image";
-import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
+import { NextLayoutPage } from "@/types/nextjs";
 import { memewarStore } from "@/services/memewar";
-import { Pot2PumpTracker } from "@/components/MemeWarBanner/Pot2PumpTracker";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { Button } from "@/components/button/button-next";
 import { LaunchCardV3 } from "@/components/LaunchCard/v3";
+import Pagination from "@/components/Pagination/Pagination";
+import { Pot2PumpTracker } from "@/components/MemeWarBanner/Pot2PumpTracker";
 import { Pot2PumpPumpingService } from "@/services/launchpad/pot2pump/pumping";
-import { LaunchCard } from "@/components/LaunchCard";
+import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pumpingProjects, setPumpingProjects] =
@@ -41,8 +40,8 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <div className="w-full grow">
-      <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
+    <div className="w-full grow flex flex-col font-gliker">
+      <div className="px-4 md:px-6 w-full xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
         <Pot2PumpTracker />
 
         <div>

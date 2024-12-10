@@ -448,7 +448,7 @@ const DetailLaunchCard = observer(
             }),
           ]}
         />
-        <div className="bg-[url('/images/pumping/inline-border.png')] bg-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
+        <div className="bg-[url('/images/pumping/inline-border.svg')] h-6 absolute top-0 left-0 w-full bg-contain bg-left-top bg-repeat-x"></div>
         <Image
           alt="banner"
           width={256}

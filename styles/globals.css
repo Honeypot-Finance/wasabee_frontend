@@ -25,6 +25,12 @@
   src: url("/fonts/meme/MemeParagraph.ttf") format("truetype");
 }
 
+@font-face {
+  font-weight: 400;
+  font-family: "Gliker";
+  src: url("/fonts/v3-ui/Gliker-Regular.ttf") format("truetype");
+}
+
 html,
 body {
   width: 100%;

@@ -3,35 +3,27 @@ import { TokenSelector } from "@/components/TokenSelector";
 import { SwapAmount } from "../SwapAmount/index";
 import { swap } from "@/services/swap";
 import { ExchangeSvg } from "../svg/exchange";
-import { Button } from "@/components/button";
+import { Button } from "@/components/button/button-next";
 import { Token } from "@/services/contract/token";
 import { SpinnerContainer } from "../Spinner";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { isEthAddress } from "@/lib/address";
-import { useAccount } from "wagmi";
 import { wallet } from "@/services/wallet";
 import { amountFormatted } from "../../lib/format";
 import { AmountFormat } from "../AmountFormat";
 import { liquidity } from "@/services/liquidity";
-import { chart } from "@/services/chart";
-import LoadingDisplay, {
-  LoadingContainer,
-} from "../LoadingDisplay/LoadingDisplay";
-import { trpc, trpcClient } from "@/lib/trpc";
-import { GhostLaunchPair } from "@/services/indexer/indexerTypes";
+import { LoadingContainer } from "../LoadingDisplay/LoadingDisplay";
 import { ItemSelect, SelectItem, SelectState } from "../ItemSelect";
 import { cn, Input, Slider, Tooltip } from "@nextui-org/react";
 import Image from "next/image";
-import { delay } from "lodash";
-import { LuOption } from "react-icons/lu";
-import { IoOptions } from "react-icons/io5";
-import { SlOptions } from "react-icons/sl";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import TokenLogo from "../TokenLogo/TokenLogo";
 import { Slippage } from "./Slippage";
 import BigNumber from "bignumber.js";
 import { useInterval } from "@/lib/hooks";
+import { Trigger } from "../Trigger";
+import { ArrowLeftRight } from "lucide-react";
 
 export const SwapCard = observer(
   ({
@@ -47,7 +39,7 @@ export const SwapCard = observer(
   }) => {
     const router = useRouter();
     const isInit = wallet.isInit && liquidity.isInit;
-    const [operate, setOperate] = useState<"buy" | "sell">("buy");
+    const [operate, setOperate] = useState<string>("buy");
     const state = useLocalObservable(() => ({
       selectState: new SelectState({
         value: 0,
@@ -113,43 +105,27 @@ export const SwapCard = observer(
       >
         <div
           className={cn(
-            " w-full flex flex-1 flex-col justify-center items-start gap-[23px] [background:var(--card-color,#271A0C)] p-[20px] rounded-[20px] border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all",
+            " w-full flex flex-1 flex-col justify-center items-start gap-[23px] bg-[#FFCD4D] px-5 pt-[90px] pb-[70px] rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all relative",
             noBoarder && "border-0"
           )}
         >
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-x-4">
-              <button
-                onClick={() => {
-                  setOperate("buy");
-                  swap.switchTokens();
-                }}
-                className={[
-                  "text-[color:var(--Button-Gradient,#F7931A)] font-bold",
-                  operate === "buy" ? "" : "opacity-50 hover:opacity-100",
-                ].join(" ")}
-              >
-                Buy
-              </button>
-              <button
-                onClick={() => {
-                  setOperate("sell");
-                  swap.switchTokens();
-                }}
-                className={[
-                  "text-[color:var(--Button-Gradient,#F7931A)] font-bold",
-                  operate === "sell" ? "" : "opacity-50 hover:opacity-100",
-                ].join(" ")}
-              >
-                Sell
-              </button>
-            </div>
-            <div className="flex items-center justify-end w-full  text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px]">
-              <Slippage className="flex justify-between items-center w-full"></Slippage>
-            </div>
-          </div>
+          <div className="bg-[url('/images/swap/top-border.png')] bg-cover bg-no-repeat bg-left-top h-[90px] absolute top-0 left-0 w-full rounded-[20px]"></div>
+          <Trigger
+            tab={operate}
+            capitalize={true}
+            setTab={setOperate}
+            options={["buy", "sell"]}
+            callback={() => swap.switchTokens()}
+            className="w-[308px] z-10 absolute top-0 transform -translate-y-1/2 left-1/2  -translate-x-1/2"
+          />
+
           <LoadingContainer isLoading={!isInit}>
-            <>
+            <div className="border border-black border-dashed px-4 py-6 w-full rounded-3xl bg-white space-y-2">
+              <div className="flex items-center justify-end w-full">
+                <div className="flex items-center justify-end w-full text-black text-base font-bold leading-3 tracking-[0.16px]">
+                  <Slippage className="flex justify-between items-center w-full" />
+                </div>
+              </div>
               <div className="flex flex-col lg:flex-row justify-between items-center w-full">
                 <SwapAmount
                   label="From"
@@ -233,7 +209,7 @@ export const SwapCard = observer(
               {swap.fromToken && (
                 <ItemSelect
                   selectState={state.selectState}
-                  className=" grid grid-cols-2 lg:grid-cols-4 gap-[16px] justify-around w-full"
+                  className="grid grid-cols-2 lg:grid-cols-4 gap-[16px] justify-around w-full"
                 >
                   <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
                     25%
@@ -250,14 +226,16 @@ export const SwapCard = observer(
                 </ItemSelect>
               )}
               <div className="flex w-full items-center gap-[5px]">
-                <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
-                <ExchangeSvg
-                  className=" cursor-pointer hover:rotate-180 transition-all"
+                <div className=" h-px flex-[1_0_0] bg-[#36363B]/30 rounded-[100px]"></div>
+                <div
+                  className=" cursor-pointer hover:rotate-180 transition-all rounded-[10px] bg-[#FFCD4D] border border-black text-black p-2.5 shadow-md"
                   onClick={() => {
                     swap.switchTokens();
                   }}
-                ></ExchangeSvg>
-                <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
+                >
+                  <ArrowLeftRight className="size-5" />
+                </div>
+                <div className=" h-px flex-[1_0_0] bg-[#36363B]/30 rounded-[100px]"></div>
               </div>
               <div className="flex flex-col lg:flex-row justify-between items-center w-full">
                 <SwapAmount
@@ -339,6 +317,7 @@ export const SwapCard = observer(
                 </div>
               )}
               <Button
+                className="w-full"
                 isDisabled={swap.isDisabled}
                 isLoading={swap.swapExactTokensForTokens.loading}
                 onClick={async () => {
@@ -347,8 +326,9 @@ export const SwapCard = observer(
               >
                 {swap.buttonContent === "Swap" ? operate : swap.buttonContent}
               </Button>
-            </>
+            </div>
           </LoadingContainer>
+          <div className="bg-[url('/images/swap/bottom-border.jpg')] bg-cover bg-no-repeat bg-left-top h-[70px] absolute bottom-0 left-0 w-full rounded-[20px]"></div>
         </div>
         {extraTokenAction}
       </SpinnerContainer>
