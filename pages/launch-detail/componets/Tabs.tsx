@@ -137,7 +137,7 @@ const Tabs = observer(
             "block bg-[#FFCD4D] relative overflow-hidden pt-12"
           }
         >
-          <div className="bg-[url('/images/pumping/outline-border.svg')] bg-top h-12 absolute top-0 left-0 w-full bg-contain"></div>
+          <div className="bg-[url('/images/pumping/outline-border.png')] bg-top h-12 absolute top-0 left-0 w-full bg-contain"></div>
           {tab === "info" && (
             <div className="flex items-center justify-center">
               <div className="w-full overflow-hidden p-10 flex items-center justify-between">

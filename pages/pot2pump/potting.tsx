@@ -48,8 +48,8 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <div className="w-full grow">
-      <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
+    <div className="w-full grow flex flex-col">
+      <div className="px-2 md:px-6 w-full xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
         {mostSuccessProjects && mostSuccessProjects.length > 0 && (
           <div className="flex flex-col">
             <div className="relative flex flex-row items-end justify-between">
@@ -76,7 +76,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               />
             </div>
             <div className="border-3 border-[#FFCD4D] bg-[#FFCD4D] rounded-3xl overflow-hidden">
-              <div className="bg-[url('/images/pumping/outline-border.svg')] bg-top h-16"></div>
+              <div className="bg-[url('/images/pumping/outline-border.png')] bg-top h-16"></div>
               <motion.div
                 initial="hidden"
                 animate="visible"
@@ -225,12 +225,12 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           </Tabs>
         </div>
       </div>
-      <footer>
+      <footer className="mt-auto w-full">
         <Image
           src="/images/pumping/toast-bear.png"
           width={1000}
           height={0}
-          className="w-full h-auto mt-auto"
+          className="w-full"
           alt="toast bear"
         />
       </footer>
