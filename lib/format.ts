@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { Address, Address } from "viem";
 
 export const amountFormatted = (
   amount?: number | string | BigNumber,
@@ -63,13 +64,13 @@ export const formatAmount = (amount?: number | string) => {
     // 构造新的格式
     return zeroCount > 4
       ? {
-          start: `0.0`,
-          zeroCount,
-          end: match[1].substring(0, 4),
-        }
+        start: `0.0`,
+        zeroCount,
+        end: match[1].substring(0, 4),
+      }
       : {
-          start: new BigNumber(new BigNumber(amount).toFixed(6)).toFixed(),
-        };
+        start: new BigNumber(new BigNumber(amount).toFixed(6)).toFixed(),
+      };
   }
 
   return {
@@ -77,7 +78,7 @@ export const formatAmount = (amount?: number | string) => {
   };
 };
 
-export function formatLargeNumber(
+export function formatLargeNumber (
   number: number | string | BigNumber,
   decimals = 0
 ) {
@@ -91,4 +92,11 @@ export function formatLargeNumber(
   }
 
   return `${num.toFixed(0)}${units[unitIndex]}`;
+}
+
+export function shortenAddress (address: Address) {
+  if (!address || address.length !== 42 || !address.startsWith("0x")) {
+    throw new Error("Invalid EVM address");
+  }
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }

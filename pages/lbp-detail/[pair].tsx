@@ -1,10 +1,6 @@
 import { Spinner } from "@nextui-org/react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import Countdown from "react-countdown";
-import { cn } from "@/lib/tailwindcss";
-import TokenInfo from "./components/TokenInfo";
-import BuySell from "./components/BuySell";
 import { useRouter } from "next/router";
 import { Address, formatUnits, isAddress, parseUnits } from "viem";
 import { LiquidityBootstrapPoolABI } from "@/lib/abis/LiquidityBootstrapPoolAbi";
@@ -28,7 +24,9 @@ import TokenDetails from "./components/TokenDetails";
 import { Logo } from "@/components/svg/logo";
 import CountdownTimer from "./components/Countdown";
 import ProjectDetails from "./components/ProjectDetails";
-import Swap from "./components/Swap";
+import { useQuery } from "@tanstack/react-query";
+import FjordHoneySdk from "@/services/fjord_honeypot_sdk";
+import { SwapCard } from "./components/Swap";
 
 const RankProjectData = [
   { icon: "🚀", value: 10 },
@@ -46,6 +44,13 @@ const ProjectDetailTabs = [
 const LBPDetail = () => {
   const router = useRouter();
   const { pair: pairAddress } = router.query;
+
+  const { data: pool } = useQuery({
+    queryKey: ["lbp-detail", pairAddress],
+    queryFn: async () => {
+      return await FjordHoneySdk.findPool(pairAddress as string);
+    },
+  });
 
   const {
     data,
@@ -273,7 +278,27 @@ const LBPDetail = () => {
             </div>
 
             <div className="rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-              <Swap />
+              <SwapCard
+                sharePriceInAsset={previewAssetsIn?.toString() ?? ""}
+                poolId={pool?.id ?? ""}
+                asset={{
+                  decimals: assetToken.decimals,
+                  name: assetToken.name,
+                  symbol: assetToken.symbol,
+                  totalSupply: assetToken.totalSupply,
+                  address: data?.args?.asset as Address,
+                }}
+                share={{
+                  decimals: token.decimals,
+                  name: token.name,
+                  symbol: token.symbol,
+                  totalSupply: token.totalSupply,
+                  address: data?.args?.share as Address,
+                }}
+                poolAddress={pairAddress as Address}
+                allowSell={Boolean(data?.args?.sellingAllowed)}
+                refetchArgs={refetchArgs}
+              />
             </div>
           </div>
 
@@ -287,7 +312,11 @@ const LBPDetail = () => {
             </div>
           </div>
 
-          <ProjectDetails token={token} tokenAddress={data?.args?.share} />
+          <ProjectDetails
+            token={token}
+            tokenAddress={data?.args?.share}
+            description={pool?.description}
+          />
         </>
       )}
     </div>

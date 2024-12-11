@@ -12,7 +12,7 @@ const universalMenuItems = [
 interface ProjectDetailsProps extends TokenInfoProps {}
 
 const ProjectDetails = observer(
-  ({ token, tokenAddress }: ProjectDetailsProps) => {
+  ({ token, tokenAddress, description }: ProjectDetailsProps) => {
     const [tab, setTab] = useState(universalMenuItems[0].key);
     return (
       <>
@@ -38,11 +38,20 @@ const ProjectDetails = observer(
           )}
 
           {tab === "about" && (
-            <TokenInfo token={token} tokenAddress={tokenAddress} />
+            <div>
+              <h2 className="text-xl sm:text-3xl">Project description:</h2>
+              <p>
+                {description
+                  ? description
+                  : "this project does not have description info"}
+              </p>
+            </div>
           )}
 
           {tab === "txs" && (
-            <TokenInfo token={token} tokenAddress={tokenAddress} />
+            <div>
+              <h2 className="text-[2rem] text-center">Coming Thoon</h2>
+            </div>
           )}
         </CardContianer>
       </>

@@ -20,7 +20,7 @@ import {
   SocialCommunityForm,
   TermsAndConditionsForm,
   TokenomicsAndPreviewForm,
-  TokenVestingForm,
+  // TokenVestingForm,
 } from "@/types/launch-project";
 import {
   confirmationSchema,
@@ -32,7 +32,7 @@ import {
   socialCommunitySchema,
   termsAndConditionsSchema,
   tokenomicsAndPreviewSchema,
-  tokenVestingSchema,
+  // tokenVestingSchema,
 } from "@/constants/launch-project";
 import { LBPButton } from "@/components/LBPFormItems/Components";
 

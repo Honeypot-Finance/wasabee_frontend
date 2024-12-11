@@ -1,16 +1,10 @@
 import React, { useState } from "react";
 import { Button } from "../button";
 import { useFormContext } from "react-hook-form";
-import {
-  useAccount,
-  useReadContract,
-  useTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import {
   decodeEventLog,
-  erc20Abi,
   formatUnits,
   keccak256,
   maxUint256,
@@ -26,11 +20,15 @@ import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import useMulticall3 from "../hooks/useMulticall3";
 import { formatErc20Data } from "@/services/lib/helper";
-import { result } from "lodash";
+import { useMutation } from "@tanstack/react-query";
+import FjordHoneySdk, { TCreatePool } from "@/services/fjord_honeypot_sdk";
+import { berachainBartioTestnet } from "@/lib/chain";
 type FomatedTokenType = {
   allowance: bigint;
   balanceOf: bigint;
   decimals: number;
+  name: string;
+  symbol: string;
 };
 
 type Props = {};
@@ -117,6 +115,12 @@ const Confirm = (props: Props) => {
     assetTokenQuantity,
   } = getValues();
 
+  console.log(getValues());
+
+  const { mutateAsync: createPoolAsync } = useMutation({
+    mutationFn: async (data: TCreatePool) => FjordHoneySdk.createPool(data),
+  });
+
   const { data } = useReadContract({
     abi: LiquidityBootstrapPoolFactoryABI,
     address: LiquidityBootstrapPoolFactoryAddress,
@@ -153,6 +157,16 @@ const Confirm = (props: Props) => {
             reference: "decimals",
             methodParameters: [],
           },
+          {
+            methodName: "name",
+            reference: "name",
+            methodParameters: [],
+          },
+          {
+            methodName: "symbol",
+            reference: "symbol",
+            methodParameters: [],
+          },
         ],
       },
       {
@@ -178,6 +192,16 @@ const Confirm = (props: Props) => {
             reference: "decimals",
             methodParameters: [],
           },
+          {
+            methodName: "name",
+            reference: "name",
+            methodParameters: [],
+          },
+          {
+            methodName: "symbol",
+            reference: "symbol",
+            methodParameters: [],
+          },
         ],
       },
     ],
@@ -192,6 +216,7 @@ const Confirm = (props: Props) => {
   ) as FomatedTokenType;
 
   console.log({ formatedProjectToken, formatedAssetToken });
+
   const [, platformFee, swapFee] = data ?? [];
 
   const SummaryItemData = [
@@ -284,7 +309,9 @@ const Confirm = (props: Props) => {
 
   const handleCreatePool = async () => {
     const {
-      // assetTokenAddress,
+      name,
+      description,
+      assetTokenAddress,
       projectToken,
       lbpType,
       startTime,
@@ -295,6 +322,11 @@ const Confirm = (props: Props) => {
       assetTokenQuantity,
       tokenClaimDelayHours,
       tokenClaimDelayMinutes,
+      projectTokenLogo,
+      saleBanner,
+      projectLink,
+      lbpDescription,
+      projectName,
     } = getValues();
     const sellingAllowed = lbpType === "buy-sell";
     if (account.address) {
@@ -345,8 +377,7 @@ const Confirm = (props: Props) => {
         });
 
         const res = await waitForTransactionReceipt(config, { hash: txHash });
-
-        console.log(res);
+        let poolAddress: string | null = null;
 
         res.logs.forEach((log) => {
           try {
@@ -355,12 +386,61 @@ const Confirm = (props: Props) => {
               data: log.data,
               topics: log.topics,
             });
+
             if (decode.eventName == "PoolCreated") {
-              const poolAddress = decode.args.pool;
-              router.push(`/lbp-detail/${poolAddress}`);
+              poolAddress = decode.args.pool;
             }
           } catch (error) {}
         });
+        if (poolAddress) {
+          await createPoolAsync({
+            address: poolAddress,
+            name: projectName,
+            description: lbpDescription,
+            chainId: berachainBartioTestnet.id,
+            owner: account.address as string,
+            endsAt: dayjs(endTime).toDate(),
+            startsAt: dayjs(startTime).toDate(),
+            swapCount: 0,
+            swapFee: "0.3",
+            swapEnabled: sellingAllowed,
+            blockNumber: +res.blockNumber.toString(),
+            sellingAllowed: sellingAllowed,
+            assetTokenAddress: assetTokenAddress,
+            assetTokenName: formatedAssetToken.name,
+            assetTokenSymbol: formatedAssetToken.symbol,
+            shareTokenAddress: projectToken,
+            shareTokenName: formatedProjectToken.name,
+            shareTokenSymbol: formatedProjectToken.symbol,
+            txHash: txHash,
+            assetTokenDecimals: formatedAssetToken.decimals,
+            assetsInitial: "",
+            fundsRaised: 0,
+            lbpMarketcap: "",
+            liquidity: "",
+            shareTokenDecimals: formatedProjectToken.decimals,
+            sharesInitial: "",
+            sharesReleased: "",
+            volume: "",
+            weightStart: parseEther(`${startWeight / 100}`).toString(),
+            weightEnd: parseEther(`${endWeight / 100}`).toString(),
+            assetsCurrent: parseUnits(
+              `${assetTokenQuantity}`,
+              formatedAssetToken?.decimals ?? 18
+            ).toString(),
+            numberParticipants: 0,
+            sharesCurrent: parseUnits(
+              `${projectTokenQuantity}`,
+              formatedProjectToken?.decimals ?? 18
+            ).toString(),
+            bannerUrl: saleBanner,
+            imageUrl: projectTokenLogo,
+            learnMoreUrl: projectLink,
+            redemptionDelay:
+              tokenClaimDelayHours * 60 * 60 + tokenClaimDelayMinutes * 60,
+          });
+          router.push(`/lbp-detail/${poolAddress}`);
+        }
       } catch (error) {
         console.log(error);
         WrappedToastify.error({

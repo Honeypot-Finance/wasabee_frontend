@@ -1,58 +1,52 @@
 import Link from "next/link";
-import { Observer, observer } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/button";
-import launchpad, { defaultPairFilters } from "@/services/launchpad";
+import launchpad from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
-import { LaunchCard } from "@/components/LaunchCard";
-import {
-  Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Tab,
-  Tabs,
-  useDisclosure,
-  Button as NextButton,
-} from "@nextui-org/react";
-import { IoSearchOutline } from "react-icons/io5";
-import { SpinnerContainer } from "@/components/Spinner";
-import { DropdownSvg } from "@/components/svg/dropdown";
+import { Tab, Tabs, Button as NextButton } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
-import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
-import { MemePairContract } from "@/services/contract/memepair-contract";
-import Pagination from "@/components/Pagination/Pagination";
-import Image from "next/image";
 import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 import LaunchPadProjectCard from "@/components/LaunchPadProjectCard";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { DataContainer } from "@/components/DataContainer";
+import FjordHoneySdk from "@/services/fjord_honeypot_sdk";
+import dayjs from "dayjs";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [mostSuccessProjects, setMostSuccessProjects] = useState<
-    MemePairContract[] | null
-  >(null);
   const [selectedTab, setSelectedTab] = useState<"all" | "my">("all");
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+
+  const owner = selectedTab == "my" ? wallet.account : "";
+
+  const {
+    data: pools,
+    isLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: ["trendingMEMEs", search, page, owner],
+    queryFn: () => {
+      return FjordHoneySdk.findManyPools({
+        page: page,
+        search: search,
+        filters: { owner: owner },
+      });
+    },
+    placeholderData: keepPreviousData,
+  });
 
   useEffect(() => {
     if (!wallet.isInit) {
       return;
     }
-    launchpad.setCurrentLaunchpadType("meme");
-    launchpad.showNotValidatedPairs = true;
-    launchpad.myLaunches.reloadPage();
-
-    // launchpad.projectsPage.reloadPage();
-    // launchpad.participatedPairs.reloadPage();
-
-    //loading most success projects
-    launchpad.trendingMEMEs().then((data) => {
-      setMostSuccessProjects(data);
-    });
   }, [wallet.isInit]);
 
   console.log("launchpad.projectsPage", launchpad.projectsPage);
+
+  const mostSuccessProjects: any[] = [];
 
   return (
     <div className="px-7 xl:max-w-[1280px] mx-auto flex flex-col sm:gap-y-5">
@@ -67,10 +61,46 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             animate="visible"
             className="w-full flex flex-col lg:flex-row gap-4 flex-grow-[1] mt-8"
           >
-            <LaunchPadProjectCard status="comming" coverImg={""} />
-            <LaunchPadProjectCard status="live" coverImg={""} />
-            <LaunchPadProjectCard status="live" coverImg={""} />
-            <LaunchPadProjectCard status="live" coverImg={""} />
+            <LaunchPadProjectCard
+              status="comming"
+              coverImg={""}
+              endDate={0}
+              tokenName={""}
+              projectAuthor={""}
+              startDate={0}
+              fundsRaised={0}
+              pairAddress={"0x"}
+            />
+            <LaunchPadProjectCard
+              status="live"
+              coverImg={""}
+              endDate={0}
+              tokenName={""}
+              projectAuthor={""}
+              startDate={0}
+              fundsRaised={0}
+              pairAddress={"0x0"}
+            />
+            <LaunchPadProjectCard
+              status="live"
+              coverImg={""}
+              endDate={0}
+              tokenName={""}
+              projectAuthor={""}
+              startDate={0}
+              fundsRaised={0}
+              pairAddress={"0x0"}
+            />
+            <LaunchPadProjectCard
+              status="live"
+              coverImg={""}
+              endDate={0}
+              tokenName={""}
+              projectAuthor={""}
+              startDate={0}
+              fundsRaised={0}
+              pairAddress={"0x0"}
+            />
           </motion.div>
         </>
       )}
@@ -89,19 +119,10 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           defaultSelectedKey={selectedTab}
           selectedKey={selectedTab}
           onSelectionChange={(key) => {
-            launchpad.setCurrentLaunchpadType("meme");
             if (key === "all") {
               setSelectedTab(key);
-              launchpad.projectsPage.setIsInit(false);
-              launchpad.pairFilterStatus = defaultPairFilters.all.status;
             } else if (key === "my") {
               setSelectedTab(key);
-              launchpad.myLaunches.setIsInit(false);
-              launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
-            } else if (key === "participated-launch") {
-              launchpad.participatedPairs.setIsInit(false);
-              launchpad.pairFilterStatus =
-                defaultPairFilters.participatedPairs.status;
             }
           }}
         >
@@ -111,9 +132,10 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
         <div className="flex gap-5">
           <WarppedNextInputSearchBar
+            value={search}
             className="max-w-[305px] w-[305px] h-[46px] flex"
             onChange={(e) => {
-              launchpad.pairFilterSearch = e.target.value;
+              setSearch(e.target.value);
             }}
           />
 
@@ -127,39 +149,51 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           </Button>
         </div>
       </div>
-
       <div>
-        {selectedTab === "all" ? (
-          <Pagination
-            paginationState={launchpad.projectsPage}
-            render={(pair) => (
-              <LaunchPadProjectCard
-                status={"live"}
-                coverImg={""}
-                isShowCoverImage={true}
-              />
-            )}
-            classNames={{
-              itemsContainer:
-                "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-x-4 xl:gap-y-5 xl:grid-cols-4",
+        <DataContainer
+          hasData={pools?.data && pools?.data?.length > 0}
+          isLoading={isLoading || isFetching}
+        >
+          <div>
+            <motion.div
+              variants={defaultContainerVariants}
+              initial="hidden"
+              animate="visible"
+              className={
+                "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-x-4 xl:gap-y-5 xl:grid-cols-4"
+              }
+            >
+              {pools?.data?.map((pair, idx) => (
+                <motion.div variants={itemPopUpVariants} key={idx}>
+                  <LaunchPadProjectCard
+                    status={
+                      dayjs(pair.startsAt).isAfter(dayjs()) ? "comming" : "live"
+                    }
+                    coverImg={pair.bannerUrl}
+                    isShowCoverImage={true}
+                    endDate={pair.endsAt}
+                    startDate={pair.startsAt}
+                    tokenName={pair.shareTokenName}
+                    projectAuthor={pair.owner}
+                    fundsRaised={pair.fundsRaised}
+                    assetTokenSymbol={pair.assetTokenSymbol}
+                    shareTokenSymbol={pair.imageUrl}
+                    pairAddress={pair.address}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </DataContainer>
+        <div className="flex justify-around my-5">
+          <Button
+            onClick={() => {
+              setPage((prev) => (prev += 1));
             }}
-          />
-        ) : (
-          <Pagination
-            paginationState={launchpad.myLaunches}
-            render={(pair) => (
-              <LaunchPadProjectCard
-                status={"live"}
-                coverImg={""}
-                isShowCoverImage={true}
-              />
-            )}
-            classNames={{
-              itemsContainer:
-                "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-x-4 xl:gap-y-5 xl:grid-cols-4",
-            }}
-          />
-        )}
+          >
+            {isFetching ? "Loading..." : "Load More"}
+          </Button>
+        </div>
       </div>
     </div>
   );
