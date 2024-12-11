@@ -254,77 +254,80 @@ export const Profile = observer(() => {
   }, [wallet.isInit, liquidity.isInit]);
 
   return (
-    <div className="m-auto flex justify-center items-start flex-col max-w-[800px] gap-2">
-      <div>
-        {wallet.isInit && (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-center gap-2 sm:gap-4">
-              <div className="flex h-10 w-10">
-                <div
-                  className="rounded-full w-full h-full "
-                  style={{
-                    backgroundImage: `linear-gradient(90deg, #${wallet.account
-                      .substring(2, 8)
-                      .toUpperCase()} 0%, #${wallet.account
-                      .substring(
-                        wallet.account.length - 6,
-                        wallet.account.length
-                      )
-                      .toUpperCase()} 100%)`,
-                  }}
-                ></div>
+    <div className="w-full">
+      <div className="flex justify-center items-start flex-col  gap-2 max-w-[800px] mx-auto">
+        <div>
+          {wallet.isInit && (
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-center gap-2 sm:gap-4">
+                <div className="flex h-10 w-10">
+                  <div
+                    className="rounded-full w-full h-full "
+                    style={{
+                      backgroundImage: `linear-gradient(90deg, #${wallet.account
+                        .substring(2, 8)
+                        .toUpperCase()} 0%, #${wallet.account
+                        .substring(
+                          wallet.account.length - 6,
+                          wallet.account.length
+                        )
+                        .toUpperCase()} 100%)`,
+                    }}
+                  ></div>
+                </div>
+                <div className="grow">
+                  <p>My Account</p>
+                  <p className="w-full break-all">
+                    {truncate(wallet.account, 10)}{" "}
+                    <Copy value={wallet.account} />
+                  </p>
+                </div>
               </div>
-              <div className="grow">
-                <p>My Account</p>
-                <p className="w-full break-all">
-                  {truncate(wallet.account, 10)} <Copy value={wallet.account} />
-                </p>
+              <div>
+                <Link
+                  target="_blank"
+                  className="underline p-1"
+                  href={`https://bartio.beratrail.io/address/${wallet.account}`}
+                >
+                  View on beratrail.io
+                </Link>
               </div>
             </div>
-            <div>
-              <Link
-                target="_blank"
-                className="underline p-1"
-                href={`https://bartio.beratrail.io/address/${wallet.account}`}
-              >
-                View on beratrail.io
-              </Link>
-            </div>
-          </div>
-        )}
-      </div>
-      <div className="w-full">
-        <Tabs
-          aria-label="Options"
-          classNames={{
-            tabList: "bg-transparent flex-wrap sm:flex-nowrap",
-            tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
-          }}
-          className="next-tab"
-          onSelectionChange={(key) => {
-            if (key === "my-launch") {
-              launchpad.myLaunches.setIsInit(false);
-              launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
-            } else if (key === "participated-launch") {
-              launchpad.participatedPairs.setIsInit(false);
-              launchpad.pairFilterStatus =
-                defaultPairFilters.participatedPairs.status;
-            }
-          }}
-        >
-          <Tab key="portfolio" title="Portfolio">
-            <PortfolioTab />
-          </Tab>
-          <Tab key="my-launch" title="My Launch">
-            <MyLaunchTab />
-          </Tab>
-          <Tab key="participated-launch" title="Participated Launch">
-            <ParticipatedLaunchTab />
-          </Tab>
-          <Tab key="my-pools" title="My Pools">
-            <PoolsTab />
-          </Tab>
-        </Tabs>
+          )}
+        </div>
+        <div className="w-full">
+          <Tabs
+            aria-label="Options"
+            classNames={{
+              tabList: "bg-transparent flex-wrap sm:flex-nowrap",
+              tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
+            }}
+            className="next-tab"
+            onSelectionChange={(key) => {
+              if (key === "my-launch") {
+                launchpad.myLaunches.setIsInit(false);
+                launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
+              } else if (key === "participated-launch") {
+                launchpad.participatedPairs.setIsInit(false);
+                launchpad.pairFilterStatus =
+                  defaultPairFilters.participatedPairs.status;
+              }
+            }}
+          >
+            <Tab key="portfolio" title="Portfolio">
+              <PortfolioTab />
+            </Tab>
+            <Tab key="my-launch" title="My Launch">
+              <MyLaunchTab />
+            </Tab>
+            <Tab key="participated-launch" title="Participated Launch">
+              <ParticipatedLaunchTab />
+            </Tab>
+            <Tab key="my-pools" title="My Pools">
+              <PoolsTab />
+            </Tab>
+          </Tabs>
+        </div>
       </div>
     </div>
   );

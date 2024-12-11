@@ -28,7 +28,7 @@ const SwapPage = observer(() => {
   const isInit = wallet.isInit && liquidity;
 
   return isInit ? (
-    <>
+    <div className="w-full">
       <div
         className={`grid ${
           chart.showChart && "grid-cols-1 lg:grid-cols-2 "
@@ -59,7 +59,7 @@ const SwapPage = observer(() => {
           </div>
         </motion.div>
       </div>
-    </>
+    </div>
   ) : (
     <LoadingDisplay />
   );

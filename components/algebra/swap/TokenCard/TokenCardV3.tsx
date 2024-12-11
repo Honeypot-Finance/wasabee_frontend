@@ -5,17 +5,21 @@ import { Currency, Percent } from "@cryptoalgebra/sdk";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAccount, useBalance, useWatchBlockNumber } from "wagmi";
 import { Address, zeroAddress } from "viem";
-import { TokenSelector } from "@/components/TokenSelector";
+import { TokenSelector } from "@/components/TokenSelector/v3";
 import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
 import { wallet } from "@/services/wallet";
 import { Token } from "@/services/contract/token";
-import { Accordion, AccordionItem, Slider } from "@nextui-org/react";
+import { AccordionItem, Slider } from "@nextui-org/react";
 import { WrappedNextAccordion } from "@/components/wrappedNextUI/Accordion/Accordion";
 import { BiDownArrow } from "react-icons/bi";
 import { debounce } from "lodash";
-import { ItemSelect, SelectState, SelectItem } from "@/components/ItemSelect";
-import NativeCurrency from "@cryptoalgebra/sdk/dist/entities/NativeCurrency";
-import { BASES_TO_CHECK_TRADES_AGAINST, WNATIVE_EXTENDED } from "@/data/algebra/routing";
+import {
+  ItemSelect,
+  SelectState,
+  SelectItem,
+} from "@/components/ItemSelect/v3";
+import { WNATIVE_EXTENDED } from "@/data/algebra/routing";
+import { SwapAmount } from "@/components/SwapAmount/v3";
 
 interface TokenSwapCardProps {
   handleTokenSelection: (currency: Currency) => void;
@@ -91,149 +95,68 @@ const TokenCardV3 = ({
   };
 
   return (
-    <div className="p-2">
-      <div className="flex w-full py-1 bg-card-dark rounded-2xl">
-        <div className="flex flex-col w-full">
-          <div className="text-sub text-sm font-normal ">{label}</div>
-
-          <Input
-            disabled={disabled}
-            type={"text"}
-            value={storedValue}
-            id={`amount-${currency?.symbol}`}
-            onUserInput={(v) => {
-              setStoredValue(v);
-              handleInput(v);
-            }}
-            className={`bg-transparent border-none text-xl font-bold w-11/12 p-2 disabled:cursor-default disabled:text-white 
-               focus:bg-black/20 focus:outline-none focus:boader-none focus:ring-0 
-                focus:ring-offset-0 focus:ring-offset-transparent focus:ring-transparent
-              `}
-            placeholder={"0.0"}
-            maxDecimals={currency?.decimals ?? 0 + 2}
-          />
-          {showBalance && (
-            <div className="text-sm">
-              {fiatValue && formatUSD.format(fiatValue)}
+    <div className="flex-1 w-full flex flex-col gap-y-3">
+      <div className="text-black flex items-center justify-between px-2">
+        <span>{label}</span>
+        {currency && account && showBalance && (
+          <div className="flex items-center gap-x-2">
+            <div>
+              <span>Balance: </span>
+              <span>{balanceString}</span>
             </div>
-          )}
-        </div>
-        <div className="flex flex-col items-end w-full">
-          {currency && account && (
-            <div className={"flex text-sm whitespace-nowrap"}>
-              {showBalance && (
-                <div>
-                  <span className="font-semibold">Balance: </span>
-                  <span>{balanceString}</span>
-                </div>
-              )}
-              {showMaxButton && (
-                <button
-                  className="ml-2 text-[#63b4ff]"
-                  onClick={handleMaxValue}
-                >
-                  Max
-                </button>
-              )}
-            </div>
-          )}
-          <TokenSelector
-            value={
-              currency?.wrapped.address
-                ? Token.getToken({
-                    address: currency?.wrapped.address,
-                    isNative:currency.isNative
-                  })
-                : undefined
-            }
-            onSelect={(token) => {
-              console.log("token.isNative", token.isNative);
-              console.log("WNATIVE_EXTENDED[wallet.currentChainId].symbol", WNATIVE_EXTENDED[wallet.currentChainId].symbol);  
-              handleTokenSelect(
-                token.isNative?
-                (new AlgebraToken(
-                  wallet.currentChainId,
-                  zeroAddress,
-                  wallet.currentChain.nativeToken.decimals,
-                  wallet.currentChain.nativeToken.symbol,
-                  wallet.currentChain.nativeToken.name,
-                )&&{isNative:true} as Currency):
-                new AlgebraToken(
-                  wallet.currentChainId,
-                  token.address,
-                  token.decimals,
-                  token.symbol,
-                  token.name
-                )
-              );
-            }}
-          />
-        </div>
-      </div>
-      <WrappedNextAccordion>
-        <AccordionItem
-          title={
-            <span className="flex w-full justify-center items-center text-center">
-              <BiDownArrow />
-            </span>
-          }
-          className=""
-          classNames={{
-            base: "bg-black/25 rounded-2xl",
-            titleWrapper: "text-center",
-            trigger: "py-1",
-          }}
-          hideIndicator
-        >
-          <div className="p-2">
-            <div className="w-full flex justify-end items-center">
-              <Slider
-                className="w-full"
-                size="sm"
-                maxValue={Number(balance?.formatted)}
-                minValue={0}
-                onChange={(value) => {
-                  setStoredValue(value.toString());
-                  handleInput(value.toString());
-                }}
-                value={Number(storedValue)}
-                step={Math.pow(0.1, 18)}
-              ></Slider>
-            </div>
-          </div>
-
-          <div className="p-2">
-            <div className="w-full flex justify-end items-center">
-              <ItemSelect
-                selectState={
-                  new SelectState({
-                    value: Number(storedValue),
-                    onSelectChange: (value) => {
-                      handleInput(
-                        (Number(balance?.formatted) * Number(value)).toString()
-                      );
-                    },
-                  })
-                }
-                className=" grid grid-cols-2 lg:grid-cols-4 gap-[16px] justify-around w-full"
+            {showMaxButton && (
+              <button
+                className="cursor-pointer text-[#63b4ff]"
+                onClick={handleMaxValue}
               >
-                <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
-                  25%
-                </SelectItem>
-                <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
-                  50%
-                </SelectItem>
-                <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
-                  75%
-                </SelectItem>
-                <SelectItem className="rounded-[30px] px-[24px]" value={1}>
-                  100%
-                </SelectItem>
-              </ItemSelect>
-            </div>
+                Max
+              </button>
+            )}
           </div>
-        </AccordionItem>
-      </WrappedNextAccordion>
+        )}
+      </div>
+
+      <div className="p-2 space-y-4">
+        <Slider
+          className="w-full"
+          size="sm"
+          maxValue={Number(balance?.formatted)}
+          minValue={0}
+          onChange={(value) => {
+            setStoredValue(value.toString());
+            handleInput(value.toString());
+          }}
+          value={Number(storedValue)}
+          step={Math.pow(0.1, 18)}
+        />
+
+        <ItemSelect
+          selectState={
+            new SelectState({
+              value: Number(storedValue),
+              onSelectChange: (value) => {
+                handleInput(
+                  (Number(balance?.formatted) * Number(value)).toString()
+                );
+              },
+            })
+          }
+          className="grid grid-cols-2 lg:grid-cols-4 gap-[16px] justify-around w-full"
+        >
+          <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
+            25%
+          </SelectItem>
+          <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
+            50%
+          </SelectItem>
+          <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
+            75%
+          </SelectItem>
+          <SelectItem className="rounded-[30px] px-[24px]" value={1}>
+            100%
+          </SelectItem>
+        </ItemSelect>
+      </div>
     </div>
   );
 };
