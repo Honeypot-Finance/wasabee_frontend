@@ -40,7 +40,7 @@ const SwapPage = observer(() => {
             initial="hidden"
             animate="visible"
             transition={{ duration: 0.5 }}
-            className="w-full lg:max-w-[574px] flex flex-col self-center place-self-end h-full"
+            className="w-full lg:max-w-[574px] flex flex-col self-center place-self-end h-full order-2 lg:order-1"
           >
             <PriceFeedGraph></PriceFeedGraph>
           </motion.div>
@@ -50,8 +50,8 @@ const SwapPage = observer(() => {
           initial="hidden"
           animate="visible"
           className={
-            "relative w-full flex flex-col items-center justify-center" +
-            (chart.showChart ? "justify-start" : "")
+            "relative w-full flex flex-col items-center justify-center order-1 lg:order-2" +
+            (chart.showChart ? " justify-start" : "")
           }
         >
           <div>

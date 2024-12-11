@@ -146,7 +146,7 @@ const SwapParamsV3 = () => {
               <div className="bg-[#FFB800] p-2 rounded-lg">
                 <ZapIcon className="w-4 h-4 text-black" />
               </div>
-              <span className="text-black font-bold text-lg">
+              <span className="text-black font-bold text-base">
                 {slidingFee && `${slidingFee?.toFixed(4)}% fee`}
               </span>
             </div>

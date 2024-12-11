@@ -1,38 +1,54 @@
 import * as React from "react";
+import { Input as BaseInput } from "@/components/input";
 
-import { cn } from "@/lib/tailwindcss";
-
-const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`);
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps {
   onUserInput?: (value: string) => void;
   maxDecimals?: number;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+  classNames?: Record<string, string>;
+  [key: string]: any;
 }
 
+const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`);
+
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, onUserInput, maxDecimals = 18, ...props }, ref) => {
+  ({ onUserInput, maxDecimals = 18, onChange, value, className, classNames, ...props }, ref) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      let newValue = e.target.value.replace(/,/g, ".");
+      newValue =
+        newValue.indexOf(".") >= 0
+          ? newValue.slice(0, newValue.indexOf(".") + maxDecimals + 1)
+          : newValue;
+
+      if (
+        newValue === "" ||
+        inputRegex.test(newValue.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+      ) {
+        onChange?.(e);
+        onUserInput?.(newValue);
+      }
+    };
+
+    const handleClear = () => {
+      const e = {
+        target: { value: "" }
+      } as React.ChangeEvent<HTMLInputElement>;
+      
+      onChange?.(e);
+      onUserInput?.("");
+    };
+
     return (
-      <input
-        type={type}
-        className={cn(
-          "flex h-10 w-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-          className
-        )}
+      <BaseInput
         ref={ref}
-        onChange={(e) => {
-          let value = e.target.value.replace(/,/g, ".");
-          value =
-            value.indexOf(".") >= 0
-              ? value.slice(0, value.indexOf(".") + maxDecimals + 1)
-              : value;
-          if (
-            value === "" ||
-            inputRegex.test(value.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-          ) {
-            onUserInput && onUserInput(value);
-          }
-        }}
-        inputMode={"decimal"}
+        value={value}
+        onChange={handleChange}
+        onClear={handleClear}
+        className={className}
+        classNames={classNames}
+        inputMode="decimal"
         pattern="^[0-9]*[.,]?[0-9]*$"
         minLength={1}
         maxLength={100}
@@ -44,6 +60,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     );
   }
 );
+
 Input.displayName = "Input";
 
 export { Input };

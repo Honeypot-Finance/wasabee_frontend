@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { isEthAddress } from "@/lib/address";
 import { wallet } from "@/services/wallet";
 import { amountFormatted } from "../../lib/format";
-import { AmountFormat } from "../AmountFormat";
 import { liquidity } from "@/services/liquidity";
 import { LoadingContainer } from "../LoadingDisplay/LoadingDisplay";
 import { ItemSelect, SelectItem, SelectState } from "../ItemSelect/v3";
@@ -233,7 +232,7 @@ export const SwapCard = observer(
                         <div className="bg-[#FFB800] p-2 rounded-lg">
                           <BsLightningChargeFill className="w-4 h-4 text-black" />
                         </div>
-                        <span className="text-black font-bold text-lg">
+                        <span className="text-black font-bold text-base">
                           0 .0100% fee
                         </span>
                       </div>
