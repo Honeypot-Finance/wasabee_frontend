@@ -138,73 +138,59 @@ const SwapParamsV3 = () => {
   if (wrapType !== WrapType.NOT_APPLICABLE) return;
 
   return trade ? (
-    <div className="rounded text-white w-full">
-      <div className="flex justify-between">
-        <button
-          className="flex items-center w-full text-md mb-1 text-center text-white bg-card-dark py-1 px-3 rounded-lg"
-          onClick={() => toggleExpanded(!isExpanded)}
-        >
-          {slidingFee && (
-            <div className="rounded select-none pointer px-1.5 py-1 flex items-center relative">
-              {dynamicFeePlugin && (
-                <ZapIcon
-                  className="mr-2"
-                  strokeWidth={1}
-                  stroke="white"
-                  fill="white"
-                  size={16}
-                />
-              )}
-              <span>{`${slidingFee?.toFixed(4)}% fee`}</span>
+    <div className="flex flex-col w-full rounded-2xl cursor-pointer">
+      <div className="w-full custom-dashed p-4">
+        <div className="flex flex-col w-full" onClick={() => toggleExpanded(!isExpanded)}>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2">
+              <div className="bg-[#FFB800] p-2 rounded-lg">
+                <ZapIcon className="w-4 h-4 text-black" />
+              </div>
+              <span className="text-black font-bold text-lg">
+                {slidingFee && `${slidingFee?.toFixed(4)}% fee`}
+              </span>
+            </div>
+            <ChevronDownIcon 
+              className={`w-6 h-6 text-black transition-transform duration-300 ${
+                isExpanded ? "rotate-180" : ""
+              }`}
+            />
+          </div>
+
+          {isExpanded && (
+            <div className="flex flex-col divide-y divide-black/10">
+              <div className="flex items-center py-3 justify-between">
+                <span className="text-black text-sm font-medium">Route</span>
+                <SwapRoute trade={trade} />
+              </div>
+
+              <div className="flex items-center py-3 justify-between">
+                <span className="text-black text-sm font-medium">
+                  {trade.tradeType === TradeType.EXACT_INPUT ? "Minimum received" : "Maximum sent"}
+                </span>
+                <span className="text-black text-sm font-medium">
+                  {trade.tradeType === TradeType.EXACT_INPUT
+                    ? `${trade.minimumAmountOut(allowedSlippage).toSignificant(6)} ${trade.outputAmount.currency.symbol}`
+                    : `${trade.maximumAmountIn(allowedSlippage).toSignificant(6)} ${trade.inputAmount.currency.symbol}`}
+                </span>
+              </div>
+
+              <div className="flex items-center py-3 justify-between">
+                <span className="text-black text-sm font-medium">LP Fee</span>
+                <span className="text-black text-sm font-medium">{LPFeeString}</span>
+              </div>
+
+              <div className="flex items-center py-3 justify-between">
+                <span className="text-black text-sm font-medium">Price Impact</span>
+                <PriceImpact priceImpact={priceImpact} />
+              </div>
+
+              <div className="flex items-center py-3 justify-between">
+                <span className="text-black text-sm font-medium">Slippage tolerance</span>
+                <span className="text-black text-sm font-medium">{allowedSlippage.toFixed(2)}%</span>
+              </div>
             </div>
           )}
-          <div className={`ml-auto duration-300 ${isExpanded && "rotate-180"}`}>
-            <ChevronDownIcon strokeWidth={2} size={16} />
-          </div>
-        </button>
-      </div>
-      <div
-        className={`h-0 duration-300 will-change-[height] overflow-hidden bg-card-dark rounded-xl ${
-          isExpanded && "h-[180px]"
-        }`}
-      >
-        <div className="flex flex-col gap-2.5 px-3 py-2 rounded-xl">
-          <div className="flex items-center justify-between">
-            <span className="font-semibold">Route</span>
-            <span>
-              <SwapRoute trade={trade} />
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="font-semibold">
-              {trade.tradeType === TradeType.EXACT_INPUT
-                ? "Minimum received"
-                : "Maximum sent"}
-            </span>
-            <span>
-              {trade.tradeType === TradeType.EXACT_INPUT
-                ? `${trade
-                    .minimumAmountOut(allowedSlippage)
-                    .toSignificant(6)} ${trade.outputAmount.currency.symbol}`
-                : `${trade.maximumAmountIn(allowedSlippage).toSignificant(6)} ${
-                    trade.inputAmount.currency.symbol
-                  }`}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="font-semibold">LP Fee</span>
-            <span>{LPFeeString}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="font-semibold">Price impact</span>
-            <span>
-              <PriceImpact priceImpact={priceImpact} />
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="font-semibold">Slippage tolerance</span>
-            <span>{allowedSlippage.toFixed(2)}%</span>
-          </div>
         </div>
       </div>
     </div>
@@ -256,13 +242,13 @@ const PriceImpact = ({ priceImpact }: { priceImpact: Percent | undefined }) => {
 
   const color =
     severity === 3 || severity === 4
-      ? "text-red-400"
+      ? "text-[#FF5449]"
       : severity === 2
         ? "text-yellow-400"
-        : "text-white";
+        : "text-black";
 
   return (
-    <span className={color}>
+    <span className={`${color} text-sm font-medium`}>
       {priceImpact ? `${priceImpact.multiply(-1).toFixed(2)}%` : "-"}
     </span>
   );
