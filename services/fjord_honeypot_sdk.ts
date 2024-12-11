@@ -90,7 +90,6 @@ class FjordHoneySdk {
             where.owner = filters.owner
         }
 
-        console.log(where)
 
         return await sdk.request.rest.findManyPools({ skip, take, where }) as any as { data: Pool[] }
     }
@@ -99,8 +98,8 @@ class FjordHoneySdk {
             where: {
                 address: address
             }
-        })
-        return pool.length > 0 ? pool[0] : null
+        }) as any as { data: Pool[] }
+        return pool.data && pool.data.length > 0 ? pool.data[0] : null
     }
 
     static createPool = async (pool: TCreatePool) => {
@@ -188,6 +187,14 @@ class FjordHoneySdk {
         return swap
     }
 
+
+    static findManySwap = async ({ poolId, page }: { poolId: string, page: number }) => {
+        const take = 10;
+        const skip = (page - 1) * take;
+
+
+        return await sdk.request.rest.findManySwaps({ where: { poolId }, take, skip })
+    }
 }
 
 export default FjordHoneySdk;

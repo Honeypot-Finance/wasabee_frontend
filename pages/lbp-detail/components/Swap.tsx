@@ -328,6 +328,8 @@ export const SwapCard = observer(
       try {
         let hash;
 
+        console.log(actionTab);
+
         if (actionTab === "buy") {
           hash = await writeContractAsync({
             abi: LiquidityBootstrapPoolABI,
@@ -349,7 +351,7 @@ export const SwapCard = observer(
           hash = await writeContractAsync({
             abi: LiquidityBootstrapPoolABI,
             address: poolAddress,
-            functionName: "swapExactAssetsForShares",
+            functionName: "swapExactSharesForAssets",
             args: [
               parseUnits(
                 swapToken?.from?.toString() || "",
@@ -390,10 +392,10 @@ export const SwapCard = observer(
             blockHash: result.blockHash,
             logIndex: 0,
             status: result.status == "success" ? "success" : "failed",
-            assetPriceProxyRoundId: "",
-            assetPriceValue: "",
+            assetPriceProxyRoundId: "1",
+            assetPriceValue: "1",
             sharePriceInAsset: sharePriceInAsset,
-            sharePriceInUsd: "",
+            sharePriceInUsd: "1",
             swapFee: "0.03",
             chainIn: Number(result.chainId.toString()),
             chainOut: Number(result.chainId.toString()),
@@ -540,11 +542,17 @@ export const SwapCard = observer(
                   </Button>
                 ) : (
                   <Button
-                    isDisabled={!isSufficientBalance || isInValidInput}
+                    isDisabled={
+                      !isSufficientBalance || isInValidInput || isTxLoading
+                    }
                     className="w-full"
                     onClick={handleWriteContract}
                   >
-                    {isSufficientBalance ? "Buy" : "Insufficient balance"}
+                    {isSufficientBalance ? (
+                      <span>{isTxLoading ? "Buying" : "Buy"}</span>
+                    ) : (
+                      "Insufficient balance"
+                    )}
                   </Button>
                 )}
                 <div className="text-sm cursor-pointer leading-3 font-normal text-center text-white/50">

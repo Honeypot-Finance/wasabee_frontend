@@ -11,6 +11,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@internationalized/date": "^3.5.6",
+    "@marigoldlabs/fjord-honeypot-sdk": "^0.1.11",
     "@metamask/sdk": "^0.14.3",
     "@nextui-org/react": "^2.4.8",
     "@nextui-org/theme": "^2.2.3",

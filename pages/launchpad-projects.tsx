@@ -38,8 +38,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     placeholderData: keepPreviousData,
   });
 
-  console.log({ isLoading, isFetching });
-
   useEffect(() => {
     if (!wallet.isInit) {
       return;
