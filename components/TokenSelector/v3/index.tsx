@@ -7,7 +7,6 @@ import {
   useDisclosure,
   Link,
 } from "@nextui-org/react";
-import { DropdownSvg } from "../svg/dropdown";
 import { IoSearchOutline } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 import { Token } from "@/services/contract/token";
@@ -15,16 +14,16 @@ import { Observer, observer, useLocalObservable } from "mobx-react-lite";
 import { liquidity } from "@/services/liquidity";
 import { useEffect } from "react";
 import { isEthAddress } from "@/lib/address";
-import { useAccount } from "wagmi";
-import { Input } from "../input/index";
-import { SpinnerContainer } from "../Spinner";
-import { NoData } from "../table";
-import { Copy } from "../copy/index";
+import { Input } from "../../input/index";
+import { SpinnerContainer } from "../../Spinner";
+import { NoData } from "../../table";
+import { Copy } from "../../copy/index";
 import { BiLinkExternal } from "react-icons/bi";
 import { wallet } from "@/services/wallet";
-import TokenLogo from "../TokenLogo/TokenLogo";
+import TokenLogo from "../../TokenLogo/TokenLogo";
 import TruncateMarkup from "react-truncate-markup";
 import { motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
@@ -34,7 +33,6 @@ type TokenSelectorProps = {
 export const TokenSelector = observer(
   ({ onSelect, value }: TokenSelectorProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { isConnected } = useAccount();
     const state = useLocalObservable(() => ({
       search: "",
       setSearch(value: string) {
@@ -99,17 +97,6 @@ export const TokenSelector = observer(
           state.currentAnimationVariant = "initial";
         }}
       >
-        {value && (
-          <>
-            <Link
-              href={`${wallet.currentChain?.chain.blockExplorers?.default.url}/token/${value.address}`}
-              target="_blank"
-            >
-              <BiLinkExternal className=" cursor-pointer hover:text-primary "></BiLinkExternal>
-            </Link>
-            <Copy value={value.address} className="ml-[8px] mr-[8px]"></Copy>
-          </>
-        )}
         <Popover
           isOpen={isOpen}
           onOpenChange={(isOpen) => {
@@ -133,7 +120,7 @@ export const TokenSelector = observer(
               state.setSearch("");
             }}
           >
-            <Button className="inline-flex max-w-full justify-between h-10 items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)]">
+            <Button className="inline-flex max-w-full justify-between h-10 items-center shrink-0 bg-transparent px-2.5 py-0 rounded-[30px] text-black">
               {value && (
                 <TokenLogo
                   addtionalClasses="min-w-[24px]"
@@ -152,7 +139,7 @@ export const TokenSelector = observer(
                 initial={animationVariants.dropDownIcon.initial}
                 animate={state.currentAnimationVariant}
               >
-                <DropdownSvg></DropdownSvg>
+                <ChevronDown className="size-4" />
               </motion.div>
             </Button>
           </PopoverTrigger>
@@ -260,6 +247,17 @@ export const TokenSelector = observer(
             </Observer>
           </PopoverContent>
         </Popover>
+        {value && (
+          <div className="text-black flex items-center gap-x-2">
+            <Link
+              href={`${wallet.currentChain?.chain.blockExplorers?.default.url}/token/${value.address}`}
+              target="_blank"
+            >
+              <BiLinkExternal className=" cursor-pointer text-[#140E06]" />
+            </Link>
+            <Copy value={value.address} className="size-4 text-[#140E06]" />
+          </div>
+        )}
       </motion.div>
     );
   }
