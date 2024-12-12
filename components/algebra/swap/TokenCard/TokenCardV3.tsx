@@ -11,6 +11,7 @@ import { wallet } from "@/services/wallet";
 import { Token } from "@/services/contract/token";
 import { Slider } from "@nextui-org/react";
 import { debounce } from "lodash";
+import NativeCurrency from "@cryptoalgebra/sdk/dist/entities/NativeCurrency";
 import {
   ItemSelect,
   SelectState,
