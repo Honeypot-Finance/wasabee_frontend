@@ -12,7 +12,6 @@ import { MemePairContract } from "@/services/contract/memepair-contract";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { trpcClient } from "@/lib/trpc";
-import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import { createSiweMessage } from "@/lib/siwe";
 

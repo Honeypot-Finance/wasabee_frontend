@@ -40,7 +40,7 @@ import {
   OptionsDropdown,
   optionsPresets,
 } from "@/components/OptionsDropdown/OptionsDropdown";
-import { LuFileEdit } from "react-icons/lu";
+import { LucideFileEdit } from "lucide-react";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -744,7 +744,7 @@ const MemeView = observer(() => {
                       address: state.pair?.value?.address ?? "",
                     }),
                     {
-                      icon: <LuFileEdit />,
+                      icon: <LucideFileEdit />,
                       display: "Update Project",
                       onClick: () => {
                         if (!state.pair.value) return;

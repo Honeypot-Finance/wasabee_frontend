@@ -125,7 +125,7 @@ const PoolsTable = <TData, TValue>({
                 value={
                   (table.getColumn(searchID)?.getFilterValue() as string) ?? ""
                 }
-                onChange={(event) =>
+                onChange={(event: { target: { value: any } }) =>
                   table.getColumn(searchID)?.setFilterValue(event.target.value)
                 }
                 className="border border-[#E18A20]/10 bg-[#271A0C] pl-12 pr-4 h-12 w-[353px] focus:border-opacity-100 rounded-2xl placeholder:align-middle"
@@ -174,7 +174,10 @@ const PoolsTable = <TData, TValue>({
       <Table className="bg-[#271A0C] rounded-[30px]">
         <TableHeader className="[&_tr]:border-b border-[#D9D7E4]/5 [&_tr]:border-opacity-30 border-t border-opacity-60">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="hover:bg-transparent border-[#D9D7E4]/5">
+            <TableRow
+              key={headerGroup.id}
+              className="hover:bg-transparent border-[#D9D7E4]/5"
+            >
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}

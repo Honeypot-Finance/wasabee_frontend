@@ -120,7 +120,7 @@ const TokenCard = ({
           type={"text"}
           value={value}
           id={`amount-${currency?.symbol}`}
-          onUserInput={(v) => handleInput(v)}
+          onUserInput={(v: string) => handleInput(v)}
           className={`text-right border border-[rgba(225,138,32,0.40)] bg-[rgba(225,138,32,0.40)] placeholder:text-[#9E9DA3] text-xl font-bold w-9/12 p-2 disabled:cursor-default disabled:text-white`}
           placeholder={"0.0"}
           maxDecimals={currency?.decimals}

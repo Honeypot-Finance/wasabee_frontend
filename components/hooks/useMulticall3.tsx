@@ -35,6 +35,7 @@ const useMulticall3 = ({
   select,
   enabled = true,
 }: Payload) => {
+  // @ts-ignore
   const client = getClient(config, { chainId: config.chains[0].id });
 
   const data = useQuery({

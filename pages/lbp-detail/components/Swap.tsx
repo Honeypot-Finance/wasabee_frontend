@@ -566,3 +566,5 @@ export const SwapCard = observer(
     );
   }
 );
+
+export default SwapCard;

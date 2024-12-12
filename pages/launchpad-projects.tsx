@@ -8,7 +8,7 @@ import { NextLayoutPage } from "@/types/nextjs";
 import { Tab, Tabs, Button as NextButton } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
-import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
+import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 import LaunchPadProjectCard from "@/components/LaunchPadProjectCard";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { DataContainer } from "@/components/DataContainer";
@@ -131,7 +131,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         </Tabs>
 
         <div className="flex gap-5">
-          <WarppedNextInputSearchBar
+          <WrappedNextInputSearchBar
             value={search}
             className="max-w-[305px] w-[305px] h-[46px] flex"
             onChange={(e) => {

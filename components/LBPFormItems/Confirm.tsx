@@ -285,6 +285,7 @@ const Confirm = (props: Props) => {
           args: [LiquidityBootstrapPoolFactoryAddress, maxUint256],
         });
 
+        // ts-ignore
         await waitForTransactionReceipt(config, { hash: txHash1 });
       }
 
@@ -296,6 +297,7 @@ const Confirm = (props: Props) => {
           args: [LiquidityBootstrapPoolFactoryAddress, maxUint256],
         });
 
+        // ts-ignore
         await waitForTransactionReceipt(config, { hash: txHash2 });
       }
       await refetch();
@@ -376,6 +378,7 @@ const Confirm = (props: Props) => {
           ],
         });
 
+        // ts-ignore
         const res = await waitForTransactionReceipt(config, { hash: txHash });
         let poolAddress: string | null = null;
 

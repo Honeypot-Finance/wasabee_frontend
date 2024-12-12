@@ -49,8 +49,6 @@ export const appPathsList: Menu[] = [
       {
         path: "/pot2pump/potting",
         title: "Potting",
-        path: "/pot2pump/potting",
-        title: "Potting",
       },
       {
         path: "/pot2pump/pumping",
@@ -59,8 +57,6 @@ export const appPathsList: Menu[] = [
       {
         path: "/launch-token?launchType=meme",
         title: "Launch Meme",
-        path: "/pot2pump/pumping",
-        title: "Pumping",
       },
       {
         path: "/launch-token?launchType=meme",
