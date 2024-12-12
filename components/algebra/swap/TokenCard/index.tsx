@@ -1,11 +1,8 @@
-import CurrencyLogo from "@/components/algebra/common/CurrencyLogo";
-import TokenSelectorModal from "@/components/algebra/modals/TokenSelectorModal";
 import { Input } from "@/components/algebra/ui/input";
 import { formatBalance } from "@/lib/algebra/utils/common/formatBalance";
 import { formatUSD } from "@/lib//algebra/utils/common/formatUSD";
 import { Currency, Percent } from "@cryptoalgebra/sdk";
-import { ChevronRight } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useAccount, useBalance, useWatchBlockNumber } from "wagmi";
 import { Address } from "viem";
 import { TokenSelector } from "@/components/TokenSelector";
