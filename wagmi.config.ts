@@ -22,6 +22,7 @@ import {
   wNativeABI,
   algebraVirtualPoolABI,
 } from "./lib/abis/algebra-contracts/ABIs";
+import { ERC20ABI } from "./lib/abis/erc20";
 
 const contracts: ContractConfig[] = [
   {
@@ -74,6 +75,10 @@ const contracts: ContractConfig[] = [
   {
     abi: wNativeABI,
     name: "WrappedNative",
+  },
+  {
+    abi: ERC20ABI,
+    name: "ERC20",
   },
 ];
 

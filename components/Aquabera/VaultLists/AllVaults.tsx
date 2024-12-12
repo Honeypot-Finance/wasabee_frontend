@@ -12,6 +12,7 @@ import {
 } from "@/lib/algebra/graphql/generated/graphql";
 import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
 import { Token } from "@/services/contract/token";
+import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
 import { wallet } from "@/services/wallet";
 import { Tabs, Tab } from "@nextui-org/react";
 import {
@@ -24,9 +25,17 @@ import {
 } from "@nextui-org/table";
 import { useEffect, useState } from "react";
 import { Address } from "viem";
+import { DepositToVaultModal } from "../modals/DepositToVaultModal";
+import { Currency } from "@cryptoalgebra/sdk";
 
 export function AllAquaberaVaults() {
   const [vaults, setVaults] = useState<VaultsSortedByHoldersQuery>();
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [selectedVault, setSelectedVault] = useState<ICHIVaultContract | null>(
+    null
+  );
+  const [selectedTokenA, setSelectedTokenA] = useState<Currency | null>(null);
+  const [selectedTokenB, setSelectedTokenB] = useState<Currency | null>(null);
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -55,6 +64,7 @@ export function AllAquaberaVaults() {
         <TableHeader>
           <TableColumn>Token Pair</TableColumn>
           <TableColumn>Vault Address</TableColumn>
+          <TableColumn>Actions</TableColumn>
         </TableHeader>
         <TableBody>
           {vaults?.ichiVaults.map((vault, index) => {
@@ -78,11 +88,59 @@ export function AllAquaberaVaults() {
                   </div>
                 </TableCell>
                 <TableCell>{vault.id}</TableCell>
+                <TableCell>
+                  <div className="flex">
+                    <Button
+                      onClick={() => {
+                        const v = new ICHIVaultContract({
+                          address: vault.id as Address,
+                        });
+                        setSelectedVault(v);
+                        setSelectedTokenA(
+                          new AlgebraToken(
+                            wallet.currentChainId,
+                            tokenA.address as `0x${string}`,
+                            tokenA.decimals,
+                            tokenA.symbol,
+                            tokenA.name
+                          )
+                        );
+                        setSelectedTokenB(
+                          new AlgebraToken(
+                            wallet.currentChainId,
+                            tokenB.address as `0x${string}`,
+                            tokenB.decimals,
+                            tokenB.symbol,
+                            tokenB.name
+                          )
+                        );
+                        setIsDepositModalOpen(true);
+                      }}
+                    >
+                      Deposit
+                    </Button>
+                  </div>
+                </TableCell>
               </TableRow>
             );
           }) || []}
         </TableBody>
       </Table>
+
+      {selectedVault && selectedTokenA && selectedTokenB && (
+        <DepositToVaultModal
+          isOpen={isDepositModalOpen}
+          onClose={() => {
+            setIsDepositModalOpen(false);
+            setSelectedVault(null);
+            setSelectedTokenA(null);
+            setSelectedTokenB(null);
+          }}
+          vault={selectedVault}
+          tokenA={selectedTokenA}
+          tokenB={selectedTokenB}
+        />
+      )}
     </div>
   );
 }

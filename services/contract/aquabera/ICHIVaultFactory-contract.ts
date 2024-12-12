@@ -41,6 +41,11 @@ export class ICHIVaultFactoryContract implements BaseContract {
 
     return new ContractWrite(this.contract.write.createICHIVault, {
       action: "Create ICHIVault",
-    }).call([tokenA as `0x${string}`, true, tokenB as `0x${string}`, true]);
+    }).call([
+      tokenA as `0x${string}`,
+      allowTokenA,
+      tokenB as `0x${string}`,
+      allowTokenB,
+    ]);
   }
 }

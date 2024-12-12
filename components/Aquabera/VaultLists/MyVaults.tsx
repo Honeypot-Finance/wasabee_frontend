@@ -91,14 +91,16 @@ export function MyAquaberaVaults() {
                       Deposit
                     </Button>
                     <Button
-                      onClick={() => {
+                      onClick={async () => {
                         const vault = new ICHIVaultContract({
                           address: vaultShare.vault.id as Address,
                         });
-                        vault.withdraw(
-                          vaultShare.vaultShareBalance,
+
+                        const balance = await vault.getBalanceOf(
                           wallet.account
                         );
+
+                        vault.withdraw(balance, wallet.account);
                       }}
                     >
                       Withdraw
