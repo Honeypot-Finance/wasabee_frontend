@@ -17,23 +17,27 @@ export function CommentCard(props: CommentCardProps) {
       variants={itemSlideVariants}
       initial="hidden"
       animate="visible"
-      className="flex flex-col gap-3 my-2 p-2 bg-slate-50/10 rounded-md"
+      className="flex flex-col gap-3 my-2 p-2 bg-[#202020] rounded-md"
     >
-      <div className="flex gap-2">
-        <Image
-          src={props.commenterImageURL}
-          width={50}
-          height={50}
-          alt="bera"
-        ></Image>
-        <div className="flex flex-col gap-1 overflow-hidden overflow-ellipsis break-words text-nowrap">
-          <div className="text-[#FFCD4D] text-base font-bold leading-[normal]">
-            <span className="hidden sm:inline">{props.commenterName}</span>
-            <span className="inline sm:hidden">{truncate(props.commenterName, 10)}</span>
+      <div className="flex items-center gap-x-2">
+        <div className="flex items-center gap-2 border border-[#FFCD4D] rounded-md w-fit">
+          <Image
+            src={props.commenterImageURL}
+            width={24}
+            height={24}
+            alt="bera"
+          ></Image>
+          <div className="flex flex-col gap-1 overflow-hidden overflow-ellipsis break-words text-nowrap mx-2">
+            <div className="text-white text-xs">
+              <span className="hidden sm:inline">{props.commenterName}</span>
+              <span className="inline sm:hidden">
+                {truncate(props.commenterName, 10)}
+              </span>
+            </div>
           </div>
-          <div className="text-[rgba(255,255,255,0.66)] text-sm font-medium leading-[normal]">
-            {props.commentDate.toLocaleString()}
-          </div>
+        </div>
+        <div className="text-white/50 text-xs">
+          {props.commentDate.toLocaleString()}
         </div>
       </div>
       <div className="text-[rgba(255,255,255,0.66)] text-base font-normal leading-[normal]">

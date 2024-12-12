@@ -13,7 +13,6 @@ import { popmodal } from "@/services/popmodal";
 import { metadata } from "@/config/metadata";
 import AnnouncementBar from "./AnnouncementBar";
 import Link from "next/link";
-import GuideModal from "../Instruction/GuideModal";
 import ChatWidget from "../ServiceChat";
 
 export const Layout = ({
@@ -85,7 +84,7 @@ export const Layout = ({
   return (
     <div
       className={cn(
-        "flex flex-col min-h-screen overflow-auto bg-[url('/images/icons/bg-honey.png')]",
+        "flex flex-col min-h-screen overflow-y-auto bg-[url('/images/icons/bg-honey.png')]",
         className
       )}
     >
@@ -102,9 +101,18 @@ export const Layout = ({
         <Header />
       )}
       {currentChain || allowedPaths.includes(currentPath) ? (
-        <div className=" px-[12px] sm:pt-[72px] pt-[24px] flex-1">
-          {children}
-        </div>
+        currentChain?.isActive ? (
+          <div className="pt-6 sm:pt-12 flex-1 flex">
+            {children}
+          </div>
+        ) : (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <h1 className="text-2xl font-bold">Chain will be support soon</h1>
+              <p className="text-lg">Check back later for more information</p>
+            </div>
+          </div>
+        )
       ) : (
         <NotConnetctedDisplay />
       )}

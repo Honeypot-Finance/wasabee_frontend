@@ -6,9 +6,10 @@ import type { AppProps } from "next/app";
 import { Layout } from "@/components/layout";
 import { NextLayoutPage } from "@/types/nextjs";
 import { WagmiProvider, useWalletClient } from "wagmi";
-import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { RainbowKitProvider } from "@usecapsule/rainbowkit";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import "@rainbow-me/rainbowkit/styles.css";
+import "@usecapsule/rainbowkit/styles.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,6 +20,10 @@ import { wallet } from "@/services/wallet";
 import { DM_Sans, Inter } from "next/font/google";
 import { Inspector, InspectParams } from "react-dev-inspector";
 import { Analytics } from "@vercel/analytics/react";
+import { capsuleClient, capsuleModalProps } from "@/config/wagmi/capsualWallet";
+import { ApolloProvider } from "@apollo/client";
+import { infoClient } from "@/lib/algebra/graphql/clients";
+
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
 
@@ -49,31 +54,36 @@ export default function App({
   const ComponentLayout = Component.Layout || Layout;
   return (
     <trpc.Provider client={trpcQueryClient} queryClient={queryClient}>
-      <Analytics></Analytics>
+      <Analytics />
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider>
-            <NextUIProvider>
-              <Provider>
-                <Inspector
-                  keys={["Ctrl", "Shift", "Z"]}
-                  onClickElement={({ codeInfo }: InspectParams) => {
-                    if (!codeInfo) {
-                      return;
-                    }
-                    window.open(
-                      `cursor://file/${codeInfo.absolutePath}:${codeInfo.lineNumber}:${codeInfo.columnNumber}`,
-                      "_blank"
-                    );
-                  }}
-                ></Inspector>
-                <ComponentLayout className={`${dmSans.className}`}>
-                  <Component {...pageProps} />
-                </ComponentLayout>
-              </Provider>
-              <ToastContainer></ToastContainer>
-            </NextUIProvider>
-          </RainbowKitProvider>
+          <ApolloProvider client={infoClient}>
+            <RainbowKitProvider
+              capsule={capsuleClient}
+              capsuleIntegratedProps={capsuleModalProps}
+            >
+              <NextUIProvider>
+                <Provider>
+                  <Inspector
+                    keys={["Ctrl", "Shift", "Z"]}
+                    onClickElement={({ codeInfo }: InspectParams) => {
+                      if (!codeInfo) {
+                        return;
+                      }
+                      window.open(
+                        `cursor://file/${codeInfo.absolutePath}:${codeInfo.lineNumber}:${codeInfo.columnNumber}`,
+                        "_blank"
+                      );
+                    }}
+                  ></Inspector>
+                  <ComponentLayout className={`${dmSans.className}`}>
+                    <Component {...pageProps} />
+                  </ComponentLayout>
+                </Provider>
+                <ToastContainer></ToastContainer>
+              </NextUIProvider>
+            </RainbowKitProvider>
+          </ApolloProvider>{" "}
         </QueryClientProvider>
       </WagmiProvider>
     </trpc.Provider>

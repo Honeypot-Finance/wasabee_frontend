@@ -1,10 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 import BigNumber from "bignumber.js";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
 
 export function toCompactLocaleString(
   value: number | string | BigNumber,

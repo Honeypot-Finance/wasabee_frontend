@@ -1,4 +1,4 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ConnectButton } from "@usecapsule/rainbowkit";
 import { Balance } from "../balance";
 import { BalanceSvg } from "../svg/balance";
 import { ButtonHTMLAttributes } from "react";

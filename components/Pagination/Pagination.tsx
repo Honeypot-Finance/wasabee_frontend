@@ -29,7 +29,6 @@ export const Pagination = observer(
           isInit={props.paginationState.isInit}
           hasData={!!props.paginationState.pageItems.value.length}
         >
-          {" "}
           {props.paginationState.isInit && (
             <div>
               <motion.div
@@ -49,7 +48,7 @@ export const Pagination = observer(
                 ))}
               </motion.div>
               <div className="flex justify-around my-5">
-                {props.paginationState.pageInfo.hasNextPage && (
+                {props.paginationState.filter.hasNextPage && (
                   <Button
                     onClick={() => {
                       props.paginationState.loadMore();

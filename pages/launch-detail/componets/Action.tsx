@@ -1,6 +1,6 @@
 import { observer, useLocalObservable } from "mobx-react-lite";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
-import { Button } from "@/components/button";
+import { Button } from "@/components/button/button-next";
 import { Input } from "@/components/input";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { useAccount } from "wagmi";
@@ -42,11 +42,38 @@ const SuccessAction = observer(
       //     </Button>{" "}
       //   </Link>
       // </div>
-      <SwapCard
-        noBoarder
-        inputAddress={pair.raiseToken?.address ?? ""}
-        outputAddress={pair.launchedToken?.address}
-      />
+      <>
+        <SwapCard
+          noBoarder
+          inputAddress={pair.raiseToken?.address ?? ""}
+          outputAddress={pair.launchedToken?.address}
+        />
+
+        {pair instanceof MemePairContract && pair.canClaimLP && (
+          <Button
+            className="w-full"
+            isLoading={pair.claimLP.loading}
+            onClick={() => {
+              pair.claimLP.call();
+            }}
+            isDisabled={!pair.canClaimLP}
+          >
+            Claim LP
+          </Button>
+        )}
+        {pair instanceof MemePairContract && pair.canClaimTokens && (
+          <Button
+            className="w-full"
+            onClick={() => {
+              pair.claimVaultTokens();
+            }}
+            isLoading={pair.claimLP.loading}
+            // isDisabled={!pair.canClaimLP}
+          >
+            Claim Tokens
+          </Button>
+        )}
+      </>
     );
   }
 );
@@ -80,26 +107,6 @@ const FailAction = observer(
           </Button>
         )}
       </div>
-    );
-  }
-);
-
-const PauseAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    return pair.isProvider ? (
-      <div className="flex flex-col gap-[16px]">
-        <Button
-          className="w-full"
-          isLoading={pair.resume.loading}
-          onClick={() => {
-            pair.resume.call();
-          }}
-        >
-          Resume
-        </Button>
-      </div>
-    ) : (
-      <></>
     );
   }
 );
@@ -145,7 +152,7 @@ const ProcessingAction = observer(
                 onClick={() => {
                   state.setDepositAmount("10");
                 }}
-                className="cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline"
+                className="cursor-pointer text-white text-base font-bold leading-3 tracking-[0.16px] underline"
               >
                 10 {pair.raiseToken?.displayName}
               </div>
@@ -155,7 +162,7 @@ const ProcessingAction = observer(
                 onClick={() => {
                   state.setDepositAmount("100");
                 }}
-                className="cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline"
+                className="cursor-pointer text-white text-base font-bold leading-3 tracking-[0.16px] underline"
               >
                 100 {pair.raiseToken?.displayName}
               </div>
@@ -165,7 +172,7 @@ const ProcessingAction = observer(
                 onClick={() => {
                   state.setDepositAmount("1000");
                 }}
-                className="cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline"
+                className="cursor-pointer text-white text-base font-bold leading-3 tracking-[0.16px] underline"
               >
                 1000 {pair.raiseToken?.displayName}
               </div>
@@ -177,7 +184,7 @@ const ProcessingAction = observer(
                 );
                 pair.raiseToken?.getBalance();
               }}
-              className="  cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px] underline"
+              className="  cursor-pointer text-white text-base font-bold leading-3 tracking-[0.16px] underline"
             >
               Max
             </div>
@@ -186,10 +193,11 @@ const ProcessingAction = observer(
             className="w-full"
             isDisabled={!Number(state.depositAmount)}
             isLoading={pair.deposit.loading}
-            onClick={() => {
-              pair.deposit.call({
+            onClick={async () => {
+              await pair.deposit.call({
                 amount: state.depositAmount,
               });
+              state.setDepositAmount("");
             }}
           >
             Deposit
@@ -202,7 +210,7 @@ const ProcessingAction = observer(
 
 const Action = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    switch (pair.ftoState) {
+    switch (pair.state) {
       case 0:
         return <SuccessAction pair={pair}></SuccessAction>;
       case 1:

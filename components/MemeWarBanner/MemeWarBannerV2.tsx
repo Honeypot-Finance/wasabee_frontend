@@ -121,7 +121,7 @@ export const MemeWarSupportSection = observer(() => {
           <Button
             isDisabled={false}
             onClick={async () => {
-              if (memewarStore.selectedSupportParticipantPair?.ftoState === 3) {
+              if (memewarStore.selectedSupportParticipantPair?.state === 3) {
                 memewarStore.selectedSupportParticipantPair.deposit.call({
                   amount: memewarStore.supportAmount.toFixed(0),
                 });
@@ -474,7 +474,7 @@ export const MemeWarPariticipantCard = observer(
                 className="w-full h-full object-contain"
               />
               <h3 className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-black">
-                {participant.pair.ftoState != 0
+                {participant.pair.state != 0
                   ? participant.pair?.depositedRaisedToken?.toFixed(0) ||
                     "loading..."
                   : Math.max(

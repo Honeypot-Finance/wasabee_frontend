@@ -12,19 +12,20 @@ import { trpcClient } from "@/lib/trpc";
 import { ZodError } from "zod";
 import { statusTextToNumber } from "../launchpad";
 import { BaseLaunchContract } from "./base-launch-contract";
+import { pot2PumpPairABI } from "@/lib/abis/Pot2Pump/pot2PumpPair";
+import { ICHIVaultContract } from "./aquabera/ICHIVault-contract";
 
 export class MemePairContract implements BaseLaunchContract {
   databaseId: number | undefined = undefined;
   address = "";
   name: string = "";
-  abi = MemePairABI.abi;
+  abi = pot2PumpPairABI;
   raiseToken: Token | undefined = undefined;
   launchedToken: Token | undefined = undefined;
   depositedRaisedTokenWithoutDecimals: BigNumber | null = null;
   depositedLaunchedTokenWithoutDecimals: BigNumber | null = null;
   endTime: string = "";
   startTime: string = "";
-  ftoState: number = 3;
   launchedTokenProvider: string = "";
   projectName = "";
   description = "";
@@ -48,6 +49,7 @@ export class MemePairContract implements BaseLaunchContract {
   bannerUrl = "";
   participantsCount = new BigNumber(0);
   beravoteSpaceId = "";
+  vaultBalance = BigInt(0);
 
   constructor(args: Partial<MemePairContract>) {
     Object.assign(this, args);
@@ -121,19 +123,31 @@ export class MemePairContract implements BaseLaunchContract {
   }
 
   get price() {
-    if (this.ftoState === 0) {
-      return this.launchedToken?.derivedUSD
-        ? new BigNumber(this.launchedToken.derivedUSD)
-        : new BigNumber(0);
+    if (this.state === 0) {
+      return this.priceAfterSuccess;
     } else {
-      return this.depositedRaisedToken &&
-        this.depositedLaunchedToken &&
-        this.raiseToken?.derivedUSD
-        ? this.depositedRaisedToken
-            .multipliedBy(this.raiseToken.derivedUSD)
-            .div(this.depositedLaunchedToken)
-        : undefined;
+      return this.priceBeforeSuccess;
     }
+  }
+
+  get priceAfterSuccess(): BigNumber {
+    if (!(this.state === 0)) {
+      return new BigNumber(0);
+    }
+
+    return this.launchedToken?.derivedUSD
+      ? new BigNumber(this.launchedToken.derivedUSD)
+      : new BigNumber(0);
+  }
+
+  get priceBeforeSuccess(): BigNumber {
+    return this.depositedRaisedToken &&
+      this.depositedLaunchedToken &&
+      this.raiseToken?.derivedUSD
+      ? this.depositedRaisedToken
+          .multipliedBy(this.raiseToken.derivedUSD)
+          .div(this.depositedLaunchedToken)
+      : new BigNumber(0);
   }
 
   get marketValue() {
@@ -195,7 +209,6 @@ export class MemePairContract implements BaseLaunchContract {
     });
 
     await this.facadeContract.deposit.call([
-      this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
       BigInt(amount),
     ]);
@@ -212,7 +225,7 @@ export class MemePairContract implements BaseLaunchContract {
 
     await new ContractWrite(this.contract.write.refundRaisedToken, {
       action: "Refund",
-    }).call();
+    }).call([wallet.account as `0x${string}`]);
 
     await this.raiseToken?.getBalance();
 
@@ -225,46 +238,21 @@ export class MemePairContract implements BaseLaunchContract {
     }
 
     await this.facadeContract.claimLP.call([
-      this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
     ]);
     this.canClaimLP = false;
-  });
-
-  resume = new AsyncState(async () => {
-    if (!this.raiseToken || !this.launchedToken) {
-      throw new Error("token is not initialized");
-    }
-
-    await this.factoryContract.resume.call([
-      this.raiseToken.address as `0x${string}`,
-      this.launchedToken.address as `0x${string}`,
-    ]);
-
-    await this.getState();
-  });
-
-  pause = new AsyncState(async () => {
-    if (!this.raiseToken || !this.launchedToken) {
-      throw new Error("token is not initialized");
-    }
-
-    await this.factoryContract.pause.call([
-      this.raiseToken.address as `0x${string}`,
-      this.launchedToken.address as `0x${string}`,
-    ]);
-
-    await this.getState();
+    this.getVaultBalance();
   });
 
   get withdraw() {
     return new ContractWrite(this.contract.write.claimLP, {
       action: "Withdraw",
+      isSuccessEffect: true,
     });
   }
 
   get ftoStatusDisplay() {
-    switch (this.ftoState) {
+    switch (this.state) {
       case 0:
         return {
           status: "success",
@@ -338,8 +326,7 @@ export class MemePairContract implements BaseLaunchContract {
     }
     if (res.provider) {
       this.provider = res.provider;
-    }
-    else{
+    } else {
       await this.getLaunchedTokenProvider();
       trpcClient.projects.createOrUpdateProjectInfo.mutate({
         chain_id: wallet.currentChainId,
@@ -357,26 +344,25 @@ export class MemePairContract implements BaseLaunchContract {
     if (res.beravote_space_id) {
       this.beravoteSpaceId = res.beravote_space_id;
     }
-    if(!res.launch_token){
+    if (!res.launch_token) {
       await this.getLaunchedToken();
       trpcClient.projects.createOrUpdateProjectInfo.mutate({
         chain_id: wallet.currentChainId,
         pair: this.address,
-        launch_token: this.launchedToken?.address??"",
+        launch_token: this.launchedToken?.address ?? "",
       });
     }
-    if(!res.raising_token){
+    if (!res.raising_token) {
       await this.getRaisedToken();
       trpcClient.projects.createOrUpdateProjectInfo.mutate({
         chain_id: wallet.currentChainId,
         pair: this.address,
-        raising_token: this.raiseToken?.address??"",
+        raising_token: this.raiseToken?.address ?? "",
       });
     }
   }
 
   async init({
-    force,
     raisedToken,
     launchedToken,
     depositedRaisedToken,
@@ -385,7 +371,6 @@ export class MemePairContract implements BaseLaunchContract {
     endTime,
     ftoState,
   }: {
-    force?: boolean;
     raisedToken?: Token;
     launchedToken?: Token;
     depositedRaisedToken?: string;
@@ -394,7 +379,7 @@ export class MemePairContract implements BaseLaunchContract {
     endTime?: string;
     ftoState?: number;
   } = {}) {
-    if (this.isInit && !force) {
+    if (this.isInit) {
       return;
     }
 
@@ -410,6 +395,7 @@ export class MemePairContract implements BaseLaunchContract {
       this.getCanClaimLP(),
       this.getRaisedTokenMinCap(),
       this.getUserParticipated(),
+      this.getVaultBalance(),
     ]).catch((error) => {
       console.error(error, `init-memepair-error-${this.address}`);
       trpcClient.projects.revalidateProjectType.mutate({
@@ -419,7 +405,6 @@ export class MemePairContract implements BaseLaunchContract {
       return;
     });
 
-    this.getState();
     this.getCanRefund();
 
     this.isInit = true;
@@ -448,7 +433,7 @@ export class MemePairContract implements BaseLaunchContract {
       }
 
       const claimed = await this.contract.read.claimedLp([wallet.account] as [
-        `0x${string}`
+        `0x${string}`,
       ]);
 
       console.log("claimed", claimed);
@@ -482,7 +467,7 @@ export class MemePairContract implements BaseLaunchContract {
       this.launchedToken = launchedToken;
       this.launchedToken.init();
     } else {
-      const res = (await this.contract.read.memeToken()) as `0x${string}`;
+      const res = (await this.contract.read.launchedToken()) as `0x${string}`;
       this.launchedToken = Token.getToken({ address: res });
       this.launchedToken.init();
     }
@@ -501,7 +486,7 @@ export class MemePairContract implements BaseLaunchContract {
     if (amount && Number(amount) !== 0) {
       this.depositedLaunchedTokenWithoutDecimals = new BigNumber(amount);
     } else {
-      const res = (await this.contract.read.depositedmemeToken()) as bigint;
+      const res = (await this.contract.read.depositedLaunchedToken()) as bigint;
       this.depositedLaunchedTokenWithoutDecimals = new BigNumber(
         res.toString()
       );
@@ -522,7 +507,7 @@ export class MemePairContract implements BaseLaunchContract {
       !this.userParticipated ||
       !this.depositedRaisedToken ||
       !this.raisedTokenMinCap ||
-      (this.ftoState !== 1 && this.ftoState !== 2)
+      (this.state !== 1 && this.state !== 2)
     ) {
       this.canRefund = false;
       return;
@@ -547,35 +532,74 @@ export class MemePairContract implements BaseLaunchContract {
     this.userParticipated = res > 0;
   }
 
-  getState() {
+  get state(): number {
     if (
       !this.depositedRaisedToken ||
       !this.endTime ||
       !this.raisedTokenMinCap
     ) {
-      console.error(
-        this.depositedRaisedToken,
-        this.endTime,
-        this.raisedTokenMinCap
-      );
-      console.error("missing data for getState");
-      return;
+      return 3;
     }
 
     if (
       this.depositedRaisedToken.toNumber() >=
       this.raisedTokenMinCap.div(Math.pow(10, 18)).toNumber()
     ) {
-      this.ftoState = 0;
+      return 0;
     } else if (dayjs.unix(Number(this.endTime)).isBefore(dayjs())) {
-      this.ftoState = 1;
+      return 1;
     } else {
-      this.ftoState = 3;
+      return 3;
     }
   }
 
   async getLaunchedTokenProvider() {
     const res = await this.contract.read.tokenDeployer();
     this.launchedTokenProvider = res;
+  }
+
+  get canClaimTokens() {
+    return this.vaultBalance > BigInt(0);
+  }
+
+  async getVaultBalance() {
+    const lpTokenAddress = await this.contract.read.lpToken();
+    console.log("lpTokenAddress", lpTokenAddress);
+    const aquaberaVaultContract = new ICHIVaultContract({
+      address: lpTokenAddress,
+    });
+
+    const vaultBalance = await aquaberaVaultContract.contract.read.balanceOf([
+      wallet.account as `0x${string}`,
+    ]);
+
+    console.log("vaultBalance", vaultBalance.toString());
+    this.vaultBalance = vaultBalance;
+  }
+
+  async claimVaultTokens() {
+    //only work when state is success
+    if (this.state !== 0) {
+      return;
+    }
+    //get lp token, lp token is going to be aquabera vault address
+    const lpTokenAddress = await this.contract.read.lpToken();
+    //console.log("lpTokenAddress", lpTokenAddress);
+    const aquaberaVaultContract = new ICHIVaultContract({
+      address: lpTokenAddress,
+    });
+
+    const vaultBalance = await aquaberaVaultContract.contract.read.balanceOf([
+      wallet.account as `0x${string}`,
+    ]);
+
+    console.log("vaultBalance", vaultBalance.toString());
+
+    await new ContractWrite(aquaberaVaultContract.contract.write.withdraw, {
+      action: "Claim Tokens",
+      isSuccessEffect: true,
+    }).call([this.vaultBalance, wallet.account as `0x${string}`]);
+
+    this.getVaultBalance();
   }
 }

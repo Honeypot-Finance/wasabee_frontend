@@ -10,7 +10,6 @@ import { RocketSvg } from "@/components/svg/Rocket";
 import { PeddingSvg } from "@/components/svg/Pedding";
 import { DreampadSvg } from "@/components/svg/Dreampad";
 import { now, getLocalTimeZone, fromDate } from "@internationalized/date";
-// import { DatePicker } from "@/components/DatePicker";
 import { dayjs } from "@/lib/dayjs";
 import {
   Accordion,
@@ -21,21 +20,29 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Select,
   SelectItem,
+  Modal,
+  ModalBody,
+  ModalContent,
 } from "@nextui-org/react";
+import { DatePicker } from "@nextui-org/date-picker";
 import { useRouter } from "next/router";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Copy } from "@/components/copy";
-import { BiSolidDownArrow } from "react-icons/bi";
+import { trpcClient } from "@/lib/trpc";
+import { BiQuestionMark, BiSolidDownArrow } from "react-icons/bi";
 import { WarppedNextSelect } from "@/components/wrappedNextUI/Select/Select";
 import { WrappedNextDatePicker } from "@/components/wrappedNextUI/DatePicker/DatePicker";
+import Image from "next/image";
 import { FaQuestionCircle } from "react-icons/fa";
 import { popmodal } from "@/services/popmodal";
 import store from "store2";
 import { cn } from "@/lib/tailwindcss";
-import Instruction from "@/components/Instruction";
-import GuideModal from "@/components/Instruction/GuideModal";
+import { UploadImage } from "@/components/UploadImage/UploadImage";
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
+const minimumTimePattern = /^(6[1-9]|[7-9][0-9]|[1-9][0-9]{2,})$/;
 
 const FTOLaunchModal: NextLayoutPage = observer(() => {
   const {
@@ -59,6 +66,13 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
     tokenAmount: number;
     poolHandler: string;
     raisingCycle: DateValue;
+    projectName: string;
+    description: string;
+    twitter: string;
+    website: string;
+    telegram: string;
+    logoUrl: string;
+    bannerUrl: string;
   }) => {
     try {
       const [pairAddress] = await launchpad.createLaunchProject.call({
@@ -204,7 +218,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                             ref={ref}
                             hideTimeZone
                             onChange={onChange} // send value to hook form
-                            minValue={now(getLocalTimeZone()) as any}
+                            minValue={now(getLocalTimeZone())}
                             onBlur={onBlur} // notify when input is touched/blur
                             value={value}
                             variant="bordered"
@@ -286,44 +300,96 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
   );
 });
 
-// const MemePadInstruction = () => {
-//   const title =
-//     "Pot2Pump mode stops rugs by ensuring all tokens are safe and integrate perfectly with PoL";
-//   const desc =
-//     "Every token created with Pot2Pump mode is a fair-launch—no presales, no team allocations with a chance to mine BGT and other protocol interests.";
-//   const stepTitle = "How it works";
-//   const buttonText = "I'm ready to pump";
-//   const steps = [
-//     {
-//       content: "Pick a coin that you like 💖",
-//     },
-//     {
-//       content:
-//         "Deposit your coin to create your LP position in the AMM pool 💸",
-//     },
-//     {
-//       content: "Withdraw anytime with no gains or losses🚪",
-//     },
-//     {
-//       content:
-//         "Once $20k market cap is reached, Liquidity is locked & burned on HenloDEX 🔥 + distrubute deployer rewards!",
-//     },
-//     {
-//       content:
-//         "claim your LP position and earn txn fee, BGT, and other protocol interest",
-//     },
-//   ];
-
-//   return (
-//     <Instruction
-//       title={title}
-//       desc={desc}
-//       stepTitle={stepTitle}
-//       buttonText={buttonText}
-//       steps={steps}
-//     />
-//   );
-// };
+const MemePadInstruction = () => {
+  const InstructionMarker = ({ className }: { className?: string }) => (
+    <div
+      className={cn(
+        "w-9 h-9 bg-[#271A0C] rounded-[50%] flex justify-center items-center",
+        className
+      )}
+    >
+      <div className="w-6 h-6 bg-[#FFCD4D10]  rounded-[50%] flex justify-center items-center">
+        <div className="w-3 h-3 bg-[#FFCD4D] rounded-[50%]"></div>
+      </div>
+    </div>
+  );
+  const steps = [
+    {
+      content: "Pick a coin that you like 💖",
+    },
+    {
+      content:
+        "Deposit your coin to create your LP position in the AMM pool 💸",
+    },
+    {
+      content: "Withdraw anytime with no gains or losses🚪",
+    },
+    {
+      content:
+        "Once $20k market cap is reached, Liquidity is locked & burned on HenloDEX 🔥 + distrubute deployer rewards!",
+    },
+    {
+      content:
+        "claim your LP position and earn txn fee, BGT, and other protocol interest",
+    },
+  ];
+  return (
+    <div className="p-5 flex flex-col gap-5">
+      <p className="text-xl">
+        Pot2Pump mode stops rugs by ensuring all tokens are safe and integrate
+        perfectly with PoL
+      </p>
+      <p className=" font-sans font-light">
+        Every token created with Pot2Pump mode is a fair-launch—no presales, no
+        team allocations with a chance to mine BGT and other protocol interests.
+      </p>
+      <h2 className="text-2xl">How it works</h2>
+      <div className="relative">
+        {/* <div className="absolute w-[2px] h-[90%] bg-[#FFCD4D] left-[21px] top-[50%] translate-y-[-50%]"></div> */}
+        <ul
+          className=" flex flex-col pl-5 text-lg font-sans font-light            
+            list-none
+          "
+        >
+          {steps.map((step, idx) => (
+            <li key={idx} className="flex relative">
+              <div className="flex flex-col items-center ">
+                {idx !== 0 && (
+                  <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>
+                )}
+                <InstructionMarker />
+                {idx !== steps.length - 1 && (
+                  <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>
+                )}
+              </div>
+              <div
+                className={cn(
+                  "bg-[#3e2a0f]   px-5 py-2 ml-8 rounded-[2rem] relative overflow-visible",
+                  idx !== 0 && idx !== steps.length - 1
+                    ? "my-2"
+                    : idx === 0
+                      ? "mb-2"
+                      : "mt-2"
+                )}
+              >
+                {step.content}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <Button
+        className="w-full mt-4"
+        onClick={() => {
+          popmodal.closeModal();
+          store.set("pot2pump_notice_read", true);
+        }}
+      >
+        I&apos;m ready to pump
+      </Button>
+    </div>
+  );
+};
 
 const MEMELaunchModal: NextLayoutPage = observer(() => {
   const {
@@ -345,8 +411,12 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     tokenName: string;
     tokenSymbol: string;
     tokenAmount: number;
-    poolHandler: string;
-    //raisingCycle: DateValue;
+    description?: string;
+    twitter: string;
+    website: string;
+    telegram: string;
+    logoUrl: string;
+    bannerUrl: string;
   }) => {
     try {
       const [pairAddress] = await launchpad.createLaunchProject.call({
@@ -359,35 +429,25 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
         raisingCycle: dayjs().unix(),
       });
 
-      if (!!pairAddress) {
-        state.setPairAddress(pairAddress);
-        router.push(`/launch-detail/${pairAddress}`);
-      }
+      state.setPairAddress(pairAddress);
+      router.push(`/launch-detail/${pairAddress}`);
     } catch (error) {
       console.error(error);
     }
   };
-  // useEffect(() => {
-  //   const notice_read = store.get("pot2pump_notice_read");
-  //   if (!notice_read) {
-  //     openInstructionModal();
-  //   }
-  // }, []);
 
-  // const openInstructionModal = () => {
-  //   popmodal.openModal({
-  //     content: <MemePadInstruction />,
-  //     // actions: [
-  //     //   {
-  //     //     label: "Confirm",
-  //     //     onPress: () => {
-  //     //       popmodal.closeModal();
-  //     //       store.set("pot2pump_notice_read", true);
-  //     //     },
-  //     //   },
-  //     // ],
-  //   });
-  // };
+  useEffect(() => {
+    const notice_read = store.get("pot2pump_notice_read");
+    if (!notice_read) {
+      openInstructionModal();
+    }
+  }, []);
+
+  const openInstructionModal = () => {
+    popmodal.openModal({
+      content: <MemePadInstruction />,
+    });
+  };
 
   return (
     <div className="md:p-6 w-full mx-auto md:max-w-full xl:max-w-[1200px]  mb-[30vh]">
@@ -417,10 +477,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 Dreampad <br className="md:hidden" /> - MEME Launch
               </span>{" "}
               <FaQuestionCircle
-                onClick={() =>
-                  GuideModal?.openInstructionModal &&
-                  GuideModal.openInstructionModal()
-                }
+                onClick={() => openInstructionModal()}
                 className="cursor-pointer hover:scale-150 transition-all"
               />
             </div>
@@ -439,6 +496,41 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                     className="outline-none w-full sm:w-[522px] lg:w-[800px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
                   />
                 )}
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <Controller
+                  control={control}
+                  name="logoUrl"
+                  render={({ field: { onChange, value } }) => (
+                    <UploadImage
+                      onUpload={onChange}
+                      imagePath={value}
+                      blobName="logo"
+                    />
+                  )}
+                />
+                <div className="text align opacity-50 text-center">
+                  Click icon to upload new token icon
+                </div>
+              </div>
+              <div className="relative w-full h-[5rem] border-dashed border-amber-950 hover:border-amber-500 border-3 rounded-2xl mb-5  transition-all text-white hover:text-amber-500">
+                <Controller
+                  control={control}
+                  name="bannerUrl"
+                  render={({ field: { onChange, value } }) => (
+                    <UploadImage
+                      blobName={"banner"}
+                      imagePath={value}
+                      onUpload={onChange}
+                      variant="banner"
+                    />
+                  )}
+                />
+
+                <h3 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold pointer-events-none">
+                  Upload Banner
+                </h3>
               </div>
 
               <div className="flex flex-col gap-4">
@@ -463,18 +555,37 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                   <span className="text-red-500">Token Symbol is required</span>
                 )}
               </div>
-              <div className="flex-col gap-4 hidden">
-                <label htmlFor="poolHandler">Pool Handler</label>
-                {wallet.currentChain?.contracts?.routerV2 && (
-                  <input
-                    defaultValue={wallet.currentChain?.contracts?.routerV2}
-                    value={wallet.currentChain?.contracts?.routerV2}
-                    // defaultValue={'0x1a12as1212'}
-                    type="text"
-                    {...register("poolHandler", {})}
-                    className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
-                  />
-                )}
+              <div className="flex flex-col gap-4">
+                <div>Description</div>
+                <input
+                  type="text"
+                  {...register("description")}
+                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                />
+              </div>
+              <div className="flex flex-col gap-4">
+                <div>Twitter</div>
+                <input
+                  type="text"
+                  {...register("twitter")}
+                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                />
+              </div>
+              <div className="flex flex-col gap-4">
+                <div>Website</div>
+                <input
+                  type="text"
+                  {...register("website")}
+                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                />
+              </div>
+              <div className="flex flex-col gap-4">
+                <div>Telegram</div>
+                <input
+                  type="text"
+                  {...register("telegram")}
+                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                />
               </div>
 
               {(state.pairAddress && (
@@ -542,6 +653,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
             <DropdownItem
               key={launch.key}
               onClick={() => setSelectedLaunch(launch.key as any)}
+              className={selectedLaunch === launch.key ? "bg-[#FFCD4D]" : ""}
             >
               {launch.label}
             </DropdownItem>

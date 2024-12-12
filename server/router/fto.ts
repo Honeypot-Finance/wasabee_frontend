@@ -20,6 +20,11 @@ export const ftoRouter = router({
         project_type: z.string().optional(),
         projectName: z.string(),
         project_logo: z.string().optional(),
+        banner_url: z.string().optional(),
+        description: z.string().optional(),
+        twitter: z.string().optional(),
+        website: z.string().optional(),
+        telegram: z.string().optional()
       })
     )
     .mutation(async ({ input }) => {

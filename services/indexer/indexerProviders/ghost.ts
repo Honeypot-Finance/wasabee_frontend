@@ -19,12 +19,14 @@ import {
   GhostPoolPair,
   GhostPoolPairResponse,
   GhostBundleResponse,
+  GhostAlgebraPoolPair,
+  GhostAlgebraPairResponse,
 } from "./../indexerTypes";
 import { networksMap } from "@/services/chain";
 import { PageInfo } from "@/services/utils";
 import dayjs from "dayjs";
 
-const memeGraphHandle = "93866c79-ad7e-4dfa-afb9-0b5a81d7d79f/ghostgraph";
+const memeGraphHandle = "5e83143f-8481-4564-afc2-7b7a766afef9/ghostgraph";
 const ftoGraphHandle = "df583977-1412-4c0a-9b3a-ebea68604f3a/ghostgraph";
 const memelaunchGraphHandle = "6250c399-1065-408f-9491-24a000b9d62d/ghostgraph";
 const pairGraphHandle = "35512369-5e78-4bcc-ab57-8a1a506d842a/ghostgraph";
@@ -256,6 +258,9 @@ export class GhostIndexer {
           }
         }
       `;
+
+    console.log("getFilteredFtoPairs: ", query);
+
     const res = await this.callIndexerApi(query, {
       apiHandle: projectType === "meme" ? memeGraphHandle : ftoGraphHandle,
     });
@@ -688,15 +693,7 @@ export class GhostIndexer {
       return {
         status: "success",
         message: "Success",
-        data: res.data ?? {
-          pairs: [],
-          pageInfo: {
-            hasNextPage: true,
-            hasPreviousPage: false,
-            startCursor: "",
-            endCursor: "",
-          },
-        },
+        data: res.data,
       };
     }
   };
@@ -798,7 +795,7 @@ export class GhostIndexer {
         }
       `;
 
-    console.log(query);
+    console.log("filtered pairs: ", query);
 
     const res = await this.callIndexerApi(query, {
       apiHandle: pairGraphHandle,
@@ -968,6 +965,8 @@ export class GhostIndexer {
   };
 
   async getTrendingMEMEPairs(): Promise<ApiResponseType<TrendingMEMEs>> {
+    console.log("endtime", dayjs().unix());
+
     const query = `{
         pairs(
           where:{
@@ -999,6 +998,9 @@ export class GhostIndexer {
         }
       }
   `;
+
+    console.log("query", query);
+
     const res = await this.callIndexerApi(query, {
       apiHandle: memeGraphHandle,
     });

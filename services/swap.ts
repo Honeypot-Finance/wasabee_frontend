@@ -13,7 +13,6 @@ import dayjs from "dayjs";
 import { chart } from "./chart";
 import { zeroAddress } from "viem";
 import { networksMap } from "./chain";
-import NetworkManager from "./network";
 
 class Swap {
   fromToken: Token | undefined = undefined;
@@ -24,6 +23,7 @@ class Swap {
   deadline: number = 20;
   price: BigNumber | null = null;
   needApprove: boolean = false;
+
   routerToken: Token[] | undefined = undefined;
 
   getRouterToken = async () => {
@@ -649,11 +649,7 @@ class Swap {
   };
 
   loadTokenRouterPairs = async (token: Token) => {
-    const networkManager = NetworkManager.getInstance();
-    const currentChain = wallet.isInit
-      ? wallet.currentChain
-      : networkManager.getSelectedNetwork();
-    const routerTokens = Object.entries(currentChain?.validatedTokensInfo ?? {})
+    const routerTokens = Object.entries(wallet.currentChain.validatedTokensInfo)
       .filter(([address, token]) => {
         return token.isRouterToken;
       })
@@ -705,7 +701,7 @@ class Swap {
       return;
     }
     if (this.isWrapOrUnwrap) {
-      return false;
+      return false
     }
 
     const fromAmountDecimals = new BigNumber(this.fromAmount)

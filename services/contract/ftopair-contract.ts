@@ -24,7 +24,7 @@ export class FtoPairContract implements BaseLaunchContract {
   depositedLaunchedTokenWithoutDecimals: BigNumber | null = null;
   endTime: string = "";
   startTime: string = "";
-  ftoState: number = 3;
+  state: number = 3;
   launchedTokenProvider: string = "";
   userDepositedRaisedToken: BigNumber | null = null;
   projectName = "";
@@ -120,7 +120,7 @@ export class FtoPairContract implements BaseLaunchContract {
   }
 
   get price() {
-    if (this.ftoState === 0) {
+    if (this.state === 0) {
       return this.launchedToken?.derivedUSD
         ? new BigNumber(this.launchedToken.derivedUSD)
         : new BigNumber(0);
@@ -262,7 +262,7 @@ export class FtoPairContract implements BaseLaunchContract {
   }
 
   get ftoStatusDisplay() {
-    switch (this.ftoState) {
+    switch (this.state) {
       case 0:
         return {
           status: "success",
@@ -344,13 +344,9 @@ export class FtoPairContract implements BaseLaunchContract {
     if (res.banner_url) {
       this.bannerUrl = res.banner_url;
     }
-    if (res.beravote_space_id) {
-      this.beravoteSpaceId = res.beravote_space_id;
-    }
   }
 
   async init({
-    force,
     raisedToken,
     launchedToken,
     depositedRaisedToken,
@@ -359,7 +355,6 @@ export class FtoPairContract implements BaseLaunchContract {
     endTime,
     ftoState,
   }: {
-    force?: boolean;
     raisedToken?: Token;
     launchedToken?: Token;
     depositedRaisedToken?: string;
@@ -368,7 +363,7 @@ export class FtoPairContract implements BaseLaunchContract {
     endTime?: string;
     ftoState?: number;
   } = {}) {
-    if (this.isInit && !force) {
+    if (this.isInit) {
       return;
     }
 
@@ -412,7 +407,7 @@ export class FtoPairContract implements BaseLaunchContract {
 
     try {
       const claimed = await this.contract.read.claimedLp([wallet.account] as [
-        `0x${string}`
+        `0x${string}`,
       ]);
 
       const claimable = await this.contract.read.claimableLP([
@@ -495,10 +490,10 @@ export class FtoPairContract implements BaseLaunchContract {
 
   async getFTOState(state?: number) {
     if (state) {
-      this.ftoState = state;
+      this.state = state;
     } else {
       const res = await this.contract.read.FTOState();
-      this.ftoState = res;
+      this.state = res;
     }
   }
   async getLaunchedTokenProvider() {

@@ -18,6 +18,19 @@ export type PageInfo = {
   endCursor: string;
 };
 
+export async function fallbacks<T>(
+  args: (() => T)[] | (() => Promise<T>)[]
+): Promise<T | undefined> {
+  for (let i = 0; i < args.length; i++) {
+    try {
+      return await args[i]();
+    } catch (error) {
+      continue;
+    }
+  }
+  return undefined;
+}
+
 export class ValueState<T> {
   _value!: T;
   constructor(args: Partial<ValueState<T>> = {}) {
@@ -40,7 +53,7 @@ export class ValueState<T> {
 }
 export class AsyncState<
   K extends (...args: any) => Promise<any> = (...args: any) => Promise<any>,
-  T = Awaited<ReturnType<K>>
+  T = Awaited<ReturnType<K>>,
 > {
   initialValue: T | null = null;
   isInit = false;
@@ -358,9 +371,14 @@ export class PaginationDataState<T> {
   }
 }
 
-export class IndexerPaginationState<
+/**
+ * @deprecated The method should not be used
+ *
+ * use `IndexerPaginationState` instead
+ */
+export class OldIndexerPaginationState<
   FilterT extends Record<string, any> = {},
-  ItemT extends any = any
+  ItemT extends any = any,
 > {
   namespace: string = "";
   pageInfo: PageInfo = {
@@ -381,7 +399,7 @@ export class IndexerPaginationState<
   ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }> = async () =>
     Promise.resolve({ items: [], pageInfo: this.pageInfo });
 
-  constructor(args: Partial<IndexerPaginationState<FilterT, ItemT>>) {
+  constructor(args: Partial<OldIndexerPaginationState<FilterT, ItemT>>) {
     Object.assign(this, args);
     makeAutoObservable(this);
   }
@@ -429,6 +447,110 @@ export class IndexerPaginationState<
 
       this.SetPageItems([...this.pageItems.value, ...items]);
       this.pageInfo = pageInfo;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.isLoading = false;
+    }
+  };
+
+  SetPageItems = (items: ItemT[]) => {
+    this.pageItems.setValue(items);
+  };
+
+  addPageItemsAtEnd = (items: ItemT[]) => {
+    this.pageItems.setValue([...this.pageItems.value, ...items]);
+  };
+
+  addPageItemsToStart = (items: ItemT[]) => {
+    this.pageItems.setValue([...items, ...this.pageItems.value]);
+  };
+
+  addSingleItemToStart = (item: ItemT) => {
+    this.pageItems.setValue([item, ...this.pageItems.value]);
+  };
+
+  addSingleItemToEnd = (item: ItemT) => {
+    this.pageItems.setValue([...this.pageItems.value, item]);
+  };
+
+  removeItem = (item: ItemT) => {
+    this.pageItems.setValue(this.pageItems.value.filter((i) => i !== item));
+  };
+
+  setIsInit(isInit: boolean) {
+    this.isInit = isInit;
+  }
+
+  setIsLoading(isLoading: boolean) {
+    this.isLoading = isLoading;
+  }
+}
+
+export class IndexerPaginationState<
+  FilterT extends Record<string, any & { hasNextPage: boolean }> = {},
+  ItemT extends any = any,
+> {
+  namespace: string = "";
+  filter: FilterT = {} as FilterT;
+  defaultFilter: FilterT = {} as FilterT;
+  isInit: boolean = false;
+  isLoading: boolean = false;
+  pageItems = new ValueState<ItemT[]>({
+    value: [],
+  });
+  LoadNextPageFunction: (
+    filter: FilterT
+  ) => Promise<{ items: ItemT[]; filterUpdates?: Partial<FilterT> }> =
+    async () => Promise.resolve({ items: [] });
+
+  constructor(args: Partial<IndexerPaginationState<FilterT, ItemT>>) {
+    Object.assign(this, args);
+    makeAutoObservable(this);
+  }
+
+  updateFilter = debounce((filter: Partial<FilterT>) => {
+    this.filter = {
+      ...this.filter,
+      ...filter,
+    };
+    console.log("updateFilter", this.namespace);
+    this.reloadPage();
+  }, 500);
+
+  resetPage = () => {
+    this.filter = this.defaultFilter;
+    this.isInit = false;
+    this.pageItems.setValue([]);
+  };
+
+  reloadPage = async () => {
+    if (this.isLoading) return;
+    this.isInit = false;
+    this.resetPage();
+    await this.loadMore();
+    this.isInit = true;
+  };
+
+  loadMore = async () => {
+    if (this.isLoading || !this.filter.hasNextPage) {
+      return;
+    }
+
+    this.isLoading = true;
+
+    try {
+      const { items, filterUpdates: newFilter } =
+        await this.LoadNextPageFunction(this.filter);
+
+      if (newFilter) {
+        this.filter = {
+          ...this.filter,
+          ...newFilter,
+        };
+      }
+
+      this.SetPageItems([...this.pageItems.value, ...items]);
     } catch (error) {
       console.error(error);
     } finally {

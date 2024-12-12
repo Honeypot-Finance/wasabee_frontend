@@ -60,21 +60,18 @@ export const trpcClient = createTRPCClient<AppRouter>({
       //     const data = await cloned.json()
       //     toast.error(data[0]?.error.message)
       //   }
-
+   
       //   return res
       // },
       url: `${getBaseUrl()}/api/trpc`,
       async headers () {
         const headers = {} as Record<string, string>;
         if (
-          window?.localStorage &&
-          window.localStorage?.getItem("message") &&
-          window.localStorage?.getItem("signature")
+          localStorage.getItem("message") &&
+          localStorage.getItem("signature")
         ) {
-          headers["message"] = window.localStorage.getItem("message") as string;
-          headers["signature"] = window.localStorage.getItem(
-            "signature"
-          ) as string;
+          headers["message"] = localStorage.getItem("message") as string;
+          headers["signature"] = localStorage.getItem("signature") as string;
         }
         return headers;
       },
@@ -92,14 +89,11 @@ export const trpcQueryClient = trpc.createClient({
       async headers () {
         const headers = {} as Record<string, string>;
         if (
-          window?.localStorage &&
-          window.localStorage?.getItem("message") &&
-          window.localStorage?.getItem("signature")
+          localStorage.getItem("message") &&
+          localStorage.getItem("signature")
         ) {
-          headers["message"] = window.localStorage.getItem("message") as string;
-          headers["signature"] = window.localStorage.getItem(
-            "signature"
-          ) as string;
+          headers["message"] = localStorage.getItem("message") as string;
+          headers["signature"] = localStorage.getItem("signature") as string;
         }
         return headers;
       },

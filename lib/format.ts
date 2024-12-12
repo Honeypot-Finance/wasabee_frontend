@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { Address, Address } from "viem";
+import { Address } from "viem";
 
 export const amountFormatted = (
   amount?: number | string | BigNumber,
@@ -7,7 +7,7 @@ export const amountFormatted = (
     decimals,
     fixed,
     prefix,
-    symbol,
+    symbol
   }: {
     decimals?: number;
     fixed?: number;
@@ -29,11 +29,7 @@ export const amountFormatted = (
   if (r.isLessThan(minValue)) {
     return prefix + `<${minValue.toFixed()}${symbol ?? ""}`;
   }
-  return (
-    prefix +
-    new BigNumber(new BigNumber(r.toFixed(fixed, 1)).toFixed()).toFormat() +
-    (symbol ?? "")
-  );
+  return prefix + new BigNumber(new BigNumber(r.toFixed(fixed, 1)).toFixed()).toFormat() + (symbol ?? "");
 };
 
 // truncate middle of string

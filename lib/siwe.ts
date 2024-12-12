@@ -1,22 +1,18 @@
-import { SiweMessage } from "siwe";
-import { WalletClient } from "viem";
+import { SiweMessage } from 'siwe';
+import { WalletClient } from 'viem';
 
-export async function createSiweMessage(
-  address: string,
-  statement: string,
-  client: WalletClient
-) {
+export async function  createSiweMessage(address: string, statement: string, client: WalletClient) {
   const scheme = window.location.protocol.slice(0, -1);
   const domain = window.location.host;
   const origin = window.location.origin;
-  const chainId = await client.getChainId();
+  const chainId = await client.getChainId()
   const messageGen = new SiweMessage({
     scheme,
     domain,
     address,
     statement,
     uri: origin,
-    version: "1",
+    version: '1',
     chainId: chainId,
   });
   const message = messageGen.prepareMessage();
@@ -25,6 +21,6 @@ export async function createSiweMessage(
     message,
     account,
   });
-  window.localStorage?.setItem("message", window.btoa(message));
-  window.localStorage?.setItem("signature", window.btoa(signature));
+  window.localStorage.setItem('message', window.btoa(message));
+  window.localStorage.setItem('signature', window.btoa(signature));
 }

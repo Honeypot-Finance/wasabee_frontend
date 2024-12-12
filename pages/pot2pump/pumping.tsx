@@ -1,53 +1,23 @@
 import Link from "next/link";
-import { Observer, observer } from "mobx-react-lite";
-import { wallet } from "@/services/wallet";
-import { useCallback, useEffect, useState } from "react";
-import { Button } from "@/components/button";
-import launchpad, { defaultPairFilters } from "@/services/launchpad";
-import { NextLayoutPage } from "@/types/nextjs";
-import { LaunchCard } from "@/components/LaunchCard";
-import {
-  Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Tab,
-  Tabs,
-  useDisclosure,
-  Button as NextButton,
-} from "@nextui-org/react";
-import { IoSearchOutline } from "react-icons/io5";
-import { SpinnerContainer } from "@/components/Spinner";
-import { DropdownSvg } from "@/components/svg/dropdown";
-import { motion } from "framer-motion";
-import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
-import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
-import { MemePairContract } from "@/services/contract/memepair-contract";
-import Pagination from "@/components/Pagination/Pagination";
 import Image from "next/image";
-import { WarppedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
-import { MemeWarPariticipantRaceChart } from "@/components/MemeWarBanner/MemeWarBannerV2";
+import { observer } from "mobx-react-lite";
+import { wallet } from "@/services/wallet";
+import { useEffect, useState } from "react";
+import launchpad from "@/services/launchpad";
+import { Tab, Tabs } from "@nextui-org/react";
+import { NextLayoutPage } from "@/types/nextjs";
 import { memewarStore } from "@/services/memewar";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { Button } from "@/components/button/button-next";
+import { LaunchCardV3 } from "@/components/LaunchCard/v3";
+import Pagination from "@/components/Pagination/Pagination";
+import { Pot2PumpTracker } from "@/components/MemeWarBanner/Pot2PumpTracker";
+import { Pot2PumpPumpingService } from "@/services/launchpad/pot2pump/pumping";
+import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [mostSuccessProjects, setMostSuccessProjects] = useState<
-    MemePairContract[] | null
-  >(null);
-
-  const updateMostSuccessProjects = useCallback(() => {
-    console.log("updating most success projects", mostSuccessProjects);
-    mostSuccessProjects?.forEach((pair) => {
-      pair.getDepositedRaisedToken();
-    });
-  }, [mostSuccessProjects]);
-
-  useEffect(() => {
-    const updateInterval = setInterval(() => {
-      updateMostSuccessProjects();
-    }, 2000);
-    return () => clearInterval(updateInterval);
-  }, [updateMostSuccessProjects]);
+  const [pumpingProjects, setPumpingProjects] =
+    useState<Pot2PumpPumpingService>();
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -64,208 +34,118 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
     // launchpad.projectsPage.reloadPage();
     // launchpad.participatedPairs.reloadPage();
-
-    //loading most success projects
-    const startMostSuccessfulFtoPolling = () => {
-      launchpad.trendingMEMEs().then((data) => {
-        //if data is same as previous data then no need to update
-        setMostSuccessProjects(data);
-      });
-    };
-
-    startMostSuccessfulFtoPolling();
+    const newPumpingProjects = new Pot2PumpPumpingService();
+    setPumpingProjects(newPumpingProjects);
+    newPumpingProjects.projectsPage.reloadPage();
   }, [wallet.isInit]);
 
   return (
-    <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
-      <div className="flex w-full justify-end gap-2">
-        <Button className="scale-[0.8] sm:scale-100">
-          <Link
-            href="/launch-token?launchType=meme"
-            className="text-black font-bold"
+    <div className="w-full grow flex flex-col font-gliker">
+      <div className="px-4 md:px-6 w-full xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
+        <Pot2PumpTracker />
+
+        <div>
+          <div
+            id="filter"
+            className="flex flex-col sm:flex-row items-center gap-2 my-4 sm:my-0"
           >
-            Launch Token
-          </Link>
-        </Button>
-      </div>
+            <WrappedNextInputSearchBar
+              className="border border-[#FFCD4D] shadow-[1px_2px_0px_0px_#9B7D2F] placeholder:text-xs"
+              onChange={(e) => {
+                launchpad.pairFilterSearch = e.target.value;
+              }}
+            />
+          </div>
+        </div>
 
-      <MemeWarPariticipantRaceChart />
+        <div className="w-full relative">
+          <div className="py-2 sm:py-0 sm:absolute right-0 top-0">
+            <Button className="w-full">
+              <Link
+                href="/launch-token?launchType=meme"
+                className="text-black font-bold"
+              >
+                Launch Token
+              </Link>
+            </Button>
+          </div>
 
-      <div>
-        <div
-          id="filter"
-          className="flex flex-col sm:flex-row items-center gap-2 my-4 sm:my-0"
-        >
-          <WarppedNextInputSearchBar
-            onChange={(e) => {
-              launchpad.pairFilterSearch = e.target.value;
-            }}
-          />
-          {/* <Popover
-            shouldBlockScroll
-            isOpen={isOpen}
-            onOpenChange={(isOpen) => {
-              isOpen ? onOpen() : onClose();
-            }}
-            placement="bottom"
+          <Tabs
+            // destroyInactiveTabPanel={false}
+            aria-label="Options"
             classNames={{
-              base: [
-                // arrow color
-                "before:bg-default-200",
-              ],
-              content: [
-                "py-3 px-4 border border-default-200",
-                "bg-gradient-to-br from-white to-default-300",
-                "dark:from-default-100 dark:to-default-50",
-              ],
+              tabList: "bg-transparent",
+              tab: "flex flex-col items-center gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
+            }}
+            className="next-tab"
+            onSelectionChange={(key) => {
+              if (key === "all") {
+                pumpingProjects?.projectsPage.reloadPage();
+              }
             }}
           >
-            <PopoverTrigger>
-              <NextButton className="inline-flex w-full sm:w-[124px] h-10 justify-between items-center shrink-0 border [background:#3E2A0F] px-2.5 py-0 rounded-[30px] border-solid border-[rgba(247,147,26,0.10)] text-white text-center">
-                <span className="flex-1">
-                  {launchpad.projectsPage.filter.status.toUpperCase()}
-                </span>
-                <DropdownSvg></DropdownSvg>
-              </NextButton>
-            </PopoverTrigger>
-            <PopoverContent className="flex lg:w-[352px] flex-col items-center gap-4 border border-[color:var(--card-stroke,#F7931A)] [background:var(--card-color,#271A0C)] rounded-xl border-solid">
-              <Observer>
-                {() => (
-                  <div className="w-full">
-                    <SpinnerContainer
-                      isLoading={launchpad.projectsPage.isLoading}
-                    >
-                      <div className="max-h-[300px] grid grid-cols-3 gap-2">
-                        <NextButton
-                          onClick={() => {
-                            launchpad.pairFilterStatus = "all";
-                            onClose();
-                          }}
-                          className="w-[100px]"
-                        >
-                          All
-                        </NextButton>
-                        <NextButton
-                          onClick={() => {
-                            launchpad.pairFilterStatus = "success";
-                            onClose();
-                          }}
-                          className="w-[100px]"
-                        >
-                          Success
-                        </NextButton>
-                        <NextButton
-                          onClick={() => {
-                            launchpad.pairFilterStatus = "fail";
-                            onClose();
-                          }}
-                          className="w-[100px]"
-                        >
-                          Failed
-                        </NextButton>
-                        <NextButton
-                          onClick={() => {
-                            launchpad.pairFilterStatus = "processing";
-                            onClose();
-                          }}
-                          className="w-[100px]"
-                        >
-                          Processing
-                        </NextButton>
-                      </div>
-                    </SpinnerContainer>
-                  </div>
-                )}
-              </Observer>
-            </PopoverContent>
-          </Popover> */}
+            <Tab key="all" title="All MEMEs">
+              {pumpingProjects && (
+                <Pagination
+                  paginationState={pumpingProjects.projectsPage}
+                  render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
+                  classNames={{
+                    itemsContainer:
+                      "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
+                  }}
+                />
+              )}
+            </Tab>
+            <Tab key="my" title="My MEMEs" href="/profile" />
+            <Tab
+              key="participated-launch"
+              title="Participated MEMEs"
+              href="/profile"
+            />
+            {/* <Tab href="/launch" title="To Fto projects->" /> */}
+            <Tab
+              href="https://bartio.bonds.yeetit.xyz/"
+              target="_blank"
+              title={
+                <div className="flex items-center text-yellow-400">
+                  <Image
+                    className="size-4"
+                    src="/images/partners/yeet_icon.png"
+                    alt=""
+                    width={100}
+                    height={100}
+                  />
+                  <span className="flex items-center justify-center gap-2">
+                    Try Yeet Bond <FaExternalLinkAlt className="inline-block" />
+                  </span>
+                </div>
+              }
+            />
+            <Tab
+              title={
+                <Link
+                  href="/memewar"
+                  className="flex items-center text-rose-600"
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    Meme War ⚔️
+                  </span>
+                </Link>
+              }
+            />
+          </Tabs>
         </div>
       </div>
 
-      <div className="w-full">
-        <Tabs
-          // destroyInactiveTabPanel={false}
-          aria-label="Options"
-          classNames={{
-            tabList: "bg-transparent",
-            tab: "flex flex-col items-center gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
-          }}
-          className="next-tab"
-          onSelectionChange={(key) => {
-            launchpad.setCurrentLaunchpadType("meme");
-            if (key === "all") {
-              launchpad.projectsPage.setIsInit(false);
-              launchpad.pairFilterStatus = defaultPairFilters.all.status;
-            } else if (key === "my") {
-              launchpad.myLaunches.setIsInit(false);
-              launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
-            } else if (key === "participated-launch") {
-              launchpad.participatedPairs.setIsInit(false);
-              launchpad.pairFilterStatus =
-                defaultPairFilters.participatedPairs.status;
-            }
-          }}
-        >
-          <Tab key="all" title="All MEMEs">
-            <Pagination
-              paginationState={launchpad.projectsPage}
-              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
-              classNames={{
-                itemsContainer:
-                  "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-              }}
-            />
-          </Tab>
-          <Tab key="my" title="My MEMEs">
-            <Pagination
-              paginationState={launchpad.myLaunches}
-              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
-              classNames={{
-                itemsContainer:
-                  "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-              }}
-            />
-          </Tab>
-          <Tab key="participated-launch" title="Participated MEMEs">
-            <Pagination
-              paginationState={launchpad.participatedPairs}
-              render={(pair) => <LaunchCard pair={pair} action={<></>} />}
-              classNames={{
-                itemsContainer:
-                  "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",
-              }}
-            />
-          </Tab>
-          {/* <Tab href="/launch" title="To Fto projects->" /> */}
-          <Tab
-            href="https://bartio.bonds.yeetit.xyz/"
-            target="_blank"
-            title={
-              <div className="flex items-center text-yellow-400">
-                <Image
-                  className="size-4"
-                  src="/images/partners/yeet_icon.png"
-                  alt=""
-                  width={100}
-                  height={100}
-                />
-                <span className="flex items-center justify-center gap-2">
-                  Try Yeet Bond <FaExternalLinkAlt className="inline-block" />
-                </span>
-              </div>
-            }
-          />
-          <Tab
-            title={
-              <Link href="/memewar" className="flex items-center text-rose-600">
-                <span className="flex items-center justify-center gap-2">
-                  Meme War ⚔️
-                </span>
-              </Link>
-            }
-          />
-        </Tabs>
-      </div>
+      <footer>
+        <Image
+          src="/images/pumping/toast-bear.png"
+          width={1000}
+          height={0}
+          className="w-full h-auto"
+          alt="toast bear"
+        />
+      </footer>
     </div>
   );
 });

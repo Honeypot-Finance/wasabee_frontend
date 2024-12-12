@@ -11,7 +11,7 @@ import { watchAsset } from "viem/actions";
 import { networksMap } from "../chain";
 import { WrappedToastify } from "@/lib/wrappedToastify";
 import { trpcClient } from "@/lib/trpc";
-import NetworkManager from "@/services/network";
+import NetworkManager from "../network";
 
 export class Token implements BaseContract {
   static tokensMap: Record<string, Token> = {};

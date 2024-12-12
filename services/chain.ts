@@ -4,14 +4,20 @@ import { Chain } from "viem/chains";
 import {
   berachainBartioTestnet,
   berachainTestnet,
+  movementTestnet,
   polygonMumbaiChain,
+  sprotoTestnet,
   //sepolia,
 } from "@/lib/chain";
+import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
+import { zeroAddress } from "viem";
 export class Network {
-  get chainId () {
+  isActive: boolean = true;
+  get chainId() {
     return this.chain.id;
   }
   contracts!: {
+    routerV3: string;
     routerV2: string;
     factory: string;
     ftoFactory: string;
@@ -34,7 +40,7 @@ export class Network {
     logoURI?: string;
   }[];
   blacklist?: {
-    poolBlacklist: string[];
+    poolBlacklist?: string[];
   };
   validatedTokens: Token[] = [];
   validatedTokensInfo: Record<string, Token> = {};
@@ -100,12 +106,13 @@ export const berachainBartioTestnetNetwork = new Network({
     requirements: "You can claim 100 BERA tokens every 24 hours.",
   },
   contracts: {
+    routerV3: ALGEBRA_POSITION_MANAGER,
     routerV2: "0x8aBc3a7bAC442Ae449B07fd0C2152364C230DA9A",
     factory: "0x7A962f6E45100b8cC560C7d2c248ec704623fb53",
     ftoFactory: "0x7E0CCe2C9Ff537f8301dd40c652A03479B18dAef",
     ftoFacade: "0x0264D933F13eE993270591668CfF87b8D35Dd3b4",
-    memeFactory: "0xc906E2bA6AA4F6Dd8340487DD8CDeBcA65e56A8D",
-    memeFacade: "0x1D97520d3a483457bA6b2423F6eF3dbfd9bcCe0A",
+    memeFactory: "0x30DbCcdFE17571c2Cec5caB61736a5AF194b1593",
+    memeFacade: "0x29F4D4511dA9771F0529872923fb48F4ACfEDcc2",
     ftoTokens: [
       {
         address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E".toLowerCase(),
@@ -360,7 +367,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/memewar2/Bera_Goat.png",
     },
-    "0x5c648D0Fd479cAFB9638eB94dB50aAA4d6A58c33": {
+    "0x96d62fbd15608ef087219f20986735a1d65a22a4": {
       name: "Bera Moo Deng",
       symbol: "BERA Moo Deng",
       decimals: 18,
@@ -372,7 +379,7 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/memewar2/Bera_Retadrio.png",
     },
-    "0x96d62fbd15608ef087219f20986735a1d65a22a4": {
+    "0x5a42fefa75b0adebd63d3078c2f1e3e9a6c39177": {
       name: "Bera Apu",
       symbol: "BERA APU",
       decimals: 18,
@@ -397,9 +404,54 @@ export const berachainBartioTestnetNetwork = new Network({
   validatedMemeAddresses: [],
 });
 
+export const movementNetWork = new Network({
+  isActive: false,
+  chain: movementTestnet,
+  officialFaucets: [],
+  nativeToken: {},
+  contracts: {
+    routerV3: ALGEBRA_POSITION_MANAGER,
+    routerV2: zeroAddress,
+    factory: zeroAddress,
+    ftoFactory: zeroAddress,
+    ftoFacade: zeroAddress,
+    memeFactory: zeroAddress,
+    memeFacade: zeroAddress,
+    ftoTokens: [],
+  },
+  faucetTokens: [],
+  blacklist: {},
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
+export const sprotoNetWork = new Network({
+  isActive: false,
+  chain: sprotoTestnet,
+  officialFaucets: [],
+  nativeToken: {},
+  contracts: {
+    routerV3: ALGEBRA_POSITION_MANAGER,
+    routerV2: zeroAddress,
+    factory: zeroAddress,
+    ftoFactory: zeroAddress,
+    ftoFacade: zeroAddress,
+    memeFactory: zeroAddress,
+    memeFacade: zeroAddress,
+    ftoTokens: [],
+  },
+  faucetTokens: [],
+  blacklist: {},
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
 export const networks = [
   berachainBartioTestnetNetwork,
-  //sepoliaNetwork,
+  movementNetWork,
+  sprotoNetWork,
 ];
 export const networksMap = networks.reduce((acc, network) => {
   acc[network.chainId] = network;

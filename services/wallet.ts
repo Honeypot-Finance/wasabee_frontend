@@ -30,12 +30,13 @@ export class Wallet {
   publicClient!: PublicClient;
   isInit = false;
   get networksMap() {
-    console.log("networks", this.networks);
-
-    return this.networks.reduce((acc, network) => {
-      acc[network.chainId] = network;
-      return acc;
-    }, {} as Record<number, Network>);
+    return this.networks.reduce(
+      (acc, network) => {
+        acc[network.chainId] = network;
+        return acc;
+      },
+      {} as Record<number, Network>
+    );
   }
 
   get currentChain() {
@@ -57,7 +58,8 @@ export class Wallet {
     if (
       !walletClient.chain?.id ||
       !this.networksMap[walletClient.chain.id] ||
-      !walletClient.account?.address
+      !walletClient.account?.address ||
+      !this.networksMap[walletClient.chain.id].isActive
     ) {
       return;
     }

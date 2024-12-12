@@ -230,7 +230,7 @@ export const MemeWarBanner = observer((props: Props) => {
 
     Object.values(state.pairs).forEach((pair) => {
       pair.pair.call().then(() => {
-        if (pair.pair.value?.ftoState === 0) {
+        if (pair.pair.value?.state === 0) {
           pair.successScore.call();
         }
       });
@@ -434,7 +434,7 @@ export const MemeWarBanner = observer((props: Props) => {
                         className="w-full h-full object-contain"
                       />
                       <h3 className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-black">
-                        {pair.pair.value.ftoState != 0
+                        {pair.pair.value.state != 0
                           ? pair.pair.value?.depositedRaisedToken?.toFixed(0) ||
                             "loading..."
                           : Math.max(
@@ -528,7 +528,7 @@ export const MemeWarBanner = observer((props: Props) => {
                         Number(value.SUPPORT_AMOUNT) <= 0
                       }
                       onClick={async () => {
-                        if (value.pair.value?.ftoState === 3) {
+                        if (value.pair.value?.state === 3) {
                           value.pair.value?.deposit
                             .call({
                               amount: value.SUPPORT_AMOUNT,

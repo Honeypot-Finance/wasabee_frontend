@@ -2,6 +2,7 @@ import { providers } from "ethers";
 import { PairFilter } from "../launchpad";
 import { GhostIndexer } from "./indexerProviders/ghost";
 import {
+  GhostAlgebraPairResponse,
   GhostBundleResponse,
   GhostFtoPairResponse,
   GhostFtoTokensResponse,
@@ -149,10 +150,13 @@ export default class Indexer<T extends IndexerProvider> {
     async (tokenAddresses) => {
       const res = await this.getPairTokensData(tokenAddresses);
       const data = (res as any).data as GhostToken[];
-      const dataMap = data.reduce((acc, token) => {
-        acc[token.id.toLowerCase()] = token;
-        return acc;
-      }, {} as Record<string, GhostToken>);
+      const dataMap = data.reduce(
+        (acc, token) => {
+          acc[token.id.toLowerCase()] = token;
+          return acc;
+        },
+        {} as Record<string, GhostToken>
+      );
       return tokenAddresses.map((address) => dataMap[address.toLowerCase()]);
     },
     {
