@@ -75,7 +75,7 @@ const Tabs = observer(
           tab={tab}
           setTab={setTab}
           options={options.map((item) => item.key)}
-          className="px-2 md:px-8 pt-2 pb-1 rounded-t-2xl mx-auto max-w-[600px] absolute -top-8 z-10 left-1/2 -translate-x-1/2"
+          className="px-2 md:px-8 pt-2 pb-1 rounded-t-2xl mx-auto max-w-[600px] absolute -top-8 z-10 left-1/2 -translate-x-1/2 hidden sm:block"
           capitalize={true}
         />
 
@@ -83,7 +83,7 @@ const Tabs = observer(
           <button
             onBlur={() => setIsMenuOpen(false)}
             onClick={() => setIsMenuOpen((isMenuOpen) => !isMenuOpen)}
-            className="inline-flex justify-center w-full rounded-md shadow-sm px-4 py-2 bg-[#3B2712] text-[#A46617] text-sm font-medium hover:bg-[#9D5E28] hover:text-white focus:outline-none mb-2 space-x-0.5"
+            className="inline-flex justify-center w-full rounded-2xl border border-[#202020] bg-white px-4 py-2 text-[#202020] text-sm font-medium shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] focus:outline-none mb-2 space-x-0.5"
           >
             <span>
               {universalMenuItems.find((item) => item.key === tab)?.label}
@@ -98,9 +98,9 @@ const Tabs = observer(
               opacity: isMenuOpen ? 1 : 0,
             }}
             transition={{ duration: 0.3 }}
-            className="absolute left-0 w-56 rounded-md overflow-hidden z-10"
+            className="absolute left-0 w-56 rounded-2xl overflow-hidden z-10 border border-[#202020] bg-white shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020]"
           >
-            <div className="py-1 rounded-md z-10">
+            <div className="py-1 rounded-2xl">
               {universalMenuItems.map((item) => (
                 <button
                   key={item.key}
@@ -109,36 +109,33 @@ const Tabs = observer(
                     setIsMenuOpen(false);
                   }}
                   className={[
-                    "block px-4 py-2 text-sm w-full text-left",
+                    "block px-4 py-2 text-sm w-full text-left transition-all",
                     tab === item.key
-                      ? "bg-[#9D5E28] text-white"
-                      : "bg-[#3B2712] text-[#A46617] hover:bg-[#9D5E28] hover:text-white",
+                      ? "bg-[#202020] text-white"
+                      : "text-[#202020] hover:bg-[#20202010]",
                   ].join(" ")}
                 >
                   {item.label}
                 </button>
               ))}
-              {
-                // Show voting space only when the status is success
-                pair?.state === 0 &&
-                  successMenuItems.map((item) => (
-                    <button
-                      key={item.key}
-                      onClick={() => {
-                        setTab(item.key);
-                        setIsMenuOpen(false);
-                      }}
-                      className={[
-                        "block px-4 py-2 text-sm w-full text-left",
-                        tab === item.key
-                          ? "bg-[#9D5E28] text-white"
-                          : "bg-[#3B2712] text-[#A46617] hover:bg-[#9D5E28] hover:text-white",
-                      ].join(" ")}
-                    >
-                      {item.label}
-                    </button>
-                  ))
-              }
+              {pair?.state === 0 &&
+                successMenuItems.map((item) => (
+                  <button
+                    key={item.key}
+                    onClick={() => {
+                      setTab(item.key);
+                      setIsMenuOpen(false);
+                    }}
+                    className={[
+                      "block px-4 py-2 text-sm w-full text-left transition-all",
+                      tab === item.key
+                        ? "bg-[#202020] text-white"
+                        : "text-[#202020] hover:bg-[#20202010]",
+                    ].join(" ")}
+                  >
+                    {item.label}
+                  </button>
+                ))}
             </div>
           </motion.div>
         </div>
@@ -149,34 +146,34 @@ const Tabs = observer(
             "block bg-[#FFCD4D] relative overflow-hidden pt-12"
           }
         >
-          <div className="bg-[url('/images/pumping/outline-border.png')] bg-top h-12 absolute top-0 left-0 w-full bg-contain"></div>
+          <div className="bg-[url('/images/pumping/outline-border.png')] bg-top h-12 absolute top-0 left-0 w-full bg-contain bg-repeat-x"></div>
           {tab === "info" && (
             <div className="flex items-center justify-center">
-              <div className="w-full overflow-hidden p-10 flex items-center justify-between gap-x-4 md:gap-x-8">
+              <div className="w-full overflow-hidden p-4 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-x-8">
                 <div>
-                  <h1 className="text-[var(--Heading,#0D0D0D)] text-stroke-white webkit-text-stroke-[2px] webkit-text-stroke-color-[#FFF] font-gliker text-[64px] font-normal leading-[110%] tracking-[1.28px] mb-12 text-stroke-custom">
+                  <h1 className="text-[var(--Heading,#0D0D0D)] text-center md:text-left text-stroke-white webkit-text-stroke-[2px] webkit-text-stroke-color-[#FFF] font-gliker text-[40px] md:text-[64px] font-normal leading-[110%] tracking-[1.28px] mb-6 md:mb-12 text-stroke-custom">
                     Token Info
                   </h1>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[34px] font-normal leading-[110%] tracking-[0.68px]">
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+                    <div className="space-y-4 text-center md:text-left col-span-2 md:col-span-1">
+                      <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[24px] md:text-[34px] font-normal leading-[110%] tracking-[0.68px]">
                         {pair?.launchedToken?.name}
                       </div>
                       <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
                         Token Name
                       </div>
                     </div>
-                    <div className="space-y-4">
-                      <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[34px] font-normal leading-[110%] tracking-[0.68px]">
+                    <div className="space-y-4 text-center md:text-left col-span-2 md:col-span-1">
+                      <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[24px] md:text-[34px] font-normal leading-[110%] tracking-[0.68px]">
                         {pair?.launchedToken?.symbol}
                       </div>
                       <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
                         Token Symbol
                       </div>
                     </div>
-                    <div className="space-y-4">
-                      <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[34px] font-normal leading-[110%] tracking-[0.68px]">
+                    <div className="space-y-4 text-center md:text-left col-span-2 md:col-span-1">
+                      <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[24px] md:text-[34px] font-normal leading-[110%] tracking-[0.68px]">
                         MEME
                       </div>
                       <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
@@ -186,38 +183,35 @@ const Tabs = observer(
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center gap-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white rounded-3xl px-[60px] text-center border border-black shadow-[4px_4px_0px_0px_#D29A0D] space-y-4 py-[28.5px]">
-                      <div className="text-[34px] text-stroke-black text-shadow-custom">
-                        {(
-                          pair as MemePairContract
-                        )?.depositedLaunchedToken?.toNumber()}
+                <div className="flex flex-col items-center gap-6 w-full">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                    <div className="w-full bg-white rounded-3xl px-4 md:px-[60px] text-center border border-black shadow-[4px_4px_0px_0px_#D29A0D] space-y-4 py-[28.5px]">
+                      <div className="text-[24px] md:text-[34px] text-stroke-black text-shadow-custom">
+                        {(pair as MemePairContract)?.depositedLaunchedToken?.toNumber()}
                       </div>
-                      <div className="text-lg text-[#0D0D0D]">Total Supply</div>
+                      <div className="text-base md:text-lg text-[#0D0D0D]">Total Supply</div>
                     </div>
-                    <div className="bg-white rounded-3xl px-[60px] text-center border border-black shadow-[4px_4px_0px_0px_#D29A0D] space-y-4 py-[28.5px]">
-                      <div className="text-[34px] text-stroke-black text-shadow-custom">
-                        ${" "}
-                        {amountFormatted(pair?.depositedRaisedToken, {
+                    <div className="w-full bg-white rounded-3xl px-4 md:px-[60px] text-center border border-black shadow-[4px_4px_0px_0px_#D29A0D] space-y-4 py-[28.5px]">
+                      <div className="text-[24px] md:text-[34px] text-stroke-black text-shadow-custom">
+                        $ {amountFormatted(pair?.depositedRaisedToken, {
                           decimals: 0,
                           fixed: 3,
                         })}
                       </div>
-                      <div className="text-lg text-[#0D0D0D]">
+                      <div className="text-base md:text-lg text-[#0D0D0D]">
                         Initial Market Cap
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-[16px] border-[3px] border-white bg-[#EFC049] shadow-[4px_4px_0px_0px_#202020,-2px_4px_0px_0px_#202020] w-full flex items-center justify-between  relative">
+                  <div className="w-full rounded-[16px] border-[3px] border-white bg-[#EFC049] shadow-[4px_4px_0px_0px_#202020,-2px_4px_0px_0px_#202020] flex items-center justify-between relative">
                     <Copy
                       className={"w-full"}
                       content="Copy address"
                       value={pair?.launchedToken?.address || ""}
                       displayContent={
                         <div className="relative">
-                          <span className="px-4 py-2 flex h-[41px] justify-between items-center bg-[#F2C34A] rounded-[10px] cursor-pointer hover:brightness-150 active:brightness-75 select-none text-[#202020]">
-                            {truncate(pair?.launchedToken?.address || "", 28)}
+                          <span className="px-4 py-2 flex h-[41px] justify-between items-center bg-[#F2C34A] rounded-[10px] cursor-pointer hover:brightness-150 active:brightness-75 select-none text-[#202020] text-sm md:text-base">
+                            {truncate(pair?.launchedToken?.address || "", 16)}
                           </span>
                           <div className="size-6 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center bg-white text-[#202020] border border-[#202020] rounded-md">
                             <VscCopy className="size-4" />
