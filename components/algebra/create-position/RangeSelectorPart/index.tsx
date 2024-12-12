@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { Price, Token } from "@cryptoalgebra/sdk";
 import { useMintState } from "@/lib/algebra/state/mintStore";
 import { Button } from "@/components/algebra/ui/button";
@@ -87,7 +87,7 @@ const RangeSelectorPart = ({
           id={title}
           onBlur={handleOnBlur}
           disabled={disabled || locked}
-          onUserInput={(v: string) => {
+          onUserInput={(v: SetStateAction<string>) => {
             setLocalTokenValue(v);
             updateSelectedPreset(null);
           }}

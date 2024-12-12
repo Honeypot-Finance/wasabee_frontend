@@ -1,5 +1,4 @@
-import { SelectItemProps, SelectProps } from "@nextui-org/react";
-import { Select, SelectItem } from "@nextui-org/select";
+import { SelectItemProps, SelectProps,  Select, SelectItem  } from "@nextui-org/react";
 
 export function WarppedNextSelect<T extends object>(props: SelectProps<T>) {
   return (

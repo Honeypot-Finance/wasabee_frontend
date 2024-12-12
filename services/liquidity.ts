@@ -218,7 +218,9 @@ class Liquidity {
       ...wallet.currentChain.validatedTokensInfo,
     };
     const tokens = Object.values(tokensMap);
-    tokens.push(wallet.currentChain.nativeToken);
+    if (wallet.currentChain?.nativeToken) {
+      tokens.push(wallet.currentChain.nativeToken);
+    }
     const sortedTokens = tokens.sort((a, b) => {
       const diff = b.priority - a.priority;
       if (diff === 0) {

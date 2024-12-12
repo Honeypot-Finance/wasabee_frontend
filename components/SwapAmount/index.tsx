@@ -2,7 +2,7 @@ import { InputProps } from "@nextui-org/react";
 import { Input } from "../input/index";
 
 type SwapAmountProps = {
-  label: string;
+  label: string | React.ReactNode;
   inputProps?: InputProps;
 };
 

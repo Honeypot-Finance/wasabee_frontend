@@ -7,7 +7,7 @@ import { FtoFactoryContract } from "./contract/ftofactory-contract";
 import { FtoFacadeContract } from "./contract/ftofacade-contract";
 import { makeAutoObservable, reaction } from "mobx";
 import { createPublicClientByChain } from "@/lib/client";
-import { AsyncState, StorageState } from "./utils";
+import { StorageState } from "./utils";
 import { MemeFactoryContract } from "./contract/memefactory-contract";
 import { MEMEFacadeContract } from "./contract/memefacade-contract";
 import { ICHIVaultFactoryContract } from "./contract/aquabera/ICHIVaultFactory-contract";

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { amountFormatted, truncate } from "@/lib/format";
 import { chart } from "@/services/chart";
@@ -14,9 +14,9 @@ import Image from "next/image";
 import { Button } from "@/components/button";
 import BeraVoteForm from "@/components/beravote/components/NewSpace/Steps/BeraVoteForm";
 import { observer } from "mobx-react-lite";
-import TokenAddress from "./TokenAddress";
 import { VscCopy } from "react-icons/vsc";
 import { Copy } from "@/components/copy";
+import TokenAddress from "./TokenAddress";
 import { Trigger } from "@/components/Trigger";
 
 const universalMenuItems = [

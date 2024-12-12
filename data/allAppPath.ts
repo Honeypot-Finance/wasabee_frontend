@@ -24,28 +24,7 @@ export const appPathsList: Menu[] = [
   //   title: "Navigation",
   // },
   {
-    path: [
-      {
-        path: "/pot2pump/potting",
-        title: "Potting",
-      },
-      {
-        path: "/pot2pump/pumping",
-        title: "Pumping",
-      },
-      {
-        path: "/launch-token?launchType=meme",
-        title: "Launch Meme",
-      },
-      {
-        path: "/memewar",
-        title: "Meme War ⚔️",
-      },
-    ],
-    title: "Pot2pump",
-  },
-  {
-    title: "DEX",
+    title: "Dex",
     path: [
       {
         path: "/swap",
@@ -60,6 +39,36 @@ export const appPathsList: Menu[] = [
         title: "LP Pool List",
       },
     ],
+  },
+  {
+    path: [
+      {
+        path: "/pot2pump/potting",
+        title: "Potting",
+      },
+      {
+        path: "/pot2pump/pumping",
+        title: "Pumping",
+      },
+      {
+        path: "/memewar",
+        title: "Meme War ⚔️",
+      },
+    ],
+    title: "Pot2pump",
+  },
+  {
+    path: [
+      {
+        path: "/launch-project",
+        title: "Launch",
+      },
+      {
+        path: "/launchpad-projects",
+        title: "Launch List",
+      },
+    ],
+    title: "Dreampad",
   },
   {
     path: "/profile",

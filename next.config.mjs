@@ -49,6 +49,11 @@ const nextConfig = {
         port: "",
         hostname: "*.honeypotfinance.xyz",
       },
+      {
+        protocol: "https",
+        port: "",
+        hostname: "images.unsplash.com",
+      },
     ],
   },
   async redirects() {
