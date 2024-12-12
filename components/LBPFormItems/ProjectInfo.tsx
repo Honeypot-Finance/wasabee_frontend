@@ -176,7 +176,7 @@ const ProjectInfo = () => {
         </div>
       </div>
       <div className="flex flex-col gap-9 mt-9">
-        <div>
+        {/* <div>
           <div className="text-base leading-5 font-medium">Category</div>
           <Controller
             name="category"
@@ -198,7 +198,7 @@ const ProjectInfo = () => {
               </SelectField>
             )}
           />
-        </div>
+        </div> */}
         <div>
           <div className="text-base leading-5 font-medium">LBP Description</div>
           <div className="text-[12px] leading-4 font-medium text-white/50 mt-[6px]">
@@ -267,22 +267,60 @@ const ProjectInfo = () => {
         </div>
         <div>
           <div className="text-base leading-5 font-medium">Links</div>
-          <div className="text-xs leading-4 font-medium text-white/50 mt-1.5 mb-2">
-            Main Link*
+          <div>
+            <div className="text-xs leading-4 font-medium text-white/50 mt-1.5 mb-2">
+              X Link
+            </div>
+            <Controller
+              name="xlink"
+              control={control}
+              render={({ field }) => (
+                <InputField
+                  {...field}
+                  placeholder="Paste URL here"
+                  isInvalid={!!errors?.X}
+                  errorMessage={errors?.X?.message?.toString()}
+                  className="max-w-[400px]"
+                />
+              )}
+            />
           </div>
-          <Controller
-            name="projectLink"
-            control={control}
-            render={({ field }) => (
-              <InputField
-                {...field}
-                placeholder="Paste URL here"
-                isInvalid={!!errors?.projectLink}
-                errorMessage={errors?.projectLink?.message?.toString()}
-                className="max-w-[400px]"
-              />
-            )}
-          />
+          <div>
+            <div className="text-xs leading-4 font-medium text-white/50 mt-1.5 mb-2">
+              Website Link
+            </div>
+            <Controller
+              name="website"
+              control={control}
+              render={({ field }) => (
+                <InputField
+                  {...field}
+                  placeholder="Paste URL here"
+                  isInvalid={!!errors?.website}
+                  errorMessage={errors?.website?.message?.toString()}
+                  className="max-w-[400px]"
+                />
+              )}
+            />
+          </div>{" "}
+          <div>
+            <div className="text-xs leading-4 font-medium text-white/50 mt-1.5 mb-2">
+              Telegram Link
+            </div>
+            <Controller
+              name="website"
+              control={control}
+              render={({ field }) => (
+                <InputField
+                  {...field}
+                  placeholder="Paste URL here"
+                  isInvalid={!!errors?.telegram}
+                  errorMessage={errors?.telegram?.message?.toString()}
+                  className="max-w-[400px]"
+                />
+              )}
+            />
+          </div>
         </div>
         {/* <div>
           <div className="flex items-center gap-[18px]">

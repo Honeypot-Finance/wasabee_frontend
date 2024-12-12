@@ -52,9 +52,9 @@ const STEP_DATA = [
   {
     title: "Project Info",
   },
-  {
-    title: "Socials & Community",
-  },
+  // {
+  //   title: "Socials & Community",
+  // },
   {
     title: "Review",
   },
@@ -112,13 +112,13 @@ const LaunchProject = () => {
       //   return <TokenVesting />;
       case 3:
         return <ProjectInfo />;
+      // case 4:
+      //   return <SocialsAndCommunity />;
       case 4:
-        return <SocialsAndCommunity />;
-      case 5:
         return <Review changeStep={setCurrentStep} />;
-      case 6:
+      case 5:
         return <TermsConditions />;
-      case 7:
+      case 6:
         return <Confirm />;
       default:
         return <div />;

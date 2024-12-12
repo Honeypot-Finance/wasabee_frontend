@@ -1,3 +1,5 @@
+import { Url } from "next/dist/shared/lib/router/router";
+
 // 1.Create and Branding
 export type CreateAndBrandingForm = {
   ecosystem: string;
@@ -64,9 +66,11 @@ export type InvestmentRound = {
 };
 
 export type ProjectInfoForm = {
-  category: PROJECT_CATEGORY_TYPE;
-  lbpDescription: string;
-  projectLink: string;
+  //category: PROJECT_CATEGORY_TYPE;
+  lbpDescription?: string | undefined;
+  X?: string | undefined;
+  website?: string | undefined;
+  telegram?: string | undefined;
   // blockedCountry: string[];
   // investmentRound: InvestmentRound[];
 };

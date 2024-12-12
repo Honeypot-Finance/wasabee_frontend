@@ -11,14 +11,14 @@ import {
   TokenomicsAndPreviewForm,
   TokenVestingForm,
 } from "@/types/launch-project";
+import { X } from "lucide-react";
 import { z, ZodType } from "zod";
-
 
 export const DEFAULT_LAUNCH_PROJECT_FORM = {
   // 1.Create and Branding
-  ecosystem: 'evm',
-  targetNetwork: 'berachain',
-  projectName: '',
+  ecosystem: "evm",
+  targetNetwork: "berachain",
+  projectName: "",
   projectToken: "",
   projectTokenLogo: "",
   saleBanner: "",
@@ -64,9 +64,12 @@ export const createAndBrandingSchema: ZodType<CreateAndBrandingForm> = z.object(
     ecosystem: z.string().min(1, "Ecosystem is required."),
     targetNetwork: z.string().min(1, "Target network is required."),
     projectName: z.string().min(1, "Project token is required."),
-    projectToken: z.string().min(1, "Project token is required.").regex(/^0x[a-fA-F0-9]{40}$/, {
-      message: "Invalid Ethereum address",
-    }),
+    projectToken: z
+      .string()
+      .min(1, "Project token is required.")
+      .regex(/^0x[a-fA-F0-9]{40}$/, {
+        message: "Invalid Ethereum address",
+      }),
     projectTokenLogo: z.string().url("Project token logo must be a valid URL."),
     saleBanner: z.string().url("Sale banner must be a valid URL."),
   }
@@ -222,13 +225,18 @@ const investmentRoundSchema = z.object({
 });
 
 export const projectInfoFormSchema: ZodType<ProjectInfoForm> = z.object({
-  category: z.enum([
-    PROJECT_CATEGORY_TYPE.GAMING,
-    PROJECT_CATEGORY_TYPE.CRYPTO,
-    PROJECT_CATEGORY_TYPE.FINANCE,
-  ]),
-  lbpDescription: z.string().min(1, "LBP Description cannot be empty"),
-  projectLink: z.string().url("Invalid URL format"),
+  // category: z.enum([
+  //   PROJECT_CATEGORY_TYPE.GAMING,
+  //   PROJECT_CATEGORY_TYPE.CRYPTO,
+  //   PROJECT_CATEGORY_TYPE.FINANCE,
+  // ]),
+  lbpDescription: z
+    .string()
+    .min(1, "LBP Description cannot be empty")
+    .optional(),
+  X: z.string().url("Invalid URL format").optional(),
+  website: z.string().url("Invalid URL format").optional(),
+  telegram: z.string().url("Invalid URL format").optional(),
   // blockedCountry: z.array(z.string()),
   // investmentRound: z.array(investmentRoundSchema),
 });
