@@ -1,5 +1,13 @@
 import { gql } from "@apollo/client";
 
+export const VAULTS_SORTED_BY_HOLDERS = gql`
+  query VaultsSortedByHolders {
+    ichiVaults(first: 100, orderBy: holdersCount, orderDirection: desc) {
+      ...VaultField
+    }
+  }
+`;
+
 export const ACCOUNT_VAULT_SHARES = gql`
   query AccountVaultShares($AccountId: ID!) {
     vaultShares(where: { user_: { id: $AccountId }, vaultShareBalance_gt: 0 }) {

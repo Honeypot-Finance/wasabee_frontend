@@ -8,6 +8,7 @@ import {
   TableCell,
 } from "@nextui-org/table";
 import MyAquaberaVaults from "./MyVaults";
+import AllAquaberaVaults from "./AllVaults";
 
 export function AquaberaList() {
   return (
@@ -17,6 +18,11 @@ export function AquaberaList() {
           base: "w-full",
         }}
       >
+        <Tab key={"all"} title="Vaults" className="w-full">
+          <div className="flex flex-col xl:flex-row gap-4 w-full py-4">
+            <AllAquaberaVaults />
+          </div>
+        </Tab>
         <Tab key={"my"} title="My Vaults" className="w-full">
           <div className="flex flex-col xl:flex-row gap-4 w-full py-4">
             <MyAquaberaVaults />

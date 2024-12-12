@@ -1,11 +1,13 @@
 import { BaseContract } from "./..";
 import { wallet } from "@/services/wallet";
 import { makeAutoObservable } from "mobx";
-import { getContract, zeroAddress } from "viem";
+import { Address, getContract, zeroAddress } from "viem";
 import { ICHIVaultABI } from "@/lib/abis/aquabera/ICHIVault";
+import { writeContract } from "viem/actions";
+import { ContractWrite } from "@/services/utils";
 
 export class ICHIVaultContract implements BaseContract {
-  address = zeroAddress;
+  address: Address = zeroAddress;
   name: string = "ICHIVault";
   abi = ICHIVaultABI;
 
@@ -31,22 +33,17 @@ export class ICHIVaultContract implements BaseContract {
     if (!wallet.walletClient?.account) {
       return;
     }
-    return await this.contract.write.deposit(
-      [deposit0, deposit1, to as `0x${string}`],
-      {
-        account: wallet.walletClient.account,
-        chain: wallet.publicClient.chain,
-      }
-    );
+    return await new ContractWrite(this.contract.write.deposit, {
+      action: "deposit",
+    }).call([deposit0, deposit1, to as `0x${string}`]);
   }
 
   async withdraw(shares: bigint, to: string) {
     if (!wallet.walletClient?.account) {
       return;
     }
-    return await this.contract.write.withdraw([shares, to as `0x${string}`], {
-      account: wallet.walletClient.account,
-      chain: wallet.publicClient.chain,
-    });
+    return await new ContractWrite(this.contract.write.withdraw, {
+      action: "withdraw",
+    }).call([shares, to as `0x${string}`]);
   }
 }

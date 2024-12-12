@@ -4,8 +4,13 @@ import {
   AccountVaultSharesQuery,
   AccountVaultSharesQueryResult,
   VaultShare,
+  VaultsSortedByHoldersDocument,
+  VaultsSortedByHoldersQuery,
 } from "../generated/graphql";
-import { ACCOUNT_VAULT_SHARES } from "../queries/vaults";
+import {
+  ACCOUNT_VAULT_SHARES,
+  VAULTS_SORTED_BY_HOLDERS,
+} from "../queries/vaults";
 
 export async function getAccountVaultsList(
   accountAddress: string
@@ -20,6 +25,15 @@ export async function getAccountVaultsList(
   });
 
   console.log(vaults);
+
+  return vaults.data;
+}
+
+export async function getVaultPageData(): Promise<VaultsSortedByHoldersQuery> {
+  console.log(VAULTS_SORTED_BY_HOLDERS);
+  const vaults = await infoClient.query<VaultsSortedByHoldersQuery>({
+    query: VaultsSortedByHoldersDocument,
+  });
 
   return vaults.data;
 }

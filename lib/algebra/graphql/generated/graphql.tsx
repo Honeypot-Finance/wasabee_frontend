@@ -10813,6 +10813,11 @@ export type AllTokensQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type AllTokensQuery = { __typename?: 'Query', tokens: Array<{ __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any }> };
 
+export type VaultsSortedByHoldersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type VaultsSortedByHoldersQuery = { __typename?: 'Query', ichiVaults: Array<{ __typename?: 'IchiVault', id: string, sender: any, tokenA: any, allowTokenA: boolean, tokenB: any, allowTokenB: boolean, count: any, createdAtTimestamp: any, holdersCount: number }> };
+
 export type AccountVaultSharesQueryVariables = Exact<{
   AccountId: Scalars['ID']['input'];
 }>;
@@ -11381,6 +11386,45 @@ export type AllTokensQueryHookResult = ReturnType<typeof useAllTokensQuery>;
 export type AllTokensLazyQueryHookResult = ReturnType<typeof useAllTokensLazyQuery>;
 export type AllTokensSuspenseQueryHookResult = ReturnType<typeof useAllTokensSuspenseQuery>;
 export type AllTokensQueryResult = Apollo.QueryResult<AllTokensQuery, AllTokensQueryVariables>;
+export const VaultsSortedByHoldersDocument = gql`
+    query VaultsSortedByHolders {
+  ichiVaults(first: 100, orderBy: holdersCount, orderDirection: desc) {
+    ...VaultField
+  }
+}
+    ${VaultFieldFragmentDoc}`;
+
+/**
+ * __useVaultsSortedByHoldersQuery__
+ *
+ * To run a query within a React component, call `useVaultsSortedByHoldersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVaultsSortedByHoldersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVaultsSortedByHoldersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useVaultsSortedByHoldersQuery(baseOptions?: Apollo.QueryHookOptions<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>(VaultsSortedByHoldersDocument, options);
+      }
+export function useVaultsSortedByHoldersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>(VaultsSortedByHoldersDocument, options);
+        }
+export function useVaultsSortedByHoldersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>(VaultsSortedByHoldersDocument, options);
+        }
+export type VaultsSortedByHoldersQueryHookResult = ReturnType<typeof useVaultsSortedByHoldersQuery>;
+export type VaultsSortedByHoldersLazyQueryHookResult = ReturnType<typeof useVaultsSortedByHoldersLazyQuery>;
+export type VaultsSortedByHoldersSuspenseQueryHookResult = ReturnType<typeof useVaultsSortedByHoldersSuspenseQuery>;
+export type VaultsSortedByHoldersQueryResult = Apollo.QueryResult<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>;
 export const AccountVaultSharesDocument = gql`
     query AccountVaultShares($AccountId: ID!) {
   vaultShares(where: {user_: {id: $AccountId}, vaultShareBalance_gt: 0}) {
