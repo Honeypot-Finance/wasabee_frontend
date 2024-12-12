@@ -123,11 +123,20 @@ export function DepositToVaultModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="2xl">
-      <ModalContent>
-        <ModalHeader>Deposit to Vault</ModalHeader>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="2xl"
+      classNames={{
+        base: "bg-yellow-300",
+        body: "bg-yellow-300",
+        header: "bg-yellow-500",
+      }}
+    >
+      <ModalContent className="">
+        <ModalHeader className="">Deposit to Vault</ModalHeader>
         <ModalBody>
-          <div className="flex flex-col gap-4 p-4">
+          <div className="flex flex-col gap-4 p-4 ">
             <TokenCardV3
               value={amountA}
               currency={tokenA}

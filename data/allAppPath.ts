@@ -41,10 +41,6 @@ export const appPathsList: Menu[] = [
     ],
   },
   {
-    path: "/faucet",
-    title: "Faucet",
-  },
-  {
     path: [
       {
         path: "/pot2pump/potting",
@@ -55,14 +51,6 @@ export const appPathsList: Menu[] = [
         title: "Pumping",
       },
       {
-        path: "/launch-token?launchType=meme",
-        title: "Launch Meme",
-      },
-      {
-        path: "/launch-token?launchType=meme",
-        title: "Launch Meme",
-      },
-      {
         path: "/memewar",
         title: "Meme War ⚔️",
       },
@@ -70,21 +58,17 @@ export const appPathsList: Menu[] = [
     title: "Pot2pump",
   },
   {
-    title: "DEX",
     path: [
       {
-        path: "/swap",
-        title: "Swap",
+        path: "/launch-project",
+        title: "Launch",
       },
       {
-        path: "/pool",
-        title: "Add Liquidity",
-      },
-      {
-        path: "/pools",
-        title: "LP Pool List",
+        path: "/launchpad-projects",
+        title: "Launch List",
       },
     ],
+    title: "Dreampad",
   },
   {
     path: "/profile",
