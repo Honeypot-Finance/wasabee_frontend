@@ -20,9 +20,18 @@ import {
 } from "@nextui-org/table";
 import { useEffect, useState } from "react";
 import { Address } from "viem";
+import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
+import { Currency } from "@cryptoalgebra/sdk";
+import { DepositToVaultModal } from "../modals/DepositToVaultModal";
 
 export function MyAquaberaVaults() {
   const [myVaults, setMyVaults] = useState<AccountVaultSharesQuery>();
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [selectedVault, setSelectedVault] = useState<ICHIVaultContract | null>(
+    null
+  );
+  const [selectedTokenA, setSelectedTokenA] = useState<Currency | null>(null);
+  const [selectedTokenB, setSelectedTokenB] = useState<Currency | null>(null);
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -86,6 +95,26 @@ export function MyAquaberaVaults() {
                         const vault = new ICHIVaultContract({
                           address: vaultShare.vault.id as Address,
                         });
+                        setSelectedVault(vault);
+                        setSelectedTokenA(
+                          new AlgebraToken(
+                            wallet.currentChainId,
+                            tokenA.address as `0x${string}`,
+                            tokenA.decimals,
+                            tokenA.symbol,
+                            tokenA.name
+                          )
+                        );
+                        setSelectedTokenB(
+                          new AlgebraToken(
+                            wallet.currentChainId,
+                            tokenB.address as `0x${string}`,
+                            tokenB.decimals,
+                            tokenB.symbol,
+                            tokenB.name
+                          )
+                        );
+                        setIsDepositModalOpen(true);
                       }}
                     >
                       Deposit
@@ -112,6 +141,20 @@ export function MyAquaberaVaults() {
           }) || []}
         </TableBody>
       </Table>
+      {selectedVault && selectedTokenA && selectedTokenB && (
+        <DepositToVaultModal
+          isOpen={isDepositModalOpen}
+          onClose={() => {
+            setIsDepositModalOpen(false);
+            setSelectedVault(null);
+            setSelectedTokenA(null);
+            setSelectedTokenB(null);
+          }}
+          vault={selectedVault}
+          tokenA={selectedTokenA}
+          tokenB={selectedTokenB}
+        />
+      )}
     </div>
   );
 }
