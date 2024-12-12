@@ -15,7 +15,10 @@ import { BiDownArrow } from "react-icons/bi";
 import { debounce } from "lodash";
 import { ItemSelect, SelectState, SelectItem } from "@/components/ItemSelect";
 import NativeCurrency from "@cryptoalgebra/sdk/dist/entities/NativeCurrency";
-import { BASES_TO_CHECK_TRADES_AGAINST, WNATIVE_EXTENDED } from "@/data/algebra/routing";
+import {
+  BASES_TO_CHECK_TRADES_AGAINST,
+  WNATIVE_EXTENDED,
+} from "@/data/algebra/routing";
 
 interface TokenSwapCardProps {
   handleTokenSelection: (currency: Currency) => void;
@@ -142,29 +145,32 @@ const TokenCardV3 = ({
               currency?.wrapped.address
                 ? Token.getToken({
                     address: currency?.wrapped.address,
-                    isNative:currency.isNative
+                    isNative: currency.isNative,
                   })
                 : undefined
             }
             onSelect={(token) => {
               console.log("token.isNative", token.isNative);
-              console.log("WNATIVE_EXTENDED[wallet.currentChainId].symbol", WNATIVE_EXTENDED[wallet.currentChainId].symbol);  
+              console.log(
+                "WNATIVE_EXTENDED[wallet.currentChainId].symbol",
+                WNATIVE_EXTENDED[wallet.currentChainId].symbol
+              );
               handleTokenSelect(
-                token.isNative?
-                (new AlgebraToken(
-                  wallet.currentChainId,
-                  zeroAddress,
-                  wallet.currentChain.nativeToken.decimals,
-                  wallet.currentChain.nativeToken.symbol,
-                  wallet.currentChain.nativeToken.name,
-                )&&{isNative:true} as Currency):
-                new AlgebraToken(
-                  wallet.currentChainId,
-                  token.address,
-                  token.decimals,
-                  token.symbol,
-                  token.name
-                )
+                token.isNative
+                  ? new AlgebraToken(
+                      wallet.currentChainId,
+                      zeroAddress,
+                      wallet.currentChain.nativeToken.decimals,
+                      wallet.currentChain.nativeToken.symbol,
+                      wallet.currentChain.nativeToken.name
+                    ) && ({ isNative: true } as Currency)
+                  : new AlgebraToken(
+                      wallet.currentChainId,
+                      token.address,
+                      token.decimals,
+                      token.symbol,
+                      token.name
+                    )
               );
             }}
           />
