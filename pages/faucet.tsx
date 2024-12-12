@@ -89,7 +89,7 @@ const FaucetPage: NextLayoutPage = observer(() => {
   }, [wallet.currentChain?.faucetTokens]);
 
   return (
-    <div className="flex flex-col  items-center ">
+    <div className="flex flex-col items-center w-full">
       <div className="flex items-center relative w-full sm:w-[700px] h-[138px] overflow-hidden">
         <Image
           src="/images/bera/honeybera.png"

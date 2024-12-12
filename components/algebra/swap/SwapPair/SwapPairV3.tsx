@@ -7,7 +7,7 @@ import {
 } from "@cryptoalgebra/sdk";
 import { useCallback, useMemo } from "react";
 import TokenCard from "../TokenCard";
-import { ChevronsUpDownIcon } from "lucide-react";
+import { ArrowLeftRight, ChevronsUpDownIcon } from "lucide-react";
 import useWrapCallback, {
   WrapType,
 } from "@/lib/algebra/hooks/swap/useWrapCallback";
@@ -132,7 +132,7 @@ const SwapPairV3 = () => {
   };
 
   return (
-    <div className="flex flex-col gap-1 relative">
+    <div className="flex flex-col gap-1 relative bg-white custom-dashed px-[18px] py-6">
       <TokenCardV3
         value={formattedAmounts[SwapField.INPUT] || ""}
         currency={baseCurrency}
@@ -147,13 +147,16 @@ const SwapPairV3 = () => {
       />
 
       <div className="flex w-full items-center gap-[5px]">
-        <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
-        <ExchangeSvg
-          className=" cursor-pointer hover:rotate-180 transition-all"
+        <div className=" h-px flex-[1_0_0] bg-[#363636]/30 rounded-[100px]"></div>
+        <div
+          className=" cursor-pointer hover:rotate-180 transition-all rounded-[10px] bg-[#FFCD4D] border border-black text-black p-2.5 shadow-[1.25px_2.5px_0px_0px_#000]"
           onClick={onSwitchTokens}
-        ></ExchangeSvg>
-        <div className=" h-px flex-[1_0_0] [background:rgba(247,147,26,0.20)] rounded-[100px]"></div>
+        >
+          <ArrowLeftRight className="size-5" />
+        </div>
+        <div className=" h-px flex-[1_0_0] bg-[#363636]/30 rounded-[100px]"></div>
       </div>
+
       <TokenCardV3
         value={formattedAmounts[SwapField.OUTPUT] || ""}
         currency={quoteCurrency}

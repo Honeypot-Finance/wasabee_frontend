@@ -1,8 +1,6 @@
 import { observer, useLocalObservable } from "mobx-react-lite";
-import { TokenSelector } from "@/components/TokenSelector";
-import { SwapAmount } from "../SwapAmount/index";
+import { SwapAmount } from "../SwapAmount/v3";
 import { swap } from "@/services/swap";
-import { ExchangeSvg } from "../svg/exchange";
 import { Button } from "@/components/button/button-next";
 import { Token } from "@/services/contract/token";
 import { SpinnerContainer } from "../Spinner";
@@ -11,19 +9,18 @@ import { useEffect, useState } from "react";
 import { isEthAddress } from "@/lib/address";
 import { wallet } from "@/services/wallet";
 import { amountFormatted } from "../../lib/format";
-import { AmountFormat } from "../AmountFormat";
 import { liquidity } from "@/services/liquidity";
 import { LoadingContainer } from "../LoadingDisplay/LoadingDisplay";
-import { ItemSelect, SelectItem, SelectState } from "../ItemSelect";
-import { cn, Input, Slider, Tooltip } from "@nextui-org/react";
-import Image from "next/image";
+import { ItemSelect, SelectItem, SelectState } from "../ItemSelect/v3";
+import { cn, Slider } from "@nextui-org/react";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import TokenLogo from "../TokenLogo/TokenLogo";
 import { Slippage } from "./Slippage";
 import BigNumber from "bignumber.js";
 import { useInterval } from "@/lib/hooks";
 import { Trigger } from "../Trigger";
-import { ArrowLeftRight } from "lucide-react";
+import { ArrowLeftRight, Zap, ChevronDown } from "lucide-react";
+import { BsLightningChargeFill } from "react-icons/bs";
 
 export const SwapCard = observer(
   ({
@@ -96,6 +93,8 @@ export const SwapCard = observer(
       swap.onFromAmountChange();
     }, 3000);
 
+    const [isExpanded, setIsExpanded] = useState(true);
+
     return (
       <SpinnerContainer
         className={cn(
@@ -120,67 +119,37 @@ export const SwapCard = observer(
           />
 
           <LoadingContainer isLoading={!isInit}>
-            <div className="border border-black border-dashed px-4 py-6 w-full rounded-3xl bg-white space-y-2">
-              <div className="flex items-center justify-end w-full">
-                <div className="flex items-center justify-end w-full text-black text-base font-bold leading-3 tracking-[0.16px]">
-                  <Slippage className="flex justify-between items-center w-full" />
-                </div>
-              </div>
-              <div className="flex flex-col lg:flex-row justify-between items-center w-full">
-                <SwapAmount
-                  label="From"
-                  inputProps={{
-                    value: swap.fromAmount,
-                    disabled: !swap.fromToken,
-                    max: swap.fromToken?.balance.toNumber(),
-                    min: 0,
-                    isInvalid:
-                      Number(swap.fromAmount) >
-                        (swap.fromToken as Token)?.balance?.toNumber() ||
-                      0 ||
-                      Number(swap.fromAmount) < 0,
-                    errorMessage: "Insufficient balance",
-                    onClear: () => {
-                      swap.setFromAmount("0");
-                    },
-                    onChange: (e) => {
-                      swap.setFromAmount(e.target.value);
-                    },
-                  }}
-                ></SwapAmount>
-                <div className="flex flex-col items-end w-full lg:w-[unset]">
-                  {!!swap.fromToken && (
-                    <div className="flex items-center">
-                      <div className="text-sub">
-                        Balance: {swap.fromToken.balanceFormatted}
-                      </div>
-                      <div
-                        onClick={() => {
-                          swap.setFromAmount(
-                            (swap.fromToken as Token).balance.toFixed()
-                          );
-                        }}
-                        className=" pb-2 cursor-pointer text-[color:var(--Button-Gradient,#F7931A)] ml-[8px] font-bold  underline"
-                      >
-                        <Image
-                          src={"/images/icons/artisticTexts/MAX.svg"}
-                          alt={""}
-                          width={40}
-                          height={40}
-                        ></Image>
-                      </div>
-                    </div>
-                  )}
-                  <TokenSelector
-                    value={swap.fromToken}
-                    onSelect={(token) => {
-                      swap.setFromToken(token);
-                    }}
-                  ></TokenSelector>
-                </div>
-              </div>
+            <div className="flex items-center justify-between w-full text-black text-base font-bold leading-3 tracking-[0.16px]">
+              <span className="text-[#202020]">Slippage</span>
+              <Slippage className="flex justify-between items-center w-full" />
+            </div>
+            <div className="w-full rounded-[32px] bg-white space-y-2 px-4 py-6 custom-dashed">
+              <SwapAmount
+                label="From"
+                token={swap.fromToken}
+                direction="from"
+                inputProps={{
+                  value: swap.fromAmount,
+                  disabled: !swap.fromToken,
+                  max: swap.fromToken?.balance.toNumber(),
+                  min: 0,
+                  isInvalid:
+                    Number(swap.fromAmount) >
+                      (swap.fromToken as Token)?.balance?.toNumber() ||
+                    0 ||
+                    Number(swap.fromAmount) < 0,
+                  errorMessage: "Insufficient balance",
+                  onClear: () => {
+                    swap.setFromAmount("0");
+                  },
+                  onChange: (e) => {
+                    swap.setFromAmount(e.target.value);
+                  },
+                }}
+              />
               {swap.fromToken && (
                 <div className="w-full flex justify-end items-center">
+                  {/* TODO: update slider ui */}
                   <Slider
                     className="w-full"
                     size="sm"
@@ -203,7 +172,7 @@ export const SwapCard = observer(
                     }}
                     value={Number(swap.fromAmount)}
                     step={Math.pow(0.1, 18)}
-                  ></Slider>
+                  />
                 </div>
               )}{" "}
               {swap.fromToken && (
@@ -226,107 +195,163 @@ export const SwapCard = observer(
                 </ItemSelect>
               )}
               <div className="flex w-full items-center gap-[5px]">
-                <div className=" h-px flex-[1_0_0] bg-[#36363B]/30 rounded-[100px]"></div>
+                <div className=" h-px flex-[1_0_0] bg-[#363636]/30 rounded-[100px]"></div>
                 <div
-                  className=" cursor-pointer hover:rotate-180 transition-all rounded-[10px] bg-[#FFCD4D] border border-black text-black p-2.5 shadow-md"
+                  className=" cursor-pointer hover:rotate-180 transition-all rounded-[10px] bg-[#FFCD4D] border border-black text-black p-2.5 shadow-[1.25px_2.5px_0px_0px_#000]"
                   onClick={() => {
                     swap.switchTokens();
                   }}
                 >
                   <ArrowLeftRight className="size-5" />
                 </div>
-                <div className=" h-px flex-[1_0_0] bg-[#36363B]/30 rounded-[100px]"></div>
+                <div className=" h-px flex-[1_0_0] bg-[#363636]/30 rounded-[100px]"></div>
               </div>
-              <div className="flex flex-col lg:flex-row justify-between items-center w-full">
-                <SwapAmount
-                  label="To"
-                  inputProps={{
-                    value: swap.toAmount,
-                    isClearable: false,
-                    disabled: true,
-                    onChange: (e) => {
-                      swap.setToAmount(e.target.value);
-                    },
-                  }}
-                ></SwapAmount>
-                <div className="flex flex-col items-end w-full lg:w-[unset]">
-                  {!!swap.toToken && (
-                    <div className="flex items-center">
-                      <div className="text-sub">
-                        Balance: {swap.toToken.balanceFormatted}
-                      </div>
-                    </div>
-                  )}
-                  <TokenSelector
-                    value={swap.toToken}
-                    onSelect={(token) => {
-                      swap.setToToken(token);
-                    }}
-                  ></TokenSelector>
-                </div>
-              </div>
-              {!!swap.price && (
-                <div className="flex  w-full lg:w-[529px] max-w-full h-[71px] justify-between items-center border [background:#291C0A] px-5 py-2.5 rounded-2xl border-solid border-[rgba(247,147,26,0.20)]">
-                  <div>
-                    <div>
-                      <AmountFormat
-                        amount={swap.price?.toFixed()}
-                      ></AmountFormat>
-                    </div>
-                    <div>
-                      {swap.toToken?.displayName} per{" "}
-                      {swap.fromToken?.displayName}
-                    </div>
-                  </div>
-                  <div>
-                    <div>
-                      {amountFormatted(swap.minToAmount, {
-                        decimals: 0,
-                        fixed: 6,
-                      })}{" "}
-                      {swap.toToken?.displayName}
-                    </div>
-                    <div>Minimum Received</div>
-                  </div>
-                </div>
-              )}{" "}
-              {swap.routerToken && swap.routerToken.length > 0 && (
-                <div className="w-full p-1 flex justify-between items-center rounded-xl  bg-black/50">
-                  <>
-                    <div>
-                      <TokenLogo token={swap.fromToken as Token} />
-                    </div>
-                    <FaLongArrowAltRight />
-                  </>
-
-                  {swap.routerToken.map((token, idx) => {
-                    if (idx != 0 && idx !== swap.routerToken!.length - 1) {
-                      return (
-                        <>
-                          <div key={token.address}>
-                            <TokenLogo token={token} />
-                          </div>
-                          <FaLongArrowAltRight />
-                        </>
-                      );
-                    }
-                  })}
-                  <div>
-                    <TokenLogo token={swap.toToken as Token} />
-                  </div>
-                </div>
-              )}
-              <Button
-                className="w-full"
-                isDisabled={swap.isDisabled}
-                isLoading={swap.swapExactTokensForTokens.loading}
-                onClick={async () => {
-                  await swap.swapExactTokensForTokens.call();
+              <SwapAmount
+                label="To"
+                direction="to"
+                token={swap.toToken}
+                inputProps={{
+                  value: swap.toAmount,
+                  isClearable: false,
+                  disabled: true,
+                  onChange: (e) => {
+                    swap.setToAmount(e.target.value);
+                  },
                 }}
-              >
-                {swap.buttonContent === "Swap" ? operate : swap.buttonContent}
-              </Button>
+              />
             </div>
+            {!!swap.price && (
+              <div className="flex flex-col w-full rounded-2xl cursor-pointer">
+                <div className="w-full custom-dashed p-4">
+                  <div
+                    className="flex flex-col w-full"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-2">
+                        <div className="bg-[#FFB800] p-2 rounded-lg">
+                          <BsLightningChargeFill className="w-4 h-4 text-black" />
+                        </div>
+                        <span className="text-black font-bold text-base">
+                          0 .0100% fee
+                        </span>
+                      </div>
+                      <ChevronDown
+                        className={`w-6 h-6 text-black transition-transform duration-300 ${
+                          isExpanded ? "rotate-180" : ""
+                        }`}
+                      />
+                    </div>
+
+                    {isExpanded && (
+                      <div className="flex flex-col divide-y divide-black/10">
+                        <div className="flex items-center py-3 justify-between">
+                          <span className="text-black text-sm font-medium">
+                            Route
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <TokenLogo token={swap.fromToken as Token} />
+                            <svg
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M5 12H19M19 12L12 5M19 12L12 19"
+                                stroke="black"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            <TokenLogo token={swap.toToken as Token} />
+                          </div>
+                        </div>
+
+                        <div className="flex items-center py-3 justify-between">
+                          <span className="text-black text-sm font-medium">
+                            Minimum received
+                          </span>
+                          <span className="text-black text-sm font-medium">
+                            {amountFormatted(swap.minToAmount, {
+                              decimals: 0,
+                              fixed: 6,
+                            })}{" "}
+                            {swap.toToken?.displayName}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center py-3 justify-between">
+                          <span className="text-black text-sm font-medium">
+                            LP Fee
+                          </span>
+                          <span className="text-black text-sm font-medium">
+                            0.0001 tHPOT
+                          </span>
+                        </div>
+
+                        <div className="flex items-center py-3 justify-between">
+                          <span className="text-black text-sm font-medium">
+                            Price Impact
+                          </span>
+                          <span className="text-[#FF5449] text-sm font-medium">
+                            -4.49%
+                          </span>
+                        </div>
+
+                        <div className="flex items-center py-3 justify-between">
+                          <span className="text-black text-sm font-medium">
+                            Slippage tolerance
+                          </span>
+                          <span className="text-black text-sm font-medium">
+                            0.50%
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+            {swap.routerToken && swap.routerToken.length > 0 && (
+              <div className="w-full p-1 flex justify-between items-center rounded-xl  bg-black/50">
+                <>
+                  <div>
+                    <TokenLogo token={swap.fromToken as Token} />
+                  </div>
+                  <FaLongArrowAltRight />
+                </>
+
+                {swap.routerToken.map((token, idx) => {
+                  if (idx != 0 && idx !== swap.routerToken!.length - 1) {
+                    return (
+                      <>
+                        <div key={token.address}>
+                          <TokenLogo token={token} />
+                        </div>
+                        <FaLongArrowAltRight />
+                      </>
+                    );
+                  }
+                })}
+                <div>
+                  <TokenLogo token={swap.toToken as Token} />
+                </div>
+              </div>
+            )}
+
+            <Button
+              className="w-full"
+              isDisabled={swap.isDisabled}
+              isLoading={swap.swapExactTokensForTokens.loading}
+              onClick={async () => {
+                await swap.swapExactTokensForTokens.call();
+              }}
+            >
+              {swap.buttonContent === "Swap" ? operate : swap.buttonContent}
+            </Button>
           </LoadingContainer>
           <div className="bg-[url('/images/swap/bottom-border.jpg')] bg-cover bg-no-repeat bg-left-top h-[70px] absolute bottom-0 left-0 w-full rounded-[20px]"></div>
         </div>

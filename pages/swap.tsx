@@ -28,7 +28,7 @@ const SwapPage = observer(() => {
   const isInit = wallet.isInit && liquidity;
 
   return isInit ? (
-    <>
+    <div className="w-full">
       <div
         className={`grid ${
           chart.showChart && "grid-cols-1 lg:grid-cols-2 "
@@ -40,7 +40,7 @@ const SwapPage = observer(() => {
             initial="hidden"
             animate="visible"
             transition={{ duration: 0.5 }}
-            className="w-full lg:max-w-[574px] flex flex-col self-center place-self-end h-full"
+            className="w-full lg:max-w-[574px] flex flex-col self-center place-self-end h-full order-2 lg:order-1"
           >
             <PriceFeedGraph></PriceFeedGraph>
           </motion.div>
@@ -50,8 +50,8 @@ const SwapPage = observer(() => {
           initial="hidden"
           animate="visible"
           className={
-            "relative w-full flex flex-col items-center justify-center" +
-            (chart.showChart ? "justify-start" : "")
+            "relative w-full flex flex-col items-center justify-center order-1 lg:order-2" +
+            (chart.showChart ? " justify-start" : "")
           }
         >
           <div>
@@ -59,7 +59,7 @@ const SwapPage = observer(() => {
           </div>
         </motion.div>
       </div>
-    </>
+    </div>
   ) : (
     <LoadingDisplay />
   );

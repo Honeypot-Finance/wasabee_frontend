@@ -2,23 +2,23 @@ import { Input } from "@/components/algebra/ui/input";
 import { formatBalance } from "@/lib/algebra/utils/common/formatBalance";
 import { formatUSD } from "@/lib//algebra/utils/common/formatUSD";
 import { Currency, Percent } from "@cryptoalgebra/sdk";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAccount, useBalance, useWatchBlockNumber } from "wagmi";
 import { Address, zeroAddress } from "viem";
-import { TokenSelector } from "@/components/TokenSelector";
+import { TokenSelector } from "@/components/TokenSelector/v3";
 import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
 import { wallet } from "@/services/wallet";
 import { Token } from "@/services/contract/token";
-import { Accordion, AccordionItem, Slider } from "@nextui-org/react";
-import { WrappedNextAccordion } from "@/components/wrappedNextUI/Accordion/Accordion";
-import { BiDownArrow } from "react-icons/bi";
+import { Slider } from "@nextui-org/react";
 import { debounce } from "lodash";
-import { ItemSelect, SelectState, SelectItem } from "@/components/ItemSelect";
 import NativeCurrency from "@cryptoalgebra/sdk/dist/entities/NativeCurrency";
 import {
-  BASES_TO_CHECK_TRADES_AGAINST,
-  WNATIVE_EXTENDED,
-} from "@/data/algebra/routing";
+  ItemSelect,
+  SelectState,
+  SelectItem,
+} from "@/components/ItemSelect/v3";
+import { WNATIVE_EXTENDED } from "@/data/algebra/routing";
+import { cn } from "@/lib/tailwindcss";
 
 interface TokenSwapCardProps {
   handleTokenSelection: (currency: Currency) => void;
@@ -94,52 +94,29 @@ const TokenCardV3 = ({
   };
 
   return (
-    <div className="p-2">
-      <div className="flex w-full py-1 bg-card-dark rounded-2xl">
-        <div className="flex flex-col w-full">
-          <div className="text-sub text-sm font-normal ">{label}</div>
+    <div className="flex-1 w-full flex flex-col gap-y-3">
+      <div className="text-black flex items-center justify-between px-2">
+        <span>{label}</span>
+        {currency && account && showBalance && (
+          <div className="flex items-center gap-x-2">
+            <div>
+              <span>Balance: </span>
+              <span>{balanceString}</span>
+            </div>
+            {showMaxButton && (
+              <button
+                className="cursor-pointer text-[#63b4ff]"
+                onClick={handleMaxValue}
+              >
+                Max
+              </button>
+            )}
+          </div>
+        )}
+      </div>
 
-          <Input
-            disabled={disabled}
-            type={"text"}
-            value={storedValue}
-            id={`amount-${currency?.symbol}`}
-            onUserInput={(v) => {
-              setStoredValue(v);
-              handleInput(v);
-            }}
-            className={`bg-transparent border-none text-xl font-bold w-11/12 p-2 disabled:cursor-default disabled:text-white 
-               focus:bg-black/20 focus:outline-none focus:boader-none focus:ring-0 
-                focus:ring-offset-0 focus:ring-offset-transparent focus:ring-transparent
-              `}
-            placeholder={"0.0"}
-            maxDecimals={currency?.decimals ?? 0 + 2}
-          />
-          {showBalance && (
-            <div className="text-sm">
-              {fiatValue && formatUSD.format(fiatValue)}
-            </div>
-          )}
-        </div>
-        <div className="flex flex-col items-end w-full">
-          {currency && account && (
-            <div className={"flex text-sm whitespace-nowrap"}>
-              {showBalance && (
-                <div>
-                  <span className="font-semibold">Balance: </span>
-                  <span>{balanceString}</span>
-                </div>
-              )}
-              {showMaxButton && (
-                <button
-                  className="ml-2 text-[#63b4ff]"
-                  onClick={handleMaxValue}
-                >
-                  Max
-                </button>
-              )}
-            </div>
-          )}
+      <div className="w-full rounded-2xl border bg-card-dark shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] flex items-center justify-between px-4 py-2.5 gap-x-2">
+        <div className="flex flex-row flex-1">
           <TokenSelector
             value={
               currency?.wrapped.address
@@ -174,72 +151,101 @@ const TokenCardV3 = ({
               );
             }}
           />
+          <div className="flex flex-col grow items-end">
+            <Input
+              disabled={disabled}
+              type="text"
+              value={storedValue}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setStoredValue(e.target.value);
+                handleInput(e.target.value);
+              }}
+              className={cn(
+                "text-right",
+                "!bg-transparent",
+                "[&_*]:!bg-transparent",
+                "data-[invalid=true]:!bg-transparent"
+              )}
+              classNames={{
+                inputWrapper: cn(
+                  "!bg-transparent",
+                  "border-none",
+                  "shadow-none",
+                  "!transition-none",
+                  "data-[invalid=true]:!bg-transparent",
+                  "group-data-[invalid=true]:!bg-transparent"
+                ),
+                input: cn(
+                  "!bg-transparent",
+                  "!text-[#202020]",
+                  "text-right",
+                  "text-xl",
+                  "!pr-0",
+                  "[appearance:textfield]",
+                  "[&::-webkit-outer-spin-button]:appearance-none",
+                  "[&::-webkit-inner-spin-button]:appearance-none",
+                  "data-[invalid=true]:!bg-transparent"
+                ),
+                clearButton: cn(
+                  "opacity-70",
+                  "hover:opacity-100",
+                  "!text-black",
+                  "!p-0"
+                ),
+              }}
+              placeholder="0.0"
+              maxDecimals={currency?.decimals ?? 0 + 2}
+            />
+            {showBalance && fiatValue && (
+              <div className="text-sm">{formatUSD.format(fiatValue)}</div>
+            )}
+          </div>
         </div>
       </div>
-      <WrappedNextAccordion>
-        <AccordionItem
-          title={
-            <span className="flex w-full justify-center items-center text-center">
-              <BiDownArrow />
-            </span>
-          }
-          className=""
-          classNames={{
-            base: "bg-black/25 rounded-2xl",
-            titleWrapper: "text-center",
-            trigger: "py-1",
-          }}
-          hideIndicator
-        >
-          <div className="p-2">
-            <div className="w-full flex justify-end items-center">
-              <Slider
-                className="w-full"
-                size="sm"
-                maxValue={Number(balance?.formatted)}
-                minValue={0}
-                onChange={(value) => {
-                  setStoredValue(value.toString());
-                  handleInput(value.toString());
-                }}
-                value={Number(storedValue)}
-                step={Math.pow(0.1, 18)}
-              ></Slider>
-            </div>
-          </div>
 
-          <div className="p-2">
-            <div className="w-full flex justify-end items-center">
-              <ItemSelect
-                selectState={
-                  new SelectState({
-                    value: Number(storedValue),
-                    onSelectChange: (value) => {
-                      handleInput(
-                        (Number(balance?.formatted) * Number(value)).toString()
-                      );
-                    },
-                  })
-                }
-                className=" grid grid-cols-2 lg:grid-cols-4 gap-[16px] justify-around w-full"
-              >
-                <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
-                  25%
-                </SelectItem>
-                <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
-                  50%
-                </SelectItem>
-                <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
-                  75%
-                </SelectItem>
-                <SelectItem className="rounded-[30px] px-[24px]" value={1}>
-                  100%
-                </SelectItem>
-              </ItemSelect>
-            </div>
-          </div>
-        </AccordionItem>
-      </WrappedNextAccordion>
+      {label?.toLowerCase() !== "to" && (
+        <div className="p-2 space-y-4">
+          <Slider
+            className="w-full"
+            size="sm"
+            maxValue={Number(balance?.formatted)}
+            minValue={0}
+            onChange={(value) => {
+              setStoredValue(value.toString());
+              handleInput(value.toString());
+            }}
+            value={Number(storedValue)}
+            step={Math.pow(0.1, 18)}
+          />
+
+          <ItemSelect
+            selectState={
+              new SelectState({
+                value: Number(storedValue),
+                onSelectChange: (value) => {
+                  handleInput(
+                    (Number(balance?.formatted) * Number(value)).toString()
+                  );
+                },
+              })
+            }
+            className="grid grid-cols-2 lg:grid-cols-4 gap-[16px] justify-around w-full"
+          >
+            <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
+              25%
+            </SelectItem>
+            <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
+              50%
+            </SelectItem>
+            <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
+              75%
+            </SelectItem>
+            <SelectItem className="rounded-[30px] px-[24px]" value={1}>
+              100%
+            </SelectItem>
+          </ItemSelect>
+        </div>
+      )}
     </div>
   );
 };

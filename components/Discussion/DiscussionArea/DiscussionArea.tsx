@@ -142,7 +142,7 @@ export function DiscussionArea(props: DiscussionAreaProps) {
             classNames={{
               base: "w-full h-full bg-[#262626] border border-[#FFCD4D] rounded-2xl overflow-hidden",
               inputWrapper:
-                "w-full !h-full bg-[#2F200B] hover:bg-[#2F200B] z-1",
+                "w-full !h-full z-1",
               input: "w-full h-full",
               mainWrapper: "w-full h-full bg-[#2F200B] hover:bg-[#2F200B] z-1",
               label: "text-[#FFCD4D] text-base font-bold leading-[normal] z-1",

@@ -1,42 +1,34 @@
 import CardContianer from "@/components/CardContianer/CardContianer";
-import PoweredByAlgebra from "../common/PoweredByAlgebra";
-import IntegralPools from "./IntegralPools";
-import SwapButton from "./SwapButton";
-import SwapChart from "./SwapChart";
-import SwapPair from "./SwapPair";
-import SwapParams from "./SwapParams";
 import ChartData from "@/components/svg/chartData";
-import { Slippage } from "@/components/SwapCard/Slippage";
 import { chart } from "@/services/chart";
 import Settings from "../common/Settings";
 import SwapPairV3 from "./SwapPair/SwapPairV3";
 import SwapButtonV3 from "./SwapButton/SwapButotnV3";
 import SwapParamsV3 from "./SwapParams/SwapParamsV3";
+import { MdCandlestickChart } from "react-icons/md";
 
 export function V3SwapCard() {
   return (
-    <div className="w-full">
-      <CardContianer addtionalClassName="flex-col gap-2">
-        {/* <IntegralPools /> */}
-        <div className="flex items-center justify-between w-full  text-[color:var(--Button-Gradient,#F7931A)] text-base font-bold leading-3 tracking-[0.16px]">
-          <span
-            onClick={() => {
-              chart.toggleChart();
-            }}
-          >
-            <ChartData></ChartData>
-          </span>
-          <Settings />
-        </div>
-        <SwapPairV3 />
-        <SwapParamsV3 />
-        <SwapButtonV3 />
-        {/* <PoweredByAlgebra /> */}
-      </CardContianer>
-
-      {/* <div className="col-span-2">
-        <SwapChart />{" "}
-      </div> */}
+    <div className="flex flex-col items-center gap-2 bg-[#FFCD4D] rounded-2xl px-4 py-3 relative pt-[90px] pb-[70px] text-black ">
+      <div className="bg-[url('/images/swap/top-border.png')] bg-cover bg-no-repeat bg-left-top h-[90px] absolute top-0 left-0 w-full rounded-[20px]"></div>
+      <div className="flex items-center justify-between w-full">
+        <span
+          onClick={() => {
+            chart.toggleChart();
+          }}
+        >
+          <MdCandlestickChart
+            className="text-[#202020] hover:text-white transition-all cursor-pointer"
+            size={24}
+          />
+        </span>
+        <Settings />
+      </div>
+      <SwapPairV3 />
+      <SwapParamsV3 />
+      <SwapButtonV3 />
+      {/* <PoweredByAlgebra /> */}
+      <div className="bg-[url('/images/swap/bottom-border.jpg')] bg-cover bg-no-repeat bg-left-top h-[70px] absolute bottom-0 left-0 w-full rounded-[20px]"></div>
     </div>
   );
 }

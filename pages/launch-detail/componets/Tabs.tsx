@@ -152,9 +152,8 @@ const Tabs = observer(
           <div className="bg-[url('/images/pumping/outline-border.png')] bg-top h-12 absolute top-0 left-0 w-full bg-contain"></div>
           {tab === "info" && (
             <div className="flex items-center justify-center">
-              <div className="w-full overflow-hidden p-10 flex items-center justify-between">
+              <div className="w-full overflow-hidden p-10 flex items-center justify-between gap-x-4 md:gap-x-8">
                 <div>
-                  {/* TODO: add Gliker font */}
                   <h1 className="text-[var(--Heading,#0D0D0D)] text-stroke-white webkit-text-stroke-[2px] webkit-text-stroke-color-[#FFF] font-gliker text-[64px] font-normal leading-[110%] tracking-[1.28px] mb-12 text-stroke-custom">
                     Token Info
                   </h1>

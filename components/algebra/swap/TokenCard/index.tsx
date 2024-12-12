@@ -1,11 +1,8 @@
-import CurrencyLogo from "@/components/algebra/common/CurrencyLogo";
-import TokenSelectorModal from "@/components/algebra/modals/TokenSelectorModal";
 import { Input } from "@/components/algebra/ui/input";
 import { formatBalance } from "@/lib/algebra/utils/common/formatBalance";
 import { formatUSD } from "@/lib//algebra/utils/common/formatUSD";
 import { Currency, Percent } from "@cryptoalgebra/sdk";
-import { ChevronRight } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useAccount, useBalance, useWatchBlockNumber } from "wagmi";
 import { Address } from "viem";
 import { TokenSelector } from "@/components/TokenSelector";
@@ -120,7 +117,7 @@ const TokenCard = ({
           type={"text"}
           value={value}
           id={`amount-${currency?.symbol}`}
-          onUserInput={(v) => handleInput(v)}
+          onUserInput={(v: string) => handleInput(v)}
           className={`text-right border border-[rgba(225,138,32,0.40)] bg-[rgba(225,138,32,0.40)] placeholder:text-[#9E9DA3] text-xl font-bold w-9/12 p-2 disabled:cursor-default disabled:text-white`}
           placeholder={"0.0"}
           maxDecimals={currency?.decimals}
