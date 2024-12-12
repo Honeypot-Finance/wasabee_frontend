@@ -69,7 +69,7 @@ const EnterAmountCard = ({
         <Input
           value={value}
           id={`amount-${currency?.symbol}`}
-          onUserInput={(v) => handleInput(v)}
+          onUserInput={(v: string) => handleInput(v)}
           className={`text-right border text-xl font-bold p-2 honeypot-input w-full max-w-[300px]`}
           placeholder={"0.0"}
           maxDecimals={currency?.decimals}

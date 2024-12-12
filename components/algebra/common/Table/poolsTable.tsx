@@ -125,7 +125,7 @@ const PoolsTable = <TData, TValue>({
                 value={
                   (table.getColumn(searchID)?.getFilterValue() as string) ?? ""
                 }
-                onChange={(event) =>
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                   table.getColumn(searchID)?.setFilterValue(event.target.value)
                 }
                 className="border border-[#E18A20]/10 bg-[#271A0C] pl-12 pr-4 h-12 w-[353px] focus:border-opacity-100 rounded-2xl placeholder:align-middle"

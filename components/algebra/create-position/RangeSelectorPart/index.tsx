@@ -87,7 +87,7 @@ const RangeSelectorPart = ({
           id={title}
           onBlur={handleOnBlur}
           disabled={disabled || locked}
-          onUserInput={(v) => {
+          onUserInput={(v: string) => {
             setLocalTokenValue(v);
             updateSelectedPreset(null);
           }}
