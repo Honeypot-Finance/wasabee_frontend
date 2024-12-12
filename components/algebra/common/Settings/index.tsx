@@ -113,7 +113,7 @@ const SlippageTolerance = () => {
                   ? ""
                   : slippage.toFixed(2)
             }
-            onChange={(e: { target: { value: string } }) =>
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               parseSlippageInput(e.target.value)
             }
             onBlur={() => {
@@ -189,7 +189,7 @@ const TransactionDeadline = () => {
                 ? ""
                 : (txDeadline / 60).toString()
           }
-          onChange={(e: { target: { value: string } }) =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             parseCustomDeadline(e.target.value)
           }
           onBlur={() => {

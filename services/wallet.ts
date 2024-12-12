@@ -1,6 +1,6 @@
 import { Network, networks } from "./chain";
 import BigNumber from "bignumber.js";
-import { PublicClient, WalletClient } from "viem";
+import { Address, PublicClient, WalletClient } from "viem";
 import { RouterV2Contract } from "./contract/routerv2-contract";
 import { FactoryContract } from "./contract/factory-contract";
 import { FtoFactoryContract } from "./contract/ftofactory-contract";
@@ -10,6 +10,7 @@ import { createPublicClientByChain } from "@/lib/client";
 import { StorageState } from "./utils";
 import { MemeFactoryContract } from "./contract/memefactory-contract";
 import { MEMEFacadeContract } from "./contract/memefacade-contract";
+import { ICHIVaultFactoryContract } from "./contract/aquabera/ICHIVaultFactory-contract";
 
 export class Wallet {
   account: string = "";
@@ -23,9 +24,9 @@ export class Wallet {
     factory: FactoryContract;
     ftofactory: FtoFactoryContract;
     ftofacade: FtoFacadeContract;
-    memeFactory: MemeFactoryContract;      
+    memeFactory: MemeFactoryContract;
     memeFacade: MEMEFacadeContract;
-    
+    vaultFactory: ICHIVaultFactoryContract;
   } = {} as any;
   publicClient!: PublicClient;
   isInit = false;
@@ -84,6 +85,9 @@ export class Wallet {
       }),
       memeFacade: new MEMEFacadeContract({
         address: this.currentChain.contracts.memeFacade,
+      }),
+      vaultFactory: new ICHIVaultFactoryContract({
+        address: this.currentChain.contracts.vaultFactory as Address,
       }),
     };
     this.publicClient = createPublicClientByChain(this.currentChain.chain);

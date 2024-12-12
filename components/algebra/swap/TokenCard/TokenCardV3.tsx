@@ -11,6 +11,7 @@ import { wallet } from "@/services/wallet";
 import { Token } from "@/services/contract/token";
 import { Slider } from "@nextui-org/react";
 import { debounce } from "lodash";
+import NativeCurrency from "@cryptoalgebra/sdk/dist/entities/NativeCurrency";
 import {
   ItemSelect,
   SelectState,
@@ -202,47 +203,49 @@ const TokenCardV3 = ({
         </div>
       </div>
 
-      <div className="p-2 space-y-4">
-        <Slider
-          className="w-full"
-          size="sm"
-          maxValue={Number(balance?.formatted)}
-          minValue={0}
-          onChange={(value) => {
-            setStoredValue(value.toString());
-            handleInput(value.toString());
-          }}
-          value={Number(storedValue)}
-          step={Math.pow(0.1, 18)}
-        />
+      {label?.toLowerCase() !== "to" && (
+        <div className="p-2 space-y-4">
+          <Slider
+            className="w-full"
+            size="sm"
+            maxValue={Number(balance?.formatted)}
+            minValue={0}
+            onChange={(value) => {
+              setStoredValue(value.toString());
+              handleInput(value.toString());
+            }}
+            value={Number(storedValue)}
+            step={Math.pow(0.1, 18)}
+          />
 
-        <ItemSelect
-          selectState={
-            new SelectState({
-              value: Number(storedValue),
-              onSelectChange: (value) => {
-                handleInput(
-                  (Number(balance?.formatted) * Number(value)).toString()
-                );
-              },
-            })
-          }
-          className="grid grid-cols-2 lg:grid-cols-4 gap-[16px] justify-around w-full"
-        >
-          <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
-            25%
-          </SelectItem>
-          <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
-            50%
-          </SelectItem>
-          <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
-            75%
-          </SelectItem>
-          <SelectItem className="rounded-[30px] px-[24px]" value={1}>
-            100%
-          </SelectItem>
-        </ItemSelect>
-      </div>
+          <ItemSelect
+            selectState={
+              new SelectState({
+                value: Number(storedValue),
+                onSelectChange: (value) => {
+                  handleInput(
+                    (Number(balance?.formatted) * Number(value)).toString()
+                  );
+                },
+              })
+            }
+            className="grid grid-cols-2 lg:grid-cols-4 gap-[16px] justify-around w-full"
+          >
+            <SelectItem className="rounded-[30px] px-[24px]" value={0.25}>
+              25%
+            </SelectItem>
+            <SelectItem className="rounded-[30px] px-[24px]" value={0.5}>
+              50%
+            </SelectItem>
+            <SelectItem className="rounded-[30px] px-[24px]" value={0.75}>
+              75%
+            </SelectItem>
+            <SelectItem className="rounded-[30px] px-[24px]" value={1}>
+              100%
+            </SelectItem>
+          </ItemSelect>
+        </div>
+      )}
     </div>
   );
 };

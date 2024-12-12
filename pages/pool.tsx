@@ -9,6 +9,7 @@ import { wallet } from "@/services/wallet";
 import { Tab, Tabs } from "@nextui-org/react";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
+import { CreateAquaberaVault } from "@/components/Aquabera/create-vault/CreateAquaberaVault";
 
 const Pool = observer(() => {
   const isInit = wallet.isInit && liquidity.isInit;
@@ -19,12 +20,22 @@ const Pool = observer(() => {
 
     liquidity.initPool();
   }, [wallet.isInit]);
+
   return (
     <div>
       {isInit ? (
-        <div className="relative w-full flex justify-center content-center items-center">
-          <CreatePoolForm />
-        </div>
+        <Tabs>
+          <Tab key="aquabera" title="Create Aquabera Vault">
+            <div className="relative w-full flex justify-center content-center items-center">
+              <CreateAquaberaVault />
+            </div>
+          </Tab>
+          <Tab key="algebra" title="Create AlgebraPool">
+            <div className="relative w-full flex justify-center content-center items-center">
+              <CreatePoolForm />
+            </div>
+          </Tab>
+        </Tabs>
       ) : (
         <LoadingDisplay />
       )}

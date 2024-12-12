@@ -1,4 +1,3 @@
-import CurrencyLogo from "@/components/algebra/common/CurrencyLogo";
 import { Input } from "@/components/algebra/ui/input";
 import { Currency, CurrencyAmount } from "@cryptoalgebra/sdk";
 import { useCallback, useMemo } from "react";

@@ -15,6 +15,8 @@ import { defaultContainerVariants } from "@/lib/animation";
 import Image from "next/image";
 import Pagination from "@/components/Pagination/Pagination";
 import PoolsList from "@/components/algebra/pools/PoolsList";
+import MyAquaberaVaults from "@/components/Aquabera/VaultLists/MyVaults";
+import AquaberaList from "@/components/Aquabera/VaultLists/VaultLists";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const router = useRouter();
@@ -73,57 +75,21 @@ const PoolsPage: NextLayoutPage = observer(() => {
     }
   };
 
-  // const state = useLocalObservable(() => ({
-  //   columns: [
-  //     {
-  //       key: "name",
-  //       label: "Pool Name",
-  //     },
-  //     {
-  //       key: "liquidity",
-  //       label: "Liquidity",
-  //     },
-  //   ],
-  //   pagination: new PaginationState({}),
-  //   searchValue: "",
-  //   setSearchValue(value: string) {
-  //     this.searchValue = value;
-  //   },
-
-  //   get columnsMap() {
-  //     return this.columns.reduce((acc, column) => {
-  //       acc[column.key] = column;
-  //       return acc;
-  //     }, {} as Record<string, (typeof this.columns)[number]>);
-  //   },
-
-  //   get filteredPairs() {
-  //     return liquidity.pairs.filter((pair) => {
-  //       return (
-  //         pair.poolName
-  //           .toLowerCase()
-  //           .includes(this.searchValue.toLowerCase()) ||
-  //         pair.address.toLowerCase().includes(this.searchValue.toLowerCase()) ||
-  //         pair.token0.address
-  //           .toLowerCase()
-  //           .includes(this.searchValue.toLowerCase()) ||
-  //         pair.token1.address
-  //           .toLowerCase()
-  //           .includes(this.searchValue.toLowerCase())
-  //       );
-  //     });
-  //   },
-  //   get pairsByPage() {
-  //     return this.filteredPairs.slice(
-  //       state.pagination.offset,
-  //       state.pagination.end
-  //     );
-  //   },
-  // }));
-
   return (
-    <div className="max-w-screen-xl mx-auto">
-      <PoolsList />
+    <div className="w-full mx-auto">
+      <Tabs
+        classNames={{
+          base: "w-full",
+          panel: "w-full",
+        }}
+      >
+        <Tab key="algebra" title="Algebra Pool" className="w-full">
+          <PoolsList />
+        </Tab>
+        <Tab key="aquabera" title="Vault" className="w-full">
+          <AquaberaList />
+        </Tab>
+      </Tabs>
     </div>
   );
 });
