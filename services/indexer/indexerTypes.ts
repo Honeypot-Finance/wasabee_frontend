@@ -95,8 +95,18 @@ export type GhostToken = {
   decimals: number;
   derivedETH?: string;
   derivedUSD?: string;
+  holderCount?: string;
   swapCount?: string;
 };
+
+export interface LaunchTokenData {
+  id: string;
+  launchId: string;
+  amount: string;
+  currentAmount: string;
+  timestamp: string;
+  txHash: string;
+}
 
 export type GhostPoolPair = {
   id: string;

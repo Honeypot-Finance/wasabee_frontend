@@ -179,6 +179,29 @@ class Chart {
     );
   }
 
+  async updateCurrentPrice() {
+    if (!this.chartTarget) return;
+
+    const newestPrice = await trpcClient.priceFeed.getChartData.query({
+      chainId: wallet.currentChainId.toString(),
+      tokenAddress: this.chartTarget.address,
+      from: dayjs().unix() - 60,
+      to: dayjs().unix(),
+      resolution: "1",
+      tokenNumber: this.tokenNumber,
+      currencyCode: this.currencyCode,
+    });
+
+    if (
+      newestPrice.status === "success" &&
+      newestPrice.data?.getBars?.c[0] !== undefined
+    ) {
+      this.chartData.value?.getBars.c.push(
+        newestPrice.data?.getBars?.c[0] as never
+      );
+    }
+  }
+
   toggleChart() {
     this.showChart = !this.showChart;
   }

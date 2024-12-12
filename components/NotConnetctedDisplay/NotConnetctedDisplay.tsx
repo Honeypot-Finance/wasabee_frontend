@@ -1,6 +1,4 @@
 import HoneyStickSvg from "../svg/HoneyStick";
-import { PeddingSvg } from "../svg/Pedding";
-import { RocketSvg } from "../svg/Rocket";
 
 export default function NotConnetctedDisplay() {
   return (

@@ -66,7 +66,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <div className="px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
+    <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
       <div className="w-full">
         <MemeWarBanner isEnd />
       </div>

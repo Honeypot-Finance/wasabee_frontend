@@ -5,12 +5,12 @@ import { NoData } from "../table/index";
 import HoneyStickSvg from "../svg/HoneyStick";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
 
-export type DataContainerProps =  {
-    children: React.ReactNode;
-    isLoading?: boolean;
-    hasData?: boolean;
-    isInit?: boolean;
-  } & HTMLAttributes<any>
+export type DataContainerProps = {
+  children: React.ReactNode;
+  isLoading?: boolean;
+  hasData?: boolean;
+  isInit?: boolean;
+} & HTMLAttributes<any>;
 
 export const DataContainer = ({
   children,
@@ -23,12 +23,6 @@ export const DataContainer = ({
   const noData = !hasData && isInit;
   return (
     <div className={clsx(" relative", className)} {...props}>
-      {isLoading ? (
-        // <Spinner className=" absolute  left-0  m-auto right-0 top-0 bottom-0"></Spinner>
-        <LoadingDisplay />
-      ) : (
-        <></>
-      )}
       {noData ? (
         <div className="flex flex-col justify-center items-center min-h-[200px]  pt-5">
           <HoneyStickSvg />
@@ -36,6 +30,10 @@ export const DataContainer = ({
         </div>
       ) : (
         children
+      )}
+      {isLoading && (
+        // <Spinner className=" absolute  left-0  m-auto right-0 top-0 bottom-0"></Spinner>
+        <LoadingDisplay />
       )}
     </div>
   );

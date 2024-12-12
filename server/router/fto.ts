@@ -4,6 +4,7 @@ import PQueue from "p-queue";
 import { ftoService } from "../service/fto";
 import { cacheProvider, getCacheKey } from "@/lib/server/cache";
 import { id } from "ethers/lib/utils";
+import { chain } from "lodash";
 
 const queue = new PQueue({ concurrency: 10 });
 
@@ -31,22 +32,6 @@ export const ftoRouter = router({
         chain_id: z.number(),
       })
     )
-    .output(
-      z
-        .object({
-          id: z.number(),
-          twitter: z.string().or(z.null()),
-          telegram: z.string().or(z.null()),
-          website: z.string().or(z.null()),
-          description: z.string().or(z.null()),
-          logo_url: z.string().or(z.null()),
-          name: z.string().or(z.null()),
-          provider: z.string(),
-          project_type: z.string().or(z.null()),
-          banner_url: z.string().or(z.null()),
-        })
-        .or(z.null())
-    )
     .query(async ({ input }) => {
       return cacheProvider.getOrSet(
         getCacheKey("getProjectInfo", input),
@@ -72,17 +57,38 @@ export const ftoRouter = router({
         async () => ftoService.getFtoProjectsByAccount(input)
       );
     }),
+  getProjectsByLaunchToken: publicProcedure
+    .input(
+      z.object({
+        chain_id: z.number(),
+        launch_token: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      return cacheProvider.getOrSet(
+        getCacheKey("getProjectsByLaunchToken", input),
+        async () => {
+          const launchs = await ftoService.selectProjectByLaunchToken(input);
+          console.log("launchs", launchs);
+          return launchs;
+        }
+      );
+    }),
   createOrUpdateProjectInfo: authProcedure
     .input(
       z.object({
-        twitter: z.string(),
-        telegram: z.string(),
-        website: z.string(),
-        description: z.string(),
-        projectName: z.string(),
+        twitter: z.string().optional(),
+        telegram: z.string().optional(),
+        website: z.string().optional(),
+        description: z.string().optional(),
+        projectName: z.string().optional(),
         pair: z.string(),
         chain_id: z.number(),
+        provider: z.string().optional(),
         project_type: z.string().optional(),
+        launch_token: z.string().optional(),
+        raising_token: z.string().optional(),
+        beravote_space_id: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {

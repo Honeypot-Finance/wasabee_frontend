@@ -8,10 +8,10 @@ import { amountFormatted } from "@/lib/format";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { faucetABI } from "@/lib/abis/faucet";
 import { watchAsset } from "viem/actions";
-import { toast } from "react-toastify";
 import { networksMap } from "../chain";
 import { WrappedToastify } from "@/lib/wrappedToastify";
 import { trpcClient } from "@/lib/trpc";
+import NetworkManager from "@/services/network";
 
 export class Token implements BaseContract {
   static tokensMap: Record<string, Token> = {};
@@ -53,6 +53,7 @@ export class Token implements BaseContract {
   isPopular = false;
   derivedETH = "";
   derivedUSD = "";
+  holderCount = "";
   swapCount = "";
   indexerDataLoaded = false;
 
@@ -124,6 +125,19 @@ export class Token implements BaseContract {
     });
   }
 
+  async loadLogoURI() {
+    if (!!this.logoURI) {
+      return;
+    }
+
+    const launch = await trpcClient.projects.getProjectsByLaunchToken.query({
+      chain_id: wallet.currentChainId,
+      launch_token: this.address,
+    });
+
+    launch[0]?.logo_url && this.setLogoURI(launch[0].logo_url);
+  }
+
   setLogoURI(logoURI: string) {
     this.logoURI = logoURI;
   }
@@ -159,6 +173,7 @@ export class Token implements BaseContract {
     const loadClaimed = options?.loadClaimed ?? false;
     const loadLogoURI = options?.loadLogoURI ?? true;
     const loadIndexerTokenData = options?.loadIndexerTokenData ?? false;
+
     await Promise.all([
       loadName && !this.name
         ? this.contract.read.name().then((name) => {
@@ -167,13 +182,13 @@ export class Token implements BaseContract {
           })
         : Promise.resolve(),
       loadSymbol && !this.symbol
-        ? this.contract.read.symbol().then((symbol) => {
+        ? this.contract.read?.symbol().then((symbol) => {
             console.log("symbol", symbol);
             this.symbol = symbol;
           })
         : Promise.resolve(),
       loadDecimals && !this.decimals
-        ? this.contract.read.decimals().then((decimals) => {
+        ? this.contract.read?.decimals().then((decimals) => {
             console.log("decimals", decimals);
             this.decimals = decimals;
           })
@@ -186,6 +201,7 @@ export class Token implements BaseContract {
           })
         : Promise.resolve(),
       loadIndexerTokenData ? this.getIndexerTokenData() : Promise.resolve(),
+      loadLogoURI ? this.loadLogoURI() : Promise.resolve(),
     ]).catch((e) => {
       console.log(e);
       return;
@@ -260,11 +276,20 @@ export class Token implements BaseContract {
   }
 
   getIsRouterToken() {
-    this.isRouterToken =
-      networksMap[wallet.currentChainId].validatedTokensInfo[
-        this.address.toLowerCase()
-      ]?.isRouterToken;
-    return this.isRouterToken;
+    const networkManager = NetworkManager.getInstance();
+
+    const currentChainId = wallet.isInit
+      ? wallet.currentChainId
+      : networkManager.getSelectedNetwork()?.chainId;
+
+    if (currentChainId) {
+      this.isRouterToken =
+        networksMap[currentChainId].validatedTokensInfo[
+          this.address.toLowerCase()
+        ]?.isRouterToken;
+      return this.isRouterToken;
+    }
+    return false;
   }
 
   getSupportedFeeOnTransferTokens() {

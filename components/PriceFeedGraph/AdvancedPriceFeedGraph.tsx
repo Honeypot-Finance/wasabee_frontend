@@ -16,18 +16,18 @@ import {
 } from "@/public/static/charting_library/charting_library";
 import { pairToTicker, tokenToTicker } from "@/lib/advancedChart.util";
 import { pairQueryOutput } from "@/types/pair";
-import { TVChartContainer } from "../AdvancedChart/TVChartContainer/TVChartContainer";
+//import { TVChartContainer } from "../AdvancedChart/TVChartContainer/TVChartContainer";
 import { chart } from "@/services/chart";
 import { PairContract } from "@/services/contract/pair-contract";
 import { observer } from "mobx-react-lite";
 
-// const TVChartContainer = dynamic(
-//   () =>
-//     import("@/components/AdvancedChart/TVChartContainer/TVChartContainer").then(
-//       (mod) => mod.TVChartContainer
-//     ),
-//   { ssr: false }
-// );
+const TVChartContainer = dynamic(
+  () =>
+    import("@/components/AdvancedChart/TVChartContainer/TVChartContainer").then(
+      (mod) => mod.TVChartContainer
+    ),
+  { ssr: false }
+);
 
 export const AdvancedPriceFeedGraph = observer(() => {
   const [isScriptReady, setIsScriptReady] = useState(false);

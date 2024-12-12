@@ -8,7 +8,7 @@ import {
   //sepolia,
 } from "@/lib/chain";
 export class Network {
-  get chainId() {
+  get chainId () {
     return this.chain.id;
   }
   contracts!: {
@@ -54,7 +54,7 @@ export class Network {
     if (args) {
     }
   }
-  init() {
+  init () {
     this.nativeToken = Token.getToken(this.nativeToken);
     this.nativeToken.init().then(() => {
       console.log("this.nativeToken", this.nativeToken.name);
@@ -384,6 +384,11 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/memewar2/trumpot.jpg",
     },
+    "0xc87e5a73781e09d831d41e32991d9fc943517feb": {
+      name: "Bera Coral",
+      symbol: "BERA CORAL",
+      decimals: 18,
+    },
   },
   validatedFtoAddresses: [
     "0x2c504e661750e03aa9252c67e771dc059a521863".toLowerCase(),
@@ -396,10 +401,11 @@ export const networks = [
   berachainBartioTestnetNetwork,
   //sepoliaNetwork,
 ];
-export const networksMap = networks.reduce(
-  (acc, network) => {
-    acc[network.chainId] = network;
-    return acc;
-  },
-  {} as Record<number | string, Network>
-);
+export const networksMap = networks.reduce((acc, network) => {
+  acc[network.chainId] = network;
+  return acc;
+}, {} as Record<number | string, Network>);
+
+
+export const LiquidityBootstrapPoolFactoryAddress = "0xe2957CeAe8d267C493ad41e5CF7BBc274B969711"
+

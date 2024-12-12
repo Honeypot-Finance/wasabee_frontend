@@ -26,7 +26,8 @@ import dayjs from "dayjs";
 
 const memeGraphHandle = "93866c79-ad7e-4dfa-afb9-0b5a81d7d79f/ghostgraph";
 const ftoGraphHandle = "df583977-1412-4c0a-9b3a-ebea68604f3a/ghostgraph";
-const pairGraphHandle = "c0bb4104-f7ae-4325-926a-e31bec273615/ghostgraph";
+const memelaunchGraphHandle = "6250c399-1065-408f-9491-24a000b9d62d/ghostgraph";
+const pairGraphHandle = "35512369-5e78-4bcc-ab57-8a1a506d842a/ghostgraph";
 
 function getTimeStampToDayNow() {
   return Math.floor(dayjs().unix() / 86400);
@@ -499,6 +500,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
+                holderCount
                 swapCount
               }
               token1 {
@@ -508,6 +510,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
+                holderCount
                 swapCount
               }
           }
@@ -771,6 +774,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
+                holderCount
                 swapCount
               }
               token1 {
@@ -780,6 +784,7 @@ export class GhostIndexer {
                 decimals
                 derivedETH
                 derivedUSD
+                holderCount
                 swapCount
               }
             }
@@ -855,6 +860,7 @@ export class GhostIndexer {
             decimals
             derivedETH
             derivedUSD
+            holderCount
             swapCount
           }
           token1{
@@ -864,6 +870,7 @@ export class GhostIndexer {
             decimals
             derivedETH
             derivedUSD
+            holderCount
             swapCount
           }
         }
@@ -901,6 +908,7 @@ export class GhostIndexer {
           decimals
           derivedETH
           derivedUSD
+          holderCount
           swapCount
           symbol
           name
@@ -935,6 +943,7 @@ export class GhostIndexer {
           decimals
           derivedETH
           derivedUSD
+          holderCount
           swapCount
           symbol
           name
@@ -1026,6 +1035,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
+        holderCount
         swapCount
       }
       token1{
@@ -1035,6 +1045,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
+        holderCount
         swapCount
       }
       reserve0
@@ -1054,6 +1065,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
+        holderCount
         swapCount
       }
       token1{
@@ -1063,6 +1075,7 @@ export class GhostIndexer {
         decimals
         derivedETH
         derivedUSD
+        holderCount
         swapCount
       }
       reserve0
@@ -1078,6 +1091,36 @@ export class GhostIndexer {
 
     if (res.status === "success") {
       return res.data.pairs0.items[0] || res.data.pairs1.items[0];
+    }
+    return res;
+  }
+
+  async getMemeGraphData(tokenAddress: string) {
+    const query = `
+      query {
+        raisedTokenDeposits(
+          orderBy: "timestamp"
+          orderDirection: "desc"
+          where: {launchId: "${tokenAddress}"}
+        ) {
+          items {
+            id
+            launchId
+            amount
+            currentAmount
+            timestamp
+            txHash
+          }
+        }
+      }
+    `;
+
+    const res = await this.callIndexerApi(query, {
+      apiHandle: memelaunchGraphHandle,
+    });
+
+    if (res.status === "success") {
+      return res.data.raisedTokenDeposits.items;
     }
     return res;
   }

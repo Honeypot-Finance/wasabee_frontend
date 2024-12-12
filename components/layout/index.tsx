@@ -1,8 +1,7 @@
 import { useEffect } from "react";
-import { Footer } from "./footer";
 import { Header } from "./header";
 import { useRouter } from "next/router";
-import { useAccount, useConnectorClient } from "wagmi";
+import { useAccount } from "wagmi";
 import { networksMap } from "@/services/chain";
 import LaunchHeader from "./LaunchHeader";
 import { cn } from "@/lib/tailwindcss";
@@ -11,8 +10,11 @@ import ConfettiComponent from "../atoms/Confetti/Confetti";
 import PopOverModal from "../PopOverModal/PopOverModal";
 import { trpcClient } from "@/lib/trpc";
 import { popmodal } from "@/services/popmodal";
-import Link from "next/link";
 import { metadata } from "@/config/metadata";
+import AnnouncementBar from "./AnnouncementBar";
+import Link from "next/link";
+import GuideModal from "../Instruction/GuideModal";
+import ChatWidget from "../ServiceChat";
 
 export const Layout = ({
   children,
@@ -35,7 +37,9 @@ export const Layout = ({
       popmodal.openModal({
         content: (
           <div className="min-h-[300px] line-[24px]">
-            <p className="text-center  font-bold text-[30px]">Announcement</p>
+            <div className="text-center  font-bold text-[30px]">
+              Announcement
+            </div>
             <h1 className="mt-[24px]">
               This version is outdated, please check our newest link:&nbsp;{" "}
               <a
@@ -56,6 +60,28 @@ export const Layout = ({
     });
   }, []);
 
+  // const allowedPaths = ["/swap"];
+  const allowedPaths = [""];
+  const currentPath = router.pathname;
+
+  const slogans = [
+    <>
+      <Link href="/memewar" className="flex items-center ">
+        <span> Participate in the: </span> &nbsp;
+        <span className="flex items-center justify-center gap-2 text-rose-600">
+          Meme War ⚔️
+        </span>
+      </Link>
+    </>,
+    <>
+      <Link href="/launch-token?launchType=meme" className="flex items-center">
+        <span className="flex items-center justify-center gap-2">
+          Launch a new meme token within 5 seconds 🚀
+        </span>
+      </Link>
+    </>,
+  ];
+
   return (
     <div
       className={cn(
@@ -63,6 +89,10 @@ export const Layout = ({
         className
       )}
     >
+      <AnnouncementBar slogans={slogans} interval={5000} />
+      {/* <GuideModal /> */}
+      <ChatWidget />
+
       <ConfettiComponent />
       <PopOverModal />
       {router.pathname.startsWith("/launch") ||
@@ -71,7 +101,7 @@ export const Layout = ({
       ) : (
         <Header />
       )}
-      {currentChain ? (
+      {currentChain || allowedPaths.includes(currentPath) ? (
         <div className=" px-[12px] sm:pt-[72px] pt-[24px] flex-1">
           {children}
         </div>
