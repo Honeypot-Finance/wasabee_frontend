@@ -6,10 +6,13 @@ import {
   VaultShare,
   VaultsSortedByHoldersDocument,
   VaultsSortedByHoldersQuery,
+  SingleVaultDetailsDocument,
+  SingleVaultDetailsQuery,
 } from "../generated/graphql";
 import {
   ACCOUNT_VAULT_SHARES,
   VAULTS_SORTED_BY_HOLDERS,
+  SINGLE_VAULT_DETAILS,
 } from "../queries/vaults";
 
 export async function getAccountVaultsList(
@@ -36,4 +39,17 @@ export async function getVaultPageData(): Promise<VaultsSortedByHoldersQuery> {
   });
 
   return vaults.data;
+}
+
+export async function getSingleVaultDetails(
+  vaultId: string
+): Promise<SingleVaultDetailsQuery> {
+  const result = await infoClient.query<SingleVaultDetailsQuery>({
+    query: SingleVaultDetailsDocument,
+    variables: {
+      vaultId: vaultId.toLowerCase(),
+    },
+  });
+
+  return result.data;
 }

@@ -11,6 +11,8 @@ import { wallet } from "@/services/wallet";
 import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
 import { useReadErc20BalanceOf } from "@/wagmi-generated";
 import { WithdrawFromVaultModal } from "@/components/Aquabera/modals/WithdrawFromVaultModal";
+import { getSingleVaultDetails } from "@/lib/algebra/graphql/clients/vaults";
+import { SingleVaultDetailsQuery } from "@/lib/algebra/graphql/generated/graphql";
 
 export default function VaultDetail() {
   const router = useRouter();
@@ -23,6 +25,12 @@ export default function VaultDetail() {
   const [totalSupply, setTotalSupply] = useState<bigint>(BigInt(0));
   const [userShares, setUserShares] = useState<bigint>(BigInt(0));
   const [fees, setFees] = useState<number>(0);
+  const [tvl, setTvl] = useState<string>("$0");
+  const [volume24h, setVolume24h] = useState<string>("$0");
+  const [fees24h, setFees24h] = useState<string>("$0");
+  const [vaultData, setVaultData] = useState<SingleVaultDetailsQuery | null>(
+    null
+  );
 
   useEffect(() => {
     if (address && typeof address === "string") {
@@ -31,7 +39,7 @@ export default function VaultDetail() {
       });
       setVault(vaultContract);
 
-      // Fetch token addresses
+      // Fetch token addresses and pool data
       const loadVaultData = async () => {
         const token0Address = await vaultContract.contract.read.token0();
         const token1Address = await vaultContract.contract.read.token1();
@@ -53,6 +61,38 @@ export default function VaultDetail() {
         if (wallet.account) {
           const shares = await vaultContract.getBalanceOf(wallet.account);
           setUserShares(shares);
+        }
+
+        // Get vault data from subgraph
+        const vaultDetails = await getSingleVaultDetails(address);
+        setVaultData(vaultDetails);
+
+        if (vaultDetails.ichiVault) {
+          setTvl(
+            Number(
+              vaultDetails.ichiVault.pool?.totalValueLockedUSD || 0
+            ).toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            })
+          );
+
+          const latestDayData = vaultDetails.ichiVault.pool?.poolDayData[0];
+          if (latestDayData) {
+            setVolume24h(
+              Number(latestDayData.volumeUSD || 0).toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+              })
+            );
+
+            setFees24h(
+              Number(latestDayData.feesUSD || 0).toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+              })
+            );
+          }
         }
       };
 
@@ -82,7 +122,13 @@ export default function VaultDetail() {
     // Get fees
     const fee = await vault.getFee();
     setFees(fee);
-  }, [vault, wallet.account]);
+
+    // Refresh subgraph data
+    if (address && typeof address === "string") {
+      const vaultDetails = await getSingleVaultDetails(address);
+      setVaultData(vaultDetails);
+    }
+  }, [vault, wallet.account, address]);
 
   // Format number with 18 decimals
   const formatShares = (value: bigint) => {
@@ -104,6 +150,22 @@ export default function VaultDetail() {
       ? `${integerPart}.${trimmedFractional}`
       : integerPart.toString();
   };
+
+  // Merge all transactions into one array and sort by timestamp
+  const allTransactions = [
+    ...vaultData?.ichiVault?.vaultDeposits.map((tx) => ({
+      ...tx,
+      type: "deposit",
+    })),
+    ...vaultData?.ichiVault?.vaultWithdraws.map((tx) => ({
+      ...tx,
+      type: "withdraw",
+    })),
+    ...vaultData?.ichiVault?.vaultCollectFees.map((tx) => ({
+      ...tx,
+      type: "fee",
+    })),
+  ].sort((a, b) => Number(b.createdAtTimestamp) - Number(a.createdAtTimestamp));
 
   return (
     <div className="container mx-auto p-4">
@@ -186,10 +248,52 @@ export default function VaultDetail() {
               %
             </p>
           </div>
+          <div className="bg-[#1A1108] p-4 rounded-xl">
+            <h3 className="text-sm text-gray-400">Total Value Locked</h3>
+            <p className="text-xl font-bold">{tvl}</p>
+          </div>
+          <div className="bg-[#1A1108] p-4 rounded-xl">
+            <h3 className="text-sm text-gray-400">24h Volume</h3>
+            <p className="text-xl font-bold">{volume24h}</p>
+          </div>
+          <div className="bg-[#1A1108] p-4 rounded-xl">
+            <h3 className="text-sm text-gray-400">24h Fees</h3>
+            <p className="text-xl font-bold">{fees24h}</p>
+          </div>
         </div>
 
+        {/* Recent Activity */}
+        {vaultData?.ichiVault && (
+          <div className="bg-[#1A1108] p-4 rounded-xl">
+            <h3 className="text-lg font-bold mb-4">Recent Activity</h3>
+            <div className="space-y-4">
+              {allTransactions.map((tx) => (
+                <div key={tx.id} className="flex justify-between items-center">
+                  <div>
+                    {tx.type === "deposit" && (
+                      <span className="text-green-500">Deposit</span>
+                    )}
+                    {tx.type === "withdraw" && (
+                      <span className="text-red-500">Withdraw</span>
+                    )}
+                    {tx.type === "fee" && (
+                      <span className="text-yellow-500">Fee Collection</span>
+                    )}
+                    {tx.to && ` by ${tx.to.slice(0, 6)}...${tx.to.slice(-4)}`}
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    {new Date(
+                      Number(tx.createdAtTimestamp) * 1000
+                    ).toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Vault Info */}
-        <div className="bg-[#1A1108] p-4 rounded-xl">
+        <div className="bg-[#1A1108] p-4 rounded-xl mt-6">
           <h3 className="text-lg font-bold mb-4">Vault Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>

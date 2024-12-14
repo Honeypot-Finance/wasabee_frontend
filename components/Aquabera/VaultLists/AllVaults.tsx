@@ -68,6 +68,9 @@ export function AllAquaberaVaults() {
         <TableHeader>
           <TableColumn>Token Pair</TableColumn>
           <TableColumn>Vault Address</TableColumn>
+          <TableColumn>TVL</TableColumn>
+          <TableColumn>24h Volume</TableColumn>
+          <TableColumn>24h Fees</TableColumn>
         </TableHeader>
         <TableBody>
           {vaults?.ichiVaults.map((vault, index) => {
@@ -82,18 +85,45 @@ export function AllAquaberaVaults() {
             tokenA.init();
             tokenB.init();
 
+            const tvl = Number(
+              vault.pool?.totalValueLockedUSD || 0
+            ).toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            });
+
+            const volume = Number(
+              vault.pool?.poolDayData?.[0]?.volumeUSD || 0
+            ).toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            });
+
+            const fees = Number(
+              vault.pool?.poolDayData?.[0]?.feesUSD || 0
+            ).toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            });
+
             return (
               <TableRow
                 key={vault.id}
                 className="cursor-pointer hover:bg-[#F7931A10]"
               >
                 <TableCell>
-                  <div className="flex">
+                  <div className="flex items-center gap-2">
                     {vault.tokenA && <TokenLogo token={tokenA} />}
                     {vault.tokenB && <TokenLogo token={tokenB} />}
+                    <span>
+                      {tokenA.symbol}/{tokenB.symbol}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell>{vault.id}</TableCell>
+                <TableCell>{tvl}</TableCell>
+                <TableCell>{volume}</TableCell>
+                <TableCell>{fees}</TableCell>
               </TableRow>
             );
           }) || []}

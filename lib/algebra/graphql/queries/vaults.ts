@@ -47,5 +47,86 @@ export const VAULT_FRAGMENT = gql`
     count
     createdAtTimestamp
     holdersCount
+    pool {
+      ...PoolField
+    }
   }
+`;
+
+export const POOL_FRAGMENT = gql`
+  fragment PoolField on Pool {
+    totalValueLockedUSD
+    token0 {
+      id
+      symbol
+      name
+      decimals
+    }
+    token1 {
+      id
+      symbol
+      name
+      decimals
+    }
+    poolDayData(first: 30, orderBy: date, orderDirection: desc) {
+      date
+      volumeUSD
+      feesUSD
+      tvlUSD
+    }
+  }
+`;
+
+export const SINGLE_VAULT_DETAILS = gql`
+  query SingleVaultDetails($vaultId: ID!) {
+    ichiVault(id: $vaultId) {
+      ...VaultField
+      totalShares
+      vaultShares {
+        id
+        user {
+          id
+        }
+        vaultShareBalance
+      }
+      vaultDeposits(
+        orderBy: createdAtTimestamp
+        orderDirection: desc
+        first: 100
+      ) {
+        id
+        createdAtTimestamp
+        amount0
+        amount1
+        shares
+        to
+      }
+      vaultWithdraws(
+        orderBy: createdAtTimestamp
+        orderDirection: desc
+        first: 100
+      ) {
+        id
+        createdAtTimestamp
+        amount0
+        amount1
+        shares
+        to
+      }
+      vaultCollectFees(
+        orderBy: createdAtTimestamp
+        orderDirection: desc
+        first: 100
+      ) {
+        id
+        createdAtTimestamp
+        feeAmount0
+        feeAmount1
+      }
+      pool {
+        ...PoolField
+      }
+    }
+  }
+  ${VAULT_FRAGMENT}
 `;

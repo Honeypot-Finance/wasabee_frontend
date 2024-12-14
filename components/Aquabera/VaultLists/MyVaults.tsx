@@ -64,7 +64,10 @@ export function MyAquaberaVaults() {
         <TableHeader>
           <TableColumn>Token Pair</TableColumn>
           <TableColumn>Vault Address</TableColumn>
-          <TableColumn>Vault Shares</TableColumn>
+          <TableColumn>TVL</TableColumn>
+          <TableColumn>24h Volume</TableColumn>
+          <TableColumn>24h Fees</TableColumn>
+          <TableColumn>My Vault Shares</TableColumn>
         </TableHeader>
         <TableBody>
           {myVaults?.vaultShares.map((vaultShare, index) => {
@@ -79,18 +82,45 @@ export function MyAquaberaVaults() {
             tokenA.init();
             tokenB.init();
 
+            const tvl = Number(
+              vaultShare.vault.pool?.totalValueLockedUSD || 0
+            ).toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            });
+
+            const volume = Number(
+              vaultShare.vault.pool?.poolDayData?.[0]?.volumeUSD || 0
+            ).toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            });
+
+            const fees = Number(
+              vaultShare.vault.pool?.poolDayData?.[0]?.feesUSD || 0
+            ).toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            });
+
             return (
               <TableRow
                 key={vaultShare.vault.id}
                 className="cursor-pointer hover:bg-[#F7931A10]"
               >
                 <TableCell>
-                  <div className="flex">
+                  <div className="flex items-center gap-2">
                     {vaultShare.vault.tokenA && <TokenLogo token={tokenA} />}
                     {vaultShare.vault.tokenB && <TokenLogo token={tokenB} />}
+                    <span>
+                      {tokenA.symbol}/{tokenB.symbol}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell>{vaultShare.vault.id}</TableCell>
+                <TableCell>{tvl}</TableCell>
+                <TableCell>{volume}</TableCell>
+                <TableCell>{fees}</TableCell>
                 <TableCell>{vaultShare.vaultShareBalance}</TableCell>
               </TableRow>
             );
