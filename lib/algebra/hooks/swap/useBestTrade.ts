@@ -239,7 +239,7 @@ export function useBestTradeExactOut(
         tradeType: TradeType.EXACT_OUTPUT,
         inputAmount: CurrencyAmount.fromRawAmount(
           currencyIn,
-          amountIn.toString()
+          (amountIn as BigInt[]).sort()[0].toString()
         ),
         outputAmount: amountOut,
       }),

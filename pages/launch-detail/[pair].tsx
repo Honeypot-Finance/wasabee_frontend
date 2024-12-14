@@ -41,6 +41,7 @@ import {
   optionsPresets,
 } from "@/components/OptionsDropdown/OptionsDropdown";
 import { LucideFileEdit } from "lucide-react";
+import KlineChart from "./componets/KlineChart";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -714,7 +715,9 @@ const MemeView = observer(() => {
           </div>
           <div className="bg-[#FFCD4D] p-4 py-6 rounded-2xl space-y-3 col-span-2 lg:col-span-1 relative overflow-hidden">
             <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
+            <KlineChart height={300} />
             <div className="flex flex-col py-5 px-4 bg-[#202020] rounded-2xl gap-y-5">
+              {/* TODO：kline chart */}
               <div className="flex justify-between items-start \">
                 <TokenRaised
                   depositedRaisedToken={pair?.depositedRaisedToken}
