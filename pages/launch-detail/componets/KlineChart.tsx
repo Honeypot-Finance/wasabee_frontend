@@ -94,10 +94,6 @@ const KlineChart = ({
         background: { color: "#202020" },
         textColor: "rgba(255, 255, 255, 0.5)",
         fontFamily: "Roboto, sans-serif",
-        padding: {
-          left: 10,
-          right: 10
-        }
       },
       rightPriceScale: {
         borderVisible: false,
