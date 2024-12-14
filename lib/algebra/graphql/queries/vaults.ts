@@ -122,6 +122,7 @@ export const SINGLE_VAULT_DETAILS = gql`
         createdAtTimestamp
         feeAmount0
         feeAmount1
+        sender
       }
       pool {
         ...PoolField

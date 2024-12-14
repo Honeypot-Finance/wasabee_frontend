@@ -13,6 +13,7 @@ import { Tabs, Tab } from "@nextui-org/react";
 import { liquidity } from "@/services/liquidity";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import V3SwapCard from "@/components/algebra/swap/V3SwapCard";
+import KlineChart from "./launch-detail/componets/KlineChart";
 
 const SwapPage = observer(() => {
   useEffect(() => {
@@ -30,11 +31,12 @@ const SwapPage = observer(() => {
   return isInit ? (
     <div className="w-full">
       <div
-        className={`grid ${
-          chart.showChart && "grid-cols-1 lg:grid-cols-2 "
-        }  mb-[20vh] gap-[2rem] lg:gap-[5rem] `}
+        className={`grid mx-auto ${
+          //chart.showChart &&
+          "grid-cols-1 lg:grid-cols-[1fr_500px] items-center max-w-[min(1500px,100%)]"
+        }  mb-[20vh] gap-[1rem] `}
       >
-        {chart.showChart && (
+        {/* {chart.showChart && (
           <motion.div
             variants={itemPopUpVariants}
             initial="hidden"
@@ -42,16 +44,16 @@ const SwapPage = observer(() => {
             transition={{ duration: 0.5 }}
             className="w-full lg:max-w-[574px] flex flex-col self-center place-self-end h-full order-2 lg:order-1"
           >
-            <PriceFeedGraph></PriceFeedGraph>
+            <PriceFeedGraph></PriceFeedGraph> 
           </motion.div>
-        )}
+        )} */}
+        <KlineChart height={600} />
         <motion.div
           variants={itemPopUpVariants}
           initial="hidden"
           animate="visible"
           className={
-            "relative w-full flex flex-col items-center justify-center order-1 lg:order-2" +
-            (chart.showChart ? " justify-start" : "")
+            "relative w-full flex flex-col items-center order-1 lg:order-2 justify-start"
           }
         >
           <div>

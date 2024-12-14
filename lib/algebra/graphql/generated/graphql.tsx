@@ -2359,7 +2359,7 @@ export type IchiVault = {
   sender: Scalars['Bytes']['output'];
   tokenA: Scalars['Bytes']['output'];
   tokenB: Scalars['Bytes']['output'];
-  totalShares: Scalars['BigInt']['output'];
+  totalShares: Scalars['BigDecimal']['output'];
   vaultAffiliates: Array<VaultAffiliate>;
   vaultApprovals: Array<VaultApproval>;
   vaultCollectFees: Array<VaultCollectFee>;
@@ -2578,14 +2578,14 @@ export type IchiVault_Filter = {
   tokenB_not?: InputMaybe<Scalars['Bytes']['input']>;
   tokenB_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   tokenB_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  totalShares?: InputMaybe<Scalars['BigInt']['input']>;
-  totalShares_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  totalShares_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  totalShares_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  totalShares_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  totalShares_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  totalShares_not?: InputMaybe<Scalars['BigInt']['input']>;
-  totalShares_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalShares?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalShares_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalShares_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalShares_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalShares_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalShares_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalShares_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalShares_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   vaultAffiliates_?: InputMaybe<VaultAffiliate_Filter>;
   vaultApprovals_?: InputMaybe<VaultApproval_Filter>;
   vaultCollectFees_?: InputMaybe<VaultCollectFee_Filter>;
@@ -12202,7 +12202,7 @@ export type SingleVaultDetailsQueryVariables = Exact<{
 }>;
 
 
-export type SingleVaultDetailsQuery = { __typename?: 'Query', ichiVault?: { __typename?: 'IchiVault', totalShares: any, id: string, sender: any, tokenA: any, allowTokenA: boolean, tokenB: any, allowTokenB: boolean, count: any, createdAtTimestamp: any, holdersCount: number, vaultShares: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, user: { __typename?: 'Account', id: string } }>, vaultDeposits: Array<{ __typename?: 'VaultDeposit', id: string, createdAtTimestamp: any, amount0: any, amount1: any, shares: any, to: any }>, vaultWithdraws: Array<{ __typename?: 'VaultWithdraw', id: string, createdAtTimestamp: any, amount0: any, amount1: any, shares: any, to: any }>, vaultCollectFees: Array<{ __typename?: 'VaultCollectFee', id: string, createdAtTimestamp: any, feeAmount0: any, feeAmount1: any }>, pool: { __typename?: 'Pool', totalValueLockedUSD: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any }, poolDayData: Array<{ __typename?: 'PoolDayData', date: number, volumeUSD: any, feesUSD: any, tvlUSD: any }> } } | null };
+export type SingleVaultDetailsQuery = { __typename?: 'Query', ichiVault?: { __typename?: 'IchiVault', totalShares: any, id: string, sender: any, tokenA: any, allowTokenA: boolean, tokenB: any, allowTokenB: boolean, count: any, createdAtTimestamp: any, holdersCount: number, vaultShares: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, user: { __typename?: 'Account', id: string } }>, vaultDeposits: Array<{ __typename?: 'VaultDeposit', id: string, createdAtTimestamp: any, amount0: any, amount1: any, shares: any, to: any }>, vaultWithdraws: Array<{ __typename?: 'VaultWithdraw', id: string, createdAtTimestamp: any, amount0: any, amount1: any, shares: any, to: any }>, vaultCollectFees: Array<{ __typename?: 'VaultCollectFee', id: string, createdAtTimestamp: any, feeAmount0: any, feeAmount1: any, sender: any }>, pool: { __typename?: 'Pool', totalValueLockedUSD: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any }, poolDayData: Array<{ __typename?: 'PoolDayData', date: number, volumeUSD: any, feesUSD: any, tvlUSD: any }> } } | null };
 
 export const BundleFieldsFragmentDoc = gql`
     fragment BundleFields on Bundle {
@@ -12898,6 +12898,7 @@ export const SingleVaultDetailsDocument = gql`
       createdAtTimestamp
       feeAmount0
       feeAmount1
+      sender
     }
     pool {
       ...PoolField

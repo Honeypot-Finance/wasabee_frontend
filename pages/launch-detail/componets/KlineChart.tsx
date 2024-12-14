@@ -10,6 +10,9 @@ import * as LightweightCharts from "lightweight-charts";
 import dayjs from "dayjs";
 import Image from "next/image";
 import { AiOutlineSwap } from "react-icons/ai";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
+import { Token } from "@/services/contract/token";
+import { wallet } from "@/services/wallet";
 
 interface KlineChartProps {
   data?: any[];
@@ -69,6 +72,12 @@ const KlineChart = ({
   const [candleSeries, setCandleSeries] = useState<any | undefined>();
   const [volumeSeries, setVolumeSeries] = useState<any | undefined>();
   const [timeRange, setTimeRange] = useState<TimeRange>("24H");
+  const [token1, setToken1] = useState<Token>(
+    wallet.currentChain.validatedTokens[0]
+  );
+  const [token2, setToken2] = useState<Token>(
+    wallet.currentChain.validatedTokens[1]
+  );
 
   const mockData = useMemo(() => generateMockData(timeRange), [timeRange]);
 
@@ -197,14 +206,8 @@ const KlineChart = ({
         {/* 顶部标题栏 */}
         <div className="flex items-center gap-2">
           <div className="flex items-center">
-            <Image src="/images/tokens/usdc.png" alt="USDC" width={32} height={32} />
-            <Image
-              src="/images/tokens/eth.png"
-              alt="ETH"
-              width={32}
-              height={32}
-              className="-ml-2"
-            />
+            <TokenLogo token={token1} />
+            <TokenLogo token={token2} />
           </div>
           <span className="text-white text-lg font-bold">{symbol}</span>
           <AiOutlineSwap className="text-white size-5 font-bold" />

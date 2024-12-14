@@ -153,18 +153,19 @@ export default function VaultDetail() {
 
   // Merge all transactions into one array and sort by timestamp
   const allTransactions = [
-    ...vaultData?.ichiVault?.vaultDeposits.map((tx) => ({
+    ...(vaultData?.ichiVault?.vaultDeposits?.map((tx) => ({
       ...tx,
       type: "deposit",
-    })),
-    ...vaultData?.ichiVault?.vaultWithdraws.map((tx) => ({
+    })) ?? []),
+    ...(vaultData?.ichiVault?.vaultWithdraws?.map((tx) => ({
       ...tx,
       type: "withdraw",
-    })),
-    ...vaultData?.ichiVault?.vaultCollectFees.map((tx) => ({
+    })) ?? []),
+    ...(vaultData?.ichiVault?.vaultCollectFees?.map((tx) => ({
       ...tx,
+      to: tx.sender,
       type: "fee",
-    })),
+    })) ?? []),
   ].sort((a, b) => Number(b.createdAtTimestamp) - Number(a.createdAtTimestamp));
 
   return (
