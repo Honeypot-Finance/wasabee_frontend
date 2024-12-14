@@ -3,7 +3,6 @@ import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import Pagination from "@/components/Pagination/Pagination";
 import OldPagination from "@/components/Pagination/OldPagination";
 import PoolLiquidityCard from "@/components/PoolLiquidityCard/PoolLiquidityCard";
-import TokenBalanceCard from "@/components/TokenBalanceCard/TokenBalanceCard";
 import { Copy } from "@/components/copy";
 import { defaultContainerVariants, itemSlideVariants } from "@/lib/animation";
 import { truncate } from "@/lib/format";
@@ -22,9 +21,12 @@ import { motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAccount } from "wagmi";
 import { LaunchCardV3 } from "@/components/LaunchCard/v3";
+import TokenBalanceCard from "@/components/TokenBalanceCard/TokenBalanceCard";
+import { PriceChart } from "@/components/PriceChart/PriceChart";
+import { UTCTimestamp } from "lightweight-charts";
 
 const MyLaunchTab = observer(() => {
   const [myProjects, setMyProjects] = useState<Pot2PumpService>();
@@ -214,22 +216,26 @@ const PoolsTab = observer(() => {
 
 const PortfolioTab = observer(() => {
   return (
-    <Card className="next-card">
-      <CardBody>
-        <motion.div
-          variants={defaultContainerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {wallet?.currentChain?.validatedTokens &&
-            wallet?.currentChain?.validatedTokens
+    <Card className="bg-[#1C1C1C] border-none">
+      <CardBody className="p-0">
+        <table className="w-full">
+          <thead className="bg-[#323232] text-white">
+            <tr>
+              <th className="py-4 px-6 text-left">Asset</th>
+              <th className="py-4 px-6 text-right">Price</th>
+              <th className="py-4 px-6 text-right">Balance</th>
+              <th className="py-4 px-6 text-right">Proportion</th>
+              <th className="py-4 px-6 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#2D2D2D]">
+            {wallet?.currentChain?.validatedTokens
               ?.filter((token) => token.balance.toNumber() > 0)
               .map((token) => (
-                <motion.div variants={itemSlideVariants} key={token.address}>
-                  <TokenBalanceCard token={token} autoSize></TokenBalanceCard>
-                </motion.div>
+                <TokenBalanceCard key={token.address} token={token} />
               ))}
-        </motion.div>
+          </tbody>
+        </table>
       </CardBody>
     </Card>
   );
@@ -237,6 +243,15 @@ const PortfolioTab = observer(() => {
 
 export const Profile = observer(() => {
   const { chainId } = useAccount();
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const [chartWidth, setChartWidth] = useState(0);
+  const [timeRange, setTimeRange] = useState<"1D" | "1W" | "1M" | "1Y">("1D");
+
+  useEffect(() => {
+    if (chartContainerRef.current) {
+      setChartWidth(chartContainerRef.current.offsetWidth);
+    }
+  }, []);
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -253,81 +268,285 @@ export const Profile = observer(() => {
     liquidity.myPairPage.reloadPage();
   }, [wallet.isInit, liquidity.isInit]);
 
+  const chartData = {
+    "1D": [
+      {
+        time: Math.floor(
+          new Date("2024-01-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.5,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 39.2,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.9,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 39.5,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.7,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.9,
+      },
+    ],
+    "1W": [
+      {
+        time: Math.floor(
+          new Date("2024-01-06").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 37.5,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-07").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.2,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-08").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.9,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-09").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 39.5,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-10").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.7,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-11").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.4,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.9,
+      },
+    ],
+    "1M": [
+      {
+        time: Math.floor(
+          new Date("2023-12-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 36.5,
+      },
+      {
+        time: Math.floor(
+          new Date("2023-12-17").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 37.2,
+      },
+      {
+        time: Math.floor(
+          new Date("2023-12-22").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 37.9,
+      },
+      {
+        time: Math.floor(
+          new Date("2023-12-27").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.5,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-01").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.7,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-06").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.4,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.9,
+      },
+    ],
+    "1Y": [
+      {
+        time: Math.floor(
+          new Date("2023-01-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 35.5,
+      },
+      {
+        time: Math.floor(
+          new Date("2023-03-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 36.2,
+      },
+      {
+        time: Math.floor(
+          new Date("2023-05-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 37.9,
+      },
+      {
+        time: Math.floor(
+          new Date("2023-07-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.5,
+      },
+      {
+        time: Math.floor(
+          new Date("2023-09-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.7,
+      },
+      {
+        time: Math.floor(
+          new Date("2023-11-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.4,
+      },
+      {
+        time: Math.floor(
+          new Date("2024-01-12").getTime() / 1000
+        ) as UTCTimestamp,
+        value: 38.9,
+      },
+    ],
+  };
+
   return (
-    <div className="w-full">
-      <div className="flex justify-center items-start flex-col  gap-2 max-w-[800px] mx-auto">
-        <div>
-          {wallet.isInit && (
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-center gap-2 sm:gap-4">
-                <div className="flex h-10 w-10">
-                  <div
-                    className="rounded-full w-full h-full "
-                    style={{
-                      backgroundImage: `linear-gradient(90deg, #${wallet.account
-                        .substring(2, 8)
-                        .toUpperCase()} 0%, #${wallet.account
-                        .substring(
-                          wallet.account.length - 6,
-                          wallet.account.length
-                        )
-                        .toUpperCase()} 100%)`,
-                    }}
-                  ></div>
+    <div className="w-full max-w-[1200px] mx-auto px-4 xl:px-0">
+      <div className="flex flex-col gap-6">
+        {wallet.isInit && (
+          <>
+            <div className="flex justify-between items-start">
+              <div className="flex flex-col gap-8">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12">
+                    <div
+                      className="rounded-full w-full h-full"
+                      style={{
+                        backgroundImage: `linear-gradient(90deg, #${wallet.account.substring(2, 8).toUpperCase()} 0%, #${wallet.account
+                          .substring(
+                            wallet.account.length - 6,
+                            wallet.account.length
+                          )
+                          .toUpperCase()} 100%)`,
+                      }}
+                    ></div>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-[#FAFAFC] text-lg">My Account</p>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        target="_blank"
+                        className="text-[#FAFAFC]/60 hover:text-[#FAFAFC] hover:underline transition-colors"
+                        href={`https://bartio.beratrail.io/address/${wallet.account}`}
+                      >
+                        {truncate(wallet.account, 10)}
+                      </Link>
+                      <Copy value={wallet.account} />
+                    </div>
+                  </div>
                 </div>
-                <div className="grow">
-                  <p>My Account</p>
-                  <p className="w-full break-all">
-                    {truncate(wallet.account, 10)}{" "}
-                    <Copy value={wallet.account} />
-                  </p>
+
+                <div className="flex  gap-2">
+                  <span className="text-[#FAFAFC] text-[48px] leading-none">
+                    $38.9
+                  </span>
+                  <div>
+                    <span className="text-[#FAFAFC]/60 text-sm ml-1">
+                      {timeRange}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-[#FF5555] text-sm">-$0.5531</span>
+                      <span className="text-[#FF5555] text-sm">(-1.41%)</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div>
-                <Link
-                  target="_blank"
-                  className="underline p-1"
-                  href={`https://bartio.beratrail.io/address/${wallet.account}`}
+
+              <div className="w-[300px] flex flex-col gap-2">
+                <div
+                  className="h-30 w-full rounded-lg overflow-hidden"
+                  ref={chartContainerRef}
                 >
-                  View on beratrail.io
-                </Link>
+                  <PriceChart
+                    data={chartData[timeRange]}
+                    width={300}
+                    height={120}
+                    timeRange={timeRange}
+                  />
+                </div>
+                <div className="flex items-center justify-end gap-6">
+                  {(["1D", "1W", "1M", "1Y"] as const).map((range) => (
+                    <span
+                      key={range}
+                      className={`text-sm cursor-pointer ${
+                        timeRange === range
+                          ? "text-[#FAFAFC]"
+                          : "text-[#FAFAFC]/60 hover:text-[#FAFAFC]"
+                      }`}
+                      onClick={() => setTimeRange(range)}
+                    >
+                      {range}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
-          )}
-        </div>
-        <div className="w-full">
-          <Tabs
-            aria-label="Options"
-            classNames={{
-              tabList: "bg-transparent flex-wrap sm:flex-nowrap",
-              tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
-            }}
-            className="next-tab"
-            onSelectionChange={(key) => {
-              if (key === "my-launch") {
-                launchpad.myLaunches.setIsInit(false);
-                launchpad.pairFilterStatus = defaultPairFilters.myPairs.status;
-              } else if (key === "participated-launch") {
-                launchpad.participatedPairs.setIsInit(false);
-                launchpad.pairFilterStatus =
-                  defaultPairFilters.participatedPairs.status;
-              }
-            }}
-          >
-            <Tab key="portfolio" title="Portfolio">
-              <PortfolioTab />
-            </Tab>
-            <Tab key="my-launch" title="My Launch">
-              <MyLaunchTab />
-            </Tab>
-            <Tab key="participated-launch" title="Participated Launch">
-              <ParticipatedLaunchTab />
-            </Tab>
-            <Tab key="my-pools" title="My Pools">
-              <PoolsTab />
-            </Tab>
-          </Tabs>
-        </div>
+
+            <Tabs
+              aria-label="Options"
+              classNames={{
+                tabList: "bg-[#1C1C1C] p-1 rounded-lg gap-2",
+                tab: "text-[#FAFAFC]/60 data-[selected=true]:text-[#FAFAFC] data-[selected=true]:bg-[#2D2D2D] rounded-lg px-4 py-2",
+                cursor: "bg-[#2D2D2D]",
+                panel: "pt-6",
+              }}
+            >
+              <Tab key="portfolio" title="Portfolio">
+                <PortfolioTab />
+              </Tab>
+              <Tab key="my-launch" title="My Launch">
+                <MyLaunchTab />
+              </Tab>
+              <Tab key="participated-launch" title="Participated Launch">
+                <ParticipatedLaunchTab />
+              </Tab>
+              <Tab key="my-pools" title="My Pools">
+                <PoolsTab />
+              </Tab>
+            </Tabs>
+          </>
+        )}
       </div>
     </div>
   );

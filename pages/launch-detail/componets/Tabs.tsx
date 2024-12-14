@@ -108,7 +108,7 @@ const Tabs = observer(
           tab={tab}
           setTab={setTab}
           options={options.map((item) => item.key)}
-          className="px-2 md:px-8 pt-2 pb-1 rounded-t-2xl mx-auto max-w-[600px] absolute -top-8 z-10 left-1/2 -translate-x-1/2 hidden sm:block"
+          className="px-2 md:px-8 pt-2 pb-1 rounded-t-2xl mx-auto absolute -top-8 z-10 left-1/2 -translate-x-1/2 hidden sm:block"
           capitalize={true}
         />
 
