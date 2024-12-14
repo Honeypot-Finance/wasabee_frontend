@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { Button } from "@/components/button";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { getAccountVaultsList } from "@/lib/algebra/graphql/clients/vaults";
@@ -9,7 +10,7 @@ import {
 import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
 import { Token } from "@/services/contract/token";
 import { wallet } from "@/services/wallet";
-import { Tabs, Tab } from "@nextui-org/react";
+import { Tabs, Tab, Link } from "@nextui-org/react";
 import {
   Table,
   TableHeader,
@@ -25,6 +26,7 @@ import { Currency } from "@cryptoalgebra/sdk";
 import { DepositToVaultModal } from "../modals/DepositToVaultModal";
 
 export function MyAquaberaVaults() {
+  const router = useRouter();
   const [myVaults, setMyVaults] = useState<AccountVaultSharesQuery>();
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [selectedVault, setSelectedVault] = useState<ICHIVaultContract | null>(
@@ -56,16 +58,16 @@ export function MyAquaberaVaults() {
           table: "w-full",
           thead: "w-full",
         }}
+        selectionMode="single"
+        onRowAction={(key) => router.push(`/vault/${key}`)}
       >
         <TableHeader>
           <TableColumn>Token Pair</TableColumn>
           <TableColumn>Vault Address</TableColumn>
           <TableColumn>Vault Shares</TableColumn>
-          <TableColumn>Actions</TableColumn>
         </TableHeader>
         <TableBody>
           {myVaults?.vaultShares.map((vaultShare, index) => {
-            console.log("vaultShare", vaultShare);
             const tokenA = Token.getToken({
               address: vaultShare.vault.tokenA,
             });
@@ -78,7 +80,10 @@ export function MyAquaberaVaults() {
             tokenB.init();
 
             return (
-              <TableRow key={index}>
+              <TableRow
+                key={vaultShare.vault.id}
+                className="cursor-pointer hover:bg-[#F7931A10]"
+              >
                 <TableCell>
                   <div className="flex">
                     {vaultShare.vault.tokenA && <TokenLogo token={tokenA} />}
@@ -87,55 +92,6 @@ export function MyAquaberaVaults() {
                 </TableCell>
                 <TableCell>{vaultShare.vault.id}</TableCell>
                 <TableCell>{vaultShare.vaultShareBalance}</TableCell>
-
-                <TableCell>
-                  <div className="flex">
-                    <Button
-                      onClick={() => {
-                        const vault = new ICHIVaultContract({
-                          address: vaultShare.vault.id as Address,
-                        });
-                        setSelectedVault(vault);
-                        setSelectedTokenA(
-                          new AlgebraToken(
-                            wallet.currentChainId,
-                            tokenA.address as `0x${string}`,
-                            tokenA.decimals,
-                            tokenA.symbol,
-                            tokenA.name
-                          )
-                        );
-                        setSelectedTokenB(
-                          new AlgebraToken(
-                            wallet.currentChainId,
-                            tokenB.address as `0x${string}`,
-                            tokenB.decimals,
-                            tokenB.symbol,
-                            tokenB.name
-                          )
-                        );
-                        setIsDepositModalOpen(true);
-                      }}
-                    >
-                      Deposit
-                    </Button>
-                    <Button
-                      onClick={async () => {
-                        const vault = new ICHIVaultContract({
-                          address: vaultShare.vault.id as Address,
-                        });
-
-                        const balance = await vault.getBalanceOf(
-                          wallet.account
-                        );
-
-                        vault.withdraw(balance, wallet.account);
-                      }}
-                    >
-                      Withdraw
-                    </Button>
-                  </div>
-                </TableCell>
               </TableRow>
             );
           }) || []}

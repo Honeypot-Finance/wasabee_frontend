@@ -110,16 +110,20 @@ export function DepositToVaultModal({
       wallet.account
     );
     // Perform deposit
-    await new ContractWrite(vault.contract.write.deposit, {
-      action: "Deposit",
-      isSuccessEffect: true,
-    }).call([
-      BigInt(parsedAmountA?.toString() || "0"),
-      BigInt(parsedAmountB?.toString() || "0"),
-      wallet.account as `0x${string}`,
-    ]);
+    try {
+      await new ContractWrite(vault.contract.write.deposit, {
+        action: "Deposit",
+        isSuccessEffect: true,
+      }).call([
+        BigInt(parsedAmountA?.toString() || "0"),
+        BigInt(parsedAmountB?.toString() || "0"),
+        wallet.account as `0x${string}`,
+      ]);
 
-    onClose();
+      onClose(); // Close modal after successful transaction
+    } catch (error) {
+      console.error("Deposit failed:", error);
+    }
   };
 
   return (

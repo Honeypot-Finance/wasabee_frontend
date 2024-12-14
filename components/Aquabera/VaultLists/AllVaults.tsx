@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { Button } from "@/components/button";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import {
@@ -14,7 +15,7 @@ import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contra
 import { Token } from "@/services/contract/token";
 import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
 import { wallet } from "@/services/wallet";
-import { Tabs, Tab } from "@nextui-org/react";
+import { Tabs, Tab, Link } from "@nextui-org/react";
 import {
   Table,
   TableHeader,
@@ -29,6 +30,7 @@ import { DepositToVaultModal } from "../modals/DepositToVaultModal";
 import { Currency } from "@cryptoalgebra/sdk";
 
 export function AllAquaberaVaults() {
+  const router = useRouter();
   const [vaults, setVaults] = useState<VaultsSortedByHoldersQuery>();
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [selectedVault, setSelectedVault] = useState<ICHIVaultContract | null>(
@@ -60,11 +62,12 @@ export function AllAquaberaVaults() {
           table: "w-full",
           thead: "w-full",
         }}
+        selectionMode="single"
+        onRowAction={(key) => router.push(`/vault/${key}`)}
       >
         <TableHeader>
           <TableColumn>Token Pair</TableColumn>
           <TableColumn>Vault Address</TableColumn>
-          <TableColumn>Actions</TableColumn>
         </TableHeader>
         <TableBody>
           {vaults?.ichiVaults.map((vault, index) => {
@@ -80,7 +83,10 @@ export function AllAquaberaVaults() {
             tokenB.init();
 
             return (
-              <TableRow key={index}>
+              <TableRow
+                key={vault.id}
+                className="cursor-pointer hover:bg-[#F7931A10]"
+              >
                 <TableCell>
                   <div className="flex">
                     {vault.tokenA && <TokenLogo token={tokenA} />}
@@ -88,39 +94,6 @@ export function AllAquaberaVaults() {
                   </div>
                 </TableCell>
                 <TableCell>{vault.id}</TableCell>
-                <TableCell>
-                  <div className="flex">
-                    <Button
-                      onClick={() => {
-                        const v = new ICHIVaultContract({
-                          address: vault.id as Address,
-                        });
-                        setSelectedVault(v);
-                        setSelectedTokenA(
-                          new AlgebraToken(
-                            wallet.currentChainId,
-                            tokenA.address as `0x${string}`,
-                            tokenA.decimals,
-                            tokenA.symbol,
-                            tokenA.name
-                          )
-                        );
-                        setSelectedTokenB(
-                          new AlgebraToken(
-                            wallet.currentChainId,
-                            tokenB.address as `0x${string}`,
-                            tokenB.decimals,
-                            tokenB.symbol,
-                            tokenB.name
-                          )
-                        );
-                        setIsDepositModalOpen(true);
-                      }}
-                    >
-                      Deposit
-                    </Button>
-                  </div>
-                </TableCell>
               </TableRow>
             );
           }) || []}

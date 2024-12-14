@@ -1,12 +1,4 @@
 import { Tab, Tabs } from "@nextui-org/react";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
-} from "@nextui-org/table";
 import MyAquaberaVaults from "./MyVaults";
 import AllAquaberaVaults from "./AllVaults";
 

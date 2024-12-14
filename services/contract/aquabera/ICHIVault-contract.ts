@@ -10,6 +10,7 @@ export class ICHIVaultContract implements BaseContract {
   address: Address = zeroAddress;
   name: string = "ICHIVault";
   abi = ICHIVaultABI;
+  fee = 0;
 
   constructor(args: Partial<ICHIVaultContract>) {
     Object.assign(this, args);
@@ -45,5 +46,17 @@ export class ICHIVaultContract implements BaseContract {
     return await new ContractWrite(this.contract.write.withdraw, {
       action: "withdraw",
     }).call([shares, to as `0x${string}`]);
+  }
+
+  async getFee() {
+    const fee = await this.contract.read.fee();
+    this.fee = fee;
+    return fee;
+  }
+
+  async collectFees() {
+    return await new ContractWrite(this.contract.write.collectFees, {
+      action: "Collect Fees",
+    }).call();
   }
 }
