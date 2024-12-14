@@ -1,5 +1,7 @@
-import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLeaderboard } from "@/lib/hooks/useLeaderboard";
+import { useTotalUsers } from "@/lib/hooks/useTotalUsers";
+import { useAccounts } from "@/lib/hooks/useAccounts";
 
 interface LeaderboardItem {
   rank: number;
@@ -7,9 +9,6 @@ interface LeaderboardItem {
   username?: string;
   xp: number;
   totalVolume?: number;
-  bought?: number;
-  sold?: number;
-  platformNet?: number;
   transactions?: number;
   lastActive?: string;
 }
@@ -21,19 +20,54 @@ interface StatsCard {
 }
 
 const LeaderboardPage = () => {
-  const router = useRouter();
   const [searchAddress, setSearchAddress] = useState("");
-  const [showUSD, setShowUSD] = useState(true);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const { stats, loading: statsLoading } = useLeaderboard();
+  const { totalUsers, loading: usersLoading } = useTotalUsers();
+  const { accounts, loading: accountsLoading, hasMore, loadMore } = useAccounts(
+    page,
+    pageSize,
+    debouncedSearch
+  );
+
+  // 使用防抖处理搜索
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchAddress);
+      setPage(1); // 重置页码
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchAddress]);
 
   // 顶部统计数据
   const statsCards: StatsCard[] = [
-    { title: "Users", value: 685 },
-    { title: "Total Trades", value: 3467 },
-    { title: "Total Volume", value: "$275,417.10", subValue: "438,946.07 ₳" },
-    { title: "TVL", value: "$25,374.33", subValue: "40,440.34 ₳" },
+    { title: "Users", value: usersLoading ? "Loading..." : totalUsers },
+    stats
+      ? {
+          title: stats.totalTrades.title,
+          value: stats.totalTrades.value,
+        }
+      : { title: "Total Trades", value: "-" },
+    stats
+      ? {
+          title: stats.totalVolume.title,
+          value: stats.totalVolume.value,
+          subValue: stats.totalVolume.subValue,
+        }
+      : { title: "Total Volume", value: "-" },
+    stats
+      ? {
+          title: stats.tvl.title,
+          value: stats.tvl.value,
+          subValue: stats.tvl.subValue,
+        }
+      : { title: "TVL", value: "-" },
   ];
 
-  const stats = [
+  // 将这个变量重命名为 topStats
+  const topStats = [
     { title: "Top Trader", address: "0xbe8F...2A90", value: "800 Swaps" },
     { title: "Top Deployer", address: "0xc36f...9062", value: "749 Deploys" },
     {
@@ -43,35 +77,24 @@ const LeaderboardPage = () => {
     },
   ];
 
-  const leaderboardData: LeaderboardItem[] = [
-    {
-      rank: 1,
-      walletAddress: "0xFf1B...eb2382",
-      totalVolume: 14066.97,
-      bought: 7463.19,
-      sold: 6603.78,
-      platformNet: -859.41,
-      transactions: 33,
-      lastActive: "11/30/2024, 6:49:16 PM",
-      xp: 176440,
-    },
-    // ... 其他数据
-  ];
-
   return (
     <div className="w-full">
       <div className="max-w-[1200px] w-full mx-auto bg-[#FFCD4D] rounded-3xl relative overflow-hidden">
         <div className="bg-[url('/images/pumping/outline-border.png')] bg-contain bg-repeat-x bg-left-top h-[90px] absolute -top-1 left-0 w-full"></div>
         <div className="max-w-[1200px] w-full mx-auto px-6 pt-[90px] pb-[70px]">
-          <div className="max-w-[480px] lg:max-w-[720px] xl:max-w-[1200px] mx-auto">
+          <div className="max-w-full xl:max-w-[1200px] mx-auto">
             {/* 顶部统计卡片 */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
               {statsCards.map((stat, index) => (
                 <div key={index} className="bg-[#202020] rounded-2xl p-5">
                   <div className="text-gray-400 text-sm mb-2">{stat.title}</div>
-                  <div className="text-white text-xl font-medium">{stat.value}</div>
+                  <div className="text-white text-xl font-medium">
+                    {statsLoading ? "Loading..." : stat.value}
+                  </div>
                   {stat.subValue && (
-                    <div className="text-gray-400 text-sm">{stat.subValue}</div>
+                    <div className="text-gray-400 text-sm mt-1">
+                      {statsLoading ? "Loading..." : stat.subValue}
+                    </div>
                   )}
                 </div>
               ))}
@@ -79,7 +102,7 @@ const LeaderboardPage = () => {
 
             {/* Top Traders/Deployers/Participants */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-              {stats.map((stat, index) => (
+              {topStats.map((stat, index) => (
                 <div key={index} className="bg-[#202020] rounded-2xl p-5">
                   <div>
                     <span
@@ -114,79 +137,134 @@ const LeaderboardPage = () => {
                 />
                 {searchAddress && (
                   <button
-                    onClick={() => setSearchAddress("")}
-                    className="px-4 py-2 bg-[#2a2a2a] rounded-lg text-white"
+                    onClick={() => {
+                      setSearchAddress("");
+                      setPage(1);
+                    }}
+                    className="px-4 py-2 bg-[#2a2a2a] rounded-lg text-white hover:bg-[#3a3a3a] transition-colors"
                   >
                     Clear
                   </button>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-white">Show values in:</span>
-                <button
-                  onClick={() => setShowUSD(!showUSD)}
-                  className="px-4 py-2 bg-[#2a2a2a] rounded-lg text-white"
-                >
-                  {showUSD ? "USD" : "ADA"}
-                </button>
-              </div>
+              {debouncedSearch && (
+                <div className="text-gray-400 text-sm ml-4">
+                  {accountsLoading ? (
+                    "Searching..."
+                  ) : accounts.length > 0 ? (
+                    `Found ${accounts.length} results`
+                  ) : (
+                    "No results found"
+                  )}
+                </div>
+              )}
             </div>
 
             {/* 交易数据表格 */}
             <div className="bg-[#202020] rounded-2xl overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-700">
+              <div className="px-6 py-4 border-b border-[#5C5C5C]">
                 <h2 className="text-xl text-white font-bold">Top Traders</h2>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-[#323232] text-white">
-                    <tr>
-                      <th className="py-4 px-6 text-left text-base">Address</th>
-                      <th className="py-4 px-6 text-left text-base">Total Volume</th>
-                      <th className="py-4 px-6 text-left text-base">Bought</th>
-                      <th className="py-4 px-6 text-left text-base">Sold</th>
-                      <th className="py-4 px-6 text-left text-base">Platform Net</th>
-                      <th className="py-4 px-6 text-center text-base">Transactions</th>
-                      <th className="py-4 px-6 text-left text-base">Last Active</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-white">
-                    {leaderboardData.map((item) => (
-                      <tr
-                        key={item.rank}
-                        className="border-b border-gray-700 hover:bg-[#2a2a2a] transition-colors"
-                      >
-                        <td className="py-4 px-6 text-base font-mono text-blue-400">
-                          {item.walletAddress}
-                        </td>
-                        <td className="py-4 px-6 text-base">
-                          ${item.totalVolume?.toLocaleString()}
-                        </td>
-                        <td className="py-4 px-6 text-base">
-                          ${item.bought?.toLocaleString()}
-                        </td>
-                        <td className="py-4 px-6 text-base">
-                          ${item.sold?.toLocaleString()}
-                        </td>
-                        <td className="py-4 px-6 text-base">
-                          <span
-                            className={
-                              item.platformNet && item.platformNet > 0
-                                ? "text-green-500"
-                                : "text-red-500"
-                            }
-                          >
-                            ${item.platformNet && Math.abs(item.platformNet).toLocaleString()}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6 text-center text-base">
-                          {item.transactions}
-                        </td>
-                        <td className="py-4 px-6 text-base">{item.lastActive}</td>
+              <div className="p-6">
+                <div className="border border-[#5C5C5C] rounded-lg overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-[#323232] text-white border-b border-[#5C5C5C]">
+                      <tr>
+                        <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 bg-[#FFCD4D] rounded"></div>
+                            Address
+                          </div>
+                        </th>
+                        <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">Total Volume</th>
+                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">Swaps</th>
+                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">Holdings</th>
+                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">Meme Tokens</th>
+                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">Participations</th>
+                        <th className="py-4 px-6 text-right text-base font-medium whitespace-nowrap">Daily Earning</th>
+                        <th className="py-4 px-6 text-right text-base font-medium whitespace-nowrap">Monthly Earning</th>
+                        <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">Last Active</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="text-white divide-y divide-[#5C5C5C]">
+                      {accountsLoading ? (
+                        <tr>
+                          <td colSpan={9} className="py-4 px-6 text-center">Loading...</td>
+                        </tr>
+                      ) : accounts.map((item, index) => (
+                        <tr
+                          key={item.walletAddress}
+                          className="hover:bg-[#2a2a2a] transition-colors"
+                        >
+                          <td className="py-4 px-6 text-base font-mono text-blue-400">
+                            <div className="flex items-center gap-2">
+                              <div className="w-4 h-4 bg-[#FFCD4D] rounded"></div>
+                              {item.walletAddress}
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 text-base">${item.totalVolume.toLocaleString()}</td>
+                          <td className="py-4 px-6 text-center text-base">{item.swapCount}</td>
+                          <td className="py-4 px-6 text-center text-base">{item.holdingCount}</td>
+                          <td className="py-4 px-6 text-center text-base">{item.memeTokenCount}</td>
+                          <td className="py-4 px-6 text-center text-base">{item.participateCount}</td>
+                          <td className="py-4 px-6 text-right text-base">${item.dailyEarning.toLocaleString()}</td>
+                          <td className="py-4 px-6 text-right text-base">${item.monthlyEarning.toLocaleString()}</td>
+                          <td className="py-4 px-6 text-base">{item.lastActive}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="px-6 py-4 flex justify-end border-t border-gray-700">
+                <div className="flex items-center gap-6 max-w-[400px]">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                      className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      Previous
+                    </button>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400">Page</span>
+                      <span className="px-3 py-1 bg-[#1a1a1a] rounded text-white min-w-[40px] text-center">
+                        {page}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (hasMore) {
+                          loadMore().then(() => setPage(p => p + 1));
+                        }
+                      }}
+                      disabled={!hasMore || accountsLoading}
+                      className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition-colors"
+                    >
+                      Next
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {accountsLoading && (
+                    <div className="flex items-center gap-2 text-gray-400">
+                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Loading...
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
