@@ -20,21 +20,13 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Select,
   SelectItem,
-  Modal,
-  ModalBody,
-  ModalContent,
 } from "@nextui-org/react";
-import { DatePicker } from "@nextui-org/date-picker";
 import { useRouter } from "next/router";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Copy } from "@/components/copy";
-import { trpcClient } from "@/lib/trpc";
-import { BiQuestionMark, BiSolidDownArrow } from "react-icons/bi";
+import { BiSolidDownArrow } from "react-icons/bi";
 import { WarppedNextSelect } from "@/components/wrappedNextUI/Select/Select";
 import { WrappedNextDatePicker } from "@/components/wrappedNextUI/DatePicker/DatePicker";
-import Image from "next/image";
 import { FaQuestionCircle } from "react-icons/fa";
 import { popmodal } from "@/services/popmodal";
 import store from "store2";
@@ -42,7 +34,6 @@ import { cn } from "@/lib/tailwindcss";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
-const minimumTimePattern = /^(6[1-9]|[7-9][0-9]|[1-9][0-9]{2,})$/;
 
 const FTOLaunchModal: NextLayoutPage = observer(() => {
   const {

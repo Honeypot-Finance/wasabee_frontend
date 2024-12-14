@@ -8,15 +8,15 @@ import Image from "next/image";
 import {
   OptionsDropdown,
   optionsPresets,
-} from "../OptionsDropdown/OptionsDropdown";
+} from "../../OptionsDropdown/OptionsDropdown";
 import { motion } from "framer-motion";
 import { itemPopUpVariants } from "@/lib/animation";
 import { MemePairContract } from "@/services/contract/memepair-contract";
-import ProgressBar from "../atoms/ProgressBar/ProgressBar";
-import { AmountFormat } from "../AmountFormat";
+import ProgressBar from "../../atoms/ProgressBar/ProgressBar";
+import { AmountFormat } from "../../AmountFormat";
 import { LaunchType as projectType } from "@/pages/launch-token";
 import Countdown from "react-countdown";
-import CardContianer from "../CardContianer/CardContianer";
+import CardContianer from "../../CardContianer/CardContianer";
 import BigNumber from "bignumber.js";
 
 type launchCardVariants = "list" | "detail" | "trending";
@@ -424,7 +424,7 @@ const DetailLaunchCard = observer(
     return (
       <div className="flex flex-col gap-y-4 bg-white px-4 py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative overflow-hidden">
         <OptionsDropdown
-          className="absolute left-[1rem] top-[1rem] "
+          className="absolute right-0 top-[1rem] text-black"
           options={[
             optionsPresets.copy({
               copyText: pair?.launchedToken?.address ?? "",
@@ -454,7 +454,7 @@ const DetailLaunchCard = observer(
           width={256}
           height={0}
           objectFit="cover"
-          className="w-full h-[108px] rounded-xl"
+          className="mx-auto w-fit h-[108px] bg-contain rounded-xl"
           src={
             !!pair.bannerUrl
               ? pair.bannerUrl
