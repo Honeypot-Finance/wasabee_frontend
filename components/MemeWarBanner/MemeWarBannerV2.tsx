@@ -19,7 +19,7 @@ import { WarppedNextSelect } from "../wrappedNextUI/Select/Select";
 import BigNumber from "bignumber.js";
 import dynamic from "next/dynamic";
 import { popmodal } from "@/services/popmodal";
-import { SwapCard } from "../SwapCard/MemeSwap";
+import { LaunchDetailSwapCard } from "../SwapCard/MemeSwap";
 import { toCompactLocaleString } from "@/lib/utils";
 import TokenLogo from "../TokenLogo/TokenLogo";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -240,7 +240,7 @@ export const MemeWarPariticipantRaceChart = observer(() => {
 
             popmodal.openModal({
               content: (
-                <SwapCard
+                <LaunchDetailSwapCard
                   noBoarder
                   inputAddress={target.pair?.raiseToken?.address}
                   outputAddress={target.pair?.launchedToken?.address}

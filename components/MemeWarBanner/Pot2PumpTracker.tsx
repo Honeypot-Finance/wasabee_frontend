@@ -3,7 +3,7 @@ import { popmodal } from "@/services/popmodal";
 import { Button } from "@nextui-org/react";
 import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
-import { SwapCard } from "../SwapCard/MemeSwap";
+import { LaunchDetailSwapCard } from "../SwapCard/MemeSwap";
 import TokenLogo from "../TokenLogo/TokenLogo";
 import { useEffect, useState } from "react";
 import { fetchMemetrackerList, Pair } from "@/lib/algebra/graphql/clients/pair";
@@ -104,7 +104,7 @@ export const Pot2PumpTracker = observer(() => {
 
             popmodal.openModal({
               content: (
-                <SwapCard
+                <LaunchDetailSwapCard
                   noBoarder
                   inputAddress={target.token1.id}
                   outputAddress={target.token0.id}

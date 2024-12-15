@@ -130,6 +130,18 @@ export class Token implements BaseContract {
       return;
     }
 
+    if (
+      wallet &&
+      wallet.currentChain.validatedTokensInfo[this.address.toLowerCase()]
+        ?.logoURI
+    ) {
+      this.setLogoURI(
+        wallet.currentChain.validatedTokensInfo[this.address.toLowerCase()]
+          ?.logoURI
+      );
+      return;
+    }
+
     const launch = await trpcClient.projects.getProjectsByLaunchToken.query({
       chain_id: wallet.currentChainId,
       launch_token: this.address,

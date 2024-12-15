@@ -5,7 +5,7 @@ import { Input } from "@/components/input";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { useAccount } from "wagmi";
 import { MemePairContract } from "@/services/contract/memepair-contract";
-import { SwapCard } from "@/components/SwapCard/MemeSwap";
+import { LaunchDetailSwapCard } from "@/components/SwapCard/MemeSwap";
 
 const SuccessAction = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -43,10 +43,11 @@ const SuccessAction = observer(
       //   </Link>
       // </div>
       <>
-        <SwapCard
+        <LaunchDetailSwapCard
           noBoarder
           inputAddress={pair.raiseToken?.address ?? ""}
           outputAddress={pair.launchedToken?.address}
+          memePairContract={pair as MemePairContract}
         />
       </>
     );
