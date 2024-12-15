@@ -16,6 +16,7 @@ import { MemePairContract } from "@/services/contract/memepair-contract";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 import { LaunchCard } from "@/components/LaunchCard";
 import { Pot2PumpPottingService } from "@/services/launchpad/pot2pump/potting";
+import { Filter, FilterState } from "@/components/pot2pump/FilterModal";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pottingProjects, setPottingProjects] =
@@ -23,6 +24,10 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
     MemePairContract[] | null
   >(null);
+  const [filters, setFilters] = useState<FilterState>({
+    tvl: { min: "", max: "" },
+    participants: { min: "", max: "" },
+  });
 
   const updateMostSuccessProjects = useCallback(() => {
     console.log("updating most success projects", mostSuccessProjects);
@@ -141,14 +146,21 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
         <div className="w-full relative">
           <div className="py-2 sm:py-0 sm:absolute right-0 top-0">
-            <Button className="w-full">
-              <Link
-                href="/launch-token?launchType=meme"
-                className="text-black font-bold"
-              >
-                Launch Token
-              </Link>
-            </Button>
+            <div className="flex gap-2">
+              <Filter
+                filters={filters}
+                setFilters={setFilters}
+                pumpingProjects={pottingProjects}
+              />
+              <Button className="w-full">
+                <Link
+                  href="/launch-token?launchType=meme"
+                  className="text-black font-bold"
+                >
+                  Launch Token
+                </Link>
+              </Button>
+            </div>
           </div>
           <Tabs
             // destroyInactiveTabPanel={false}

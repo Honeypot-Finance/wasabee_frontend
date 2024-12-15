@@ -31,14 +31,14 @@ export class Pot2PumpPumpingService {
     namespace: "projectsPage",
     defaultFilter: this.DEFAULT_FILTER,
     LoadNextPageFunction: async (filter) => {
+      console.log("query", "LoadNextPageFunction", JSON.stringify(filter));
       return await this.LoadMoreProjectPage(filter);
     },
   });
 
   LoadMoreProjectPage = async (filter: SubgraphProjectFilter) => {
-    let res;
-
-    res = await fetchPot2PumpList({
+    console.log("query", "filter", JSON.stringify(filter));
+    const res = await fetchPot2PumpList({
       chainId: String(wallet.currentChainId),
       filter: filter,
     });

@@ -202,7 +202,7 @@ class Swap {
         if (this.fromToken && this.toToken) {
           await this.currentPair.call();
         }
-        this.updateChartData();
+        //this.updateChartData();
       }
     );
     reaction(
@@ -219,7 +219,7 @@ class Swap {
             this.fromAmount = this.fromAmount + " ";
           }
         }
-        this.updateChartData();
+        // this.updateChartData();
       }
     );
     reaction(

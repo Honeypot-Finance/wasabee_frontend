@@ -37,7 +37,8 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
           o[index] === null ||
           h[index] === null ||
           l[index] === null ||
-          c[index] === null
+          c[index] === null ||
+          v[index] === null
         ) {
           return null;
         }
@@ -52,7 +53,7 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
         };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null);
-  }, [chart.chartData.value]);
+  }, [chart.chartData.value, chart.chartTarget]);
 
   const handleResize = useCallback(() => {
     if (chartCreated && chartRef?.current?.parentElement) {
@@ -183,7 +184,7 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
     return () => {
       chartInstance.remove();
     };
-  }, [height]);
+  }, [height, chartData]);
 
   return (
     <div className="w-full relative rounded-2xl bg-[#202020] overflow-hidden p-4">

@@ -126,13 +126,38 @@ export async function fetchPairsList({
   pageRequest?: PageRequest;
 }): Promise<PairsListResponse> {
   let whereCondition = "";
+  let conditions = [];
 
   if (filter.status === "success") {
-    whereCondition = `{ raisedTokenReachingMinCap: true }`;
+    conditions.push(`raisedTokenReachingMinCap: true`);
   } else if (filter.status === "fail") {
-    whereCondition = `{ raisedTokenReachingMinCap: false, endTime_lte: ${dayjs().unix()} }`;
+    conditions.push(
+      `raisedTokenReachingMinCap: false, endTime_lte: ${dayjs().unix()}`
+    );
   } else if (filter.status === "processing") {
-    whereCondition = `{ raisedTokenReachingMinCap: false, endTime_gt: ${dayjs().unix()} }`;
+    conditions.push(
+      `raisedTokenReachingMinCap: false, endTime_gt: ${dayjs().unix()}`
+    );
+  }
+
+  // Add TVL range conditions
+  if (filter.tvlRange?.min !== undefined) {
+    conditions.push(`LaunchTokenTVL_gte: "${filter.tvlRange.min}"`);
+  }
+  if (filter.tvlRange?.max !== undefined) {
+    conditions.push(`LaunchTokenTVL_lte: "${filter.tvlRange.max}"`);
+  }
+
+  // Add participants range conditions
+  if (filter.participantsRange?.min !== undefined) {
+    conditions.push(`participantsCount_gte: "${filter.participantsRange.min}"`);
+  }
+  if (filter.participantsRange?.max !== undefined) {
+    conditions.push(`participantsCount_lte: "${filter.participantsRange.max}"`);
+  }
+
+  if (conditions.length > 0) {
+    whereCondition = `{ ${conditions.join(", ")} }`;
   }
 
   const queryParts = [
@@ -299,6 +324,24 @@ export async function fetchPot2PumpList({
     );
   }
 
+  if (filter.tvlRange?.min !== undefined) {
+    whereCondition.push(` LaunchTokenTVL_gte: "${filter.tvlRange.min}" `);
+  }
+  if (filter.tvlRange?.max !== undefined) {
+    whereCondition.push(` LaunchTokenTVL_lte: "${filter.tvlRange.max}" `);
+  }
+
+  if (filter.participantsRange?.min !== undefined) {
+    whereCondition.push(
+      ` participantsCount_gte: "${filter.participantsRange.min}" `
+    );
+  }
+  if (filter.participantsRange?.max !== undefined) {
+    whereCondition.push(
+      ` participantsCount_lte: "${filter.participantsRange.max}" `
+    );
+  }
+
   if (filter.creator) {
     whereCondition.push(` creator: "${filter.creator.toLowerCase()}" `);
   }
@@ -332,8 +375,6 @@ export async function fetchPot2PumpList({
       }
     }
   `;
-
-  console.log(query);
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),

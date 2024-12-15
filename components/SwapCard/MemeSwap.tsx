@@ -120,6 +120,25 @@ export const LaunchDetailSwapCard = observer(
 
     const [isExpanded, setIsExpanded] = useState(true);
 
+    useEffect(() => {
+      if (swap.toToken) {
+        chart.setChartLabel(
+          `${Token.getToken({ address: swap.toToken.address }).symbol}`
+        );
+        chart.setChartTarget(Token.getToken({ address: swap.toToken.address }));
+        chart.setCurrencyCode("USD");
+      } else if (swap.fromToken) {
+        chart.setChartLabel(
+          `${Token.getToken({ address: swap.fromToken.address }).symbol}`
+        );
+        chart.setChartTarget(
+          Token.getToken({ address: swap.fromToken.address })
+        );
+        chart.setCurrencyCode("USD");
+      }
+      console.log("chart.getChartTarget()", chart.chartTarget);
+    }, [swap.fromToken, swap.toToken]);
+
     return (
       <SpinnerContainer
         className={cn(

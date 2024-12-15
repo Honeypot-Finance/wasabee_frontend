@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import launchpad from "@/services/launchpad";
-import { Button } from "@/components/button";
+import { Button } from "@/components/button/button-next";
 import { NextLayoutPage } from "@/types/nextjs";
 import { RocketSvg } from "@/components/svg/Rocket";
 import { PeddingSvg } from "@/components/svg/Pedding";
@@ -448,7 +448,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
             <div className="flex flex-col items-center">
               <div className="relative">
                 <PeddingSvg />
-                <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
+                <div className="absolute top-1/2 -translate-y-@1/2 left-1/2 -translate-x-1/2">
                   <RocketSvg />
                 </div>
               </div>
@@ -461,21 +461,24 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col w-full sm:w-[584px] lg:w-[900px] items-center border-[color:var(--Button-Gradient,#F7931A)] bg-[#291C0A] py-4 px-[5px] rounded-[54px] border-2">
+          <div className="flex flex-col w-full sm:w-[584px] lg:w-[900px] items-center border-[color:var(--Button-Gradient,#F7931A)] bg-[#FFCD4D] py-12 px-8 rounded-[54px] relative overflow-hidden">
+            <div className="bg-[url('/images/pumping/outline-border.png')] h-[50px] absolute top-0 left-0 w-full bg-contain bg-[left_-90px_top] bg-repeat-x"></div>
+
             <div className="flex items-center gap-2">
               <DreampadSvg />
-              <span>
+              <span className="text-black text-xl font-bold">
                 Dreampad <br className="md:hidden" /> - MEME Launch
               </span>{" "}
               <FaQuestionCircle
                 onClick={() => openInstructionModal()}
-                className="cursor-pointer hover:scale-150 transition-all"
+                className="cursor-pointer hover:scale-150 transition-all text-black"
               />
             </div>
+
             <form
               //@ts-ignore
               onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col gap-[22px] w-full px-4 sm:w-auto sm:px-0"
+              className="w-full rounded-[32px] bg-white space-y-4 px-8 py-6 custom-dashed mx-6 mt-6"
             >
               <div className="flex-col gap-4 hidden">
                 <label htmlFor="provider">Token Provider</label>
@@ -493,6 +496,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 <Controller
                   control={control}
                   name="logoUrl"
+                  rules={{ required: "Token Logo is required" }}
                   render={({ field: { onChange, value } }) => (
                     <UploadImage
                       onUpload={onChange}
@@ -501,11 +505,15 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                     />
                   )}
                 />
-                <div className="text align opacity-50 text-center">
+                <div className="text-black opacity-50 text-center">
                   Click icon to upload new token icon
                 </div>
+                {errors.logoUrl && (
+                  <span className="text-red-500 text-center">{errors.logoUrl.message as string}</span>
+                )}
               </div>
-              <div className="relative w-full h-[5rem] border-dashed border-amber-950 hover:border-amber-500 border-3 rounded-2xl mb-5  transition-all text-white hover:text-amber-500">
+
+              <div className="relative w-full h-[5rem] border-dashed border-black hover:border-black/70 border-2 rounded-2xl mb-5 transition-all text-black hover:text-black/70">
                 <Controller
                   control={control}
                   name="bannerUrl"
@@ -518,69 +526,85 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                     />
                   )}
                 />
-
                 <h3 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold pointer-events-none">
                   Upload Banner
                 </h3>
               </div>
 
-              <div className="flex flex-col gap-4">
-                <div>Token Name</div>
+              <div className="flex flex-col gap-2">
+                <label className="text-black text-base font-medium">
+                  Token Name
+                </label>
                 <input
                   type="text"
                   {...register("tokenName", { required: true })}
-                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
                 />
                 {errors.tokenName && (
                   <span className="text-red-500">Token Name is required</span>
                 )}
               </div>
-              <div className="flex flex-col gap-4">
-                <div>Token Symbol</div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-black text-base font-medium">
+                  Token Symbol
+                </label>
                 <input
                   type="text"
                   {...register("tokenSymbol", { required: true })}
-                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
                 />
                 {errors.tokenSymbol && (
                   <span className="text-red-500">Token Symbol is required</span>
                 )}
               </div>
-              <div className="flex flex-col gap-4">
-                <div>Description</div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-black text-base font-medium">
+                  Description
+                </label>
                 <input
                   type="text"
                   {...register("description")}
-                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
-                />
-              </div>
-              <div className="flex flex-col gap-4">
-                <div>Twitter</div>
-                <input
-                  type="text"
-                  {...register("twitter")}
-                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
-                />
-              </div>
-              <div className="flex flex-col gap-4">
-                <div>Website</div>
-                <input
-                  type="text"
-                  {...register("website")}
-                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
-                />
-              </div>
-              <div className="flex flex-col gap-4">
-                <div>Telegram</div>
-                <input
-                  type="text"
-                  {...register("telegram")}
-                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
                 />
               </div>
 
-              {(state.pairAddress && (
-                <div className="flex items-center">
+              <div className="flex flex-col gap-2">
+                <label className="text-black text-base font-medium">
+                  Twitter
+                </label>
+                <input
+                  type="text"
+                  {...register("twitter")}
+                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-black text-base font-medium">
+                  Website
+                </label>
+                <input
+                  type="text"
+                  {...register("website")}
+                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-black text-base font-medium">
+                  Telegram
+                </label>
+                <input
+                  type="text"
+                  {...register("telegram")}
+                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
+                />
+              </div>
+
+              {state.pairAddress ? (
+                <div className="flex items-center text-black">
                   Pair Address:&nbsp;
                   <Link
                     className="text-primary"
@@ -591,16 +615,18 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                   </Link>
                   <Copy className="ml-[8px]" value={state.pairAddress}></Copy>
                 </div>
-              )) || (
+              ) : (
                 <Button
                   type="submit"
                   isLoading={launchpad.createLaunchProject.loading}
-                  className="text-black font-bold"
+                  className="w-full bg-black text-white font-bold rounded-[16px] px-4 py-[18px] border-2 border-black hover:bg-black/90"
                 >
                   Launch Token
                 </Button>
               )}
             </form>
+
+            <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-contain"></div>
           </div>
         )}
       </div>
