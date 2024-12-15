@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { amountFormatted, truncate } from "@/lib/format";
 import { chart } from "@/services/chart";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, LucideFileEdit } from "lucide-react";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { MemePairContract } from "@/services/contract/memepair-contract";
@@ -18,6 +18,14 @@ import { VscCopy } from "react-icons/vsc";
 import { Copy } from "@/components/copy";
 import TokenAddress from "./TokenAddress";
 import { Trigger } from "@/components/Trigger";
+import {
+  OptionsDropdown,
+  optionsPresets,
+} from "@/components/OptionsDropdown/OptionsDropdown";
+import { wallet } from "@/services/wallet";
+import { toast } from "react-toastify";
+import { Modal, useDisclosure } from "@nextui-org/react";
+import { UpdateProjectModal } from "../[pair]";
 
 const universalMenuItems = [
   { key: "info", label: "Token Info" },
@@ -43,21 +51,21 @@ const transactionData: Transaction[] = [
     address: "0x0e230092509233trd1234567",
     quantity: "51,774.3457510410643427771",
     percentage: "30.89%",
-    value: "$34,432,134.09"
+    value: "$34,432,134.09",
   },
   {
     rank: "02",
     address: "0x0e230092509233trd1234567",
     quantity: "51,774.3457510410643427771",
     percentage: "30.89%",
-    value: "$34,432,134.09"
+    value: "$34,432,134.09",
   },
   {
     rank: "03",
     address: "0x0e230092509233trd1234567",
     quantity: "51,774.3457510410643427771",
     percentage: "30.89%",
-    value: "$34,432,134.09"
+    value: "$34,432,134.09",
   },
   // ... 可以继续添加更多数据
 ];
@@ -65,6 +73,7 @@ const transactionData: Transaction[] = [
 const Tabs = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract | null }) => {
     const [tab, setTab] = useState(universalMenuItems[0].key);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const options =
       pair?.state === 0
@@ -73,6 +82,17 @@ const Tabs = observer(
 
     return (
       <div className="relative">
+        {pair && (
+          <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            classNames={{
+              base: "max-h-[70vh] overflow-y-scroll",
+            }}
+          >
+            <UpdateProjectModal pair={pair}></UpdateProjectModal>
+          </Modal>
+        )}
         {/* <div className="hidden sm:flex items-center gap-x-1 md:text-xs ml-3">
           {universalMenuItems.map((item) => (
             <button
@@ -182,6 +202,44 @@ const Tabs = observer(
           <div className="bg-[url('/images/pumping/outline-border.png')] bg-top h-12 absolute top-0 left-0 w-full bg-contain bg-repeat-x"></div>
           {tab === "info" && (
             <div className="flex items-center justify-center">
+              <OptionsDropdown
+                className="p-0 m-0 absolute right-2 top-2 lg:top-4 "
+                options={[
+                  optionsPresets.copy({
+                    copyText: pair?.launchedToken?.address ?? "",
+                    displayText: "Copy Token address",
+                    copysSuccessText: "Token address copied",
+                  }),
+                  optionsPresets.share({
+                    shareUrl: `${window.location.origin}/launch-detail/${pair?.address}`,
+                    displayText: "Share this project",
+                    shareText: "Checkout this Token: " + pair?.projectName,
+                  }),
+                  optionsPresets.importTokenToWallet({
+                    token: pair?.launchedToken,
+                  }),
+                  optionsPresets.viewOnExplorer({
+                    address: pair?.address ?? "",
+                  }),
+                  {
+                    icon: <LucideFileEdit />,
+                    display: "Update Project",
+                    onClick: () => {
+                      if (!pair) return;
+
+                      if (
+                        pair.provider.toLowerCase() !==
+                        wallet.account.toLowerCase()
+                      ) {
+                        toast.warning("You are not the owner of this project");
+                        return;
+                      }
+
+                      onOpen();
+                    },
+                  },
+                ]}
+              />
               <div className="w-full overflow-hidden p-4 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-x-8">
                 <div>
                   <h1 className="text-[var(--Heading,#0D0D0D)] text-center md:text-left text-stroke-white webkit-text-stroke-[2px] webkit-text-stroke-color-[#FFF] font-gliker text-[40px] md:text-[64px] font-normal leading-[110%] tracking-[1.28px] mb-6 md:mb-12 text-stroke-custom">
@@ -220,13 +278,18 @@ const Tabs = observer(
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                     <div className="w-full bg-white rounded-3xl px-4 md:px-[60px] text-center border border-black shadow-[4px_4px_0px_0px_#D29A0D] space-y-4 py-[28.5px]">
                       <div className="text-[24px] md:text-[34px] text-stroke-black text-shadow-custom">
-                        {(pair as MemePairContract)?.depositedLaunchedToken?.toNumber()}
+                        {(
+                          pair as MemePairContract
+                        )?.depositedLaunchedToken?.toNumber()}
                       </div>
-                      <div className="text-base md:text-lg text-[#0D0D0D]">Total Supply</div>
+                      <div className="text-base md:text-lg text-[#0D0D0D]">
+                        Total Supply
+                      </div>
                     </div>
                     <div className="w-full bg-white rounded-3xl px-4 md:px-[60px] text-center border border-black shadow-[4px_4px_0px_0px_#D29A0D] space-y-4 py-[28.5px]">
                       <div className="text-[24px] md:text-[34px] text-stroke-black text-shadow-custom">
-                        $ {amountFormatted(pair?.depositedRaisedToken, {
+                        ${" "}
+                        {amountFormatted(pair?.depositedRaisedToken, {
                           decimals: 0,
                           fixed: 3,
                         })}
@@ -300,16 +363,29 @@ const Tabs = observer(
                   <table className="w-full">
                     <thead className="bg-[#323232] text-white">
                       <tr>
-                        <th className="py-4 px-6 text-left text-base font-medium">RANK</th>
-                        <th className="py-4 px-6 text-left text-base font-medium">ADDRESS</th>
-                        <th className="py-4 px-6 text-left text-base font-medium">QUANTITY</th>
-                        <th className="py-4 px-6 text-right text-base font-medium">PERCENTAGE</th>
-                        <th className="py-4 px-6 text-right text-base font-medium">VALUE</th>
+                        <th className="py-4 px-6 text-left text-base font-medium">
+                          RANK
+                        </th>
+                        <th className="py-4 px-6 text-left text-base font-medium">
+                          ADDRESS
+                        </th>
+                        <th className="py-4 px-6 text-left text-base font-medium">
+                          QUANTITY
+                        </th>
+                        <th className="py-4 px-6 text-right text-base font-medium">
+                          PERCENTAGE
+                        </th>
+                        <th className="py-4 px-6 text-right text-base font-medium">
+                          VALUE
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="text-white divide-y divide-[#5C5C5C]">
                       {transactionData.map((item, index) => (
-                        <tr key={index} className="hover:bg-[#2a2a2a] transition-colors">
+                        <tr
+                          key={index}
+                          className="hover:bg-[#2a2a2a] transition-colors"
+                        >
                           <td className="py-4 px-6">
                             <div className="flex items-center gap-2">
                               <div className="w-4 h-4 bg-[#FFCD4D] rounded"></div>
@@ -320,20 +396,36 @@ const Tabs = observer(
                             <div className="flex items-center gap-2">
                               {item.address}
                               <button className="p-1 hover:bg-[#3a3a3a] rounded">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M8 5H6C4.89543 5 4 5.89543 4 7V19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19V7C20 5.89543 19.1046 5 18 5H16M8 5V3H16V5M8 5H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <svg
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M8 5H6C4.89543 5 4 5.89543 4 7V19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19V7C20 5.89543 19.1046 5 18 5H16M8 5V3H16V5M8 5H16"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
                                 </svg>
                               </button>
                             </div>
                           </td>
-                          <td className="py-4 px-6 text-base">{item.quantity}</td>
+                          <td className="py-4 px-6 text-base">
+                            {item.quantity}
+                          </td>
                           <td className="py-4 px-6 text-right text-base">
                             <div className="flex items-center justify-end gap-2">
                               <div className="w-12 bg-[#FFCD4D] h-1 rounded"></div>
                               {item.percentage}
                             </div>
                           </td>
-                          <td className="py-4 px-6 text-right text-base">{item.value}</td>
+                          <td className="py-4 px-6 text-right text-base">
+                            {item.value}
+                          </td>
                         </tr>
                       ))}
                     </tbody>

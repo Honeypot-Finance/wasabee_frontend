@@ -48,43 +48,6 @@ export const LaunchDataProgress = observer(
             raisedTokenMinCap={pair?.raisedTokenMinCap}
             raiseTokenDecimals={pair?.raiseToken?.decimals}
           />{" "}
-          <OptionsDropdown
-            className="p-0 m-0"
-            options={[
-              optionsPresets.copy({
-                copyText: pair.launchedToken?.address ?? "",
-                displayText: "Copy Token address",
-                copysSuccessText: "Token address copied",
-              }),
-              optionsPresets.share({
-                shareUrl: `${window.location.origin}/launch-detail/${pair.address}`,
-                displayText: "Share this project",
-                shareText: "Checkout this Token: " + pair.projectName,
-              }),
-              optionsPresets.importTokenToWallet({
-                token: pair.launchedToken,
-              }),
-              optionsPresets.viewOnExplorer({
-                address: pair.address ?? "",
-              }),
-              {
-                icon: <LucideFileEdit />,
-                display: "Update Project",
-                onClick: () => {
-                  if (!pair) return;
-
-                  if (
-                    pair.provider.toLowerCase() !== wallet.account.toLowerCase()
-                  ) {
-                    toast.warning("You are not the owner of this project");
-                    return;
-                  }
-
-                  onOpen();
-                },
-              },
-            ]}
-          />
         </div>
         <SaleProgress
           ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}

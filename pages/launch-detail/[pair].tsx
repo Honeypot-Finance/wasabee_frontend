@@ -44,7 +44,7 @@ import { LucideFileEdit } from "lucide-react";
 import KlineChart from "./componets/KlineChart";
 import { LaunchDataProgress } from "./componets/LaunchDataProgress";
 
-const UpdateProjectModal = observer(
+export const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
     const {
       register,
