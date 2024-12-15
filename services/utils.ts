@@ -514,12 +514,11 @@ export class IndexerPaginationState<
       ...this.filter,
       ...filter,
     };
-    console.log("updateFilter", this.namespace);
     this.reloadPage();
   }, 500);
 
   resetPage = () => {
-    this.filter = this.defaultFilter;
+    this.filter = { ...this.filter, ...this.defaultFilter };
     this.isInit = false;
     this.pageItems.setValue([]);
   };

@@ -34,6 +34,14 @@ export type PairFilter = {
   status: "all" | "processing" | "success" | "fail";
   showNotValidatedPairs: boolean;
   limit: number;
+  tvlRange?: {
+    min?: number;
+    max?: number;
+  };
+  participantsRange?: {
+    min?: number;
+    max?: number;
+  };
 };
 
 export type SubgraphProjectFilter = {
@@ -46,6 +54,14 @@ export type SubgraphProjectFilter = {
   participant?: string;
   orderBy?: string;
   orderDirection?: string;
+  tvlRange?: {
+    min?: number;
+    max?: number;
+  };
+  participantsRange?: {
+    min?: number;
+    max?: number;
+  };
 };
 
 export const defaultPairFilters: {
