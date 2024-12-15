@@ -4,20 +4,36 @@ import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { useEffect, useState } from "react";
 import launchpad from "@/services/launchpad";
-import { Tab, Tabs } from "@nextui-org/react";
+import {
+  Tab,
+  Tabs,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button as NextButton,
+} from "@nextui-org/react";
 import { NextLayoutPage } from "@/types/nextjs";
 import { memewarStore } from "@/services/memewar";
-import { FaExternalLinkAlt } from "react-icons/fa";
+import { FaExternalLinkAlt, FaFilter } from "react-icons/fa";
 import { Button } from "@/components/button/button-next";
 import { LaunchCardV3 } from "@/components/LaunchCard/v3";
 import Pagination from "@/components/Pagination/Pagination";
 import { Pot2PumpTracker } from "@/components/MemeWarBanner/Pot2PumpTracker";
 import { Pot2PumpPumpingService } from "@/services/launchpad/pot2pump/pumping";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
+import { useDisclosure } from "@nextui-org/react";
+import { Filter, FilterState } from "@/components/pot2pump/FilterModal";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pumpingProjects, setPumpingProjects] =
     useState<Pot2PumpPumpingService>();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [filters, setFilters] = useState<FilterState>({
+    tvl: { min: "", max: "" },
+    participants: { min: "", max: "" },
+  });
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -32,8 +48,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
     memewarStore.reloadParticipants();
 
-    // launchpad.projectsPage.reloadPage();
-    // launchpad.participatedPairs.reloadPage();
     const newPumpingProjects = new Pot2PumpPumpingService();
     setPumpingProjects(newPumpingProjects);
     newPumpingProjects.projectsPage.reloadPage();
@@ -59,7 +73,12 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         </div>
 
         <div className="w-full relative">
-          <div className="py-2 sm:py-0 sm:absolute right-0 top-0">
+          <div className="py-2 sm:py-0 sm:absolute right-0 top-0 flex gap-2">
+            <Filter
+              filters={filters}
+              setFilters={setFilters}
+              pumpingProjects={pumpingProjects}
+            />
             <Button className="w-full">
               <Link
                 href="/launch-token?launchType=meme"
