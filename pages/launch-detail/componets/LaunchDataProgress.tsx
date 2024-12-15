@@ -104,3 +104,5 @@ export const LaunchDataProgress = observer(
     );
   }
 );
+
+export default LaunchDataProgress;
