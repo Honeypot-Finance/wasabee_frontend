@@ -95,7 +95,7 @@ export const Profile = observer(() => {
                   <span className="text-[#FAFAFC] text-[48px] leading-none">
                     {portfolio.totalBalanceFormatted} USD
                   </span>
-                  <div>
+                  {/* <div>
                     <span className="text-[#FAFAFC]/60 text-sm ml-1">
                       {timeRange}
                     </span>
@@ -103,11 +103,11 @@ export const Profile = observer(() => {
                       <span className="text-[#FF5555] text-sm">-$0.5531</span>
                       <span className="text-[#FF5555] text-sm">(-1.41%)</span>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
-              <div className="w-[300px] flex flex-col gap-2">
+              {/* <div className="w-[300px] flex flex-col gap-2">
                 <div
                   className="h-30 w-full rounded-lg overflow-hidden"
                   ref={chartContainerRef}
@@ -129,7 +129,7 @@ export const Profile = observer(() => {
                     </span>
                   ))}
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <Tabs
