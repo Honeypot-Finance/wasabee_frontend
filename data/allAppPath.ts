@@ -33,10 +33,10 @@ export const appPathsList: Menu[] = [
         path: "/pot2pump/pumping",
         title: "Pumping",
       },
-      {
-        path: "/memewar",
-        title: "Meme War ⚔️",
-      },
+      // {
+      //   path: "/memewar",
+      //   title: "Meme War ⚔️",
+      // },
     ],
     title: "Pot2pump",
   },
