@@ -42,6 +42,7 @@ import {
 } from "@/components/OptionsDropdown/OptionsDropdown";
 import { LucideFileEdit } from "lucide-react";
 import KlineChart from "./componets/KlineChart";
+import { LaunchDataProgress } from "./componets/LaunchDataProgress";
 
 const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -537,12 +538,6 @@ const MemeView = observer(() => {
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { pair: pairAddress } = router.query;
-  const [votes, setVotes] = useState({
-    rocket_count: 0,
-    fire_count: 0,
-    poo_count: 0,
-    flag_count: 0,
-  });
 
   const state = useLocalObservable(() => ({
     pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
@@ -631,7 +626,6 @@ const MemeView = observer(() => {
     router.query.edit,
     router,
   ]);
-
   useEffect(() => {
     if (!wallet.isInit || !pairAddress) {
       return;
@@ -642,10 +636,7 @@ const MemeView = observer(() => {
     state.pair.call({
       pairAddress: pairAddress as string,
     });
-
-    refreshVotes();
   }, [wallet.isInit, pairAddress]);
-
   useEffect(() => {
     if (!state.pair.value?.launchedToken) {
       return;
@@ -656,14 +647,6 @@ const MemeView = observer(() => {
     chart.setChartLabel(state.pair.value.launchedToken?.displayName + "/USD");
     console.log("chart", chart);
   }, [state.pair.value, state.pair.value?.launchedToken]);
-
-  function refreshVotes() {
-    trpcClient.projects.getProjectVotes
-      .query({ pair: pairAddress as string })
-      .then((data) => {
-        setVotes(data);
-      });
-  }
 
   const pair = useMemo(() => state.pair.value, [state.pair.value]);
 
@@ -715,112 +698,45 @@ const MemeView = observer(() => {
           </div>
           <div className="bg-[#FFCD4D] p-4 py-6 rounded-2xl space-y-3 col-span-2 lg:col-span-1 relative overflow-hidden">
             <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
-            <KlineChart height={300} />
-            <div className="flex flex-col py-5 px-4 bg-[#202020] rounded-2xl gap-y-5">
-              {/* TODO：kline chart */}
-              <div className="flex justify-between items-start \">
-                <TokenRaised
-                  depositedRaisedToken={pair?.depositedRaisedToken}
-                  raiseTokenDerivedUSD={pair?.raiseToken?.derivedUSD}
-                  raisedTokenMinCap={pair?.raisedTokenMinCap}
-                  raiseTokenDecimals={pair?.raiseToken?.decimals}
-                />{" "}
-                <OptionsDropdown
-                  className="p-0 m-0"
-                  options={[
-                    optionsPresets.copy({
-                      copyText: state.pair?.value?.launchedToken?.address ?? "",
-                      displayText: "Copy Token address",
-                      copysSuccessText: "Token address copied",
-                    }),
-                    optionsPresets.share({
-                      shareUrl: `${window.location.origin}/launch-detail/${state.pair?.value?.address}`,
-                      displayText: "Share this project",
-                      shareText:
-                        "Checkout this Token: " +
-                        state.pair?.value?.projectName,
-                    }),
-                    optionsPresets.importTokenToWallet({
-                      token: state.pair?.value?.launchedToken,
-                    }),
-                    optionsPresets.viewOnExplorer({
-                      address: state.pair?.value?.address ?? "",
-                    }),
-                    {
-                      icon: <LucideFileEdit />,
-                      display: "Update Project",
-                      onClick: () => {
-                        if (!state.pair.value) return;
+            {state.pair.value?.state === 0 && (
+              <>
+                {state.pair.value?.canClaimLP && (
+                  <Button
+                    className="w-full"
+                    isLoading={state.pair.value?.claimLP.loading}
+                    onClick={() => {
+                      state.pair.value?.claimLP.call();
+                    }}
+                    isDisabled={!state.pair.value?.canClaimLP}
+                  >
+                    Claim LP
+                  </Button>
+                )}
+                {state.pair.value?.canClaimTokens && (
+                  <Button
+                    className="w-full"
+                    onClick={async () => {
+                      //navigate to vault/[vaultaddress]
+                      const lpTokenAddress =
+                        await state.pair.value?.contract.read.lpToken();
+                      window.location.href = `/vault/${lpTokenAddress}`;
 
-                        if (
-                          state.pair.value.provider.toLowerCase() !==
-                          wallet.account.toLowerCase()
-                        ) {
-                          toast.warning(
-                            "You are not the owner of this project"
-                          );
-                          return;
-                        }
+                      // pair.claimVaultTokens();
+                    }}
+                    isLoading={state.pair.value?.claimLP.loading}
+                    // isDisabled={!pair.canClaimLP}
+                  >
+                    Visit Vault
+                  </Button>
+                )}
+                <KlineChart height={300} />
+              </>
+            )}
+            {}
 
-                        onOpen();
-                      },
-                    },
-                  ]}
-                />
-              </div>
-              <SaleProgress
-                ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
-                raiseTokenBalance={pair?.raisedTokenMinCap}
-                raiseTokenDecimals={pair?.raiseToken?.decimals}
-                depositedRaisedToken={pair?.depositedRaisedToken}
-              />
-
-              <TokenAddress address={pair?.launchedToken?.address} />
-
-              <TokenDetails
-                price={pair?.price}
-                depositedRaisedToken={pair?.depositedRaisedToken}
-                startTimeDisplay={pair?.startTimeDisplay}
-                endTimeDisplay={pair?.endTimeDisplay}
-              />
-
-              <div className="w-full h-[1px] bg-[#52493D]"></div>
-              <div className="space-y-1.5">
-                <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
-                <div className="flex gap-5">
-                  {Object.entries(votes).map(([key, value]) => {
-                    return (
-                      <div
-                        key={key}
-                        onClick={() => {
-                          if (!wallet.account || !state.pair.value?.address)
-                            return;
-
-                          trpcClient.projects.createOrUpdateProjectVotes
-                            .mutate({
-                              project_pair: state.pair.value?.address,
-                              wallet_address: wallet.account,
-                              vote: key.split("_")[0],
-                            })
-                            .then(() => {
-                              refreshVotes();
-                            });
-                        }}
-                        className="mt-2 flex-1 flex flex-col  justify-center items-center bg-[#202020] px-3 py-3 hover:bg-[#FFCD4D] active:[background:#F0A000] cursor-pointer select-none border border-[#F2C34A] rounded-2xl"
-                      >
-                        <p>
-                          {(key.split("_")[0] === "rocket" && "🚀") ||
-                            (key.split("_")[0] === "fire" && "🔥") ||
-                            (key.split("_")[0] === "poo" && "💩") ||
-                            (key.split("_")[0] === "flag" && "🚩")}
-                        </p>
-                        <p>{value}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+            {state.pair.value?.state === 3 && (
+              <LaunchDataProgress pair={state.pair.value} />
+            )}
             <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-contain"></div>
           </div>
           <div className="bg-transparent rounded-2xl space-y-3 col-span-2 lg:col-span-1">
