@@ -239,7 +239,43 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
       </div>
 
       {/* Chart or Placeholder */}
-      {chartData.length > 0 ? (
+      {!chart.range ? (
+        <div className="w-full h-[300px] mt-2 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-white/50 text-sm mb-2">
+              Please select a time range
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <svg
+                className="w-8 h-8 text-[#FFCD4D]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <div className="flex gap-1">
+                {Object.values(chartTimeRanges)
+                  .slice(0, 3)
+                  .map((range) => (
+                    <button
+                      key={range.label}
+                      onClick={() => chart.setRange(range.label)}
+                      className="px-3 py-1 rounded-md text-xs font-medium bg-[#FFCD4D] text-black hover:bg-[#FFCD4D]/80 transition-colors"
+                    >
+                      {range.label}
+                    </button>
+                  ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : chartData.length > 0 ? (
         <div ref={chartRef} className="w-full mt-2" />
       ) : (
         <div className="w-full h-[300px] mt-2 flex items-center justify-center">
