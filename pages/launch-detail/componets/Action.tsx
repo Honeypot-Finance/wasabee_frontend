@@ -47,6 +47,7 @@ const SuccessAction = observer(
           noBoarder
           inputAddress={pair.raiseToken?.address ?? ""}
           outputAddress={pair.launchedToken?.address}
+          memePairContract={pair as MemePairContract}
         />
       </>
     );

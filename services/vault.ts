@@ -15,14 +15,11 @@ class Vault {
   allowTokenB: boolean = false;
   needApproveA: boolean = false;
   needApproveB: boolean = false;
-  slippage: number = 0.5; // Default slippage 0.5%
-  deadline: number = 20; // Default deadline 20 minutes
   vaultContract?: ICHIVaultContract;
 
   constructor() {
     makeAutoObservable(this);
 
-    // Only react to amount changes
     reaction(
       () => [this.amountA, this.amountB],
       () => {
@@ -32,34 +29,48 @@ class Vault {
   }
 
   // Getters
+  get displayTokenA() {
+    return this.allowTokenA ? this.tokenA : undefined;
+  }
+
+  get displayTokenB() {
+    return this.allowTokenB ? this.tokenB : undefined;
+  }
+
   get isDisabled() {
+    const hasValidAmounts =
+      (this.allowTokenA && this.amountA) || (this.allowTokenB && this.amountB);
+
+    const hasInsufficientBalance =
+      (this.amountA &&
+        (this.tokenA?.balance?.toNumber() ?? 0) < Number(this.amountA)) ||
+      (this.amountB &&
+        (this.tokenB?.balance?.toNumber() ?? 0) < Number(this.amountB));
+
     return (
-      !this.tokenA ||
-      !this.tokenB ||
-      !this.vaultContract ||
-      (!this.amountA && !this.amountB) ||
-      (this.allowTokenA && !this.amountA) ||
-      (this.allowTokenB && !this.amountB) ||
-      (this.amountA && this.tokenA.balance.toNumber() < Number(this.amountA)) ||
-      (this.amountB && this.tokenB.balance.toNumber() < Number(this.amountB))
+      !this.vaultContract || !!!hasValidAmounts || !!hasInsufficientBalance
     );
   }
 
   get buttonContent() {
-    if (!this.tokenA || !this.tokenB) {
-      return "Select Tokens";
+    if (!this.vaultContract) {
+      return "Connect Wallet";
     }
 
     if (
-      (!this.amountA && this.allowTokenA) ||
-      (!this.amountB && this.allowTokenB)
+      this.allowTokenA &&
+      !this.amountA &&
+      this.allowTokenB &&
+      !this.amountB
     ) {
       return "Enter Amount";
     }
 
     if (
-      (this.amountA && this.tokenA.balance.toNumber() < Number(this.amountA)) ||
-      (this.amountB && this.tokenB.balance.toNumber() < Number(this.amountB))
+      (this.amountA &&
+        (this.tokenA?.balance?.toNumber() ?? 0) < Number(this.amountA)) ||
+      (this.amountB &&
+        (this.tokenB?.balance?.toNumber() ?? 0) < Number(this.amountB))
     ) {
       return "Insufficient Balance";
     }
@@ -73,85 +84,114 @@ class Vault {
 
   // Setters
   setAmountA(amount: string) {
-    this.amountA = amount;
+    if (this.allowTokenA) {
+      this.amountA = amount;
+    }
   }
 
   setAmountB(amount: string) {
-    this.amountB = amount;
+    if (this.allowTokenB) {
+      this.amountB = amount;
+    }
   }
 
   async setVaultContract(contract: ICHIVaultContract) {
     this.vaultContract = contract;
+    this.resetState();
 
-    // Reset state
+    if (contract) {
+      await this.initializeTokens(contract);
+    }
+  }
+
+  private resetState() {
     this.amountA = "";
     this.amountB = "";
     this.needApproveA = false;
     this.needApproveB = false;
+    this.tokenA = undefined;
+    this.tokenB = undefined;
+    this.allowTokenA = false;
+    this.allowTokenB = false;
+  }
 
-    if (contract) {
-      // Get pool tokens
-      const [token0, token1, allowToken0, allowToken1] = await Promise.all([
-        contract.contract.read.token0(),
-        contract.contract.read.token1(),
-        contract.contract.read.allowToken0(),
-        contract.contract.read.allowToken1(),
-      ]);
+  private async initializeTokens(contract: ICHIVaultContract) {
+    const [token0, token1, allowToken0, allowToken1] = await Promise.all([
+      contract.contract.read.token0(),
+      contract.contract.read.token1(),
+      contract.contract.read.allowToken0(),
+      contract.contract.read.allowToken1(),
+    ]);
 
-      // Initialize tokens
-      this.tokenA = new Token({ address: token0 });
-      this.tokenB = new Token({ address: token1 });
+    this.tokenA = new Token({ address: token0 });
+    this.tokenB = new Token({ address: token1 });
+    this.allowTokenA = allowToken0;
+    this.allowTokenB = allowToken1;
 
-      this.allowTokenA = allowToken0;
-      this.allowTokenB = allowToken1;
-
-      // Initialize tokens
-      await Promise.all([this.tokenA.init(), this.tokenB.init()]);
-    } else {
-      this.tokenA = undefined;
-      this.tokenB = undefined;
-      this.allowTokenA = false;
-      this.allowTokenB = false;
-    }
+    await Promise.all([
+      this.tokenA.init(false, {
+        loadIndexerTokenData: true,
+        loadLogoURI: true,
+      }),
+      this.tokenB.init(false, {
+        loadIndexerTokenData: true,
+        loadLogoURI: true,
+      }),
+    ]);
   }
 
   // Actions
   deposit = new AsyncState(async () => {
-    if (!this.tokenA || !this.tokenB || !this.vaultContract) {
-      return;
-    }
+    if (!this.vaultContract) return;
 
-    const deposit0 = this.allowTokenA
-      ? new BigNumber(this.amountA)
-          .multipliedBy(new BigNumber(10).pow(this.tokenA.decimals))
-          .toFixed(0)
-      : "0";
+    const deposit0 =
+      this.allowTokenA && this.amountA
+        ? new BigNumber(this.amountA)
+            .multipliedBy(new BigNumber(10).pow(this.tokenA!.decimals))
+            .toFixed(0)
+        : "0";
 
-    const deposit1 = this.allowTokenB
-      ? new BigNumber(this.amountB)
-          .multipliedBy(new BigNumber(10).pow(this.tokenB.decimals))
-          .toFixed(0)
-      : "0";
+    const deposit1 =
+      this.allowTokenB && this.amountB
+        ? new BigNumber(this.amountB)
+            .multipliedBy(new BigNumber(10).pow(this.tokenB!.decimals))
+            .toFixed(0)
+        : "0";
 
-    // Only approve tokens that are allowed and have amounts
+    await this.handleApprovals(deposit0, deposit1);
+    await this.executeDeposit(deposit0, deposit1);
+    await this.refreshBalances();
+
+    //redirect to /vault/[address]
+    window.location.href = `/vault/${this.vaultContract.address}`;
+  });
+
+  private async handleApprovals(deposit0: string, deposit1: string) {
     const approvalPromises = [];
+
     if (this.allowTokenA && this.amountA) {
       approvalPromises.push(
-        this.tokenA.approveIfNoAllowance({
+        this.tokenA!.approveIfNoAllowance({
           amount: deposit0,
-          spender: this.vaultContract.address,
+          spender: this.vaultContract!.address,
         })
       );
     }
+
     if (this.allowTokenB && this.amountB) {
       approvalPromises.push(
-        this.tokenB.approveIfNoAllowance({
+        this.tokenB!.approveIfNoAllowance({
           amount: deposit1,
-          spender: this.vaultContract.address,
+          spender: this.vaultContract!.address,
         })
       );
     }
+
     await Promise.all(approvalPromises);
+  }
+
+  private async executeDeposit(deposit0: string, deposit1: string) {
+    if (!this.vaultContract) return;
 
     await this.vaultContract.deposit(
       BigInt(deposit0),
@@ -159,12 +199,15 @@ class Vault {
       wallet.account as `0x${string}`
     );
 
-    // Reset amounts after deposit
     this.amountA = "";
     this.amountB = "";
-    // Refresh balances
-    await Promise.all([this.tokenA.getBalance(), this.tokenB.getBalance()]);
-  });
+  }
+
+  private async refreshBalances() {
+    if (!this.vaultContract) return;
+
+    await Promise.all([this.tokenA?.getBalance(), this.tokenB?.getBalance()]);
+  }
 
   withdraw = new AsyncState(async (shares: string) => {
     if (!this.vaultContract || !shares) {

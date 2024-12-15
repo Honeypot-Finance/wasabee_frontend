@@ -22,6 +22,10 @@ import { Trigger } from "../Trigger";
 import { ArrowLeftRight, Zap, ChevronDown } from "lucide-react";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { VaultAmount } from "../VaultAmount/VaultAmount";
+import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
+import { PairContract } from "@/services/contract/pair-contract";
+import { MemePairContract } from "@/services/contract/memepair-contract";
+import { vault } from "@/services/vault";
 
 export const LaunchDetailSwapCard = observer(
   ({
@@ -29,11 +33,13 @@ export const LaunchDetailSwapCard = observer(
     outputAddress,
     extraTokenAction,
     noBoarder,
+    memePairContract,
   }: {
     inputAddress?: string;
     outputAddress?: string;
     extraTokenAction?: React.ReactNode;
     noBoarder?: boolean;
+    memePairContract: MemePairContract;
   }) => {
     const [currentTab, setCurrentTab] = useState<"Swap" | "LP">("Swap");
     const router = useRouter();
@@ -49,6 +55,23 @@ export const LaunchDetailSwapCard = observer(
         },
       }),
     }));
+    const [vaultContract, setVaultContract] =
+      useState<ICHIVaultContract | null>(null);
+
+    useEffect(() => {
+      //get pair contract by inputAddress and outputAddress
+
+      const loadVaultContract = async () => {
+        //get lp token, lp token is going to be aquabera vault address
+        const lpTokenAddress = await memePairContract.contract.read.lpToken();
+        //console.log("lpTokenAddress", lpTokenAddress);
+        const aquaberaVaultContract = new ICHIVaultContract({
+          address: lpTokenAddress,
+        });
+        setVaultContract(aquaberaVaultContract);
+      };
+      loadVaultContract();
+    }, [inputAddress, outputAddress]);
 
     const { inputCurrency, outputCurrency } = router.query as {
       inputCurrency: string;
@@ -369,123 +392,29 @@ export const LaunchDetailSwapCard = observer(
 
           {currentTab === "LP" && (
             <LoadingContainer isLoading={!isInit}>
+              <Button
+                className="w-full"
+                onClick={async () => {
+                  const lpTokenAddress =
+                    await memePairContract.contract.read.lpToken();
+                  window.location.href = `/vault/${lpTokenAddress}`;
+                }}
+              >
+                Visit Vault
+              </Button>
               <div className="w-full rounded-[32px] bg-white space-y-2 px-4 py-6 custom-dashed">
-                <VaultAmount
-                  label="From"
-                  token={swap.fromToken}
-                  direction="from"
-                  inputProps={{
-                    value: swap.fromAmount,
-                    disabled: !swap.fromToken,
-                    max: swap.fromToken?.balance.toNumber(),
-                    min: 0,
-                    isInvalid:
-                      Number(swap.fromAmount) >
-                        (swap.fromToken as Token)?.balance?.toNumber() ||
-                      0 ||
-                      Number(swap.fromAmount) < 0,
-                    errorMessage: "Insufficient balance",
-                    onClear: () => {
-                      swap.setFromAmount("0");
-                    },
-                    onChange: (e) => {
-                      swap.setFromAmount(e.target.value);
-                    },
-                  }}
-                />
-                {swap.fromToken && (
-                  <div className="w-full flex justify-end items-center">
-                    {/* TODO: update slider ui */}
-                    <Slider
-                      className="w-full"
-                      size="sm"
-                      maxValue={
-                        (swap.fromToken as Token).balance.toNumber() +
-                        Math.pow(0.1, 15)
-                      }
-                      minValue={0}
-                      onChange={(value) => {
-                        if (
-                          new BigNumber(String(value)) >
-                          (swap.fromToken as Token).balance
-                        ) {
-                          swap.setFromAmount(
-                            (swap.fromToken as Token).balance.toFixed()
-                          );
-                        } else {
-                          swap.setFromAmount(String(value));
-                        }
-                      }}
-                      value={Number(swap.fromAmount)}
-                      step={Math.pow(0.1, 18)}
-                    />
-                  </div>
-                )}{" "}
-                {swap.fromToken && (
-                  <ItemSelect
-                    selectState={state.selectState}
-                    className="grid grid-cols-2 lg:grid-cols-4 gap-[16px] justify-around w-full"
-                  >
-                    <SelectItem
-                      className="rounded-[30px] px-[24px]"
-                      value={0.25}
-                    >
-                      25%
-                    </SelectItem>
-                    <SelectItem
-                      className="rounded-[30px] px-[24px]"
-                      value={0.5}
-                    >
-                      50%
-                    </SelectItem>
-                    <SelectItem
-                      className="rounded-[30px] px-[24px]"
-                      value={0.75}
-                    >
-                      75%
-                    </SelectItem>
-                    <SelectItem className="rounded-[30px] px-[24px]" value={1}>
-                      100%
-                    </SelectItem>
-                  </ItemSelect>
-                )}
+                {vaultContract && <VaultAmount vaultContract={vaultContract} />}
               </div>
-              {swap.routerToken && swap.routerToken.length > 0 && (
-                <div className="w-full p-1 flex justify-between items-center rounded-xl  bg-black/50">
-                  <>
-                    <div>
-                      <TokenLogo token={swap.fromToken as Token} />
-                    </div>
-                    <FaLongArrowAltRight />
-                  </>
-
-                  {swap.routerToken.map((token, idx) => {
-                    if (idx != 0 && idx !== swap.routerToken!.length - 1) {
-                      return (
-                        <>
-                          <div key={token.address}>
-                            <TokenLogo token={token} />
-                          </div>
-                          <FaLongArrowAltRight />
-                        </>
-                      );
-                    }
-                  })}
-                  <div>
-                    <TokenLogo token={swap.toToken as Token} />
-                  </div>
-                </div>
-              )}
 
               <Button
                 className="w-full"
-                isDisabled={swap.isDisabled}
-                isLoading={swap.swapExactTokensForTokens.loading}
+                isDisabled={vault.isDisabled}
+                isLoading={vault.deposit.loading}
                 onClick={async () => {
-                  await swap.swapExactTokensForTokens.call();
+                  await vault.deposit.call();
                 }}
               >
-                {swap.buttonContent === "Swap" ? operate : swap.buttonContent}
+                {vault.buttonContent}
               </Button>
             </LoadingContainer>
           )}
