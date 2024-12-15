@@ -5,7 +5,7 @@ interface TriggerProps<T extends string = string> {
   tab: T;
   options: T[];
   className?: string;
-  callback?: Function;
+  callback?: (option: T) => void;
   capitalize?: boolean;
   setTab: (tab: T) => void;
 }
@@ -30,7 +30,7 @@ export function Trigger({
           key={option}
           onClick={() => {
             setTab(option);
-            callback && callback();
+            callback && callback(option);
           }}
           className={cn(
             "flex-1 px-3 py-1.5 text-sm font-medium transition-all rounded-lg text-center",
