@@ -1,30 +1,53 @@
 import { useQuery } from "@apollo/client";
-import { ACCOUNTS_QUERY, AccountsQueryData, PaginationParams } from "../algebra/graphql/clients/leaderboard";
+import {
+  ACCOUNTS_WITH_ADDRESS_QUERY,
+  ACCOUNTS_WITHOUT_ADDRESS_QUERY,
+  AccountsQueryData,
+  PaginationParams,
+  TOP_PARTICIPATE_ACCOUNTS_QUERY,
+  TOP_POT2PUMP_DEPLOYER_QUERY,
+  TOP_SWAP_ACCOUNTS_QUERY,
+  TopParticipateAccountsQueryData,
+  TopPot2PumpDeployerQueryData,
+  TopSwapAccountsQueryData,
+} from "../algebra/graphql/clients/leaderboard";
 import dayjs from "dayjs";
 
-export function useAccounts(page: number = 1, pageSize: number = 10, searchAddress: string = '') {
-  const { data, loading, error, fetchMore } = useQuery<AccountsQueryData>(ACCOUNTS_QUERY, {
-    variables: {
-      skip: (page - 1) * pageSize,
-      first: pageSize,
-      address: searchAddress ? { id: searchAddress.toLowerCase() } : null,
-    },
-  });
+export function useAccounts(
+  page: number = 1,
+  pageSize: number = 10,
+  searchAddress: string = ""
+) {
+  const { data, loading, error, fetchMore } = useQuery<AccountsQueryData>(
+    searchAddress
+      ? ACCOUNTS_WITH_ADDRESS_QUERY
+      : ACCOUNTS_WITHOUT_ADDRESS_QUERY,
+    {
+      variables: {
+        skip: (page - 1) * pageSize,
+        first: pageSize,
+        address: searchAddress ? { id: searchAddress.toLowerCase() } : null,
+      },
+    }
+  );
 
-  const accounts = data?.accounts.map(account => ({
-    walletAddress: account.id,
-    totalVolume: parseFloat(account.totalSpendUSD),
-    swapCount: parseInt(account.swapCount),
-    holdingCount: parseInt(account.holdingPoolCount),
-    memeTokenCount: parseInt(account.memeTokenHoldingCount),
-    transactions: parseInt(account.platformTxCount),
-    participateCount: parseInt(account.participateCount),
-    dailyEarning: parseFloat(account.totalEarningUSDDay),
-    monthlyEarning: parseFloat(account.totalEarningUSDMonth),
-    lastActive: account.transaction[0]
-      ? dayjs(parseInt(account.transaction[0].timestamp) * 1000).format("MM/DD/YYYY, h:mm:ss A")
-      : "-",
-  })) ?? [];
+  const accounts =
+    data?.accounts.map((account) => ({
+      walletAddress: account.id,
+      totalVolume: parseFloat(account.totalSpendUSD),
+      swapCount: parseInt(account.swapCount),
+      holdingCount: parseInt(account.holdingPoolCount),
+      memeTokenCount: parseInt(account.memeTokenHoldingCount),
+      transactions: parseInt(account.platformTxCount),
+      participateCount: parseInt(account.participateCount),
+      dailyEarning: parseFloat(account.totalEarningUSDDay),
+      monthlyEarning: parseFloat(account.totalEarningUSDMonth),
+      lastActive: account.transaction[0]
+        ? dayjs(parseInt(account.transaction[0].timestamp) * 1000).format(
+            "MM/DD/YYYY, h:mm:ss A"
+          )
+        : "-",
+    })) ?? [];
 
   const loadMore = () => {
     return fetchMore({
@@ -42,4 +65,49 @@ export function useAccounts(page: number = 1, pageSize: number = 10, searchAddre
     loadMore,
     hasMore: accounts.length === pageSize,
   };
-} 
+}
+
+export function useTopSwapAccounts() {
+  const { data, loading, error } = useQuery<TopSwapAccountsQueryData>(
+    TOP_SWAP_ACCOUNTS_QUERY
+  );
+  return {
+    accounts:
+      data?.accounts.map((account) => ({
+        walletAddress: account.id,
+        swapCount: parseInt(account.swapCount),
+      })) ?? [],
+    loading,
+    error,
+  };
+}
+
+export function useTopPot2PumpDeployer() {
+  const { data, loading, error } = useQuery<TopPot2PumpDeployerQueryData>(
+    TOP_POT2PUMP_DEPLOYER_QUERY
+  );
+  return {
+    accounts:
+      data?.accounts.map((account) => ({
+        walletAddress: account.id,
+        pot2PumpDeployCount: parseInt(account.pot2PumpLaunchCount),
+      })) ?? [],
+    loading,
+    error,
+  };
+}
+
+export function useTopParticipateAccounts() {
+  const { data, loading, error } = useQuery<TopParticipateAccountsQueryData>(
+    TOP_PARTICIPATE_ACCOUNTS_QUERY
+  );
+  return {
+    accounts:
+      data?.accounts.map((account) => ({
+        walletAddress: account.id,
+        participateCount: parseInt(account.participateCount),
+      })) ?? [],
+    loading,
+    error,
+  };
+}

@@ -22,6 +22,7 @@ import { popmodal } from "@/services/popmodal";
 import { LaunchDetailSwapCard } from "../SwapCard/MemeSwap";
 import { toCompactLocaleString } from "@/lib/utils";
 import TokenLogo from "../TokenLogo/TokenLogo";
+import { MemePairContract } from "@/services/contract/memepair-contract";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const ANIMATION_DURATION = 500; //ms
@@ -242,6 +243,7 @@ export const MemeWarPariticipantRaceChart = observer(() => {
               content: (
                 <LaunchDetailSwapCard
                   noBoarder
+                  memePairContract={target.pair as MemePairContract}
                   inputAddress={target.pair?.raiseToken?.address}
                   outputAddress={target.pair?.launchedToken?.address}
                   extraTokenAction={

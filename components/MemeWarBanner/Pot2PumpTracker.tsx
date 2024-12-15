@@ -10,6 +10,7 @@ import { fetchMemetrackerList, Pair } from "@/lib/algebra/graphql/clients/pair";
 import { wallet } from "@/services/wallet";
 import { Token } from "@/services/contract/token";
 import { trpcClient } from "@/lib/trpc";
+import { MemePairContract } from "@/services/contract/memepair-contract";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -106,6 +107,7 @@ export const Pot2PumpTracker = observer(() => {
               content: (
                 <LaunchDetailSwapCard
                   noBoarder
+                  memePairContract={target as unknown as MemePairContract}
                   inputAddress={target.token1.id}
                   outputAddress={target.token0.id}
                   extraTokenAction={

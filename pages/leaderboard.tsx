@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { useLeaderboard } from "@/lib/hooks/useLeaderboard";
 import { useTotalUsers } from "@/lib/hooks/useTotalUsers";
-import { useAccounts } from "@/lib/hooks/useAccounts";
+import {
+  useAccounts,
+  useTopParticipateAccounts,
+  useTopPot2PumpDeployer,
+  useTopSwapAccounts,
+} from "@/lib/hooks/useAccounts";
 
 interface LeaderboardItem {
   rank: number;
@@ -19,6 +24,13 @@ interface StatsCard {
   subValue?: string;
 }
 
+const shortenAddress = (address: string, chars = 4): string => {
+  if (!address) return "";
+  return `${address.substring(0, chars + 2)}...${address.substring(
+    address.length - chars
+  )}`;
+};
+
 const LeaderboardPage = () => {
   const [searchAddress, setSearchAddress] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -26,11 +38,22 @@ const LeaderboardPage = () => {
   const pageSize = 10;
   const { stats, loading: statsLoading } = useLeaderboard();
   const { totalUsers, loading: usersLoading } = useTotalUsers();
-  const { accounts, loading: accountsLoading, hasMore, loadMore } = useAccounts(
-    page,
-    pageSize,
-    debouncedSearch
-  );
+  const {
+    accounts,
+    loading: accountsLoading,
+    hasMore,
+    loadMore,
+  } = useAccounts(page, pageSize, debouncedSearch);
+  const { accounts: topSwapAccounts, loading: topSwapAccountsLoading } =
+    useTopSwapAccounts();
+  const {
+    accounts: topPot2PumpDeployerAccounts,
+    loading: topPot2PumpDeployerAccountsLoading,
+  } = useTopPot2PumpDeployer();
+  const {
+    accounts: topParticipateAccounts,
+    loading: topParticipateAccountsLoading,
+  } = useTopParticipateAccounts();
 
   // 使用防抖处理搜索
   useEffect(() => {
@@ -68,12 +91,22 @@ const LeaderboardPage = () => {
 
   // 将这个变量重命名为 topStats
   const topStats = [
-    { title: "Top Trader", address: "0xbe8F...2A90", value: "800 Swaps" },
-    { title: "Top Deployer", address: "0xc36f...9062", value: "749 Deploys" },
+    {
+      title: "Top Trader",
+      address: shortenAddress(topSwapAccounts[0]?.walletAddress ?? "-"),
+      value: `${topSwapAccounts[0]?.swapCount ?? "-"} Swaps`,
+    },
+    {
+      title: "Top Deployer",
+      address: shortenAddress(
+        topPot2PumpDeployerAccounts[0]?.walletAddress ?? "-"
+      ),
+      value: `${topPot2PumpDeployerAccounts[0]?.pot2PumpDeployCount ?? "-"} Deploys`,
+    },
     {
       title: "Top Participant",
-      address: "0x5906...5846",
-      value: "6212 Participations",
+      address: shortenAddress(topParticipateAccounts[0]?.walletAddress ?? "-"),
+      value: `${topParticipateAccounts[0]?.participateCount ?? "-"} Participations`,
     },
   ];
 
@@ -149,13 +182,11 @@ const LeaderboardPage = () => {
               </div>
               {debouncedSearch && (
                 <div className="text-gray-400 text-sm ml-4">
-                  {accountsLoading ? (
-                    "Searching..."
-                  ) : accounts.length > 0 ? (
-                    `Found ${accounts.length} results`
-                  ) : (
-                    "No results found"
-                  )}
+                  {accountsLoading
+                    ? "Searching..."
+                    : accounts.length > 0
+                      ? `Found ${accounts.length} results`
+                      : "No results found"}
                 </div>
               )}
             </div>
@@ -176,42 +207,78 @@ const LeaderboardPage = () => {
                             Address
                           </div>
                         </th>
-                        <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">Total Volume</th>
-                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">Swaps</th>
-                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">Holdings</th>
-                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">Meme Tokens</th>
-                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">Participations</th>
-                        <th className="py-4 px-6 text-right text-base font-medium whitespace-nowrap">Daily Earning</th>
-                        <th className="py-4 px-6 text-right text-base font-medium whitespace-nowrap">Monthly Earning</th>
-                        <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">Last Active</th>
+                        <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">
+                          Total Volume
+                        </th>
+                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
+                          Swaps
+                        </th>
+                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
+                          Holdings
+                        </th>
+                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
+                          Meme Tokens
+                        </th>
+                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
+                          Participations
+                        </th>
+                        <th className="py-4 px-6 text-right text-base font-medium whitespace-nowrap">
+                          Daily Earning
+                        </th>
+                        <th className="py-4 px-6 text-right text-base font-medium whitespace-nowrap">
+                          Monthly Earning
+                        </th>
+                        <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">
+                          Last Active
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="text-white divide-y divide-[#5C5C5C]">
                       {accountsLoading ? (
                         <tr>
-                          <td colSpan={9} className="py-4 px-6 text-center">Loading...</td>
-                        </tr>
-                      ) : accounts.map((item, index) => (
-                        <tr
-                          key={item.walletAddress}
-                          className="hover:bg-[#2a2a2a] transition-colors"
-                        >
-                          <td className="py-4 px-6 text-base font-mono text-blue-400">
-                            <div className="flex items-center gap-2">
-                              <div className="w-4 h-4 bg-[#FFCD4D] rounded"></div>
-                              {item.walletAddress}
-                            </div>
+                          <td colSpan={9} className="py-4 px-6 text-center">
+                            Loading...
                           </td>
-                          <td className="py-4 px-6 text-base">${item.totalVolume.toLocaleString()}</td>
-                          <td className="py-4 px-6 text-center text-base">{item.swapCount}</td>
-                          <td className="py-4 px-6 text-center text-base">{item.holdingCount}</td>
-                          <td className="py-4 px-6 text-center text-base">{item.memeTokenCount}</td>
-                          <td className="py-4 px-6 text-center text-base">{item.participateCount}</td>
-                          <td className="py-4 px-6 text-right text-base">${item.dailyEarning.toLocaleString()}</td>
-                          <td className="py-4 px-6 text-right text-base">${item.monthlyEarning.toLocaleString()}</td>
-                          <td className="py-4 px-6 text-base">{item.lastActive}</td>
                         </tr>
-                      ))}
+                      ) : (
+                        accounts.map((item, index) => (
+                          <tr
+                            key={item.walletAddress}
+                            className="hover:bg-[#2a2a2a] transition-colors"
+                          >
+                            <td className="py-4 px-6 text-base font-mono text-blue-400">
+                              <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 bg-[#FFCD4D] rounded"></div>
+                                {item.walletAddress}
+                              </div>
+                            </td>
+                            <td className="py-4 px-6 text-base">
+                              ${item.totalVolume.toLocaleString()}
+                            </td>
+                            <td className="py-4 px-6 text-center text-base">
+                              {item.swapCount}
+                            </td>
+                            <td className="py-4 px-6 text-center text-base">
+                              {item.holdingCount}
+                            </td>
+                            <td className="py-4 px-6 text-center text-base">
+                              {item.memeTokenCount}
+                            </td>
+                            <td className="py-4 px-6 text-center text-base">
+                              {item.participateCount}
+                            </td>
+                            <td className="py-4 px-6 text-right text-base">
+                              ${item.dailyEarning.toLocaleString()}
+                            </td>
+                            <td className="py-4 px-6 text-right text-base">
+                              ${item.monthlyEarning.toLocaleString()}
+                            </td>
+                            <td className="py-4 px-6 text-base">
+                              {item.lastActive}
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -220,12 +287,22 @@ const LeaderboardPage = () => {
                 <div className="flex items-center gap-6 max-w-[400px]">
                   <div className="flex items-center gap-4">
                     <button
-                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
                       className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition-colors"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
                       </svg>
                       Previous
                     </button>
@@ -238,23 +315,44 @@ const LeaderboardPage = () => {
                     <button
                       onClick={() => {
                         if (hasMore) {
-                          loadMore().then(() => setPage(p => p + 1));
+                          loadMore().then(() => setPage((p) => p + 1));
                         }
                       }}
                       disabled={!hasMore || accountsLoading}
                       className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition-colors"
                     >
                       Next
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </button>
                   </div>
 
                   {accountsLoading && (
                     <div className="flex items-center gap-2 text-gray-400">
-                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <svg
+                        className="animate-spin h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
                         <path
                           className="opacity-75"
                           fill="currentColor"

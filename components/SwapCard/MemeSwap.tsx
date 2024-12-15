@@ -26,6 +26,7 @@ import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contra
 import { PairContract } from "@/services/contract/pair-contract";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { vault } from "@/services/vault";
+import { chart } from "@/services/chart";
 
 export const LaunchDetailSwapCard = observer(
   ({
