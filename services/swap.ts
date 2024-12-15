@@ -34,9 +34,8 @@ class Swap {
 
     const routerPossiblePaths = this.getRouterPathsByValidatedToken();
 
-    const bestPath = await this.calculateBestPathFromRouterPaths(
-      routerPossiblePaths
-    );
+    const bestPath =
+      await this.calculateBestPathFromRouterPaths(routerPossiblePaths);
 
     this.setRouterToken(bestPath.map((t) => Token.getToken({ address: t })));
   };
@@ -203,7 +202,7 @@ class Swap {
         if (this.fromToken && this.toToken) {
           await this.currentPair.call();
         }
-        this.updateChartData();
+        //this.updateChartData();
       }
     );
     reaction(
@@ -220,7 +219,7 @@ class Swap {
             this.fromAmount = this.fromAmount + " ";
           }
         }
-        this.updateChartData();
+        // this.updateChartData();
       }
     );
     reaction(
@@ -701,7 +700,7 @@ class Swap {
       return;
     }
     if (this.isWrapOrUnwrap) {
-      return false
+      return false;
     }
 
     const fromAmountDecimals = new BigNumber(this.fromAmount)
