@@ -1,4 +1,5 @@
 import type { CodegenConfig } from "@graphql-codegen/cli";
+import { QueryClient } from "@tanstack/react-query";
 
 const config: CodegenConfig = {
   overwrite: true,
@@ -18,6 +19,7 @@ const config: CodegenConfig = {
       config: {
         withHooks: true,
         withResultType: true,
+        addQuery: true,
       },
     },
   },

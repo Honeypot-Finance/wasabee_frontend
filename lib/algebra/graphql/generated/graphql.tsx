@@ -11975,6 +11975,174 @@ export enum _SubgraphErrorPolicy_ {
   Deny = "deny",
 }
 
+export type AllAccountsQueryVariables = Exact<{
+  orderBy?: InputMaybe<Account_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+}>;
+
+export type AllAccountsQuery = {
+  __typename?: "Query";
+  accounts: Array<{
+    __typename?: "Account";
+    id: string;
+    swapCount: any;
+    memeTokenHoldingCount: any;
+    pot2PumpLaunchCount: any;
+    participateCount: any;
+    platformTxCount: any;
+    holdingPoolCount: any;
+    totalSpendUSD: any;
+    vaultShares?: Array<{
+      __typename?: "VaultShare";
+      id: string;
+      vaultShareBalance: any;
+      vault: { __typename?: "IchiVault"; id: string };
+    }> | null;
+    transaction: Array<{
+      __typename?: "Transaction";
+      id: string;
+      timestamp: any;
+    }>;
+    holder: Array<{
+      __typename?: "HoldingToken";
+      id: string;
+      token: {
+        __typename?: "Token";
+        id: string;
+        symbol: string;
+        derivedUSD: any;
+      };
+    }>;
+    participant: Array<{
+      __typename?: "Participant";
+      id: string;
+      pot2Pump: { __typename?: "Pot2Pump"; id: string };
+    }>;
+  }>;
+};
+
+export type SingleAccountDetailsQueryVariables = Exact<{
+  accountId: Scalars["ID"]["input"];
+}>;
+
+export type SingleAccountDetailsQuery = {
+  __typename?: "Query";
+  account?: {
+    __typename?: "Account";
+    id: string;
+    swapCount: any;
+    memeTokenHoldingCount: any;
+    pot2PumpLaunchCount: any;
+    participateCount: any;
+    platformTxCount: any;
+    holdingPoolCount: any;
+    totalSpendUSD: any;
+    vaultShares?: Array<{
+      __typename?: "VaultShare";
+      id: string;
+      vaultShareBalance: any;
+      vault: { __typename?: "IchiVault"; id: string };
+    }> | null;
+    transaction: Array<{
+      __typename?: "Transaction";
+      id: string;
+      timestamp: any;
+    }>;
+    holder: Array<{
+      __typename?: "HoldingToken";
+      id: string;
+      token: {
+        __typename?: "Token";
+        id: string;
+        symbol: string;
+        derivedUSD: any;
+      };
+    }>;
+    participant: Array<{
+      __typename?: "Participant";
+      id: string;
+      pot2Pump: { __typename?: "Pot2Pump"; id: string };
+    }>;
+  } | null;
+};
+
+export type AccountFieldFragment = {
+  __typename?: "Account";
+  id: string;
+  swapCount: any;
+  memeTokenHoldingCount: any;
+  pot2PumpLaunchCount: any;
+  participateCount: any;
+  platformTxCount: any;
+  holdingPoolCount: any;
+  totalSpendUSD: any;
+  vaultShares?: Array<{
+    __typename?: "VaultShare";
+    id: string;
+    vaultShareBalance: any;
+    vault: { __typename?: "IchiVault"; id: string };
+  }> | null;
+  transaction: Array<{
+    __typename?: "Transaction";
+    id: string;
+    timestamp: any;
+  }>;
+  holder: Array<{
+    __typename?: "HoldingToken";
+    id: string;
+    token: {
+      __typename?: "Token";
+      id: string;
+      symbol: string;
+      derivedUSD: any;
+    };
+  }>;
+  participant: Array<{
+    __typename?: "Participant";
+    id: string;
+    pot2Pump: { __typename?: "Pot2Pump"; id: string };
+  }>;
+};
+
+export type HoldingTokenFieldFragment = {
+  __typename?: "HoldingToken";
+  id: string;
+  token: { __typename?: "Token"; id: string; symbol: string; derivedUSD: any };
+};
+
+export type ParticipantFieldFragment = {
+  __typename?: "Participant";
+  id: string;
+  pot2Pump: { __typename?: "Pot2Pump"; id: string };
+};
+
+export type Pot2PumpFieldFragment = { __typename?: "Pot2Pump"; id: string };
+
+export type VaultShareFieldFragment = {
+  __typename?: "VaultShare";
+  id: string;
+  vaultShareBalance: any;
+  vault: { __typename?: "IchiVault"; id: string };
+};
+
+export type AlgebraVaultFieldFragment = {
+  __typename?: "IchiVault";
+  id: string;
+};
+
+export type TransactionFieldFragment = {
+  __typename?: "Transaction";
+  id: string;
+  timestamp: any;
+};
+
+export type TokenFieldFragment = {
+  __typename?: "Token";
+  id: string;
+  symbol: string;
+  derivedUSD: any;
+};
+
 export type EternalFarmingsQueryVariables = Exact<{
   pool?: InputMaybe<Scalars["Bytes"]["input"]>;
 }>;
@@ -12567,6 +12735,85 @@ export type SingleVaultDetailsQuery = {
   } | null;
 };
 
+export const AlgebraVaultFieldFragmentDoc = gql`
+  fragment AlgebraVaultField on IchiVault {
+    id
+  }
+`;
+export const VaultShareFieldFragmentDoc = gql`
+  fragment VaultShareField on VaultShare {
+    id
+    vaultShareBalance
+    vault {
+      ...AlgebraVaultField
+    }
+  }
+  ${AlgebraVaultFieldFragmentDoc}
+`;
+export const TransactionFieldFragmentDoc = gql`
+  fragment TransactionField on Transaction {
+    id
+    timestamp
+  }
+`;
+export const TokenFieldFragmentDoc = gql`
+  fragment TokenField on Token {
+    id
+    symbol
+    derivedUSD
+  }
+`;
+export const HoldingTokenFieldFragmentDoc = gql`
+  fragment HoldingTokenField on HoldingToken {
+    id
+    token {
+      ...TokenField
+    }
+  }
+  ${TokenFieldFragmentDoc}
+`;
+export const Pot2PumpFieldFragmentDoc = gql`
+  fragment Pot2PumpField on Pot2Pump {
+    id
+  }
+`;
+export const ParticipantFieldFragmentDoc = gql`
+  fragment ParticipantField on Participant {
+    id
+    pot2Pump {
+      ...Pot2PumpField
+    }
+  }
+  ${Pot2PumpFieldFragmentDoc}
+`;
+export const AccountFieldFragmentDoc = gql`
+  fragment AccountField on Account {
+    id
+    swapCount
+    memeTokenHoldingCount
+    pot2PumpLaunchCount
+    participateCount
+    platformTxCount
+    holdingPoolCount
+    totalSpendUSD
+    vaultShares {
+      ...VaultShareField
+    }
+    transaction(orderBy: timestamp, orderDirection: desc, first: 100) {
+      ...TransactionField
+    }
+    holder {
+      ...HoldingTokenField
+    }
+    participant {
+      ...ParticipantField
+    }
+  }
+  ${VaultShareFieldFragmentDoc}
+  ${TransactionFieldFragmentDoc}
+  ${HoldingTokenFieldFragmentDoc}
+  ${ParticipantFieldFragmentDoc}
+`;
 export const BundleFieldsFragmentDoc = gql`
   fragment BundleFields on Bundle {
     id
@@ -12687,6 +12934,170 @@ export const VaultSharesFieldFragmentDoc = gql`
   ${VaultUserFieldFragmentDoc}
   ${VaultFieldFragmentDoc}
 `;
+export const AllAccountsDocument = gql`
+  query AllAccounts(
+    $orderBy: Account_orderBy
+    $orderDirection: OrderDirection
+  ) {
+    accounts(first: 100, orderBy: $orderBy, orderDirection: $orderDirection) {
+      ...AccountField
+    }
+  }
+  ${AccountFieldFragmentDoc}
+`;
+
+/**
+ * __useAllAccountsQuery__
+ *
+ * To run a query within a React component, call `useAllAccountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllAccountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAllAccountsQuery({
+ *   variables: {
+ *      orderBy: // value for 'orderBy'
+ *      orderDirection: // value for 'orderDirection'
+ *   },
+ * });
+ */
+export function useAllAccountsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AllAccountsQuery,
+    AllAccountsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<AllAccountsQuery, AllAccountsQueryVariables>(
+    AllAccountsDocument,
+    options
+  );
+}
+export function useAllAccountsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AllAccountsQuery,
+    AllAccountsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<AllAccountsQuery, AllAccountsQueryVariables>(
+    AllAccountsDocument,
+    options
+  );
+}
+export function useAllAccountsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        AllAccountsQuery,
+        AllAccountsQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<AllAccountsQuery, AllAccountsQueryVariables>(
+    AllAccountsDocument,
+    options
+  );
+}
+export type AllAccountsQueryHookResult = ReturnType<typeof useAllAccountsQuery>;
+export type AllAccountsLazyQueryHookResult = ReturnType<
+  typeof useAllAccountsLazyQuery
+>;
+export type AllAccountsSuspenseQueryHookResult = ReturnType<
+  typeof useAllAccountsSuspenseQuery
+>;
+export type AllAccountsQueryResult = Apollo.QueryResult<
+  AllAccountsQuery,
+  AllAccountsQueryVariables
+>;
+export const SingleAccountDetailsDocument = gql`
+  query SingleAccountDetails($accountId: ID!) {
+    account(id: $accountId) {
+      ...AccountField
+    }
+  }
+  ${AccountFieldFragmentDoc}
+`;
+
+/**
+ * __useSingleAccountDetailsQuery__
+ *
+ * To run a query within a React component, call `useSingleAccountDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSingleAccountDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSingleAccountDetailsQuery({
+ *   variables: {
+ *      accountId: // value for 'accountId'
+ *   },
+ * });
+ */
+export function useSingleAccountDetailsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    SingleAccountDetailsQuery,
+    SingleAccountDetailsQueryVariables
+  > &
+    (
+      | { variables: SingleAccountDetailsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    )
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    SingleAccountDetailsQuery,
+    SingleAccountDetailsQueryVariables
+  >(SingleAccountDetailsDocument, options);
+}
+export function useSingleAccountDetailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SingleAccountDetailsQuery,
+    SingleAccountDetailsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    SingleAccountDetailsQuery,
+    SingleAccountDetailsQueryVariables
+  >(SingleAccountDetailsDocument, options);
+}
+export function useSingleAccountDetailsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        SingleAccountDetailsQuery,
+        SingleAccountDetailsQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    SingleAccountDetailsQuery,
+    SingleAccountDetailsQueryVariables
+  >(SingleAccountDetailsDocument, options);
+}
+export type SingleAccountDetailsQueryHookResult = ReturnType<
+  typeof useSingleAccountDetailsQuery
+>;
+export type SingleAccountDetailsLazyQueryHookResult = ReturnType<
+  typeof useSingleAccountDetailsLazyQuery
+>;
+export type SingleAccountDetailsSuspenseQueryHookResult = ReturnType<
+  typeof useSingleAccountDetailsSuspenseQuery
+>;
+export type SingleAccountDetailsQueryResult = Apollo.QueryResult<
+  SingleAccountDetailsQuery,
+  SingleAccountDetailsQueryVariables
+>;
 export const EternalFarmingsDocument = gql`
   query EternalFarmings($pool: Bytes) {
     eternalFarmings(where: { pool: $pool }) {
