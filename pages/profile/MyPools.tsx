@@ -1,7 +1,15 @@
+import MyPoolsList from "@/components/algebra/pools/PoolsList/MyPoolsList";
+import MyAquaberaVaults from "@/components/Aquabera/VaultLists/MyVaults";
 import OldPagination from "@/components/Pagination/OldPagination";
 import { PoolLiquidityCard } from "@/components/PoolLiquidityCard/PoolLiquidityCard";
 import { liquidity } from "@/services/liquidity";
-import { Card, CardBody, Button as NextButton } from "@nextui-org/react";
+import {
+  Card,
+  CardBody,
+  Button as NextButton,
+  Tab,
+  Tabs,
+} from "@nextui-org/react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +18,17 @@ export const MyPools = observer(() => {
   return (
     <Card className="next-card">
       <CardBody>
-        <div className="flex w-full items-center">
+        <Tabs>
+          <Tab value="algebra" title="Pool">
+            <MyPoolsList />
+          </Tab>
+          <Tab value="vault" title="Vault">
+            <div className="flex flex-col xl:flex-row gap-4 w-full py-4">
+              <MyAquaberaVaults />
+            </div>
+          </Tab>
+        </Tabs>
+        {/* <div className="flex w-full items-center">
           <div className="hidden md:flex w-full justify-between text-[#FAFAFC] gap-[0.5rem]">
             <div className="w-full">
               <h2 className="ml-[1rem] opacity-65 ">Pool</h2>
@@ -52,7 +70,7 @@ export const MyPools = observer(() => {
             itemsContainer: "",
             item: "",
           }}
-        />
+        /> */}
       </CardBody>
     </Card>
   );

@@ -194,26 +194,26 @@ export const poolsColumns: ColumnDef<Pool>[] = [
       );
     },
   },
-  {
-    accessorKey: "actions",
-    header: () => <></>,
-    cell: () => {
-      return (
-        <div className="space-x-2">
-          <button
-            className="border border-[#E18A20]/40 text-black rounded-lg shrink-0 p-2.5"
-            style={{
-              background:
-                "var(--f-7931-a-2-paints, linear-gradient(180deg, rgba(232, 211, 124, 0.13) 33.67%, #FCD729 132.5%), #F7931A)",
-            }}
-          >
-            Add
-          </button>
-          <button className="border border-[#E18A20]/40 bg-[#E18A20]/40 text-white rounded-lg p-2.5 shrink-0">
-            Remove
-          </button>
-        </div>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "actions",
+  //   header: () => <></>,
+  //   cell: () => {
+  //     return (
+  //       <div className="space-x-2">
+  //         <button
+  //           className="border border-[#E18A20]/40 text-black rounded-lg shrink-0 p-2.5"
+  //           style={{
+  //             background:
+  //               "var(--f-7931-a-2-paints, linear-gradient(180deg, rgba(232, 211, 124, 0.13) 33.67%, #FCD729 132.5%), #F7931A)",
+  //           }}
+  //         >
+  //           Add
+  //         </button>
+  //         <button className="border border-[#E18A20]/40 bg-[#E18A20]/40 text-white rounded-lg p-2.5 shrink-0">
+  //           Remove
+  //         </button>
+  //       </div>
+  //     );
+  //   },
+  // },
 ];
