@@ -2,12 +2,84 @@ import { observer } from "mobx-react-lite";
 import { Card, CardBody, Skeleton } from "@nextui-org/react";
 import { TokenBalanceCard } from "@/components/TokenBalanceCard/TokenBalanceCard";
 import { portfolio } from "@/services/portfolio";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+
+type SortField = "name" | "price" | "balance" | "value";
+type SortDirection = "asc" | "desc";
 
 export const PortfolioTab = observer(() => {
+  const [sortField, setSortField] = useState<SortField>("value");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
   useEffect(() => {
     portfolio.initPortfolio();
   }, []);
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("desc");
+    }
+  };
+
+  const getSortedTokens = () => {
+    return [...portfolio.tokens].sort((a, b) => {
+      const multiplier = sortDirection === "asc" ? 1 : -1;
+
+      switch (sortField) {
+        case "name":
+          return multiplier * a.displayName.localeCompare(b.displayName);
+        case "price":
+          return (
+            multiplier * (Number(a.derivedUSD || 0) - Number(b.derivedUSD || 0))
+          );
+        case "balance":
+          return multiplier * (a.balance.toNumber() - b.balance.toNumber());
+        case "value":
+          const aValue = Number(a.derivedUSD || 0) * a.balance.toNumber();
+          const bValue = Number(b.derivedUSD || 0) * b.balance.toNumber();
+          return multiplier * (aValue - bValue);
+        default:
+          return 0;
+      }
+    });
+  };
+
+  const SortHeader = ({
+    field,
+    label,
+  }: {
+    field: SortField;
+    label: string;
+  }) => (
+    <th
+      className="py-4 px-6 cursor-pointer hover:bg-[#2D2D2D]/30 transition-colors"
+      onClick={() => handleSort(field)}
+    >
+      <div className="flex items-center gap-2 justify-end">
+        <span>{label}</span>
+        <div className="flex flex-col">
+          <ChevronUpIcon
+            className={`h-3 w-3 ${
+              sortField === field && sortDirection === "asc"
+                ? "text-[#F7931A]"
+                : "text-gray-400"
+            }`}
+          />
+          <ChevronDownIcon
+            className={`h-3 w-3 ${
+              sortField === field && sortDirection === "desc"
+                ? "text-[#F7931A]"
+                : "text-gray-400"
+            }`}
+          />
+        </div>
+      </div>
+    </th>
+  );
 
   return (
     <Card className="bg-[#1C1C1C] border-none">
@@ -15,17 +87,39 @@ export const PortfolioTab = observer(() => {
         <table className="w-full">
           <thead className="bg-[#323232] text-white">
             <tr>
-              <th className="py-4 px-6 text-left">Asset</th>
-              <th className="py-4 px-6 text-right">Price</th>
-              <th className="py-4 px-6 text-right">Balance</th>
-              <th className="py-4 px-6 text-right">Proportion</th>
+              <th
+                className="py-4 px-6 text-left cursor-pointer hover:bg-[#2D2D2D]/30 transition-colors"
+                onClick={() => handleSort("name")}
+              >
+                <div className="flex items-center gap-2">
+                  <span>Asset</span>
+                  <div className="flex flex-col">
+                    <ChevronUpIcon
+                      className={`h-3 w-3 ${
+                        sortField === "name" && sortDirection === "asc"
+                          ? "text-[#F7931A]"
+                          : "text-gray-400"
+                      }`}
+                    />
+                    <ChevronDownIcon
+                      className={`h-3 w-3 ${
+                        sortField === "name" && sortDirection === "desc"
+                          ? "text-[#F7931A]"
+                          : "text-gray-400"
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+              <SortHeader field="price" label="Price" />
+              <SortHeader field="balance" label="Balance" />
+              <SortHeader field="value" label="Value" />
               <th className="py-4 px-6 text-center">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#2D2D2D]">
             {portfolio.isLoading
-              ? // Skeleton loading rows
-                Array(3)
+              ? Array(3)
                   .fill(0)
                   .map((_, index) => (
                     <tr key={index}>
@@ -46,7 +140,7 @@ export const PortfolioTab = observer(() => {
                       </td>
                     </tr>
                   ))
-              : portfolio.sortedTokens.map((token) => (
+              : getSortedTokens().map((token) => (
                   <TokenBalanceCard key={token.address} token={token} />
                 ))}
           </tbody>
