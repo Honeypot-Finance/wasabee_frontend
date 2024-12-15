@@ -21,6 +21,7 @@ import { useInterval } from "@/lib/hooks";
 import { Trigger } from "../Trigger";
 import { ArrowLeftRight, Zap, ChevronDown } from "lucide-react";
 import { BsLightningChargeFill } from "react-icons/bs";
+import { chart } from "@/services/chart";
 
 export const SwapCard = observer(
   ({
@@ -94,6 +95,22 @@ export const SwapCard = observer(
     }, 3000);
 
     const [isExpanded, setIsExpanded] = useState(true);
+
+    useEffect(() => {
+      if (inputCurrency) {
+        chart.setChartLabel(
+          `${Token.getToken({ address: inputCurrency }).symbol}`
+        );
+        chart.setChartTarget(Token.getToken({ address: inputCurrency }));
+        chart.setCurrencyCode("USD");
+      } else if (outputCurrency) {
+        chart.setChartLabel(`${outputCurrency}`);
+        chart.setChartTarget(Token.getToken({ address: outputCurrency }));
+        chart.setCurrencyCode("USD");
+      }
+
+      console.log("chart.getChartTarget()", chart.chartTarget);
+    }, [inputCurrency, outputCurrency]);
 
     return (
       <SpinnerContainer

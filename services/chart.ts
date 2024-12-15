@@ -33,27 +33,27 @@ export const chartTimeRanges: {
 } = {
   "5M": {
     label: "5M",
-    value: dayjs().unix() - 60 * 5,
+    value: dayjs().unix() - 60 * 5 * 10,
     resolution: "1",
   },
   "15M": {
     label: "15M",
-    value: dayjs().unix() - 60 * 15,
+    value: dayjs().unix() - 60 * 15 * 10,
     resolution: "1",
   },
   "30M": {
     label: "30M",
-    value: dayjs().unix() - 60 * 30,
+    value: dayjs().unix() - 60 * 30 * 10,
     resolution: "1",
   },
   "4H": {
     label: "4H",
-    value: dayjs().unix() - 60 * 60 * 4,
+    value: dayjs().unix() - 60 * 60 * 4 * 10,
     resolution: "15",
   },
   "1D": {
     label: "1D",
-    value: dayjs().unix() - 60 * 60 * 24,
+    value: dayjs().unix() - 60 * 60 * 24 * 10,
     resolution: "30",
   },
 };
@@ -182,7 +182,7 @@ class Chart {
   constructor() {
     makeAutoObservable(this);
     reaction(
-      () => this.range,
+      () => [this.range, this.chartTarget],
       () => {
         this.chartData.call();
       }

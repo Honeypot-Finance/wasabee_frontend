@@ -135,37 +135,55 @@ const SwapPairV3 = () => {
         ) ?? ""),
   };
 
-  useEffect(() => {
-    if (baseCurrency && quoteCurrency) {
-      chart.setChartLabel(`${baseCurrency.symbol}/${quoteCurrency.symbol}`);
+  // useEffect(() => {
+  //   if (baseCurrency && quoteCurrency) {
+  //     chart.setChartLabel(`${baseCurrency.symbol}/${quoteCurrency.symbol}`);
 
-      chart.setChartTarget(
-        new PairContract({
-          address: computePoolAddress({
-            tokenA: baseCurrency.wrapped,
-            tokenB: quoteCurrency.wrapped,
-          }),
-          token0: Token.getToken({
-            address: baseCurrency.wrapped.address,
-          }),
-          token1: Token.getToken({
-            address: quoteCurrency.wrapped.address,
-          }),
-        })
-      );
-      chart.setCurrencyCode("TOKEN");
-    } else if (baseCurrency) {
+  //     chart.setChartTarget(
+  //       new PairContract({
+  //         address: computePoolAddress({
+  //           tokenA: baseCurrency.wrapped,
+  //           tokenB: quoteCurrency.wrapped,
+  //         }),
+  //         token0: Token.getToken({
+  //           address: baseCurrency.wrapped.address,
+  //         }),
+  //         token1: Token.getToken({
+  //           address: quoteCurrency.wrapped.address,
+  //         }),
+  //       })
+  //     );
+  //     chart.setCurrencyCode("TOKEN");
+  //   } else if (baseCurrency) {
+  //     chart.setChartLabel(`${baseCurrency.symbol}`);
+  //     chart.setChartTarget(
+  //       Token.getToken({ address: baseCurrency.wrapped.address })
+  //     );
+  //     chart.setCurrencyCode("TOKEN");
+  //   } else if (quoteCurrency) {
+  //     chart.setChartLabel(`${quoteCurrency.symbol}`);
+  //     chart.setChartTarget(
+  //       Token.getToken({ address: quoteCurrency.wrapped.address })
+  //     );
+  //     chart.setCurrencyCode("TOKEN");
+  //   }
+
+  //   console.log("chart.getChartTarget()", chart.chartTarget);
+  // }, [baseCurrency, quoteCurrency]);
+
+  useEffect(() => {
+    if (baseCurrency) {
       chart.setChartLabel(`${baseCurrency.symbol}`);
       chart.setChartTarget(
         Token.getToken({ address: baseCurrency.wrapped.address })
       );
-      chart.setCurrencyCode("TOKEN");
+      chart.setCurrencyCode("USD");
     } else if (quoteCurrency) {
       chart.setChartLabel(`${quoteCurrency.symbol}`);
       chart.setChartTarget(
         Token.getToken({ address: quoteCurrency.wrapped.address })
       );
-      chart.setCurrencyCode("TOKEN");
+      chart.setCurrencyCode("USD");
     }
 
     console.log("chart.getChartTarget()", chart.chartTarget);
