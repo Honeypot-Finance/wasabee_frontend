@@ -58,4 +58,5 @@ export interface ChartDataResponseGetBars {
   l: number[] | undefined[];
   c: number[] | undefined[];
   t: number[] | undefined[];
+  v: number[] | undefined[];
 }

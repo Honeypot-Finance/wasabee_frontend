@@ -7,79 +7,52 @@ import {
   useMemo,
 } from "react";
 import * as LightweightCharts from "lightweight-charts";
-import dayjs from "dayjs";
-import Image from "next/image";
+import { observer } from "mobx-react-lite";
+import { chart, chartTimeRanges } from "@/services/chart";
 import { AiOutlineSwap } from "react-icons/ai";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
-import { wallet } from "@/services/wallet";
+import dayjs from "dayjs";
 
 interface KlineChartProps {
-  data?: any[];
   height?: number;
-  symbol?: string;
-  price?: string;
-  change?: string;
 }
 
-type TimeRange = "24H" | "1W" | "1M" | "1Y";
-
-// 根据不同时间范围生成数据
-const generateMockData = (timeRange: TimeRange = "24H") => {
-  const data = [];
-  let basePrice = 1200;
-  const now = dayjs();
-
-  const config = {
-    "24H": { unit: "hour", count: 24, step: 1 },
-    "1W": { unit: "day", count: 7, step: 2 },
-    "1M": { unit: "day", count: 30, step: 6 },
-    "1Y": { unit: "month", count: 12, step: 24 },
-  } as const;
-
-  const { unit, count, step } = config[timeRange];
-
-  for (let i = count; i >= 0; i -= step) {
-    const time = now.subtract(i, unit as any).unix() as LightweightCharts.Time;
-    const open = basePrice + Math.random() * 20 - 10;
-    const high = open + Math.random() * 10;
-    const low = open - Math.random() * 10;
-    const close = (high + low) / 2;
-
-    basePrice = close;
-
-    data.push({
-      time,
-      open,
-      high,
-      low,
-      close,
-      volume: Math.floor(Math.random() * 200),
-    });
-  }
-
-  return data;
-};
-
-const KlineChart = ({
-  height = 400,
-  symbol = "USDC/ETH",
-  price = "$1.03",
-  change = "0.03%",
-}: KlineChartProps) => {
+const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [chartCreated, setChart] = useState<any | undefined>();
   const [candleSeries, setCandleSeries] = useState<any | undefined>();
   const [volumeSeries, setVolumeSeries] = useState<any | undefined>();
-  const [timeRange, setTimeRange] = useState<TimeRange>("24H");
-  const [token1, setToken1] = useState<Token>(
-    wallet.currentChain.validatedTokens[0]
-  );
-  const [token2, setToken2] = useState<Token>(
-    wallet.currentChain.validatedTokens[1]
-  );
 
-  const mockData = useMemo(() => generateMockData(timeRange), [timeRange]);
+  // Convert chart service data to candlestick format
+  const chartData = useMemo(() => {
+    if (!chart.chartData.value?.getBars) return [];
+
+    const { t, o, h, l, c, v } = chart.chartData.value.getBars;
+
+    return t
+      .map((time, index) => {
+        // Skip data points where any required value is null/undefined
+        if (
+          o[index] === null ||
+          h[index] === null ||
+          l[index] === null ||
+          c[index] === null
+        ) {
+          return null;
+        }
+
+        return {
+          time: time as number,
+          open: o[index] as number,
+          high: h[index] as number,
+          low: l[index] as number,
+          close: c[index] as number,
+          volume: (v?.[index] as number) || 0,
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+  }, [chart.chartData.value]);
 
   const handleResize = useCallback(() => {
     if (chartCreated && chartRef?.current?.parentElement) {
@@ -93,10 +66,43 @@ const KlineChart = ({
     return () => window.removeEventListener("resize", handleResize);
   }, [handleResize]);
 
+  // Update chart when data changes
+  useEffect(() => {
+    if (!candleSeries || !volumeSeries || !chartData.length) return;
+
+    // Set volume data
+    volumeSeries.setData(
+      chartData.map((d) => ({
+        time: d.time,
+        value: d.volume,
+        color: d.close >= d.open ? "#08998150" : "#F2364550",
+      }))
+    );
+
+    // Set candlestick data
+    candleSeries.setData(chartData);
+
+    // Update price line only if we have valid data
+    if (chartData.length > 0) {
+      const lastPrice = chartData[chartData.length - 1].close;
+      candleSeries.createPriceLine({
+        price: lastPrice,
+        color:
+          lastPrice >= chartData[chartData.length - 1].open
+            ? "#089981"
+            : "#F23645",
+        lineWidth: 1,
+        lineStyle: LightweightCharts.LineStyle.Dashed,
+        axisLabelVisible: true,
+        title: lastPrice.toFixed(6),
+      });
+    }
+  }, [chartData, candleSeries, volumeSeries]);
+
   useLayoutEffect(() => {
     if (!chartRef.current) return;
 
-    const chart = LightweightCharts.createChart(chartRef.current, {
+    const chartInstance = LightweightCharts.createChart(chartRef.current, {
       width: (chartRef.current.parentElement?.clientWidth || 600) - 48,
       height,
       layout: {
@@ -151,7 +157,7 @@ const KlineChart = ({
       },
     });
 
-    const volumeSeries = chart.addHistogramSeries({
+    const volumeSeries = chartInstance.addHistogramSeries({
       priceFormat: {
         type: "volume",
       },
@@ -159,7 +165,7 @@ const KlineChart = ({
       color: "rgba(255, 255, 255, 0.5)",
     });
 
-    const candlestickSeries = chart.addCandlestickSeries({
+    const candlestickSeries = chartInstance.addCandlestickSeries({
       upColor: "#089981",
       downColor: "#F23645",
       borderVisible: false,
@@ -170,83 +176,104 @@ const KlineChart = ({
       priceScaleId: "right",
     });
 
-    volumeSeries.setData(
-      mockData.map((d) => ({
-        time: d.time,
-        value: d.volume,
-        color: d.close >= d.open ? "#08998150" : "#F2364550",
-      }))
-    );
-
-    candlestickSeries.setData(mockData);
-
-    candlestickSeries.createPriceLine({
-      price: mockData[mockData.length - 1].close,
-      color: "#089981",
-      lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Dashed,
-      axisLabelVisible: true,
-      title: mockData[mockData.length - 1].close.toFixed(1),
-    });
-
-    chart.timeScale().fitContent();
-
-    setChart(chart);
+    setChart(chartInstance);
     setCandleSeries(candlestickSeries);
     setVolumeSeries(volumeSeries);
 
     return () => {
-      chart.remove();
+      chartInstance.remove();
     };
-  }, [mockData, height]);
+  }, [height]);
 
   return (
     <div className="w-full relative rounded-2xl bg-[#202020] overflow-hidden p-4">
       <div className="flex flex-col gap-1">
-        {/* 顶部标题栏 */}
+        {/* Token Info */}
         <div className="flex items-center gap-2">
           <div className="flex items-center">
-            <TokenLogo token={token1} />
-            <TokenLogo token={token2} />
+            {chart.TargetLogoDisplay.map((token: Token) => (
+              <TokenLogo key={token.address} token={token} />
+            ))}
           </div>
-          <span className="text-white text-lg font-bold">{symbol}</span>
+          <span className="text-white text-lg font-bold">
+            {chart.chartLabel}
+          </span>
           <AiOutlineSwap className="text-white size-5 font-bold" />
         </div>
 
-        {/* 价格和涨跌幅 */}
+        {/* Price and Change */}
         <div className="flex items-center gap-2">
-          <span className="text-white text-3xl font-bold">{price}</span>
+          <span className="text-white text-3xl font-bold">
+            ${chart.currentPrice?.toFixed(6)}
+          </span>
           <span
-            className={`text-base ${change.startsWith("-") ? "text-[#F23645]" : "text-[#089981]"}`}
+            className={`text-base ${
+              chart.chartPricePercentageChange >= 0
+                ? "text-[#089981]"
+                : "text-[#F23645]"
+            }`}
           >
-            {change.startsWith("-") ? "▼" : "▲"} {change}
+            {chart.chartPricePercentageChange >= 0 ? "▲" : "▼"}{" "}
+            {chart.chartPricePercentageChange.toFixed(2)}%
           </span>
         </div>
 
-        {/* 时间范围选择器 */}
+        {/* Time Range Selector */}
         <div className="absolute top-4 right-4 flex items-center">
           <div className="flex items-center bg-[#FFCD4D] rounded-xl p-1 space-x-1">
-            {(["24H", "1W", "1M", "1Y"] as const).map((range) => (
+            {Object.values(chartTimeRanges).map((range) => (
               <button
-                key={range}
-                onClick={() => setTimeRange(range)}
+                key={range.label}
+                onClick={() => chart.setRange(range.label)}
                 className={`w-12 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                  timeRange === range
+                  chart.range === range.label
                     ? "bg-[#202020] text-white/80"
                     : "text-black hover:bg-black/10"
                 }`}
               >
-                {range}
+                {range.label}
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* 图表 */}
-      <div ref={chartRef} className="w-full mt-2" />
+      {/* Chart or Placeholder */}
+      {chartData.length > 0 ? (
+        <div ref={chartRef} className="w-full mt-2" />
+      ) : (
+        <div className="w-full h-[300px] mt-2 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-white/50 text-sm mb-2">
+              No chart data available
+            </div>
+            <div className="flex justify-center">
+              <svg
+                className="animate-spin h-8 w-8 text-[#FFCD4D]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+});
 
 export default KlineChart;

@@ -78,6 +78,16 @@ class Chart {
 
     this.isLoading = true;
 
+    console.log("priceDataRequest", {
+      chainId: wallet.currentChainId.toString(),
+      tokenAddress: this.chartTarget.address,
+      from: this.timestampsByRange,
+      to: dayjs().unix(),
+      resolution: chartTimeRanges[this.range].resolution,
+      tokenNumber: this.tokenNumber,
+      currencyCode: this.currencyCode,
+    });
+
     const priceDataRequest = await trpcClient.priceFeed.getChartData.query({
       chainId: wallet.currentChainId.toString(),
       tokenAddress: this.chartTarget.address,

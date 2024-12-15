@@ -1,11 +1,12 @@
 import { useUSDCValue } from "@/lib/algebra/hooks/common/useUSDCValue";
 import {
+  computePoolAddress,
   Currency,
   CurrencyAmount,
   maxAmountSpend,
   tryParseAmount,
 } from "@cryptoalgebra/sdk";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 import TokenCard from "../TokenCard";
 import { ArrowLeftRight, ChevronsUpDownIcon } from "lucide-react";
 import useWrapCallback, {
@@ -19,6 +20,9 @@ import {
 import { SwapField, SwapFieldType } from "@/types/algebra/types/swap-field";
 import TokenCardV3 from "../TokenCard/TokenCardV3";
 import { ExchangeSvg } from "@/components/svg/exchange";
+import { chart } from "@/services/chart";
+import { Token } from "@/services/contract/token";
+import { PairContract } from "@/services/contract/pair-contract";
 
 const SwapPairV3 = () => {
   const {
@@ -130,6 +134,42 @@ const SwapPairV3 = () => {
           (parsedAmounts[dependentField]?.currency.decimals || 6) / 2
         ) ?? ""),
   };
+
+  useEffect(() => {
+    if (baseCurrency && quoteCurrency) {
+      chart.setChartLabel(`${baseCurrency.symbol}/${quoteCurrency.symbol}`);
+
+      chart.setChartTarget(
+        new PairContract({
+          address: computePoolAddress({
+            tokenA: baseCurrency.wrapped,
+            tokenB: quoteCurrency.wrapped,
+          }),
+          token0: Token.getToken({
+            address: baseCurrency.wrapped.address,
+          }),
+          token1: Token.getToken({
+            address: quoteCurrency.wrapped.address,
+          }),
+        })
+      );
+      chart.setCurrencyCode("TOKEN");
+    } else if (baseCurrency) {
+      chart.setChartLabel(`${baseCurrency.symbol}`);
+      chart.setChartTarget(
+        Token.getToken({ address: baseCurrency.wrapped.address })
+      );
+      chart.setCurrencyCode("TOKEN");
+    } else if (quoteCurrency) {
+      chart.setChartLabel(`${quoteCurrency.symbol}`);
+      chart.setChartTarget(
+        Token.getToken({ address: quoteCurrency.wrapped.address })
+      );
+      chart.setCurrencyCode("TOKEN");
+    }
+
+    console.log("chart.getChartTarget()", chart.chartTarget);
+  }, [baseCurrency, quoteCurrency]);
 
   return (
     <div className="flex flex-col gap-1 relative bg-white custom-dashed px-[18px] py-6">
