@@ -23,6 +23,7 @@ interface TokenSwapCardProps {
   showBalance?: boolean;
   showNativeToken?: boolean;
   disabled?: boolean;
+  showInput?: boolean;
 }
 
 const TokenCard = ({
@@ -37,6 +38,7 @@ const TokenCard = ({
   showBalance = true,
   showNativeToken,
   disabled,
+  showInput = true,
 }: TokenSwapCardProps) => {
   const { address: account } = useAccount();
   useWatchBlockNumber({
@@ -73,8 +75,8 @@ const TokenCard = ({
   };
 
   return (
-    <div className="flex w-full px-4 py-6 bg-card-dark rounded-2xl">
-      <div className="flex flex-col gap-2 min-w-fit">
+    <div className="flex w-full px-4 py-6 bg-card-dark rounded-2xl justify-center items-center">
+      <div className="flex w-full gap-2">
         <TokenSelector
           value={
             currency?.wrapped.address
@@ -111,23 +113,25 @@ const TokenCard = ({
           </div>
         )}
       </div>
-      <div className="flex flex-col items-end w-full">
-        <Input
-          disabled={disabled}
-          type={"text"}
-          value={value}
-          id={`amount-${currency?.symbol}`}
-          onUserInput={(v: string) => handleInput(v)}
-          className={`text-right border border-[rgba(225,138,32,0.40)] bg-[rgba(225,138,32,0.40)] placeholder:text-[#9E9DA3] text-xl font-bold w-9/12 p-2 disabled:cursor-default disabled:text-white`}
-          placeholder={"0.0"}
-          maxDecimals={currency?.decimals}
-        />
-        {showBalance && (
-          <div className="text-sm">
-            {fiatValue && formatUSD.format(fiatValue)}
-          </div>
-        )}
-      </div>
+      {showInput && (
+        <div className="flex flex-col items-end w-full">
+          <Input
+            disabled={disabled}
+            type={"text"}
+            value={value}
+            id={`amount-${currency?.symbol}`}
+            onUserInput={(v: string) => handleInput(v)}
+            className={`text-right border border-[rgba(225,138,32,0.40)] bg-[rgba(225,138,32,0.40)] placeholder:text-[#9E9DA3] text-xl font-bold w-9/12 p-2 disabled:cursor-default disabled:text-white`}
+            placeholder={"0.0"}
+            maxDecimals={currency?.decimals}
+          />
+          {showBalance && (
+            <div className="text-sm">
+              {fiatValue && formatUSD.format(fiatValue)}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -46,7 +46,7 @@ const SelectPair = ({ mintInfo, currencyA, currencyB }: ISelectPair) => {
   );
 
   return (
-    <div className="relative flex flex-col gap-2 items-center">
+    <div className="relative flex  gap-2 items-center">
       <TokenCard
         disabled
         showBalance={false}
@@ -54,14 +54,16 @@ const SelectPair = ({ mintInfo, currencyA, currencyB }: ISelectPair) => {
         currency={currencyA}
         otherCurrency={currencyB}
         handleTokenSelection={handleInputSelect}
+        showInput={false}
       />
 
+      {/* 
       <button
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-1.5 bg-card-dark w-fit rounded-full border-[5px] border-[#1a1d2b] hover:bg-card-hover duration-200"
         onClick={onSwitchTokens}
       >
         <ChevronsUpDownIcon size={16} />
-      </button>
+      </button> */}
 
       <TokenCard
         showBalance={false}
@@ -70,6 +72,7 @@ const SelectPair = ({ mintInfo, currencyA, currencyB }: ISelectPair) => {
         currency={currencyB}
         otherCurrency={currencyA}
         handleValueChange={handleTypeInput}
+        showInput={false}
       />
     </div>
   );

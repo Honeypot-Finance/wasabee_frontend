@@ -22,9 +22,9 @@ const Pool = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <div>
+    <div className="w-full">
       {isInit ? (
-        <Tabs>
+        <Tabs className="w-full flex flex-col justify-center items-center">
           <Tab key="aquabera" title="Create Aquabera Vault">
             <div className="relative w-full flex justify-center content-center items-center">
               <CreateAquaberaVault />

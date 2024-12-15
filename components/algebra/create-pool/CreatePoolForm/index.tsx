@@ -1,5 +1,6 @@
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/algebra/ui/button";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ADDRESS_ZERO,
   NonfungiblePositionManager,
@@ -10,7 +11,6 @@ import { useContractWrite } from "wagmi";
 import { Address } from "viem";
 import Loader from "@/components/algebra/common/Loader";
 import { PoolState, usePool } from "@/lib/algebra/hooks/pools/usePool";
-import Summary from "../Summary";
 import SelectPair from "../SelectPair";
 import { STABLECOINS } from "@/data/algebra/tokens";
 import {
@@ -25,8 +25,17 @@ import {
 import { SwapField } from "@/types/algebra/types/swap-field";
 import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
 import { useToastify } from "@/lib/hooks/useContractToastify";
+import { Input } from "@/components/algebra/ui/input";
+
+const FEE_TIERS = [
+  { value: 100, label: "0.01%", description: "Best for stable pairs" },
+  { value: 500, label: "0.05%", description: "Best for stable pairs" },
+  { value: 3000, label: "0.3%", description: "Best for most pairs" },
+  { value: 10000, label: "1%", description: "Best for exotic pairs" },
+];
 
 const CreatePoolForm = () => {
+  const router = useRouter();
   const { currencies } = useDerivedSwapInfo();
 
   const {
@@ -58,11 +67,13 @@ const CreatePoolForm = () => {
 
   const isPoolExists = poolState === PoolState.EXISTS;
 
+  const [selectedFee, setSelectedFee] = useState(3000);
+
   const mintInfo = useDerivedMintInfo(
     currencyA ?? undefined,
     currencyB ?? undefined,
     poolAddress ?? undefined,
-    100,
+    selectedFee,
     currencyA ?? undefined,
     undefined
   );
@@ -80,8 +91,8 @@ const CreatePoolForm = () => {
     );
   }, [mintInfo?.pool]);
 
-  const { data: createPoolConfig, error } =
-    useSimulateAlgebraPositionManagerMulticall({
+  const { data: createPoolConfig } = useSimulateAlgebraPositionManagerMulticall(
+    {
       args: Array.isArray(calldata)
         ? [calldata as Address[]]
         : [[calldata] as Address[]],
@@ -89,10 +100,8 @@ const CreatePoolForm = () => {
       query: {
         enabled: Boolean(calldata),
       },
-    });
-
-  console.log(error);
-  console.log(error);
+    }
+  );
 
   const { data: createPoolData, writeContract: createPool } =
     useContractWrite();
@@ -108,7 +117,7 @@ const CreatePoolForm = () => {
     "/pools"
   );
 
-  const createPoolToast = useToastify({
+  useToastify({
     title: "Create Pool",
     isLoading,
     isSuccess,
@@ -128,9 +137,20 @@ const CreatePoolForm = () => {
     };
   }, []);
 
+  const handleButtonClick = () => {
+    if (isPoolExists && poolAddress) {
+      router.push(`/pooldetail/${poolAddress}`);
+      return;
+    }
+
+    if (createPoolConfig) {
+      createPool(createPoolConfig?.request);
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-1 p-2 bg-[#271A0C] rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all">
-      <h2 className="font-semibold text-xl text-left ml-2 mt-2">Select Pair</h2>
+    <div className="flex flex-col gap-4 p-4 bg-[#271A0C] rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all">
+      <h2 className="font-semibold text-xl">Select Pair</h2>
       <SelectPair
         mintInfo={mintInfo}
         currencyA={currencyA}
@@ -138,21 +158,64 @@ const CreatePoolForm = () => {
       />
 
       {areCurrenciesSelected && !isSameToken && !isPoolExists && (
-        <Summary currencyA={currencyA} currencyB={currencyB} />
+        <>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm text-gray-300">Select Fee Tier</label>
+            <div className="grid grid-cols-2 gap-2">
+              {FEE_TIERS.map((fee) => (
+                <Button
+                  key={fee.value}
+                  type="button"
+                  variant={selectedFee === fee.value ? "default" : "outline"}
+                  className={`flex flex-col items-start p-3 h-auto ${
+                    selectedFee === fee.value
+                      ? "bg-[#F7931A20] border-[#F7931A]"
+                      : "bg-[#1A1207] border-[#F7931A20]"
+                  }`}
+                  onClick={() => setSelectedFee(fee.value)}
+                >
+                  <span className="font-semibold">{fee.label}</span>
+                  <span className="text-xs text-gray-400">
+                    {fee.description}
+                  </span>
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-sm text-gray-300">
+              Initial price ({currencyA?.symbol} per {currencyB?.symbol})
+            </label>
+            <Input
+              type="number"
+              placeholder="0.0"
+              value={startPriceTypedValue}
+              onChange={(e: { target: { value: string } }) =>
+                typeStartPriceInput(e.target.value)
+              }
+              className="bg-[#1A1207] border-[#F7931A20]"
+            />
+            <p className="text-xs text-gray-400">
+              {startPriceTypedValue
+                ? `1 ${currencyB?.symbol} = ${
+                    1 / Number(startPriceTypedValue)
+                  } ${currencyA?.symbol}`
+                : "Enter the initial price"}
+            </p>
+          </div>
+        </>
       )}
 
       <Button
         className="mt-2"
         disabled={
           isLoading ||
-          isPoolExists ||
-          !startPriceTypedValue ||
+          (!startPriceTypedValue && !isPoolExists) ||
           !areCurrenciesSelected ||
           isSameToken
         }
-        onClick={() =>
-          createPoolConfig && createPool(createPoolConfig?.request)
-        }
+        onClick={handleButtonClick}
       >
         {isLoading ? (
           <Loader />
@@ -160,10 +223,10 @@ const CreatePoolForm = () => {
           "Select another pair"
         ) : !areCurrenciesSelected ? (
           "Select currencies"
-        ) : isPoolExists ? (
-          "Pool already exists"
-        ) : !startPriceTypedValue ? (
+        ) : !startPriceTypedValue && !isPoolExists ? (
           "Enter initial price"
+        ) : isPoolExists ? (
+          "View Existing Pool"
         ) : (
           "Create Pool"
         )}

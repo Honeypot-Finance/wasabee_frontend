@@ -47,10 +47,10 @@ export const appPathsList: Menu[] = [
         path: "/swap",
         title: "Swap",
       },
-      {
-        path: "/pool",
-        title: "Add Liquidity",
-      },
+      // {
+      //   path: "/pool",
+      //   title: "Add Liquidity",
+      // },
       {
         path: "/pools",
         title: "LP Pool List",

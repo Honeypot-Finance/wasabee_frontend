@@ -23,7 +23,8 @@ import { LoadingState } from "./loadingState";
 import { Input } from "@/components/algebra/ui/input";
 import { Search, Plus, LayoutGrid } from "lucide-react";
 import { Switch } from "@/components/algebra/ui/switch";
-import Link from "next/link";
+import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
+import CreatePoolForm from "../../create-pool/CreatePoolForm";
 import { cn } from "@/lib/tailwindcss";
 
 interface PoolsTableProps<TData, TValue> {
@@ -47,6 +48,7 @@ const PoolsTable = <TData, TValue>({
   loading,
 }: PoolsTableProps<TData, TValue>) => {
   const [selectedFilter, setSelectedFilter] = useState<string>("trending");
+  const [isCreatePoolOpen, setIsCreatePoolOpen] = useState(false);
 
   const filters = [
     { key: "trending", label: "🔥Trending" },
@@ -137,15 +139,36 @@ const PoolsTable = <TData, TValue>({
             </div>
           </div>
           <div className="flex items-center gap-x-5">
-            <Link
+            <Button
               className={cn(
                 "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
               )}
-              href="/pool"
+              onClick={() => setIsCreatePoolOpen(true)}
             >
               <Plus />
               <span>Create Pool</span>
-            </Link>
+            </Button>
+
+            <Modal
+              isOpen={isCreatePoolOpen}
+              onOpenChange={setIsCreatePoolOpen}
+              classNames={{
+                base: "bg-[#271A0C] dark:bg-[#271A0C]", // modal background
+                header: "border-b border-[#F7931A20]",
+                body: "py-6",
+                closeButton: "hover:bg-white/5 active:bg-white/10",
+              }}
+            >
+              <ModalContent>
+                {/* <ModalHeader className="flex flex-col gap-1">
+                  Create New Pool
+                </ModalHeader> */}
+                <ModalBody>
+                  <CreatePoolForm />
+                </ModalBody>
+              </ModalContent>
+            </Modal>
+
             <div className="flex gap-2 max-md:gap-4 items-center w-fit ml-auto max-sm:hidden">
               <label
                 className="flex gap-2 items-center"
