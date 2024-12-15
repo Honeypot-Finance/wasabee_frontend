@@ -49,7 +49,7 @@ export const Filter = observer(
 
     return (
       <>
-        <Button className="!px-4 !flex !items-center !gap-2" onClick={onOpen}>
+        <Button className="!px-4" onClick={onOpen}>
           <FaSlidersH className="!text-black size-4" />
           {/* FIXME: display text */}
           {/* <span className="!text-black">Filters</span> */}

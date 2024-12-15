@@ -108,7 +108,7 @@ export const SwapCard = observer(
             noBoarder && "border-0"
           )}
         >
-          <div className="bg-[url('/images/swap/top-border.png')] bg-cover bg-no-repeat bg-center h-[60px] absolute top-0 left-0 w-full rounded-t-[20px]"></div>
+          <div className="bg-[url('/images/pumping/outline-border.png')] h-[60px] bg-[length:150%_auto] absolute top-0 left-0 w-full bg-repeat-x rounded-t-2xl"></div>
           <Trigger
             tab={operate}
             capitalize={true}
@@ -353,7 +353,7 @@ export const SwapCard = observer(
               {swap.buttonContent === "Swap" ? operate : swap.buttonContent}
             </Button>
           </LoadingContainer>
-          <div className="bg-[url('/images/swap/bottom-border.jpg')] bg-cover bg-no-repeat bg-center h-[50px] absolute bottom-0 left-0 w-full rounded-b-[20px]"></div>
+          <div className="bg-[url('/images/swap/bottom-border.jpg')] bg-[length:100%_100%] bg-no-repeat h-[50px] absolute bottom-0 left-0 w-full"></div>
         </div>
         {extraTokenAction}
       </SpinnerContainer>
