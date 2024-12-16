@@ -23,8 +23,15 @@ import { ExchangeSvg } from "@/components/svg/exchange";
 import { chart } from "@/services/chart";
 import { Token } from "@/services/contract/token";
 import { PairContract } from "@/services/contract/pair-contract";
+import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
+import { wallet } from "@/services/wallet";
 
-const SwapPairV3 = () => {
+interface SwapPairV3Props {
+  fromTokenAddress?: string;
+  toTokenAddress?: string;
+}
+
+const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
   const {
     toggledTrade: trade,
     currencyBalances,
@@ -135,6 +142,39 @@ const SwapPairV3 = () => {
         ) ?? ""),
   };
 
+  useEffect(() => {
+    if (fromTokenAddress && !baseCurrency) {
+      const token = Token.getToken({ address: fromTokenAddress });
+      handleInputSelect(
+        new AlgebraToken(
+          wallet.currentChainId,
+          token.address,
+          token.decimals,
+          token.symbol,
+          token.name
+        )
+      );
+    }
+    if (toTokenAddress && !quoteCurrency) {
+      const token = Token.getToken({ address: toTokenAddress });
+      handleOutputSelect(
+        new AlgebraToken(
+          wallet.currentChainId,
+          token.address,
+          token.decimals,
+          token.symbol,
+          token.name
+        )
+      );
+    }
+  }, [
+    fromTokenAddress,
+    toTokenAddress,
+    baseCurrency,
+    quoteCurrency,
+    handleInputSelect,
+    handleOutputSelect,
+  ]);
   // useEffect(() => {
   //   if (baseCurrency && quoteCurrency) {
   //     chart.setChartLabel(`${baseCurrency.symbol}/${quoteCurrency.symbol}`);
@@ -170,7 +210,6 @@ const SwapPairV3 = () => {
 
   //   console.log("chart.getChartTarget()", chart.chartTarget);
   // }, [baseCurrency, quoteCurrency]);
-
   useEffect(() => {
     if (baseCurrency) {
       chart.setChartLabel(`${baseCurrency.symbol}`);
