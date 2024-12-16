@@ -1,5 +1,5 @@
 export const MemeHorseRace = () => {
-  return <div>MemeHorseRace</div>;
+  return <div>Berachain Derby Dashboard</div>;
 };
 
 export default MemeHorseRace;
