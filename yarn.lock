@@ -1010,10 +1010,10 @@
   resolved "https://registry.yarnpkg.com/@lukeed/ms/-/ms-2.0.2.tgz#07f09e59a74c52f4d88c6db5c1054e819538e2a8"
   integrity sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==
 
-"@marigoldlabs/fjord-honeypot-sdk@^0.1.11":
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/@marigoldlabs/fjord-honeypot-sdk/-/fjord-honeypot-sdk-0.1.11.tgz#b1d450f52a07555d7d8d3646642a50937f013397"
-  integrity sha512-58n70MZN6GOJLBhqixmuR8BBDwfnl3etVy1qB/4+cZO/ShnNkAGJ72aZTWlCyMusE9Q4lT0/6rtiU7K9rD+g0Q==
+"@marigoldlabs/fjord-honeypot-sdk@^0.1.14":
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/@marigoldlabs/fjord-honeypot-sdk/-/fjord-honeypot-sdk-0.1.14.tgz#b1520005da10298fc2223765de5b582c9a673954"
+  integrity sha512-UgLkJWgmMIPhti1R2k3EMMPvj/Z8MkEbhzwiGEOXMYt7rRN4I7n5XOKq9v+MjBbIOKGl8wPN420JkUocvV6fDA==
 
 "@metamask/eth-json-rpc-provider@^1.0.0":
   version "1.0.1"

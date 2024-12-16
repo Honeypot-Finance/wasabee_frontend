@@ -1,3 +1,4 @@
+import search from "@/pages/api/udf-data-feed/search";
 import { FjordSdk, PoolCreateArgs, Pool } from "node_modules/@marigoldlabs/fjord-honeypot-sdk/dist/index.js";
 
 const API_URL = "https://fjord-api-dev.fly.dev/api";
@@ -78,18 +79,34 @@ class FjordHoneySdk {
 
     static findManyPools = async ({ page, search, filters }: TFindManyPools) => {
 
-        const skip = page - 1;
         const take = 10;
+        const skip = (page - 1) * take;
         const where: any = {}
 
         if (search) {
-            where.shareTokenSymbol = search
+            where.name = [
+                {
+                    shareTokenAddress: {
+                        contains: search,
+                    }
+                },
+                {
+                    name: {
+                        contains: search,
+                    }
+                },
+                {
+                    shareTokenSymbol: {
+                        contains: search,
+                    }
+                }
+            ]
         }
 
         if (filters?.owner) {
             where.owner = filters.owner
         }
-
+        console.log({ skip, take, where })
 
         return await sdk.request.rest.findManyPools({ skip, take, where }) as any as { data: Pool[] }
     }

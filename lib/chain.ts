@@ -34,7 +34,7 @@ export const berachainBartioTestnet: Chain = {
     symbol: "BERA",
   },
   rpcUrls: {
-    default: { http: ["https://bartio.rpc.berachain.com"] },
+    default: { http: ["https://bera-testnet.nodeinfra.com"] },
   },
   blockExplorers: {
     default: {
