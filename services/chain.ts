@@ -61,7 +61,7 @@ export class Network {
     if (args) {
     }
   }
-  init () {
+  init() {
     this.nativeToken = Token.getToken(this.nativeToken);
     this.nativeToken.init().then(() => {
       console.log("this.nativeToken", this.nativeToken.name);
@@ -398,6 +398,12 @@ export const berachainBartioTestnetNetwork = new Network({
       symbol: "BERA CORAL",
       decimals: 18,
     },
+    "0x32cf940db5d7ea3e95e799a805b1471341241264": {
+      name: "Liquid BGT",
+      symbol: "LBGT",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/lbgt-token-icon.svg",
+    },
   },
   validatedFtoAddresses: [
     "0x2c504e661750e03aa9252c67e771dc059a521863".toLowerCase(),
@@ -457,11 +463,13 @@ export const networks = [
   movementNetWork,
   sprotoNetWork,
 ];
-export const networksMap = networks.reduce((acc, network) => {
-  acc[network.chainId] = network;
-  return acc;
-}, {} as Record<number | string, Network>);
+export const networksMap = networks.reduce(
+  (acc, network) => {
+    acc[network.chainId] = network;
+    return acc;
+  },
+  {} as Record<number | string, Network>
+);
 
-
-export const LiquidityBootstrapPoolFactoryAddress = "0xe2957CeAe8d267C493ad41e5CF7BBc274B969711"
-
+export const LiquidityBootstrapPoolFactoryAddress =
+  "0xe2957CeAe8d267C493ad41e5CF7BBc274B969711";
