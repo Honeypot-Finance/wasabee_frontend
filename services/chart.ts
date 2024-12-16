@@ -60,7 +60,7 @@ export const chartTimeRanges: {
 
 class Chart {
   isLoading = false;
-  showChart = false;
+  showChart = true;
   chartTarget: Token | PairContract | undefined = undefined;
   tokenNumber: 0 | 1 = 0;
   currencyCode: "USD" | "TOKEN" = "USD";
