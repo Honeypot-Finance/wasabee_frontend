@@ -29,25 +29,26 @@ const SwapPage = observer(() => {
   const isInit = wallet.isInit && liquidity;
 
   return isInit ? (
-    <div className="w-full">
+    <div className="w-full flex items-center justify-center">
       <div
         className={`grid mx-auto ${
           //chart.showChart &&
           "grid-cols-1 lg:grid-cols-[1fr_500px] items-center max-w-[min(1500px,100%)]"
         }  mb-[20vh] gap-[1rem] `}
       >
-        {/* {chart.showChart && (
+        {chart.showChart && (
           <motion.div
             variants={itemPopUpVariants}
             initial="hidden"
             animate="visible"
             transition={{ duration: 0.5 }}
-            className="w-full lg:max-w-[574px] flex flex-col self-center place-self-end h-full order-2 lg:order-1"
+            className="w-full lg:w-[574px] flex flex-col self-center place-self-end h-full order-2 lg:order-1 bg-[#FFCD4D] py-12 px-4 rounded-2xl relative overflow-hidden"
           >
-            <PriceFeedGraph></PriceFeedGraph> 
+            <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
+            <KlineChart height={600} />
+            <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-contain"></div>
           </motion.div>
-        )} */}
-        <KlineChart height={600} />
+        )}
         <motion.div
           variants={itemPopUpVariants}
           initial="hidden"
@@ -56,9 +57,7 @@ const SwapPage = observer(() => {
             "relative w-full flex flex-col items-center order-1 lg:order-2 justify-start"
           }
         >
-          <div>
-            <V3SwapCard />
-          </div>
+          <V3SwapCard />
         </motion.div>
       </div>
     </div>
