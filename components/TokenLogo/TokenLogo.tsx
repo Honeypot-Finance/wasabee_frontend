@@ -22,6 +22,7 @@ export const TokenLogo = observer(
     disableTooltip,
     ...props
   }: TokenLogoProps) => {
+    token.loadLogoURI();
     return (
       <Tooltip
         content={

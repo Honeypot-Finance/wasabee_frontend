@@ -5,6 +5,7 @@ import { AvgAPR, Plugins } from "../../common/Table/poolsColumns";
 import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { formatPercent } from "@/lib/algebra/utils/common/formatPercent";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type TokenAsset = {
   __typename?: string;
@@ -38,78 +39,80 @@ type Pool = {
 const PoolCardList = ({ data }: { data: Pool[] }) => {
   return (
     <div className="xl:hidden flex flex-col gap-y-5">
-      {data.map((pool) => (
-        <Link
-          key={pool.id}
-          href={`/pooldetail/${pool.id}`}
-          className="honeypot-card px-2.5 py-[14px] break-all space-y-2.5 cursor-pointer"
-        >
-          <Ellipsis />
-          <div className="flex items-center justify-between">
-            <span className="text-[#f5f5f5] text-sm">Pool Name</span>
-            <div className="flex items-center gap-x-3">
-              <div className="flex items-center">
-                <div className="z-10">
-                  <TokenLogo
-                    size={16}
-                    token={Token.getToken({
-                      address: pool.pair.token0.id,
-                    })}
-                  />
+      {data.map((pool) => {
+        const token1 = Token.getToken({
+          address: pool.pair.token0.id,
+        });
+        const token2 = Token.getToken({
+          address: pool.pair.token1.id,
+        });
+
+        token1.init();
+        token2.init();
+
+        return (
+          <Link
+            key={pool.id}
+            href={`/pooldetail/${pool.id}`}
+            className="honeypot-card px-2.5 py-[14px] break-all space-y-2.5 cursor-pointer"
+          >
+            <Ellipsis />
+            <div className="flex items-center justify-between">
+              <span className="text-[#f5f5f5] text-sm">Pool Name</span>
+              <div className="flex items-center gap-x-3">
+                <div className="flex items-center">
+                  <div className="z-10">
+                    <TokenLogo size={16} token={token1} />
+                  </div>
+                  <div className="-ml-1">
+                    <TokenLogo size={16} token={token2} />
+                  </div>
                 </div>
-                <div className="-ml-1">
-                  <TokenLogo
-                    size={16}
-                    token={Token.getToken({
-                      address: pool.pair.token1.id,
-                    })}
-                  />
-                </div>
+                <span className="text-[#FAFAFC] text-sm">
+                  {pool.pair.token0.symbol} - {pool.pair.token1.symbol}
+                </span>
+                <span className="text-sm text-[#4BDF81]">{`${pool.fee}%`}</span>
               </div>
-              <span className="text-[#FAFAFC] text-sm">
-                {pool.pair.token0.symbol} - {pool.pair.token1.symbol}
-              </span>
-              <span className="text-sm text-[#4BDF81]">{`${pool.fee}%`}</span>
             </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-white/55">Plugins</span>
-            <Plugins poolId={pool.id as `0x{string}`} />
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-white/55">TVL</span>
-            <span className="text-sm text-white">
-              {formatUSD.format(pool.tvlUSD)}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-white/55">Volume 24H</span>
-            <span className="text-sm text-white">
-              {formatUSD.format(pool.volume24USD)}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-white/55">Fees 24H</span>
-            <span className="text-sm text-white">
-              {formatUSD.format(pool.fees24USD)}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-white/55">Avg. APR</span>
-            <AvgAPR
-              avgApr={formatPercent.format(pool.poolAvgApr / 100)}
-              maxApr={formatPercent.format(pool.poolMaxApr / 100)}
-              farmApr={
-                pool.hasActiveFarming
-                  ? formatPercent.format(pool.farmApr / 100)
-                  : undefined
-              }
-            >
-              {formatPercent.format(pool.poolAvgApr / 100)}
-            </AvgAPR>
-          </div>
-        </Link>
-      ))}
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-white/55">Plugins</span>
+              <Plugins poolId={pool.id as `0x{string}`} />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-white/55">TVL</span>
+              <span className="text-sm text-white">
+                {formatUSD.format(pool.tvlUSD)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-white/55">Volume 24H</span>
+              <span className="text-sm text-white">
+                {formatUSD.format(pool.volume24USD)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-white/55">Fees 24H</span>
+              <span className="text-sm text-white">
+                {formatUSD.format(pool.fees24USD)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-white/55">Avg. APR</span>
+              <AvgAPR
+                avgApr={formatPercent.format(pool.poolAvgApr / 100)}
+                maxApr={formatPercent.format(pool.poolMaxApr / 100)}
+                farmApr={
+                  pool.hasActiveFarming
+                    ? formatPercent.format(pool.farmApr / 100)
+                    : undefined
+                }
+              >
+                {formatPercent.format(pool.poolAvgApr / 100)}
+              </AvgAPR>
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 };
