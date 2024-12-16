@@ -36,7 +36,7 @@ export function useAccounts(
       walletAddress: account.id,
       totalVolume: parseFloat(account.totalSpendUSD),
       swapCount: parseInt(account.swapCount),
-      holdingCount: parseInt(account.holdingPoolCount),
+      poolHoldingCount: parseInt(account.holdingPoolCount),
       memeTokenCount: parseInt(account.memeTokenHoldingCount),
       transactions: parseInt(account.platformTxCount),
       participateCount: parseInt(account.participateCount),

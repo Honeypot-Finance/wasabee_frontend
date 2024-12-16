@@ -7,6 +7,8 @@ import {
   useTopPot2PumpDeployer,
   useTopSwapAccounts,
 } from "@/lib/hooks/useAccounts";
+import { shortenAddressString } from "@/lib/utils";
+import { Tooltip } from "@nextui-org/react";
 
 interface LeaderboardItem {
   rank: number;
@@ -23,13 +25,6 @@ interface StatsCard {
   value: string | number;
   subValue?: string;
 }
-
-const shortenAddress = (address: string, chars = 4): string => {
-  if (!address) return "";
-  return `${address.substring(0, chars + 2)}...${address.substring(
-    address.length - chars
-  )}`;
-};
 
 const LeaderboardPage = () => {
   const [searchAddress, setSearchAddress] = useState("");
@@ -93,19 +88,21 @@ const LeaderboardPage = () => {
   const topStats = [
     {
       title: "Top Trader",
-      address: shortenAddress(topSwapAccounts[0]?.walletAddress ?? "-"),
+      address: shortenAddressString(topSwapAccounts[0]?.walletAddress ?? "-"),
       value: `${topSwapAccounts[0]?.swapCount ?? "-"} Swaps`,
     },
     {
       title: "Top Deployer",
-      address: shortenAddress(
+      address: shortenAddressString(
         topPot2PumpDeployerAccounts[0]?.walletAddress ?? "-"
       ),
       value: `${topPot2PumpDeployerAccounts[0]?.pot2PumpDeployCount ?? "-"} Deploys`,
     },
     {
       title: "Top Participant",
-      address: shortenAddress(topParticipateAccounts[0]?.walletAddress ?? "-"),
+      address: shortenAddressString(
+        topParticipateAccounts[0]?.walletAddress ?? "-"
+      ),
       value: `${topParticipateAccounts[0]?.participateCount ?? "-"} Participations`,
     },
   ];
@@ -214,7 +211,7 @@ const LeaderboardPage = () => {
                           Swaps
                         </th>
                         <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
-                          Holdings
+                          Holding Pools
                         </th>
                         <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
                           Meme Tokens
@@ -240,32 +237,28 @@ const LeaderboardPage = () => {
                             <td className="py-4 px-6 text-base font-mono text-blue-400">
                               <div className="flex items-center gap-2">
                                 <div className="w-4 h-4 bg-[#FFCD4D] rounded"></div>
-                                {item.walletAddress}
+                                <Tooltip
+                                  content={item.walletAddress}
+                                  placement="top"
+                                >
+                                  {shortenAddressString(item.walletAddress)}
+                                </Tooltip>
                               </div>
                             </td>
                             <td className="py-4 px-6 text-base">
-                              ${item.totalVolume.toLocaleString()}
+                              ${(item.totalVolume / 10 ** 18).toLocaleString()}
                             </td>
                             <td className="py-4 px-6 text-center text-base">
                               {item.swapCount}
                             </td>
                             <td className="py-4 px-6 text-center text-base">
-                              {item.holdingCount}
+                              {item.poolHoldingCount}
                             </td>
                             <td className="py-4 px-6 text-center text-base">
                               {item.memeTokenCount}
                             </td>
                             <td className="py-4 px-6 text-center text-base">
                               {item.participateCount}
-                            </td>
-                            <td className="py-4 px-6 text-right text-base">
-                              ${item.dailyEarning.toLocaleString()}
-                            </td>
-                            <td className="py-4 px-6 text-right text-base">
-                              ${item.monthlyEarning.toLocaleString()}
-                            </td>
-                            <td className="py-4 px-6 text-base">
-                              {item.lastActive}
                             </td>
                           </tr>
                         ))
