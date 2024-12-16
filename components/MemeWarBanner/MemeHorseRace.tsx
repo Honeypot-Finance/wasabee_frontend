@@ -5,6 +5,8 @@ import raceFieldBg from "public/images/horserace/race_field.png";
 import { Token } from "@/services/contract/token";
 import { V3SwapCard } from "@/components/algebra/swap/V3SwapCard";
 import { popmodal } from "@/services/popmodal";
+import { wallet } from "@/services/wallet";
+import { observer } from "mobx-react-lite";
 
 const RaceTrack = styled.div<{ totalRacers: number }>`
   width: 100%;
@@ -170,7 +172,7 @@ const mockData = {
       ],
     },
     {
-      tokenAddress: "0x51A42ceAFDA32F68390840A187b65a99584332df",
+      tokenAddress: "0xf71218db215d61f895d7acda7b6dd36b595d4484",
       tokenHourScore: [
         { starttimestamp: 1734352147, score: 130 },
         { starttimestamp: 1734355747, score: 210 },
@@ -185,12 +187,13 @@ const mockData = {
   ],
 };
 
-export const MemeHorseRace = () => {
+export const MemeHorseRace = observer(() => {
   const [timeIndex, setTimeIndex] = useState(2);
   const [tokens, setTokens] = useState<Record<string, Token>>({});
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
 
   useEffect(() => {
+    if (!wallet.isInit) return;
     // Initialize tokens
     const initTokens = async () => {
       const tokenMap: Record<string, Token> = {};
@@ -203,7 +206,7 @@ export const MemeHorseRace = () => {
     };
 
     initTokens();
-  }, []);
+  }, [wallet.isInit]);
 
   const timestamps = mockData.racers[0].tokenHourScore.map(
     (score) => score.starttimestamp
@@ -248,24 +251,23 @@ export const MemeHorseRace = () => {
                 <RacerIcon
                   position={(racer.currentScore / allTimeHighScore) * 85}
                 >
-                  {racer.token?.logoURI ? (
+                  {racer.token?.logoURI && (
                     <div
                       onClick={() => handleTokenClick(racer.token)}
                       style={{ cursor: "pointer" }}
                     >
                       <Image
-                        src={racer.token.logoURI}
+                        src={racer.token?.logoURI}
                         alt={racer.token?.symbol || ""}
-                        width={48}
-                        height={48}
+                        width={100}
+                        height={100}
                         style={{
-                          boxShadow: "0 0 10px rgba(255, 215, 0, 0.5)",
                           transition: "transform 0.2s ease-in-out",
-                          transform: "scale(1) &:hover: scale(1.1)",
                         }}
+                        className="scale-100 hover:scale-110"
                       />
                     </div>
-                  ) : null}
+                  )}
                   {/* <span
                     style={{
                       color: "#FFFFFF",
@@ -293,6 +295,6 @@ export const MemeHorseRace = () => {
       </RaceTrack>
     </>
   );
-};
+});
 
 export default MemeHorseRace;
