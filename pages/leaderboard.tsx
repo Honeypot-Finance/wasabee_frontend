@@ -77,14 +77,14 @@ const LeaderboardPage = () => {
       ? {
           title: stats.totalVolume.title,
           value: stats.totalVolume.value,
-          subValue: stats.totalVolume.subValue,
+          subValue: "USD",
         }
       : { title: "Total Volume", value: "-" },
     stats
       ? {
           title: stats.tvl.title,
           value: stats.tvl.value,
-          subValue: stats.tvl.subValue,
+          subValue: "USD",
         }
       : { title: "TVL", value: "-" },
   ];
@@ -194,7 +194,7 @@ const LeaderboardPage = () => {
             {/* 交易数据表格 */}
             <div className="bg-[#202020] rounded-2xl overflow-hidden">
               <div className="px-6 py-4 border-b border-[#5C5C5C]">
-                <h2 className="text-xl text-white font-bold">Top Traders</h2>
+                <h2 className="text-xl text-white font-bold">Leaderboard</h2>
               </div>
               <div className="p-6">
                 <div className="border border-[#5C5C5C] rounded-lg overflow-hidden">
@@ -220,16 +220,7 @@ const LeaderboardPage = () => {
                           Meme Tokens
                         </th>
                         <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
-                          Participations
-                        </th>
-                        <th className="py-4 px-6 text-right text-base font-medium whitespace-nowrap">
-                          Daily Earning
-                        </th>
-                        <th className="py-4 px-6 text-right text-base font-medium whitespace-nowrap">
-                          Monthly Earning
-                        </th>
-                        <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">
-                          Last Active
+                          Pot2Pump Participations
                         </th>
                       </tr>
                     </thead>

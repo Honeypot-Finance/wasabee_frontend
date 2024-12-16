@@ -2,6 +2,7 @@ import { useQuery } from "@apollo/client";
 import { LEADERBOARD_QUERY } from "../algebra/graphql/clients/leaderboard";
 import BigNumber from "bignumber.js";
 import type { FactoryData } from "../algebra/graphql/clients/leaderboard";
+import { wallet } from "@/services/wallet";
 
 export function useLeaderboard() {
   const { data, loading, error } = useQuery<FactoryData>(LEADERBOARD_QUERY);
@@ -10,7 +11,7 @@ export function useLeaderboard() {
     const bn = new BigNumber(value || "0");
     return {
       usd: `$${bn.toFormat(2)}`,
-      matic: `${bn.toFormat(2)} Matic`,
+      matic: `${bn.toFormat(2)} ${wallet.currentChain.nativeToken.symbol}`,
     };
   };
 
@@ -23,12 +24,10 @@ export function useLeaderboard() {
         totalVolume: {
           title: "Total Volume",
           value: formatValue(data.factories[0].totalVolumeUSD).usd,
-          subValue: formatValue(data.factories[0].totalVolumeMatic).matic,
         },
         tvl: {
           title: "TVL",
           value: formatValue(data.factories[0].totalValueLockedUSD).usd,
-          subValue: formatValue(data.factories[0].totalValueLockedMatic).matic,
         },
       }
     : null;

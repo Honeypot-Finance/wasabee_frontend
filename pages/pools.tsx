@@ -83,10 +83,10 @@ const PoolsPage: NextLayoutPage = observer(() => {
           panel: "w-full",
         }}
       >
-        <Tab key="algebra" title="Algebra Pool" className="w-full">
+        <Tab key="algebra" title="Pool V3" className="w-full">
           <PoolsList />
         </Tab>
-        <Tab key="aquabera" title="Vault" className="w-full">
+        <Tab key="aquabera" title="POGE Vault" className="w-full">
           <AquaberaList />
         </Tab>
       </Tabs>
