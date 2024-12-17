@@ -25,6 +25,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     MemePairContract[] | null
   >(null);
   const [filters, setFilters] = useState<FilterState>({
+    search: "",
     tvl: { min: "", max: "" },
     participants: { min: "", max: "" },
   });
