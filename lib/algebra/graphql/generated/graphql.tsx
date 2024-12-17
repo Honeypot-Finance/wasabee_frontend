@@ -883,6 +883,7 @@ export enum Burn_OrderBy {
   Origin = 'origin',
   Owner = 'owner',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -1224,6 +1225,7 @@ export enum Collect_OrderBy {
   LogIndex = 'logIndex',
   Owner = 'owner',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -1383,6 +1385,7 @@ export enum DeployIchiVault_OrderBy {
   Id = 'id',
   Owner = 'owner',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -2187,6 +2190,7 @@ export enum Flash_OrderBy {
   Id = 'id',
   LogIndex = 'logIndex',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -2617,6 +2621,7 @@ export enum IchiVault_OrderBy {
   Id = 'id',
   MaxTotalSupply = 'maxTotalSupply',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -3129,6 +3134,7 @@ export enum Mint_OrderBy {
   Origin = 'origin',
   Owner = 'owner',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -3411,8 +3417,8 @@ export enum ParticipantTransactionHistory_OrderBy {
   Pot2Pump = 'pot2Pump',
   Pot2PumpDepositLaunchToken = 'pot2Pump__DepositLaunchToken',
   Pot2PumpDepositRaisedToken = 'pot2Pump__DepositRaisedToken',
-  Pot2PumpLaunchTokenMarketCap = 'pot2Pump__LaunchTokenMarketCap',
-  Pot2PumpLaunchTokenTvl = 'pot2Pump__LaunchTokenTVL',
+  Pot2PumpLaunchTokenMcapusd = 'pot2Pump__LaunchTokenMCAPUSD',
+  Pot2PumpLaunchTokenTvlusd = 'pot2Pump__LaunchTokenTVLUSD',
   Pot2PumpCreatedAt = 'pot2Pump__createdAt',
   Pot2PumpCreator = 'pot2Pump__creator',
   Pot2PumpEndTime = 'pot2Pump__endTime',
@@ -3553,8 +3559,8 @@ export enum Participant_OrderBy {
   Pot2Pump = 'pot2Pump',
   Pot2PumpDepositLaunchToken = 'pot2Pump__DepositLaunchToken',
   Pot2PumpDepositRaisedToken = 'pot2Pump__DepositRaisedToken',
-  Pot2PumpLaunchTokenMarketCap = 'pot2Pump__LaunchTokenMarketCap',
-  Pot2PumpLaunchTokenTvl = 'pot2Pump__LaunchTokenTVL',
+  Pot2PumpLaunchTokenMcapusd = 'pot2Pump__LaunchTokenMCAPUSD',
+  Pot2PumpLaunchTokenTvlusd = 'pot2Pump__LaunchTokenTVLUSD',
   Pot2PumpCreatedAt = 'pot2Pump__createdAt',
   Pot2PumpCreator = 'pot2Pump__creator',
   Pot2PumpEndTime = 'pot2Pump__endTime',
@@ -3646,6 +3652,7 @@ export enum Plugin_OrderBy {
   CollectedFeesUsd = 'collectedFeesUSD',
   Id = 'id',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -3686,6 +3693,10 @@ export enum Plugin_OrderBy {
 
 export type Pool = {
   __typename?: 'Pool';
+  aprDayData: Array<PoolDayData>;
+  aprMonthData: Array<PoolMonthData>;
+  aprPercentage: Scalars['BigDecimal']['output'];
+  aprWeekData: Array<PoolWeekData>;
   burns: Array<Burn>;
   collectedFeesToken0: Scalars['BigDecimal']['output'];
   collectedFeesToken1: Scalars['BigDecimal']['output'];
@@ -3734,6 +3745,33 @@ export type Pool = {
   volumeToken0: Scalars['BigDecimal']['output'];
   volumeToken1: Scalars['BigDecimal']['output'];
   volumeUSD: Scalars['BigDecimal']['output'];
+};
+
+
+export type PoolAprDayDataArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<PoolDayData_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<PoolDayData_Filter>;
+};
+
+
+export type PoolAprMonthDataArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<PoolMonthData_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<PoolMonthData_Filter>;
+};
+
+
+export type PoolAprWeekDataArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<PoolWeekData_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<PoolWeekData_Filter>;
 };
 
 
@@ -3819,7 +3857,9 @@ export type PoolTicksArgs = {
 
 export type PoolDayData = {
   __typename?: 'PoolDayData';
+  aprPercentage: Scalars['BigDecimal']['output'];
   close: Scalars['BigDecimal']['output'];
+  dailyFeeUSD: Scalars['BigDecimal']['output'];
   date: Scalars['Int']['output'];
   feeGrowthGlobal0X128: Scalars['BigInt']['output'];
   feeGrowthGlobal1X128: Scalars['BigInt']['output'];
@@ -3848,6 +3888,14 @@ export type PoolDayData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<PoolDayData_Filter>>>;
+  aprPercentage?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  aprPercentage_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   close?: InputMaybe<Scalars['BigDecimal']['input']>;
   close_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   close_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -3856,6 +3904,14 @@ export type PoolDayData_Filter = {
   close_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
   close_not?: InputMaybe<Scalars['BigDecimal']['input']>;
   close_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  dailyFeeUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
+  dailyFeeUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  dailyFeeUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  dailyFeeUSD_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  dailyFeeUSD_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  dailyFeeUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  dailyFeeUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  dailyFeeUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   date?: InputMaybe<Scalars['Int']['input']>;
   date_gt?: InputMaybe<Scalars['Int']['input']>;
   date_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -4049,7 +4105,9 @@ export type PoolDayData_Filter = {
 };
 
 export enum PoolDayData_OrderBy {
+  AprPercentage = 'aprPercentage',
   Close = 'close',
+  DailyFeeUsd = 'dailyFeeUSD',
   Date = 'date',
   FeeGrowthGlobal0X128 = 'feeGrowthGlobal0X128',
   FeeGrowthGlobal1X128 = 'feeGrowthGlobal1X128',
@@ -4062,6 +4120,7 @@ export enum PoolDayData_OrderBy {
   Low = 'low',
   Open = 'open',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -4401,6 +4460,7 @@ export enum PoolHourData_OrderBy {
   Open = 'open',
   PeriodStartUnix = 'periodStartUnix',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -4451,6 +4511,7 @@ export enum PoolHourData_OrderBy {
 
 export type PoolMonthData = {
   __typename?: 'PoolMonthData';
+  aprPercentage: Scalars['BigDecimal']['output'];
   close: Scalars['BigDecimal']['output'];
   feeGrowthGlobal0X128: Scalars['BigInt']['output'];
   feeGrowthGlobal1X128: Scalars['BigInt']['output'];
@@ -4462,6 +4523,7 @@ export type PoolMonthData = {
   liquidity: Scalars['BigInt']['output'];
   low: Scalars['BigDecimal']['output'];
   month: Scalars['Int']['output'];
+  monthlyFeeUSD: Scalars['BigDecimal']['output'];
   open: Scalars['BigDecimal']['output'];
   pool: Pool;
   sqrtPrice: Scalars['BigInt']['output'];
@@ -4480,6 +4542,14 @@ export type PoolMonthData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<PoolMonthData_Filter>>>;
+  aprPercentage?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  aprPercentage_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   close?: InputMaybe<Scalars['BigDecimal']['input']>;
   close_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   close_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -4568,6 +4638,14 @@ export type PoolMonthData_Filter = {
   month_lte?: InputMaybe<Scalars['Int']['input']>;
   month_not?: InputMaybe<Scalars['Int']['input']>;
   month_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  monthlyFeeUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
+  monthlyFeeUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  monthlyFeeUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  monthlyFeeUSD_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  monthlyFeeUSD_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  monthlyFeeUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  monthlyFeeUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  monthlyFeeUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   open?: InputMaybe<Scalars['BigDecimal']['input']>;
   open_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   open_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -4681,6 +4759,7 @@ export type PoolMonthData_Filter = {
 };
 
 export enum PoolMonthData_OrderBy {
+  AprPercentage = 'aprPercentage',
   Close = 'close',
   FeeGrowthGlobal0X128 = 'feeGrowthGlobal0X128',
   FeeGrowthGlobal1X128 = 'feeGrowthGlobal1X128',
@@ -4692,8 +4771,10 @@ export enum PoolMonthData_OrderBy {
   Liquidity = 'liquidity',
   Low = 'low',
   Month = 'month',
+  MonthlyFeeUsd = 'monthlyFeeUSD',
   Open = 'open',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -4874,6 +4955,7 @@ export enum PoolPosition_OrderBy {
   LowerTickVolumeUsd = 'lowerTick__volumeUSD',
   Owner = 'owner',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -4935,6 +5017,7 @@ export enum PoolPosition_OrderBy {
 
 export type PoolWeekData = {
   __typename?: 'PoolWeekData';
+  aprPercentage: Scalars['BigDecimal']['output'];
   close: Scalars['BigDecimal']['output'];
   feeGrowthGlobal0X128: Scalars['BigInt']['output'];
   feeGrowthGlobal1X128: Scalars['BigInt']['output'];
@@ -4958,12 +5041,21 @@ export type PoolWeekData = {
   volumeToken1: Scalars['BigDecimal']['output'];
   volumeUSD: Scalars['BigDecimal']['output'];
   week: Scalars['Int']['output'];
+  weeklyFeeUSD: Scalars['BigDecimal']['output'];
 };
 
 export type PoolWeekData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<PoolWeekData_Filter>>>;
+  aprPercentage?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  aprPercentage_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   close?: InputMaybe<Scalars['BigDecimal']['input']>;
   close_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   close_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -5162,9 +5254,18 @@ export type PoolWeekData_Filter = {
   week_lte?: InputMaybe<Scalars['Int']['input']>;
   week_not?: InputMaybe<Scalars['Int']['input']>;
   week_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  weeklyFeeUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
+  weeklyFeeUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  weeklyFeeUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  weeklyFeeUSD_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  weeklyFeeUSD_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  weeklyFeeUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  weeklyFeeUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  weeklyFeeUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
 };
 
 export enum PoolWeekData_OrderBy {
+  AprPercentage = 'aprPercentage',
   Close = 'close',
   FeeGrowthGlobal0X128 = 'feeGrowthGlobal0X128',
   FeeGrowthGlobal1X128 = 'feeGrowthGlobal1X128',
@@ -5177,6 +5278,7 @@ export enum PoolWeekData_OrderBy {
   Low = 'low',
   Open = 'open',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -5223,13 +5325,25 @@ export enum PoolWeekData_OrderBy {
   VolumeToken0 = 'volumeToken0',
   VolumeToken1 = 'volumeToken1',
   VolumeUsd = 'volumeUSD',
-  Week = 'week'
+  Week = 'week',
+  WeeklyFeeUsd = 'weeklyFeeUSD'
 }
 
 export type Pool_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Pool_Filter>>>;
+  aprDayData_?: InputMaybe<PoolDayData_Filter>;
+  aprMonthData_?: InputMaybe<PoolMonthData_Filter>;
+  aprPercentage?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  aprPercentage_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  aprWeekData_?: InputMaybe<PoolWeekData_Filter>;
   burns_?: InputMaybe<Burn_Filter>;
   collectedFeesToken0?: InputMaybe<Scalars['BigDecimal']['input']>;
   collectedFeesToken0_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -5590,6 +5704,10 @@ export type Pool_Filter = {
 };
 
 export enum Pool_OrderBy {
+  AprDayData = 'aprDayData',
+  AprMonthData = 'aprMonthData',
+  AprPercentage = 'aprPercentage',
+  AprWeekData = 'aprWeekData',
   Burns = 'burns',
   CollectedFeesToken0 = 'collectedFeesToken0',
   CollectedFeesToken1 = 'collectedFeesToken1',
@@ -5921,6 +6039,7 @@ export enum PositionSnapshot_OrderBy {
   Liquidity = 'liquidity',
   Owner = 'owner',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -6253,6 +6372,7 @@ export enum Position_OrderBy {
   Liquidity = 'liquidity',
   Owner = 'owner',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -6388,8 +6508,8 @@ export type Pot2Pump = {
   __typename?: 'Pot2Pump';
   DepositLaunchToken: Scalars['BigInt']['output'];
   DepositRaisedToken: Scalars['BigInt']['output'];
-  LaunchTokenMarketCap: Scalars['BigDecimal']['output'];
-  LaunchTokenTVL: Scalars['BigDecimal']['output'];
+  LaunchTokenMCAPUSD: Scalars['BigDecimal']['output'];
+  LaunchTokenTVLUSD: Scalars['BigDecimal']['output'];
   createdAt: Scalars['BigInt']['output'];
   creator: Scalars['String']['output'];
   endTime: Scalars['BigInt']['output'];
@@ -6443,22 +6563,22 @@ export type Pot2Pump_Filter = {
   DepositRaisedToken_lte?: InputMaybe<Scalars['BigInt']['input']>;
   DepositRaisedToken_not?: InputMaybe<Scalars['BigInt']['input']>;
   DepositRaisedToken_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  LaunchTokenMarketCap?: InputMaybe<Scalars['BigDecimal']['input']>;
-  LaunchTokenMarketCap_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
-  LaunchTokenMarketCap_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
-  LaunchTokenMarketCap_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
-  LaunchTokenMarketCap_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
-  LaunchTokenMarketCap_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
-  LaunchTokenMarketCap_not?: InputMaybe<Scalars['BigDecimal']['input']>;
-  LaunchTokenMarketCap_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
-  LaunchTokenTVL?: InputMaybe<Scalars['BigDecimal']['input']>;
-  LaunchTokenTVL_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
-  LaunchTokenTVL_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
-  LaunchTokenTVL_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
-  LaunchTokenTVL_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
-  LaunchTokenTVL_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
-  LaunchTokenTVL_not?: InputMaybe<Scalars['BigDecimal']['input']>;
-  LaunchTokenTVL_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  LaunchTokenMCAPUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenMCAPUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenMCAPUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenMCAPUSD_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  LaunchTokenMCAPUSD_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenMCAPUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenMCAPUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenMCAPUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  LaunchTokenTVLUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenTVLUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenTVLUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenTVLUSD_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  LaunchTokenTVLUSD_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenTVLUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenTVLUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenTVLUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Pot2Pump_Filter>>>;
@@ -6628,8 +6748,8 @@ export type Pot2Pump_Filter = {
 export enum Pot2Pump_OrderBy {
   DepositLaunchToken = 'DepositLaunchToken',
   DepositRaisedToken = 'DepositRaisedToken',
-  LaunchTokenMarketCap = 'LaunchTokenMarketCap',
-  LaunchTokenTvl = 'LaunchTokenTVL',
+  LaunchTokenMcapusd = 'LaunchTokenMCAPUSD',
+  LaunchTokenTvlusd = 'LaunchTokenTVLUSD',
   CreatedAt = 'createdAt',
   Creator = 'creator',
   EndTime = 'endTime',
@@ -9295,6 +9415,7 @@ export enum Swap_OrderBy {
   LogIndex = 'logIndex',
   Origin = 'origin',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -9564,6 +9685,7 @@ export enum TickDayData_OrderBy {
   LiquidityGross = 'liquidityGross',
   LiquidityNet = 'liquidityNet',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -9760,6 +9882,7 @@ export enum TickHourData_OrderBy {
   LiquidityNet = 'liquidityNet',
   PeriodStartUnix = 'periodStartUnix',
   Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -10037,6 +10160,7 @@ export enum Tick_OrderBy {
   LiquidityProviderCount = 'liquidityProviderCount',
   Pool = 'pool',
   PoolAddress = 'poolAddress',
+  PoolAprPercentage = 'pool__aprPercentage',
   PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
   PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
   PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
@@ -10716,8 +10840,8 @@ export enum Token_OrderBy {
   Pot2Pump = 'pot2Pump',
   Pot2PumpDepositLaunchToken = 'pot2Pump__DepositLaunchToken',
   Pot2PumpDepositRaisedToken = 'pot2Pump__DepositRaisedToken',
-  Pot2PumpLaunchTokenMarketCap = 'pot2Pump__LaunchTokenMarketCap',
-  Pot2PumpLaunchTokenTvl = 'pot2Pump__LaunchTokenTVL',
+  Pot2PumpLaunchTokenMcapusd = 'pot2Pump__LaunchTokenMCAPUSD',
+  Pot2PumpLaunchTokenTvlusd = 'pot2Pump__LaunchTokenTVLUSD',
   Pot2PumpCreatedAt = 'pot2Pump__createdAt',
   Pot2PumpCreator = 'pot2Pump__creator',
   Pot2PumpEndTime = 'pot2Pump__endTime',
@@ -13034,7 +13158,7 @@ export const AllRacersDocument = gql`
     token {
       symbol
     }
-    hourData(orderBy: timestamp, orderDirection: desc) {
+    hourData(orderBy: timestamp, orderDirection: asc) {
       timestamp
       score
     }

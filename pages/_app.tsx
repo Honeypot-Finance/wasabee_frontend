@@ -6,7 +6,7 @@ import type { AppProps } from "next/app";
 import { Layout } from "@/components/layout";
 import { NextLayoutPage } from "@/types/nextjs";
 import { WagmiProvider, useWalletClient } from "wagmi";
-import { RainbowKitProvider } from "@usecapsule/rainbowkit";
+import { AvatarComponent, RainbowKitProvider } from "@usecapsule/rainbowkit";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import "@rainbow-me/rainbowkit/styles.css";
 import "@usecapsule/rainbowkit/styles.css";
@@ -45,6 +45,17 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
   return children;
 };
 
+const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
+  return (
+    <img
+      src={"/images/empty-logo.png"}
+      width={size}
+      height={size}
+      style={{ borderRadius: 999 }}
+    />
+  );
+};
+
 export default function App({
   Component,
   pageProps,
@@ -59,6 +70,7 @@ export default function App({
         <QueryClientProvider client={queryClient}>
           <ApolloProvider client={infoClient}>
             <RainbowKitProvider
+              avatar={CustomAvatar}
               capsule={capsuleClient}
               capsuleIntegratedProps={capsuleModalProps}
             >
