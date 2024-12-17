@@ -92,245 +92,9 @@ const TimeSlider = styled.input`
   margin: 20px 0;
 `;
 
-[
-  {
-    tokenAddress: "0x05d0dd5135e3ef3ade32a9ef9cb06e8d37a6795d",
-    tokenHourScore: [
-      {
-        starttimestamp: "1733940000",
-        score: "999999999999999.9999999999999999999",
-      },
-      {
-        starttimestamp: "1732593600",
-        score: "999999999999999.9999999999999999999",
-      },
-    ],
-  },
-  {
-    tokenAddress: "0x150bcee57b23a79c9dd5e707c8a64c65016215d0",
-    tokenHourScore: [
-      {
-        starttimestamp: "1734008400",
-        score: "0",
-      },
-      {
-        starttimestamp: "1733587200",
-        score: "945972938773624809.4775008679422248",
-      },
-    ],
-  },
-  {
-    tokenAddress: "0xd6d83af58a19cd14ef3cf6fe848c9a4d21e5727c",
-    tokenHourScore: [
-      {
-        starttimestamp: "1734400800",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734397200",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734375600",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734368400",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734364800",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734361200",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734354000",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734343200",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734321600",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734314400",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734260400",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734163200",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734156000",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1734152400",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1733940000",
-        score: "9975012990099499999999.999999999999",
-      },
-      {
-        starttimestamp: "1732586400",
-        score: "0",
-      },
-      {
-        starttimestamp: "1732579200",
-        score: "0",
-      },
-      {
-        starttimestamp: "1732568400",
-        score: "0",
-      },
-    ],
-  },
-  {
-    tokenAddress: "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
-    tokenHourScore: [
-      {
-        starttimestamp: "1734400800",
-        score: "1918227205984510117640136.128015128",
-      },
-      {
-        starttimestamp: "1734397200",
-        score: "1918227205984510117640136.128015128",
-      },
-      {
-        starttimestamp: "1734393600",
-        score: "1918227205984510117640136.128015128",
-      },
-      {
-        starttimestamp: "1734390000",
-        score: "1918227205984510117640136.128015128",
-      },
-      {
-        starttimestamp: "1734386400",
-        score: "1918227205984510117640136.128015128",
-      },
-      {
-        starttimestamp: "1734382800",
-        score: "1918227205984510117640136.128015128",
-      },
-      {
-        starttimestamp: "1734379200",
-        score: "1918227205984510117640136.128015128",
-      },
-      {
-        starttimestamp: "1734375600",
-        score: "30059660291819027134163298746.18329",
-      },
-      {
-        starttimestamp: "1734372000",
-        score: "30059660291819027134163298746.18329",
-      },
-      {
-        starttimestamp: "1734368400",
-        score: "30059660291819027134163298746.18329",
-      },
-      {
-        starttimestamp: "1734364800",
-        score: "30059660291819027134163298746.18329",
-      },
-      {
-        starttimestamp: "1734357600",
-        score: "30059660291819027134163298746.18329",
-      },
-      {
-        starttimestamp: "1734310800",
-        score: "30059660291819027134163298746.18329",
-      },
-      {
-        starttimestamp: "1734260400",
-        score: "30059660291819027134163298746.18329",
-      },
-      {
-        starttimestamp: "1734253200",
-        score: "30059660291819027134163298746.18329",
-      },
-      {
-        starttimestamp: "1734231600",
-        score: "284350351892059472627522254.660071",
-      },
-      {
-        starttimestamp: "1734159600",
-        score: "284350351892059472627522254.660071",
-      },
-      {
-        starttimestamp: "1734141600",
-        score: "284350351892059472627522254.660071",
-      },
-      {
-        starttimestamp: "1734015600",
-        score: "284350351892059472627522254.660071",
-      },
-      {
-        starttimestamp: "1734012000",
-        score: "284350351892059472627522254.660071",
-      },
-      {
-        starttimestamp: "1733731200",
-        score: "284350351892059472627522254.660071",
-      },
-      {
-        starttimestamp: "1733587200",
-        score: "284350351892059472627522254.660071",
-      },
-      {
-        starttimestamp: "1732996800",
-        score: "284350351892059472627522254.660071",
-      },
-      {
-        starttimestamp: "1732960800",
-        score: "284350351892059472627522254.660071",
-      },
-      {
-        starttimestamp: "1732953600",
-        score: "297789331184564947388859258.4931356",
-      },
-      {
-        starttimestamp: "1732669200",
-        score: "297789331184564947388859258.4931356",
-      },
-      {
-        starttimestamp: "1732600800",
-        score: "297789331184564947388859258.4931356",
-      },
-      {
-        starttimestamp: "1732593600",
-        score: "0",
-      },
-      {
-        starttimestamp: "1732586400",
-        score: "0",
-      },
-      {
-        starttimestamp: "1732410000",
-        score: "0",
-      },
-      {
-        starttimestamp: "1731744000",
-        score: "0",
-      },
-    ],
-  },
-];
-
 export const MemeHorseRace = observer(() => {
   const [timeIndex, setTimeIndex] = useState(0);
   const [tokens, setTokens] = useState<Record<string, Token>>({});
-  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [racers, setRacers] = useState<Racer[]>([]);
 
   useEffect(() => {
@@ -355,29 +119,64 @@ export const MemeHorseRace = observer(() => {
     initTokens();
   }, [wallet.isInit, racers]);
 
-  const timestamps = racers[0]?.tokenHourScore.map(
-    (score) => score.starttimestamp
+  // Find the racer with the most data points to use as timeline reference
+  const maxTimelineRacer = racers.reduce(
+    (prev, current) =>
+      current.tokenHourScore.length > prev.tokenHourScore.length
+        ? current
+        : prev,
+    racers[0] || { tokenHourScore: [] }
   );
 
-  const allTimeHighScore = Math.max(
-    ...racers.flatMap((racer) =>
-      racer.tokenHourScore.map((score) => score.score)
-    )
-  );
+  // Get sorted unique timestamps across all racers
+  const timestamps = [
+    ...new Set(
+      maxTimelineRacer.tokenHourScore.map((score) =>
+        parseInt(score.starttimestamp)
+      )
+    ),
+  ].sort((a, b) => a - b);
+
+  // Get score for a racer at specific timeIndex
+  const getRacerScore = (racer: Racer, timestamp: number) => {
+    // Find the exact timestamp match first
+    const exactScore = racer.tokenHourScore.find(
+      (score) => parseInt(score.starttimestamp) === timestamp
+    );
+    if (exactScore) {
+      return parseFloat(exactScore.score);
+    }
+
+    // If no exact match, find the latest score before this timestamp
+    const lastValidScore = racer.tokenHourScore
+      .filter((score) => parseInt(score.starttimestamp) <= timestamp)
+      .sort(
+        (a, b) => parseInt(b.starttimestamp) - parseInt(a.starttimestamp)
+      )[0];
+
+    return lastValidScore ? parseFloat(lastValidScore.score) : 0;
+  };
 
   const getCurrentScores = () => {
+    const currentTimestamp = timestamps[timeIndex];
     return racers.map((racer) => ({
       ...racer,
       token: tokens[racer.tokenAddress],
-      currentScore: racer.tokenHourScore[timeIndex].score,
+      currentScore: getRacerScore(racer, currentTimestamp),
     }));
   };
+
+  // Calculate max score across all timestamps and racers
+  const allTimeHighScore = Math.max(
+    ...racers.flatMap((racer) =>
+      racer.tokenHourScore.map((score) => parseFloat(score.score))
+    )
+  );
 
   const currentRacers = getCurrentScores();
   const totalRacers = racers.length;
 
   const handleTokenClick = (token: Token) => {
-    setSelectedToken(token);
     popmodal.openModal({
       content: <V3SwapCard toTokenAddress={token.address} />,
     });
@@ -385,7 +184,7 @@ export const MemeHorseRace = observer(() => {
 
   return (
     <>
-      {racers && racers.length > 0 && (
+      {racers && racers.length > 0 && timestamps.length > 0 && (
         <RaceTrack totalRacers={totalRacers}>
           <ContentWrapper totalRacers={totalRacers}>
             <h2>Berachain Derby Dashboard</h2>
@@ -397,6 +196,7 @@ export const MemeHorseRace = observer(() => {
                     position={(racer.currentScore / allTimeHighScore) * 85}
                   />
                   <RacerIcon
+                    className="relative"
                     position={(racer.currentScore / allTimeHighScore) * 85}
                   >
                     {racer.token?.logoURI && (
@@ -416,14 +216,16 @@ export const MemeHorseRace = observer(() => {
                         />
                       </div>
                     )}
-                    {/* <span
-                    style={{
-                      color: "#FFFFFF",
-                      textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-                    }}
-                  >
-                    {racer.token?.symbol}: {racer.currentScore}
-                  </span> */}
+                    <span
+                      className="absolute bottom-0 left-[50%] translate-x-[-50%] translate-y-[100%]"
+                      style={{
+                        color: "#FFFFFF",
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+                      }}
+                    >
+                      {/* {racer.token?.symbol}: */}
+                      {racer.currentScore}
+                    </span>
                   </RacerIcon>
                 </RaceLane>
               ))}

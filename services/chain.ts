@@ -42,6 +42,7 @@ export class Network {
   }[];
   blacklist?: {
     poolBlacklist?: string[];
+    memeBlacklist?: string[];
   };
   validatedTokens: Token[] = [];
   validatedTokensInfo: Record<string, Token> = {};
@@ -165,6 +166,16 @@ export const berachainBartioTestnetNetwork = new Network({
   ],
   blacklist: {
     poolBlacklist: ["0xfF95cdfC724Ca85b8d96D5a6Ea86333AC6a4799D".toLowerCase()],
+    memeBlacklist: [
+      "0x0C9a7895a7d93cDAC09079eb37dfBb186ce664d1".toLowerCase(),
+      "0xea2148fcf19a75f0066b4a58967b6a46260db911".toLowerCase(),
+      "0x0de0da199f7702f9a012e0b44c416738134392c2".toLowerCase(),
+      "0xf5936c007541a428a7bcde997dcf92e4a3648728".toLowerCase(),
+      "0xa675885b5a767a9c5afec6ecfb4076d0f6a2322a".toLowerCase(),
+      "0xa57bb140c490fb01ce02ff6ee7596d47b52abaa5".toLowerCase(),
+      "0x0fb4a8e6f3d19449d5a5ba46e89bdeb218f627ef".toLowerCase(),
+      "0xe8d36edc13c1c687a3eb88a737c0fa34213d5aa7".toLowerCase(),
+    ],
   },
   validatedTokensInfo: {
     //when adding a new token, make sure to add the address as lowercase
