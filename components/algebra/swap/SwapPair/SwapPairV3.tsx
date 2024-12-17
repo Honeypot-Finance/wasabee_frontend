@@ -143,86 +143,52 @@ const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
   };
 
   useEffect(() => {
-    if (fromTokenAddress && !baseCurrency) {
-      const token = Token.getToken({ address: fromTokenAddress });
-      handleInputSelect(
-        new AlgebraToken(
-          wallet.currentChainId,
-          token.address,
-          token.decimals,
-          token.symbol,
-          token.name
-        )
-      );
-    } else {
-      const token = Token.getToken({
-        address: wallet.currentChain.platformTokenAddress.HPOT,
-      });
-      handleInputSelect(
-        new AlgebraToken(
-          wallet.currentChainId,
-          token.address,
-          token.decimals,
-          token.symbol,
-          token.name
-        )
-      );
-    }
-    if (toTokenAddress && !quoteCurrency) {
-      const token = Token.getToken({ address: toTokenAddress });
-      handleOutputSelect(
-        new AlgebraToken(
-          wallet.currentChainId,
-          token.address,
-          token.decimals,
-          token.symbol,
-          token.name
-        )
-      );
-    }
-  }, [
-    fromTokenAddress,
-    toTokenAddress,
-    baseCurrency,
-    quoteCurrency,
-    handleInputSelect,
-    handleOutputSelect,
-  ]);
-  // useEffect(() => {
-  //   if (baseCurrency && quoteCurrency) {
-  //     chart.setChartLabel(`${baseCurrency.symbol}/${quoteCurrency.symbol}`);
+    const initializeTokens = () => {
+      if (!baseCurrency && !quoteCurrency) {
+        if (fromTokenAddress) {
+          const token = Token.getToken({ address: fromTokenAddress });
+          handleInputSelect(
+            new AlgebraToken(
+              wallet.currentChainId,
+              token.address,
+              token.decimals,
+              token.symbol,
+              token.name
+            )
+          );
+        } else {
+          const token = Token.getToken({
+            address: wallet.currentChain.platformTokenAddress.HPOT,
+          });
+          handleInputSelect(
+            new AlgebraToken(
+              wallet.currentChainId,
+              token.address,
+              token.decimals,
+              token.symbol,
+              token.name
+            )
+          );
+        }
 
-  //     chart.setChartTarget(
-  //       new PairContract({
-  //         address: computePoolAddress({
-  //           tokenA: baseCurrency.wrapped,
-  //           tokenB: quoteCurrency.wrapped,
-  //         }),
-  //         token0: Token.getToken({
-  //           address: baseCurrency.wrapped.address,
-  //         }),
-  //         token1: Token.getToken({
-  //           address: quoteCurrency.wrapped.address,
-  //         }),
-  //       })
-  //     );
-  //     chart.setCurrencyCode("TOKEN");
-  //   } else if (baseCurrency) {
-  //     chart.setChartLabel(`${baseCurrency.symbol}`);
-  //     chart.setChartTarget(
-  //       Token.getToken({ address: baseCurrency.wrapped.address })
-  //     );
-  //     chart.setCurrencyCode("TOKEN");
-  //   } else if (quoteCurrency) {
-  //     chart.setChartLabel(`${quoteCurrency.symbol}`);
-  //     chart.setChartTarget(
-  //       Token.getToken({ address: quoteCurrency.wrapped.address })
-  //     );
-  //     chart.setCurrencyCode("TOKEN");
-  //   }
+        if (toTokenAddress) {
+          const token = Token.getToken({ address: toTokenAddress });
+          handleOutputSelect(
+            new AlgebraToken(
+              wallet.currentChainId,
+              token.address,
+              token.decimals,
+              token.symbol,
+              token.name
+            )
+          );
+        }
+      }
+    };
 
-  //   console.log("chart.getChartTarget()", chart.chartTarget);
-  // }, [baseCurrency, quoteCurrency]);
+    initializeTokens();
+  }, [baseCurrency, quoteCurrency, fromTokenAddress, toTokenAddress, handleInputSelect, handleOutputSelect]);
+
   useEffect(() => {
     if (baseCurrency) {
       chart.setChartLabel(`${baseCurrency.symbol}`);

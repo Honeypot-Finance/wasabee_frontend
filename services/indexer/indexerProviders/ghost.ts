@@ -29,7 +29,7 @@ import dayjs from "dayjs";
 const memeGraphHandle = "5e83143f-8481-4564-afc2-7b7a766afef9/ghostgraph";
 const ftoGraphHandle = "df583977-1412-4c0a-9b3a-ebea68604f3a/ghostgraph";
 const memelaunchGraphHandle = "6250c399-1065-408f-9491-24a000b9d62d/ghostgraph";
-const pairGraphHandle = "335bbb3d-f3aa-49a6-9acb-502b6599eb5f/ghostgraph";
+const pairGraphHandle = "35512369-5e78-4bcc-ab57-8a1a506d842a/ghostgraph";
 
 function getTimeStampToDayNow() {
   return Math.floor(dayjs().unix() / 86400);
