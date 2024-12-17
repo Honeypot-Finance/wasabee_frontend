@@ -51,9 +51,9 @@ const PoolsTable = <TData, TValue>({
   const [isCreatePoolOpen, setIsCreatePoolOpen] = useState(false);
 
   const filters = [
-    { key: "trending", label: "🔥Trending" },
-    { key: "highApr", label: "High APR" },
-    { key: "stablecoin", label: "Stablecoin" },
+    { key: "trending", label: "All Pools" },
+    // { key: "highApr", label: "High APR" },
+    // { key: "stablecoin", label: "Stablecoin" },
     { key: "myPools", label: "My Pools" },
   ];
 

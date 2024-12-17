@@ -8,6 +8,7 @@ import {
   useMintActionHandlers,
 } from "@/lib/algebra/state/mintStore";
 import { PresetProfits, PresetsArgs } from "@/types/algebra/types/presets";
+import { maxInt256 } from "viem";
 
 interface RangeSidebarProps {
   currencyA: Currency | undefined;
@@ -55,7 +56,7 @@ const commonPresets = [
     type: Presets.FULL,
     title: `Full`,
     min: 0,
-    max: Infinity,
+    max: 2,
     risk: PresetProfits.VERY_LOW,
     profit: PresetProfits.VERY_LOW,
   },

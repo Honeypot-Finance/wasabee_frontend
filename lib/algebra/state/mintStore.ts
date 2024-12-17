@@ -125,9 +125,9 @@ export const useMintState = create<MintState>((set, get) => ({
       set({ leftRangeTypedValue: true, rightRangeTypedValue: true }),
     typeStartPriceInput: (typedValue: string) =>
       set({ startPriceTypedValue: typedValue }),
-    typeLeftRangeInput: (typedValue: string) =>
+    typeLeftRangeInput: (typedValue: string | true) =>
       set({ leftRangeTypedValue: typedValue }),
-    typeRightRangeInput: (typedValue: string) =>
+    typeRightRangeInput: (typedValue: string | true) =>
       set({ rightRangeTypedValue: typedValue }),
     typeInput: (field: Field, typedValue: string, noLiquidity: boolean) => {
       if (noLiquidity) {
