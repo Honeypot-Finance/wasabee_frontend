@@ -103,8 +103,9 @@ const CreatePoolForm = () => {
     }
   );
 
-  const { data: createPoolData, writeContract: createPool } =
-    useContractWrite();
+  const { data: createPoolData, writeContract: createPool } = useContractWrite(
+    {}
+  );
 
   const { isLoading, isError, isSuccess } = useTransactionAwait(
     createPoolData,
@@ -114,7 +115,7 @@ const CreatePoolForm = () => {
       tokenB: currencyB?.wrapped.address as Address,
       type: TransactionType.POOL,
     },
-    "/pools"
+    `/pooldetail/${poolAddress}`
   );
 
   useToastify({
@@ -185,7 +186,7 @@ const CreatePoolForm = () => {
 
           <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-300">
-              Initial price ({currencyA?.symbol} per {currencyB?.symbol})
+              Initial price ({currencyB?.symbol} per {currencyA?.symbol} )
             </label>
             <Input
               type="number"
