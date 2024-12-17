@@ -8,6 +8,9 @@ import { popmodal } from "@/services/popmodal";
 import { wallet } from "@/services/wallet";
 import { observer } from "mobx-react-lite";
 import { getAllRacers, Racer } from "@/lib/algebra/graphql/clients/racer";
+import { Tooltip } from "@nextui-org/react";
+
+const START_TIMESTAMP = 1734436800;
 
 const RaceTrack = styled.div<{ totalRacers: number }>`
   width: 100%;
@@ -139,6 +142,9 @@ export const MemeHorseRace = observer(() => {
 
   // Get score for a racer at specific timeIndex
   const getRacerScore = (racer: Racer, timestamp: number) => {
+    if (timestamp < START_TIMESTAMP) {
+      return 0;
+    }
     // Find the exact timestamp match first
     const exactScore = racer.tokenHourScore.find(
       (score) => parseInt(score.starttimestamp) === timestamp
@@ -182,67 +188,100 @@ export const MemeHorseRace = observer(() => {
     });
   };
 
+  //sorted Rank by latest timestamp
+  const getSortedRacers = () => {
+    return currentRacers.sort((a, b) => {
+      return b.currentScore - a.currentScore;
+    });
+  };
+
   return (
     <>
       {racers && racers.length > 0 && timestamps.length > 0 && (
-        <RaceTrack totalRacers={totalRacers}>
-          <ContentWrapper totalRacers={totalRacers}>
-            <h2>Berachain Derby Dashboard</h2>
+        <>
+          <RaceTrack totalRacers={totalRacers}>
+            <ContentWrapper totalRacers={totalRacers}>
+              <h2>Berachain Derby Dashboard</h2>
 
-            <RaceLanesContainer>
-              {currentRacers.map((racer) => (
-                <RaceLane key={racer.tokenAddress}>
-                  <RaceTrail
-                    position={(racer.currentScore / allTimeHighScore) * 85}
-                  />
-                  <RacerIcon
-                    className="relative"
-                    position={(racer.currentScore / allTimeHighScore) * 85}
-                  >
-                    {racer.token?.logoURI && (
-                      <div
-                        onClick={() => handleTokenClick(racer.token)}
-                        style={{ cursor: "pointer" }}
+              <RaceLanesContainer>
+                {currentRacers.map((racer) => (
+                  <RaceLane key={racer.tokenAddress}>
+                    <RaceTrail
+                      position={(racer.currentScore / allTimeHighScore) * 85}
+                    />
+                    <Tooltip content={racer.token?.symbol}>
+                      <RacerIcon
+                        className="relative"
+                        position={(racer.currentScore / allTimeHighScore) * 85}
                       >
-                        <Image
-                          src={racer.token?.logoURI}
-                          alt={racer.token?.symbol || ""}
-                          width={100}
-                          height={100}
+                        {racer.token?.logoURI && (
+                          <div
+                            onClick={() => handleTokenClick(racer.token)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <Image
+                              src={racer.token?.logoURI}
+                              alt={racer.token?.symbol || ""}
+                              width={100}
+                              height={100}
+                              style={{
+                                transition: "transform 0.2s ease-in-out",
+                              }}
+                              className="scale-100 hover:scale-110"
+                            />
+                          </div>
+                        )}
+                        <span
+                          className="absolute top-[50%] left-0 translate-x-[-100%] translate-y-[-50%] text-right"
                           style={{
-                            transition: "transform 0.2s ease-in-out",
+                            color: "#FFFFFF",
+                            textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
                           }}
-                          className="scale-100 hover:scale-110"
-                        />
-                      </div>
-                    )}
-                    <span
-                      className="absolute bottom-0 left-[50%] translate-x-[-50%] translate-y-[100%]"
-                      style={{
-                        color: "#FFFFFF",
-                        textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-                      }}
-                    >
-                      {/* {racer.token?.symbol}: */}
-                      {racer.currentScore}
-                    </span>
-                  </RacerIcon>
-                </RaceLane>
-              ))}
-            </RaceLanesContainer>
+                        >
+                          MCAP:{" "}
+                          {(racer.currentScore / Math.pow(10, 18)).toFixed(3)}$
+                        </span>
+                      </RacerIcon>
+                    </Tooltip>
+                  </RaceLane>
+                ))}
+              </RaceLanesContainer>
 
-            <TimeSlider
-              type="range"
-              min={0}
-              max={timestamps.length - 1}
-              value={timeIndex}
-              onChange={(e) => setTimeIndex(parseInt(e.target.value))}
-            />
-            <div>
-              Time: {new Date(timestamps[timeIndex] * 1000).toLocaleString()}
+              <TimeSlider
+                type="range"
+                min={0}
+                max={timestamps.length - 1}
+                value={timeIndex}
+                onChange={(e) => setTimeIndex(parseInt(e.target.value))}
+                style={{ cursor: "pointer" }}
+              />
+              <div>
+                Time: {new Date(timestamps[timeIndex] * 1000).toLocaleString()}
+              </div>
+            </ContentWrapper>
+          </RaceTrack>
+          {getSortedRacers().map((racer, index) => (
+            <div
+              key={racer.tokenAddress}
+              className="flex justify-start items-center p-2"
+            >
+              <div>
+                <Image
+                  src={racer.token?.logoURI}
+                  alt={racer.token?.symbol || ""}
+                  width={50}
+                  height={50}
+                />
+              </div>
+              <div>
+                <span className="inline-block w-[150px]">
+                  {index === 0 ? `👑` : `${index + 1}.`} {racer.token?.symbol}
+                </span>{" "}
+                - {(racer.currentScore / Math.pow(10, 18)).toFixed(3)}$
+              </div>
             </div>
-          </ContentWrapper>
-        </RaceTrack>
+          ))}
+        </>
       )}
     </>
   );
