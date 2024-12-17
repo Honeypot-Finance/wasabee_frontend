@@ -8,7 +8,8 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { observer } from "mobx-react-lite";
-import { Pot2PumpPumpingService } from "@/services/launchpad/pot2pump/pumping";
+import { Pot2PumpPumpingService  } from "@/services/launchpad/pot2pump/pumping";
+import { Pot2PumpPumpingService as Pot2PumpService } from "@/services/launchpad/pot2pump/pot2Pump";
 import { Button } from "@/components/button/button-next";
 import { FaSlidersH } from "react-icons/fa";
 
@@ -27,7 +28,7 @@ export interface FilterState {
 interface FilterProps {
   filters: FilterState;
   setFilters: (filters: FilterState) => void;
-  pumpingProjects?: Pot2PumpPumpingService;
+  pumpingProjects?: Pot2PumpPumpingService | Pot2PumpService;
 }
 
 export const Filter = observer(

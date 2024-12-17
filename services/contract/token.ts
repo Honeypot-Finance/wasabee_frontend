@@ -56,6 +56,9 @@ export class Token implements BaseContract {
   holderCount = "";
   swapCount = "";
   indexerDataLoaded = false;
+  volumeUSD = "";
+  initialUSD = "";
+  totalValueLockedUSD = "";
 
   // determines the order of the token in the list
   get priority() {

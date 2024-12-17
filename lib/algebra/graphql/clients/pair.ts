@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import BigNumber from "bignumber.js";
 import { Token } from "@/services/contract/token";
+import { Pot2Pump } from "./type";
 
 type SubgraphToken = {
   id: string;
@@ -15,21 +16,6 @@ type SubgraphToken = {
   holderCount: string;
   derivedMatic: string;
   totalSupply: string;
-};
-
-type Pot2Pump = {
-  id: string;
-  launchToken: SubgraphToken;
-  raisedToken: SubgraphToken;
-  DepositRaisedToken: string;
-  DepositLaunchToken: string;
-  createdAt: string;
-  endTime: string;
-  state: string;
-  participantsCount: string;
-  raisedTokenReachingMinCap: boolean;
-  raisedTokenMinCap: string;
-  creator: string;
 };
 
 type Pot2PumpListData = {
@@ -97,6 +83,10 @@ const subgraphTokenQuery = `
   holderCount
   derivedMatic
   totalSupply
+  derivedUSD
+  volumeUSD
+  initialUSD
+  totalValueLockedUSD
 `;
 
 const pop2PumpQuery = `
@@ -424,6 +414,10 @@ export async function fetchPot2PumpList({
           totalSupplyWithoutDecimals: BigNumber(
             pot2Pump.launchToken.totalSupply
           ),
+          derivedUSD: pot2Pump.launchToken.derivedUSD,
+          volumeUSD: pot2Pump.launchToken.volumeUSD,
+          initialUSD: pot2Pump.launchToken.initialUSD,
+          totalValueLockedUSD: pot2Pump.launchToken.totalValueLockedUSD,
         }),
         raiseToken: new Token({
           address: pot2Pump.raisedToken.id,
@@ -469,4 +463,95 @@ export async function fetchPot2PumpList({
   }
 
   return transformPairsListData(data);
+}
+
+export async function fetchPot2Pumps({
+  filter,
+}: {
+  chainId: string;
+  filter: SubgraphProjectFilter;
+}): Promise<Pot2PumpListData> {
+  const whereCondition: string[] = [];
+
+  if (filter.search) {
+    whereCondition.push(`
+      launchToken_: {
+        or: [
+          {name_contains_nocase: "${filter.search}"}, 
+          {symbol_contains_nocase: "${filter.search}"}, 
+          {id: "${filter.search.toLowerCase()}"}
+        ]
+      }
+    `);
+  }
+
+  if (filter.status === "success") {
+    whereCondition.push(` raisedTokenReachingMinCap: true `);
+  } else if (filter.status === "fail") {
+    whereCondition.push(
+      ` raisedTokenReachingMinCap: false, endTime_lt: ${Math.floor(Date.now() / 1000)} `
+    );
+  } else if (filter.status === "processing") {
+    whereCondition.push(
+      ` raisedTokenReachingMinCap: false, endTime_gte: ${Math.floor(Date.now() / 1000)} `
+    );
+  }
+
+  if (filter.tvlRange?.min !== undefined) {
+    whereCondition.push(` LaunchTokenTVL_gte: "${filter.tvlRange.min}" `);
+  }
+  if (filter.tvlRange?.max !== undefined) {
+    whereCondition.push(` LaunchTokenTVL_lte: "${filter.tvlRange.max}" `);
+  }
+
+  if (filter.participantsRange?.min !== undefined) {
+    whereCondition.push(
+      ` participantsCount_gte: "${filter.participantsRange.min}" `
+    );
+  }
+  if (filter.participantsRange?.max !== undefined) {
+    whereCondition.push(
+      ` participantsCount_lte: "${filter.participantsRange.max}" `
+    );
+  }
+
+  if (filter.creator) {
+    whereCondition.push(` creator: "${filter.creator.toLowerCase()}" `);
+  }
+
+  if (filter.participant) {
+    whereCondition.push(
+      ` participants_:{account:"${filter.participant.toLowerCase()}"}`
+    );
+  }
+
+  const queryParts = [
+    filter.limit ? `first: ${filter.limit}` : "",
+    filter?.currentPage && filter.limit
+      ? `skip: ${filter?.currentPage * filter.limit}`
+      : "",
+    filter.orderBy ? `orderBy: ${filter.orderBy}` : "",
+    filter.orderDirection ? `orderDirection: ${filter.orderDirection}` : "",
+    whereCondition.length > 0
+      ? `where:{ ${whereCondition
+          .map((condition) => `${condition}`)
+          .join(",\n")}}`
+      : "",
+  ].filter(Boolean);
+
+  const query = `
+    query PairsList {
+      pot2Pumps(
+        ${queryParts.join(",\n")}
+      ) {
+        ${pop2PumpQuery}
+      }
+    }
+  `;
+
+  const { data } = await infoClient.query<Pot2PumpListData>({
+    query: gql(query),
+  });
+
+  return data;
 }

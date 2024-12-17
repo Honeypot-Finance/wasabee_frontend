@@ -11,12 +11,11 @@ import { LaunchCardV3 } from "@/components/LaunchCard/v3";
 import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import Pagination from "@/components/Pagination/Pagination";
 import launchpad, { defaultPairFilters } from "@/services/launchpad";
-import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
-import { MemePairContract } from "@/services/contract/memepair-contract";
-import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
-import { LaunchCard } from "@/components/LaunchCard";
-import { Pot2PumpPottingService } from "@/services/launchpad/pot2pump/potting";
 import { Filter, FilterState } from "@/components/pot2pump/FilterModal";
+import { MemePairContract } from "@/services/contract/memepair-contract";
+import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
+import { Pot2PumpPottingService } from "@/services/launchpad/pot2pump/potting";
+import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pottingProjects, setPottingProjects] =

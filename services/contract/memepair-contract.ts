@@ -1,19 +1,14 @@
-import { BaseContract } from ".";
+import { Token } from "./token";
 import { wallet } from "../wallet";
 import { getContract } from "viem";
-import { AsyncState, ContractWrite } from "../utils";
-import { action, makeAutoObservable, reaction } from "mobx";
-import { MemePairABI } from "@/lib/abis/MemePair";
-import BigNumber from "bignumber.js";
-import { Token } from "./token";
 import { dayjs } from "@/lib/dayjs";
-import { cn } from "@/lib/tailwindcss";
+import BigNumber from "bignumber.js";
 import { trpcClient } from "@/lib/trpc";
-import { ZodError } from "zod";
-import { statusTextToNumber } from "../launchpad";
+import { makeAutoObservable } from "mobx";
+import { AsyncState, ContractWrite } from "../utils";
 import { BaseLaunchContract } from "./base-launch-contract";
-import { pot2PumpPairABI } from "@/lib/abis/Pot2Pump/pot2PumpPair";
 import { ICHIVaultContract } from "./aquabera/ICHIVault-contract";
+import { pot2PumpPairABI } from "@/lib/abis/Pot2Pump/pot2PumpPair";
 
 export class MemePairContract implements BaseLaunchContract {
   databaseId: number | undefined = undefined;
@@ -409,7 +404,6 @@ export class MemePairContract implements BaseLaunchContract {
 
     this.isInit = true;
   }
-
 
   async getRaisedTokenMinCap() {
     const res = await this.contract.read.raisedTokenMinCap();

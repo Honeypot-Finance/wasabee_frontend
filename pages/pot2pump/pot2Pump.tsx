@@ -9,10 +9,10 @@ import { memewarStore } from "@/services/memewar";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { Button } from "@/components/button/button-next";
 import Pagination from "@/components/Pagination/Pagination";
-import { LaunchCardV3 } from "@/components/LaunchCard/v3";
+import { LaunchCardV3 } from "@/components/LaunchCard/v3/pot2Pump";
 import { Filter, FilterState } from "@/components/pot2pump/FilterModal";
 import { Pot2PumpTracker } from "@/components/MemeWarBanner/Pot2PumpTracker";
-import { Pot2PumpPumpingService } from "@/services/launchpad/pot2pump/pumping";
+import { Pot2PumpPumpingService } from "@/services/launchpad/pot2pump/pot2Pump";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {

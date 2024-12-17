@@ -5,24 +5,14 @@ import {
   DropdownMenu,
   DropdownItem,
   Button,
-  Link,
 } from "@nextui-org/react";
-import { SlOptions, SlShare, SlWallet } from "react-icons/sl";
-import { VscCopy, VscRemoteExplorer } from "react-icons/vsc";
-import { toast } from "react-toastify";
+import { SlOptions, SlShare } from "react-icons/sl";
+import { VscCopy } from "react-icons/vsc";
 import * as clipboard from "clipboard-polyfill";
-import CopyToClipboard from "react-copy-to-clipboard";
 import { ShareMediaDisplay } from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { Token } from "@/services/contract/token";
-import {
-  BiLink,
-  BiLinkExternal,
-  BiLogoInternetExplorer,
-  BiWallet,
-} from "react-icons/bi";
-import { FaInternetExplorer } from "react-icons/fa";
+import { BiLink, BiWallet } from "react-icons/bi";
 import { popmodal } from "@/services/popmodal";
-import Image from "next/image";
 import { WrappedToastify } from "@/lib/wrappedToastify";
 
 type optionItem = {

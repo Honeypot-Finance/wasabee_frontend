@@ -77,33 +77,57 @@ const TimeLineComponent = observer(
   }
 );
 
-const LaunchProgress = observer(({ pair }: { pair: MemePairContract }) => {
-  return (
-    <>
-      {pair.depositedRaisedToken && pair.raisedTokenMinCap && (
-        <ComponentContainer>
-          <h6 className="text-xs">Progress</h6>
-          <div className="flex items-center gap-2 text-sm w-[80%]">
-            <ProgressBar
-              label={
-                (
-                  (pair.depositedRaisedToken.toNumber() /
-                    (pair.raisedTokenMinCap.toNumber() / Math.pow(10, 18))) *
-                  100
-                ).toFixed(2) + "%"
-              }
-              value={
-                (pair.depositedRaisedToken.toNumber() /
-                  (pair.raisedTokenMinCap.toNumber() / Math.pow(10, 18))) *
-                100
-              }
-            />
-          </div>
-        </ComponentContainer>
-      )}
-    </>
-  );
-});
+const LaunchProgress = observer(
+  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+    // 计算进度百分比
+    const progressPercentage = new BigNumber(
+      pair.depositedRaisedToken?.toNumber() ?? 0
+    )
+      .div(
+        new BigNumber(
+          (pair as MemePairContract).raisedTokenMinCap?.toNumber() ?? 0
+        ).div(Math.pow(10, 18))
+      )
+      .times(100)
+      .toFixed(2);
+
+    // 计算进度值
+    const progressValue =
+      pair?.depositedRaisedToken && (pair as MemePairContract).raisedTokenMinCap
+        ? (pair.depositedRaisedToken.toNumber() /
+            (((pair as MemePairContract).raisedTokenMinCap?.toNumber() ?? 0) /
+              Math.pow(10, 18))) *
+          100
+        : 0;
+
+    // 如果进度超过100%，不显示组件
+    if (Number(progressPercentage) >= 100) {
+      return <div className="mt-4"></div>;
+    }
+
+    return (
+      <div className="space-y-1.5 mt-4 text-[#202020]">
+        <span className="text-sm opacity-70 space-x-1">
+          <span>Progress</span>
+          <span className="font-bold">({progressPercentage}%)</span>
+        </span>
+        <ProgressBar
+          className="rounded-[24px] border border-black bg-white shadow-[2px_2px_0px_0px_#D29A0D]"
+          value={progressValue}
+        />
+        <div className="flex items-center justify-between text-sm">
+          <span className="space-x-0.5">
+            <span>
+              {(pair as MemePairContract)?.depositedRaisedToken?.toFormat(3)}
+            </span>
+            <span> {pair?.raiseToken?.displayName}</span>
+          </span>
+          <span className="font-bold">{progressPercentage}%</span>
+        </div>
+      </div>
+    );
+  }
+);
 
 const TotalLaunched = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -480,102 +504,80 @@ const DetailLaunchCard = observer(
             />
           </div>
 
-          <div className="space-y-1.5 mt-4 text-[#202020]">
-            <span className="text-sm opacity-70 space-x-1">
-              <span>Progress</span>
-              <span className="font-bold">
-                (
-                {(pair as MemePairContract)?.depositedRaisedToken &&
-                (pair as MemePairContract).raisedTokenMinCap
-                  ? new BigNumber(
-                      (
-                        pair as MemePairContract
-                      ).depositedRaisedToken?.toNumber() ?? 0
-                    )
-                      .div(
-                        new BigNumber(
-                          (
-                            pair as MemePairContract
-                          ).raisedTokenMinCap?.toNumber() ?? 0
-                        ).div(Math.pow(10, 18))
-                      )
-                      .times(100)
-                      .toFixed(2)
-                  : "-"}{" "}
-                %)
-              </span>
-            </span>
-            <ProgressBar
-              className="rounded-[24px] border border-black bg-white shadow-[2px_2px_0px_0px_#D29A0D]"
-              value={
-                pair?.depositedRaisedToken &&
-                (pair as MemePairContract).raisedTokenMinCap
-                  ? (pair.depositedRaisedToken.toNumber() /
-                      (((
-                        pair as MemePairContract
-                      ).raisedTokenMinCap?.toNumber() ?? 0) /
-                        Math.pow(10, 18))) *
-                    100
-                  : 0
-              }
-            />
-            <div className="flex items-center justify-between text-sm">
-              <span className="space-x-0.5">
+          <LaunchProgress pair={pair} />
+
+          <div className="grid grid-cols-2 gap-4 text-black">
+            <div>
+              <p className="text-xs opacity-60">Total Raised Token</p>
+              <p className="font-semibold">
                 <span>
-                  {(pair as MemePairContract)?.depositedRaisedToken?.toFormat(
-                    3
-                  )}
+                  {pair?.depositedRaisedToken && pair.raiseToken
+                    ? "$" +
+                      pair.depositedRaisedToken
+                        .multipliedBy(pair?.raiseToken?.derivedUSD || 0)
+                        .toFormat(3)
+                    : "-"}
+                  &nbsp;
+                  {pair?.raiseToken?.displayName}
                 </span>
-                <span> {pair?.raiseToken?.displayName}</span>
-              </span>
-              <span className="font-bold">
-                {(pair as MemePairContract)?.depositedRaisedToken &&
-                (pair as MemePairContract).raisedTokenMinCap
-                  ? new BigNumber(
-                      (
-                        pair as MemePairContract
-                      ).depositedRaisedToken?.toNumber() ?? 0
-                    )
-                      .div(
-                        new BigNumber(
-                          (
-                            pair as MemePairContract
-                          ).raisedTokenMinCap?.toNumber() ?? 0
-                        ).div(Math.pow(10, 18))
-                      )
-                      .times(100)
-                      .toFixed(2)
-                  : "-"}{" "}
-                %
-              </span>
+              </p>
             </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4 text-black">
-          <div>
-            <p className="text-xs opacity-60">Total Raised Token</p>
-            <p className="font-semibold">
-              <span>
-                {pair?.depositedRaisedToken && pair.raiseToken
-                  ? "$" +
-                    pair.depositedRaisedToken
-                      .multipliedBy(pair?.raiseToken?.derivedUSD || 0)
-                      .toFormat(3)
-                  : "-"}
-                &nbsp;
-                {pair?.raiseToken?.displayName}
-              </span>
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs opacity-60">Participants Count</p>
-            <p className="font-semibold">
-              <span>
-                {pair?.participantsCount
-                  ? pair.participantsCount.toFormat(0)
-                  : "-"}
-              </span>
-            </p>
+            <div className="text-right">
+              <p className="text-xs opacity-60">Participants Count</p>
+              <p className="font-semibold">
+                <span>
+                  {pair?.participantsCount
+                    ? pair.participantsCount.toFormat(0)
+                    : "-"}
+                </span>
+              </p>
+            </div>
+            <div>
+              <p className="text-xs opacity-60">Volume</p>
+              <p className="font-semibold">
+                <span>
+                  {pair?.launchedToken?.volumeUSD
+                    ? "$" +
+                      new BigNumber(pair.launchedToken.volumeUSD).toFormat(3)
+                    : "--"}
+                </span>
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs opacity-60">TVL</p>
+              <p className="font-semibold">
+                <span>
+                  {pair?.launchedToken?.totalValueLockedUSD
+                    ? "$" +
+                      new BigNumber(
+                        pair.launchedToken.totalValueLockedUSD
+                      ).toFormat(3)
+                    : "--"}
+                </span>
+              </p>
+            </div>
+            <div>
+              <p className="text-xs opacity-60">Current Price</p>
+              <p className="font-semibold">
+                <span>
+                  {pair?.launchedToken?.derivedUSD
+                    ? "$" +
+                      new BigNumber(pair.launchedToken.derivedUSD).toFormat(3)
+                    : "--"}
+                </span>
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs opacity-60">Price Change</p>
+              <p className="font-semibold">
+                <span>
+                  {pair?.launchedToken?.derivedUSD &&
+                  pair?.launchedToken?.initialUSD
+                    ? `${((Number(pair.launchedToken.derivedUSD) / Number(pair.launchedToken.initialUSD)) * 100).toFixed(3)}%`
+                    : "--"}
+                </span>
+              </p>
+            </div>
           </div>
         </div>
         <div className="w-full h-[1px] bg-[#202020]"></div>
