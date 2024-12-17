@@ -36,11 +36,6 @@ import TokenRaised from "./componets/TokenRaised";
 import SaleProgress from "./componets/SaleProgress";
 import TokenAddress from "./componets/TokenAddress";
 import TokenDetails from "./componets/TokenDetails";
-import {
-  OptionsDropdown,
-  optionsPresets,
-} from "@/components/OptionsDropdown/OptionsDropdown";
-import { LucideFileEdit } from "lucide-react";
 import KlineChart from "./componets/KlineChart";
 import { LaunchDataProgress } from "./componets/LaunchDataProgress";
 
@@ -737,7 +732,7 @@ const MemeView = observer(() => {
             {state.pair.value?.state === 3 && (
               <LaunchDataProgress pair={state.pair.value} />
             )}
-            <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-contain"></div>
+            <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-repeat-x bg-auto"></div>
           </div>
           <div className="bg-transparent rounded-2xl space-y-3 col-span-2 lg:col-span-1">
             {/* <div className="bg-[url('/images/pumping/outline-border.png')] h-[50px] absolute top-0 left-0 w-full bg-repeat-x bg-[length:130%]"></div> */}

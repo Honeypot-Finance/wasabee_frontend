@@ -21,6 +21,7 @@ export interface FilterState {
     min: string;
     max: string;
   };
+  search: string;
 }
 
 interface FilterProps {
@@ -61,7 +62,8 @@ export const Filter = observer(
           classNames={{
             base: "bg-transparent",
             wrapper: "bg-transparent",
-            closeButton: "absolute right-4 top-6 z-50 text-white w-8 h-8 flex items-center justify-center",
+            closeButton:
+              "absolute right-4 top-6 z-50 text-white w-8 h-8 flex items-center justify-center",
           }}
         >
           <ModalContent className="bg-[#FFCD4D] relative overflow-hidden">

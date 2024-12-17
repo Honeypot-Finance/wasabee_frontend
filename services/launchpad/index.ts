@@ -46,7 +46,7 @@ export type PairFilter = {
 
 export type SubgraphProjectFilter = {
   status: "all" | "processing" | "success" | "fail";
-  search: string;
+  search?: string;
   currentPage: number;
   limit: number;
   hasNextPage: boolean;

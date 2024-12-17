@@ -4,33 +4,23 @@ import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { useEffect, useState } from "react";
 import launchpad from "@/services/launchpad";
-import {
-  Tab,
-  Tabs,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button as NextButton,
-} from "@nextui-org/react";
+import { Tab, Tabs } from "@nextui-org/react";
 import { NextLayoutPage } from "@/types/nextjs";
 import { memewarStore } from "@/services/memewar";
-import { FaExternalLinkAlt, FaFilter } from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { Button } from "@/components/button/button-next";
 import { LaunchCardV3 } from "@/components/LaunchCard/v3";
 import Pagination from "@/components/Pagination/Pagination";
 import { Pot2PumpTracker } from "@/components/MemeWarBanner/Pot2PumpTracker";
 import { Pot2PumpPumpingService } from "@/services/launchpad/pot2pump/pumping";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
-import { useDisclosure } from "@nextui-org/react";
 import { Filter, FilterState } from "@/components/pot2pump/FilterModal";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pumpingProjects, setPumpingProjects] =
     useState<Pot2PumpPumpingService>();
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [filters, setFilters] = useState<FilterState>({
+    search: "",
     tvl: { min: "", max: "" },
     participants: { min: "", max: "" },
   });
@@ -39,12 +29,12 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     if (!wallet.isInit) {
       return;
     }
-    launchpad.setCurrentLaunchpadType("meme");
-    launchpad.showNotValidatedPairs = true;
-    launchpad.myLaunches.reloadPage();
-    launchpad.projectsPage.updateFilter({
-      status: "success",
-    });
+    // launchpad.setCurrentLaunchpadType("meme");
+    // launchpad.showNotValidatedPairs = true;
+    // launchpad.myLaunches.reloadPage();
+    // launchpad.projectsPage.updateFilter({
+    //   status: "success",
+    // });
 
     memewarStore.reloadParticipants();
 
@@ -64,9 +54,37 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             className="flex flex-col sm:flex-row items-center gap-2 my-4 sm:my-0"
           >
             <WrappedNextInputSearchBar
+              value={filters.search}
+              placeholder="Search by token name, symbol or address"
               className="border border-[#FFCD4D] shadow-[1px_2px_0px_0px_#9B7D2F] placeholder:text-xs"
               onChange={(e) => {
-                launchpad.pairFilterSearch = e.target.value;
+                const newFilters = {
+                  ...filters,
+                  search: e.target.value,
+                };
+                setFilters(newFilters);
+
+                if (pumpingProjects) {
+                  pumpingProjects.projectsPage.updateFilter({
+                    search: newFilters.search,
+                    tvlRange: {
+                      min: newFilters.tvl.min
+                        ? Number(newFilters.tvl.min)
+                        : undefined,
+                      max: newFilters.tvl.max
+                        ? Number(newFilters.tvl.max)
+                        : undefined,
+                    },
+                    participantsRange: {
+                      min: newFilters.participants.min
+                        ? Number(newFilters.participants.min)
+                        : undefined,
+                      max: newFilters.participants.max
+                        ? Number(newFilters.participants.max)
+                        : undefined,
+                    },
+                  });
+                }
               }}
             />
           </div>

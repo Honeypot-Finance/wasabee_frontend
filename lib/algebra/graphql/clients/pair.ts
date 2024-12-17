@@ -128,6 +128,18 @@ export async function fetchPairsList({
   let whereCondition = "";
   let conditions = [];
 
+  if (filter.search) {
+    conditions.push(`
+      launchToken_: {
+        or: [
+          {name_contains_nocase: "${filter.search}"}, 
+          {symbol_contains_nocase: "${filter.search}"}, 
+          {id: "${filter.search.toLowerCase()}"}
+        ]
+      }
+    `);
+  }
+
   if (filter.status === "success") {
     conditions.push(`raisedTokenReachingMinCap: true`);
   } else if (filter.status === "fail") {
@@ -181,6 +193,8 @@ export async function fetchPairsList({
       }
     }
   `;
+
+  console.log("query fetchPairsList", query);
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),
@@ -312,6 +326,18 @@ export async function fetchPot2PumpList({
 }): Promise<Pot2PumpListResponse> {
   let whereCondition: string[] = [];
 
+  if (filter.search) {
+    whereCondition.push(`
+      launchToken_: {
+        or: [
+          {name_contains_nocase: "${filter.search}"}, 
+          {symbol_contains_nocase: "${filter.search}"}, 
+          {id: "${filter.search.toLowerCase()}"}
+        ]
+      }
+    `);
+  }
+
   if (filter.status === "success") {
     whereCondition.push(` raisedTokenReachingMinCap: true `);
   } else if (filter.status === "fail") {
@@ -375,6 +401,8 @@ export async function fetchPot2PumpList({
       }
     }
   `;
+
+  console.log("query fetchPot2PumpList", query);
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),

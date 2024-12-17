@@ -7,7 +7,7 @@ import {
   useTopPot2PumpDeployer,
   useTopSwapAccounts,
 } from "@/lib/hooks/useAccounts";
-import { shortenAddressString } from "@/lib/utils";
+import { shortenAddressString, formatVolume } from "@/lib/utils";
 import { Tooltip } from "@nextui-org/react";
 
 interface LeaderboardItem {
@@ -246,7 +246,7 @@ const LeaderboardPage = () => {
                               </div>
                             </td>
                             <td className="py-4 px-6 text-base">
-                              ${(item.totalVolume / 10 ** 18).toLocaleString()}
+                              {formatVolume(item.totalVolume)}
                             </td>
                             <td className="py-4 px-6 text-center text-base">
                               {item.swapCount}
