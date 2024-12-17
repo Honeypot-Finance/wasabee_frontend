@@ -154,6 +154,19 @@ const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
           token.name
         )
       );
+    } else {
+      const token = Token.getToken({
+        address: wallet.currentChain.platformTokenAddress.HPOT,
+      });
+      handleInputSelect(
+        new AlgebraToken(
+          wallet.currentChainId,
+          token.address,
+          token.decimals,
+          token.symbol,
+          token.name
+        )
+      );
     }
     if (toTokenAddress && !quoteCurrency) {
       const token = Token.getToken({ address: toTokenAddress });

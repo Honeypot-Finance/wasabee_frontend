@@ -16,6 +16,9 @@ export class Network {
   get chainId() {
     return this.chain.id;
   }
+  platformTokenAddress!: {
+    HPOT: string;
+  };
   contracts!: {
     routerV3: string;
     routerV2: string;
@@ -106,6 +109,9 @@ export const berachainBartioTestnetNetwork = new Network({
     address: "0x1bd43f7f55b700236c92256a0fd90266363119f7",
     name: "Daily Faucet",
     requirements: "You can claim 100 BERA tokens every 24 hours.",
+  },
+  platformTokenAddress: {
+    HPOT: "0xfc5e3743e9fac8bb60408797607352e24db7d65e".toLowerCase(),
   },
   contracts: {
     routerV3: ALGEBRA_POSITION_MANAGER,

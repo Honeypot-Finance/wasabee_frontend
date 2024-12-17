@@ -6,19 +6,33 @@ import SwapPairV3 from "./SwapPair/SwapPairV3";
 import SwapButtonV3 from "./SwapButton/SwapButotnV3";
 import SwapParamsV3 from "./SwapParams/SwapParamsV3";
 import { MdCandlestickChart } from "react-icons/md";
+import { cn } from "@/lib/tailwindcss";
 
 interface V3SwapCardProps {
   fromTokenAddress?: string;
   toTokenAddress?: string;
+  boarderless?: boolean;
 }
 
 export function V3SwapCard({
   fromTokenAddress,
   toTokenAddress,
+  boarderless,
 }: V3SwapCardProps) {
   return (
-    <div className="flex flex-col items-center gap-2 bg-[#FFCD4D] rounded-2xl px-4 py-3 relative pt-[90px] pb-[70px] text-black ">
-      <div className="bg-[url('/images/swap/top-border.png')] bg-cover bg-no-repeat bg-left-top h-[90px] absolute top-0 left-0 w-full rounded-[20px]"></div>
+    <div
+      className={cn(
+        "flex flex-col w-full",
+        !boarderless &&
+          " items-center gap-2 bg-[#FFCD4D] rounded-2xl px-4 py-3 relative pt-[90px] pb-[70px] text-black "
+      )}
+    >
+      <div
+        className={cn(
+          !boarderless &&
+            "bg-[url('/images/swap/top-border.png')] bg-cover bg-no-repeat bg-left-top h-[90px] absolute top-0 left-0 w-full rounded-[20px]"
+        )}
+      ></div>
       <div className="flex items-center justify-between w-full">
         <span
           onClick={() => {
