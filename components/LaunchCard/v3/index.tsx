@@ -537,8 +537,10 @@ const DetailLaunchCard = observer(
               <p className="font-semibold">
                 <span>
                   {pair?.launchedToken?.volumeUSD
-                    ? "$" +
-                      new BigNumber(pair.launchedToken.volumeUSD).toFormat(3)
+                    ? "$ " +
+                      (Number(pair.launchedToken.volumeUSD) < 0.001
+                        ? "<0.001"
+                        : Number(pair.launchedToken.volumeUSD).toFixed(3))
                     : "--"}
                 </span>
               </p>
@@ -548,10 +550,12 @@ const DetailLaunchCard = observer(
               <p className="font-semibold">
                 <span>
                   {pair?.launchedToken?.totalValueLockedUSD
-                    ? "$" +
-                      new BigNumber(
-                        pair.launchedToken.totalValueLockedUSD
-                      ).toFormat(3)
+                    ? "$ " +
+                      (Number(pair.launchedToken.totalValueLockedUSD) < 0.001
+                        ? "<0.001"
+                        : Number(
+                            pair.launchedToken.totalValueLockedUSD
+                          ).toFixed(3))
                     : "--"}
                 </span>
               </p>
@@ -561,8 +565,10 @@ const DetailLaunchCard = observer(
               <p className="font-semibold">
                 <span>
                   {pair?.launchedToken?.derivedUSD
-                    ? "$" +
-                      new BigNumber(pair.launchedToken.derivedUSD).toFormat(3)
+                    ? "$ " +
+                      (Number(pair.launchedToken.derivedUSD) < 0.001
+                        ? "<0.001"
+                        : Number(pair.launchedToken.derivedUSD).toFixed(3))
                     : "--"}
                 </span>
               </p>
@@ -570,10 +576,24 @@ const DetailLaunchCard = observer(
             <div className="text-right">
               <p className="text-xs opacity-60">Price Change</p>
               <p className="font-semibold">
-                <span>
+                <span
+                  className={cn(
+                    Number(pair?.launchedToken?.initialUSD) &&
+                      Number(pair?.launchedToken?.derivedUSD) &&
+                      (Number(pair?.launchedToken?.derivedUSD) >
+                      Number(pair?.launchedToken?.initialUSD)
+                        ? "text-green-500"
+                        : "text-red-500")
+                  )}
+                >
                   {pair?.launchedToken?.derivedUSD &&
-                  pair?.launchedToken?.initialUSD
-                    ? `${((Number(pair.launchedToken.derivedUSD) / Number(pair.launchedToken.initialUSD)) * 100).toFixed(3)}%`
+                  Number(pair?.launchedToken?.derivedUSD) &&
+                  pair?.launchedToken?.initialUSD &&
+                  Number(pair.launchedToken.initialUSD)
+                    ? Number(pair.launchedToken.derivedUSD) >
+                      Number(pair.launchedToken.initialUSD)
+                      ? `${((Number(pair.launchedToken.derivedUSD) / Number(pair.launchedToken.initialUSD)) * 100).toFixed(2)}%`
+                      : `-${((Number(pair.launchedToken.initialUSD) / Number(pair.launchedToken.derivedUSD)) * 100).toFixed(2)}%`
                     : "--"}
                 </span>
               </p>
