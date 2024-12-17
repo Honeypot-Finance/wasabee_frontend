@@ -37,15 +37,9 @@ export const Pagination = observer(
                 animate="visible"
                 className={props.classNames?.itemsContainer ?? ""}
               >
-                {props.paginationState.pageItems.value.map((pair, idx) => (
-                  <motion.div
-                    variants={itemPopUpVariants}
-                    key={idx}
-                    className={props.classNames?.item ?? ""}
-                  >
-                    {props.render(pair)}
-                  </motion.div>
-                ))}
+                {props.paginationState.pageItems.value.map((pair, idx) =>
+                  props.render(pair)
+                )}
               </motion.div>
               <div className="flex justify-around my-5">
                 {props.paginationState.filter.hasNextPage && (

@@ -210,9 +210,9 @@ const LeaderboardPage = () => {
                         <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
                           Swaps
                         </th>
-                        <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
+                        {/* <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
                           Holding Pools
-                        </th>
+                        </th> */}
                         <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
                           Meme Tokens
                         </th>
@@ -251,9 +251,9 @@ const LeaderboardPage = () => {
                             <td className="py-4 px-6 text-center text-base">
                               {item.swapCount}
                             </td>
-                            <td className="py-4 px-6 text-center text-base">
+                            {/* <td className="py-4 px-6 text-center text-base">
                               {item.poolHoldingCount}
-                            </td>
+                            </td> */}
                             <td className="py-4 px-6 text-center text-base">
                               {item.memeTokenCount}
                             </td>

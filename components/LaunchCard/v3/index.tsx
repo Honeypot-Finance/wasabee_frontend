@@ -18,6 +18,7 @@ import { LaunchType as projectType } from "@/pages/launch-token";
 import Countdown from "react-countdown";
 import CardContianer from "../../CardContianer/CardContianer";
 import BigNumber from "bignumber.js";
+import { wallet } from "@/services/wallet";
 
 type launchCardVariants = "list" | "detail" | "trending";
 
@@ -758,29 +759,37 @@ export const LaunchCardV3 = observer(
       pair instanceof MemePairContract ? "meme" : "fto";
 
     return (
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        whileInView="visible"
-        variants={itemPopUpVariants}
-        className={cn("w-full", className)}
-      >
-        {(!type || type === "detail") && pair && (
-          // FIXME: height issue
-          <DetailLaunchCard
-            pair={pair}
-            action={action}
-            type="detail"
-            projectType={projectType}
-          />
-        )}
+      <>
+        {!wallet.currentChain.blacklist?.memeBlacklist?.includes(
+          pair?.address?.toLowerCase() || ""
+        ) ? (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            whileInView="visible"
+            variants={itemPopUpVariants}
+            className={cn("w-full", className)}
+          >
+            {(!type || type === "detail") && pair && (
+              // FIXME: height issue
+              <DetailLaunchCard
+                pair={pair}
+                action={action}
+                type="detail"
+                projectType={projectType}
+              />
+            )}
 
-        {type === "list" && pair && <div>To be implemented</div>}
+            {type === "list" && pair && <div>To be implemented</div>}
 
-        {type === "trending" && pair && (
-          <TrendingLaunchCard pair={pair} projectType={projectType} />
+            {type === "trending" && pair && (
+              <TrendingLaunchCard pair={pair} projectType={projectType} />
+            )}
+          </motion.div>
+        ) : (
+          <></>
         )}
-      </motion.div>
+      </>
     );
   }
 );
