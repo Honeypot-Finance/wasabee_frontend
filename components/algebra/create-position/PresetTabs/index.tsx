@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Currency } from "@cryptoalgebra/sdk";
 import { Button } from "@/components/algebra/ui/button";
 import {
@@ -56,7 +56,7 @@ const commonPresets = [
     type: Presets.FULL,
     title: `Full`,
     min: 0,
-    max: 2,
+    max: Infinity,
     risk: PresetProfits.VERY_LOW,
     profit: PresetProfits.VERY_LOW,
   },
@@ -97,7 +97,7 @@ const PresetTabs = ({ currencyA, currencyB, mintInfo }: RangeSidebarProps) => {
 
     updateSelectedPreset(preset ? preset.type : null);
 
-    if (preset && preset.type === Presets.FULL) {
+    if (preset && preset.type === Presets.FULL.toString()) {
       setFullRange();
     } else {
       onLeftRangeInput(preset ? String(+price * preset.min) : "");
@@ -114,6 +114,10 @@ const PresetTabs = ({ currencyA, currencyB, mintInfo }: RangeSidebarProps) => {
       handlePresetRangeSelection(range);
     }
   }
+
+  useEffect(() => {
+    setFullRange();
+  }, []);
 
   return (
     <div className="flex h-fit w-fit bg-card rounded-3xl p-1">
