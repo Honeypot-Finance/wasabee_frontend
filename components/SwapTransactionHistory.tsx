@@ -34,8 +34,8 @@ const SwapTransactionHistory = () => {
   };
 
   return (
-    <div className="bg-[#FFCD4D] rounded-2xl overflow-hidden relative pt-12 pb-6 w-full">
-      <div className="bg-[url('/images/pumping/outline-border.png')] bg-top h-12 absolute top-0 left-0 w-full bg-contain bg-repeat-x"></div>
+    <div className="bg-[#FFCD4D] rounded-2xl overflow-hidden relative md:pt-12 pb-6 w-full">
+      <div className="bg-[url('/images/pumping/outline-border.png')] bg-left-top h-4 md:h-12 absolute top-0 left-0 w-full bg-contain bg-repeat-x"></div>
 
       <div className="p-2 sm:p-6 w-full">
         <div className="bg-[#202020] rounded-2xl overflow-hidden w-full">

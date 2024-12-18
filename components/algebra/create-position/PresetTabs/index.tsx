@@ -9,6 +9,7 @@ import {
 } from "@/lib/algebra/state/mintStore";
 import { PresetProfits, PresetsArgs } from "@/types/algebra/types/presets";
 import { maxInt256 } from "viem";
+import { cn } from "@/lib/utils";
 
 interface RangeSidebarProps {
   currencyA: Currency | undefined;
@@ -120,18 +121,20 @@ const PresetTabs = ({ currencyA, currencyB, mintInfo }: RangeSidebarProps) => {
   }, []);
 
   return (
-    <div className="flex h-fit w-fit bg-card rounded-3xl p-1">
+    <div className="flex rounded-2xl border border-[#202020] bg-white p-4 shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] py-2 px-3.5">
       {presets.map((range) => (
-        <Button
-          variant={preset === range.type.toString() ? "iconActive" : "icon"}
-          size={"sm"}
+        <button
           key={`preset-range-${range.title}`}
-          onClick={() =>
-            onPresetSelect({ ...range, type: range.type.toString() })
-          }
+          onClick={() => onPresetSelect({ ...range, type: range.type.toString() })}
+          className={cn(
+            "flex-1 px-3 py-1.5 text-sm font-medium transition-all rounded-lg text-center",
+            preset === range.type.toString()
+              ? "bg-[#202020] text-white"
+              : "text-[#202020] hover:bg-[#20202010]"
+          )}
         >
           {range.title}
-        </Button>
+        </button>
       ))}
     </div>
   );

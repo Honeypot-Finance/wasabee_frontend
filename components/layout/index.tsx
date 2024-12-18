@@ -81,7 +81,7 @@ export const Layout = ({
   return (
     <div
       className={cn(
-        "flex flex-col min-h-screen overflow-y-auto bg-[url('/images/icons/bg-honey.png')]",
+        "flex flex-col min-h-screen w-full overflow-x-hidden overflow-y-auto bg-[url('/images/icons/bg-honey.png')]",
         className
       )}
     >

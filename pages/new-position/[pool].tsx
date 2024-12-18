@@ -100,67 +100,81 @@ const NewPositionPage = () => {
 
   return (
     <PageContainer>
-      <PageTitle title={"Create Position"} />
+      <div className="max-w-[1200px] w-full mx-auto bg-[#FFCD4D] rounded-3xl relative overflow-hidden">
+        {/* 顶部装饰边框 */}
+        <div className="bg-[url('/images/pumping/outline-border.png')] bg-contain bg-repeat-x bg-left-top h-[90px] absolute -top-1 left-0 w-full"></div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8 text-left">
-        <div className="col-span-2">
-          <div className="flex max-md:flex-col md:items-center justify-between w-full mb-6 gap-4">
-            <h2 className="font-semibold text-2xl text-left">
-              1. Select Range
-            </h2>
-            <PresetTabs
-              currencyA={currencyA}
-              currencyB={currencyB}
-              mintInfo={mintInfo}
-            />
-          </div>
+        <div className="max-w-[1200px] w-full mx-auto px-6 pt-[90px] pb-[70px]">
+          <PageTitle title={"Create Position"} />
 
-          <div className="flex flex-col w-full">
-            <div className="w-full px-8 py-6 bg-card text-left honeypot-card p-2">
-              <div className="flex w-full flex-col md:flex-row gap-4">
-                <RangeSelector
-                  priceLower={priceLower}
-                  priceUpper={priceUpper}
-                  getDecrementLower={getDecrementLower}
-                  getIncrementLower={getIncrementLower}
-                  getDecrementUpper={getDecrementUpper}
-                  getIncrementUpper={getIncrementUpper}
-                  onLeftRangeInput={onLeftRangeInput}
-                  onRightRangeInput={onRightRangeInput}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8 text-left">
+            <div className="col-span-2">
+              <div className="flex max-md:flex-col md:items-center justify-between w-full mb-6 gap-4">
+                <h2 className="font-semibold text-2xl text-[#202020]">
+                  1. Select Range
+                </h2>
+                <PresetTabs
                   currencyA={currencyA}
                   currencyB={currencyB}
                   mintInfo={mintInfo}
-                  disabled={!startPriceTypedValue && !mintInfo.price}
                 />
-                <div className="md:ml-auto md:text-right">
-                  <div className="font-bold text-xs mb-3">CURRENT PRICE</div>
-                  <div className="font-bold text-xl">{`${currentPrice}`}</div>
-                </div>
               </div>
 
-              <LiquidityChart
-                currencyA={currencyA}
-                currencyB={currencyB}
-                currentPrice={price ? parseFloat(price) : undefined}
-                priceLower={priceLower}
-                priceUpper={priceUpper}
-              />
+              <div className="flex flex-col w-full">
+                <div className="w-full rounded-[32px] bg-white space-y-4 px-6 py-8 custom-dashed">
+                  <div className="flex w-full flex-col md:flex-row gap-4">
+                    <RangeSelector
+                      priceLower={priceLower}
+                      priceUpper={priceUpper}
+                      getDecrementLower={getDecrementLower}
+                      getIncrementLower={getIncrementLower}
+                      getDecrementUpper={getDecrementUpper}
+                      getIncrementUpper={getIncrementUpper}
+                      onLeftRangeInput={onLeftRangeInput}
+                      onRightRangeInput={onRightRangeInput}
+                      currencyA={currencyA}
+                      currencyB={currencyB}
+                      mintInfo={mintInfo}
+                      disabled={!startPriceTypedValue && !mintInfo.price}
+                    />
+                    <div className="md:ml-auto md:text-right">
+                      <div className="font-medium text-sm mb-3 text-black/70">CURRENT PRICE</div>
+                      <div className="font-bold text-xl text-black">{`${currentPrice}`}</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <LiquidityChart
+                      currencyA={currencyA}
+                      currencyB={currencyB}
+                      currentPrice={price ? parseFloat(price) : undefined}
+                      priceLower={priceLower}
+                      priceUpper={priceUpper}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <h2 className="font-semibold text-2xl text-[#202020] mb-6 leading-[44px]">
+                2. Enter Amounts
+              </h2>
+              <div className="w-full rounded-[32px] bg-white space-y-4 px-6 py-8 custom-dashed">
+                <AmountsSection
+                  currencyA={currencyA}
+                  currencyB={currencyB}
+                  mintInfo={mintInfo}
+                  manageLiquidity={ManageLiquidity.ADD}
+                />
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col pb-8">
-          <h2 className="font-semibold text-2xl text-left mb-6 leading-[44px]">
-            2. Enter Amounts
-          </h2>
-          <div className="flex flex-col w-full h-full gap-2 honeypot-card">
-            <AmountsSection
-              currencyA={currencyA}
-              currencyB={currencyB}
-              mintInfo={mintInfo}
-              manageLiquidity={ManageLiquidity.ADD}
-            />
-          </div>
+        {/* 底部装饰边框 */}
+        <div className="absolute -bottom-1 left-0 w-full">
+          <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-contain bg-repeat-x bg-left-bottom h-[70px] w-full"></div>
         </div>
       </div>
     </PageContainer>

@@ -1,5 +1,5 @@
 import Loader from "@/components/algebra/common/Loader";
-import { Button } from "@/components/algebra/ui/button";
+import { Button } from "@/components/button/button-next";
 import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
 import {
   DEFAULT_CHAIN_ID,

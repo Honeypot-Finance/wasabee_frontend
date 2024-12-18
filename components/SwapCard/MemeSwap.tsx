@@ -46,7 +46,7 @@ export const LaunchDetailSwapCard = observer(
     const [currentTab, setCurrentTab] = useState<"Swap" | "LP">("Swap");
     const router = useRouter();
     const isInit = wallet.isInit && liquidity.isInit;
-    const [operate, setOperate] = useState<string>("buy");
+    const [operate, setOperate] = useState<string>("Swap");
     const state = useLocalObservable(() => ({
       selectState: new SelectState({
         value: 0,
@@ -64,13 +64,16 @@ export const LaunchDetailSwapCard = observer(
       //get pair contract by inputAddress and outputAddress
 
       const loadVaultContract = async () => {
-        //get lp token, lp token is going to be aquabera vault address
-        const lpTokenAddress = await memePairContract.contract.read.lpToken();
-        //console.log("lpTokenAddress", lpTokenAddress);
-        const aquaberaVaultContract = new ICHIVaultContract({
-          address: lpTokenAddress,
-        });
-        setVaultContract(aquaberaVaultContract);
+        try {
+          const lpTokenAddress = await memePairContract.contract.read.lpToken();
+          const aquaberaVaultContract = new ICHIVaultContract({
+            address: lpTokenAddress,
+          });
+          await vault.setVaultContract(aquaberaVaultContract);
+          setVaultContract(aquaberaVaultContract);
+        } catch (error) {
+          console.error("Failed to load vault contract:", error);
+        }
       };
       loadVaultContract();
     }, [inputAddress, outputAddress]);

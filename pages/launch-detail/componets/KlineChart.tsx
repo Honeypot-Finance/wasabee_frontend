@@ -17,7 +17,7 @@ import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface KlineChartProps {
-  height?: number;
+  height: number | string;
 }
 
 const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
@@ -122,7 +122,7 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
 
     const chartInstance = LightweightCharts.createChart(chartRef.current, {
       width: (chartRef.current.parentElement?.clientWidth || 600) - 48,
-      height,
+      height: typeof height === 'string' ? parseInt(height) : height,
       layout: {
         background: { color: "#202020" },
         textColor: "rgba(255, 255, 255, 0.5)",

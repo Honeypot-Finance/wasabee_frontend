@@ -16,7 +16,10 @@ import { Modal, ModalContent, ModalHeader, Tooltip } from "@nextui-org/react";
 import { ControlledToolTip } from "@/components/molecule/ControlledToolTip/ControlledToolTip";
 import { NativeFaucetContract } from "@/services/contract/faucet-contract";
 import { faucet } from "@/services/faucet";
-import { OptionsDropdown } from "@/components/OptionsDropdown/OptionsDropdown";
+import {
+  OptionsDropdown,
+  optionsPresets,
+} from "@/components/OptionsDropdown/OptionsDropdown";
 import { VscHome } from "react-icons/vsc";
 import { FaDonate } from "react-icons/fa";
 import { sendTransaction } from "viem/actions";
@@ -238,7 +241,41 @@ const FaucetPage: NextLayoutPage = observer(() => {
               key={token.address}
               className="flex w-full items-center flex-col lg:grid lg:grid-cols-[1fr,200px] gap-[0.5rem]"
             >
-              <TokenBalanceCard token={token}></TokenBalanceCard>
+              <CardContianer>
+                <div className="flex-1 flex items-center">
+                  <Image
+                    className="border border-[color:var(--card-stroke,#F7931A)] rounded-full mr-4"
+                    src={token.logoURI ?? ""}
+                    alt={token.name}
+                    width={24}
+                    height={24}
+                  />
+                  <span className="text-[#FAFAFC] font-medium">
+                    {token.displayName}
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[#FAFAFC]">
+                    {token.balanceFormatted}
+                  </span>
+                </div>
+                <OptionsDropdown
+                  className="min-h-0 h-[unset]"
+                  options={[
+                    optionsPresets.copy({
+                      copyText: token?.address ?? "",
+                      displayText: "Copy Token address",
+                      copysSuccessText: "Token address copied",
+                    }),
+                    optionsPresets.importTokenToWallet({
+                      token: token,
+                    }),
+                    optionsPresets.viewOnExplorer({
+                      address: token?.address ?? "",
+                    }),
+                  ]}
+                />
+              </CardContianer>
               <Button
                 isDisabled={token.claimed}
                 isLoading={token.faucet.loading}
