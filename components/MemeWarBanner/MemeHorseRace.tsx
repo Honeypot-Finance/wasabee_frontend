@@ -355,15 +355,18 @@ export const MemeHorseRace = observer(() => {
                         : count,
                     0
                   );
-                  // Calculate position based on rank (higher rank = less distance)
+                  // Calculate position based on rank with minimum distance of 15%
                   const position =
-                    85 - rank * (85 / (currentRacers.length - 1 || 1));
+                    85 - rank * (70 / (currentRacers.length - 1 || 1));
 
                   return (
                     <RaceLane key={racer.tokenAddress}>
-                      <RaceTrail position={position} />
+                      <RaceTrail position={Math.max(15, position)} />
                       <Tooltip content={racer.tokenOnchainData?.symbol}>
-                        <RacerIcon className="relative" position={position}>
+                        <RacerIcon
+                          className="relative"
+                          position={Math.max(15, position)}
+                        >
                           {racer.tokenOnchainData?.logoURI && (
                             <div
                               onClick={() =>
