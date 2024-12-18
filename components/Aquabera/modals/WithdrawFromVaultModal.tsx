@@ -6,6 +6,7 @@ import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contra
 import { wallet } from "@/services/wallet";
 import { ContractWrite } from "@/services/utils";
 import { Slider } from "@nextui-org/slider";
+import BigNumber from "bignumber.js";
 
 interface WithdrawFromVaultModalProps {
   isOpen: boolean;
@@ -28,11 +29,16 @@ export function WithdrawFromVaultModal({
       const value = e.target.value;
       if (value === "" || /^\d*\.?\d*$/.test(value)) {
         setAmount(value);
-        // Update percentage based on input amount
-        const newPercentage = value
-          ? (Number(value) / Number(maxShares)) * 100
-          : 0;
-        setPercentage(Math.min(newPercentage, 100));
+        // Convert decimal input to BigInt shares
+        if (value) {
+          const [integerPart, fractionalPart = ""] = value.split(".");
+          const paddedFractional = fractionalPart.padEnd(18, "0");
+          const fullNumber = `${integerPart}${paddedFractional}`;
+          const newPercentage = (Number(fullNumber) / Number(maxShares)) * 100;
+          setPercentage(Math.min(newPercentage, 100));
+        } else {
+          setPercentage(0);
+        }
       }
     },
     [maxShares]
@@ -52,21 +58,32 @@ export function WithdrawFromVaultModal({
     (percent: number) => {
       setPercentage(percent);
       const newAmount =
-        (BigInt(maxShares) * BigInt(percent * 100)) / BigInt(10000);
-      setAmount(newAmount.toString());
+        //use bigNumber
+        new BigNumber(maxShares.toString())
+          .dividedBy(10 ** 18)
+          .multipliedBy(percent / 100)
+          .toString();
+      setAmount(newAmount);
+
+      //   (BigInt(maxShares) * BigInt(percent * 100)) / BigInt(10000);
+      // setAmount(newAmount.toString());
     },
     [maxShares]
   );
 
   const handleMaxAmount = useCallback(() => {
-    setAmount(maxShares.toString());
+    setAmount(
+      new BigNumber(maxShares.toString()).dividedBy(10 ** 18).toString()
+    );
     setPercentage(100);
   }, [maxShares]);
 
   const handleWithdraw = async () => {
     if (!wallet.account || !amount) return;
 
-    const withdrawAmount = BigInt(amount);
+    const withdrawAmount = BigInt(
+      new BigNumber(amount).multipliedBy(10 ** 18).toFixed(0)
+    );
 
     if (withdrawAmount > maxShares) {
       console.error("Cannot withdraw more than available shares");
@@ -85,16 +102,16 @@ export function WithdrawFromVaultModal({
     }
   };
 
-  // 添加格式化函数
+  // 添加��式化函数
   const formatShares = (value: bigint) => {
-    const decimals = vault.contract.read.decimals(); // 从合约获取 decimals
-    const divisor = BigInt(10 ** Number(decimals));
+    const decimals = 18; // Assuming 18 decimals for the vault shares
+    const divisor = BigInt(10 ** decimals);
     const integerPart = value / divisor;
     const fractionalPart = value % divisor;
-    const fractionalStr = fractionalPart.toString().padStart(Number(decimals), "0");
-    const displayDecimals = 6;
+    const fractionalStr = fractionalPart.toString().padStart(decimals, "0");
+    const displayDecimals = 6; // Show 6 decimal places
     const formattedFractional = fractionalStr.slice(0, displayDecimals);
-    const trimmedFractional = formattedFractional.replace(/0+$/, "");
+    const trimmedFractional = formattedFractional.replace(/0+$/, ""); // Remove trailing zeros
 
     return trimmedFractional
       ? `${integerPart}.${trimmedFractional}`
@@ -109,7 +126,8 @@ export function WithdrawFromVaultModal({
       classNames={{
         base: "bg-transparent",
         wrapper: "bg-transparent",
-        closeButton: "absolute right-4 top-6 z-50 text-white w-8 h-8 flex items-center justify-center rounded-full",
+        closeButton:
+          "absolute right-4 top-6 z-50 text-white w-8 h-8 flex items-center justify-center rounded-full",
       }}
     >
       <ModalContent className="bg-[#FFCD4D] relative overflow-hidden">
@@ -119,7 +137,9 @@ export function WithdrawFromVaultModal({
             <div className="bg-[url('/images/pumping/outline-border.png')] h-[50px] absolute top-0 left-0 w-full bg-contain bg-[left_-90px_top] bg-repeat-x"></div>
 
             <ModalHeader className="pt-14 bg-[#FFCD4D]">
-              <h3 className="text-xl font-bold text-black">Withdraw from Vault</h3>
+              <h3 className="text-xl font-bold text-black">
+                Withdraw from Vault
+              </h3>
             </ModalHeader>
 
             <ModalBody className="px-6 bg-[#FFCD4D]">
@@ -156,7 +176,9 @@ export function WithdrawFromVaultModal({
                         aria-label="Withdraw percentage"
                         value={percentage}
                         onChange={(value) =>
-                          handleSliderChange(Array.isArray(value) ? value[0] : value)
+                          handleSliderChange(
+                            Array.isArray(value) ? value[0] : value
+                          )
                         }
                         className="w-full"
                         step={1}
@@ -194,8 +216,8 @@ export function WithdrawFromVaultModal({
                     onClick={handleWithdraw}
                     disabled={
                       !amount ||
-                      BigInt(amount || "0") <= BigInt(0) ||
-                      BigInt(amount) > maxShares
+                      new BigNumber(amount).lte(0) ||
+                      new BigNumber(amount).gt(maxShares.toString())
                     }
                   >
                     Withdraw
