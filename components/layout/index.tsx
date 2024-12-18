@@ -65,7 +65,7 @@ export const Layout = ({
 
   const slogans = [
     <>
-      <Link href="/memewar" className="flex items-center ">
+      <Link href="/derbydashboard" className="flex items-center ">
         <span> Back your horse in the Berachain Derby 🏇</span>
       </Link>
     </>,
