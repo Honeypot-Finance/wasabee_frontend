@@ -36,8 +36,7 @@ const TokenVesting = () => {
   const endTime = getValues("endTime");
   const delayHours = getValues("tokenClaimDelayHours");
   const delayMinutes = getValues("tokenClaimDelayMinutes");
-  const vestingCliffTime = watch("vestingCliffTime")
-  
+  const vestingCliffTime = watch("vestingCliffTime");
 
   const vestingStartTime = dayjs(endTime)
     .add(delayHours, "hours")
@@ -133,8 +132,10 @@ const TokenVesting = () => {
                     label="Vesting Cliff Time"
                     minValue={parseAbsoluteToLocal(endTime.toISOString())}
                     value={parseAbsoluteToLocal(field.value.toISOString())}
-                    onChange={(value: DateValue) => {
-                      field.onChange(value.toDate(getLocalTimeZone()));
+                    onChange={(value: DateValue | null) => {
+                      if (value) {
+                        field.onChange(value.toDate(getLocalTimeZone()));
+                      }
                     }}
                     isInvalid={!!errors?.vestingCliffTime}
                     errorMessage={errors?.vestingCliffTime?.message?.toString()}
@@ -156,10 +157,14 @@ const TokenVesting = () => {
                 render={({ field }) => (
                   <DatePickerField
                     label="Ending Date & Time"
-                    minValue={parseAbsoluteToLocal(vestingCliffTime.toISOString())}
+                    minValue={parseAbsoluteToLocal(
+                      vestingCliffTime.toISOString()
+                    )}
                     value={parseAbsoluteToLocal(field.value.toISOString())}
-                    onChange={(value: DateValue) => {
-                      field.onChange(value.toDate(getLocalTimeZone()));
+                    onChange={(value: DateValue | null) => {
+                      if (value) {
+                        field.onChange(value.toDate(getLocalTimeZone()));
+                      }
                     }}
                     isInvalid={!!errors?.vestingEndTime}
                     errorMessage={errors?.vestingEndTime?.message?.toString()}
