@@ -1,4 +1,6 @@
 import BigNumber from "bignumber.js";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function toCompactLocaleString(
   value: number | string | BigNumber,
@@ -38,3 +40,7 @@ export const formatVolume = (volume: number): string => {
 
   return `$${value.toFixed(2)}`;
 };
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}

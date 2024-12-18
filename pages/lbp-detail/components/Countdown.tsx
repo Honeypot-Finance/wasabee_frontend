@@ -1,6 +1,6 @@
 import React from "react";
 import Countdown from "react-countdown";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface CountdownTimerProps {
   label: string;
@@ -13,7 +13,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ label, date }) => {
       {label ? (
         <div className="text-[#F7931A] xs:text-lg md:text-xl">{label}</div>
       ) : (
-        <Skeleton className="rounded-lg h-11 w-[210px] bg-white/40" />
+        <Skeleton className="rounded-lg h-11 w-[210px]" />
       )}
       {date ? (
         <div>
@@ -47,7 +47,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ label, date }) => {
           />
         </div>
       ) : (
-        <Skeleton className="rounded-lg h-11 w-[210px] bg-white/40" />
+        <Skeleton className="rounded-lg h-11 w-[210px]" />
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import { useSingleTokenQuery } from "@/lib/algebra/graphql/generated/graphql";
 import { useMintState } from "@/lib/algebra/state/mintStore";
 import { Currency } from "@cryptoalgebra/sdk";
-import { Skeleton } from "@nextui-org/react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 import { Address } from "viem";
 import CurrencyLogo from "../../common/CurrencyLogo";

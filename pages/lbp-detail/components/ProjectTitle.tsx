@@ -1,5 +1,5 @@
 import React from "react";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProjectTitleProps {
   name?: string;

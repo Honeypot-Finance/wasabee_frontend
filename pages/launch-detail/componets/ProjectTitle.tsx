@@ -1,5 +1,5 @@
 import React from "react";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProjectTitleProps {
   name?: string;
@@ -12,12 +12,12 @@ const ProjectTitle: React.FC<ProjectTitleProps> = ({ name, displayName }) => {
       {name ? (
         <div>{name}</div>
       ) : (
-        <Skeleton className="rounded-lg h-8 w-[140px] bg-blue-500" />
+        <Skeleton className="h-8 w-[140px] bg-slate-200" />
       )}
       {name ? (
         <div className="text-sm text-[#5C5C5C]/60">{displayName}</div>
       ) : (
-        <Skeleton className="rounded-lg h-5 w-20" />
+        <Skeleton className="h-5 w-20 bg-slate-200" />
       )}
     </div>
   );

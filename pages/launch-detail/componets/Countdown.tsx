@@ -1,6 +1,7 @@
 import React from "react";
 import Countdown from "react-countdown";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
 
 interface CountdownTimerProps {
   endTime?: string;
@@ -13,6 +14,15 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
   ftoState,
   endTimeDisplay,
 }) => {
+  const formatEndTimeDisplay = (timestamp: string) => {
+    try {
+      const date = new Date(parseInt(timestamp) * 1000);
+      return format(date, "yyyy-MM-dd HH:mm:ss");
+    } catch {
+      return endTimeDisplay;
+    }
+  };
+
   return (
     <div className="flex flex-col items-center gap-y-2.5">
       {/* TODO: gradient color */}
@@ -22,7 +32,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
           date={parseInt(endTime) * 1000}
           renderer={({ days, hours, minutes, seconds, completed }) => {
             if (completed || ftoState !== 3) {
-              return endTimeDisplay;
+              return formatEndTimeDisplay(endTime);
             } else {
               return (
                 <div className="flex items-end md:gap-x-2">

@@ -3,7 +3,7 @@ import { HeaderItem } from "./common";
 import { Address } from "viem";
 import { DynamicFeePluginIcon } from "../PluginIcons";
 import { usePoolPlugins } from "@/lib/algebra/hooks/pools/usePoolPlugins";
-import { Skeleton } from "@/components/algebra/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { FarmingPluginIcon } from "../PluginIcons";
 import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
 import {
