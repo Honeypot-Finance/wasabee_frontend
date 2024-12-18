@@ -4,12 +4,6 @@ import { Address } from "viem";
 import useSWR from "swr";
 import PoolsTable from "@/components/algebra/common/Table/poolsTable";
 import { usePositions } from "@/lib/algebra/hooks/positions/usePositions";
-import {
-  POOL_MAX_APR_API,
-  fetcher,
-  POOL_AVG_APR_API,
-  ETERNAL_FARMINGS_API,
-} from "@/data/algebra/api";
 import { farmingClient } from "@/lib/algebra/graphql/clients";
 import {
   usePoolsListQuery,
