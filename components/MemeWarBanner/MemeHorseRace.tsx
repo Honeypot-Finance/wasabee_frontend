@@ -126,16 +126,20 @@ const TableContainer = styled.div`
   z-index: 1;
 `;
 
+const formatMarketCap = (value: number) => {
+  if (value >= 1e12) return `${(value / 1e12).toFixed(2)}T`;
+  if (value >= 1e9) return `${(value / 1e9).toFixed(2)}B`;
+  if (value >= 1e6) return `${(value / 1e6).toFixed(2)}M`;
+  if (value >= 1e3) return `${(value / 1e3).toFixed(2)}K`;
+  return value.toFixed(2);
+};
+
 const LerpingValue = ({
   value,
-  prefix = "",
-  suffix = "",
-  decimals = 3,
+  formatter = (val: number) => val.toFixed(3),
 }: {
   value: number;
-  prefix?: string;
-  suffix?: string;
-  decimals?: number;
+  formatter?: (val: number) => string;
 }) => {
   const { number } = useSpring({
     from: { number: 0 },
@@ -144,13 +148,7 @@ const LerpingValue = ({
     immediate: false,
   });
 
-  return (
-    <span>
-      {prefix}
-      <animated.span>{number.to((val) => val.toFixed(decimals))}</animated.span>
-      {suffix}
-    </span>
-  );
+  return <animated.span>{number.to((val) => formatter(val))}</animated.span>;
 };
 
 export const MemeHorseRace = observer(() => {
@@ -393,11 +391,10 @@ export const MemeHorseRace = observer(() => {
                               textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
                             }}
                           >
-                            MCAP:{" "}
+                            MCAP: $
                             <LerpingValue
                               value={racer.currentScore / Math.pow(10, 18)}
-                              prefix="$"
-                              suffix=""
+                              formatter={formatMarketCap}
                             />
                           </span>
                         </RacerIcon>
@@ -469,7 +466,7 @@ export const MemeHorseRace = observer(() => {
                         >
                           <LerpingValue
                             value={racer.currentScore / Math.pow(10, 18)}
-                            prefix="$"
+                            formatter={formatMarketCap}
                           />
                         </AnimatedValue>
                       </td>
