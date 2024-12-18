@@ -184,7 +184,12 @@ export const MemeHorseRace = observer(() => {
 
   const handleTokenClick = (token: Token) => {
     popmodal.openModal({
-      content: <V3SwapCard toTokenAddress={token.address} />,
+      content: (
+        <V3SwapCard
+          fromTokenAddress={wallet.currentChain.platformTokenAddress.HPOT}
+          toTokenAddress={token.address}
+        />
+      ),
     });
   };
 

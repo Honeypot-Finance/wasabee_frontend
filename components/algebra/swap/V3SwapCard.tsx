@@ -7,6 +7,7 @@ import SwapButtonV3 from "./SwapButton/SwapButotnV3";
 import SwapParamsV3 from "./SwapParams/SwapParamsV3";
 import { MdCandlestickChart } from "react-icons/md";
 import { cn } from "@/lib/tailwindcss";
+import { useEffect } from "react";
 
 interface V3SwapCardProps {
   fromTokenAddress?: string;
@@ -19,6 +20,9 @@ export function V3SwapCard({
   toTokenAddress,
   boarderless,
 }: V3SwapCardProps) {
+  useEffect(() => {
+    console.log(fromTokenAddress, toTokenAddress);
+  }, [fromTokenAddress, toTokenAddress]);
   return (
     <div
       className={cn(

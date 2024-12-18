@@ -53,7 +53,9 @@ const SwapPage = observer(() => {
             "relative w-full flex flex-col items-center order-1 lg:order-2 justify-start"
           }
         >
-          <V3SwapCard />
+          <V3SwapCard
+            toTokenAddress={wallet.currentChain.platformTokenAddress.HPOT}
+          />
         </motion.div>
       </div>
     </div>

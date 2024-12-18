@@ -144,50 +144,35 @@ const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
 
   useEffect(() => {
     const initializeTokens = () => {
-      if (!baseCurrency && !quoteCurrency) {
-        if (fromTokenAddress) {
-          const token = Token.getToken({ address: fromTokenAddress });
-          handleInputSelect(
-            new AlgebraToken(
-              wallet.currentChainId,
-              token.address,
-              token.decimals,
-              token.symbol,
-              token.name
-            )
-          );
-        } else {
-          const token = Token.getToken({
-            address: wallet.currentChain.platformTokenAddress.HPOT,
-          });
-          handleInputSelect(
-            new AlgebraToken(
-              wallet.currentChainId,
-              token.address,
-              token.decimals,
-              token.symbol,
-              token.name
-            )
-          );
-        }
+      if (fromTokenAddress) {
+        const token = Token.getToken({ address: fromTokenAddress });
+        handleInputSelect(
+          new AlgebraToken(
+            wallet.currentChainId,
+            token.address,
+            token.decimals,
+            token.symbol,
+            token.name
+          )
+        );
+      }
 
-        if (toTokenAddress) {
-          const token = Token.getToken({ address: toTokenAddress });
-          handleOutputSelect(
-            new AlgebraToken(
-              wallet.currentChainId,
-              token.address,
-              token.decimals,
-              token.symbol,
-              token.name
-            )
-          );
-        }
+      if (toTokenAddress) {
+        const token = Token.getToken({ address: toTokenAddress });
+        handleOutputSelect(
+          new AlgebraToken(
+            wallet.currentChainId,
+            token.address,
+            token.decimals,
+            token.symbol,
+            token.name
+          )
+        );
       }
     };
 
     initializeTokens();
-  }, [baseCurrency, quoteCurrency, fromTokenAddress, toTokenAddress, handleInputSelect, handleOutputSelect]);
+  }, [fromTokenAddress, toTokenAddress]);
 
   useEffect(() => {
     if (baseCurrency) {

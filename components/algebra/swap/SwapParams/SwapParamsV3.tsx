@@ -140,17 +140,27 @@ const SwapParamsV3 = () => {
   return trade ? (
     <div className="flex flex-col w-full rounded-2xl cursor-pointer">
       <div className="w-full custom-dashed p-4">
-        <div className="flex flex-col w-full" onClick={() => toggleExpanded(!isExpanded)}>
+        <div
+          className="flex flex-col w-full"
+          onClick={() => toggleExpanded(!isExpanded)}
+        >
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2">
-              <div className="bg-[#FFB800] p-2 rounded-lg">
-                <ZapIcon className="w-4 h-4 text-black" />
+            <div className="flex items-center gap-2 w-full justify-between text-black font-bold text-base">
+              <div className="flex items-center gap-2 ">
+                <div className="bg-[#FFB800] p-2 rounded-lg">
+                  <ZapIcon className="w-4 h-4 text-black" />
+                </div>
+                <span className="">
+                  {slidingFee && `${slidingFee?.toFixed(4)}% fee`}
+                </span>
               </div>
-              <span className="text-black font-bold text-base">
-                {slidingFee && `${slidingFee?.toFixed(4)}% fee`}
-              </span>
+              <div className="flex items-center py-3 justify-between">
+                <span className="">
+                  (Price Impact <PriceImpact priceImpact={priceImpact} />)
+                </span>
+              </div>
             </div>
-            <ChevronDownIcon 
+            <ChevronDownIcon
               className={`w-6 h-6 text-black transition-transform duration-300 ${
                 isExpanded ? "rotate-180" : ""
               }`}
@@ -166,7 +176,9 @@ const SwapParamsV3 = () => {
 
               <div className="flex items-center py-3 justify-between">
                 <span className="text-black text-sm font-medium">
-                  {trade.tradeType === TradeType.EXACT_INPUT ? "Minimum received" : "Maximum sent"}
+                  {trade.tradeType === TradeType.EXACT_INPUT
+                    ? "Minimum received"
+                    : "Maximum sent"}
                 </span>
                 <span className="text-black text-sm font-medium">
                   {trade.tradeType === TradeType.EXACT_INPUT
@@ -177,17 +189,18 @@ const SwapParamsV3 = () => {
 
               <div className="flex items-center py-3 justify-between">
                 <span className="text-black text-sm font-medium">LP Fee</span>
-                <span className="text-black text-sm font-medium">{LPFeeString}</span>
+                <span className="text-black text-sm font-medium">
+                  {LPFeeString}
+                </span>
               </div>
 
               <div className="flex items-center py-3 justify-between">
-                <span className="text-black text-sm font-medium">Price Impact</span>
-                <PriceImpact priceImpact={priceImpact} />
-              </div>
-
-              <div className="flex items-center py-3 justify-between">
-                <span className="text-black text-sm font-medium">Slippage tolerance</span>
-                <span className="text-black text-sm font-medium">{allowedSlippage.toFixed(2)}%</span>
+                <span className="text-black text-sm font-medium">
+                  Slippage tolerance
+                </span>
+                <span className="text-black text-sm font-medium">
+                  {allowedSlippage.toFixed(2)}%
+                </span>
               </div>
             </div>
           )}
