@@ -97,6 +97,7 @@
     "react-number-format": "^5.4.2",
     "react-scroll-to-top": "^3.0.0",
     "react-scroll-up": "^1.4.0",
+    "react-spring": "^9.7.5",
     "react-toastify": "^10.0.5",
     "react-truncate-markup": "^5.1.2",
     "react-window": "^1.8.10",

@@ -3,7 +3,17 @@ import { AllRacersDocument, AllRacersQuery } from "../generated/graphql";
 
 export interface Racer {
   tokenAddress: string;
-  tokenHourScore: { starttimestamp: any; score: any }[];
+  currentScore: string;
+  tokenHourScore: {
+    starttimestamp: string;
+    score: string;
+    usdAtThisHour: string;
+  }[];
+  token: {
+    initialUSD: string;
+    derivedUSD: string;
+    totalSupply: string;
+  };
 }
 
 export async function getAllRacers() {
@@ -11,7 +21,7 @@ export async function getAllRacers() {
     query: AllRacersDocument,
   });
 
-  console.log(allRacers);
+  //console.log(allRacers);
 
   const racers: Racer[] = [];
 
@@ -21,16 +31,23 @@ export async function getAllRacers() {
       return {
         starttimestamp: hourData.timestamp,
         score: hourData.score,
+        usdAtThisHour: hourData.usdAtThisHour,
       };
     });
 
     racers.push({
       tokenAddress: tokenAddress,
       tokenHourScore: tokenHourScore,
+      currentScore: racer.currentScore,
+      token: {
+        initialUSD: racer.token.initialUSD,
+        derivedUSD: racer.token.derivedUSD,
+        totalSupply: racer.token.totalSupply,
+      },
     });
   });
 
-  console.log(racers);
+  // console.log(racers);
 
   return racers;
 }

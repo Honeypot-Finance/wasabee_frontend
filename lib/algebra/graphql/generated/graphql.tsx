@@ -2760,6 +2760,7 @@ export type MemeRacer = {
   hourData: Array<MemeRacerHourData>;
   id: Scalars['ID']['output'];
   token: Token;
+  totalSupply: Scalars['BigInt']['output'];
 };
 
 
@@ -2777,6 +2778,7 @@ export type MemeRacerHourData = {
   racer: MemeRacer;
   score: Scalars['BigDecimal']['output'];
   timestamp: Scalars['BigInt']['output'];
+  usdAtThisHour: Scalars['BigDecimal']['output'];
 };
 
 export type MemeRacerHourData_Filter = {
@@ -2829,6 +2831,14 @@ export type MemeRacerHourData_Filter = {
   timestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
   timestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
   timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  usdAtThisHour?: InputMaybe<Scalars['BigDecimal']['input']>;
+  usdAtThisHour_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  usdAtThisHour_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  usdAtThisHour_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  usdAtThisHour_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  usdAtThisHour_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  usdAtThisHour_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  usdAtThisHour_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
 };
 
 export enum MemeRacerHourData_OrderBy {
@@ -2836,8 +2846,10 @@ export enum MemeRacerHourData_OrderBy {
   Racer = 'racer',
   RacerCurrentScore = 'racer__currentScore',
   RacerId = 'racer__id',
+  RacerTotalSupply = 'racer__totalSupply',
   Score = 'score',
-  Timestamp = 'timestamp'
+  Timestamp = 'timestamp',
+  UsdAtThisHour = 'usdAtThisHour'
 }
 
 export type MemeRacer_Filter = {
@@ -2883,6 +2895,14 @@ export type MemeRacer_Filter = {
   token_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   token_starts_with?: InputMaybe<Scalars['String']['input']>;
   token_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  totalSupply?: InputMaybe<Scalars['BigInt']['input']>;
+  totalSupply_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalSupply_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalSupply_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalSupply_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalSupply_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalSupply_not?: InputMaybe<Scalars['BigInt']['input']>;
+  totalSupply_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
 };
 
 export enum MemeRacer_OrderBy {
@@ -2908,7 +2928,8 @@ export enum MemeRacer_OrderBy {
   TokenTxCount = 'token__txCount',
   TokenUntrackedVolumeUsd = 'token__untrackedVolumeUSD',
   TokenVolume = 'token__volume',
-  TokenVolumeUsd = 'token__volumeUSD'
+  TokenVolumeUsd = 'token__volumeUSD',
+  TotalSupply = 'totalSupply'
 }
 
 export type Mint = {
@@ -12616,7 +12637,7 @@ export type NativePriceQuery = { __typename?: 'Query', bundles: Array<{ __typena
 export type AllRacersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllRacersQuery = { __typename?: 'Query', memeRacers: Array<{ __typename?: 'MemeRacer', id: string, currentScore: any, token: { __typename?: 'Token', symbol: string }, hourData: Array<{ __typename?: 'MemeRacerHourData', timestamp: any, score: any }> }> };
+export type AllRacersQuery = { __typename?: 'Query', memeRacers: Array<{ __typename?: 'MemeRacer', id: string, currentScore: any, token: { __typename?: 'Token', symbol: string, initialUSD: any, derivedUSD: any, totalSupply: any }, hourData: Array<{ __typename?: 'MemeRacerHourData', timestamp: any, score: any, usdAtThisHour: any }> }> };
 
 export type PoolFieldsFragment = { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any } };
 
@@ -13157,10 +13178,14 @@ export const AllRacersDocument = gql`
     currentScore
     token {
       symbol
+      initialUSD
+      derivedUSD
+      totalSupply
     }
     hourData(orderBy: timestamp, orderDirection: asc) {
       timestamp
       score
+      usdAtThisHour
     }
   }
 }

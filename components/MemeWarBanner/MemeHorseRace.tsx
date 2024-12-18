@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import raceFieldBg from "public/images/horserace/race_field.png";
@@ -9,6 +9,7 @@ import { wallet } from "@/services/wallet";
 import { observer } from "mobx-react-lite";
 import { getAllRacers, Racer } from "@/lib/algebra/graphql/clients/racer";
 import { Tooltip } from "@nextui-org/react";
+import { useSpring, animated } from "react-spring";
 
 const START_TIMESTAMP = 1734436800;
 
@@ -21,7 +22,9 @@ const RaceTrack = styled.div<{ totalRacers: number }>`
   background-repeat: no-repeat;
   padding: 20px;
   border-radius: 10px;
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 10;
   overflow-y: auto;
 
   &::before {
@@ -95,34 +98,109 @@ const TimeSlider = styled.input`
   margin: 20px 0;
 `;
 
+const AnimatedValue = styled.span<{ changed: boolean }>`
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+  background-color: ${(props) =>
+    props.changed ? "rgba(255, 255, 255, 0.1)" : "transparent"};
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+`;
+
+const LoadingWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 20px;
+`;
+
+const TableContainer = styled.div`
+  margin-top: 20px;
+  position: relative;
+  z-index: 1;
+`;
+
+const LerpingValue = ({
+  value,
+  prefix = "",
+  suffix = "",
+  decimals = 3,
+}: {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+}) => {
+  const { number } = useSpring({
+    from: { number: 0 },
+    number: value,
+    config: { duration: 300 },
+    immediate: false,
+  });
+
+  return (
+    <span>
+      {prefix}
+      <animated.span>{number.to((val) => val.toFixed(decimals))}</animated.span>
+      {suffix}
+    </span>
+  );
+};
+
 export const MemeHorseRace = observer(() => {
-  const [timeIndex, setTimeIndex] = useState(0);
+  const [timeIndex, setTimeIndex] = useState(-1);
   const [tokens, setTokens] = useState<Record<string, Token>>({});
   const [racers, setRacers] = useState<Racer[]>([]);
+  const [prevScores, setPrevScores] = useState<Record<string, number>>({});
+  const [changedValues, setChangedValues] = useState<Record<string, boolean>>(
+    {}
+  );
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getAllRacers().then((racers) => {
-      setRacers(racers);
-    });
-  }, []);
+    const initialize = async () => {
+      try {
+        // Get initial racers
+        const initialRacers = await getAllRacers();
+        setRacers(initialRacers);
 
-  useEffect(() => {
-    if (!wallet.isInit || !racers) return;
-    // Initialize tokens
-    const initTokens = async () => {
-      const tokenMap: Record<string, Token> = {};
-      for (const racer of racers) {
-        const token = Token.getToken({ address: racer.tokenAddress });
-        await token.init();
-        tokenMap[racer.tokenAddress] = token;
+        // Initialize tokens if wallet is ready
+        if (wallet.isInit) {
+          const tokenMap: Record<string, Token> = {};
+          for (const racer of initialRacers) {
+            const token = Token.getToken({ address: racer.tokenAddress });
+            await token.init();
+            tokenMap[racer.tokenAddress] = token;
+          }
+          setTokens(tokenMap);
+        }
+
+        setIsInitializing(false);
+
+        // Set up interval for updates after initialization
+        const interval = setInterval(async () => {
+          const updatedRacers = await getAllRacers();
+          setRacers(updatedRacers);
+        }, 1000);
+
+        return () => clearInterval(interval);
+      } catch (error) {
+        console.error("Initialization error:", error);
+        setIsInitializing(false);
       }
-      setTokens(tokenMap);
     };
 
-    initTokens();
-  }, [wallet.isInit, racers]);
+    initialize();
+  }, [wallet.isInit]);
 
-  // Find the racer with the most data points to use as timeline reference
   const maxTimelineRacer = racers.reduce(
     (prev, current) =>
       current.tokenHourScore.length > prev.tokenHourScore.length
@@ -131,7 +209,6 @@ export const MemeHorseRace = observer(() => {
     racers[0] || { tokenHourScore: [] }
   );
 
-  // Get sorted unique timestamps across all racers
   const timestamps = [
     ...new Set(
       maxTimelineRacer.tokenHourScore.map((score) =>
@@ -140,12 +217,10 @@ export const MemeHorseRace = observer(() => {
     ),
   ].sort((a, b) => a - b);
 
-  // Get score for a racer at specific timeIndex
   const getRacerScore = (racer: Racer, timestamp: number) => {
     if (timestamp < START_TIMESTAMP) {
       return 0;
     }
-    // Find the exact timestamp match first
     const exactScore = racer.tokenHourScore.find(
       (score) => parseInt(score.starttimestamp) === timestamp
     );
@@ -153,7 +228,6 @@ export const MemeHorseRace = observer(() => {
       return parseFloat(exactScore.score);
     }
 
-    // If no exact match, find the latest score before this timestamp
     const lastValidScore = racer.tokenHourScore
       .filter((score) => parseInt(score.starttimestamp) <= timestamp)
       .sort(
@@ -163,23 +237,37 @@ export const MemeHorseRace = observer(() => {
     return lastValidScore ? parseFloat(lastValidScore.score) : 0;
   };
 
+  const getHourlyChange = (racer: Racer, currentTimestamp: number) => {
+    const currentScore = getRacerScore(racer, currentTimestamp);
+
+    const oneHourAgoTimestamp = currentTimestamp - 3600;
+    const previousScore = getRacerScore(racer, oneHourAgoTimestamp);
+
+    if (previousScore === 0) return 0;
+    return ((currentScore - previousScore) / previousScore) * 100;
+  };
+
   const getCurrentScores = () => {
     const currentTimestamp = timestamps[timeIndex];
     return racers.map((racer) => ({
       ...racer,
-      token: tokens[racer.tokenAddress],
+      tokenOnchainData: tokens[racer.tokenAddress],
       currentScore: getRacerScore(racer, currentTimestamp),
+      hourlyChange: getHourlyChange(racer, currentTimestamp),
     }));
   };
 
-  // Calculate max score across all timestamps and racers
   const allTimeHighScore = Math.max(
     ...racers.flatMap((racer) =>
       racer.tokenHourScore.map((score) => parseFloat(score.score))
     )
   );
 
-  const currentRacers = getCurrentScores();
+  const currentRacers = useMemo(
+    () => getCurrentScores(),
+    [racers, tokens, timeIndex, timestamps]
+  );
+
   const totalRacers = racers.length;
 
   const handleTokenClick = (token: Token) => {
@@ -193,40 +281,93 @@ export const MemeHorseRace = observer(() => {
     });
   };
 
-  //sorted Rank by latest timestamp
   const getSortedRacers = () => {
     return currentRacers.sort((a, b) => {
       return b.currentScore - a.currentScore;
     });
   };
 
+  useEffect(() => {
+    const currentScores = currentRacers.reduce(
+      (acc, racer) => {
+        acc[racer.tokenAddress] = racer.currentScore;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    const newChangedValues: Record<string, boolean> = {};
+    Object.keys(currentScores).forEach((address) => {
+      if (
+        prevScores[address] !== undefined &&
+        prevScores[address] !== currentScores[address]
+      ) {
+        newChangedValues[address] = true;
+      }
+    });
+
+    setChangedValues(newChangedValues);
+    setPrevScores(currentScores);
+
+    const timer = setTimeout(() => {
+      setChangedValues({});
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [currentRacers]);
+
+  useEffect(() => {
+    if (timestamps.length > 0 && timeIndex === -1) {
+      setTimeIndex(timestamps.length - 1);
+    }
+  }, [timestamps.length, timeIndex]);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setScrollPosition(containerRef.current.scrollTop);
+    }
+  }, [racers]);
+
+  useEffect(() => {
+    if (containerRef.current && scrollPosition > 0) {
+      containerRef.current.scrollTop = scrollPosition;
+    }
+  }, [scrollPosition]);
+
   return (
-    <>
-      {racers && racers.length > 0 && timestamps.length > 0 && (
+    <div className="relative">
+      {isInitializing ? (
+        <LoadingWrapper>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+          <div className="text-lg text-gray-300">Loading Derby Data...</div>
+        </LoadingWrapper>
+      ) : racers && racers.length > 0 && timestamps.length > 0 ? (
         <>
           <RaceTrack totalRacers={totalRacers}>
             <ContentWrapper totalRacers={totalRacers}>
               <h2>Berachain Derby Dashboard</h2>
 
-              <RaceLanesContainer>
+              <RaceLanesContainer className="md:pl-[120px]">
                 {currentRacers.map((racer) => (
                   <RaceLane key={racer.tokenAddress}>
                     <RaceTrail
                       position={(racer.currentScore / allTimeHighScore) * 85}
                     />
-                    <Tooltip content={racer.token?.symbol}>
+                    <Tooltip content={racer.tokenOnchainData?.symbol}>
                       <RacerIcon
                         className="relative"
                         position={(racer.currentScore / allTimeHighScore) * 85}
                       >
-                        {racer.token?.logoURI && (
+                        {racer.tokenOnchainData?.logoURI && (
                           <div
-                            onClick={() => handleTokenClick(racer.token)}
+                            onClick={() =>
+                              handleTokenClick(racer.tokenOnchainData)
+                            }
                             style={{ cursor: "pointer" }}
                           >
                             <Image
-                              src={racer.token?.logoURI}
-                              alt={racer.token?.symbol || ""}
+                              src={racer.tokenOnchainData?.logoURI}
+                              alt={racer.tokenOnchainData?.symbol || ""}
                               width={100}
                               height={100}
                               style={{
@@ -244,7 +385,11 @@ export const MemeHorseRace = observer(() => {
                           }}
                         >
                           MCAP:{" "}
-                          {(racer.currentScore / Math.pow(10, 18)).toFixed(3)}$
+                          <LerpingValue
+                            value={racer.currentScore / Math.pow(10, 18)}
+                            prefix="$"
+                            suffix=""
+                          />
                         </span>
                       </RacerIcon>
                     </Tooltip>
@@ -265,30 +410,93 @@ export const MemeHorseRace = observer(() => {
               </div>
             </ContentWrapper>
           </RaceTrack>
-          {getSortedRacers().map((racer, index) => (
-            <div
-              key={racer.tokenAddress}
-              className="flex justify-start items-center p-2"
-            >
-              <div>
-                <Image
-                  src={racer.token?.logoURI}
-                  alt={racer.token?.symbol || ""}
-                  width={50}
-                  height={50}
-                />
-              </div>
-              <div>
-                <span className="inline-block w-[150px]">
-                  {index === 0 ? `👑` : `${index + 1}.`} {racer.token?.symbol}
-                </span>{" "}
-                - {(racer.currentScore / Math.pow(10, 18)).toFixed(3)}$
-              </div>
+
+          <TableContainer>
+            <div className="overflow-x-auto" ref={containerRef}>
+              <table className="w-full table-auto">
+                <thead>
+                  <tr className="bg-gray-800">
+                    <th className="p-3 text-left w-[10%]">Rank</th>
+                    <th className="p-3 text-left w-[30%]">Token</th>
+                    <th className="p-3 text-left w-[25%]">Market Cap</th>
+                    <th className="p-3 text-left w-[15%]">1h Change</th>
+                    <th className="p-3 text-left w-[20%]">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {getSortedRacers().map((racer, index) => (
+                    <tr
+                      key={racer.tokenAddress}
+                      className="border-b border-gray-700 hover:bg-gray-700/50"
+                    >
+                      <td className="p-3 whitespace-nowrap">
+                        <span className="flex items-center gap-2">
+                          {index === 0 ? `👑` : `${index + 1}.`}
+                        </span>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src={racer.tokenOnchainData?.logoURI}
+                            alt={racer.tokenOnchainData?.symbol || ""}
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                          />
+                          <div className="flex flex-col">
+                            <span className="font-medium">
+                              {racer.tokenOnchainData?.symbol}
+                            </span>
+                            <span className="text-sm text-gray-400">
+                              {racer.tokenOnchainData?.name}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <AnimatedValue
+                          changed={changedValues[racer.tokenAddress]}
+                        >
+                          <LerpingValue
+                            value={racer.currentScore / Math.pow(10, 18)}
+                            prefix="$"
+                          />
+                        </AnimatedValue>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <span
+                          className={
+                            racer.hourlyChange >= 0
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
+                          {racer.hourlyChange.toFixed(2)}%
+                        </span>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <button
+                          onClick={() =>
+                            handleTokenClick(racer.tokenOnchainData)
+                          }
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
+                        >
+                          Swap
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          ))}
+          </TableContainer>
         </>
+      ) : (
+        <LoadingWrapper>
+          <div className="text-lg text-gray-300">No race data available</div>
+        </LoadingWrapper>
       )}
-    </>
+    </div>
   );
 });
 

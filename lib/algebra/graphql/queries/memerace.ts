@@ -7,10 +7,14 @@ export const ALL_RACERS = gql`
       currentScore
       token {
         symbol
+        initialUSD
+        derivedUSD
+        totalSupply
       }
       hourData(orderBy: timestamp, orderDirection: asc) {
         timestamp
         score
+        usdAtThisHour
       }
     }
   }
