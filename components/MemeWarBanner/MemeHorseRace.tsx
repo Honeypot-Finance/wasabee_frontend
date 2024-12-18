@@ -346,53 +346,62 @@ export const MemeHorseRace = observer(() => {
               <h2>Berachain Derby Dashboard</h2>
 
               <RaceLanesContainer className="md:pl-[120px]">
-                {currentRacers.map((racer) => (
-                  <RaceLane key={racer.tokenAddress}>
-                    <RaceTrail
-                      position={(racer.currentScore / allTimeHighScore) * 85}
-                    />
-                    <Tooltip content={racer.tokenOnchainData?.symbol}>
-                      <RacerIcon
-                        className="relative"
-                        position={(racer.currentScore / allTimeHighScore) * 85}
-                      >
-                        {racer.tokenOnchainData?.logoURI && (
-                          <div
-                            onClick={() =>
-                              handleTokenClick(racer.tokenOnchainData)
-                            }
-                            style={{ cursor: "pointer" }}
+                {currentRacers.map((racer) => {
+                  // Calculate rank based on market cap
+                  const rank = currentRacers.reduce(
+                    (count, other) =>
+                      other.currentScore > racer.currentScore
+                        ? count + 1
+                        : count,
+                    0
+                  );
+                  // Calculate position based on rank (higher rank = less distance)
+                  const position =
+                    85 - rank * (85 / (currentRacers.length - 1 || 1));
+
+                  return (
+                    <RaceLane key={racer.tokenAddress}>
+                      <RaceTrail position={position} />
+                      <Tooltip content={racer.tokenOnchainData?.symbol}>
+                        <RacerIcon className="relative" position={position}>
+                          {racer.tokenOnchainData?.logoURI && (
+                            <div
+                              onClick={() =>
+                                handleTokenClick(racer.tokenOnchainData)
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <Image
+                                src={racer.tokenOnchainData?.logoURI}
+                                alt={racer.tokenOnchainData?.symbol || ""}
+                                width={100}
+                                height={100}
+                                style={{
+                                  transition: "transform 0.2s ease-in-out",
+                                }}
+                                className="scale-100 hover:scale-110"
+                              />
+                            </div>
+                          )}
+                          <span
+                            className="absolute top-[50%] left-0 translate-x-[-100%] translate-y-[-50%] text-right"
+                            style={{
+                              color: "#FFFFFF",
+                              textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+                            }}
                           >
-                            <Image
-                              src={racer.tokenOnchainData?.logoURI}
-                              alt={racer.tokenOnchainData?.symbol || ""}
-                              width={100}
-                              height={100}
-                              style={{
-                                transition: "transform 0.2s ease-in-out",
-                              }}
-                              className="scale-100 hover:scale-110"
+                            MCAP:{" "}
+                            <LerpingValue
+                              value={racer.currentScore / Math.pow(10, 18)}
+                              prefix="$"
+                              suffix=""
                             />
-                          </div>
-                        )}
-                        <span
-                          className="absolute top-[50%] left-0 translate-x-[-100%] translate-y-[-50%] text-right"
-                          style={{
-                            color: "#FFFFFF",
-                            textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-                          }}
-                        >
-                          MCAP:{" "}
-                          <LerpingValue
-                            value={racer.currentScore / Math.pow(10, 18)}
-                            prefix="$"
-                            suffix=""
-                          />
-                        </span>
-                      </RacerIcon>
-                    </Tooltip>
-                  </RaceLane>
-                ))}
+                          </span>
+                        </RacerIcon>
+                      </Tooltip>
+                    </RaceLane>
+                  );
+                })}
               </RaceLanesContainer>
 
               <TimeSlider
