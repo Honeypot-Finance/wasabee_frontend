@@ -703,4 +703,4 @@ export const pot2PumpFactoryABI = [
     name: "SafeERC20FailedOperation",
     inputs: [{ name: "token", type: "address", internalType: "address" }],
   },
-];
+] as const;

@@ -463,6 +463,7 @@ const FtoView = observer(() => {
             raiseTokenBalance={pair?.raiseToken?.balance}
             raiseTokenDecimals={pair?.raiseToken?.decimals}
             depositedRaisedToken={pair?.depositedRaisedToken}
+            raiseTokenSymbol={pair?.raiseToken?.symbol || ""}
           />
 
           <TokenAddress address={pair?.launchedToken?.address} />

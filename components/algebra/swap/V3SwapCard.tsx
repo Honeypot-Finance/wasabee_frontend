@@ -20,9 +20,6 @@ export function V3SwapCard({
   toTokenAddress,
   boarderless,
 }: V3SwapCardProps) {
-  useEffect(() => {
-    console.log(fromTokenAddress, toTokenAddress);
-  }, [fromTokenAddress, toTokenAddress]);
   return (
     <div
       className={cn(

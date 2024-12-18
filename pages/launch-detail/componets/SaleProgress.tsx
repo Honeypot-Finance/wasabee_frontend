@@ -9,6 +9,7 @@ interface SaleProgressProps {
   raiseTokenBalance?: BigNumber;
   ftoStatusDisplayStatus?: string;
   depositedRaisedToken?: BigNumber;
+  raiseTokenSymbol: string;
 }
 
 const SaleProgress: React.FC<SaleProgressProps> = ({
@@ -16,12 +17,13 @@ const SaleProgress: React.FC<SaleProgressProps> = ({
   raiseTokenBalance,
   raiseTokenDecimals,
   depositedRaisedToken,
+  raiseTokenSymbol,
 }) => {
   const depositedRaisedTokenDisplay = depositedRaisedToken
     ? amountFormatted(depositedRaisedToken, {
         decimals: 0,
         fixed: 3,
-        prefix: "$",
+        prefix: "",
       })
     : null;
 
@@ -29,7 +31,7 @@ const SaleProgress: React.FC<SaleProgressProps> = ({
     ? amountFormatted(raiseTokenBalance, {
         decimals: raiseTokenDecimals,
         fixed: 3,
-        prefix: "$",
+        prefix: "",
       })
     : null;
 
@@ -80,7 +82,9 @@ const SaleProgress: React.FC<SaleProgressProps> = ({
         )}
         <span className="text-sm">/</span>
         {raisedTokenMinCapDisplay ? (
-          <span className="text-sm text-white">{raisedTokenMinCapDisplay}</span>
+          <span className="text-sm text-white">
+            {raisedTokenMinCapDisplay} {raiseTokenSymbol ?? "Raise Token"}
+          </span>
         ) : (
           <Skeleton className="rounded-lg h-5 w-20" />
         )}

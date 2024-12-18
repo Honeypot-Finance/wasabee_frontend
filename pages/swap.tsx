@@ -10,6 +10,7 @@ import { liquidity } from "@/services/liquidity";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import V3SwapCard from "@/components/algebra/swap/V3SwapCard";
 import KlineChart from "./launch-detail/componets/KlineChart";
+import { useSearchParams } from "next/navigation";
 
 const SwapPage = observer(() => {
   useEffect(() => {
@@ -21,6 +22,9 @@ const SwapPage = observer(() => {
       liquidity.initPool();
     }
   }, [wallet.isInit]);
+
+  const inputCurrency = useSearchParams().get("inputCurrency");
+  const outputCurrency = useSearchParams().get("outputCurrency");
 
   const isInit = wallet.isInit && liquidity;
 
@@ -54,7 +58,10 @@ const SwapPage = observer(() => {
           }
         >
           <V3SwapCard
-            toTokenAddress={wallet.currentChain.platformTokenAddress.HPOT}
+            fromTokenAddress={inputCurrency ?? undefined}
+            toTokenAddress={
+              outputCurrency ?? wallet.currentChain.platformTokenAddress.HPOT
+            }
           />
         </motion.div>
       </div>
