@@ -3,7 +3,7 @@ import { Button } from "@/components/button";
 import { useCallback, useState } from "react";
 import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
 import { Token } from "@/services/contract/token";
-import { Address } from "viem";
+import { Address, maxInt256 } from "viem";
 import TokenCardV3 from "@/components/algebra/swap/TokenCard/TokenCardV3";
 import { wallet } from "@/services/wallet";
 import { Currency, tryParseAmount } from "@cryptoalgebra/sdk";
@@ -11,8 +11,11 @@ import { useBalance } from "wagmi";
 import {
   useReadErc20Allowance,
   useReadErc20BalanceOf,
+  useReadIchiVaultAllowToken0,
+  useReadIchiVaultAllowToken1,
 } from "@/wagmi-generated";
 import { ContractWrite } from "@/services/utils";
+import BigNumber from "bignumber.js";
 
 interface DepositToVaultModalProps {
   isOpen: boolean;
@@ -50,6 +53,14 @@ export function DepositToVaultModal({
     args: [wallet.account as `0x${string}`, vault.address as `0x${string}`],
   });
 
+  const isTokenAAllowed = useReadIchiVaultAllowToken0({
+    address: vault.address as `0x${string}`,
+  });
+
+  const isTokenBAllowed = useReadIchiVaultAllowToken1({
+    address: vault.address as `0x${string}`,
+  });
+
   const handleTypeAmountA = useCallback((value: string) => {
     setAmountA(value);
   }, []);
@@ -59,49 +70,62 @@ export function DepositToVaultModal({
   }, []);
 
   const handleMaxA = useCallback(async () => {
-    setAmountA(tokenABalance.data?.toString() || "0");
+    const balance = new BigNumber(tokenABalance.data?.toString() ?? 0)
+      .dividedBy(10 ** tokenA.decimals)
+      .toFixed(0);
+    if (!balance) return;
+    setAmountA(balance.toString());
   }, [tokenABalance]);
 
   const handleMaxB = useCallback(async () => {
-    setAmountB(tokenBBalance.data?.toString() || "0");
+    const balance = new BigNumber(tokenBBalance.data?.toString() ?? 0)
+      .dividedBy(10 ** tokenB.decimals)
+      .toFixed(0);
+    if (!balance) return;
+    setAmountB(balance.toString());
   }, [tokenBBalance]);
 
   const handleDeposit = async () => {
     if (!wallet.walletClient?.account?.address) return;
 
     // Check and handle token approvals
-    const parsedAmountA = Number(amountA) * 10 ** tokenA.decimals;
-    const parsedAmountB = Number(amountB) * 10 ** tokenB.decimals;
+    const parsedAmountA = amountA
+      ? new BigNumber(amountA).multipliedBy(10 ** tokenA.decimals).toFixed(0)
+      : undefined;
+    const parsedAmountB = amountB
+      ? new BigNumber(amountB).multipliedBy(10 ** tokenB.decimals).toFixed(0)
+      : undefined;
 
     if (!parsedAmountA && !parsedAmountB) return;
+
+    console.log(
+      parsedAmountA,
+      parsedAmountB,
+      tokenAAllowance.data,
+      tokenBAllowance.data
+    );
 
     if (
       parsedAmountA !== undefined &&
       tokenAAllowance.data !== undefined &&
-      BigInt(tokenAAllowance.data) < BigInt(parsedAmountA.toString())
+      tokenAAllowance.data < BigInt(parsedAmountA)
     ) {
       const token = Token.getToken({ address: tokenA.wrapped.address });
 
       await new ContractWrite(token.contract.write.approve, {
         action: "Approve",
-      }).call([
-        vault.address as `0x${string}`,
-        BigInt(parsedAmountA.toString()),
-      ]);
+      }).call([vault.address as `0x${string}`, BigInt(maxInt256)]);
     }
 
     if (
       parsedAmountB !== undefined &&
       tokenBAllowance.data !== undefined &&
-      BigInt(tokenBAllowance.data) < BigInt(parsedAmountB.toString())
+      tokenBAllowance.data < BigInt(parsedAmountB)
     ) {
       const token = Token.getToken({ address: tokenB.wrapped.address });
       await new ContractWrite(token.contract.write.approve, {
         action: "Approve",
-      }).call([
-        vault.address as `0x${string}`,
-        BigInt(parsedAmountB.toString()),
-      ]);
+      }).call([vault.address as `0x${string}`, BigInt(maxInt256)]);
     }
 
     console.log(
@@ -115,8 +139,8 @@ export function DepositToVaultModal({
         action: "Deposit",
         isSuccessEffect: true,
       }).call([
-        BigInt(parsedAmountA?.toString() || "0"),
-        BigInt(parsedAmountB?.toString() || "0"),
+        BigInt(parsedAmountA?.toString() ?? 0),
+        BigInt(parsedAmountB?.toString() ?? 0),
         wallet.account as `0x${string}`,
       ]);
 
@@ -141,34 +165,36 @@ export function DepositToVaultModal({
         <ModalHeader className="">Deposit to Vault</ModalHeader>
         <ModalBody>
           <div className="flex flex-col gap-4 p-4 ">
-            <TokenCardV3
-              value={amountA}
-              currency={tokenA}
-              otherCurrency={tokenB}
-              handleValueChange={handleTypeAmountA}
-              handleMaxValue={handleMaxA}
-              handleTokenSelection={setTokenA}
-              showBalance={true}
-              label="Token A Amount"
-              showMaxButton={true}
-            />
-
-            <TokenCardV3
-              value={amountB}
-              currency={tokenB}
-              otherCurrency={tokenA}
-              handleValueChange={handleTypeAmountB}
-              handleMaxValue={handleMaxB}
-              handleTokenSelection={setTokenB}
-              showBalance={true}
-              label="Token B Amount"
-              showMaxButton={true}
-            />
-
+            {isTokenAAllowed.data && (
+              <TokenCardV3
+                value={amountA}
+                currency={tokenA}
+                otherCurrency={tokenB}
+                handleValueChange={handleTypeAmountA}
+                handleMaxValue={handleMaxA}
+                handleTokenSelection={setTokenA}
+                showBalance={true}
+                label=""
+                showMaxButton={true}
+              />
+            )}
+            {isTokenBAllowed.data && (
+              <TokenCardV3
+                value={amountB}
+                currency={tokenB}
+                otherCurrency={tokenA}
+                handleValueChange={handleTypeAmountB}
+                handleMaxValue={handleMaxB}
+                handleTokenSelection={setTokenB}
+                showBalance={true}
+                label=""
+                showMaxButton={true}
+              />
+            )}
             <Button
               className="w-full"
               onClick={handleDeposit}
-              disabled={!amountA || !amountB || !wallet.account}
+              disabled={!wallet.account}
             >
               Deposit
             </Button>

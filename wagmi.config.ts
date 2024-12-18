@@ -22,6 +22,8 @@ import {
   wNativeABI,
   algebraVirtualPoolABI,
 } from "./lib/abis/algebra-contracts/ABIs";
+import { ICHIVaultABI } from "./lib/abis/aquabera/ICHIVault";
+import { ICHIVaultFactoryABI } from "./lib/abis/aquabera/ICHIVaultFactory";
 import { ERC20ABI } from "./lib/abis/erc20";
 
 const contracts: ContractConfig[] = [
@@ -79,6 +81,14 @@ const contracts: ContractConfig[] = [
   {
     abi: ERC20ABI,
     name: "ERC20",
+  },
+  {
+    abi: ICHIVaultABI,
+    name: "ICHIVault",
+  },
+  {
+    abi: ICHIVaultFactoryABI,
+    name: "ICHIVaultFactory",
   },
 ];
 

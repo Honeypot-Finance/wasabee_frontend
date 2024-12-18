@@ -4522,6 +4522,1074 @@ export const farmingCenterConfig = {
 } as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ICHIVault
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const ichiVaultAbi = [
+  {
+    type: 'constructor',
+    inputs: [
+      { name: '_pool', internalType: 'address', type: 'address' },
+      { name: '_allowToken0', internalType: 'bool', type: 'bool' },
+      { name: '_allowToken1', internalType: 'bool', type: 'bool' },
+      { name: '__owner', internalType: 'address', type: 'address' },
+      { name: '_twapPeriod', internalType: 'uint32', type: 'uint32' },
+      { name: '_vaultIndex', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'PRECISION',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'affiliate',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'amount0', internalType: 'uint256', type: 'uint256' },
+      { name: 'amount1', internalType: 'uint256', type: 'uint256' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'algebraMintCallback',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'amount0Delta', internalType: 'int256', type: 'int256' },
+      { name: 'amount1Delta', internalType: 'int256', type: 'int256' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'algebraSwapCallback',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'allowToken0',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'allowToken1',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'owner', internalType: 'address', type: 'address' },
+      { name: 'spender', internalType: 'address', type: 'address' },
+    ],
+    name: 'allowance',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ammFeeRecipient',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'spender', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'approve',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'account', internalType: 'address', type: 'address' }],
+    name: 'balanceOf',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'baseLower',
+    outputs: [{ name: '', internalType: 'int24', type: 'int24' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'baseUpper',
+    outputs: [{ name: '', internalType: 'int24', type: 'int24' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'collectFees',
+    outputs: [
+      { name: 'fees0', internalType: 'uint256', type: 'uint256' },
+      { name: 'fees1', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'currentTick',
+    outputs: [{ name: 'tick', internalType: 'int24', type: 'int24' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'decimals',
+    outputs: [{ name: '', internalType: 'uint8', type: 'uint8' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'spender', internalType: 'address', type: 'address' },
+      { name: 'subtractedValue', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'decreaseAllowance',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'deposit0', internalType: 'uint256', type: 'uint256' },
+      { name: 'deposit1', internalType: 'uint256', type: 'uint256' },
+      { name: 'to', internalType: 'address', type: 'address' },
+    ],
+    name: 'deposit',
+    outputs: [{ name: 'shares', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'deposit0Max',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'deposit1Max',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'fee',
+    outputs: [{ name: 'fee_', internalType: 'uint24', type: 'uint24' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'getBasePosition',
+    outputs: [
+      { name: 'liquidity', internalType: 'uint128', type: 'uint128' },
+      { name: 'amount0', internalType: 'uint256', type: 'uint256' },
+      { name: 'amount1', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'getLimitPosition',
+    outputs: [
+      { name: 'liquidity', internalType: 'uint128', type: 'uint128' },
+      { name: 'amount0', internalType: 'uint256', type: 'uint256' },
+      { name: 'amount1', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'getTotalAmounts',
+    outputs: [
+      { name: 'total0', internalType: 'uint256', type: 'uint256' },
+      { name: 'total1', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'hysteresis',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ichiVaultFactory',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'spender', internalType: 'address', type: 'address' },
+      { name: 'addedValue', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'increaseAllowance',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'limitLower',
+    outputs: [{ name: '', internalType: 'int24', type: 'int24' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'limitUpper',
+    outputs: [{ name: '', internalType: 'int24', type: 'int24' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'name',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'owner',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'pool',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_baseLower', internalType: 'int24', type: 'int24' },
+      { name: '_baseUpper', internalType: 'int24', type: 'int24' },
+      { name: '_limitLower', internalType: 'int24', type: 'int24' },
+      { name: '_limitUpper', internalType: 'int24', type: 'int24' },
+      { name: 'swapQuantity', internalType: 'int256', type: 'int256' },
+    ],
+    name: 'rebalance',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_affiliate', internalType: 'address', type: 'address' }],
+    name: 'setAffiliate',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_ammFeeRecipient', internalType: 'address', type: 'address' },
+    ],
+    name: 'setAmmFeeRecipient',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_deposit0Max', internalType: 'uint256', type: 'uint256' },
+      { name: '_deposit1Max', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'setDepositMax',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_hysteresis', internalType: 'uint256', type: 'uint256' }],
+    name: 'setHysteresis',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'newTwapPeriod', internalType: 'uint32', type: 'uint32' }],
+    name: 'setTwapPeriod',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'symbol',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'tickSpacing',
+    outputs: [{ name: '', internalType: 'int24', type: 'int24' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'token0',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'token1',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'totalSupply',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'transfer',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'from', internalType: 'address', type: 'address' },
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'transferFrom',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
+    name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'twapPeriod',
+    outputs: [{ name: '', internalType: 'uint32', type: 'uint32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'shares', internalType: 'uint256', type: 'uint256' },
+      { name: 'to', internalType: 'address', type: 'address' },
+    ],
+    name: 'withdraw',
+    outputs: [
+      { name: 'amount0', internalType: 'uint256', type: 'uint256' },
+      { name: 'amount1', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'affiliate',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'Affiliate',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'ammFeeRecipient',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'AmmFeeRecipient',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'owner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'spender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'value',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Approval',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'feeAmount0',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'feeAmount1',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'CollectFees',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      { name: 'pool', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'allowToken0',
+        internalType: 'bool',
+        type: 'bool',
+        indexed: false,
+      },
+      {
+        name: 'allowToken1',
+        internalType: 'bool',
+        type: 'bool',
+        indexed: false,
+      },
+      {
+        name: 'owner',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'twapPeriod',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'DeployICHIVault',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'shares',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'amount0',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'amount1',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Deposit',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'deposit0Max',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'deposit1Max',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'DepositMax',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'hysteresis',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Hysteresis',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'previousOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'newOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'OwnershipTransferred',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'tick', internalType: 'int24', type: 'int24', indexed: false },
+      {
+        name: 'totalAmount0',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'totalAmount1',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'feeAmount0',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'feeAmount1',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'totalSupply',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Rebalance',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'newTwapPeriod',
+        internalType: 'uint32',
+        type: 'uint32',
+        indexed: false,
+      },
+    ],
+    name: 'SetTwapPeriod',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'from', internalType: 'address', type: 'address', indexed: true },
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'value',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Transfer',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'shares',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'amount0',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'amount1',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Withdraw',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ICHIVaultFactory
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const ichiVaultFactoryAbi = [
+  {
+    type: 'constructor',
+    inputs: [
+      { name: '_algebraFactory', internalType: 'address', type: 'address' },
+      { name: '_basePluginFactory', internalType: 'address', type: 'address' },
+      { name: '_ammName', internalType: 'string', type: 'string' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'algebraFactory',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'allVaults',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ammFee',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ammName',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'baseFee',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'baseFeeSplit',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'basePluginFactory',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'tokenA', internalType: 'address', type: 'address' },
+      { name: 'allowTokenA', internalType: 'bool', type: 'bool' },
+      { name: 'tokenB', internalType: 'address', type: 'address' },
+      { name: 'allowTokenB', internalType: 'bool', type: 'bool' },
+    ],
+    name: 'createICHIVault',
+    outputs: [{ name: 'ichiVault', internalType: 'address', type: 'address' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'feeRecipient',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'deployer', internalType: 'address', type: 'address' },
+      { name: 'token0', internalType: 'address', type: 'address' },
+      { name: 'token1', internalType: 'address', type: 'address' },
+      { name: 'allowToken0', internalType: 'bool', type: 'bool' },
+      { name: 'allowToken1', internalType: 'bool', type: 'bool' },
+    ],
+    name: 'genKey',
+    outputs: [{ name: 'key', internalType: 'bytes32', type: 'bytes32' }],
+    stateMutability: 'pure',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'getICHIVault',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'owner',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_ammFee', internalType: 'uint256', type: 'uint256' }],
+    name: 'setAmmFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_baseFee', internalType: 'uint256', type: 'uint256' }],
+    name: 'setBaseFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_baseFeeSplit', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'setBaseFeeSplit',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_feeRecipient', internalType: 'address', type: 'address' },
+    ],
+    name: 'setFeeRecipient',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
+    name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'ammFee',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'AmmFee',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'baseFee',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'BaseFee',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'baseFeeSplit',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'BaseFeeSplit',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'algebraFactory',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'basePluginFactory',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'DeployICHIVaultFactory',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'feeRecipient',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'FeeRecipient',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'ichiVault',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'tokenA',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'allowTokenA',
+        internalType: 'bool',
+        type: 'bool',
+        indexed: false,
+      },
+      {
+        name: 'tokenB',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'allowTokenB',
+        internalType: 'bool',
+        type: 'bool',
+        indexed: false,
+      },
+      {
+        name: 'count',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'ICHIVaultCreated',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'previousOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'newOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'OwnershipTransferred',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WrappedNative
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -9054,6 +10122,1006 @@ export const simulateFarmingCenterMulticall =
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
     functionName: 'multicall',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__
+ */
+export const readIchiVault = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"PRECISION"`
+ */
+export const readIchiVaultPrecision = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'PRECISION',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"affiliate"`
+ */
+export const readIchiVaultAffiliate = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'affiliate',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"allowToken0"`
+ */
+export const readIchiVaultAllowToken0 = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'allowToken0',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"allowToken1"`
+ */
+export const readIchiVaultAllowToken1 = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'allowToken1',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"allowance"`
+ */
+export const readIchiVaultAllowance = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'allowance',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"ammFeeRecipient"`
+ */
+export const readIchiVaultAmmFeeRecipient = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'ammFeeRecipient',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"balanceOf"`
+ */
+export const readIchiVaultBalanceOf = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'balanceOf',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"baseLower"`
+ */
+export const readIchiVaultBaseLower = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'baseLower',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"baseUpper"`
+ */
+export const readIchiVaultBaseUpper = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'baseUpper',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"currentTick"`
+ */
+export const readIchiVaultCurrentTick = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'currentTick',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"decimals"`
+ */
+export const readIchiVaultDecimals = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'decimals',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"deposit0Max"`
+ */
+export const readIchiVaultDeposit0Max = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'deposit0Max',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"deposit1Max"`
+ */
+export const readIchiVaultDeposit1Max = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'deposit1Max',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"fee"`
+ */
+export const readIchiVaultFee = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'fee',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"getBasePosition"`
+ */
+export const readIchiVaultGetBasePosition = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'getBasePosition',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"getLimitPosition"`
+ */
+export const readIchiVaultGetLimitPosition = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'getLimitPosition',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"getTotalAmounts"`
+ */
+export const readIchiVaultGetTotalAmounts = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'getTotalAmounts',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"hysteresis"`
+ */
+export const readIchiVaultHysteresis = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'hysteresis',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"ichiVaultFactory"`
+ */
+export const readIchiVaultIchiVaultFactory = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'ichiVaultFactory',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"limitLower"`
+ */
+export const readIchiVaultLimitLower = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'limitLower',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"limitUpper"`
+ */
+export const readIchiVaultLimitUpper = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'limitUpper',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"name"`
+ */
+export const readIchiVaultName = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'name',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"owner"`
+ */
+export const readIchiVaultOwner = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'owner',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"pool"`
+ */
+export const readIchiVaultPool = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'pool',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"symbol"`
+ */
+export const readIchiVaultSymbol = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'symbol',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"tickSpacing"`
+ */
+export const readIchiVaultTickSpacing = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'tickSpacing',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"token0"`
+ */
+export const readIchiVaultToken0 = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'token0',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"token1"`
+ */
+export const readIchiVaultToken1 = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'token1',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"totalSupply"`
+ */
+export const readIchiVaultTotalSupply = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'totalSupply',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"twapPeriod"`
+ */
+export const readIchiVaultTwapPeriod = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'twapPeriod',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__
+ */
+export const writeIchiVault = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultAbi,
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"algebraMintCallback"`
+ */
+export const writeIchiVaultAlgebraMintCallback =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'algebraMintCallback',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"algebraSwapCallback"`
+ */
+export const writeIchiVaultAlgebraSwapCallback =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'algebraSwapCallback',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"approve"`
+ */
+export const writeIchiVaultApprove = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'approve',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"collectFees"`
+ */
+export const writeIchiVaultCollectFees = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'collectFees',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"decreaseAllowance"`
+ */
+export const writeIchiVaultDecreaseAllowance =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'decreaseAllowance',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"deposit"`
+ */
+export const writeIchiVaultDeposit = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'deposit',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"increaseAllowance"`
+ */
+export const writeIchiVaultIncreaseAllowance =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'increaseAllowance',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"rebalance"`
+ */
+export const writeIchiVaultRebalance = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'rebalance',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const writeIchiVaultRenounceOwnership =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'renounceOwnership',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setAffiliate"`
+ */
+export const writeIchiVaultSetAffiliate = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'setAffiliate',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setAmmFeeRecipient"`
+ */
+export const writeIchiVaultSetAmmFeeRecipient =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'setAmmFeeRecipient',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setDepositMax"`
+ */
+export const writeIchiVaultSetDepositMax = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'setDepositMax',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setHysteresis"`
+ */
+export const writeIchiVaultSetHysteresis = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'setHysteresis',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setTwapPeriod"`
+ */
+export const writeIchiVaultSetTwapPeriod = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'setTwapPeriod',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"transfer"`
+ */
+export const writeIchiVaultTransfer = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'transfer',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"transferFrom"`
+ */
+export const writeIchiVaultTransferFrom = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'transferFrom',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const writeIchiVaultTransferOwnership =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'transferOwnership',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"withdraw"`
+ */
+export const writeIchiVaultWithdraw = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'withdraw',
+})
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__
+ */
+export const simulateIchiVault = /*#__PURE__*/ createSimulateContract({
+  abi: ichiVaultAbi,
+})
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"algebraMintCallback"`
+ */
+export const simulateIchiVaultAlgebraMintCallback =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'algebraMintCallback',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"algebraSwapCallback"`
+ */
+export const simulateIchiVaultAlgebraSwapCallback =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'algebraSwapCallback',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"approve"`
+ */
+export const simulateIchiVaultApprove = /*#__PURE__*/ createSimulateContract({
+  abi: ichiVaultAbi,
+  functionName: 'approve',
+})
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"collectFees"`
+ */
+export const simulateIchiVaultCollectFees =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'collectFees',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"decreaseAllowance"`
+ */
+export const simulateIchiVaultDecreaseAllowance =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'decreaseAllowance',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"deposit"`
+ */
+export const simulateIchiVaultDeposit = /*#__PURE__*/ createSimulateContract({
+  abi: ichiVaultAbi,
+  functionName: 'deposit',
+})
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"increaseAllowance"`
+ */
+export const simulateIchiVaultIncreaseAllowance =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'increaseAllowance',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"rebalance"`
+ */
+export const simulateIchiVaultRebalance = /*#__PURE__*/ createSimulateContract({
+  abi: ichiVaultAbi,
+  functionName: 'rebalance',
+})
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const simulateIchiVaultRenounceOwnership =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'renounceOwnership',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setAffiliate"`
+ */
+export const simulateIchiVaultSetAffiliate =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'setAffiliate',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setAmmFeeRecipient"`
+ */
+export const simulateIchiVaultSetAmmFeeRecipient =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'setAmmFeeRecipient',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setDepositMax"`
+ */
+export const simulateIchiVaultSetDepositMax =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'setDepositMax',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setHysteresis"`
+ */
+export const simulateIchiVaultSetHysteresis =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'setHysteresis',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setTwapPeriod"`
+ */
+export const simulateIchiVaultSetTwapPeriod =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'setTwapPeriod',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"transfer"`
+ */
+export const simulateIchiVaultTransfer = /*#__PURE__*/ createSimulateContract({
+  abi: ichiVaultAbi,
+  functionName: 'transfer',
+})
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"transferFrom"`
+ */
+export const simulateIchiVaultTransferFrom =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'transferFrom',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const simulateIchiVaultTransferOwnership =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'transferOwnership',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"withdraw"`
+ */
+export const simulateIchiVaultWithdraw = /*#__PURE__*/ createSimulateContract({
+  abi: ichiVaultAbi,
+  functionName: 'withdraw',
+})
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__
+ */
+export const watchIchiVaultEvent = /*#__PURE__*/ createWatchContractEvent({
+  abi: ichiVaultAbi,
+})
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Affiliate"`
+ */
+export const watchIchiVaultAffiliateEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Affiliate',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"AmmFeeRecipient"`
+ */
+export const watchIchiVaultAmmFeeRecipientEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'AmmFeeRecipient',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Approval"`
+ */
+export const watchIchiVaultApprovalEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Approval',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"CollectFees"`
+ */
+export const watchIchiVaultCollectFeesEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'CollectFees',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"DeployICHIVault"`
+ */
+export const watchIchiVaultDeployIchiVaultEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'DeployICHIVault',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Deposit"`
+ */
+export const watchIchiVaultDepositEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Deposit',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"DepositMax"`
+ */
+export const watchIchiVaultDepositMaxEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'DepositMax',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Hysteresis"`
+ */
+export const watchIchiVaultHysteresisEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Hysteresis',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"OwnershipTransferred"`
+ */
+export const watchIchiVaultOwnershipTransferredEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'OwnershipTransferred',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Rebalance"`
+ */
+export const watchIchiVaultRebalanceEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Rebalance',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"SetTwapPeriod"`
+ */
+export const watchIchiVaultSetTwapPeriodEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'SetTwapPeriod',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Transfer"`
+ */
+export const watchIchiVaultTransferEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Transfer',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Withdraw"`
+ */
+export const watchIchiVaultWithdrawEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Withdraw',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__
+ */
+export const readIchiVaultFactory = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultFactoryAbi,
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"algebraFactory"`
+ */
+export const readIchiVaultFactoryAlgebraFactory =
+  /*#__PURE__*/ createReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'algebraFactory',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"allVaults"`
+ */
+export const readIchiVaultFactoryAllVaults = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultFactoryAbi,
+  functionName: 'allVaults',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"ammFee"`
+ */
+export const readIchiVaultFactoryAmmFee = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultFactoryAbi,
+  functionName: 'ammFee',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"ammName"`
+ */
+export const readIchiVaultFactoryAmmName = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultFactoryAbi,
+  functionName: 'ammName',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"baseFee"`
+ */
+export const readIchiVaultFactoryBaseFee = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultFactoryAbi,
+  functionName: 'baseFee',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"baseFeeSplit"`
+ */
+export const readIchiVaultFactoryBaseFeeSplit =
+  /*#__PURE__*/ createReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'baseFeeSplit',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"basePluginFactory"`
+ */
+export const readIchiVaultFactoryBasePluginFactory =
+  /*#__PURE__*/ createReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'basePluginFactory',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"feeRecipient"`
+ */
+export const readIchiVaultFactoryFeeRecipient =
+  /*#__PURE__*/ createReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'feeRecipient',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"genKey"`
+ */
+export const readIchiVaultFactoryGenKey = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultFactoryAbi,
+  functionName: 'genKey',
+})
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"getICHIVault"`
+ */
+export const readIchiVaultFactoryGetIchiVault =
+  /*#__PURE__*/ createReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'getICHIVault',
+  })
+
+/**
+ * Wraps __{@link readContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"owner"`
+ */
+export const readIchiVaultFactoryOwner = /*#__PURE__*/ createReadContract({
+  abi: ichiVaultFactoryAbi,
+  functionName: 'owner',
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__
+ */
+export const writeIchiVaultFactory = /*#__PURE__*/ createWriteContract({
+  abi: ichiVaultFactoryAbi,
+})
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"createICHIVault"`
+ */
+export const writeIchiVaultFactoryCreateIchiVault =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'createICHIVault',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const writeIchiVaultFactoryRenounceOwnership =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'renounceOwnership',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setAmmFee"`
+ */
+export const writeIchiVaultFactorySetAmmFee = /*#__PURE__*/ createWriteContract(
+  { abi: ichiVaultFactoryAbi, functionName: 'setAmmFee' },
+)
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setBaseFee"`
+ */
+export const writeIchiVaultFactorySetBaseFee =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setBaseFee',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setBaseFeeSplit"`
+ */
+export const writeIchiVaultFactorySetBaseFeeSplit =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setBaseFeeSplit',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setFeeRecipient"`
+ */
+export const writeIchiVaultFactorySetFeeRecipient =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setFeeRecipient',
+  })
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const writeIchiVaultFactoryTransferOwnership =
+  /*#__PURE__*/ createWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'transferOwnership',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__
+ */
+export const simulateIchiVaultFactory = /*#__PURE__*/ createSimulateContract({
+  abi: ichiVaultFactoryAbi,
+})
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"createICHIVault"`
+ */
+export const simulateIchiVaultFactoryCreateIchiVault =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'createICHIVault',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const simulateIchiVaultFactoryRenounceOwnership =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'renounceOwnership',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setAmmFee"`
+ */
+export const simulateIchiVaultFactorySetAmmFee =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setAmmFee',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setBaseFee"`
+ */
+export const simulateIchiVaultFactorySetBaseFee =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setBaseFee',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setBaseFeeSplit"`
+ */
+export const simulateIchiVaultFactorySetBaseFeeSplit =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setBaseFeeSplit',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setFeeRecipient"`
+ */
+export const simulateIchiVaultFactorySetFeeRecipient =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setFeeRecipient',
+  })
+
+/**
+ * Wraps __{@link simulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const simulateIchiVaultFactoryTransferOwnership =
+  /*#__PURE__*/ createSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'transferOwnership',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__
+ */
+export const watchIchiVaultFactoryEvent =
+  /*#__PURE__*/ createWatchContractEvent({ abi: ichiVaultFactoryAbi })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"AmmFee"`
+ */
+export const watchIchiVaultFactoryAmmFeeEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'AmmFee',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"BaseFee"`
+ */
+export const watchIchiVaultFactoryBaseFeeEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'BaseFee',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"BaseFeeSplit"`
+ */
+export const watchIchiVaultFactoryBaseFeeSplitEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'BaseFeeSplit',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"DeployICHIVaultFactory"`
+ */
+export const watchIchiVaultFactoryDeployIchiVaultFactoryEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'DeployICHIVaultFactory',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"FeeRecipient"`
+ */
+export const watchIchiVaultFactoryFeeRecipientEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'FeeRecipient',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"ICHIVaultCreated"`
+ */
+export const watchIchiVaultFactoryIchiVaultCreatedEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'ICHIVaultCreated',
+  })
+
+/**
+ * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"OwnershipTransferred"`
+ */
+export const watchIchiVaultFactoryOwnershipTransferredEvent =
+  /*#__PURE__*/ createWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'OwnershipTransferred',
   })
 
 /**
@@ -13673,6 +15741,1027 @@ export const useSimulateFarmingCenterMulticall =
     abi: farmingCenterAbi,
     address: farmingCenterAddress,
     functionName: 'multicall',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__
+ */
+export const useReadIchiVault = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"PRECISION"`
+ */
+export const useReadIchiVaultPrecision = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'PRECISION',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"affiliate"`
+ */
+export const useReadIchiVaultAffiliate = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'affiliate',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"allowToken0"`
+ */
+export const useReadIchiVaultAllowToken0 = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'allowToken0',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"allowToken1"`
+ */
+export const useReadIchiVaultAllowToken1 = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'allowToken1',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"allowance"`
+ */
+export const useReadIchiVaultAllowance = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'allowance',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"ammFeeRecipient"`
+ */
+export const useReadIchiVaultAmmFeeRecipient =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultAbi,
+    functionName: 'ammFeeRecipient',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"balanceOf"`
+ */
+export const useReadIchiVaultBalanceOf = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'balanceOf',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"baseLower"`
+ */
+export const useReadIchiVaultBaseLower = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'baseLower',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"baseUpper"`
+ */
+export const useReadIchiVaultBaseUpper = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'baseUpper',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"currentTick"`
+ */
+export const useReadIchiVaultCurrentTick = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'currentTick',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"decimals"`
+ */
+export const useReadIchiVaultDecimals = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'decimals',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"deposit0Max"`
+ */
+export const useReadIchiVaultDeposit0Max = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'deposit0Max',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"deposit1Max"`
+ */
+export const useReadIchiVaultDeposit1Max = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'deposit1Max',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"fee"`
+ */
+export const useReadIchiVaultFee = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'fee',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"getBasePosition"`
+ */
+export const useReadIchiVaultGetBasePosition =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultAbi,
+    functionName: 'getBasePosition',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"getLimitPosition"`
+ */
+export const useReadIchiVaultGetLimitPosition =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultAbi,
+    functionName: 'getLimitPosition',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"getTotalAmounts"`
+ */
+export const useReadIchiVaultGetTotalAmounts =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultAbi,
+    functionName: 'getTotalAmounts',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"hysteresis"`
+ */
+export const useReadIchiVaultHysteresis = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'hysteresis',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"ichiVaultFactory"`
+ */
+export const useReadIchiVaultIchiVaultFactory =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultAbi,
+    functionName: 'ichiVaultFactory',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"limitLower"`
+ */
+export const useReadIchiVaultLimitLower = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'limitLower',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"limitUpper"`
+ */
+export const useReadIchiVaultLimitUpper = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'limitUpper',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"name"`
+ */
+export const useReadIchiVaultName = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'name',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"owner"`
+ */
+export const useReadIchiVaultOwner = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'owner',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"pool"`
+ */
+export const useReadIchiVaultPool = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'pool',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"symbol"`
+ */
+export const useReadIchiVaultSymbol = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'symbol',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"tickSpacing"`
+ */
+export const useReadIchiVaultTickSpacing = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'tickSpacing',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"token0"`
+ */
+export const useReadIchiVaultToken0 = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'token0',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"token1"`
+ */
+export const useReadIchiVaultToken1 = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'token1',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"totalSupply"`
+ */
+export const useReadIchiVaultTotalSupply = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'totalSupply',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"twapPeriod"`
+ */
+export const useReadIchiVaultTwapPeriod = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultAbi,
+  functionName: 'twapPeriod',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__
+ */
+export const useWriteIchiVault = /*#__PURE__*/ createUseWriteContract({
+  abi: ichiVaultAbi,
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"algebraMintCallback"`
+ */
+export const useWriteIchiVaultAlgebraMintCallback =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'algebraMintCallback',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"algebraSwapCallback"`
+ */
+export const useWriteIchiVaultAlgebraSwapCallback =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'algebraSwapCallback',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"approve"`
+ */
+export const useWriteIchiVaultApprove = /*#__PURE__*/ createUseWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'approve',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"collectFees"`
+ */
+export const useWriteIchiVaultCollectFees =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'collectFees',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"decreaseAllowance"`
+ */
+export const useWriteIchiVaultDecreaseAllowance =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'decreaseAllowance',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"deposit"`
+ */
+export const useWriteIchiVaultDeposit = /*#__PURE__*/ createUseWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'deposit',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"increaseAllowance"`
+ */
+export const useWriteIchiVaultIncreaseAllowance =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'increaseAllowance',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"rebalance"`
+ */
+export const useWriteIchiVaultRebalance = /*#__PURE__*/ createUseWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'rebalance',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const useWriteIchiVaultRenounceOwnership =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'renounceOwnership',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setAffiliate"`
+ */
+export const useWriteIchiVaultSetAffiliate =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'setAffiliate',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setAmmFeeRecipient"`
+ */
+export const useWriteIchiVaultSetAmmFeeRecipient =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'setAmmFeeRecipient',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setDepositMax"`
+ */
+export const useWriteIchiVaultSetDepositMax =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'setDepositMax',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setHysteresis"`
+ */
+export const useWriteIchiVaultSetHysteresis =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'setHysteresis',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setTwapPeriod"`
+ */
+export const useWriteIchiVaultSetTwapPeriod =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'setTwapPeriod',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"transfer"`
+ */
+export const useWriteIchiVaultTransfer = /*#__PURE__*/ createUseWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'transfer',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"transferFrom"`
+ */
+export const useWriteIchiVaultTransferFrom =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'transferFrom',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const useWriteIchiVaultTransferOwnership =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultAbi,
+    functionName: 'transferOwnership',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"withdraw"`
+ */
+export const useWriteIchiVaultWithdraw = /*#__PURE__*/ createUseWriteContract({
+  abi: ichiVaultAbi,
+  functionName: 'withdraw',
+})
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__
+ */
+export const useSimulateIchiVault = /*#__PURE__*/ createUseSimulateContract({
+  abi: ichiVaultAbi,
+})
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"algebraMintCallback"`
+ */
+export const useSimulateIchiVaultAlgebraMintCallback =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'algebraMintCallback',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"algebraSwapCallback"`
+ */
+export const useSimulateIchiVaultAlgebraSwapCallback =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'algebraSwapCallback',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"approve"`
+ */
+export const useSimulateIchiVaultApprove =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'approve',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"collectFees"`
+ */
+export const useSimulateIchiVaultCollectFees =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'collectFees',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"decreaseAllowance"`
+ */
+export const useSimulateIchiVaultDecreaseAllowance =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'decreaseAllowance',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"deposit"`
+ */
+export const useSimulateIchiVaultDeposit =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'deposit',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"increaseAllowance"`
+ */
+export const useSimulateIchiVaultIncreaseAllowance =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'increaseAllowance',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"rebalance"`
+ */
+export const useSimulateIchiVaultRebalance =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'rebalance',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const useSimulateIchiVaultRenounceOwnership =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'renounceOwnership',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setAffiliate"`
+ */
+export const useSimulateIchiVaultSetAffiliate =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'setAffiliate',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setAmmFeeRecipient"`
+ */
+export const useSimulateIchiVaultSetAmmFeeRecipient =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'setAmmFeeRecipient',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setDepositMax"`
+ */
+export const useSimulateIchiVaultSetDepositMax =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'setDepositMax',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setHysteresis"`
+ */
+export const useSimulateIchiVaultSetHysteresis =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'setHysteresis',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"setTwapPeriod"`
+ */
+export const useSimulateIchiVaultSetTwapPeriod =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'setTwapPeriod',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"transfer"`
+ */
+export const useSimulateIchiVaultTransfer =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'transfer',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"transferFrom"`
+ */
+export const useSimulateIchiVaultTransferFrom =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'transferFrom',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const useSimulateIchiVaultTransferOwnership =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'transferOwnership',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultAbi}__ and `functionName` set to `"withdraw"`
+ */
+export const useSimulateIchiVaultWithdraw =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultAbi,
+    functionName: 'withdraw',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__
+ */
+export const useWatchIchiVaultEvent = /*#__PURE__*/ createUseWatchContractEvent(
+  { abi: ichiVaultAbi },
+)
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Affiliate"`
+ */
+export const useWatchIchiVaultAffiliateEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Affiliate',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"AmmFeeRecipient"`
+ */
+export const useWatchIchiVaultAmmFeeRecipientEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'AmmFeeRecipient',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Approval"`
+ */
+export const useWatchIchiVaultApprovalEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Approval',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"CollectFees"`
+ */
+export const useWatchIchiVaultCollectFeesEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'CollectFees',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"DeployICHIVault"`
+ */
+export const useWatchIchiVaultDeployIchiVaultEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'DeployICHIVault',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Deposit"`
+ */
+export const useWatchIchiVaultDepositEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Deposit',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"DepositMax"`
+ */
+export const useWatchIchiVaultDepositMaxEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'DepositMax',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Hysteresis"`
+ */
+export const useWatchIchiVaultHysteresisEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Hysteresis',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"OwnershipTransferred"`
+ */
+export const useWatchIchiVaultOwnershipTransferredEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'OwnershipTransferred',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Rebalance"`
+ */
+export const useWatchIchiVaultRebalanceEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Rebalance',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"SetTwapPeriod"`
+ */
+export const useWatchIchiVaultSetTwapPeriodEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'SetTwapPeriod',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Transfer"`
+ */
+export const useWatchIchiVaultTransferEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Transfer',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultAbi}__ and `eventName` set to `"Withdraw"`
+ */
+export const useWatchIchiVaultWithdrawEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultAbi,
+    eventName: 'Withdraw',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__
+ */
+export const useReadIchiVaultFactory = /*#__PURE__*/ createUseReadContract({
+  abi: ichiVaultFactoryAbi,
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"algebraFactory"`
+ */
+export const useReadIchiVaultFactoryAlgebraFactory =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'algebraFactory',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"allVaults"`
+ */
+export const useReadIchiVaultFactoryAllVaults =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'allVaults',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"ammFee"`
+ */
+export const useReadIchiVaultFactoryAmmFee =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'ammFee',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"ammName"`
+ */
+export const useReadIchiVaultFactoryAmmName =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'ammName',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"baseFee"`
+ */
+export const useReadIchiVaultFactoryBaseFee =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'baseFee',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"baseFeeSplit"`
+ */
+export const useReadIchiVaultFactoryBaseFeeSplit =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'baseFeeSplit',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"basePluginFactory"`
+ */
+export const useReadIchiVaultFactoryBasePluginFactory =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'basePluginFactory',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"feeRecipient"`
+ */
+export const useReadIchiVaultFactoryFeeRecipient =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'feeRecipient',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"genKey"`
+ */
+export const useReadIchiVaultFactoryGenKey =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'genKey',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"getICHIVault"`
+ */
+export const useReadIchiVaultFactoryGetIchiVault =
+  /*#__PURE__*/ createUseReadContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'getICHIVault',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"owner"`
+ */
+export const useReadIchiVaultFactoryOwner = /*#__PURE__*/ createUseReadContract(
+  { abi: ichiVaultFactoryAbi, functionName: 'owner' },
+)
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__
+ */
+export const useWriteIchiVaultFactory = /*#__PURE__*/ createUseWriteContract({
+  abi: ichiVaultFactoryAbi,
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"createICHIVault"`
+ */
+export const useWriteIchiVaultFactoryCreateIchiVault =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'createICHIVault',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const useWriteIchiVaultFactoryRenounceOwnership =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'renounceOwnership',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setAmmFee"`
+ */
+export const useWriteIchiVaultFactorySetAmmFee =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setAmmFee',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setBaseFee"`
+ */
+export const useWriteIchiVaultFactorySetBaseFee =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setBaseFee',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setBaseFeeSplit"`
+ */
+export const useWriteIchiVaultFactorySetBaseFeeSplit =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setBaseFeeSplit',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setFeeRecipient"`
+ */
+export const useWriteIchiVaultFactorySetFeeRecipient =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setFeeRecipient',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const useWriteIchiVaultFactoryTransferOwnership =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'transferOwnership',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__
+ */
+export const useSimulateIchiVaultFactory =
+  /*#__PURE__*/ createUseSimulateContract({ abi: ichiVaultFactoryAbi })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"createICHIVault"`
+ */
+export const useSimulateIchiVaultFactoryCreateIchiVault =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'createICHIVault',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const useSimulateIchiVaultFactoryRenounceOwnership =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'renounceOwnership',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setAmmFee"`
+ */
+export const useSimulateIchiVaultFactorySetAmmFee =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setAmmFee',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setBaseFee"`
+ */
+export const useSimulateIchiVaultFactorySetBaseFee =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setBaseFee',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setBaseFeeSplit"`
+ */
+export const useSimulateIchiVaultFactorySetBaseFeeSplit =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setBaseFeeSplit',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"setFeeRecipient"`
+ */
+export const useSimulateIchiVaultFactorySetFeeRecipient =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'setFeeRecipient',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const useSimulateIchiVaultFactoryTransferOwnership =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: ichiVaultFactoryAbi,
+    functionName: 'transferOwnership',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__
+ */
+export const useWatchIchiVaultFactoryEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({ abi: ichiVaultFactoryAbi })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"AmmFee"`
+ */
+export const useWatchIchiVaultFactoryAmmFeeEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'AmmFee',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"BaseFee"`
+ */
+export const useWatchIchiVaultFactoryBaseFeeEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'BaseFee',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"BaseFeeSplit"`
+ */
+export const useWatchIchiVaultFactoryBaseFeeSplitEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'BaseFeeSplit',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"DeployICHIVaultFactory"`
+ */
+export const useWatchIchiVaultFactoryDeployIchiVaultFactoryEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'DeployICHIVaultFactory',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"FeeRecipient"`
+ */
+export const useWatchIchiVaultFactoryFeeRecipientEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'FeeRecipient',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"ICHIVaultCreated"`
+ */
+export const useWatchIchiVaultFactoryIchiVaultCreatedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'ICHIVaultCreated',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link ichiVaultFactoryAbi}__ and `eventName` set to `"OwnershipTransferred"`
+ */
+export const useWatchIchiVaultFactoryOwnershipTransferredEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: ichiVaultFactoryAbi,
+    eventName: 'OwnershipTransferred',
   })
 
 /**
