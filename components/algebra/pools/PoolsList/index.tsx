@@ -32,19 +32,6 @@ const PoolsList = () => {
     });
   const { positions, loading: isPositionsLoading } = usePositions();
 
-  const { data: poolsMaxApr, isLoading: isPoolsMaxAprLoading } = useSWR(
-    POOL_MAX_APR_API,
-    fetcher
-  );
-  const { data: poolsAvgApr, isLoading: isPoolsAvgAprLoading } = useSWR(
-    POOL_AVG_APR_API,
-    fetcher
-  );
-  const { data: farmingsAPR, isLoading: isFarmingsAPRLoading } = useSWR(
-    ETERNAL_FARMINGS_API,
-    fetcher
-  );
-
   const isLoading =
     isPoolsListLoading ||
     // isPoolsMaxAprLoading ||
@@ -73,20 +60,30 @@ const PoolsList = () => {
           (farming) => farming.pool === id
         );
 
-        const poolMaxApr =
-          poolsMaxApr && poolsMaxApr[id]
-            ? Number(poolsMaxApr[id].toFixed(2))
-            : 0;
-        const poolAvgApr =
-          poolsAvgApr && poolsAvgApr[id]
-            ? Number(poolsAvgApr[id].toFixed(2))
-            : 0;
-        const farmApr =
-          activeFarming && farmingsAPR && farmingsAPR[activeFarming.id] > 0
-            ? farmingsAPR[activeFarming.id]
-            : 0;
+        // const poolMaxApr =
+        //   poolsMaxApr && poolsMaxApr[id]
+        //     ? Number(poolsMaxApr[id].toFixed(2))
+        //     : 0;
+        // const poolAvgApr =
+        //   poolsAvgApr && poolsAvgApr[id]
+        //     ? Number(poolsAvgApr[id].toFixed(2))
+        //     : 0;
+        // const farmApr =
+        //   activeFarming && farmingsAPR && farmingsAPR[activeFarming.id] > 0
+        //     ? farmingsAPR[activeFarming.id]
+        //     : 0;
 
-        const avgApr = farmApr + poolAvgApr;
+        // const avgApr = farmApr + poolAvgApr;
+
+        // 池子的 APR 是 24H 的 fee 除以 TVL，position 的 APR 是 24H 的 fee 除以 TVL
+        const poolMaxApr = !!Number(totalValueLockedUSD)
+          ? (Number(currentPool.feesUSD) * 365) / Number(totalValueLockedUSD)
+          : 0;
+        const poolAvgApr = !!Number(totalValueLockedUSD)
+          ? (Number(currentPool.feesUSD) * 365) / Number(totalValueLockedUSD)
+          : 0;
+        const farmApr = 0;
+        const avgApr = poolAvgApr;
 
         return {
           id: id as Address,
@@ -108,15 +105,7 @@ const PoolsList = () => {
         };
       }
     );
-  }, [
-    isLoading,
-    pools,
-    positions,
-    activeFarmings,
-    poolsMaxApr,
-    poolsAvgApr,
-    farmingsAPR,
-  ]);
+  }, [isLoading, pools, positions, activeFarmings]);
 
   return (
     <div>
