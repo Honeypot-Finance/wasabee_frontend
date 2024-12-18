@@ -23,7 +23,7 @@ export function V3SwapCard({
   return (
     <div
       className={cn(
-        "flex flex-col w-full",
+        "flex flex-col w-full relative z-[100]",
         !boarderless &&
           "items-center gap-2 bg-[#FFCD4D] rounded-2xl px-4 py-3 relative pt-[80px] pb-[90px] text-black"
       )}

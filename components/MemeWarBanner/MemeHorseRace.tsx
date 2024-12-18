@@ -10,6 +10,7 @@ import { observer } from "mobx-react-lite";
 import { getAllRacers, Racer } from "@/lib/algebra/graphql/clients/racer";
 import { Tooltip } from "@nextui-org/react";
 import { useSpring, animated } from "react-spring";
+import { useRouter } from "next/router";
 
 const START_TIMESTAMP = 1734436800;
 
@@ -186,12 +187,12 @@ export const MemeHorseRace = observer(() => {
         setIsInitializing(false);
 
         // Set up interval for updates after initialization
-        const interval = setInterval(async () => {
-          const updatedRacers = await getAllRacers();
-          setRacers(updatedRacers);
-        }, 1000);
+        // const interval = setInterval(async () => {
+        //   const updatedRacers = await getAllRacers();
+        //   setRacers(updatedRacers);
+        // }, 1000);
 
-        return () => clearInterval(interval);
+        // return () => clearInterval(interval);
       } catch (error) {
         console.error("Initialization error:", error);
         setIsInitializing(false);
@@ -263,10 +264,7 @@ export const MemeHorseRace = observer(() => {
     )
   );
 
-  const currentRacers = useMemo(
-    () => getCurrentScores(),
-    [racers, tokens, timeIndex, timestamps]
-  );
+  const currentRacers = useMemo(() => getCurrentScores(), [getCurrentScores]);
 
   const totalRacers = racers.length;
 
@@ -314,7 +312,7 @@ export const MemeHorseRace = observer(() => {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [currentRacers]);
+  }, [racers]);
 
   useEffect(() => {
     if (timestamps.length > 0 && timeIndex === -1) {
