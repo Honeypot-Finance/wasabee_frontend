@@ -54,6 +54,7 @@ export const LaunchDataProgress = observer(
           raiseTokenBalance={pair?.raisedTokenMinCap}
           raiseTokenDecimals={pair?.raiseToken?.decimals}
           depositedRaisedToken={pair?.depositedRaisedToken}
+          raiseTokenSymbol={pair?.raiseToken?.symbol ?? "Raise Token"}
         />
 
         <TokenAddress address={pair?.launchedToken?.address} />
