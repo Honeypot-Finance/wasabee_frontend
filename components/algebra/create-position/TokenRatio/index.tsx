@@ -65,7 +65,7 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
       <div className="flex w-full h-full font-semibold">
         {Number(token0Ratio) > 0 && (
           <div
-            className={`flex items-center justify-end pl-1 pr-2 h-full bg-[#143e65] border border-[#36f] duration-300 ${Number(token0Ratio) === 100 ? "rounded-2xl" : "rounded-l-2xl"}`}
+            className={`flex items-center justify-end pl-1 pr-2 h-full bg-[#ffd666] border border-[#ffd666]/30 duration-300 ${Number(token0Ratio) === 100 ? "rounded-2xl" : "rounded-l-2xl"}`}
             style={{ width: `${token0Ratio}%` }}
           >
             <TokenLogo
@@ -74,7 +74,7 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
                 address: currencyA ? currencyA.wrapped.address : zeroAddress,
               })}
             />
-            {`${Number(token0Ratio).toFixed()}%`}
+            {`${parseFloat(token0Ratio).toFixed()}%`}
           </div>
         )}
         {Number(token1Ratio) > 0 && (
@@ -82,7 +82,7 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
             className={`flex items-center pr-1 pl-2 h-full honeypot-button border duration-300 relative ${Number(token1Ratio) === 100 ? "rounded-2xl" : "rounded-r-2xl"}`}
             style={{ width: `${token1Ratio}%` }}
           >
-            {`${Number(token1Ratio).toFixed()}%`}
+            {`${parseFloat(token1Ratio).toFixed()}%`}
             <TokenLogo
               addtionalClasses="w-8 absolute right-0 top-0"
               token={Token.getToken({

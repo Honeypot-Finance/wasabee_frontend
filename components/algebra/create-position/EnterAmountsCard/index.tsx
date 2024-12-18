@@ -6,6 +6,7 @@ import { Address } from "viem";
 import { formatCurrency } from "@/lib/algebra/utils/common/formatCurrency";
 import { Token } from "@/services/contract/token";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
+import { cn } from "@/lib/utils";
 
 interface EnterAmountsCardProps {
   currency: Currency | undefined;
@@ -47,107 +48,78 @@ const EnterAmountCard = ({
   }
 
   return (
-    <div className="flex w-full bg-card-dark p-3 rounded-2xl gap-x-4">
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2 xs:gap-4">
+    <div className="w-full rounded-2xl border bg-white shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
           {currency && (
             <TokenLogo
-              addtionalClasses="w-8 sm:w-10"
+              addtionalClasses="w-8 h-8"
               token={Token.getToken({
                 address: currency.wrapped.address,
               })}
             />
           )}
-          <span className="font-bold text-sm sm:text-lg">
+          <span className="font-medium text-black">
             {currency ? currency.symbol : "Select a token"}
           </span>
         </div>
-      </div>
 
-      <div className="flex flex-col items-end gap-2 flex-1">
-        <Input
-          value={value}
-          id={`amount-${currency?.symbol}`}
-          onUserInput={(v: string) => handleInput(v)}
-          className={`text-right border text-xl font-bold p-2 honeypot-input w-full max-w-[300px]`}
-          placeholder={"0.0"}
-          maxDecimals={currency?.decimals}
-        />
-        {currency && account && (
-          <div className={"flex text-sm whitespace-nowrap"}>
-            <div>
-              <span className="font-semibold">Balance: </span>
-              <span>{balanceString}</span>
+        <div className="flex flex-col items-end gap-1">
+          <Input
+            value={value}
+            id={`amount-${currency?.symbol}`}
+            onUserInput={(v: string) => handleInput(v)}
+            placeholder={"0.00"}
+            maxDecimals={currency?.decimals}
+            className={cn(
+              "text-right",
+              "!bg-transparent",
+              "[&_*]:!bg-transparent",
+              "data-[invalid=true]:!bg-transparent",
+              "border-none",
+              "text-black",
+              "text-xl",
+              "font-medium",
+              "w-[160px]"
+            )}
+            classNames={{
+              inputWrapper: cn(
+                "!bg-transparent",
+                "border-none",
+                "shadow-none",
+                "!transition-none",
+                "data-[invalid=true]:!bg-transparent",
+                "group-data-[invalid=true]:!bg-transparent",
+                "pr-5"
+              ),
+              input: cn(
+                "!bg-transparent",
+                "!text-[#202020]",
+                "text-right",
+                "text-xl",
+                "!pr-0",
+                "[appearance:textfield]",
+                "[&::-webkit-outer-spin-button]:appearance-none",
+                "[&::-webkit-inner-spin-button]:appearance-none",
+                "data-[invalid=true]:!bg-transparent"
+              ),
+            }}
+          />
+          {currency && account && (
+            <div className="flex items-center gap-2 text-sm text-[#202020]">
+              <span>Balance: {balanceString}</span>
+              <button 
+                onClick={setMax}
+                className="text-[#FFCD4D] hover:text-[#ffd666] font-medium transition-colors"
+              >
+                Max
+              </button>
             </div>
-            <button className="ml-2 text-[#63b4ff]" onClick={setMax}>
-              Max
-            </button>
-          </div>
-        )}
-        {/* <div className="text-sm">{fiatValue && formatUSD.format(fiatValue)}</div> */}
+          )}
+        </div>
       </div>
     </div>
   );
-
-  // return (
-  //   <div
-  //       className="flex flex-col justify-between w-full relative">
-  //     <div
-  //     className="absolute text-right">
-  //       {/* // {`Balance: ${displayNumber(balance)}`} */}
-  //       {`Balance: ${balance.toString()}`}
-  //     </div>
-
-  //     <div
-  //     className="flex items-center justify-between">
-  //       <div className="flex items-center p-2">
-  //         {/* <EquilibreAvatar
-  //           src={asset?.logoURI || ''}
-  //           size={'md'}
-  //           ml={1}
-  //           mr={4}
-  //         /> */}
-  //         <Input value={value} onChange={v => handleChange(v.target.value)} />
-  //         {/* <InputGroup flexDirection={'column'}>
-  //           <NumberInput
-  //             step={0.1}
-  //             colorScheme="white"
-  //             variant={'unstyled'}
-  //             value={value}
-  //             onChange={handleChange}>
-  //             <NumberInputField
-  //               fontSize={'2xl'}
-  //               placeholder="0"
-  //               textAlign={'left'}
-  //             />
-  //           </NumberInput>
-  //         </InputGroup> */}
-  //       </div>
-  //       <Button
-  //         onClick={setMax}>
-  //         MAX
-  //       </Button>
-  //     </div>
-  //     <div className="mt-4">
-  //       {error ? (
-  //         <div className="flex flex-col absolute">
-  //           {error}
-  //         </div>
-  //       ) : needApprove ? (
-  //         <Button
-  //           disabled={!approve || isApprovalLoading}
-  //           onClick={() => approve()}>
-  //           {isApprovalLoading ? 'Loading...' : `Approve ${currency?.symbol}`}
-  //         </Button>
-  //       ) : valueForApprove ? (
-  //         <div className="absolute">
-  //           {/* <CheckIcon /> */}
-  //           Approved
-  //         </div>
-  //       ) : null}
-  //     </div>
-  //   </div>
-  // );
 };
 
 export default EnterAmountCard;

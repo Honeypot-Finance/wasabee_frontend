@@ -1,5 +1,5 @@
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/modal";
-import { Button } from "@/components/button";
+import { Button } from "@/components/button/button-next";
 import { useCallback, useState } from "react";
 import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
 import { Token } from "@/services/contract/token";
@@ -132,48 +132,59 @@ export function DepositToVaultModal({
       onClose={onClose}
       size="2xl"
       classNames={{
-        base: "bg-yellow-300",
-        body: "bg-yellow-300",
-        header: "bg-yellow-500",
+        base: "bg-transparent",
+        wrapper: "bg-transparent",
+        closeButton: "absolute right-4 top-6 z-50 text-white w-8 h-8 flex items-center justify-center rounded-full",
       }}
     >
-      <ModalContent className="">
-        <ModalHeader className="">Deposit to Vault</ModalHeader>
-        <ModalBody>
-          <div className="flex flex-col gap-4 p-4 ">
-            <TokenCardV3
-              value={amountA}
-              currency={tokenA}
-              otherCurrency={tokenB}
-              handleValueChange={handleTypeAmountA}
-              handleMaxValue={handleMaxA}
-              handleTokenSelection={setTokenA}
-              showBalance={true}
-              label="Token A Amount"
-              showMaxButton={true}
-            />
+      <ModalContent className="bg-[#FFCD4D] relative overflow-hidden">
+        {(onClose) => (
+          <>
+            <div className="bg-[url('/images/pumping/outline-border.png')] h-[50px] absolute top-0 left-0 w-full bg-contain bg-[left_-90px_top] bg-repeat-x"></div>
 
-            <TokenCardV3
-              value={amountB}
-              currency={tokenB}
-              otherCurrency={tokenA}
-              handleValueChange={handleTypeAmountB}
-              handleMaxValue={handleMaxB}
-              handleTokenSelection={setTokenB}
-              showBalance={true}
-              label="Token B Amount"
-              showMaxButton={true}
-            />
+            <ModalHeader className="pt-14 bg-[#FFCD4D]">
+              <h3 className="text-xl font-bold text-black">Deposit to Vault</h3>
+            </ModalHeader>
 
-            <Button
-              className="w-full"
-              onClick={handleDeposit}
-              disabled={!amountA || !amountB || !wallet.account}
-            >
-              Deposit
-            </Button>
-          </div>
-        </ModalBody>
+            <ModalBody className="px-6 bg-[#FFCD4D]">
+              <div className="w-full rounded-[32px] bg-white space-y-4 px-4 py-6 custom-dashed mb-6">
+                <TokenCardV3
+                  value={amountA}
+                  currency={tokenA}
+                  otherCurrency={tokenB}
+                  handleValueChange={handleTypeAmountA}
+                  handleMaxValue={handleMaxA}
+                  handleTokenSelection={setTokenA}
+                  showBalance={true}
+                  label="Token A Amount"
+                  showMaxButton={true}
+                />
+
+                <TokenCardV3
+                  value={amountB}
+                  currency={tokenB}
+                  otherCurrency={tokenA}
+                  handleValueChange={handleTypeAmountB}
+                  handleMaxValue={handleMaxB}
+                  handleTokenSelection={setTokenB}
+                  showBalance={true}
+                  label="Token B Amount"
+                  showMaxButton={true}
+                />
+
+                <Button
+                  className="w-full bg-[#FFCD4D] hover:bg-[#ffd666] text-black font-medium rounded-[16px] py-[18px] shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)]"
+                  onClick={handleDeposit}
+                  disabled={!amountA || !amountB || !wallet.account}
+                >
+                  Deposit
+                </Button>
+              </div>
+            </ModalBody>
+
+            <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-contain"></div>
+          </>
+        )}
       </ModalContent>
     </Modal>
   );

@@ -59,7 +59,7 @@ const CustomBar = ({
         <text
           x={x + 10}
           y={y - 10}
-          fill="white"
+          fill="#202020"
           fontSize={"14px"}
           fontWeight={600}
           textAnchor="middle"
@@ -69,7 +69,7 @@ const CustomBar = ({
         <text
           x={x + 10}
           y={y - 10}
-          fill="white"
+          fill="#202020"
           fontSize={"14px"}
           fontWeight={600}
           textAnchor="middle"
@@ -270,20 +270,20 @@ export function Chart({
               }}
             >
               {formattedData?.map((entry: any, index: number) => {
-                let fill = "#3b3c4e";
+                let fill = "#FFF8E7";
 
                 const value = isSorted ? entry.price0 : entry.price1;
 
                 if (focusBar === index) {
-                  fill = "#cdd1ff";
+                  fill = "#FFE7B3";
                 } else if (entry.isCurrent) {
-                  fill = "#cd27f0";
+                  fill = "#FFCD4D";
                 } else if (leftPrice && rightPrice) {
                   if (
                     Number(value) >= Number(leftPrice) &&
                     Number(value) <= Number(rightPrice)
                   ) {
-                    fill = "url(#colorUv)";
+                    fill = "#FFE199";
                   }
                 }
 

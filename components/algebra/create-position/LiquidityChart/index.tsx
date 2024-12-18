@@ -212,40 +212,42 @@ const LiquidityChart = ({
   // const handleZoomOut = () => setZoom((zoom) => zoom - ZOOM_STEP)
 
   return (
-    <div className="flex w-full h-full">
-      {formattedData ? (
-        <Chart
-          formattedData={formattedData}
-          leftPrice={leftPrice}
-          rightPrice={rightPrice}
-          currentPrice={currentPrice}
-          isSorted={isSorted}
-          zoom={zoom}
-          currencyA={currencyA}
-          currencyB={currencyB}
-        />
-      ) : (
-        <LiquidityChartLoader />
-      )}
+    <div className="w-full rounded-2xl border bg-card-dark shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] p-4">
+      <div className="flex w-full h-full">
+        {formattedData ? (
+          <Chart
+            formattedData={formattedData}
+            leftPrice={leftPrice}
+            rightPrice={rightPrice}
+            currentPrice={currentPrice}
+            isSorted={isSorted}
+            zoom={zoom}
+            currencyA={currencyA}
+            currencyB={currencyB}
+          />
+        ) : (
+          <LiquidityChartLoader />
+        )}
+      </div>
     </div>
   );
 };
 
 const LiquidityChartLoader = () => (
   <div className="flex items-end gap-4 w-full h-[250px]">
-    <Skeleton className="w-[40px] h-[120px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[130px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[160px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[130px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[120px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[160px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[200px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[140px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[130px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[120px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[140px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[120px] bg-card-light" />
-    <Skeleton className="w-[40px] h-[190px] bg-card-light" />
+    <Skeleton className="w-[40px] h-[120px] bg-white/10" />
+    <Skeleton className="w-[40px] h-[130px] bg-white/10" />
+    <Skeleton className="w-[40px] h-[160px] bg-white/10" />
+    <Skeleton className="w-[40px] h-[130px] bg-white/10" />
+    <Skeleton className="w-[40px] h-[120px] bg-white/10" />
+    <Skeleton className="w-[40px] h-[160px] bg-white/10" />
+    <Skeleton className="w-[40px] h-[200px] bg-white/10" />
+    <Skeleton className="w-[40px] h-[140px] bg-white/10" />
+    <Skeleton className="w-[40px] h-[130px] bg-white/10" />
+    <Skeleton className="w-[40px] h-[120px] bg-white/10" />
+    <Skeleton className="w-[40px] h-[140px] bg-white/10" />
+    <Skeleton className="w-[40px] h-[120px] bg-white/10" />
+    <Skeleton className="w-[40px] h-[190px] bg-white/10" />
   </div>
 );
 

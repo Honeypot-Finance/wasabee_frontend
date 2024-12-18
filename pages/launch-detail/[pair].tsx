@@ -692,48 +692,49 @@ const MemeView = observer(() => {
               <ProjectStatus pair={pair} />
             </div>
           </div>
-          <div className="bg-[#FFCD4D] p-4 py-6 rounded-2xl space-y-3 col-span-2 lg:col-span-1 relative overflow-hidden">
-            <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
-            {state.pair.value?.state === 0 && (
-              <>
-                {state.pair.value?.canClaimLP && (
-                  <Button
-                    className="w-full"
-                    isLoading={state.pair.value?.claimLP.loading}
-                    onClick={() => {
-                      state.pair.value?.claimLP.call();
-                    }}
-                    isDisabled={!state.pair.value?.canClaimLP}
-                  >
-                    Claim LP
-                  </Button>
-                )}
-                {state.pair.value?.canClaimTokens && (
-                  <Button
-                    className="w-full"
-                    onClick={async () => {
-                      //navigate to vault/[vaultaddress]
-                      const lpTokenAddress =
-                        await state.pair.value?.contract.read.lpToken();
-                      window.location.href = `/vault/${lpTokenAddress}`;
+          <div className="col-span-2 lg:col-span-1">
+            <div className="bg-[#FFCD4D] min-h-[408px] p-4 py-6 rounded-2xl space-y-3 relative overflow-hidden">
+              <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
+              {state.pair.value?.state === 0 && (
+                <>
+                  {state.pair.value?.canClaimLP && (
+                    <Button
+                      className="w-full"
+                      isLoading={state.pair.value?.claimLP.loading}
+                      onClick={() => {
+                        state.pair.value?.claimLP.call();
+                      }}
+                      isDisabled={!state.pair.value?.canClaimLP}
+                    >
+                      Claim LP
+                    </Button>
+                  )}
+                  {state.pair.value?.canClaimTokens && (
+                    <Button
+                      className="w-full"
+                      onClick={async () => {
+                        //navigate to vault/[vaultaddress]
+                        const lpTokenAddress =
+                          await state.pair.value?.contract.read.lpToken();
+                        window.location.href = `/vault/${lpTokenAddress}`;
 
-                      // pair.claimVaultTokens();
-                    }}
-                    isLoading={state.pair.value?.claimLP.loading}
-                    // isDisabled={!pair.canClaimLP}
-                  >
-                    Visit Vault
-                  </Button>
-                )}
-                <KlineChart height={300} />
-              </>
-            )}
-            {}
+                        // pair.claimVaultTokens();
+                      }}
+                      isLoading={state.pair.value?.claimLP.loading}
+                      // isDisabled={!pair.canClaimLP}
+                    >
+                      Visit Vault
+                    </Button>
+                  )}
+                  <KlineChart height={300} />
+                </>
+              )}
 
-            {state.pair.value?.state === 3 && (
-              <LaunchDataProgress pair={state.pair.value} />
-            )}
-            <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-repeat-x bg-auto"></div>
+              {state.pair.value?.state === 3 && (
+                <LaunchDataProgress pair={state.pair.value} />
+              )}
+              <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-repeat-x bg-auto"></div>
+            </div>
           </div>
           <div className="bg-transparent rounded-2xl space-y-3 col-span-2 lg:col-span-1">
             {/* <div className="bg-[url('/images/pumping/outline-border.png')] h-[50px] absolute top-0 left-0 w-full bg-repeat-x bg-[length:130%]"></div> */}

@@ -193,7 +193,7 @@ const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
   }, [baseCurrency, quoteCurrency]);
 
   return (
-    <div className="flex flex-col gap-1 relative bg-white custom-dashed px-[18px] py-6">
+    <div className="flex flex-col gap-1 relative bg-white custom-dashed px-[18px] py-6 w-full">
       <TokenCardV3
         value={formattedAmounts[SwapField.INPUT] || ""}
         currency={baseCurrency}
