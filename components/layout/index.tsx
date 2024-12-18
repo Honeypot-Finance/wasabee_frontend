@@ -66,10 +66,7 @@ export const Layout = ({
   const slogans = [
     <>
       <Link href="/memewar" className="flex items-center ">
-        <span> Participate in the: </span> &nbsp;
-        <span className="flex items-center justify-center gap-2 text-rose-600">
-          Meme War ⚔️
-        </span>
+        <span> Back your horse in the Berachain Derby 🏇</span>
       </Link>
     </>,
     <>
@@ -102,9 +99,7 @@ export const Layout = ({
       )}
       {currentChain || allowedPaths.includes(currentPath) ? (
         currentChain?.isActive ? (
-          <div className="pt-6 sm:pt-12 flex-1 flex">
-            {children}
-          </div>
+          <div className="pt-6 sm:pt-12 flex-1 flex">{children}</div>
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">

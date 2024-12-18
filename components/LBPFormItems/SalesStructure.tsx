@@ -8,6 +8,7 @@ import {
 } from "@internationalized/date";
 import { DatePickerField, NumberField, SelectField } from "./Components";
 import { LBP_TYPE, PRICE_TYPE } from "@/types/launch-project";
+import dayjs from "dayjs";
 
 const PRICE_TYPE_OPTIONS = [
   { key: "lbp", value: PRICE_TYPE.LBP, label: "LBP" },
@@ -96,8 +97,10 @@ const SalesStructure = () => {
                 label="Starting Date & Time"
                 minValue={today(getLocalTimeZone())}
                 value={parseAbsoluteToLocal(field.value.toISOString())}
-                onChange={(value: DateValue) => {
-                  field.onChange(value.toDate(getLocalTimeZone()));
+                onChange={(value: DateValue | null) => {
+                  if (value) {
+                    field.onChange(value.toDate(getLocalTimeZone()));
+                  }
                 }}
                 isInvalid={!!errors?.startTime}
                 errorMessage={errors?.startTime?.message?.toString()}
@@ -113,8 +116,10 @@ const SalesStructure = () => {
                 label="Ending Date & Time"
                 minValue={today(getLocalTimeZone())}
                 value={parseAbsoluteToLocal(field.value.toISOString())}
-                onChange={(value: DateValue) => {
-                  field.onChange(value.toDate(getLocalTimeZone()));
+                onChange={(value: DateValue | null) => {
+                  if (value) {
+                    field.onChange(value.toDate(getLocalTimeZone()));
+                  }
                 }}
                 isInvalid={!!errors?.endTime}
                 errorMessage={errors?.endTime?.message?.toString()}
@@ -175,8 +180,8 @@ const SalesStructure = () => {
               render={({ field }) => (
                 <DatePickerField
                   value={parseAbsoluteToLocal(field.value.toISOString())}
-                  onChange={(value: DateValue) => {
-                    field.onChange(value.toDate(getLocalTimeZone()));
+                  onChange={(value: DateValue | null) => {
+                    field.onChange(value?.toDate(getLocalTimeZone()));
                   }}
                   isInvalid={!!errors?.tokenClaimDelay}
                   errorMessage={errors?.tokenClaimDelay?.message?.toString()}
