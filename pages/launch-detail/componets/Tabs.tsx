@@ -26,6 +26,7 @@ import { wallet } from "@/services/wallet";
 import { toast } from "react-toastify";
 import { Modal, useDisclosure } from "@nextui-org/react";
 import { UpdateProjectModal } from "../[pair]";
+import TransactionHistory from "./TransactionHistory";
 
 const universalMenuItems = [
   { key: "info", label: "Token Info" },
@@ -357,82 +358,10 @@ const Tabs = observer(
             </div>
           )}
           {tab === "txs" && (
-            <div className="bg-[#202020] rounded-2xl overflow-hidden">
-              <div className="p-6">
-                <div className="border border-[#5C5C5C] rounded-lg overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-[#323232] text-white">
-                      <tr>
-                        <th className="py-4 px-6 text-left text-base font-medium">
-                          RANK
-                        </th>
-                        <th className="py-4 px-6 text-left text-base font-medium">
-                          ADDRESS
-                        </th>
-                        <th className="py-4 px-6 text-left text-base font-medium">
-                          QUANTITY
-                        </th>
-                        <th className="py-4 px-6 text-right text-base font-medium">
-                          PERCENTAGE
-                        </th>
-                        <th className="py-4 px-6 text-right text-base font-medium">
-                          VALUE
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-white divide-y divide-[#5C5C5C]">
-                      {transactionData.map((item, index) => (
-                        <tr
-                          key={index}
-                          className="hover:bg-[#2a2a2a] transition-colors"
-                        >
-                          <td className="py-4 px-6">
-                            <div className="flex items-center gap-2">
-                              <div className="w-4 h-4 bg-[#FFCD4D] rounded"></div>
-                              {item.rank}
-                            </div>
-                          </td>
-                          <td className="py-4 px-6 text-base font-mono">
-                            <div className="flex items-center gap-2">
-                              {item.address}
-                              <button className="p-1 hover:bg-[#3a3a3a] rounded">
-                                <svg
-                                  width="16"
-                                  height="16"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    d="M8 5H6C4.89543 5 4 5.89543 4 7V19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19V7C20 5.89543 19.1046 5 18 5H16M8 5V3H16V5M8 5H16"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  />
-                                </svg>
-                              </button>
-                            </div>
-                          </td>
-                          <td className="py-4 px-6 text-base">
-                            {item.quantity}
-                          </td>
-                          <td className="py-4 px-6 text-right text-base">
-                            <div className="flex items-center justify-end gap-2">
-                              <div className="w-12 bg-[#FFCD4D] h-1 rounded"></div>
-                              {item.percentage}
-                            </div>
-                          </td>
-                          <td className="py-4 px-6 text-right text-base">
-                            {item.value}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+            <TransactionHistory 
+              pairAddress={pair?.address ?? ""} 
+              pair={pair as MemePairContract} 
+            />
           )}
           {tab === "comment" && (
             <div className="w-full">
