@@ -13,6 +13,8 @@ import { AiOutlineSwap } from "react-icons/ai";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
 import dayjs from "dayjs";
+import { ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface KlineChartProps {
   height?: number;
@@ -23,6 +25,7 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
   const [chartCreated, setChart] = useState<any | undefined>();
   const [candleSeries, setCandleSeries] = useState<any | undefined>();
   const [volumeSeries, setVolumeSeries] = useState<any | undefined>();
+  const [isTimeRangeOpen, setIsTimeRangeOpen] = useState(false);
 
   // Convert chart service data to candlestick format
   const chartData = useMemo(() => {
@@ -57,10 +60,24 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
 
   const handleResize = useCallback(() => {
     if (chartCreated && chartRef?.current?.parentElement) {
-      chartCreated.resize(chartRef.current.parentElement.clientWidth, height);
+      const newWidth = chartRef.current.parentElement.clientWidth - 48;
+      chartCreated.resize(newWidth, height);
+      
+      // Reload data to ensure correct display
+      if (candleSeries && volumeSeries && chartData.length) {
+        volumeSeries.setData(
+          chartData.map((d) => ({
+            time: d.time,
+            value: d.volume,
+            color: d.close >= d.open ? "#08998150" : "#F2364550",
+          }))
+        );
+        candleSeries.setData(chartData);
+      }
+      
       chartCreated.timeScale().fitContent();
     }
-  }, [chartCreated, height]);
+  }, [chartCreated, height, candleSeries, volumeSeries, chartData]);
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);
@@ -219,8 +236,8 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
           </span>
         </div>
 
-        {/* Time Range Selector */}
-        <div className="absolute top-4 right-4 flex items-center">
+        {/* Time Range Selector - Desktop */}
+        <div className="absolute top-4 right-4 hidden sm:flex items-center">
           <div className="flex items-center bg-[#FFCD4D] rounded-xl p-1 space-x-1">
             {Object.values(chartTimeRanges).map((range) => (
               <button
@@ -236,6 +253,48 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Time Range Selector - Mobile */}
+        <div className="absolute top-4 right-4 sm:hidden">
+          <button
+            onBlur={() => setIsTimeRangeOpen(false)}
+            onClick={() => setIsTimeRangeOpen(!isTimeRangeOpen)}
+            className="inline-flex justify-center w-full rounded-2xl border border-[#202020] bg-white px-4 py-2 text-[#202020] text-sm font-medium shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] focus:outline-none space-x-0.5"
+          >
+            <span>{chart.range || 'Select Range'}</span>
+            <ChevronDown className="size-4" />
+          </button>
+
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{
+              height: isTimeRangeOpen ? "auto" : 0,
+              opacity: isTimeRangeOpen ? 1 : 0,
+            }}
+            transition={{ duration: 0.3 }}
+            className="absolute right-0 w-32 mt-1 rounded-2xl overflow-hidden z-10 border border-[#202020] bg-white shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020]"
+          >
+            <div className="py-1">
+              {Object.values(chartTimeRanges).map((range) => (
+                <button
+                  key={range.label}
+                  onClick={() => {
+                    chart.setRange(range.label);
+                    setIsTimeRangeOpen(false);
+                  }}
+                  className={[
+                    "block px-4 py-2 text-sm w-full text-left transition-all",
+                    chart.range === range.label
+                      ? "bg-[#202020] text-white"
+                      : "text-[#202020] hover:bg-[#20202010]",
+                  ].join(" ")}
+                >
+                  {range.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
 
