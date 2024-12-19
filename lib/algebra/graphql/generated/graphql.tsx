@@ -12681,6 +12681,14 @@ export type PoolFeeDataQueryVariables = Exact<{
 
 export type PoolFeeDataQuery = { __typename?: 'Query', poolDayDatas: Array<{ __typename?: 'PoolDayData', feesUSD: any }> };
 
+export type PoolsByTokenPairQueryVariables = Exact<{
+  token0: Scalars['ID']['input'];
+  token1: Scalars['ID']['input'];
+}>;
+
+
+export type PoolsByTokenPairQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any } }> };
+
 export type TokenFieldsFragment = { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any };
 
 export type SingleTokenQueryVariables = Exact<{
@@ -12689,6 +12697,13 @@ export type SingleTokenQueryVariables = Exact<{
 
 
 export type SingleTokenQuery = { __typename?: 'Query', token?: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any } | null };
+
+export type TokenTop10HoldersQueryVariables = Exact<{
+  tokenId: Scalars['ID']['input'];
+}>;
+
+
+export type TokenTop10HoldersQuery = { __typename?: 'Query', token?: { __typename?: 'Token', id: string, symbol: string, holders: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, account: { __typename?: 'Account', id: string } }> } | null };
 
 export type AllTokensQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -13431,6 +13446,47 @@ export type PoolFeeDataQueryHookResult = ReturnType<typeof usePoolFeeDataQuery>;
 export type PoolFeeDataLazyQueryHookResult = ReturnType<typeof usePoolFeeDataLazyQuery>;
 export type PoolFeeDataSuspenseQueryHookResult = ReturnType<typeof usePoolFeeDataSuspenseQuery>;
 export type PoolFeeDataQueryResult = Apollo.QueryResult<PoolFeeDataQuery, PoolFeeDataQueryVariables>;
+export const PoolsByTokenPairDocument = gql`
+    query PoolsByTokenPair($token0: ID!, $token1: ID!) {
+  pools(where: {token0_: {id: $token0}, token1_: {id: $token1}}) {
+    ...PoolFields
+  }
+}
+    ${PoolFieldsFragmentDoc}`;
+
+/**
+ * __usePoolsByTokenPairQuery__
+ *
+ * To run a query within a React component, call `usePoolsByTokenPairQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePoolsByTokenPairQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePoolsByTokenPairQuery({
+ *   variables: {
+ *      token0: // value for 'token0'
+ *      token1: // value for 'token1'
+ *   },
+ * });
+ */
+export function usePoolsByTokenPairQuery(baseOptions: Apollo.QueryHookOptions<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables> & ({ variables: PoolsByTokenPairQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>(PoolsByTokenPairDocument, options);
+      }
+export function usePoolsByTokenPairLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>(PoolsByTokenPairDocument, options);
+        }
+export function usePoolsByTokenPairSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>(PoolsByTokenPairDocument, options);
+        }
+export type PoolsByTokenPairQueryHookResult = ReturnType<typeof usePoolsByTokenPairQuery>;
+export type PoolsByTokenPairLazyQueryHookResult = ReturnType<typeof usePoolsByTokenPairLazyQuery>;
+export type PoolsByTokenPairSuspenseQueryHookResult = ReturnType<typeof usePoolsByTokenPairSuspenseQuery>;
+export type PoolsByTokenPairQueryResult = Apollo.QueryResult<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>;
 export const SingleTokenDocument = gql`
     query SingleToken($tokenId: ID!) {
   token(id: $tokenId) {
@@ -13471,6 +13527,54 @@ export type SingleTokenQueryHookResult = ReturnType<typeof useSingleTokenQuery>;
 export type SingleTokenLazyQueryHookResult = ReturnType<typeof useSingleTokenLazyQuery>;
 export type SingleTokenSuspenseQueryHookResult = ReturnType<typeof useSingleTokenSuspenseQuery>;
 export type SingleTokenQueryResult = Apollo.QueryResult<SingleTokenQuery, SingleTokenQueryVariables>;
+export const TokenTop10HoldersDocument = gql`
+    query TokenTop10Holders($tokenId: ID!) {
+  token(id: $tokenId) {
+    id
+    symbol
+    holders(first: 10, orderBy: holdingValue, orderDirection: desc) {
+      id
+      holdingValue
+      account {
+        id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useTokenTop10HoldersQuery__
+ *
+ * To run a query within a React component, call `useTokenTop10HoldersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTokenTop10HoldersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTokenTop10HoldersQuery({
+ *   variables: {
+ *      tokenId: // value for 'tokenId'
+ *   },
+ * });
+ */
+export function useTokenTop10HoldersQuery(baseOptions: Apollo.QueryHookOptions<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables> & ({ variables: TokenTop10HoldersQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables>(TokenTop10HoldersDocument, options);
+      }
+export function useTokenTop10HoldersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables>(TokenTop10HoldersDocument, options);
+        }
+export function useTokenTop10HoldersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables>(TokenTop10HoldersDocument, options);
+        }
+export type TokenTop10HoldersQueryHookResult = ReturnType<typeof useTokenTop10HoldersQuery>;
+export type TokenTop10HoldersLazyQueryHookResult = ReturnType<typeof useTokenTop10HoldersLazyQuery>;
+export type TokenTop10HoldersSuspenseQueryHookResult = ReturnType<typeof useTokenTop10HoldersSuspenseQuery>;
+export type TokenTop10HoldersQueryResult = Apollo.QueryResult<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables>;
 export const AllTokensDocument = gql`
     query AllTokens {
   tokens {

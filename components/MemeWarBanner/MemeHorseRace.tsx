@@ -8,10 +8,25 @@ import { popmodal } from "@/services/popmodal";
 import { wallet } from "@/services/wallet";
 import { observer } from "mobx-react-lite";
 import { getAllRacers, Racer } from "@/lib/algebra/graphql/clients/racer";
-import { Tooltip } from "@nextui-org/react";
+import {
+  ModalBody,
+  ModalHeader,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Tooltip,
+} from "@nextui-org/react";
 import { useSpring, animated } from "react-spring";
+import { getTokenTop10Holders } from "@/lib/algebra/graphql/clients/token";
+import { Modal, Table } from "@nextui-org/react";
+import { TokenTop10HoldersQuery } from "@/lib/algebra/graphql/generated/graphql";
+import BigNumber from "bignumber.js";
+import { truncateEthAddress } from "@usecapsule/rainbowkit-wallet";
+import Link from "next/link";
+import { poolsByTokenPair } from "@/lib/algebra/graphql/clients/pool";
 import { useRouter } from "next/router";
-
 const START_TIMESTAMP = 1734436800;
 
 const RaceTrack = styled.div<{ totalRacers: number }>`
@@ -163,12 +178,15 @@ export const MemeHorseRace = observer(() => {
   const [isLoading, setIsLoading] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const initialize = async () => {
       try {
         // Get initial racers
         const initialRacers = await getAllRacers();
+
         setRacers(initialRacers);
 
         // Initialize tokens if wallet is ready
@@ -330,6 +348,84 @@ export const MemeHorseRace = observer(() => {
     }
   }, [scrollPosition]);
 
+  const handleShowHolders = async (tokenId: string) => {
+    if (!racers.find((racer) => racer.tokenAddress === tokenId)) {
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const data = await getTokenTop10Holders(tokenId);
+      popmodal.openModal({
+        content: (
+          <TopHoldersList
+            racer={racers.find((racer) => racer.tokenAddress === tokenId)!}
+            holders={data}
+          />
+        ),
+      });
+    } catch (error) {
+      console.error("Error fetching holders:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddLP = async (tokenAddress: string) => {
+    const pools = await poolsByTokenPair(
+      tokenAddress,
+      wallet.currentChain.platformTokenAddress.HPOT
+    );
+
+    if (pools && pools.length > 0) {
+      const pool = pools[0];
+      //redirect to add liquidity page
+      router.push(`/new-position/${pool.id}`);
+    }
+  };
+
+  const TopHoldersList = ({
+    racer,
+    holders,
+  }: {
+    racer: Racer;
+    holders: TokenTop10HoldersQuery;
+  }) => {
+    const TotalHoldingValue = holders.token?.holders?.reduce(
+      (acc, holder) => acc + Number(holder.holdingValue),
+      0
+    );
+    console.log(TotalHoldingValue);
+    return (
+      <Table>
+        <TableHeader>
+          <TableColumn>Rank</TableColumn>
+          <TableColumn>Address</TableColumn>
+          <TableColumn>Balance</TableColumn>
+          <TableColumn>Percentage</TableColumn>
+        </TableHeader>
+        <TableBody>
+          {holders.token?.holders?.map((holder, index) => (
+            <TableRow key={holder.id}>
+              <TableCell>{index + 1}</TableCell>
+              <TableCell>{truncateEthAddress(holder.account.id)}</TableCell>
+              <TableCell>
+                {BigNumber(holder.holdingValue).dividedBy(1e18).toFixed(0)}{" "}
+                {holders.token?.symbol}
+              </TableCell>
+              <TableCell>
+                {(
+                  (holder.holdingValue / (TotalHoldingValue ?? 0)) *
+                  100
+                ).toFixed(2)}
+                %
+              </TableCell>
+            </TableRow>
+          )) || []}
+        </TableBody>
+      </Table>
+    );
+  };
+
   return (
     <div className="relative">
       {isInitializing ? (
@@ -486,9 +582,21 @@ export const MemeHorseRace = observer(() => {
                           onClick={() =>
                             handleTokenClick(racer.tokenOnchainData)
                           }
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
+                          className="px-4 py-2 mx-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
                         >
                           Swap
+                        </button>
+                        <button
+                          onClick={() => handleShowHolders(racer.tokenAddress)}
+                          className="px-4 py-2 mx-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
+                        >
+                          View Top Holders
+                        </button>
+                        <button
+                          onClick={() => handleAddLP(racer.tokenAddress)}
+                          className="px-4 py-2 mx-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
+                        >
+                          Add LP
                         </button>
                       </td>
                     </tr>
