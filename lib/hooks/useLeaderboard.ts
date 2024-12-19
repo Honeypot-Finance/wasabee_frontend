@@ -5,13 +5,14 @@ import type { FactoryData } from "../algebra/graphql/clients/leaderboard";
 import { wallet } from "@/services/wallet";
 
 export function useLeaderboard() {
-  const { data, loading, error } = useQuery<FactoryData>(LEADERBOARD_QUERY);
+  const { data, loading, error, refetch } =
+    useQuery<FactoryData>(LEADERBOARD_QUERY);
 
   const formatValue = (value: string) => {
     const bn = new BigNumber(value || "0");
     return {
       usd: `$${bn.toFormat(2)}`,
-      matic: `${bn.toFormat(2)} ${wallet.currentChain.nativeToken.symbol}`,
+      matic: `${bn.toFormat(2)} ${wallet.currentChain?.nativeToken?.symbol}`,
     };
   };
 
