@@ -123,11 +123,12 @@ const SwapParamsV3 = () => {
   }, [trade, tradeState.fee]);
 
   const { realizedLPFee, priceImpact } = useMemo(() => {
-    if (!trade) return { realizedLPFee: undefined, priceImpact: undefined };
+    if (!trade || !trade.priceImpact || !trade.inputAmount)
+      return { realizedLPFee: undefined, priceImpact: undefined };
 
     const realizedLpFeePercent = computeRealizedLPFeePercent(trade);
     const realizedLPFee = trade.inputAmount.multiply(realizedLpFeePercent);
-    const priceImpact = trade.priceImpact.subtract(realizedLpFeePercent);
+    const priceImpact = trade?.priceImpact?.subtract(realizedLpFeePercent);
     return { priceImpact, realizedLPFee };
   }, [trade]);
 

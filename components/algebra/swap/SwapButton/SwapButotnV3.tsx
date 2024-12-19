@@ -44,15 +44,22 @@ const SwapButtonV3 = () => {
     typedValue
   );
 
+  // console.log("currencies[SwapField.INPUT]", currencies[SwapField.INPUT]);
+  // console.log("currencies[SwapField.OUTPUT]", currencies[SwapField.OUTPUT]);
+  // console.log("inputError", wrapInputError);
+  // console.log("loading", isWrapLoading);
+
   const wrapToast = useToastify({
     title: wrapType === WrapType.WRAP ? "Wrap" : "Unwrap",
-    message: isWrapLoading ? " Pending":(isWrapSuccess?" Success":" Failed"),
+    message: isWrapLoading
+      ? " Pending"
+      : isWrapSuccess
+        ? " Success"
+        : " Failed",
     isError: false,
-    isLoading: isWrapLoading??false,
-    isSuccess: isWrapSuccess??false,
-   });
-
-
+    isLoading: isWrapLoading ?? false,
+    isSuccess: isWrapSuccess ?? false,
+  });
 
   const showWrap = wrapType !== WrapType.NOT_APPLICABLE;
 
@@ -87,7 +94,7 @@ const SwapButtonV3 = () => {
   const priceImpactSeverity = useMemo(() => {
     if (!trade) return 4;
     const realizedLpFeePercent = computeRealizedLPFeePercent(trade);
-    const priceImpact = trade.priceImpact.subtract(realizedLpFeePercent);
+    const priceImpact = trade?.priceImpact?.subtract(realizedLpFeePercent);
     return warningSeverity(priceImpact);
   }, [trade]);
 
@@ -132,7 +139,7 @@ const SwapButtonV3 = () => {
 
   if (showWrap)
     return (
-      <Button onClick={() => onWrap && onWrap()}>
+      <Button onPress={() => onWrap && onWrap()}>
         {isWrapLoading ? (
           <Loader />
         ) : wrapType === WrapType.WRAP ? (
@@ -155,7 +162,7 @@ const SwapButtonV3 = () => {
       <Button
         isDisabled={approvalState !== ApprovalState.NOT_APPROVED}
         disabled={approvalState !== ApprovalState.NOT_APPROVED}
-        onClick={() => approvalCallback && approvalCallback()}
+        onPress={() => approvalCallback && approvalCallback()}
       >
         {approvalState === ApprovalState.PENDING ? (
           <Loader />
@@ -170,7 +177,7 @@ const SwapButtonV3 = () => {
   return (
     <>
       <Button
-        onClick={() => handleSwap()}
+        onPress={() => handleSwap()}
         disabled={
           !isValid || priceImpactTooHigh || !!swapCallbackError || isSwapLoading
         }

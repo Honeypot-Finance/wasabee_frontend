@@ -25,12 +25,12 @@ export default function useWrapCallback(
   inputCurrency: Currency | undefined,
   outputCurrency: Currency | undefined,
   typedValue: string | undefined
-): {  
+): {
   wrapType: (typeof WrapType)[keyof typeof WrapType];
   execute?: undefined | (() => void);
   loading?: boolean;
   inputError?: string;
-  isSuccess?:boolean
+  isSuccess?: boolean;
 } {
   const chainId = useChainId();
   const { address: account } = useAccount();
@@ -47,7 +47,11 @@ export default function useWrapCallback(
 
   const { data: wrapData, writeContract: wrap } = useContractWrite();
 
-  const { isLoading: isWrapLoading,isError:isWrapError,isSuccess:isWrapSuccess } = useTransactionAwait(wrapData, {
+  const {
+    isLoading: isWrapLoading,
+    isError: isWrapError,
+    isSuccess: isWrapSuccess,
+  } = useTransactionAwait(wrapData, {
     title: `Wrap ${inputAmount?.toSignificant(3)} ${DEFAULT_NATIVE_SYMBOL}`,
     tokenA: WNATIVE[chainId].address as Address,
     type: TransactionType.SWAP,
@@ -58,10 +62,12 @@ export default function useWrapCallback(
     args: inputAmount ? [BigInt(inputAmount.quotient.toString())] : undefined,
   });
 
-  const { data: unwrapData, writeContract: unwrap,isError: isUnwrapError
-    ,isSuccess: isUnwrapSuccess
-   } = useContractWrite();
-
+  const {
+    data: unwrapData,
+    writeContract: unwrap,
+    isError: isUnwrapError,
+    isSuccess: isUnwrapSuccess,
+  } = useContractWrite();
 
   const { isLoading: isUnwrapLoading } = useTransactionAwait(unwrapData, {
     title: `Unwrap ${inputAmount?.toSignificant(3)} W${DEFAULT_NATIVE_SYMBOL}`,
@@ -103,7 +109,7 @@ export default function useWrapCallback(
           : hasInputAmount
             ? `Insufficient ${DEFAULT_NATIVE_SYMBOL} balance`
             : `Enter ${DEFAULT_NATIVE_SYMBOL} amount`,
-        isSuccess:isWrapSuccess 
+        isSuccess: isWrapSuccess,
       };
     } else if (weth.equals(inputCurrency) && outputCurrency.isNative) {
       return {
@@ -118,7 +124,7 @@ export default function useWrapCallback(
           : hasInputAmount
             ? `Insufficient W${DEFAULT_NATIVE_SYMBOL} balance`
             : `Enter W${DEFAULT_NATIVE_SYMBOL} amount`,
-        isSuccess:isUnwrapSuccess 
+        isSuccess: isUnwrapSuccess,
       };
     } else {
       return NOT_APPLICABLE;
@@ -135,5 +141,7 @@ export default function useWrapCallback(
     unwrap,
     isWrapSuccess,
     isUnwrapSuccess,
+    wrapConfig,
+    unwrapConfig,
   ]);
 }

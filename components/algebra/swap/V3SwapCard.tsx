@@ -34,8 +34,8 @@ export function V3SwapCard({
             "bg-[url('/images/pumping/outline-border.png')] bg-left-top bg-contain bg-repeat-x h-4 md:h-12 absolute top-0 left-0 w-full rounded-t-2xl"
         )}
       ></div>
-      <div className="flex items-center justify-between w-full">
-        <span
+      <div className="flex items-center justify-end w-full">
+        {/* <span
           onClick={() => {
             chart.toggleChart();
           }}
@@ -44,7 +44,7 @@ export function V3SwapCard({
             className="text-[#202020] hover:text-white transition-all cursor-pointer"
             size={24}
           />
-        </span>
+        </span> */}
         <Settings />
       </div>
       <SwapPairV3

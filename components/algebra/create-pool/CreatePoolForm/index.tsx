@@ -160,7 +160,7 @@ const CreatePoolForm = () => {
 
       {areCurrenciesSelected && !isSameToken && !isPoolExists && (
         <>
-          <div className="flex flex-col gap-2">
+          {/* <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-300">Select Fee Tier</label>
             <div className="grid grid-cols-2 gap-2">
               {FEE_TIERS.map((fee) => (
@@ -182,7 +182,7 @@ const CreatePoolForm = () => {
                 </Button>
               ))}
             </div>
-          </div>
+          </div> */}
 
           <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-300">
