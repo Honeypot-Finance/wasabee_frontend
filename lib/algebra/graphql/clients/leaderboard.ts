@@ -13,9 +13,10 @@ export const LEADERBOARD_QUERY = gql`
   }
 `;
 
+//todo: fix this query
 export const TOTAL_USERS_QUERY = gql`
   query TotalUsers {
-    accounts {
+    accounts(first: 1000) {
       id
     }
   }

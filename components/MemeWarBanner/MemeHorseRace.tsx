@@ -9,8 +9,6 @@ import { wallet } from "@/services/wallet";
 import { observer } from "mobx-react-lite";
 import { getAllRacers, Racer } from "@/lib/algebra/graphql/clients/racer";
 import {
-  ModalBody,
-  ModalHeader,
   TableBody,
   TableCell,
   TableColumn,
