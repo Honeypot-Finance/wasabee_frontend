@@ -35,10 +35,12 @@ type SwapTransactionsResponse = {
 
 export async function fetchSwapTransactions(
   page: number = 1,
-  pageSize: number = 10
+  pageSize: number = 10,
+  token1Address: string,
+  token2Address: string
 ): Promise<SwapTransactionsResponse> {
   const skip = (page - 1) * pageSize;
-  
+
   const query = `
     query GetUSDTWBERASwaps {
       swaps(
@@ -46,8 +48,19 @@ export async function fetchSwapTransactions(
         skip: ${skip}
         orderBy: timestamp
         orderDirection: desc
-        where: {token0_: {symbol: "USDT"}, token1_: {symbol: "WBERA"}}
-      ) {
+        where: {
+        or: [
+            {
+              token0_: {id: "${token1Address.toLowerCase()}"},
+              token1_: {id: "${token2Address.toLowerCase()}"}
+            }, 
+            {
+              token0_: {id: "${token2Address.toLowerCase()}"},
+              token1_: {id: "${token1Address.toLowerCase()}"}
+            }
+          ]
+        })
+        {
         id
         timestamp
         transaction {
@@ -68,6 +81,8 @@ export async function fetchSwapTransactions(
     }
   `;
 
+  console.log(query);
+
   const { data } = await infoClient.query<SwapsResponse>({
     query: gql(query),
   });
@@ -80,4 +95,4 @@ export async function fetchSwapTransactions(
       hasNextPage: data.swaps.length === pageSize,
     },
   };
-} 
+}

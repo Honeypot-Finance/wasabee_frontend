@@ -6,6 +6,10 @@ import { VscCopy } from "react-icons/vsc";
 import { ExternalLink } from "lucide-react";
 import dayjs from "dayjs";
 import BigNumber from "bignumber.js";
+import { SwapField } from "@/types/algebra/types/swap-field";
+import { button } from "@nextui-org/theme";
+import { useDerivedSwapInfo } from "@/lib/algebra/state/swapStore";
+import { zeroAddress } from "viem";
 
 const SwapTransactionHistory = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -14,11 +18,26 @@ const SwapTransactionHistory = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const pageSize = 10;
 
+  const {
+    toggledTrade: trade,
+    currencyBalances,
+    parsedAmount,
+    currencies,
+  } = useDerivedSwapInfo();
+
+  const baseCurrency = currencies[SwapField.INPUT];
+  const quoteCurrency = currencies[SwapField.OUTPUT];
+
   useEffect(() => {
     const loadTransactions = async (currentPage: number) => {
       setLoading(true);
       try {
-        const response = await fetchSwapTransactions(currentPage, pageSize);
+        const response = await fetchSwapTransactions(
+          currentPage,
+          pageSize,
+          baseCurrency?.wrapped.address ?? zeroAddress,
+          quoteCurrency?.wrapped.address ?? zeroAddress
+        );
         setTransactions(response.data);
         setHasNextPage(response.pageInfo.hasNextPage);
       } finally {
@@ -27,7 +46,7 @@ const SwapTransactionHistory = () => {
     };
 
     loadTransactions(page);
-  }, [page, pageSize]);
+  }, [baseCurrency, page, pageSize, quoteCurrency]);
 
   const formatAmount = (amount: string) => {
     return new BigNumber(amount).toFixed(6);
@@ -48,10 +67,7 @@ const SwapTransactionHistory = () => {
                       Tx Hash
                     </th>
                     <th className="py-2 px-2 sm:px-4 text-left text-sm sm:text-base font-medium w-[160px] hidden md:table-cell">
-                      From
-                    </th>
-                    <th className="py-2 px-2 sm:px-4 text-left text-sm sm:text-base font-medium w-[160px] hidden md:table-cell">
-                      To
+                      User
                     </th>
                     <th className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base font-medium">
                       Amount In
@@ -109,26 +125,6 @@ const SwapTransactionHistory = () => {
                         <td className="py-2 px-2 sm:px-4 text-sm sm:text-base font-mono whitespace-nowrap hidden md:table-cell">
                           <div className="flex items-center gap-2">
                             <a
-                              href={`https://bartio.beratrail.io/address/${tx.sender}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="hover:text-[#FFCD4D] flex items-center gap-1"
-                            >
-                              {truncate(tx.sender, 12)}
-                              <ExternalLink className="size-3" />
-                            </a>
-                            <Copy
-                              className="p-1 hover:bg-[#3a3a3a] rounded flex items-center justify-center min-w-[24px]"
-                              value={tx.sender}
-                              content="Copy address"
-                            >
-                              <VscCopy className="size-3.5" />
-                            </Copy>
-                          </div>
-                        </td>
-                        <td className="py-2 px-2 sm:px-4 text-sm sm:text-base font-mono whitespace-nowrap hidden md:table-cell">
-                          <div className="flex items-center gap-2">
-                            <a
                               href={`https://bartio.beratrail.io/address/${tx.recipient}`}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -147,7 +143,7 @@ const SwapTransactionHistory = () => {
                           </div>
                         </td>
                         <td className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base whitespace-nowrap">
-                          <div className="flex flex-col sm:flex-row items-end gap-1">
+                          <div className="flex flex-col sm:flex-row justify-end items-end gap-1">
                             <span>{formatAmount(tx.amount0)}</span>
                             <span className="text-sm text-gray-400">
                               {tx.token0.symbol}
@@ -155,7 +151,7 @@ const SwapTransactionHistory = () => {
                           </div>
                         </td>
                         <td className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base whitespace-nowrap">
-                          <div className="flex flex-col sm:flex-row items-end gap-1">
+                          <div className="flex flex-col sm:flex-row justify-end items-end gap-1">
                             <span>{formatAmount(tx.amount1)}</span>
                             <span className="text-sm text-gray-400">
                               {tx.token1.symbol}
@@ -185,13 +181,25 @@ const SwapTransactionHistory = () => {
                     disabled={page === 1 || loading}
                     className="flex items-center gap-1 px-2 py-1.5 sm:py-2 bg-[#2a2a2a] rounded text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition-colors text-xs sm:text-base"
                   >
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    <svg
+                      className="w-3 h-3 sm:w-4 sm:h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
                     </svg>
                   </button>
 
                   <div className="flex items-center gap-1 sm:gap-2">
-                    <span className="text-gray-400 text-xs sm:text-base">Page</span>
+                    <span className="text-gray-400 text-xs sm:text-base">
+                      Page
+                    </span>
                     <span className="px-2 py-1 bg-[#1a1a1a] rounded text-white min-w-[24px] sm:min-w-[40px] text-center text-xs sm:text-base">
                       {page}
                     </span>
@@ -202,8 +210,18 @@ const SwapTransactionHistory = () => {
                     disabled={!hasNextPage || loading}
                     className="flex items-center gap-1 px-2 py-1.5 sm:py-2 bg-[#2a2a2a] rounded text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition-colors text-xs sm:text-base"
                   >
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    <svg
+                      className="w-3 h-3 sm:w-4 sm:h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
                     </svg>
                   </button>
                 </div>
