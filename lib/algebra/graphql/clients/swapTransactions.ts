@@ -81,8 +81,6 @@ export async function fetchSwapTransactions(
     }
   `;
 
-  console.log(query);
-
   const { data } = await infoClient.query<SwapsResponse>({
     query: gql(query),
   });

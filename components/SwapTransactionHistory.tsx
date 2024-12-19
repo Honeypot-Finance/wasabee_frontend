@@ -18,12 +18,7 @@ const SwapTransactionHistory = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const pageSize = 10;
 
-  const {
-    toggledTrade: trade,
-    currencyBalances,
-    parsedAmount,
-    currencies,
-  } = useDerivedSwapInfo();
+  const { currencies } = useDerivedSwapInfo();
 
   const baseCurrency = currencies[SwapField.INPUT];
   const quoteCurrency = currencies[SwapField.OUTPUT];
