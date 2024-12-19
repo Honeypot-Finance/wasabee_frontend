@@ -69,10 +69,10 @@ export const appPathsList: Menu[] = [
     path: "/leaderboard",
     title: "Leaderboard",
   },
-  // {
-  //   title: "Faucet",
-  //   path: "/faucet",
-  // },
+  {
+    title: "Faucet",
+    path: "/faucet",
+  },
   {
     path: "/profile",
     title: "Profile",
