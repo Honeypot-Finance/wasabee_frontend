@@ -93,6 +93,9 @@ const RaceTrail = styled.div<{ position: number }>`
   );
   border-radius: 4px;
   transition: width 0.5s ease;
+  opacity: 1;
+  visibility: visible;
+  min-width: 15%;
 `;
 
 const RacerIcon = styled.div<{ position: number }>`
@@ -438,14 +441,12 @@ export const MemeHorseRace = observer(
     const [tokens, setTokens] = useState<Record<string, Token>>({});
     const [racers, setRacers] = useState<RacerWithToken[]>([]);
     const [prevScores, setPrevScores] = useState<Record<string, number>>({});
-    const [changedValues, setChangedValues] = useState<Record<string, boolean>>(
-      {}
-    );
+    const [changedValues, setChangedValues] = useState<Record<string, boolean>>({});
     const [isInitializing, setIsInitializing] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const timeSliderRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
     const [selectedRacer, setSelectedRacer] = useState<RacerWithToken | null>(
       null
@@ -500,6 +501,13 @@ export const MemeHorseRace = observer(
 
       initialize();
     }, [wallet.isInit]);
+
+    useEffect(() => {
+      // 组件挂载时初始化进度条颜色
+      if (timeSliderRef.current) {
+        timeSliderRef.current.style.setProperty("--value", "100%");
+      }
+    }, []);
 
     const maxTimelineRacer = racers.reduce(
       (prev, current) =>
@@ -633,14 +641,14 @@ export const MemeHorseRace = observer(
     useEffect(() => {
       if (timestamps.length > 0 && timeIndex === -1) {
         setTimeIndex(timestamps.length - 1);
-        // 设置初始背景色
-        const sliderElement = document.querySelector(
-          'input[type="range"]'
-        ) as HTMLInputElement;
-        if (sliderElement) {
-          const percent = 100;
-          sliderElement.style.setProperty("--value", `${percent}%`);
-        }
+      }
+      // 设置进度条颜色
+      const sliderElement = document.querySelector(
+        'input[type="range"]'
+      ) as HTMLInputElement;
+      if (sliderElement && timeIndex >= 0) {
+        const percent = (timeIndex / (timestamps.length - 1)) * 100;
+        sliderElement.style.setProperty("--value", `${percent}%`);
       }
     }, [timestamps.length, timeIndex]);
 
@@ -718,23 +726,19 @@ export const MemeHorseRace = observer(
                     <ContentWrapper totalRacers={totalRacers}>
                       <RaceLanesContainer className="md:pl-[120px]">
                         {currentRacers.map((racer) => {
-                          const rank = currentRacers.reduce(
-                            (count, other) =>
-                              other.currentScore > racer.currentScore
-                                ? count + 1
-                                : count,
-                            0
-                          );
-                          const position =
-                            85 - rank * (70 / (currentRacers.length - 1 || 1));
+                          const sortedRacers = [...currentRacers].sort((a, b) => b.currentScore - a.currentScore);
+                          const rank = sortedRacers.findIndex(r => r.tokenAddress === racer.tokenAddress);
+                          const position = rank >= sortedRacers.length - 4
+                            ? 15 // 市值排名倒数4位的代币固定在15%的位置
+                            : 85 - rank * (70 / (sortedRacers.length - 4 || 1)); // 调整其他代币的分布范围
 
                           return (
                             <RaceLane key={racer.tokenAddress}>
-                              <RaceTrail position={Math.max(15, position)} />
+                              <RaceTrail position={position} />
                               <Tooltip content={racer.tokenOnchainData?.symbol}>
                                 <RacerIcon
                                   className="relative"
-                                  position={Math.max(15, position)}
+                                  position={position}
                                 >
                                   {racer.tokenOnchainData?.logoURI && (
                                     <div
@@ -769,6 +773,7 @@ export const MemeHorseRace = observer(
                         })}
                       </RaceLanesContainer>
                       <TimeSlider
+                        ref={timeSliderRef}
                         type="range"
                         min={0}
                         max={timestamps.length - 1}
