@@ -30,6 +30,10 @@ export function useAllTokens(showNativeToken: boolean = true) {
         tokens.set(token.id.toLowerCase() as Address, {
           ...token,
           derivedMatic: 0,
+          derivedUSD: undefined,
+          initialUSD: undefined,
+          txCount: undefined,
+          holderCount: undefined,
         });
       }
       // return [...tokens].map(([, token]) => ({ ...token }));
@@ -43,6 +47,10 @@ export function useAllTokens(showNativeToken: boolean = true) {
         name: DEFAULT_NATIVE_NAME,
         decimals: 18,
         derivedMatic: 1,
+        derivedUSD: undefined,
+        initialUSD: undefined,
+        txCount: undefined,
+        holderCount: undefined,
       });
 
     for (const token of allTokens.tokens.filter(
