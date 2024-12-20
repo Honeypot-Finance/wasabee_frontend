@@ -65,6 +65,10 @@ export function useAllTokens(showNativeToken: boolean = true) {
       tokens.set(token.id.toLowerCase() as Address, {
         ...token,
         derivedMatic: 0,
+        derivedUSD: undefined,
+        initialUSD: undefined,
+        txCount: undefined,
+        holderCount: undefined,
       });
     }
 
