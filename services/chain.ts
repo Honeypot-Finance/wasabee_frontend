@@ -412,6 +412,46 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/lbgt-token-icon.svg",
     },
+    "0x6f82653a5f95f8d4215cfa6cbc07de2429989b1d": {
+      name: "$BullWifHorn",
+      symbol: "$BullWifHorn",
+      decimals: 18,
+    },
+    "0x3d7c362411b39ae2d1aae1088759711cb1c5f0f3": {
+      name: "$Henlorse",
+      symbol: "$Henlorse",
+      decimals: 18,
+    },
+    "0xd92e5d89cfe82bb0c0f95a3f4b0ee5ddb22e5e87": {
+      name: "$ToPotToTrot",
+      symbol: "$ToPotToTrot",
+      decimals: 18,
+    },
+    "0x2004116f5bbc9f8df3cf46be48d0788fd284f979": {
+      name: "$TickerBitcoin",
+      symbol: "$TickerBitcoin",
+      decimals: 18,
+    },
+    "0x04457d8063168e7008df0f6d10961622a316dd1c": {
+      name: "$CrackPipeYeet",
+      symbol: "$CrackPipeYeet",
+      decimals: 18,
+    },
+    "0x24dc27d117aca1d8c0aace33bd840026c9a52e28": {
+      name: "$LuckyNeigh",
+      symbol: "$LuckyNeigh",
+      decimals: 18,
+    },
+    "0x223c1ee6fae816e430ada62a1e5a20c3060f0b4f": {
+      name: "$BozoClub",
+      symbol: "$BozoClub",
+      decimals: 18,
+    },
+    "0x6e504fcb8519820499ec2518bd912016b373c5dc": {
+      name: "$ChibiRider",
+      symbol: "$ChibiRider",
+      decimals: 18,
+    },
   },
   validatedFtoAddresses: [
     "0x2c504e661750e03aa9252c67e771dc059a521863".toLowerCase(),
