@@ -98,15 +98,16 @@ const RaceTrail = styled.div<{ position: number }>`
   min-width: 15%;
 `;
 
-const RacerIcon = styled.div<{ position: number }>`
+const RacerIcon = styled.div<{ position: number; isDead?: boolean }>`
   position: absolute;
-  left: ${(props) => props.position}%;
+  left: ${(props) => (props.isDead ? 15 : props.position)}%;
   transform: translateX(-50%);
   transition: left 0.5s ease;
   display: flex;
   align-items: center;
   gap: 12px;
   font-size: 20px;
+  opacity: ${(props) => (props.isDead ? 0.5 : 1)};
 `;
 
 const TimeSlider = styled.input`
@@ -219,6 +220,25 @@ const TableContainer = styled.div`
   padding: 16px;
   backdrop-filter: blur(10px);
 `;
+
+const DeadRacers = [
+  {
+    racerAddress: "0x6e504fcb8519820499ec2518bd912016b373c5dc",
+    deadTime: 1734710400,
+  },
+  {
+    racerAddress: "0xd92e5d89cfe82bb0c0f95a3f4b0ee5ddb22e5e87",
+    deadTime: 1734710400,
+  },
+  {
+    racerAddress: "0x24dc27d117aca1d8c0aace33bd840026c9a52e28",
+    deadTime: 1734710400,
+  },
+  {
+    racerAddress: "0x04457d8063168e7008df0f6d10961622a316dd1c",
+    deadTime: 1734710400,
+  },
+];
 
 const formatMarketCap = (value: number) => {
   if (value >= 1e12) return `${(value / 1e12).toFixed(2)}T`;
@@ -441,7 +461,9 @@ export const MemeHorseRace = observer(
     const [tokens, setTokens] = useState<Record<string, Token>>({});
     const [racers, setRacers] = useState<RacerWithToken[]>([]);
     const [prevScores, setPrevScores] = useState<Record<string, number>>({});
-    const [changedValues, setChangedValues] = useState<Record<string, boolean>>({});
+    const [changedValues, setChangedValues] = useState<Record<string, boolean>>(
+      {}
+    );
     const [isInitializing, setIsInitializing] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
@@ -453,7 +475,9 @@ export const MemeHorseRace = observer(
     );
     const [holdersData, setHoldersData] =
       useState<TokenTop10HoldersQuery | null>(null);
-    const [selectedTokenAddress, setSelectedTokenAddress] = useState<string | null>(null);
+    const [selectedTokenAddress, setSelectedTokenAddress] = useState<
+      string | null
+    >(null);
     const {
       isOpen: isSwapOpen,
       onOpen: onSwapOpen,
@@ -574,18 +598,17 @@ export const MemeHorseRace = observer(
         }))
       );
 
-      return racers
-        .map((racer) => ({
-          ...racer,
-          tokenOnchainData: tokens[racer.tokenAddress],
-          currentScore: getRacerScore(racer, currentTimestamp),
-          hourlyChange: getHourlyChange(racer, currentTimestamp),
-          volume24h: 1200000, // 示例数据，实际应该从API获取
-          tvl: 4500000,
-          currentPrice: 0.0045,
-          priceChange24h: 12.5,
-        }))
-        // .sort((a, b) => b.currentScore - a.currentScore);
+      return racers.map((racer) => ({
+        ...racer,
+        tokenOnchainData: tokens[racer.tokenAddress],
+        currentScore: getRacerScore(racer, currentTimestamp),
+        hourlyChange: getHourlyChange(racer, currentTimestamp),
+        volume24h: 1200000, // 示例数据，实际应该从API获取
+        tvl: 4500000,
+        currentPrice: 0.0045,
+        priceChange24h: 12.5,
+      }));
+      // .sort((a, b) => b.currentScore - a.currentScore);
     };
 
     const allTimeHighScore = Math.max(
@@ -726,12 +749,23 @@ export const MemeHorseRace = observer(
                     <ContentWrapper totalRacers={totalRacers}>
                       <RaceLanesContainer className="md:pl-[120px]">
                         {currentRacers.map((racer) => {
-                          const sortedRacers = [...currentRacers].sort((a, b) => b.currentScore - a.currentScore);
-                          const rank = sortedRacers.findIndex(r => r.tokenAddress === racer.tokenAddress);
-                          const position = rank >= sortedRacers.length - 4
-                            ? 15 // 市值排名倒数4位的代币固定在15%的位置
-                            : 85 - rank * (70 / (sortedRacers.length - 4 || 1)); // 调整其他代币的分布范围
+                          const sortedRacers = [...currentRacers].sort(
+                            (a, b) => b.currentScore - a.currentScore
+                          );
+                          const rank = sortedRacers.findIndex(
+                            (r) => r.tokenAddress === racer.tokenAddress
+                          );
 
+                          const isDead = DeadRacers.some(
+                            (deadRacer) =>
+                              deadRacer.racerAddress.toLowerCase() ===
+                                racer.tokenAddress.toLowerCase() &&
+                              timestamps[timeIndex] >= deadRacer.deadTime
+                          );
+
+                          const position = isDead
+                            ? 15
+                            : 85 - rank * (70 / (sortedRacers.length || 1));
                           return (
                             <RaceLane key={racer.tokenAddress}>
                               <RaceTrail position={position} />
@@ -739,33 +773,44 @@ export const MemeHorseRace = observer(
                                 <RacerIcon
                                   className="relative"
                                   position={position}
+                                  isDead={isDead}
                                 >
-                                  {racer.tokenOnchainData?.logoURI && (
-                                    <div
-                                      onClick={() =>
-                                        handleTokenClick(racer.tokenAddress)
-                                      }
-                                      className="cursor-pointer transform transition-transform duration-200 hover:scale-110"
-                                    >
-                                      <Image
-                                        src={racer.tokenOnchainData?.logoURI}
-                                        alt={
-                                          racer.tokenOnchainData?.symbol || ""
+                                  <div className="relative">
+                                    {racer.tokenOnchainData?.logoURI && (
+                                      <div
+                                        onClick={() =>
+                                          !isDead &&
+                                          handleTokenClick(racer.tokenAddress)
                                         }
-                                        width={100}
-                                        height={100}
+                                        className={`cursor-${isDead ? "default" : "pointer"} transform transition-transform duration-200 ${!isDead && "hover:scale-110"}`}
+                                      >
+                                        <Image
+                                          src={racer.tokenOnchainData?.logoURI}
+                                          alt={
+                                            racer.tokenOnchainData?.symbol || ""
+                                          }
+                                          width={100}
+                                          height={100}
+                                        />
+                                        {isDead && (
+                                          <div className="absolute inset-0 flex items-center justify-center">
+                                            <span className="text-red-500 text-6xl font-bold">
+                                              X
+                                            </span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
+                                    <span className="absolute top-[50%] left-0 translate-x-[-100%] translate-y-[-50%] text-right text-white text-shadow">
+                                      MCAP: $
+                                      <LerpingValue
+                                        value={
+                                          racer.currentScore / Math.pow(10, 18)
+                                        }
+                                        formatter={formatMarketCap}
                                       />
-                                    </div>
-                                  )}
-                                  <span className="absolute top-[50%] left-0 translate-x-[-100%] translate-y-[-50%] text-right text-white text-shadow">
-                                    MCAP: $
-                                    <LerpingValue
-                                      value={
-                                        racer.currentScore / Math.pow(10, 18)
-                                      }
-                                      formatter={formatMarketCap}
-                                    />
-                                  </span>
+                                    </span>
+                                  </div>
                                 </RacerIcon>
                               </Tooltip>
                             </RaceLane>
@@ -860,28 +905,45 @@ export const MemeHorseRace = observer(
                           </td>
                           <td className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base whitespace-nowrap">
                             <div className="flex items-center justify-end gap-2">
-                              <button
-                                onClick={() =>
-                                  handleTokenClick(racer.tokenAddress)
-                                }
-                                className="px-4 py-2 bg-[#FFCD4D] hover:bg-[#E5B735] rounded text-black font-medium transition-colors"
-                              >
-                                Swap
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleShowHolders(racer.tokenAddress)
-                                }
-                                className="px-4 py-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded text-white transition-colors"
-                              >
-                                Holders
-                              </button>
-                              <button
-                                onClick={() => handleAddLP(racer.tokenAddress)}
-                                className="px-4 py-2 bg-[#FFCD4D] hover:bg-[#E5B735] rounded text-black font-medium transition-colors"
-                              >
-                                LP
-                              </button>
+                              {DeadRacers.some(
+                                (deadRacer) =>
+                                  deadRacer.racerAddress.toLowerCase() ===
+                                  racer.tokenAddress.toLowerCase()
+                              ) ? (
+                                <button
+                                  disabled
+                                  className="px-4 py-2 bg-gray-600 cursor-not-allowed rounded text-gray-400 font-medium opacity-50"
+                                >
+                                  Dead
+                                </button>
+                              ) : (
+                                <>
+                                  <button
+                                    onClick={() =>
+                                      handleTokenClick(racer.tokenAddress)
+                                    }
+                                    className="px-4 py-2 bg-[#FFCD4D] hover:bg-[#E5B735] rounded text-black font-medium transition-colors"
+                                  >
+                                    Swap
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleShowHolders(racer.tokenAddress)
+                                    }
+                                    className="px-4 py-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded text-white transition-colors"
+                                  >
+                                    Holders
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleAddLP(racer.tokenAddress)
+                                    }
+                                    className="px-4 py-2 bg-[#FFCD4D] hover:bg-[#E5B735] rounded text-black font-medium transition-colors"
+                                  >
+                                    LP
+                                  </button>
+                                </>
+                              )}
                             </div>
                           </td>
                         </tr>
