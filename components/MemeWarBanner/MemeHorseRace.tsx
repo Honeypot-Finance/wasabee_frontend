@@ -100,7 +100,7 @@ const RaceTrail = styled.div<{ position: number }>`
 
 const RacerIcon = styled.div<{ position: number; isDead?: boolean }>`
   position: absolute;
-  left: ${(props) => (props.isDead ? 15 : props.position)}%;
+  left: ${(props) => (props.isDead ? 0 : props.position)}%;
   transform: translateX(-50%);
   transition: left 0.5s ease;
   display: flex;
@@ -764,11 +764,11 @@ export const MemeHorseRace = observer(
                           );
 
                           const position = isDead
-                            ? 15
+                            ? 0
                             : 85 - rank * (70 / (sortedRacers.length || 1));
                           return (
                             <RaceLane key={racer.tokenAddress}>
-                              <RaceTrail position={position} />
+                              {!isDead && <RaceTrail position={position} />}
                               <Tooltip content={racer.tokenOnchainData?.symbol}>
                                 <RacerIcon
                                   className="relative"
