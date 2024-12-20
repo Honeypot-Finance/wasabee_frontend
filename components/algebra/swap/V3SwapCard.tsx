@@ -54,7 +54,9 @@ export function V3SwapCard({
       <SwapParamsV3 />
       <SwapButtonV3 />
       {/* <PoweredByAlgebra /> */}
-      <div className="bg-[url('/images/swap/bottom-border.jpg')] bg-[size:100%_150%] bg-no-repeat bg-left-bottom h-[50px] absolute bottom-0 left-0 w-full"></div>
+      {!boarderless && (
+        <div className="bg-[url('/images/swap/bottom-border.jpg')] bg-[size:100%_150%] bg-no-repeat bg-left-bottom h-[50px] absolute bottom-0 left-0 w-full"></div>
+      )}
     </div>
   );
 }
