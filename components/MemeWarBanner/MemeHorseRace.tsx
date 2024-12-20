@@ -403,11 +403,11 @@ const TopHoldersModal = observer(
 
 const SwapModal = observer(
   ({
-    token,
+    tokenAddress,
     isOpen,
     onClose,
   }: {
-    token: Token;
+    tokenAddress: string;
     isOpen: boolean;
     onClose: () => void;
   }) => {
@@ -424,7 +424,7 @@ const SwapModal = observer(
         <ModalContent className="bg-transparent">
           <V3SwapCard
             fromTokenAddress={wallet.currentChain.platformTokenAddress.HPOT}
-            toTokenAddress={token.address}
+            toTokenAddress={tokenAddress}
           />
         </ModalContent>
       </Modal>
@@ -452,8 +452,7 @@ export const MemeHorseRace = observer(
     );
     const [holdersData, setHoldersData] =
       useState<TokenTop10HoldersQuery | null>(null);
-    const [selectedTokenForSwap, setSelectedTokenForSwap] =
-      useState<Token | null>(null);
+    const [selectedTokenAddress, setSelectedTokenAddress] = useState<string | null>(null);
     const {
       isOpen: isSwapOpen,
       onOpen: onSwapOpen,
@@ -591,8 +590,8 @@ export const MemeHorseRace = observer(
 
     const totalRacers = racers.length;
 
-    const handleTokenClick = (token: Token) => {
-      setSelectedTokenForSwap(token);
+    const handleTokenClick = (tokenAddress: string) => {
+      setSelectedTokenAddress(tokenAddress);
       onSwapOpen();
     };
 
@@ -740,7 +739,7 @@ export const MemeHorseRace = observer(
                                   {racer.tokenOnchainData?.logoURI && (
                                     <div
                                       onClick={() =>
-                                        handleTokenClick(racer.tokenOnchainData)
+                                        handleTokenClick(racer.tokenAddress)
                                       }
                                       className="cursor-pointer transform transition-transform duration-200 hover:scale-110"
                                     >
@@ -858,7 +857,7 @@ export const MemeHorseRace = observer(
                             <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() =>
-                                  handleTokenClick(racer.tokenOnchainData)
+                                  handleTokenClick(racer.tokenAddress)
                                 }
                                 className="px-4 py-2 bg-[#FFCD4D] hover:bg-[#E5B735] rounded text-black font-medium transition-colors"
                               >
@@ -903,9 +902,9 @@ export const MemeHorseRace = observer(
             onClose={onHoldersClose}
           />
         )}
-        {selectedTokenForSwap && (
+        {selectedTokenAddress && (
           <SwapModal
-            token={selectedTokenForSwap}
+            tokenAddress={selectedTokenAddress}
             isOpen={isSwapOpen}
             onClose={onSwapClose}
           />
