@@ -46,6 +46,23 @@ const TimeLineComponent = observer(
   ({ pair }: { pair: MemePairContract | FtoPairContract }) => {
     const endedDisplay = <span>Ended!</span>;
 
+    // 计算进度百分比
+    const progressPercentage = new BigNumber(
+      pair.depositedRaisedToken?.toNumber() ?? 0
+    )
+      .div(
+        new BigNumber(
+          (pair as MemePairContract).raisedTokenMinCap?.toNumber() ?? 0
+        ).div(Math.pow(10, 18))
+      )
+      .times(100)
+      .toFixed(2);
+
+    // 如果进度超过100%，不显示组件
+    if (Number(progressPercentage) >= 100) {
+      return null;
+    }
+
     return (
       <ComponentContainer className="shrink-0 flex items-start">
         <h6 className="text-xs opacity-60">End Time</h6>

@@ -4,27 +4,28 @@ import Image from "next/image";
 import raceFieldBg from "public/images/horserace/race_field.png";
 import { Token } from "@/services/contract/token";
 import { V3SwapCard } from "@/components/algebra/swap/V3SwapCard";
-import { popmodal } from "@/services/popmodal";
 import { wallet } from "@/services/wallet";
 import { observer } from "mobx-react-lite";
 import { getAllRacers, Racer } from "@/lib/algebra/graphql/clients/racer";
 import {
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
   Tooltip,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  useDisclosure,
 } from "@nextui-org/react";
 import { useSpring, animated } from "react-spring";
 import { getTokenTop10Holders } from "@/lib/algebra/graphql/clients/token";
-import { Modal, Table } from "@nextui-org/react";
 import { TokenTop10HoldersQuery } from "@/lib/algebra/graphql/generated/graphql";
 import BigNumber from "bignumber.js";
 import { truncateEthAddress } from "@usecapsule/rainbowkit-wallet";
-import Link from "next/link";
 import { poolsByTokenPair } from "@/lib/algebra/graphql/clients/pool";
 import { useRouter } from "next/router";
+import { ExternalLink } from "lucide-react";
+import { Copy } from "@/components/copy";
+import { VscCopy } from "react-icons/vsc";
+
 const START_TIMESTAMP = 1734436800;
 
 const RaceTrack = styled.div<{ totalRacers: number }>`
@@ -36,9 +37,7 @@ const RaceTrack = styled.div<{ totalRacers: number }>`
   background-repeat: no-repeat;
   padding: 20px;
   border-radius: 10px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  position: relative;
   overflow-y: auto;
 
   &::before {
@@ -48,7 +47,7 @@ const RaceTrack = styled.div<{ totalRacers: number }>`
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
   }
 `;
@@ -110,6 +109,80 @@ const RacerIcon = styled.div<{ position: number }>`
 const TimeSlider = styled.input`
   width: 100%;
   margin: 20px 0;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  position: relative;
+  display: block;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &::-webkit-slider-thumb {
+    position: relative;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffcd4d;
+    cursor: pointer;
+    transition: transform 0.2s;
+    transform: translateY(-50%);
+    top: 50%;
+
+    &:hover {
+      transform: translateY(-50%) scale(1.2);
+    }
+  }
+
+  &::-moz-range-thumb {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffcd4d;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s;
+    transform: translateY(-50%);
+    top: 50%;
+
+    &:hover {
+      transform: translateY(-50%) scale(1.2);
+    }
+  }
+
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(
+      to right,
+      #ffcd4d 0%,
+      #ffcd4d var(--value, 0%),
+      rgba(255, 255, 255, 0.2) var(--value, 0%)
+    );
+    border-radius: 2px;
+  }
+
+  &::-moz-range-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+  }
+
+  &::-moz-range-progress {
+    height: 4px;
+    background: #ffcd4d;
+    border-radius: 2px;
+  }
 `;
 
 const AnimatedValue = styled.span<{ changed: boolean }>`
@@ -128,7 +201,8 @@ const LoadingWrapper = styled.div`
   justify-content: center;
   min-height: 400px;
   width: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
   border-radius: 10px;
   padding: 20px;
 `;
@@ -137,6 +211,10 @@ const TableContainer = styled.div`
   margin-top: 20px;
   position: relative;
   z-index: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
 `;
 
 const formatMarketCap = (value: number) => {
@@ -164,453 +242,661 @@ const LerpingValue = ({
   return <animated.span>{number.to((val) => formatter(val))}</animated.span>;
 };
 
-export const MemeHorseRace = observer(() => {
-  const [timeIndex, setTimeIndex] = useState(-1);
-  const [tokens, setTokens] = useState<Record<string, Token>>({});
-  const [racers, setRacers] = useState<Racer[]>([]);
-  const [prevScores, setPrevScores] = useState<Record<string, number>>({});
-  const [changedValues, setChangedValues] = useState<Record<string, boolean>>(
-    {}
-  );
-  const [isInitializing, setIsInitializing] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const router = useRouter();
+export interface MemeHorseRaceProps {
+  showRaceTrack?: boolean;
+  showTable?: boolean;
+}
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        // Get initial racers
-        const initialRacers = await getAllRacers();
+interface RacerWithToken extends Racer {
+  tokenOnchainData?: Token;
+  volume24h?: number;
+  tvl?: number;
+  currentPrice?: number;
+  priceChange24h?: number;
+}
 
-        setRacers(initialRacers);
+const TopHoldersModal = observer(
+  ({
+    racer,
+    holders,
+    isOpen,
+    onClose,
+  }: {
+    racer: RacerWithToken;
+    holders: TokenTop10HoldersQuery;
+    isOpen: boolean;
+    onClose: () => void;
+  }) => {
+    const TotalHoldingValue =
+      holders.token?.holders?.reduce(
+        (acc, holder) => acc + Number(holder.holdingValue),
+        0
+      ) || 0;
 
-        // Initialize tokens if wallet is ready
-        if (wallet.isInit) {
-          const tokenMap: Record<string, Token> = {};
-          for (const racer of initialRacers) {
-            const token = Token.getToken({ address: racer.tokenAddress });
-            await token.init();
-            tokenMap[racer.tokenAddress] = token;
+    return (
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        hideCloseButton={false}
+        placement="center"
+        size="4xl"
+        classNames={{
+          base: "bg-transparent",
+          wrapper: "bg-transparent",
+          closeButton: "right-4 top-4 text-white z-50",
+          body: "p-0",
+        }}
+      >
+        <ModalContent className="bg-transparent max-w-[1000px] w-[90vw]">
+          <div className="relative">
+            <div className="bg-[url('/images/pumping/outline-border.png')] h-[50px] absolute top-0 left-0 w-full bg-contain bg-[left_-90px_top] bg-repeat-x"></div>
+
+            <div className="pt-14 px-6 pb-6 bg-[#FFCD4D]">
+              <ModalHeader className="p-0">
+                <div className="flex items-center gap-4">
+                  <Image
+                    src={racer.tokenOnchainData?.logoURI || ""}
+                    alt={racer.tokenOnchainData?.symbol || ""}
+                    width={48}
+                    height={48}
+                    className="rounded-full"
+                  />
+                  <div>
+                    <h3 className="text-xl font-bold text-black">
+                      {racer.tokenOnchainData?.symbol} Top Holders
+                    </h3>
+                    <p className="text-gray-600">
+                      {racer.tokenOnchainData?.name}
+                    </p>
+                  </div>
+                </div>
+              </ModalHeader>
+
+              <ModalBody className="p-0 mt-6">
+                <div className="w-full rounded-[32px] bg-[#202020] space-y-4 px-4 py-6 custom-dashed">
+                  <div className="border border-[#5C5C5C] rounded-2xl overflow-hidden">
+                    <table className="w-full">
+                      <thead className="bg-[#323232]">
+                        <tr>
+                          <th className="py-2 px-2 sm:px-4 text-left text-sm sm:text-base font-medium text-white">
+                            Rank
+                          </th>
+                          <th className="py-2 px-2 sm:px-4 text-left text-sm sm:text-base font-medium text-white">
+                            Address
+                          </th>
+                          <th className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base font-medium text-white">
+                            Balance
+                          </th>
+                          <th className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base font-medium text-white">
+                            Percentage
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-white divide-y divide-[#5C5C5C]">
+                        {holders.token?.holders?.map((holder, index) => (
+                          <tr
+                            key={holder.id}
+                            className="hover:bg-[#2a2a2a] transition-colors"
+                          >
+                            <td className="py-2 px-2 sm:px-4 text-sm sm:text-base whitespace-nowrap">
+                              <span className="flex items-center gap-2">
+                                {index === 0 ? "👑" : index + 1}
+                              </span>
+                            </td>
+                            <td className="py-2 px-2 sm:px-4 text-sm sm:text-base whitespace-nowrap">
+                              <div className="flex items-center gap-2">
+                                <a
+                                  href={`https://bartio.beratrail.io/address/${holder.account.id}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="hover:text-[#FFCD4D] flex items-center gap-1"
+                                >
+                                  {truncateEthAddress(holder.account.id)}
+                                  <ExternalLink className="size-3" />
+                                </a>
+                                <Copy
+                                  className="p-1 hover:bg-[#3a3a3a] rounded flex items-center justify-center min-w-[24px]"
+                                  value={holder.account.id}
+                                  content="Copy address"
+                                >
+                                  <VscCopy className="size-3.5" />
+                                </Copy>
+                              </div>
+                            </td>
+                            <td className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base whitespace-nowrap">
+                              <div className="flex flex-col sm:flex-row justify-end items-end gap-1">
+                                <span>
+                                  {BigNumber(holder.holdingValue)
+                                    .dividedBy(1e18)
+                                    .toFixed(0)}
+                                </span>
+                                <span className="text-sm text-gray-400">
+                                  {holders.token?.symbol}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base whitespace-nowrap">
+                              <span className="text-[#FFCD4D] font-medium">
+                                {(
+                                  (holder.holdingValue / TotalHoldingValue) *
+                                  100
+                                ).toFixed(2)}
+                                %
+                              </span>
+                            </td>
+                          </tr>
+                        )) || []}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </ModalBody>
+            </div>
+
+            <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-contain"></div>
+          </div>
+        </ModalContent>
+      </Modal>
+    );
+  }
+);
+
+const SwapModal = observer(
+  ({
+    token,
+    isOpen,
+    onClose,
+  }: {
+    token: Token;
+    isOpen: boolean;
+    onClose: () => void;
+  }) => {
+    return (
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        hideCloseButton={false}
+        placement="center"
+        classNames={{
+          closeButton: "right-4 top-4 z-50 text-white z-[9999]",
+        }}
+      >
+        <ModalContent className="bg-transparent">
+          <V3SwapCard
+            fromTokenAddress={wallet.currentChain.platformTokenAddress.HPOT}
+            toTokenAddress={token.address}
+          />
+        </ModalContent>
+      </Modal>
+    );
+  }
+);
+
+export const MemeHorseRace = observer(
+  ({ showRaceTrack = true, showTable = true }: MemeHorseRaceProps) => {
+    const [timeIndex, setTimeIndex] = useState(-1);
+    const [tokens, setTokens] = useState<Record<string, Token>>({});
+    const [racers, setRacers] = useState<RacerWithToken[]>([]);
+    const [prevScores, setPrevScores] = useState<Record<string, number>>({});
+    const [changedValues, setChangedValues] = useState<Record<string, boolean>>(
+      {}
+    );
+    const [isInitializing, setIsInitializing] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+    const [scrollPosition, setScrollPosition] = useState(0);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const router = useRouter();
+    const [selectedRacer, setSelectedRacer] = useState<RacerWithToken | null>(
+      null
+    );
+    const [holdersData, setHoldersData] =
+      useState<TokenTop10HoldersQuery | null>(null);
+    const [selectedTokenForSwap, setSelectedTokenForSwap] =
+      useState<Token | null>(null);
+    const {
+      isOpen: isSwapOpen,
+      onOpen: onSwapOpen,
+      onClose: onSwapClose,
+    } = useDisclosure();
+    const {
+      isOpen: isHoldersOpen,
+      onOpen: onHoldersOpen,
+      onClose: onHoldersClose,
+    } = useDisclosure();
+
+    useEffect(() => {
+      const initialize = async () => {
+        try {
+          // Get initial racers
+          const initialRacers = await getAllRacers();
+
+          setRacers(initialRacers);
+
+          // Initialize tokens if wallet is ready
+          if (wallet.isInit) {
+            const tokenMap: Record<string, Token> = {};
+            for (const racer of initialRacers) {
+              const token = Token.getToken({ address: racer.tokenAddress });
+              await token.init();
+              tokenMap[racer.tokenAddress] = token;
+            }
+            setTokens(tokenMap);
           }
-          setTokens(tokenMap);
+
+          setIsInitializing(false);
+
+          // Set up interval for updates after initialization
+          // const interval = setInterval(async () => {
+          //   const updatedRacers = await getAllRacers();
+          //   setRacers(updatedRacers);
+          // }, 1000);
+
+          // return () => clearInterval(interval);
+        } catch (error) {
+          console.error("Initialization error:", error);
+          setIsInitializing(false);
         }
+      };
 
-        setIsInitializing(false);
+      initialize();
+    }, [wallet.isInit]);
 
-        // Set up interval for updates after initialization
-        // const interval = setInterval(async () => {
-        //   const updatedRacers = await getAllRacers();
-        //   setRacers(updatedRacers);
-        // }, 1000);
+    const maxTimelineRacer = racers.reduce(
+      (prev, current) =>
+        current.tokenHourScore.length > prev.tokenHourScore.length
+          ? current
+          : prev,
+      racers[0] || { tokenHourScore: [] }
+    );
 
-        // return () => clearInterval(interval);
+    const timestamps = [
+      ...new Set(
+        maxTimelineRacer.tokenHourScore.map((score) =>
+          parseInt(score.starttimestamp)
+        )
+      ),
+    ].sort((a, b) => a - b);
+
+    const getRacerScore = (racer: RacerWithToken, timestamp: number) => {
+      if (timestamp < START_TIMESTAMP) {
+        return 0;
+      }
+      const exactScore = racer.tokenHourScore.find(
+        (score) => parseInt(score.starttimestamp) === timestamp
+      );
+      if (exactScore) {
+        return parseFloat(exactScore.score);
+      }
+
+      const lastValidScore = racer.tokenHourScore
+        .filter((score) => parseInt(score.starttimestamp) <= timestamp)
+        .sort(
+          (a, b) => parseInt(b.starttimestamp) - parseInt(a.starttimestamp)
+        )[0];
+
+      return lastValidScore ? parseFloat(lastValidScore.score) : 0;
+    };
+
+    const getHourlyChange = (
+      racer: RacerWithToken,
+      currentTimestamp: number
+    ) => {
+      const currentScore = getRacerScore(racer, currentTimestamp);
+
+      const oneHourAgoTimestamp = currentTimestamp - 3600;
+      const previousScore = getRacerScore(racer, oneHourAgoTimestamp);
+
+      if (previousScore === 0) return 0;
+      return ((currentScore - previousScore) / previousScore) * 100;
+    };
+
+    const getCurrentScores = () => {
+      const currentTimestamp = timestamps[timeIndex];
+      return racers
+        .map((racer) => ({
+          ...racer,
+          tokenOnchainData: tokens[racer.tokenAddress],
+          currentScore: getRacerScore(racer, currentTimestamp),
+          hourlyChange: getHourlyChange(racer, currentTimestamp),
+          volume24h: 1200000, // 示例数据，实际应该从API获取
+          tvl: 4500000,
+          currentPrice: 0.0045,
+          priceChange24h: 12.5,
+        }))
+        .sort((a, b) => b.currentScore - a.currentScore);
+    };
+
+    const allTimeHighScore = Math.max(
+      ...racers.flatMap((racer) =>
+        racer.tokenHourScore.map((score) => parseFloat(score.score))
+      )
+    );
+
+    const currentRacers = useMemo(() => getCurrentScores(), [getCurrentScores]);
+
+    const totalRacers = racers.length;
+
+    const handleTokenClick = (token: Token) => {
+      setSelectedTokenForSwap(token);
+      onSwapOpen();
+    };
+
+    const getSortedRacers = () => {
+      return currentRacers.sort((a, b) => {
+        return b.currentScore - a.currentScore;
+      });
+    };
+
+    useEffect(() => {
+      const currentScores = currentRacers.reduce(
+        (acc, racer) => {
+          acc[racer.tokenAddress] = racer.currentScore;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
+
+      const newChangedValues: Record<string, boolean> = {};
+      Object.keys(currentScores).forEach((address) => {
+        if (
+          prevScores[address] !== undefined &&
+          prevScores[address] !== currentScores[address]
+        ) {
+          newChangedValues[address] = true;
+        }
+      });
+
+      setChangedValues(newChangedValues);
+      setPrevScores(currentScores);
+
+      const timer = setTimeout(() => {
+        setChangedValues({});
+      }, 300);
+
+      return () => clearTimeout(timer);
+    }, [racers]);
+
+    useEffect(() => {
+      if (timestamps.length > 0 && timeIndex === -1) {
+        setTimeIndex(timestamps.length - 1);
+        // 设置初始背景色
+        const sliderElement = document.querySelector('input[type="range"]') as HTMLInputElement;
+        if (sliderElement) {
+          const percent = 100;
+          sliderElement.style.setProperty('--value', `${percent}%`);
+        }
+      }
+    }, [timestamps.length, timeIndex]);
+
+    useEffect(() => {
+      if (containerRef.current) {
+        setScrollPosition(containerRef.current.scrollTop);
+      }
+    }, [racers]);
+
+    useEffect(() => {
+      if (containerRef.current && scrollPosition > 0) {
+        containerRef.current.scrollTop = scrollPosition;
+      }
+    }, [scrollPosition]);
+
+    const handleShowHolders = async (tokenId: string) => {
+      const targetRacer = racers.find(
+        (racer) => racer.tokenAddress === tokenId
+      );
+      if (!targetRacer) return;
+
+      try {
+        setIsLoading(true);
+        const data = await getTokenTop10Holders(tokenId);
+        setSelectedRacer({
+          ...targetRacer,
+          tokenOnchainData: tokens[targetRacer.tokenAddress],
+        });
+        setHoldersData(data);
+        onHoldersOpen();
       } catch (error) {
-        console.error("Initialization error:", error);
-        setIsInitializing(false);
+        console.error("Error fetching holders:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    initialize();
-  }, [wallet.isInit]);
+    const handleAddLP = async (tokenAddress: string) => {
+      const pools = await poolsByTokenPair(
+        tokenAddress,
+        wallet.currentChain.platformTokenAddress.HPOT
+      );
 
-  const maxTimelineRacer = racers.reduce(
-    (prev, current) =>
-      current.tokenHourScore.length > prev.tokenHourScore.length
-        ? current
-        : prev,
-    racers[0] || { tokenHourScore: [] }
-  );
-
-  const timestamps = [
-    ...new Set(
-      maxTimelineRacer.tokenHourScore.map((score) =>
-        parseInt(score.starttimestamp)
-      )
-    ),
-  ].sort((a, b) => a - b);
-
-  const getRacerScore = (racer: Racer, timestamp: number) => {
-    if (timestamp < START_TIMESTAMP) {
-      return 0;
-    }
-    const exactScore = racer.tokenHourScore.find(
-      (score) => parseInt(score.starttimestamp) === timestamp
-    );
-    if (exactScore) {
-      return parseFloat(exactScore.score);
-    }
-
-    const lastValidScore = racer.tokenHourScore
-      .filter((score) => parseInt(score.starttimestamp) <= timestamp)
-      .sort(
-        (a, b) => parseInt(b.starttimestamp) - parseInt(a.starttimestamp)
-      )[0];
-
-    return lastValidScore ? parseFloat(lastValidScore.score) : 0;
-  };
-
-  const getHourlyChange = (racer: Racer, currentTimestamp: number) => {
-    const currentScore = getRacerScore(racer, currentTimestamp);
-
-    const oneHourAgoTimestamp = currentTimestamp - 3600;
-    const previousScore = getRacerScore(racer, oneHourAgoTimestamp);
-
-    if (previousScore === 0) return 0;
-    return ((currentScore - previousScore) / previousScore) * 100;
-  };
-
-  const getCurrentScores = () => {
-    const currentTimestamp = timestamps[timeIndex];
-    return racers.map((racer) => ({
-      ...racer,
-      tokenOnchainData: tokens[racer.tokenAddress],
-      currentScore: getRacerScore(racer, currentTimestamp),
-      hourlyChange: getHourlyChange(racer, currentTimestamp),
-    }));
-  };
-
-  const allTimeHighScore = Math.max(
-    ...racers.flatMap((racer) =>
-      racer.tokenHourScore.map((score) => parseFloat(score.score))
-    )
-  );
-
-  const currentRacers = useMemo(() => getCurrentScores(), [getCurrentScores]);
-
-  const totalRacers = racers.length;
-
-  const handleTokenClick = (token: Token) => {
-    popmodal.openModal({
-      content: (
-        <V3SwapCard
-          fromTokenAddress={wallet.currentChain.platformTokenAddress.HPOT}
-          toTokenAddress={token.address}
-        />
-      ),
-    });
-  };
-
-  const getSortedRacers = () => {
-    return currentRacers.sort((a, b) => {
-      return b.currentScore - a.currentScore;
-    });
-  };
-
-  useEffect(() => {
-    const currentScores = currentRacers.reduce(
-      (acc, racer) => {
-        acc[racer.tokenAddress] = racer.currentScore;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    const newChangedValues: Record<string, boolean> = {};
-    Object.keys(currentScores).forEach((address) => {
-      if (
-        prevScores[address] !== undefined &&
-        prevScores[address] !== currentScores[address]
-      ) {
-        newChangedValues[address] = true;
+      if (pools && pools.length > 0) {
+        const pool = pools[0];
+        //redirect to add liquidity page
+        router.push(`/pooldetail/${pool.id}`);
       }
-    });
+    };
 
-    setChangedValues(newChangedValues);
-    setPrevScores(currentScores);
+    const handleTimeSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseInt(e.target.value);
+      setTimeIndex(value);
+      // 更新进度条颜色
+      const percent = (value / (timestamps.length - 1)) * 100;
+      e.target.style.setProperty('--value', `${percent}%`);
+    };
 
-    const timer = setTimeout(() => {
-      setChangedValues({});
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [racers]);
-
-  useEffect(() => {
-    if (timestamps.length > 0 && timeIndex === -1) {
-      setTimeIndex(timestamps.length - 1);
-    }
-  }, [timestamps.length, timeIndex]);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      setScrollPosition(containerRef.current.scrollTop);
-    }
-  }, [racers]);
-
-  useEffect(() => {
-    if (containerRef.current && scrollPosition > 0) {
-      containerRef.current.scrollTop = scrollPosition;
-    }
-  }, [scrollPosition]);
-
-  const handleShowHolders = async (tokenId: string) => {
-    if (!racers.find((racer) => racer.tokenAddress === tokenId)) {
-      return;
-    }
-    try {
-      setIsLoading(true);
-      const data = await getTokenTop10Holders(tokenId);
-      popmodal.openModal({
-        content: (
-          <TopHoldersList
-            racer={racers.find((racer) => racer.tokenAddress === tokenId)!}
-            holders={data}
-          />
-        ),
-      });
-    } catch (error) {
-      console.error("Error fetching holders:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAddLP = async (tokenAddress: string) => {
-    const pools = await poolsByTokenPair(
-      tokenAddress,
-      wallet.currentChain.platformTokenAddress.HPOT
-    );
-
-    if (pools && pools.length > 0) {
-      const pool = pools[0];
-      //redirect to add liquidity page
-      router.push(`/pooldetail/${pool.id}`);
-    }
-  };
-
-  const TopHoldersList = ({
-    racer,
-    holders,
-  }: {
-    racer: Racer;
-    holders: TokenTop10HoldersQuery;
-  }) => {
-    const TotalHoldingValue = holders.token?.holders?.reduce(
-      (acc, holder) => acc + Number(holder.holdingValue),
-      0
-    );
-    console.log(TotalHoldingValue);
     return (
-      <Table>
-        <TableHeader>
-          <TableColumn>Rank</TableColumn>
-          <TableColumn>Address</TableColumn>
-          <TableColumn>Balance</TableColumn>
-          <TableColumn>Percentage</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {holders.token?.holders?.map((holder, index) => (
-            <TableRow key={holder.id}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{truncateEthAddress(holder.account.id)}</TableCell>
-              <TableCell>
-                {BigNumber(holder.holdingValue).dividedBy(1e18).toFixed(0)}{" "}
-                {holders.token?.symbol}
-              </TableCell>
-              <TableCell>
-                {(
-                  (holder.holdingValue / (TotalHoldingValue ?? 0)) *
-                  100
-                ).toFixed(2)}
-                %
-              </TableCell>
-            </TableRow>
-          )) || []}
-        </TableBody>
-      </Table>
-    );
-  };
+      <>
+        <div className="relative space-y-6">
+          {isInitializing ? (
+            <LoadingWrapper>
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+              <div className="text-lg text-gray-300">Loading Derby Data...</div>
+            </LoadingWrapper>
+          ) : racers && racers.length > 0 && timestamps.length > 0 ? (
+            <>
+              {showRaceTrack && (
+                <div className="space-y-4">
+                  <h2 className="text-2xl font-bold text-white">
+                    Berachain Derby Dashboard
+                  </h2>
+                  <RaceTrack totalRacers={totalRacers}>
+                    <ContentWrapper totalRacers={totalRacers}>
+                      <RaceLanesContainer className="md:pl-[120px]">
+                        {currentRacers.map((racer) => {
+                          const rank = currentRacers.reduce(
+                            (count, other) =>
+                              other.currentScore > racer.currentScore
+                                ? count + 1
+                                : count,
+                            0
+                          );
+                          const position =
+                            85 - rank * (70 / (currentRacers.length - 1 || 1));
 
-  return (
-    <div className="relative">
-      {isInitializing ? (
-        <LoadingWrapper>
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <div className="text-lg text-gray-300">Loading Derby Data...</div>
-        </LoadingWrapper>
-      ) : racers && racers.length > 0 && timestamps.length > 0 ? (
-        <>
-          <RaceTrack totalRacers={totalRacers}>
-            <ContentWrapper totalRacers={totalRacers}>
-              <h2>Berachain Derby Dashboard</h2>
+                          return (
+                            <RaceLane key={racer.tokenAddress}>
+                              <RaceTrail position={Math.max(15, position)} />
+                              <Tooltip content={racer.tokenOnchainData?.symbol}>
+                                <RacerIcon
+                                  className="relative"
+                                  position={Math.max(15, position)}
+                                >
+                                  {racer.tokenOnchainData?.logoURI && (
+                                    <div
+                                      onClick={() =>
+                                        handleTokenClick(racer.tokenOnchainData)
+                                      }
+                                      className="cursor-pointer transform transition-transform duration-200 hover:scale-110"
+                                    >
+                                      <Image
+                                        src={racer.tokenOnchainData?.logoURI}
+                                        alt={
+                                          racer.tokenOnchainData?.symbol || ""
+                                        }
+                                        width={100}
+                                        height={100}
+                                      />
+                                    </div>
+                                  )}
+                                  <span className="absolute top-[50%] left-0 translate-x-[-100%] translate-y-[-50%] text-right text-white text-shadow">
+                                    MCAP: $
+                                    <LerpingValue
+                                      value={
+                                        racer.currentScore / Math.pow(10, 18)
+                                      }
+                                      formatter={formatMarketCap}
+                                    />
+                                  </span>
+                                </RacerIcon>
+                              </Tooltip>
+                            </RaceLane>
+                          );
+                        })}
+                      </RaceLanesContainer>
+                      <TimeSlider
+                        type="range"
+                        min={0}
+                        max={timestamps.length - 1}
+                        value={timeIndex}
+                        onChange={handleTimeSliderChange}
+                      />
+                    </ContentWrapper>
+                  </RaceTrack>
+                </div>
+              )}
 
-              <RaceLanesContainer className="md:pl-[120px]">
-                {currentRacers.map((racer) => {
-                  // Calculate rank based on market cap
-                  const rank = currentRacers.reduce(
-                    (count, other) =>
-                      other.currentScore > racer.currentScore
-                        ? count + 1
-                        : count,
-                    0
-                  );
-                  // Calculate position based on rank with minimum distance of 15%
-                  const position =
-                    85 - rank * (70 / (currentRacers.length - 1 || 1));
-
-                  return (
-                    <RaceLane key={racer.tokenAddress}>
-                      <RaceTrail position={Math.max(15, position)} />
-                      <Tooltip content={racer.tokenOnchainData?.symbol}>
-                        <RacerIcon
-                          className="relative"
-                          position={Math.max(15, position)}
+              {showTable && (
+                <div className="border border-[#5C5C5C] rounded-2xl overflow-hidden overflow-x-auto w-full">
+                  <table className="w-full">
+                    <thead className="bg-[#323232] text-white">
+                      <tr>
+                        <th className="py-2 px-2 sm:px-4 text-left text-sm sm:text-base font-medium w-[10%]">
+                          Rank
+                        </th>
+                        <th className="py-2 px-2 sm:px-4 text-left text-sm sm:text-base font-medium w-[30%]">
+                          Token
+                        </th>
+                        <th className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base font-medium w-[25%]">
+                          Market Cap
+                        </th>
+                        <th className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base font-medium w-[15%]">
+                          1h Change
+                        </th>
+                        <th className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base font-medium w-[20%]">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-white divide-y divide-[#5C5C5C]">
+                      {getSortedRacers().map((racer, index) => (
+                        <tr
+                          key={racer.tokenAddress}
+                          className="hover:bg-[#2a2a2a] transition-colors"
                         >
-                          {racer.tokenOnchainData?.logoURI && (
-                            <div
-                              onClick={() =>
-                                handleTokenClick(racer.tokenOnchainData)
-                              }
-                              style={{ cursor: "pointer" }}
-                            >
+                          <td className="py-2 px-2 sm:px-4 text-sm sm:text-base whitespace-nowrap">
+                            <span className="flex items-center gap-2">
+                              {index === 0 ? `👑` : `${index + 1}.`}
+                            </span>
+                          </td>
+                          <td className="py-2 px-2 sm:px-4 text-sm sm:text-base whitespace-nowrap">
+                            <div className="flex items-center gap-3">
                               <Image
                                 src={racer.tokenOnchainData?.logoURI}
                                 alt={racer.tokenOnchainData?.symbol || ""}
-                                width={100}
-                                height={100}
-                                style={{
-                                  transition: "transform 0.2s ease-in-out",
-                                }}
-                                className="scale-100 hover:scale-110"
+                                width={40}
+                                height={40}
+                                className="rounded-full"
                               />
+                              <div className="flex flex-col">
+                                <span className="font-medium">
+                                  {racer.tokenOnchainData?.symbol}
+                                </span>
+                                <span className="text-sm text-gray-400">
+                                  {racer.tokenOnchainData?.name}
+                                </span>
+                              </div>
                             </div>
-                          )}
-                          <span
-                            className="absolute top-[50%] left-0 translate-x-[-100%] translate-y-[-50%] text-right"
-                            style={{
-                              color: "#FFFFFF",
-                              textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-                            }}
-                          >
-                            MCAP: $
-                            <LerpingValue
-                              value={racer.currentScore / Math.pow(10, 18)}
-                              formatter={formatMarketCap}
-                            />
-                          </span>
-                        </RacerIcon>
-                      </Tooltip>
-                    </RaceLane>
-                  );
-                })}
-              </RaceLanesContainer>
-
-              <TimeSlider
-                type="range"
-                min={0}
-                max={timestamps.length - 1}
-                value={timeIndex}
-                onChange={(e) => setTimeIndex(parseInt(e.target.value))}
-                style={{ cursor: "pointer" }}
-              />
-              <div>
-                Time: {new Date(timestamps[timeIndex] * 1000).toLocaleString()}
+                          </td>
+                          <td className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base whitespace-nowrap">
+                            <AnimatedValue
+                              changed={changedValues[racer.tokenAddress]}
+                            >
+                              <LerpingValue
+                                value={racer.currentScore / Math.pow(10, 18)}
+                                formatter={formatMarketCap}
+                              />
+                            </AnimatedValue>
+                          </td>
+                          <td className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base whitespace-nowrap">
+                            <span
+                              className={
+                                racer.hourlyChange >= 0
+                                  ? "text-green-500"
+                                  : "text-red-500"
+                              }
+                            >
+                              {racer.hourlyChange.toFixed(2)}%
+                            </span>
+                          </td>
+                          <td className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base whitespace-nowrap">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() =>
+                                  handleTokenClick(racer.tokenOnchainData)
+                                }
+                                className="px-4 py-2 bg-[#FFCD4D] hover:bg-[#E5B735] rounded text-black font-medium transition-colors"
+                              >
+                                Swap
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleShowHolders(racer.tokenAddress)
+                                }
+                                className="px-4 py-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded text-white transition-colors"
+                              >
+                                Holders
+                              </button>
+                              <button
+                                onClick={() => handleAddLP(racer.tokenAddress)}
+                                className="px-4 py-2 bg-[#FFCD4D] hover:bg-[#E5B735] rounded text-black font-medium transition-colors"
+                              >
+                                LP
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </>
+          ) : (
+            <LoadingWrapper>
+              <div className="text-lg text-gray-300">
+                No race data available
               </div>
-            </ContentWrapper>
-          </RaceTrack>
-
-          <TableContainer>
-            <div className="overflow-x-auto" ref={containerRef}>
-              <table className="w-full table-auto">
-                <thead>
-                  <tr className="bg-gray-800">
-                    <th className="p-3 text-left w-[10%]">Rank</th>
-                    <th className="p-3 text-left w-[30%]">Token</th>
-                    <th className="p-3 text-left w-[25%]">Market Cap</th>
-                    <th className="p-3 text-left w-[15%]">1h Change</th>
-                    <th className="p-3 text-left w-[20%]">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {getSortedRacers().map((racer, index) => (
-                    <tr
-                      key={racer.tokenAddress}
-                      className="border-b border-gray-700 hover:bg-gray-700/50"
-                    >
-                      <td className="p-3 whitespace-nowrap">
-                        <span className="flex items-center gap-2">
-                          {index === 0 ? `👑` : `${index + 1}.`}
-                        </span>
-                      </td>
-                      <td className="p-3 whitespace-nowrap">
-                        <div className="flex items-center gap-3">
-                          <Image
-                            src={racer.tokenOnchainData?.logoURI}
-                            alt={racer.tokenOnchainData?.symbol || ""}
-                            width={40}
-                            height={40}
-                            className="rounded-full"
-                          />
-                          <div className="flex flex-col">
-                            <span className="font-medium">
-                              {racer.tokenOnchainData?.symbol}
-                            </span>
-                            <span className="text-sm text-gray-400">
-                              {racer.tokenOnchainData?.name}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-3 whitespace-nowrap">
-                        <AnimatedValue
-                          changed={changedValues[racer.tokenAddress]}
-                        >
-                          <LerpingValue
-                            value={racer.currentScore / Math.pow(10, 18)}
-                            formatter={formatMarketCap}
-                          />
-                        </AnimatedValue>
-                      </td>
-                      <td className="p-3 whitespace-nowrap">
-                        <span
-                          className={
-                            racer.hourlyChange >= 0
-                              ? "text-green-500"
-                              : "text-red-500"
-                          }
-                        >
-                          {racer.hourlyChange.toFixed(2)}%
-                        </span>
-                      </td>
-                      <td className="p-3 whitespace-nowrap">
-                        <button
-                          onClick={() =>
-                            handleTokenClick(racer.tokenOnchainData)
-                          }
-                          className="px-4 py-2 mx-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
-                        >
-                          Swap
-                        </button>
-                        <button
-                          onClick={() => handleShowHolders(racer.tokenAddress)}
-                          className="px-4 py-2 mx-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
-                        >
-                          View Top Holders
-                        </button>
-                        <button
-                          onClick={() => handleAddLP(racer.tokenAddress)}
-                          className="px-4 py-2 mx-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
-                        >
-                          Add LP
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </TableContainer>
-        </>
-      ) : (
-        <LoadingWrapper>
-          <div className="text-lg text-gray-300">No race data available</div>
-        </LoadingWrapper>
-      )}
-    </div>
-  );
-});
+            </LoadingWrapper>
+          )}
+        </div>
+        {selectedRacer && holdersData && (
+          <TopHoldersModal
+            racer={selectedRacer}
+            holders={holdersData}
+            isOpen={isHoldersOpen}
+            onClose={onHoldersClose}
+          />
+        )}
+        {selectedTokenForSwap && (
+          <SwapModal
+            token={selectedTokenForSwap}
+            isOpen={isSwapOpen}
+            onClose={onSwapClose}
+          />
+        )}
+      </>
+    );
+  }
+);
 
 export default MemeHorseRace;
