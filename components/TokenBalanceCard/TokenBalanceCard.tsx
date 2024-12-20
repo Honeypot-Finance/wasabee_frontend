@@ -18,7 +18,7 @@ interface TokenBalanceCardProps {
 
 export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
   useEffect(() => {
-    token.init();
+    //token.init();
   }, []);
 
   // Calculate 24h price change percentage
@@ -43,6 +43,8 @@ export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
   const formattedUSDPrice = new BigNumber(token.derivedUSD || 0).lt(0.01)
     ? "<0.01"
     : `$${Number(token.derivedUSD).toFixed(2)}`;
+
+  console.log("formattedUSDPrice", token.derivedUSD);
 
   return (
     <tr className="hover:bg-[#2D2D2D]/50 transition-colors">

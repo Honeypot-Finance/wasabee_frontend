@@ -1,6 +1,7 @@
 import { infoClient } from ".";
 import {
   AllAccountsQuery,
+  SingleAccountDetailsDocument,
   SingleAccountDetailsQuery,
   SingleAccountDetailsQueryVariables,
 } from "../generated/graphql";
@@ -25,7 +26,7 @@ export async function getSingleAccountDetails(accountId: string) {
       SingleAccountDetailsQuery,
       SingleAccountDetailsQueryVariables
     >({
-      query: SINGLE_ACCOUNT_DETAILS,
+      query: SingleAccountDetailsDocument,
       variables: {
         accountId,
       },

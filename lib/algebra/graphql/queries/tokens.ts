@@ -7,6 +7,21 @@ export const TOKEN_FRAGMENT = gql`
     name
     decimals
     derivedMatic
+    derivedUSD
+    initialUSD
+    txCount
+    holderCount
+    pot2Pump {
+      id
+    }
+  }
+`;
+
+export const MULTIPLE_TOKENS = gql`
+  query MultipleTokens($tokenIds: [ID!]!) {
+    tokens(where: { id_in: $tokenIds }) {
+      ...TokenFields
+    }
   }
 `;
 

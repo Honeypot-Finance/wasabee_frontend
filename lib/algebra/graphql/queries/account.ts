@@ -47,6 +47,7 @@ export const ACCOUNT_FRAGMENT = gql`
 export const HOLDING_TOKEN_FRAGMENT = gql`
   fragment HoldingTokenField on HoldingToken {
     id
+    holdingValue
     token {
       ...TokenField
     }

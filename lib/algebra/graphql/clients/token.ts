@@ -3,6 +3,12 @@ import {
   TokenTop10HoldersDocument,
   TokenTop10HoldersQuery,
   TokenTop10HoldersQueryVariables,
+  SingleTokenDocument,
+  SingleTokenQuery,
+  SingleTokenQueryVariables,
+  MultipleTokensQuery,
+  MultipleTokensQueryVariables,
+  MultipleTokensDocument,
 } from "../generated/graphql";
 
 export async function getTokenTop10Holders(tokenId: string) {
@@ -12,6 +18,30 @@ export async function getTokenTop10Holders(tokenId: string) {
   >({
     query: TokenTop10HoldersDocument,
     variables: { tokenId },
+  });
+
+  return tokenQuery.data;
+}
+
+export async function getSingleTokenData(tokenId: string) {
+  const tokenQuery = await infoClient.query<
+    SingleTokenQuery,
+    SingleTokenQueryVariables
+  >({
+    query: SingleTokenDocument,
+    variables: { tokenId },
+  });
+
+  return tokenQuery.data;
+}
+
+export async function getMultipleTokensData(tokenIds: string[]) {
+  const tokenQuery = await infoClient.query<
+    MultipleTokensQuery,
+    MultipleTokensQueryVariables
+  >({
+    query: MultipleTokensDocument,
+    variables: { tokenIds },
   });
 
   return tokenQuery.data;
