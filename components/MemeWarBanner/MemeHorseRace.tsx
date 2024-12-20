@@ -553,6 +553,20 @@ export const MemeHorseRace = observer(
 
     const getCurrentScores = () => {
       const currentTimestamp = timestamps[timeIndex];
+      console.log(
+        "racers",
+        racers.map((racer) => ({
+          ...racer,
+          tokenOnchainData: tokens[racer.tokenAddress],
+          currentScore: getRacerScore(racer, currentTimestamp),
+          hourlyChange: getHourlyChange(racer, currentTimestamp),
+          volume24h: 1200000, // 示例数据，实际应该从API获取
+          tvl: 4500000,
+          currentPrice: 0.0045,
+          priceChange24h: 12.5,
+        }))
+      );
+
       return racers
         .map((racer) => ({
           ...racer,
@@ -564,7 +578,7 @@ export const MemeHorseRace = observer(
           currentPrice: 0.0045,
           priceChange24h: 12.5,
         }))
-        .sort((a, b) => b.currentScore - a.currentScore);
+        // .sort((a, b) => b.currentScore - a.currentScore);
     };
 
     const allTimeHighScore = Math.max(
@@ -621,10 +635,12 @@ export const MemeHorseRace = observer(
       if (timestamps.length > 0 && timeIndex === -1) {
         setTimeIndex(timestamps.length - 1);
         // 设置初始背景色
-        const sliderElement = document.querySelector('input[type="range"]') as HTMLInputElement;
+        const sliderElement = document.querySelector(
+          'input[type="range"]'
+        ) as HTMLInputElement;
         if (sliderElement) {
           const percent = 100;
-          sliderElement.style.setProperty('--value', `${percent}%`);
+          sliderElement.style.setProperty("--value", `${percent}%`);
         }
       }
     }, [timestamps.length, timeIndex]);
@@ -681,7 +697,7 @@ export const MemeHorseRace = observer(
       setTimeIndex(value);
       // 更新进度条颜色
       const percent = (value / (timestamps.length - 1)) * 100;
-      e.target.style.setProperty('--value', `${percent}%`);
+      e.target.style.setProperty("--value", `${percent}%`);
     };
 
     return (

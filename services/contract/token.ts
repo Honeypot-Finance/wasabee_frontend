@@ -130,20 +130,22 @@ export class Token implements BaseContract {
   }
 
   async loadLogoURI() {
-    if (!!this.logoURI || !wallet.isInit) {
-      return;
-    }
+    // console.log("this.logoURI", this.logoURI);
 
-    if (
-      wallet.currentChain.validatedTokensInfo[this.address.toLowerCase()]
-        ?.logoURI
-    ) {
-      this.setLogoURI(
-        wallet.currentChain.validatedTokensInfo[this.address.toLowerCase()]
-          ?.logoURI
-      );
-      return;
-    }
+    // if (!!this.logoURI || !wallet.isInit) {
+    //   return;
+    // }
+
+    // if (
+    //   wallet.currentChain.validatedTokensInfo[this.address.toLowerCase()]
+    //     ?.logoURI
+    // ) {
+    //   this.setLogoURI(
+    //     wallet.currentChain.validatedTokensInfo[this.address.toLowerCase()]
+    //       ?.logoURI
+    //   );
+    //   return;
+    // }
 
     const launch = await trpcClient.projects.getProjectsByLaunchToken.query({
       chain_id: wallet.currentChainId,
