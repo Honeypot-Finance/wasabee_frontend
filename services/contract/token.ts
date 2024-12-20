@@ -129,12 +129,11 @@ export class Token implements BaseContract {
   }
 
   async loadLogoURI() {
-    if (!!this.logoURI) {
+    if (!!this.logoURI || !wallet.isInit) {
       return;
     }
 
     if (
-      wallet &&
       wallet.currentChain.validatedTokensInfo[this.address.toLowerCase()]
         ?.logoURI
     ) {

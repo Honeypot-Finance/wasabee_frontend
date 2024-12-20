@@ -27,13 +27,16 @@ import { toast } from "react-toastify";
 import { Modal, useDisclosure } from "@nextui-org/react";
 import { UpdateProjectModal } from "../[pair]";
 import TransactionHistory from "./TransactionHistory";
+import { getTokenTop10Holders } from "@/lib/algebra/graphql/clients/token";
+import BigNumber from "bignumber.js";
 
 const universalMenuItems = [
   { key: "info", label: "Token Info" },
   { key: "about", label: "About the Project" },
   { key: "txs", label: "Transactions" },
   { key: "comment", label: "Comments" },
-  { key: "priceChart", label: "Price Chart" },
+  //{ key: "priceChart", label: "Price Chart" },
+  { key: "holders", label: "Top 10 Holders" },
 ];
 
 const successMenuItems = [{ key: "votingspace", label: "Voting Space" }];
@@ -46,40 +49,60 @@ interface Transaction {
   value: string;
 }
 
-const transactionData: Transaction[] = [
-  {
-    rank: "01",
-    address: "0x0e230092509233trd1234567",
-    quantity: "51,774.3457510410643427771",
-    percentage: "30.89%",
-    value: "$34,432,134.09",
-  },
-  {
-    rank: "02",
-    address: "0x0e230092509233trd1234567",
-    quantity: "51,774.3457510410643427771",
-    percentage: "30.89%",
-    value: "$34,432,134.09",
-  },
-  {
-    rank: "03",
-    address: "0x0e230092509233trd1234567",
-    quantity: "51,774.3457510410643427771",
-    percentage: "30.89%",
-    value: "$34,432,134.09",
-  },
-  // ... 可以继续添加更多数据
-];
+interface Holder {
+  rank: string;
+  address: string;
+  quantity: string;
+  percentage: string;
+  value: string;
+}
 
 const Tabs = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract | null }) => {
     const [tab, setTab] = useState(universalMenuItems[0].key);
+    const [holders, setHolders] = useState<Holder[]>([]);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const options =
       pair?.state === 0
         ? [...universalMenuItems, ...successMenuItems]
         : universalMenuItems;
+
+    useEffect(() => {
+      const fetchHolders = async () => {
+        if (tab === "holders" && pair?.launchedToken?.address) {
+          try {
+            const holdersData = await getTokenTop10Holders(
+              pair.launchedToken.address
+            );
+
+            const formattedHolders =
+              holdersData.token?.holders.map((holder, index) => ({
+                rank: (index + 1).toString(),
+                address: holder.id,
+                quantity: BigNumber(holder.holdingValue)
+                  .dividedBy(10 ** (pair.launchedToken?.decimals || 0))
+                  .toFixed(2),
+                percentage: (
+                  (Number(holder.holdingValue) /
+                    Number(pair.depositedLaunchedTokenWithoutDecimals)) *
+                  100
+                ).toFixed(2),
+                value: BigNumber(holder.holdingValue)
+                  .dividedBy(10 ** (pair.launchedToken?.decimals || 0))
+                  .multipliedBy(Number(pair.launchedToken?.derivedUSD))
+                  .toFixed(2),
+              })) || [];
+            setHolders(formattedHolders);
+          } catch (error) {
+            console.error("Error fetching holders:", error);
+            setHolders([]);
+          }
+        }
+      };
+
+      fetchHolders();
+    }, [tab, pair?.launchedToken?.address]);
 
     return (
       <div className="relative">
@@ -345,22 +368,14 @@ const Tabs = observer(
                 </div>
               </div>
               <p className="text-center text-black">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus tincidunt nulla nec diam finibus, non faucibus dolor
-                venenatis. Integer pharetra nisi nec lorem volutpat, fringilla
-                arcu tincidunt. Morbi vehicula, justo in ultrices porttitor,
-                purus justo interdum nunc, sed elementum elit lacus ac turpis.
-                Proin lacinia tellus magna hendrerit, sed sodales erat
-                dignissim. Suspendisse potenti. Curabitur felis ut urna vehicula
-                volutpat. Vestibulum viverra arcu urna gravida suscipit. Donec
-                non ligula magna bibendum volutpat.
+                {pair?.description ?? "No description"}
               </p>
             </div>
           )}
           {tab === "txs" && (
-            <TransactionHistory 
-              pairAddress={pair?.address ?? ""} 
-              pair={pair as MemePairContract} 
+            <TransactionHistory
+              pairAddress={pair?.address ?? ""}
+              pair={pair as MemePairContract}
             />
           )}
           {tab === "comment" && (
@@ -373,7 +388,7 @@ const Tabs = observer(
               )}
             </div>
           )}
-          {tab === "priceChart" && (
+          {/* {tab === "priceChart" && (
             <div className="flex justify-center">
               <div className="w-full">
                 {console.log(
@@ -393,7 +408,7 @@ const Tabs = observer(
                   )}
               </div>
             </div>
-          )}
+          )} */}
           {tab === "votingspace" && (
             <div className="flex flex-col justify-center items-center gap-2">
               {pair &&
@@ -427,6 +442,49 @@ const Tabs = observer(
                     )}
                   </>
                 ))}
+            </div>
+          )}
+          {tab === "holders" && (
+            <div className="w-full px-4 md:px-10">
+              <h1 className="text-[var(--Heading,#0D0D0D)] text-center text-shadow-[2px_4px_0px_#AF7F3D] webkit-text-stroke-[2px] text-stroke-white font-gliker text-[40px] md:text-[64px] font-normal leading-[110%] tracking-[1.28px] mb-6 md:mb-12">
+                Top 10 Holders
+              </h1>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-left border-b-2 border-[#202020]">
+                      <th className="py-4 font-gliker text-[#202020]">Rank</th>
+                      <th className="py-4 font-gliker text-[#202020]">
+                        Address
+                      </th>
+                      <th className="py-4 font-gliker text-[#202020]">
+                        Quantity
+                      </th>
+                      <th className="py-4 font-gliker text-[#202020]">
+                        Percentage
+                      </th>
+                      {/* <th className="py-4 font-gliker text-[#202020]">Value</th> */}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {holders.map((holder, index) => (
+                      <tr key={index} className="border-b border-[#20202020]">
+                        <td className="py-4">{holder.rank}</td>
+                        <td className="py-4">
+                          <Copy
+                            content="Copy address"
+                            value={holder.address}
+                            displayContent={truncate(holder.address, 8)}
+                          />
+                        </td>
+                        <td className="py-4">{holder.quantity}</td>
+                        <td className="py-4">{holder.percentage}%</td>
+                        {/* <td className="py-4">${holder.value}</td> */}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </CardContianer>
