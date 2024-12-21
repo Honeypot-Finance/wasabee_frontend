@@ -26,9 +26,6 @@ export const VAULT_USER_FRAMGMENT = gql`
 export const VAULT_SHARE_FRAGMENT = gql`
   fragment VaultSharesField on VaultShare {
     id
-    user {
-      ...VaultUserField
-    }
     vault {
       ...VaultField
     }
@@ -84,9 +81,6 @@ export const SINGLE_VAULT_DETAILS = gql`
       totalShares
       vaultShares {
         id
-        user {
-          id
-        }
         vaultShareBalance
       }
       vaultDeposits(

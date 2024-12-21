@@ -13756,9 +13756,6 @@ export const SingleVaultDetailsDocument = gql`
     totalShares
     vaultShares {
       id
-      user {
-        id
-      }
       vaultShareBalance
     }
     vaultDeposits(orderBy: createdAtTimestamp, orderDirection: desc, first: 100) {
