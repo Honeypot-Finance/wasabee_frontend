@@ -79,7 +79,7 @@ const Tabs = observer(
             const formattedHolders =
               holdersData.token?.holders.map((holder, index) => ({
                 rank: (index + 1).toString(),
-                address: holder.id,
+                address: holder.account.id,
                 quantity: BigNumber(holder.holdingValue)
                   .dividedBy(10 ** (pair.launchedToken?.decimals || 0))
                   .toFixed(2),
@@ -468,7 +468,10 @@ const Tabs = observer(
                   </thead>
                   <tbody>
                     {holders.map((holder, index) => (
-                      <tr key={index} className="border-b border-[#20202020]">
+                      <tr
+                        key={index}
+                        className=" border-b border-[#20202020] text-slate-950"
+                      >
                         <td className="py-4">{holder.rank}</td>
                         <td className="py-4">
                           <Copy
