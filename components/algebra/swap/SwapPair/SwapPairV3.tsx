@@ -143,14 +143,24 @@ const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
   };
 
   useEffect(() => {
-    const initializeTokens = () => {
+    const initializeTokens = async () => {
       if (fromTokenAddress) {
         const token = Token.getToken({ address: fromTokenAddress });
+        await token.init(false, {
+          loadIndexerTokenData: true,
+          loadLogoURI: true,
+        });
+
+        if (!token) {
+          return;
+        }
+
+        console.log("token", token);
         handleInputSelect(
           new AlgebraToken(
             wallet.currentChainId,
             token.address,
-            token.decimals,
+            Number(token.decimals),
             token.symbol,
             token.name
           )
@@ -159,11 +169,19 @@ const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
 
       if (toTokenAddress) {
         const token = Token.getToken({ address: toTokenAddress });
+        await token.init(false, {
+          loadIndexerTokenData: true,
+          loadLogoURI: true,
+        });
+        if (!token) {
+          return;
+        }
+        console.log("token", token);
         handleOutputSelect(
           new AlgebraToken(
             wallet.currentChainId,
             token.address,
-            token.decimals,
+            Number(token.decimals),
             token.symbol,
             token.name
           )
