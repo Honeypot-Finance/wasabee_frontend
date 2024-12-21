@@ -6,6 +6,7 @@ import { ChartDataResponse, resolutionType } from "./priceFeed/priceFeedTypes";
 import { wallet } from "./wallet";
 import { trpcClient } from "@/lib/trpc";
 import { dayjs } from "@/lib/dayjs";
+import { AlgebraPoolContract } from "./contract/algebra/algebra-pool-contract";
 
 type Range = "5M" | "15M" | "30M" | "4H" | "1D";
 
@@ -61,7 +62,8 @@ export const chartTimeRanges: {
 class Chart {
   isLoading = false;
   showChart = true;
-  chartTarget: Token | PairContract | undefined = undefined;
+  chartTarget: Token | PairContract | AlgebraPoolContract | undefined =
+    undefined;
   tokenNumber: 0 | 1 = 0;
   currencyCode: "USD" | "TOKEN" = "USD";
   range: Range = "5M";
@@ -130,9 +132,15 @@ class Chart {
 
   get TargetLogoDisplay(): Token[] {
     if (this.chartTarget instanceof Token) {
+      this.chartTarget.init();
       return [this.chartTarget];
     } else if (this.chartTarget instanceof PairContract) {
+      this.chartTarget.token0.init();
+      this.chartTarget.token1.init();
       return [this.chartTarget.token0, this.chartTarget.token1];
+    } else if (this.chartTarget instanceof AlgebraPoolContract) {
+      this.chartTarget.init();
+      return [this.chartTarget.token0.value!, this.chartTarget.token1.value!];
     } else {
       return [];
     }
@@ -216,7 +224,9 @@ class Chart {
     this.showChart = !this.showChart;
   }
 
-  setChartTarget(target: Token | PairContract | undefined) {
+  setChartTarget(
+    target: Token | PairContract | AlgebraPoolContract | undefined
+  ) {
     this.chartTarget = target;
   }
 

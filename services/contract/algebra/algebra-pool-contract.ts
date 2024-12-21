@@ -108,6 +108,8 @@ export class AlgebraPoolContract implements BaseContract {
     ]);
 
     this.isInit = true;
+
+    return this;
   }
 
   setData({ ...args }: Partial<AlgebraPoolContract>) {

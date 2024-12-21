@@ -25,6 +25,7 @@ import { Token } from "@/services/contract/token";
 import { PairContract } from "@/services/contract/pair-contract";
 import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
 import { wallet } from "@/services/wallet";
+import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
 
 interface SwapPairV3Props {
   fromTokenAddress?: string;
@@ -193,21 +194,41 @@ const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
   }, [fromTokenAddress, toTokenAddress]);
 
   useEffect(() => {
-    if (baseCurrency) {
+    if (baseCurrency && quoteCurrency) {
+      const pairContract = new AlgebraPoolContract({
+        address: computePoolAddress({
+          tokenA: baseCurrency.wrapped,
+          tokenB: quoteCurrency.wrapped,
+        }),
+      });
+      pairContract.init().then((pair) => {
+        chart.setChartLabel(`${baseCurrency.symbol}/${quoteCurrency.symbol}`);
+        chart.setChartTarget(pairContract);
+        chart.setCurrencyCode("TOKEN");
+        chart.setTokenNumber(
+          baseCurrency.wrapped.address.toLowerCase() ===
+            pair?.token0.value?.address.toLowerCase()
+            ? 1
+            : 0
+        );
+      });
+    } else if (baseCurrency) {
       chart.setChartLabel(`${baseCurrency.symbol}`);
-      chart.setChartTarget(
-        Token.getToken({ address: baseCurrency.wrapped.address })
-      );
-      chart.setCurrencyCode("USD");
+      Token.getToken({ address: baseCurrency.wrapped.address })
+        .init()
+        .then((token) => {
+          chart.setChartTarget(token);
+          chart.setCurrencyCode("USD");
+        });
     } else if (quoteCurrency) {
       chart.setChartLabel(`${quoteCurrency.symbol}`);
-      chart.setChartTarget(
-        Token.getToken({ address: quoteCurrency.wrapped.address })
-      );
-      chart.setCurrencyCode("USD");
+      Token.getToken({ address: quoteCurrency.wrapped.address })
+        .init()
+        .then((token) => {
+          chart.setChartTarget(token);
+          chart.setCurrencyCode("USD");
+        });
     }
-
-    console.log("chart.getChartTarget()", chart.chartTarget);
   }, [baseCurrency, quoteCurrency]);
 
   return (

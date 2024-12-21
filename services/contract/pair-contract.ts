@@ -279,6 +279,7 @@ export class PairContract implements BaseContract {
       }
     }
     this.isInit = true;
+    return this;
   }
 
   removeLiquidity = new AsyncState(async (percent: number) => {

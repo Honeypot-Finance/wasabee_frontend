@@ -123,13 +123,24 @@ const SwapParamsV3 = () => {
   }, [trade, tradeState.fee]);
 
   const { realizedLPFee, priceImpact } = useMemo(() => {
-    if (!trade || !trade.priceImpact || !trade.inputAmount)
-      return { realizedLPFee: undefined, priceImpact: undefined };
+    try {
+      if (
+        !trade ||
+        !trade.priceImpact ||
+        !trade.inputAmount ||
+        !trade.outputAmount
+      ) {
+        return { realizedLPFee: undefined, priceImpact: undefined };
+      }
 
-    const realizedLpFeePercent = computeRealizedLPFeePercent(trade);
-    const realizedLPFee = trade.inputAmount.multiply(realizedLpFeePercent);
-    const priceImpact = trade?.priceImpact?.subtract(realizedLpFeePercent);
-    return { priceImpact, realizedLPFee };
+      const realizedLpFeePercent = computeRealizedLPFeePercent(trade);
+      const realizedLPFee = trade.inputAmount.multiply(realizedLpFeePercent);
+      const priceImpact = trade.priceImpact.subtract(realizedLpFeePercent);
+      return { priceImpact, realizedLPFee };
+    } catch (error) {
+      console.error("Error calculating fees:", error);
+      return { realizedLPFee: undefined, priceImpact: undefined };
+    }
   }, [trade]);
 
   const LPFeeString = realizedLPFee

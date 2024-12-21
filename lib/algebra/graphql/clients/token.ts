@@ -12,6 +12,26 @@ import {
   MultipleTokensDocument,
 } from "../generated/graphql";
 
+type SingleTokenQueryType = {
+  __typename?: "Query";
+  token?: {
+    __typename?: "Token";
+    id: string;
+    symbol: string;
+    name: string;
+    decimals: string;
+    derivedMatic: string;
+    derivedUSD: string;
+    initialUSD: string;
+    txCount: string;
+    holderCount: string;
+    pot2Pump?: {
+      __typename?: "Pot2Pump";
+      id: string;
+    } | null;
+  } | null;
+};
+
 export async function getTokenTop10Holders(tokenId: string) {
   const tokenQuery = await infoClient.query<
     TokenTop10HoldersQuery,
@@ -27,7 +47,7 @@ export async function getTokenTop10Holders(tokenId: string) {
 export async function getSingleTokenData(tokenId: string) {
   if (!tokenId || !isAddress(tokenId)) return;
   const tokenQuery = await infoClient.query<
-    SingleTokenQuery,
+    SingleTokenQueryType,
     SingleTokenQueryVariables
   >({
     query: SingleTokenDocument,
@@ -46,6 +66,6 @@ export async function getMultipleTokensData(tokenIds: string[]) {
     query: MultipleTokensDocument,
     variables: { tokenIds },
   });
-
+  tokenQuery.data.tokens;
   return tokenQuery.data;
 }

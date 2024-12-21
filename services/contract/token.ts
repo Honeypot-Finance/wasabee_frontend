@@ -225,6 +225,8 @@ export class Token implements BaseContract {
     });
 
     this.isInit = true;
+
+    return this;
   }
 
   async approveIfNoAllowance({

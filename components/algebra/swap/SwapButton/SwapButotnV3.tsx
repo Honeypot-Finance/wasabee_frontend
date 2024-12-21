@@ -44,11 +44,6 @@ const SwapButtonV3 = () => {
     typedValue
   );
 
-  // console.log("currencies[SwapField.INPUT]", currencies[SwapField.INPUT]);
-  // console.log("currencies[SwapField.OUTPUT]", currencies[SwapField.OUTPUT]);
-  // console.log("inputError", wrapInputError);
-  // console.log("loading", isWrapLoading);
-
   const wrapToast = useToastify({
     title: wrapType === WrapType.WRAP ? "Wrap" : "Unwrap",
     message: isWrapLoading
@@ -92,10 +87,15 @@ const SwapButtonV3 = () => {
   );
 
   const priceImpactSeverity = useMemo(() => {
-    if (!trade) return 4;
-    const realizedLpFeePercent = computeRealizedLPFeePercent(trade);
-    const priceImpact = trade?.priceImpact?.subtract(realizedLpFeePercent);
-    return warningSeverity(priceImpact);
+    try {
+      if (!trade || !trade.priceImpact) return 4;
+      const realizedLpFeePercent = computeRealizedLPFeePercent(trade);
+      const priceImpact = trade?.priceImpact?.subtract(realizedLpFeePercent);
+      return warningSeverity(priceImpact);
+    } catch (error) {
+      console.error("Error calculating price impact:", error);
+      return 4;
+    }
   }, [trade]);
 
   const showApproveFlow =
