@@ -114,8 +114,6 @@ export function AllAquaberaVaults() {
           table: "w-full",
           thead: "w-full",
         }}
-        selectionMode="single"
-        onRowAction={(key) => router.push(`/vault/${key}`)}
       >
         <TableHeader>
           <TableColumn key="pair">
@@ -232,21 +230,52 @@ export function AllAquaberaVaults() {
             return (
               <TableRow
                 key={vault.id}
-                className="cursor-pointer hover:bg-[#F7931A10]"
+                className="hover:bg-[#F7931A10]"
               >
                 <TableCell>
-                  <div className="flex items-center gap-2">
+                  <Link 
+                    href={`/vault/${vault.id}`}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
                     {vault.tokenA && <TokenLogo token={tokenA} />}
                     {vault.tokenB && <TokenLogo token={tokenB} />}
                     <span>
                       {tokenA.symbol}/{tokenB.symbol}
                     </span>
-                  </div>
+                  </Link>
                 </TableCell>
-                <TableCell>{vault.id}</TableCell>
-                <TableCell>{tvl}</TableCell>
-                <TableCell>{volume}</TableCell>
-                <TableCell>{fees}</TableCell>
+                <TableCell>
+                  <Link 
+                    href={`/vault/${vault.id}`}
+                    className="cursor-pointer hover:text-[#F7931A]"
+                  >
+                    {vault.id}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <Link 
+                    href={`/vault/${vault.id}`}
+                    className="cursor-pointer"
+                  >
+                    {tvl}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <Link 
+                    href={`/vault/${vault.id}`}
+                    className="cursor-pointer"
+                  >
+                    {volume}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <Link 
+                    href={`/vault/${vault.id}`}
+                    className="cursor-pointer"
+                  >
+                    {fees}
+                  </Link>
+                </TableCell>
               </TableRow>
             );
           })}

@@ -101,7 +101,7 @@ export default function VaultDetail() {
 
       loadVaultData();
     }
-  }, [address, wallet.isInit]);
+  }, [address]);
 
   const userBalance = useReadErc20BalanceOf({
     address: address as `0x${string}`,
