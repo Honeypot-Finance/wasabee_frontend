@@ -324,32 +324,36 @@ export class Token implements BaseContract {
     if (this.indexerDataLoaded && !option?.force) {
       return;
     }
-    const indexerTokenData =
-      await trpcClient.indexerFeedRouter.getPairTokenData.query({
-        tokenAddress: this.address,
-        chainId: wallet.currentChainId.toString(),
-      });
+    // const indexerTokenData =
+    //   await trpcClient.indexerFeedRouter.getPairTokenData.query({
+    //     tokenAddress: this.address,
+    //     chainId: wallet.currentChainId.toString(),
+    //   });
 
-    //console.log("indexerTokenData", indexerTokenData);
+    // //console.log("indexerTokenData", indexerTokenData);
 
-    if (indexerTokenData.status === "success") {
-      Object.assign(this, indexerTokenData.data);
+    // if (indexerTokenData.status === "success") {
+    //   Object.assign(this, indexerTokenData.data);
+    // }
+
+    const indexerTokenData = await getSingleTokenData(
+      this.address.toLowerCase()
+    );
+
+    if (!indexerTokenData) {
+      return;
     }
 
-    // const indexerTokenData = await getSingleTokenData(
-    //   this.address.toLowerCase()
-    // );
+    console.log(
+      "indexerTokenData.token?.derivedUSD",
+      indexerTokenData.token?.symbol,
+      indexerTokenData.token?.derivedUSD
+    );
 
-    // console.log(
-    //   "indexerTokenData.token?.derivedUSD",
-    //   indexerTokenData.token?.symbol,
-    //   indexerTokenData.token?.derivedUSD
-    // );
-
-    // Object.assign(this, {
-    //   ...indexerTokenData.token,
-    //   derivedETH: indexerTokenData.token?.derivedMatic,
-    // });
+    Object.assign(this, {
+      ...indexerTokenData.token,
+      derivedETH: indexerTokenData.token?.derivedMatic,
+    });
 
     this.indexerDataLoaded = true;
   }

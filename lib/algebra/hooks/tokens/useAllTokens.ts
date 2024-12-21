@@ -22,7 +22,7 @@ export function useAllTokens(showNativeToken: boolean = true) {
   const tokensBlackList: Address[] = useMemo(() => [], []);
 
   const mergedTokens = useMemo(() => {
-    const tokens = new Map<Address, TokenFieldsFragment>();
+    const tokens = new Map<Address, Partial<TokenFieldsFragment>>();
 
     if (!allTokens) {
       const _importedTokens = Object.values(importedTokens[chainId] || []);
@@ -30,10 +30,6 @@ export function useAllTokens(showNativeToken: boolean = true) {
         tokens.set(token.id.toLowerCase() as Address, {
           ...token,
           derivedMatic: 0,
-          derivedUSD: undefined,
-          initialUSD: undefined,
-          txCount: undefined,
-          holderCount: undefined,
         });
       }
       // return [...tokens].map(([, token]) => ({ ...token }));
@@ -47,10 +43,6 @@ export function useAllTokens(showNativeToken: boolean = true) {
         name: DEFAULT_NATIVE_NAME,
         decimals: 18,
         derivedMatic: 1,
-        derivedUSD: undefined,
-        initialUSD: undefined,
-        txCount: undefined,
-        holderCount: undefined,
       });
 
     for (const token of allTokens.tokens.filter(
@@ -65,10 +57,6 @@ export function useAllTokens(showNativeToken: boolean = true) {
       tokens.set(token.id.toLowerCase() as Address, {
         ...token,
         derivedMatic: 0,
-        derivedUSD: undefined,
-        initialUSD: undefined,
-        txCount: undefined,
-        holderCount: undefined,
       });
     }
 
