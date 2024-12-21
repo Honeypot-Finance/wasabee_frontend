@@ -1,5 +1,6 @@
 import { STABLECOINS } from "@/data/algebra/tokens";
 import {
+  ADDRESS_ZERO,
   Currency,
   CurrencyAmount,
   Price,
@@ -16,7 +17,7 @@ export function useUSDCPrice(currency: Currency | undefined) {
 
   const { data: token } = useSingleTokenQuery({
     variables: {
-      tokenId: currency ? currency.wrapped.address.toLowerCase() : "",
+      tokenId: currency?.wrapped.address.toLowerCase() || ADDRESS_ZERO,
     },
   });
 

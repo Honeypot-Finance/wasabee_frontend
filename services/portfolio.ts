@@ -52,7 +52,7 @@ class Portfolio {
       console.log("allTokenIds", allTokenIds);
       const tokensData = await getMultipleTokensData(allTokenIds);
       console.log("tokensData", tokensData);
-      const tokens = tokensData.tokens.map((token) =>
+      const tokens = tokensData?.tokens.map((token) =>
         Token.getToken({
           ...token,
           address: token.id.toLowerCase(),
@@ -62,9 +62,10 @@ class Portfolio {
       );
       // Filter tokens with balance
 
-      await Promise.all(tokens.map((token) => token.getBalance()));
+      await Promise.all(tokens?.map((token) => token.getBalance()) ?? []);
 
-      this.tokens = tokens.filter((token) => token.balance.toNumber() > 0);
+      this.tokens =
+        tokens?.filter((token) => token.balance.toNumber() > 0) ?? [];
 
       console.log("this.tokens", this.tokens);
 

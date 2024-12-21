@@ -1,15 +1,7 @@
 import { poolsColumns } from "@/components/algebra/common/Table/poolsColumns";
 import { useEffect, useMemo } from "react";
 import { Address } from "viem";
-import useSWR from "swr";
-import PoolsTable from "@/components/algebra/common/Table/poolsTable";
 import { usePositions } from "@/lib/algebra/hooks/positions/usePositions";
-import {
-  POOL_MAX_APR_API,
-  fetcher,
-  POOL_AVG_APR_API,
-  ETERNAL_FARMINGS_API,
-} from "@/data/algebra/api";
 import { farmingClient } from "@/lib/algebra/graphql/clients";
 import {
   usePoolsListQuery,
@@ -32,19 +24,6 @@ const MyPoolsList = () => {
       client: farmingClient,
     });
   const { positions, loading: isPositionsLoading } = usePositions();
-
-  const { data: poolsMaxApr, isLoading: isPoolsMaxAprLoading } = useSWR(
-    POOL_MAX_APR_API,
-    fetcher
-  );
-  const { data: poolsAvgApr, isLoading: isPoolsAvgAprLoading } = useSWR(
-    POOL_AVG_APR_API,
-    fetcher
-  );
-  const { data: farmingsAPR, isLoading: isFarmingsAPRLoading } = useSWR(
-    ETERNAL_FARMINGS_API,
-    fetcher
-  );
 
   const isLoading =
     isPoolsListLoading ||
@@ -74,20 +53,14 @@ const MyPoolsList = () => {
           (farming) => farming.pool === id
         );
 
-        const poolMaxApr =
-          poolsMaxApr && poolsMaxApr[id]
-            ? Number(poolsMaxApr[id].toFixed(2))
-            : 0;
-        const poolAvgApr =
-          poolsAvgApr && poolsAvgApr[id]
-            ? Number(poolsAvgApr[id].toFixed(2))
-            : 0;
-        const farmApr =
-          activeFarming && farmingsAPR && farmingsAPR[activeFarming.id] > 0
-            ? farmingsAPR[activeFarming.id]
-            : 0;
-
-        const avgApr = farmApr + poolAvgApr;
+        const poolMaxApr = !!Number(totalValueLockedUSD)
+          ? (Number(currentPool.feesUSD) * 365) / Number(totalValueLockedUSD)
+          : 0;
+        const poolAvgApr = !!Number(totalValueLockedUSD)
+          ? (Number(currentPool.feesUSD) * 365) / Number(totalValueLockedUSD)
+          : 0;
+        const farmApr = 0;
+        const avgApr = poolAvgApr;
 
         return {
           id: id as Address,
@@ -109,15 +82,7 @@ const MyPoolsList = () => {
         };
       }
     );
-  }, [
-    isLoading,
-    pools,
-    positions,
-    activeFarmings,
-    poolsMaxApr,
-    poolsAvgApr,
-    farmingsAPR,
-  ]);
+  }, [isLoading, pools, positions, activeFarmings]);
 
   return (
     <div>

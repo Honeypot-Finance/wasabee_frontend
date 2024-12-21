@@ -1,3 +1,4 @@
+import { isAddress } from "viem";
 import { infoClient } from ".";
 import {
   TokenTop10HoldersDocument,
@@ -24,6 +25,7 @@ export async function getTokenTop10Holders(tokenId: string) {
 }
 
 export async function getSingleTokenData(tokenId: string) {
+  if (!tokenId || !isAddress(tokenId)) return;
   const tokenQuery = await infoClient.query<
     SingleTokenQuery,
     SingleTokenQueryVariables
@@ -36,6 +38,7 @@ export async function getSingleTokenData(tokenId: string) {
 }
 
 export async function getMultipleTokensData(tokenIds: string[]) {
+  if (!tokenIds || tokenIds.length === 0) return;
   const tokenQuery = await infoClient.query<
     MultipleTokensQuery,
     MultipleTokensQueryVariables
