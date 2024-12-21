@@ -44,12 +44,25 @@ export async function getVaultPageData(): Promise<VaultsSortedByHoldersQuery> {
 export async function getSingleVaultDetails(
   vaultId: string
 ): Promise<SingleVaultDetailsQuery> {
-  const result = await infoClient.query<SingleVaultDetailsQuery>({
-    query: SingleVaultDetailsDocument,
-    variables: {
-      vaultId: vaultId.toLowerCase(),
-    },
-  });
+  try {
+    const result = await infoClient.query<SingleVaultDetailsQuery>({
+      query: SingleVaultDetailsDocument,
+      variables: {
+        vaultId: vaultId.toLowerCase(),
+      },
+    });
 
-  return result.data;
+    if (!result.data) {
+      throw new Error('No data returned from query');
+    }
+
+    // Add data validation and transformation here if needed
+    return result.data;
+  } catch (error) {
+    console.error('Error fetching vault details:', error);
+    // Return an empty or default response structure
+    return {
+      vault: null
+    } as SingleVaultDetailsQuery;
+  }
 }
