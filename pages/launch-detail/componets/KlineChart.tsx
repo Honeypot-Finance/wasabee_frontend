@@ -62,7 +62,7 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
     if (chartCreated && chartRef?.current?.parentElement) {
       const newWidth = chartRef.current.parentElement.clientWidth - 48;
       chartCreated.resize(newWidth, height);
-      
+
       // Reload data to ensure correct display
       if (candleSeries && volumeSeries && chartData.length) {
         volumeSeries.setData(
@@ -74,7 +74,7 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
         );
         candleSeries.setData(chartData);
       }
-      
+
       chartCreated.timeScale().fitContent();
     }
   }, [chartCreated, height, candleSeries, volumeSeries, chartData]);
@@ -122,7 +122,7 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
 
     const chartInstance = LightweightCharts.createChart(chartRef.current, {
       width: (chartRef.current.parentElement?.clientWidth || 600) - 48,
-      height: typeof height === 'string' ? parseInt(height) : height,
+      height: typeof height === "string" ? parseInt(height) : height,
       layout: {
         background: { color: "#202020" },
         textColor: "rgba(255, 255, 255, 0.5)",
@@ -210,7 +210,11 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
         <div className="flex items-center gap-2">
           <div className="flex items-center">
             {chart.TargetLogoDisplay.map((token: Token) => (
-              <TokenLogo key={token.address} token={token} />
+              <>
+                {token && token.address && (
+                  <TokenLogo key={token.address} token={token} />
+                )}
+              </>
             ))}
           </div>
           <span className="text-white text-lg font-bold">
@@ -262,7 +266,7 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
             onClick={() => setIsTimeRangeOpen(!isTimeRangeOpen)}
             className="inline-flex justify-center w-full rounded-2xl border border-[#202020] bg-white px-4 py-2 text-[#202020] text-sm font-medium shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] focus:outline-none space-x-0.5"
           >
-            <span>{chart.range || 'Select Range'}</span>
+            <span>{chart.range || "Select Range"}</span>
             <ChevronDown className="size-4" />
           </button>
 

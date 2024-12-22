@@ -44,11 +44,13 @@ export function useFarmingDepositRewardsEarned({
   }, [farming, positionId]);
 
   const formattedRewardEarned = rewardToken?.token
-    ? Number(formatUnits(rewardEarned, rewardToken.token.decimals))
+    ? Number(formatUnits(rewardEarned, Number(rewardToken.token.decimals)))
     : 0;
 
   const formattedBonusRewardEarned = bonusRewardToken?.token
-    ? Number(formatUnits(bonusRewardEarned, bonusRewardToken.token.decimals))
+    ? Number(
+        formatUnits(bonusRewardEarned, Number(bonusRewardToken.token.decimals))
+      )
     : 0;
 
   const formattedTotalEarned =

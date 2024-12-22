@@ -29,6 +29,7 @@ export function useAllTokens(showNativeToken: boolean = true) {
       for (const token of _importedTokens) {
         tokens.set(token.id.toLowerCase() as Address, {
           ...token,
+          decimals: token.decimals.toString(),
           derivedMatic: 0,
         });
       }
@@ -41,7 +42,7 @@ export function useAllTokens(showNativeToken: boolean = true) {
         id: ADDRESS_ZERO,
         symbol: DEFAULT_NATIVE_SYMBOL,
         name: DEFAULT_NATIVE_NAME,
-        decimals: 18,
+        decimals: "18",
         derivedMatic: 1,
       });
 
@@ -57,6 +58,7 @@ export function useAllTokens(showNativeToken: boolean = true) {
       tokens.set(token.id.toLowerCase() as Address, {
         ...token,
         derivedMatic: 0,
+        decimals: token.decimals.toString(),
       });
     }
 

@@ -11,13 +11,15 @@ export function useFarmingRewardRates(farming: Farming) {
   const [rewardRate, bonusRewardRate] = rates || [BigInt(0), BigInt(0)];
 
   const rewardRatePerDay =
-    Number(formatUnits(rewardRate, farming.rewardToken.decimals)) *
+    Number(formatUnits(rewardRate, Number(farming.rewardToken.decimals))) *
     60 *
     60 *
     24;
 
   const bonusRewardRatePerDay =
-    Number(formatUnits(bonusRewardRate, farming.bonusRewardToken?.decimals)) *
+    Number(
+      formatUnits(bonusRewardRate, Number(farming.bonusRewardToken?.decimals))
+    ) *
     60 *
     60 *
     24;

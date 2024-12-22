@@ -46,11 +46,11 @@ export function useFarmingRewardsEarned({
   }, [deposits, farming]);
 
   const formattedRewardEarned = Number(
-    formatUnits(rewardEarned, farming.rewardToken.decimals)
+    formatUnits(rewardEarned, Number(farming.rewardToken.decimals))
   );
 
   const formattedBonusRewardEarned = Number(
-    formatUnits(bonusRewardEarned, farming.bonusRewardToken?.decimals)
+    formatUnits(bonusRewardEarned, Number(farming.bonusRewardToken?.decimals))
   );
 
   const formattedTotalEarned =

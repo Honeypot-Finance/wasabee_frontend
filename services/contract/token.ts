@@ -346,14 +346,12 @@ export class Token implements BaseContract {
       return;
     }
 
-    console.log(
-      "indexerTokenData.token?.derivedUSD",
-      indexerTokenData.token?.symbol,
-      indexerTokenData.token?.derivedUSD
-    );
+    console.log(indexerTokenData.token);
 
     Object.assign(this, {
       ...indexerTokenData.token,
+      address: indexerTokenData.token?.id,
+      decimals: indexerTokenData.token?.decimals.toString(),
       derivedETH: indexerTokenData.token?.derivedMatic,
     });
 

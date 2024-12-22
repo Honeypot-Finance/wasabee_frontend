@@ -17,7 +17,9 @@ export function useRewardEarnedUSD({
   return useMemo(() => {
     if (!token || !nativePrice) return 0;
 
-    const formattedRewardEarned = Number(formatUnits(reward, token.decimals));
+    const formattedRewardEarned = Number(
+      formatUnits(reward, Number(token.decimals))
+    );
 
     const rewardUSD =
       token.derivedMatic *
