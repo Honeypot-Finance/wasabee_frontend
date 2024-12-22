@@ -33,75 +33,76 @@ export default function VaultDetail() {
   );
 
   useEffect(() => {
-    if (!wallet.isInit) return;
-    if (address && isAddress(address as string)) {
+    if (
+      !wallet.isInit ||
+      !wallet.account ||
+      !address ||
+      !isAddress(address as string)
+    )
+      return;
+
+    // Fetch token addresses and pool data
+    const loadVaultData = async () => {
       const vaultContract = new ICHIVaultContract({
         address: address as Address,
       });
 
       setVault(vaultContract);
 
-      console.log(vaultContract);
+      const token0Address = await vaultContract.contract.read.token0();
+      const token1Address = await vaultContract.contract.read.token1();
 
-      // Fetch token addresses and pool data
-      const loadVaultData = async () => {
-        const token0Address = await vaultContract.contract.read.token0();
-        const token1Address = await vaultContract.contract.read.token1();
+      const token0 = Token.getToken({ address: token0Address });
+      const token1 = Token.getToken({ address: token1Address });
 
-        const token0 = Token.getToken({ address: token0Address });
-        const token1 = Token.getToken({ address: token1Address });
+      await token0.init();
+      await token1.init();
 
-        await token0.init();
-        await token1.init();
+      setTokenA(token0);
+      setTokenB(token1);
 
-        setTokenA(token0);
-        setTokenB(token1);
+      // Get total supply
+      const supply = await vaultContract.contract.read.totalSupply();
+      setTotalSupply(supply);
 
-        // Get total supply
-        const supply = await vaultContract.contract.read.totalSupply();
-        setTotalSupply(supply);
+      const shares = await vaultContract.getBalanceOf(wallet.account);
+      setUserShares(shares);
 
-        // Get user shares if wallet connected
-        if (wallet.account) {
-          const shares = await vaultContract.getBalanceOf(wallet.account);
-          setUserShares(shares);
-        }
-        // Get vault data from subgraph
-        const vaultDetails = await getSingleVaultDetails(address as string);
-        setVaultData(vaultDetails);
+      // Get vault data from subgraph
+      const vaultDetails = await getSingleVaultDetails(address as string);
+      setVaultData(vaultDetails);
 
-        if (vaultDetails.ichiVault) {
-          setTvl(
-            Number(
-              vaultDetails.ichiVault.pool?.totalValueLockedUSD || 0
-            ).toLocaleString("en-US", {
+      if (vaultDetails.ichiVault) {
+        setTvl(
+          Number(
+            vaultDetails.ichiVault.pool?.totalValueLockedUSD || 0
+          ).toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          })
+        );
+
+        const latestDayData = vaultDetails.ichiVault.pool?.poolDayData[0];
+        if (latestDayData) {
+          setVolume24h(
+            Number(latestDayData.volumeUSD || 0).toLocaleString("en-US", {
               style: "currency",
               currency: "USD",
             })
           );
 
-          const latestDayData = vaultDetails.ichiVault.pool?.poolDayData[0];
-          if (latestDayData) {
-            setVolume24h(
-              Number(latestDayData.volumeUSD || 0).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })
-            );
-
-            setFees24h(
-              Number(latestDayData.feesUSD || 0).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })
-            );
-          }
+          setFees24h(
+            Number(latestDayData.feesUSD || 0).toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            })
+          );
         }
-      };
+      }
+    };
 
-      loadVaultData();
-    }
-  }, [address]);
+    loadVaultData();
+  }, [address, wallet.isInit]);
 
   const userBalance = useReadErc20BalanceOf({
     address: address as `0x${string}`,
@@ -327,7 +328,7 @@ export default function VaultDetail() {
               new AlgebraToken(
                 wallet.currentChainId,
                 tokenA.address as `0x${string}`,
-                tokenA.decimals,
+                Number(tokenA.decimals),
                 tokenA.symbol,
                 tokenA.name
               )
@@ -336,7 +337,7 @@ export default function VaultDetail() {
               new AlgebraToken(
                 wallet.currentChainId,
                 tokenB.address as `0x${string}`,
-                tokenB.decimals,
+                Number(tokenB.decimals),
                 tokenB.symbol,
                 tokenB.name
               )
