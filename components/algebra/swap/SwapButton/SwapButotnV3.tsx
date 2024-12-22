@@ -111,6 +111,8 @@ const SwapButtonV3 = () => {
     isSuccess: isSwapSuccess,
   } = useSwapCallback(trade, allowedSlippage, approvalState);
 
+  console.log(trade);
+
   console.log("swapCallbackError", swapCallbackError);
 
   const swapToast = useToastify({
@@ -159,23 +161,30 @@ const SwapButtonV3 = () => {
 
   if (showApproveFlow)
     return (
-      <Button
-        isDisabled={approvalState !== ApprovalState.NOT_APPROVED}
-        disabled={approvalState !== ApprovalState.NOT_APPROVED}
-        onPress={() => approvalCallback && approvalCallback()}
-      >
-        {approvalState === ApprovalState.PENDING ? (
-          <Loader />
-        ) : approvalState === ApprovalState.APPROVED ? (
-          "Approved"
-        ) : (
-          `Approve ${currencies[SwapField.INPUT]?.symbol}`
-        )}
-      </Button>
+      <>
+        <div>{approvalState}</div>
+        <Button
+          isDisabled={approvalState !== ApprovalState.NOT_APPROVED}
+          disabled={approvalState !== ApprovalState.NOT_APPROVED}
+          onPress={() => approvalCallback && approvalCallback()}
+        >
+          {approvalState === ApprovalState.PENDING ? (
+            <Loader />
+          ) : approvalState === ApprovalState.APPROVED ? (
+            "Approved"
+          ) : (
+            `Approve ${currencies[SwapField.INPUT]?.symbol}`
+          )}
+        </Button>
+      </>
     );
 
   return (
     <>
+      <div>{isValid}</div>
+      <div>{priceImpactTooHigh}</div>
+      <div>{swapCallbackError}</div>
+      <div>{isSwapLoading}</div>
       <Button
         onPress={() => handleSwap()}
         disabled={

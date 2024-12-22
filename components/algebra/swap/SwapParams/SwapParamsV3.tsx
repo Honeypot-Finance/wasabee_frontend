@@ -240,8 +240,6 @@ const SwapRoute = ({
   return (
     <div className="flex items-center gap-1">
       {path.map((token, idx, path) => {
-        console.log(token, idx, path);
-
         return (
           <Fragment key={`token-path-${idx}`}>
             <div>

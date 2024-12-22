@@ -126,12 +126,8 @@ const TokenCardV3 = ({
                   })
                 : undefined
             }
-            onSelect={(token) => {
-              console.log("token.isNative", token.isNative);
-              console.log(
-                "WNATIVE_EXTENDED[wallet.currentChainId].symbol",
-                WNATIVE_EXTENDED[wallet.currentChainId].symbol
-              );
+            onSelect={async (token) => {
+              await token.init();
               handleTokenSelect(
                 token.isNative
                   ? new AlgebraToken(
@@ -144,7 +140,7 @@ const TokenCardV3 = ({
                   : new AlgebraToken(
                       wallet.currentChainId,
                       token.address,
-                      token.decimals,
+                      Number(token.decimals),
                       token.symbol,
                       token.name
                     )

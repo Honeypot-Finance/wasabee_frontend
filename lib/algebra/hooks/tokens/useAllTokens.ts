@@ -30,7 +30,6 @@ export function useAllTokens(showNativeToken: boolean = true) {
         tokens.set(token.id.toLowerCase() as Address, {
           ...token,
           decimals: token.decimals.toString(),
-          derivedMatic: 0,
         });
       }
       // return [...tokens].map(([, token]) => ({ ...token }));
@@ -43,7 +42,7 @@ export function useAllTokens(showNativeToken: boolean = true) {
         symbol: DEFAULT_NATIVE_SYMBOL,
         name: DEFAULT_NATIVE_NAME,
         decimals: "18",
-        derivedMatic: 1,
+        derivedMatic: "1",
       });
 
     for (const token of allTokens.tokens.filter(

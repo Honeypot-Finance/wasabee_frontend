@@ -1,3 +1,4 @@
+import { ALGEBRA_ROUTER } from "@/data/algebra/addresses";
 import { STABLECOINS } from "@/data/algebra/tokens";
 import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
 import {
@@ -25,6 +26,7 @@ import JSBI from "jsbi";
 import { useCallback, useMemo } from "react";
 import { Address, parseUnits } from "viem";
 import { useAccount, useBalance } from "wagmi";
+import { useNeedAllowance } from "../hooks/common/useNeedAllowance";
 import { create } from "zustand";
 
 interface SwapState {
@@ -124,18 +126,18 @@ export function useSwapActionHandlers(): {
             ? ADDRESS_ZERO
             : ""
       ),
-    []
+    [selectCurrency]
   );
 
   const onSwitchTokens = useCallback(() => {
     switchCurrencies();
-  }, []);
+  }, [switchCurrencies]);
 
   const onUserInput = useCallback(
     (field: SwapFieldType, typedValue: string) => {
       typeInput(field, typedValue);
     },
-    []
+    [typeInput]
   );
 
   return {
@@ -274,6 +276,8 @@ export function useDerivedSwapInfo(): {
         trade.priceAfterSwap[trade.priceAfterSwap.length - 1].toString()
       )
     );
+
+  console.log("toggledTrade", toggledTrade);
 
   const allowedSlippage = useSwapSlippageTolerance(toggledTrade);
 
