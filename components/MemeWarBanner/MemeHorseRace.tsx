@@ -746,6 +746,11 @@ export const MemeHorseRace = observer(
       e.target.style.setProperty("--value", `${percent}%`);
     };
 
+    // Add a new function to check if the race has ended
+    const isRaceEnded = () => {
+      return Date.now() / 1000 > END_TIMESTAMP;
+    };
+
     return (
       <>
         <div className="relative space-y-6">
@@ -809,9 +814,10 @@ export const MemeHorseRace = observer(
                                       <div
                                         onClick={() =>
                                           !isDead &&
+                                          !isRaceEnded() &&
                                           handleTokenClick(racer.tokenAddress)
                                         }
-                                        className={`cursor-${isDead ? "default" : "pointer"} transform transition-transform duration-200 ${!isDead && "hover:scale-110"}`}
+                                        className={`cursor-${isDead || isRaceEnded() ? "default" : "pointer"} transform transition-transform duration-200 ${!isDead && !isRaceEnded() && "hover:scale-110"}`}
                                       >
                                         <Image
                                           src={racer.tokenOnchainData?.logoURI}
@@ -938,12 +944,12 @@ export const MemeHorseRace = observer(
                                 (deadRacer) =>
                                   deadRacer.racerAddress.toLowerCase() ===
                                   racer.tokenAddress.toLowerCase()
-                              ) ? (
+                              ) || isRaceEnded() ? (
                                 <button
                                   disabled
                                   className="px-4 py-2 bg-gray-600 cursor-not-allowed rounded text-gray-400 font-medium opacity-50"
                                 >
-                                  Dead
+                                  {isRaceEnded() ? "Race Ended" : "Dead"}
                                 </button>
                               ) : (
                                 <>
