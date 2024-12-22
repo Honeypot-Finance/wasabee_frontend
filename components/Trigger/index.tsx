@@ -8,6 +8,7 @@ interface TriggerProps<T extends string = string> {
   callback?: (option: T) => void;
   capitalize?: boolean;
   setTab: (tab: T) => void;
+  notification?: T[];
 }
 
 export function Trigger({
@@ -17,6 +18,7 @@ export function Trigger({
   callback,
   className,
   capitalize,
+  notification,
 }: TriggerProps) {
   return (
     <div
@@ -33,7 +35,7 @@ export function Trigger({
             callback && callback(option);
           }}
           className={cn(
-            "flex-1 px-3 py-1.5 text-sm font-medium transition-all rounded-lg text-center",
+            "relative flex-1 px-3 py-1.5 text-sm font-medium transition-all rounded-lg text-center",
             tab === option
               ? "bg-[#202020] text-white"
               : "text-[#202020] hover:bg-[#20202010]"
@@ -42,6 +44,9 @@ export function Trigger({
           {capitalize
             ? option.charAt(0).toUpperCase() + option.slice(1)
             : option}
+          {notification?.includes(option) && (
+            <div className="absolute top-[2px] right-[2px] translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-red-500 rounded-full z-10" />
+          )}
         </button>
       ))}
     </div>
