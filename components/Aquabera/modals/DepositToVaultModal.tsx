@@ -184,6 +184,7 @@ export function DepositToVaultModal({
                     showBalance={true}
                     label=""
                     showMaxButton={true}
+                    disableSelection
                   />
                 )}
                 {isTokenBAllowed.data && (
@@ -197,6 +198,7 @@ export function DepositToVaultModal({
                     showBalance={true}
                     label=""
                     showMaxButton={true}
+                    disableSelection
                   />
                 )}
                 <Button

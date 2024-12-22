@@ -28,10 +28,11 @@ import { ChevronDown } from "lucide-react";
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
   value?: Token | null;
+  disableSelection?: boolean;
 };
 
 export const TokenSelector = observer(
-  ({ onSelect, value }: TokenSelectorProps) => {
+  ({ onSelect, value, disableSelection }: TokenSelectorProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const state = useLocalObservable(() => ({
       search: "",
@@ -114,6 +115,7 @@ export const TokenSelector = observer(
               "dark:from-default-100 dark:to-default-50",
             ],
           }}
+          isTriggerDisabled={disableSelection}
         >
           <PopoverTrigger
             onClick={() => {

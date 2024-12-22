@@ -34,6 +34,7 @@ interface TokenSwapCardProps {
   showNativeToken?: boolean;
   disabled?: boolean;
   label?: string;
+  disableSelection?: boolean;
 }
 
 const TokenCardV3 = ({
@@ -49,6 +50,7 @@ const TokenCardV3 = ({
   showNativeToken,
   disabled,
   label,
+  disableSelection,
 }: TokenSwapCardProps) => {
   const { address: account } = useAccount();
   useWatchBlockNumber({
@@ -126,6 +128,7 @@ const TokenCardV3 = ({
                   })
                 : undefined
             }
+            disableSelection={disableSelection}
             onSelect={async (token) => {
               await token.init();
               handleTokenSelect(
