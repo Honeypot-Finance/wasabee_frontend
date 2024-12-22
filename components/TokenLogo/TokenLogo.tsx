@@ -4,6 +4,7 @@ import { Tooltip } from "@nextui-org/react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
 
 interface TokenLogoProps {
   size?: number;
@@ -22,7 +23,9 @@ export const TokenLogo = observer(
     disableTooltip,
     ...props
   }: TokenLogoProps) => {
-    token.loadLogoURI();
+    useEffect(() => {
+      token.loadLogoURI();
+    }, [token]);
     return (
       <Tooltip
         content={
