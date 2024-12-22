@@ -27,6 +27,7 @@ import { Copy } from "@/components/copy";
 import { VscCopy } from "react-icons/vsc";
 
 const START_TIMESTAMP = 1734436800;
+const END_TIMESTAMP = 1734825600;
 
 const RaceTrack = styled.div<{ totalRacers: number }>`
   width: 100%;
@@ -98,7 +99,11 @@ const RaceTrail = styled.div<{ position: number }>`
   min-width: 15%;
 `;
 
-const RacerIcon = styled.div<{ position: number; isDead?: boolean }>`
+const RacerIcon = styled.div<{
+  position: number;
+  isDead?: boolean;
+  isEndTime?: boolean;
+}>`
   position: absolute;
   left: ${(props) => (props.isDead ? 0 : props.position)}%;
   transform: translateX(-50%);
@@ -108,6 +113,17 @@ const RacerIcon = styled.div<{ position: number; isDead?: boolean }>`
   gap: 12px;
   font-size: 20px;
   opacity: ${(props) => (props.isDead ? 0.5 : 1)};
+`;
+
+const RankIndicator = styled.div`
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 `;
 
 const TimeSlider = styled.input`
@@ -543,9 +559,9 @@ export const MemeHorseRace = observer(
 
     const timestamps = [
       ...new Set(
-        maxTimelineRacer.tokenHourScore.map((score) =>
-          parseInt(score.starttimestamp)
-        )
+        maxTimelineRacer.tokenHourScore
+          .map((score) => parseInt(score.starttimestamp))
+          .filter((timestamp) => timestamp <= END_TIMESTAMP)
       ),
     ].sort((a, b) => a - b);
 
@@ -774,7 +790,20 @@ export const MemeHorseRace = observer(
                                   className="relative"
                                   position={position}
                                   isDead={isDead}
+                                  isEndTime={
+                                    timestamps[timeIndex] === END_TIMESTAMP
+                                  }
                                 >
+                                  {timestamps[timeIndex] === END_TIMESTAMP &&
+                                    rank < 3 && (
+                                      <RankIndicator>
+                                        {rank === 0
+                                          ? "👑"
+                                          : rank === 1
+                                            ? "2"
+                                            : "3"}
+                                      </RankIndicator>
+                                    )}
                                   <div className="relative">
                                     {racer.tokenOnchainData?.logoURI && (
                                       <div
