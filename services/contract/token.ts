@@ -132,24 +132,24 @@ export class Token implements BaseContract {
   async loadLogoURI() {
     // console.log("this.logoURI", this.logoURI);
 
-    // if (!!this.logoURI || !wallet.isInit) {
-    //   return;
-    // }
+    if (!!this.logoURI || !wallet.isInit) {
+      return;
+    }
 
-    // if (
-    //   wallet.currentChain.validatedTokensInfo[this.address.toLowerCase()]
-    //     ?.logoURI
-    // ) {
-    //   this.setLogoURI(
-    //     wallet.currentChain.validatedTokensInfo[this.address.toLowerCase()]
-    //       ?.logoURI
-    //   );
-    //   return;
-    // }
+    if (
+      wallet.currentChain.validatedTokensInfo[this.address.toLowerCase()]
+        ?.logoURI
+    ) {
+      this.setLogoURI(
+        wallet.currentChain.validatedTokensInfo[this.address.toLowerCase()]
+          ?.logoURI
+      );
+      return;
+    }
 
     const launch = await trpcClient.projects.getProjectsByLaunchToken.query({
       chain_id: wallet.currentChainId,
-      launch_token: this.address,
+      launch_token: this.address.toLowerCase(),
     });
 
     launch[0]?.logo_url && this.setLogoURI(launch[0].logo_url);

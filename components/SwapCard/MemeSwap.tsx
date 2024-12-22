@@ -164,7 +164,8 @@ export const LaunchDetailSwapCard = observer(
             setTab={setOperate}
             options={["Swap", "LP"]}
             callback={(tab) => setCurrentTab(tab as "Swap" | "LP")}
-            className="w-[308px] z-10 absolute top-0 transform -translate-y-1/2 left-1/2  -translate-x-1/2"
+            className="w-[308px] z-10 absolute top-0 transform -translate-y-1/2 left-1/2 -translate-x-1/2"
+            notification={memePairContract.canClaimLP ? ["LP"] : []}
           />
 
           {currentTab === "Swap" && (
@@ -179,6 +180,21 @@ export const LaunchDetailSwapCard = observer(
 
           {currentTab === "LP" && (
             <LoadingContainer isLoading={!isInit}>
+              {memePairContract.canClaimLP && (
+                <Button
+                  className="w-full relative overflow-visible"
+                  isLoading={memePairContract.claimLP.loading}
+                  onClick={() => {
+                    memePairContract.claimLP.call();
+                  }}
+                  isDisabled={!memePairContract.canClaimLP}
+                >
+                  Claim LP
+                  {memePairContract.canClaimLP && (
+                    <div className="absolute -top-0 -right-0 translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-red-500 rounded-full z-10" />
+                  )}
+                </Button>
+              )}
               <Button
                 className="w-full"
                 onClick={async () => {

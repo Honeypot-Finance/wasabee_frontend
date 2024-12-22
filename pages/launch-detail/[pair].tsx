@@ -697,18 +697,6 @@ const MemeView = observer(() => {
               <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
               {state.pair.value?.state === 0 && (
                 <>
-                  {state.pair.value?.canClaimLP && (
-                    <Button
-                      className="w-full"
-                      isLoading={state.pair.value?.claimLP.loading}
-                      onClick={() => {
-                        state.pair.value?.claimLP.call();
-                      }}
-                      isDisabled={!state.pair.value?.canClaimLP}
-                    >
-                      Claim LP
-                    </Button>
-                  )}
                   {state.pair.value?.canClaimTokens && (
                     <Button
                       className="w-full"

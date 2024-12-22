@@ -194,7 +194,20 @@ const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
   }, [fromTokenAddress, toTokenAddress]);
 
   useEffect(() => {
-    if (baseCurrency && quoteCurrency) {
+    if (
+      baseCurrency &&
+      quoteCurrency &&
+      (baseCurrency?.isNative || quoteCurrency?.isNative) &&
+      baseCurrency?.wrapped.address == quoteCurrency?.wrapped.address
+    ) {
+      chart.setChartLabel(`${baseCurrency.wrapped.symbol}`);
+      Token.getToken({ address: baseCurrency.wrapped.address })
+        .init()
+        .then((token) => {
+          chart.setChartTarget(token);
+          chart.setCurrencyCode("USD");
+        });
+    } else if (baseCurrency && quoteCurrency) {
       const pairContract = new AlgebraPoolContract({
         address: computePoolAddress({
           tokenA: baseCurrency.wrapped,
