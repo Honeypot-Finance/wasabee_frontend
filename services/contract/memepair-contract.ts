@@ -19,6 +19,8 @@ export class MemePairContract implements BaseLaunchContract {
   launchedToken: Token | undefined = undefined;
   depositedRaisedTokenWithoutDecimals: BigNumber | null = null;
   depositedLaunchedTokenWithoutDecimals: BigNumber | null = null;
+  launchedTokenBuyCount: BigNumber | null = null;
+  launchedTokenSellCount: BigNumber | null = null;
   endTime: string = "";
   startTime: string = "";
   launchedTokenProvider: string = "";

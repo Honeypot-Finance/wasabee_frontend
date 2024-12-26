@@ -22,6 +22,8 @@ export class FtoPairContract implements BaseLaunchContract {
   launchedToken: Token | undefined = undefined;
   depositedRaisedTokenWithoutDecimals: BigNumber | null = null;
   depositedLaunchedTokenWithoutDecimals: BigNumber | null = null;
+  launchedTokenBuyCount: BigNumber | null = null;
+  launchedTokenSellCount: BigNumber | null = null;
   endTime: string = "";
   startTime: string = "";
   state: number = 3;

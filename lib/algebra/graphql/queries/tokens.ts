@@ -11,6 +11,9 @@ export const TOKEN_FRAGMENT = gql`
     initialUSD
     txCount
     holderCount
+    totalSupply
+    volumeUSD
+    totalValueLockedUSD
     pot2Pump {
       id
     }

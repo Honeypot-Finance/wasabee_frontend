@@ -6,7 +6,15 @@ import dayjs from "dayjs";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import BigNumber from "bignumber.js";
 import { Token } from "@/services/contract/token";
-import { Pot2Pump } from "./type";
+import { Pot2Pump } from "../generated/graphql";
+import {
+  Pot2PumpPottingNearSuccessDocument,
+  Pot2PumpPottingHighPriceDocument,
+  Pot2PumpPottingNewTokensDocument,
+  Pot2PumpPottingNearSuccessQuery,
+  Pot2PumpPottingHighPriceQuery,
+  Pot2PumpPottingNewTokensQuery,
+} from "../generated/graphql";
 
 type SubgraphToken = {
   id: string;
@@ -18,7 +26,7 @@ type SubgraphToken = {
   totalSupply: string;
 };
 
-type Pot2PumpListData = {
+export type Pot2PumpListData = {
   pot2Pumps: Pot2Pump[];
 };
 
@@ -107,6 +115,107 @@ const pop2PumpQuery = `
   raisedTokenMinCap
   creator
 `;
+
+export const pot2PumpListToMemePairList = async (
+  pot2Pump: Partial<Pot2Pump>[]
+): Promise<MemePairContract[]> => {
+  return Promise.all(pot2Pump.map(pot2PumpToMemePair));
+};
+
+export const pot2PumpToMemePair = async (
+  pot2Pump: Partial<Pot2Pump>
+): Promise<MemePairContract> => {
+  const contract = new MemePairContract({
+    address: pot2Pump.id,
+    depositedLaunchedTokenWithoutDecimals: new BigNumber(
+      pot2Pump.DepositLaunchToken
+    ),
+    depositedRaisedTokenWithoutDecimals: new BigNumber(
+      pot2Pump.DepositRaisedToken
+    ),
+    launchedTokenProvider: pot2Pump.creator,
+    provider: pot2Pump.creator,
+    raisedTokenMinCap: new BigNumber(pot2Pump.raisedTokenMinCap),
+    participantsCount: new BigNumber(pot2Pump.participantsCount),
+    launchedTokenBuyCount: new BigNumber(pot2Pump.buyCount),
+    launchedTokenSellCount: new BigNumber(pot2Pump.sellCount),
+    endTime: pot2Pump.endTime,
+    startTime: pot2Pump.createdAt,
+    launchedToken: Token.getToken({
+      address: pot2Pump.launchToken?.id!,
+      name: pot2Pump.launchToken?.name,
+      symbol: pot2Pump.launchToken?.symbol,
+      decimals: Number(pot2Pump.launchToken?.decimals),
+      holderCount: pot2Pump.launchToken?.holderCount,
+      derivedETH: pot2Pump.launchToken?.derivedMatic,
+      totalSupplyWithoutDecimals: BigNumber(pot2Pump.launchToken?.totalSupply),
+      derivedUSD: pot2Pump.launchToken?.derivedUSD,
+      volumeUSD: pot2Pump.launchToken?.volumeUSD,
+      initialUSD: pot2Pump.launchToken?.initialUSD,
+      totalValueLockedUSD: pot2Pump.launchToken?.totalValueLockedUSD,
+    }),
+    raiseToken: Token.getToken({
+      address: pot2Pump.raisedToken?.id!,
+      name: pot2Pump.raisedToken?.name,
+      symbol: pot2Pump.raisedToken?.symbol,
+      decimals: Number(pot2Pump.raisedToken?.decimals),
+      holderCount: pot2Pump.raisedToken?.holderCount,
+      derivedETH: pot2Pump.raisedToken?.derivedMatic,
+      totalSupplyWithoutDecimals: BigNumber(pot2Pump.raisedToken?.totalSupply),
+      derivedUSD: pot2Pump.raisedToken?.derivedUSD,
+      volumeUSD: pot2Pump.raisedToken?.volumeUSD,
+      initialUSD: pot2Pump.raisedToken?.initialUSD,
+      totalValueLockedUSD: pot2Pump.raisedToken?.totalValueLockedUSD,
+    }),
+  });
+
+  contract.getProjectInfo();
+  contract.launchedToken?.loadLogoURI();
+  contract.raiseToken?.loadLogoURI();
+
+  return contract;
+};
+
+export async function fetchNearSuccessPot2Pump() {
+  const { data } = await infoClient.query<Pot2PumpPottingNearSuccessQuery>({
+    query: Pot2PumpPottingNearSuccessDocument,
+    variables: {
+      endTime: Math.floor(new Date().getTime() / 1000),
+    },
+  });
+
+  console.log("data", data.pot2Pumps);
+
+  return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
+}
+
+export async function fetchPottingNewTokens() {
+  const { data } = await infoClient.query<Pot2PumpPottingNewTokensQuery>({
+    query: Pot2PumpPottingNewTokensDocument,
+    variables: {
+      endTime: Math.floor(new Date().getTime() / 1000),
+    },
+  });
+
+  console.log(
+    "Pot2PumpPottingNewTokensDocument",
+    Pot2PumpPottingNewTokensDocument
+  );
+
+  console.log("data", data.pot2Pumps);
+
+  return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
+}
+
+export async function fetchPumpingHighPricePot2Pump() {
+  const { data } = await infoClient.query<Pot2PumpPottingHighPriceQuery>({
+    query: Pot2PumpPottingHighPriceDocument,
+  });
+
+  console.log("data", data.pot2Pumps);
+
+  return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
+}
 
 export async function fetchPairsList({
   filter,
@@ -249,9 +358,9 @@ export async function fetchMemetrackerList({
   const query = `
     query MemetrackerList {
       pot2Pumps(
-        first: 100
+        first: 25
         where: {raisedTokenReachingMinCap: true}
-        orderBy: createdAt
+        orderBy: launchToken__derivedMatic
         orderDirection: desc
       ) {
         ${pop2PumpQuery}

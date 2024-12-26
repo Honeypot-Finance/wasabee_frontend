@@ -153,6 +153,8 @@ export class Token implements BaseContract {
     });
 
     launch[0]?.logo_url && this.setLogoURI(launch[0].logo_url);
+
+    return this.logoURI;
   }
 
   setLogoURI(logoURI: string) {

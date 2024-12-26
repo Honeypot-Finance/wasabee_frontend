@@ -58,13 +58,13 @@ export const PARTICIPANT_FRAGMENT = gql`
   fragment ParticipantField on Participant {
     id
     pot2Pump {
-      ...Pot2PumpField
+      ...AccountPot2PumpField
     }
   }
 `;
 
 export const POT2PUMP_FRAGMENT = gql`
-  fragment Pot2PumpField on Pot2Pump {
+  fragment AccountPot2PumpField on Pot2Pump {
     id
   }
 `;
