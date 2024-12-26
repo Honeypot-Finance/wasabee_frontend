@@ -54,7 +54,7 @@ const SwapTransactionHistory = () => {
       <div className="p-2 sm:p-6 w-full">
         <div className="bg-[#202020] rounded-2xl overflow-hidden w-full">
           <div className="p-2 sm:p-6 w-full">
-            <div className="border border-[#5C5C5C] rounded-2xl overflow-hidden overflow-x-auto w-full">
+            <div className="border border-[#5C5C5C] rounded-2xl overflow-hidden overflow-x-auto w-full [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-[#323232] [&::-webkit-scrollbar-thumb]:bg-[#FFCD4D] [&::-webkit-scrollbar-thumb]:rounded-full [scrollbar-color:#FFCD4D_#323232] [scrollbar-width:thin]">
               <table className="w-full">
                 <thead className="bg-[#323232] text-white">
                   <tr>
@@ -71,7 +71,7 @@ const SwapTransactionHistory = () => {
                       Amount Out
                     </th>
                     <th className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base font-medium hidden sm:table-cell">
-                      Value (USD)
+                      Value
                     </th>
                     <th className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base font-medium">
                       Time
