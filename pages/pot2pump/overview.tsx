@@ -10,6 +10,7 @@ import {
   fetchPottingNewTokens,
 } from "@/lib/algebra/graphql/clients/pair";
 import { MemePairContract } from "@/services/contract/memepair-contract";
+import { wallet } from "@/services/wallet";
 
 const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   const [newTokens, setNewTokens] = useState<MemePairContract[]>();
@@ -18,6 +19,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   const [highPriceTokens, setHighPriceTokens] = useState<MemePairContract[]>();
 
   useEffect(() => {
+    if (!wallet.isInit) return;
     const fetchData = async () => {
       const [newTokensData, nearSuccessData, highPriceData] = await Promise.all(
         [
@@ -33,7 +35,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
     };
 
     fetchData();
-  }, []);
+  }, [wallet.isInit]);
 
   return (
     <div className="w-full flex justify-center px-4">
