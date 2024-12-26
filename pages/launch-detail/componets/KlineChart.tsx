@@ -22,7 +22,9 @@ interface KlineChartProps {
 
 const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
   const chartRef = useRef<HTMLDivElement>(null);
-  const [chartCreated, setChart] = useState<any | undefined>();
+  const [chartCreated, setChart] = useState<
+    LightweightCharts.IChartApi | undefined
+  >();
   const [candleSeries, setCandleSeries] = useState<any | undefined>();
   const [volumeSeries, setVolumeSeries] = useState<any | undefined>();
   const [isTimeRangeOpen, setIsTimeRangeOpen] = useState(false);
@@ -56,12 +58,12 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
         };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null);
-  }, [chart.chartData.value, chart.chartTarget]);
+  }, [chart.chartData.value, chart.chartTarget, chart.chartLabel, chart.range]);
 
   const handleResize = useCallback(() => {
     if (chartCreated && chartRef?.current?.parentElement) {
       const newWidth = chartRef.current.parentElement.clientWidth - 48;
-      chartCreated.resize(newWidth, height);
+      chartCreated.resize(newWidth, Number(height));
 
       // Reload data to ensure correct display
       if (candleSeries && volumeSeries && chartData.length) {
@@ -77,7 +79,17 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
 
       chartCreated.timeScale().fitContent();
     }
-  }, [chartCreated, height, candleSeries, volumeSeries, chartData]);
+  }, [
+    chartCreated,
+    height,
+    candleSeries,
+    volumeSeries,
+    chartData,
+    chart.chartData.value,
+    chart.chartTarget,
+    chart.chartLabel,
+    chart.range,
+  ]);
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);
@@ -115,7 +127,15 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
         title: lastPrice.toFixed(6),
       });
     }
-  }, [chartData, candleSeries, volumeSeries]);
+  }, [
+    chartData,
+    candleSeries,
+    volumeSeries,
+    chart.chartData.value,
+    chart.chartTarget,
+    chart.chartLabel,
+    chart.range,
+  ]);
 
   useLayoutEffect(() => {
     if (!chartRef.current) return;
@@ -201,7 +221,14 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
     return () => {
       chartInstance.remove();
     };
-  }, [height, chartData]);
+  }, [
+    chartData,
+    height,
+    chart.chartData.value,
+    chart.chartTarget,
+    chart.chartLabel,
+    chart.range,
+  ]);
 
   return (
     <div className="w-full relative rounded-2xl bg-[#202020] overflow-hidden p-4">

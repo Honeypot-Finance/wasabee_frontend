@@ -216,30 +216,30 @@ const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
       });
       pairContract.init().then((pair) => {
         chart.setChartLabel(`${baseCurrency.symbol}/${quoteCurrency.symbol}`);
-        chart.setChartTarget(pairContract);
         chart.setCurrencyCode("TOKEN");
         chart.setTokenNumber(
           baseCurrency.wrapped.address.toLowerCase() ===
             pair?.token0.value?.address.toLowerCase()
-            ? 1
-            : 0
+            ? 0
+            : 1
         );
+        chart.setChartTarget(pairContract);
       });
     } else if (baseCurrency) {
       chart.setChartLabel(`${baseCurrency.symbol}`);
       Token.getToken({ address: baseCurrency.wrapped.address })
         .init()
         .then((token) => {
-          chart.setChartTarget(token);
           chart.setCurrencyCode("USD");
+          chart.setChartTarget(token);
         });
     } else if (quoteCurrency) {
       chart.setChartLabel(`${quoteCurrency.symbol}`);
       Token.getToken({ address: quoteCurrency.wrapped.address })
         .init()
         .then((token) => {
-          chart.setChartTarget(token);
           chart.setCurrencyCode("USD");
+          chart.setChartTarget(token);
         });
     }
   }, [baseCurrency, quoteCurrency]);

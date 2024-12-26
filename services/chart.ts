@@ -69,7 +69,6 @@ class Chart {
   range: Range = "5M";
   chartColors = chartColorThemes.default;
   chartLabel = "";
-
   chartData = new AsyncState<
     () => Promise<ChartDataResponse | undefined>,
     ChartDataResponse | undefined
@@ -77,6 +76,14 @@ class Chart {
     if (!this.chartTarget) {
       return undefined;
     }
+
+    console.log("chartUpdate", {
+      chartTarget: this.chartTarget,
+      tokenNumber: this.tokenNumber,
+      currencyCode: this.currencyCode,
+      range: this.range,
+      timestampsByRange: this.timestampsByRange,
+    });
 
     this.isLoading = true;
 
