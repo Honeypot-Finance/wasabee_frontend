@@ -42,8 +42,6 @@ export const ACCOUNTS_WITH_ADDRESS_QUERY = gql`
       platformTxCount
       participateCount
       totalSpendUSD
-      totalEarningUSDDay
-      totalEarningUSDMonth
       transaction(first: 1, orderBy: timestamp, orderDirection: desc) {
         timestamp
       }
@@ -70,8 +68,6 @@ export const ACCOUNTS_WITHOUT_ADDRESS_QUERY = gql`
       platformTxCount
       participateCount
       totalSpendUSD
-      totalEarningUSDDay
-      totalEarningUSDMonth
       transaction(first: 1, orderBy: timestamp, orderDirection: desc) {
         timestamp
       }
@@ -143,8 +139,6 @@ export type Account = {
   platformTxCount: string;
   participateCount: string;
   totalSpendUSD: string;
-  totalEarningUSDDay: string;
-  totalEarningUSDMonth: string;
   transaction: { timestamp: string }[];
 };
 

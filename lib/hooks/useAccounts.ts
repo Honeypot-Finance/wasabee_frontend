@@ -40,8 +40,6 @@ export function useAccounts(
       memeTokenCount: parseInt(account.memeTokenHoldingCount),
       transactions: parseInt(account.platformTxCount),
       participateCount: parseInt(account.participateCount),
-      dailyEarning: parseFloat(account.totalEarningUSDDay),
-      monthlyEarning: parseFloat(account.totalEarningUSDMonth),
       lastActive: account.transaction[0]
         ? dayjs(parseInt(account.transaction[0].timestamp) * 1000).format(
             "MM/DD/YYYY, h:mm:ss A"
