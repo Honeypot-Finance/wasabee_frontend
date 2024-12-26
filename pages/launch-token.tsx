@@ -154,14 +154,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                 )}
               </div>
 
-              <Accordion
-                variant="bordered"
-                keepContentMounted
-                classNames={{
-                  content: "!p-0",
-                  base: "!p-0",
-                }}
-              >
+              <Accordion variant="bordered" keepContentMounted className="!p-0">
                 <AccordionItem
                   key="advanced"
                   aria-label="advanced"
