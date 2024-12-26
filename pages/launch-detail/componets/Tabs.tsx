@@ -32,7 +32,6 @@ import BigNumber from "bignumber.js";
 
 const universalMenuItems = [
   { key: "info", label: "Token Info" },
-  { key: "about", label: "About the Project" },
   { key: "txs", label: "Transactions" },
   { key: "comment", label: "Comments" },
   //{ key: "priceChart", label: "Price Chart" },
@@ -225,7 +224,11 @@ const Tabs = observer(
         >
           <div className="bg-[url('/images/pumping/outline-border.png')] bg-top h-12 absolute top-0 left-0 w-full bg-contain bg-repeat-x"></div>
           {tab === "info" && (
-            <div className="flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center">
+              <h1 className="text-[var(--Heading,#0D0D0D)] text-center text-shadow-[2px_4px_0px_#AF7F3D] webkit-text-stroke-[2px] text-stroke-white font-gliker text-[32px] md:text-[64px] font-normal leading-[110%] tracking-[1.28px] mb-6 md:mb-12 px-4">
+                About Project
+              </h1>
+              
               <OptionsDropdown
                 className="p-0 m-0 absolute right-2 top-2 lg:top-4 "
                 options={[
@@ -265,11 +268,7 @@ const Tabs = observer(
                 ]}
               />
               <div className="w-full overflow-hidden p-4 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-x-8">
-                <div>
-                  <h1 className="text-[var(--Heading,#0D0D0D)] text-center md:text-left text-stroke-white webkit-text-stroke-[2px] webkit-text-stroke-color-[#FFF] font-gliker text-[40px] md:text-[64px] font-normal leading-[110%] tracking-[1.28px] mb-6 md:mb-12 text-stroke-custom">
-                    Token Info
-                  </h1>
-
+                <div className="w-full md:w-[40%]">
                   <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
                     <div className="space-y-4 text-center md:text-left col-span-2 md:col-span-1">
                       <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[24px] md:text-[34px] font-normal leading-[110%] tracking-[0.68px]">
@@ -287,7 +286,7 @@ const Tabs = observer(
                         Token Symbol
                       </div>
                     </div>
-                    <div className="space-y-4 text-center md:text-left col-span-2 md:col-span-1">
+                    <div className="space-y-4 text-center md:text-left col-span-2">
                       <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[24px] md:text-[34px] font-normal leading-[110%] tracking-[0.68px]">
                         MEME
                       </div>
@@ -298,27 +297,38 @@ const Tabs = observer(
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center gap-6 w-full">
+                <div className="flex flex-col items-center gap-6 w-full md:w-[60%]">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                    <div className="w-full bg-white rounded-3xl px-4 md:px-[60px] text-center border border-black shadow-[4px_4px_0px_0px_#D29A0D] space-y-4 py-[28.5px]">
-                      <div className="text-[24px] md:text-[34px] text-stroke-black text-shadow-custom">
+                    <div className="w-full bg-white rounded-[32px] px-4 md:px-8 text-center border-[3px] border-white shadow-[4px_4px_0px_0px_#202020,-2px_4px_0px_0px_#202020] space-y-4 py-8">
+                      <div className={`text-stroke-black text-shadow-custom font-gliker ${
+                        String((pair as MemePairContract)?.depositedLaunchedToken?.toNumber()).length > 6
+                        ? 'text-[16px] md:text-[24px]' 
+                        : 'text-[24px] md:text-[34px]'
+                      }`}>
                         {(
                           pair as MemePairContract
                         )?.depositedLaunchedToken?.toNumber()}
                       </div>
-                      <div className="text-base md:text-lg text-[#0D0D0D]">
+                      <div className="text-base md:text-lg text-[#0D0D0D] font-gliker">
                         Total Supply
                       </div>
                     </div>
-                    <div className="w-full bg-white rounded-3xl px-4 md:px-[60px] text-center border border-black shadow-[4px_4px_0px_0px_#D29A0D] space-y-4 py-[28.5px]">
-                      <div className="text-[24px] md:text-[34px] text-stroke-black text-shadow-custom">
+                    <div className="w-full bg-white rounded-[32px] px-4 md:px-8 text-center border-[3px] border-white shadow-[4px_4px_0px_0px_#202020,-2px_4px_0px_0px_#202020] space-y-4 py-8">
+                      <div className={`text-stroke-black text-shadow-custom font-gliker ${
+                        String(amountFormatted(pair?.depositedRaisedToken, {
+                          decimals: 0,
+                          fixed: 3,
+                        })).length > 6
+                        ? 'text-[16px] md:text-[24px]' 
+                        : 'text-[24px] md:text-[34px]'
+                      }`}>
                         ${" "}
                         {amountFormatted(pair?.depositedRaisedToken, {
                           decimals: 0,
                           fixed: 3,
                         })}
                       </div>
-                      <div className="text-base md:text-lg text-[#0D0D0D]">
+                      <div className="text-base md:text-lg text-[#0D0D0D] font-gliker">
                         Initial Market Cap
                       </div>
                     </div>
@@ -342,34 +352,12 @@ const Tabs = observer(
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-          {tab === "about" && (
-            <div className="space-y-4 w-full px-[60px]">
-              <h1 className="text-[var(--Heading,#0D0D0D)] text-center text-shadow-[2px_4px_0px_#AF7F3D] webkit-text-stroke-[2px] text-stroke-white font-gliker text-[64px] font-normal leading-[110%] tracking-[1.28px]">
-                About the Project
-              </h1>
-              <div className="mx-auto grid grid-cols-2 gap-8 w-fit">
-                <div className="space-y-4">
-                  <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[34px] font-normal leading-[110%] tracking-[0.68px]">
-                    {pair?.launchedToken?.name}
-                  </div>
-                  <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
-                    Token Name
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[34px] font-normal leading-[110%] tracking-[0.68px]">
-                    {pair?.launchedToken?.symbol}
-                  </div>
-                  <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
-                    Token Symbol
-                  </div>
-                </div>
+              
+              <div className="w-full px-4">
+                <p className="text-center text-black">
+                  {pair?.description ?? "No description"}
+                </p>
               </div>
-              <p className="text-center text-black">
-                {pair?.description ?? "No description"}
-              </p>
             </div>
           )}
           {tab === "txs" && (

@@ -25,14 +25,14 @@ export const CreateAquaberaVault = observer(() => {
           tokenA: new AlgebraToken(
             wallet.currentChainId,
             tokenA.address,
-            tokenA.decimals,
+            Number(tokenA.decimals),
             tokenA.symbol,
             tokenA.name
           ),
           tokenB: new AlgebraToken(
             wallet.currentChainId,
             tokenB.address,
-            tokenB.decimals,
+            Number(tokenB.decimals),
             tokenB.symbol,
             tokenB.name
           ),

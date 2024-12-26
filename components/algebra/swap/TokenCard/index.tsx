@@ -90,7 +90,7 @@ const TokenCard = ({
               new AlgebraToken(
                 wallet.currentChainId,
                 token.address,
-                token.decimals,
+                Number(token.decimals),
                 token.symbol,
                 token.name
               )
