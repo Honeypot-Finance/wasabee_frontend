@@ -59,11 +59,7 @@ export function UploadImage(props: UploadImageProps): JSX.Element {
             <div className="flex justify-center items-center">
               {(props.variant === "banner" && (
                 <Image
-                  src={
-                    !!props.imagePath
-                      ? props.imagePath
-                      : "https://upload.wikimedia.org/wikipedia/commons/5/59/Empty.png"
-                  }
+                  src={props?.imagePath ?? "/images/banner-empty.png"}
                   alt="banner"
                   className="rounded-[11.712px] hover:bg-[#ECC94E20] w-[3rem] h-[3rem] self-center cursor-pointer object-fill"
                   fill

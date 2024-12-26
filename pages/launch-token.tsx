@@ -154,11 +154,25 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                 )}
               </div>
 
-              <Accordion variant="bordered" keepContentMounted>
+              <Accordion
+                variant="bordered"
+                keepContentMounted
+                classNames={{
+                  content: "!p-0",
+                  base: "!p-0",
+                }}
+              >
                 <AccordionItem
                   key="advanced"
                   aria-label="advanced"
                   title="Advanced Options"
+                  className="text-black"
+                  classNames={{
+                    title: "text-black",
+                    trigger: "text-black",
+                    content: "text-black",
+                    base: "!p-0",
+                  }}
                 >
                   <div className="flex flex-col gap-4">
                     <div>Token Amount</div>
@@ -509,7 +523,9 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                   Click icon to upload new token icon
                 </div>
                 {errors.logoUrl && (
-                  <span className="text-red-500 text-center">{errors.logoUrl.message as string}</span>
+                  <span className="text-red-500 text-center">
+                    {errors.logoUrl.message as string}
+                  </span>
                 )}
               </div>
 
@@ -533,7 +549,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-black text-base font-medium">
-                  Token Name
+                  Token Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -547,7 +563,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-black text-base font-medium">
-                  Token Symbol
+                  Token Symbol <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -559,48 +575,67 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 )}
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-black text-base font-medium">
-                  Description
-                </label>
-                <input
-                  type="text"
-                  {...register("description")}
-                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                />
-              </div>
+              <div className="custom-dashed">
+                <Accordion variant="bordered">
+                  <AccordionItem
+                    key="advanced"
+                    aria-label="advanced"
+                    title="Advanced Options"
+                    classNames={{
+                      title: "text-black/50",
+                      trigger: "text-black/50",
+                      content: "space-y-4",
+                    }}
+                  >
+                    <div className="flex flex-col gap-2">
+                      <label className="text-black text-base font-medium">
+                        Description{" "}
+                        <span className="text-black/50">(Optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        {...register("description")}
+                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
+                      />
+                    </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-black text-base font-medium">
-                  Twitter
-                </label>
-                <input
-                  type="text"
-                  {...register("twitter")}
-                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                />
-              </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-black text-base font-medium">
+                        Twitter{" "}
+                        <span className="text-black/50">(Optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        {...register("twitter")}
+                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
+                      />
+                    </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-black text-base font-medium">
-                  Website
-                </label>
-                <input
-                  type="text"
-                  {...register("website")}
-                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                />
-              </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-black text-base font-medium">
+                        Website{" "}
+                        <span className="text-black/50">(Optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        {...register("website")}
+                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
+                      />
+                    </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-black text-base font-medium">
-                  Telegram
-                </label>
-                <input
-                  type="text"
-                  {...register("telegram")}
-                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                />
+                    <div className="flex flex-col gap-2">
+                      <label className="text-black text-base font-medium">
+                        Telegram{" "}
+                        <span className="text-black/50">(Optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        {...register("telegram")}
+                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
+                      />
+                    </div>
+                  </AccordionItem>
+                </Accordion>
               </div>
 
               {state.pairAddress ? (
