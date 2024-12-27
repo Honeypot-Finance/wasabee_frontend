@@ -1,4 +1,3 @@
-import { Button as NextButton } from "@nextui-org/react";
 import {
   Modal,
   ModalContent,
@@ -8,22 +7,13 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { observer } from "mobx-react-lite";
-import { Pot2PumpPumpingService  } from "@/services/launchpad/pot2pump/pumping";
+import { Pot2PumpPumpingService } from "@/services/launchpad/pot2pump/pumping";
 import { Pot2PumpPumpingService as Pot2PumpService } from "@/services/launchpad/pot2pump/pot2Pump";
 import { Button } from "@/components/button/button-next";
 import { FaSlidersH } from "react-icons/fa";
-
-export interface FilterState {
-  tvl: {
-    min: string;
-    max: string;
-  };
-  participants: {
-    min: string;
-    max: string;
-  };
-  search: string;
-}
+import { FilterState } from "@/constants/pot2pump.type";
+import { key } from "localforage";
+import FilterItem from "./components/FilterItem";
 
 interface FilterProps {
   filters: FilterState;
@@ -31,23 +21,87 @@ interface FilterProps {
   pumpingProjects?: Pot2PumpPumpingService | Pot2PumpService;
 }
 
+type category =
+  | "tvl"
+  | "participants"
+  | "liquidity"
+  | "marketcap"
+  | "daytxns"
+  | "daybuys"
+  | "daysells"
+  | "dayvolume"
+  | "daychange";
+
+const filtersList: {
+  key: number;
+  label: string;
+  category: category;
+}[] = [
+  {
+    key: 0,
+    label: "TVL (USD)",
+    category: "tvl",
+  },
+  {
+    key: 1,
+    label: "Liquidity",
+    category: "liquidity",
+  },
+  {
+    key: 2,
+    label: "Participants Count",
+    category: "participants",
+  },
+  {
+    key: 3,
+    label: "Market cap",
+    category: "marketcap",
+  },
+  {
+    key: 4,
+    label: "24H txns",
+    category: "daytxns",
+  },
+  {
+    key: 5,
+    label: "24H buys",
+    category: "daybuys",
+  },
+  {
+    key: 6,
+    label: "24H sells",
+    category: "daysells",
+  },
+  {
+    key: 7,
+    label: "24H volume",
+    category: "dayvolume",
+  },
+  {
+    key: 8,
+    label: "24H change (%)",
+    category: "daychange",
+  },
+];
 export const Filter = observer(
   ({ filters, setFilters, pumpingProjects }: FilterProps) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    const handleInputChange = (
-      category: "tvl" | "participants",
-      type: "min" | "max",
-      value: string
-    ) => {
-      setFilters({
-        ...filters,
-        [category]: {
-          ...filters[category],
-          [type]: value,
-        },
-      });
-    };
+    const onChange =
+      (category: category) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log("onChange", category);
+        const regex = /^\d*\.?\d*$/;
+        console.log(e.target.value, regex.test(e.target.value));
+        if (regex.test(e.target.value)) {
+          setFilters({
+            ...filters,
+            [category]: {
+              ...filters[category],
+              [e.target.name]: e.target.value,
+            },
+          });
+        }
+      };
 
     return (
       <>
@@ -79,74 +133,16 @@ export const Filter = observer(
                 </ModalHeader>
 
                 <ModalBody className="px-6 bg-[#FFCD4D]">
-                  <div className="w-full rounded-[32px] bg-white space-y-4 px-4 py-6 custom-dashed">
-                    <div className="flex flex-col gap-2">
-                      <label className="text-black text-base font-medium">
-                        TVL (USD)
-                      </label>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <input
-                            type="number"
-                            placeholder="Min"
-                            value={filters.tvl.min}
-                            onChange={(e) =>
-                              handleInputChange("tvl", "min", e.target.value)
-                            }
-                            className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                          />
-                        </div>
-                        <div className="relative flex-1">
-                          <input
-                            type="number"
-                            placeholder="Max"
-                            value={filters.tvl.max}
-                            onChange={(e) =>
-                              handleInputChange("tvl", "max", e.target.value)
-                            }
-                            className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <label className="text-black text-base font-medium">
-                        Participants Count
-                      </label>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <input
-                            type="number"
-                            placeholder="Min"
-                            value={filters.participants.min}
-                            onChange={(e) =>
-                              handleInputChange(
-                                "participants",
-                                "min",
-                                e.target.value
-                              )
-                            }
-                            className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                          />
-                        </div>
-                        <div className="relative flex-1">
-                          <input
-                            type="number"
-                            placeholder="Max"
-                            value={filters.participants.max}
-                            onChange={(e) =>
-                              handleInputChange(
-                                "participants",
-                                "max",
-                                e.target.value
-                              )
-                            }
-                            className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                          />
-                        </div>
-                      </div>
-                    </div>
+                  <div className="w-full rounded-[32px] bg-white space-y-4 px-4 py-6 custom-dashed h-[60vh] overflow-auto">
+                    {filtersList.map((filter) => (
+                      <FilterItem
+                        key={filter.key}
+                        label={filter.label}
+                        onChange={onChange(filter.category)}
+                        min={filters[filter.category].min}
+                        max={filters[filter.category].max}
+                      />
+                    ))}
                   </div>
                 </ModalBody>
 

@@ -11,11 +11,13 @@ import { LaunchCardV3 } from "@/components/LaunchCard/v3";
 import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import Pagination from "@/components/Pagination/Pagination";
 import launchpad, { defaultPairFilters } from "@/services/launchpad";
-import { Filter, FilterState } from "@/components/pot2pump/FilterModal";
+import { Filter } from "@/components/pot2pump/FilterModal";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 import { Pot2PumpPottingService } from "@/services/launchpad/pot2pump/potting";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
+import { FilterState } from "@/constants/pot2pump.type";
+import { defaultFilterState } from "@/constants/pot2pump";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pottingProjects, setPottingProjects] =
@@ -23,11 +25,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [mostSuccessProjects, setMostSuccessProjects] = useState<
     MemePairContract[] | null
   >(null);
-  const [filters, setFilters] = useState<FilterState>({
-    search: "",
-    tvl: { min: "", max: "" },
-    participants: { min: "", max: "" },
-  });
+  const [filters, setFilters] = useState<FilterState>(defaultFilterState);
 
   const updateMostSuccessProjects = useCallback(() => {
     console.log("updating most success projects", mostSuccessProjects);
