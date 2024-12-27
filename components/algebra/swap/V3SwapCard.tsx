@@ -12,6 +12,7 @@ import { useEffect } from "react";
 interface V3SwapCardProps {
   fromTokenAddress?: string;
   toTokenAddress?: string;
+  disableSelection?: boolean;
   boarderless?: boolean;
 }
 
@@ -19,6 +20,7 @@ export function V3SwapCard({
   fromTokenAddress,
   toTokenAddress,
   boarderless,
+  disableSelection,
 }: V3SwapCardProps) {
   return (
     <div
@@ -50,6 +52,7 @@ export function V3SwapCard({
       <SwapPairV3
         fromTokenAddress={fromTokenAddress}
         toTokenAddress={toTokenAddress}
+        disableSelection={disableSelection}
       />
       <SwapParamsV3 />
       <SwapButtonV3 />

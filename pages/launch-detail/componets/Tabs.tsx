@@ -316,7 +316,7 @@ const Tabs = observer(
                         }}
                         className="w-full"
                       >
-                        Share
+                        Share This Project
                       </Button>
                     </div>
                   </div>

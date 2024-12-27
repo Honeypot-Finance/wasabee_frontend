@@ -30,9 +30,14 @@ import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-co
 interface SwapPairV3Props {
   fromTokenAddress?: string;
   toTokenAddress?: string;
+  disableSelection?: boolean;
 }
 
-const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
+const SwapPairV3 = ({
+  fromTokenAddress,
+  toTokenAddress,
+  disableSelection,
+}: SwapPairV3Props) => {
   const {
     toggledTrade: trade,
     currencyBalances,
@@ -257,6 +262,7 @@ const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
         showMaxButton={showMaxButton}
         showBalance={true}
         label="From"
+        disableSelection={disableSelection}
       />
 
       <div className="flex w-full items-center gap-[5px]">
@@ -279,6 +285,7 @@ const SwapPairV3 = ({ fromTokenAddress, toTokenAddress }: SwapPairV3Props) => {
         fiatValue={fiatValueOutputFormatted ?? undefined}
         showBalance={true}
         label="To"
+        disableSelection={disableSelection}
       />
     </div>
   );
