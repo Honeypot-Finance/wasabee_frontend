@@ -76,9 +76,9 @@ export const POT2_PUMP_FRAGMENT = gql`
     participantTransactionHistorys {
       ...ParticipantTransactionHistoryFields
     }
-    participants(first: 10) {
-      ...ParticipantFields
-    }
+    # participants(first: 10) {
+    #   ...ParticipantFields
+    # }
   }
 `;
 
@@ -94,6 +94,43 @@ export const PARTICIPANT_FRAGMENT = gql`
     amount
     totalRefundAmount
     totalclaimLqAmount
-    canClaim
+    account {
+      ...AccountField
+    }
+    pot2Pump {
+      ...Pot2PumpField
+    }
+  }
+`;
+
+export const CAN_CLAIM_POT2_PUMP_PARTICIPANT = gql`
+  query CanClaimPot2PumpParticipant($accountId: ID!) {
+    participants(
+      where: {
+        account_: { id: $accountId }
+        claimed: false
+        pot2Pump_: { raisedTokenReachingMinCap: true }
+      }
+      orderBy: createdAt
+      orderDirection: desc
+    ) {
+      ...ParticipantFields
+    }
+  }
+`;
+
+export const CAN_REFUND_POT2_PUMP_PARTICIPANT = gql`
+  query CanRefundPot2PumpParticipant($accountId: ID!, $timeNow: BigInt!) {
+    participants(
+      where: {
+        account_: { id: $accountId }
+        refunded: false
+        pot2Pump_: { raisedTokenReachingMinCap: false, endTime_lt: $timeNow }
+      }
+      orderBy: createdAt
+      orderDirection: desc
+    ) {
+      ...ParticipantFields
+    }
   }
 `;
