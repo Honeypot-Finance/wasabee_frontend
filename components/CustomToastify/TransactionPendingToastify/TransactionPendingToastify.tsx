@@ -2,6 +2,8 @@ import Link from "next/link";
 import { wallet } from "@/services/wallet";
 import { ViewSvg } from "@/components/svg/View";
 
+// FIXME: update toastify style
+
 export default function TransactionPendingToastify({
   hash,
   action,

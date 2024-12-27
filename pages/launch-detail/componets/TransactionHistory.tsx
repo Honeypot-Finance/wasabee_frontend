@@ -11,30 +11,52 @@ import { MemePairContract } from "@/services/contract/memepair-contract";
 interface TransactionHistoryProps {
   pairAddress: string;
   pair: MemePairContract | null;
+  refreshTrigger?: number;
 }
 
-const TransactionHistory: React.FC<TransactionHistoryProps> = ({ pairAddress, pair }) => {
+const TransactionHistory: React.FC<TransactionHistoryProps> = ({
+  pairAddress,
+  pair,
+  refreshTrigger,
+}) => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const pageSize = 10;
 
-  useEffect(() => {
-    const loadTransactions = async (currentPage: number) => {
-      if (!pairAddress) return;
-      setLoading(true);
-      try {
-        const response = await fetchPot2PumpTransactions(pairAddress, currentPage, pageSize);
-        setTransactions(response.data);
-        setHasNextPage(response.pageInfo.hasNextPage);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadTransactions = async (
+    pairAddress: string,
+    currentPage: number,
+    pageSize: number
+  ) => {
+    if (!pairAddress) return;
+    setLoading(true);
+    try {
+      const response = await fetchPot2PumpTransactions(
+        pairAddress,
+        currentPage,
+        pageSize
+      );
+      console.log("response", response);
+      setTransactions(response.data);
+      setHasNextPage(response.pageInfo.hasNextPage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    loadTransactions(page);
-  }, [pairAddress, page, pageSize]);
+  useEffect(() => {
+    if (pairAddress) {
+      loadTransactions(pairAddress, page, pageSize);
+    }
+  }, [pairAddress, page]);
+
+  useEffect(() => {
+    if (pairAddress) {
+      loadTransactions(pairAddress, 1, pageSize);
+    }
+  }, [refreshTrigger]);
 
   const getActionTypeDisplay = (type: string) => {
     switch (type.toUpperCase()) {
@@ -51,9 +73,9 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ pairAddress, pa
 
   const getAmountByType = (tx: any) => {
     if (!pair?.raiseToken?.decimals) return "0";
-    
+
     const decimals = pair.raiseToken.decimals;
-    
+
     switch (tx.actionType.toUpperCase()) {
       case "DEPOSIT":
         return new BigNumber(tx.depositAmount)
@@ -79,11 +101,21 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ pairAddress, pa
           <table className="w-full">
             <thead className="bg-[#323232] text-white">
               <tr>
-                <th className="py-4 px-6 text-left text-base font-medium">Action</th>
-                <th className="py-4 px-6 text-left text-base font-medium">Tx Hash</th>
-                <th className="py-4 px-6 text-left text-base font-medium">Address</th>
-                <th className="py-4 px-6 text-right text-base font-medium">Amount</th>
-                <th className="py-4 px-6 text-right text-base font-medium">Time</th>
+                <th className="py-4 px-6 text-left text-base font-medium">
+                  Action
+                </th>
+                <th className="py-4 px-6 text-left text-base font-medium">
+                  Tx Hash
+                </th>
+                <th className="py-4 px-6 text-left text-base font-medium">
+                  Address
+                </th>
+                <th className="py-4 px-6 text-right text-base font-medium">
+                  Amount
+                </th>
+                <th className="py-4 px-6 text-right text-base font-medium">
+                  Time
+                </th>
               </tr>
             </thead>
             <tbody className="text-white divide-y divide-[#5C5C5C]">
@@ -101,7 +133,10 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ pairAddress, pa
                 </tr>
               ) : (
                 transactions.map((tx) => (
-                  <tr key={tx.id} className="hover:bg-[#2a2a2a] transition-colors">
+                  <tr
+                    key={tx.id}
+                    className="hover:bg-[#2a2a2a] transition-colors"
+                  >
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 bg-[#FFCD4D] rounded"></div>
@@ -152,7 +187,9 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ pairAddress, pa
                       {getAmountByType(tx)} {pair?.raiseToken?.symbol}
                     </td>
                     <td className="py-4 px-6 text-right text-base">
-                      {dayjs(parseInt(tx.createdAt) * 1000).format("YYYY-MM-DD HH:mm:ss")}
+                      {dayjs(parseInt(tx.createdAt) * 1000).format(
+                        "YYYY-MM-DD HH:mm:ss"
+                      )}
                     </td>
                   </tr>
                 ))
@@ -161,7 +198,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ pairAddress, pa
           </table>
         </div>
       </div>
-      
+
       <div className="px-6 py-4 flex justify-end border-t border-[#5C5C5C]">
         <div className="flex items-center gap-6 max-w-[400px]">
           <div className="flex items-center gap-4">
@@ -185,14 +222,14 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ pairAddress, pa
               </svg>
               Previous
             </button>
-            
+
             <div className="flex items-center gap-2">
               <span className="text-gray-400">Page</span>
               <span className="px-3 py-1 bg-[#1a1a1a] rounded text-white min-w-[40px] text-center">
                 {page}
               </span>
             </div>
-            
+
             <button
               onClick={() => setPage((p) => p + 1)}
               disabled={!hasNextPage || loading}
@@ -245,4 +282,4 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ pairAddress, pa
   );
 };
 
-export default TransactionHistory; 
+export default TransactionHistory;

@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { Logo } from "@/components/svg/logo";
 import { observer, useLocalObservable } from "mobx-react-lite";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import launchpad from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { AsyncState } from "@/services/utils";
@@ -251,6 +251,11 @@ export const UpdateProjectModal = observer(
 
 const FtoView = observer(() => {
   const router = useRouter();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const triggerRefresh = useCallback(() => {
+    setRefreshTrigger((prev) => prev + 1);
+  }, []);
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { pair: pairAddress } = router.query;
   const [votes, setVotes] = useState({
@@ -510,7 +515,7 @@ const FtoView = observer(() => {
           </div>
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-          {pair && <Action pair={pair} />}
+          {pair && <Action pair={pair} onSuccess={triggerRefresh} />}
         </div>
       </div>
 
@@ -524,13 +529,18 @@ const FtoView = observer(() => {
         </div>
       </div>
 
-      <Tabs pair={pair} />
+      <Tabs pair={pair} refreshTrigger={refreshTrigger} />
     </div>
   );
 });
 
 const MemeView = observer(() => {
   const router = useRouter();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const triggerRefresh = useCallback(() => {
+    console.log("triggerRefresh");
+    setRefreshTrigger((prev) => prev + 1);
+  }, []);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { pair: pairAddress } = router.query;
@@ -647,7 +657,7 @@ const MemeView = observer(() => {
   const pair = useMemo(() => state.pair.value, [state.pair.value]);
 
   return (
-    <div className="w-full space-y-4 md:space-y-8">
+    <div className="w-full px-4 md:px-8 xl:px-0 space-y-4 md:space-y-8">
       <div className="px-4 md:px-8 xl:max-w-[1200px] mx-auto pb-20 relative pt-[90px] bg-[#202020] border-3 border-[#F2C34A] rounded-3xl overflow-hidden">
         <div className="bg-[url('/images/pumping/outline-border.png')] h-[90px] absolute top-0 left-0 w-full bg-contain bg-[left_-90px_top] bg-repeat-x"></div>
         {state.pair.value && (
@@ -725,22 +735,13 @@ const MemeView = observer(() => {
             </div>
           </div>
           <div className="bg-transparent rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-            {/* <div className="bg-[url('/images/pumping/outline-border.png')] h-[50px] absolute top-0 left-0 w-full bg-repeat-x bg-[length:130%]"></div> */}
-            {pair && <Action pair={pair} />}
+            {pair && <Action pair={pair} onSuccess={triggerRefresh} />}
           </div>
         </div>
 
-        <div className="w-full flex items-center justify-between my-4 md:my-12">
-          <div className="text-lg md:text-xl">Project Details</div>
-          <div className="flex items-center gap-x-1">
-            <Logo />
-            <span className='text-[#FFCD4D] [font-family:"Bebas_Neue"] text-lg md:text-3xl'>
-              Honeypot Finance
-            </span>
-          </div>
+        <div className="mt-6 md:mt-16">
+          <Tabs pair={pair} refreshTrigger={refreshTrigger} />
         </div>
-
-        <Tabs pair={pair} />
       </div>
       <footer>
         <Image

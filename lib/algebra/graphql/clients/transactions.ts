@@ -60,6 +60,7 @@ export async function fetchPot2PumpTransactions(
 
   const { data } = await infoClient.query<Pot2PumpTransactions>({
     query: gql(query),
+    fetchPolicy: "network-only"
   });
 
   return {

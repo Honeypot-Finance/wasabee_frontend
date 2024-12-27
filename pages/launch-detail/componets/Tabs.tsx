@@ -62,7 +62,7 @@ interface Holder {
 }
 
 const Tabs = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract | null }) => {
+  ({ pair, refreshTrigger }: { pair: FtoPairContract | MemePairContract | null; refreshTrigger?: number }) => {
     const [tab, setTab] = useState(universalMenuItems[0].key);
     const [holders, setHolders] = useState<Holder[]>([]);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -336,9 +336,14 @@ const Tabs = observer(
                             : "text-[24px] md:text-[34px]"
                         }`}
                       >
-                        {(
-                          pair as MemePairContract
-                        )?.depositedLaunchedToken?.toNumber()}
+                        {amountFormatted(
+                          (pair as MemePairContract)?.depositedLaunchedToken,
+                          {
+                            prefix: "$",
+                            decimals: 0,
+                            fixed: 3,
+                          }
+                        )}
                       </div>
                       <div className="text-base md:text-lg text-[#0D0D0D] font-gliker">
                         Total Supply
@@ -357,8 +362,8 @@ const Tabs = observer(
                             : "text-[24px] md:text-[34px]"
                         }`}
                       >
-                        ${" "}
                         {amountFormatted(pair?.depositedRaisedToken, {
+                          prefix: "$",
                           decimals: 0,
                           fixed: 3,
                         })}
@@ -399,6 +404,7 @@ const Tabs = observer(
             <TransactionHistory
               pairAddress={pair?.address ?? ""}
               pair={pair as MemePairContract}
+              refreshTrigger={refreshTrigger}
             />
           )}
           {tab === "comment" && (

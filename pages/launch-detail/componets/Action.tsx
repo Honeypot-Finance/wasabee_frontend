@@ -6,6 +6,11 @@ import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { useAccount } from "wagmi";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { LaunchDetailSwapCard } from "@/components/SwapCard/MemeSwap";
+import {
+  ItemSelect,
+  SelectItem,
+  SelectState,
+} from "@/components/ItemSelect/v3";
 
 const SuccessAction = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -88,96 +93,135 @@ const FailAction = observer(
 );
 
 const ProcessingAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
-    const acc = useAccount();
+  ({
+    pair,
+    onSuccess,
+  }: {
+    pair: FtoPairContract | MemePairContract;
+    onSuccess?: () => void;
+  }) => {
     const state = useLocalObservable(() => ({
-      depositAmount: "0",
+      depositAmount: "",
       setDepositAmount(val: string) {
         this.depositAmount = val;
       },
     }));
+
+    const selectState = useLocalObservable(
+      () =>
+        new SelectState({
+          onSelectChange: (value) => {
+            if (value === "max") {
+              state.setDepositAmount(pair.raiseToken?.balance.toFixed() ?? "0");
+              pair.raiseToken?.getBalance();
+            } else {
+              state.setDepositAmount(value.toString());
+            }
+          },
+        })
+    );
+
     return (
       pair.raiseToken && (
-        <div className="flex flex-col gap-[16px]">
-          <Input
-            className="bg-[#2F200B] rounded-[10px]"
-            value={state.depositAmount}
-            placeholder="Deposit amount"
-            min={0}
-            type="number"
-            isClearable={false}
-            max={pair.raiseToken.balance.toFixed()}
-            onChange={(e) => {
-              state.setDepositAmount(e.target.value);
-            }}
-            onBlur={() => {
-              state.setDepositAmount(Number(state.depositAmount).toString());
-            }}
-            defaultValue="0"
-            endContent={
-              <div className="flex items-center">
-                <span className="mr-2">{pair.raiseToken.displayName}</span>
-                <TokenLogo token={pair.raiseToken} />
+        <div className="flex flex-col w-full z-[100] items-center gap-2 bg-[#FFCD4D] rounded-2xl px-4 py-3 relative pt-4 md:pt-12 pb-[90px] text-black">
+          <div className="bg-[url('/images/pumping/outline-border.png')] bg-left-top bg-contain bg-repeat-x h-4 md:h-12 absolute top-0 left-0 w-full rounded-t-2xl"></div>
+          <div className="flex flex-col gap-[16px] w-full">
+            <div className="bg-white custom-dashed px-[18px] py-6 w-full rounded-[16px]">
+              <div className="text-black flex items-center justify-between mb-4">
+                <div></div>
+                <div className="flex items-center gap-x-2">
+                  <div>
+                    <span>Balance: </span>
+                    <span>{pair.raiseToken.balance.toFormat(5)}</span>
+                  </div>
+                  <button
+                    className="cursor-pointer text-[#63b4ff]"
+                    onClick={() => {
+                      state.setDepositAmount(
+                        pair.raiseToken?.balance.toFixed() ?? "0"
+                      );
+                      pair.raiseToken?.getBalance();
+                    }}
+                  >
+                    Max
+                  </button>
+                </div>
               </div>
-            }
-          ></Input>
-          <div className="flex items-center gap-[8px]">
-            <div>Balance: {pair.raiseToken.balance.toFormat(5)}</div>
-            {pair.raiseToken?.balance.gte(10) && (
-              <div
-                onClick={() => {
-                  state.setDepositAmount("10");
-                }}
-                className="cursor-pointer text-white text-base font-bold leading-3 tracking-[0.16px] underline"
+
+              <div className="w-full rounded-2xl border bg-card-dark shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] flex items-center justify-between px-4 py-2.5 gap-x-2">
+                <div className="flex items-center">
+                  <TokenLogo token={pair.raiseToken} />
+                  <span className="ml-2">{pair.raiseToken.displayName}</span>
+                </div>
+                <Input
+                  className="flex-1 text-right !bg-transparent [&_*]:!bg-transparent data-[invalid=true]:!bg-transparent"
+                  classNames={{
+                    inputWrapper:
+                      "!bg-transparent border-none shadow-none !transition-none data-[invalid=true]:!bg-transparent group-data-[invalid=true]:!bg-transparent",
+                    input:
+                      "!bg-transparent !text-[#202020] text-right text-xl !pr-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none data-[invalid=true]:!bg-transparent",
+                  }}
+                  value={state.depositAmount}
+                  placeholder="0.0"
+                  min={0}
+                  type="number"
+                  isClearable={false}
+                  max={pair.raiseToken.balance.toFixed()}
+                  onChange={(e) => {
+                    state.setDepositAmount(e.target.value);
+                  }}
+                  onBlur={() => {
+                    state.setDepositAmount(
+                      Number(state.depositAmount).toString()
+                    );
+                  }}
+                />
+              </div>
+
+              <ItemSelect
+                selectState={selectState}
+                className="grid grid-cols-[repeat(4,auto)] gap-4 w-full mt-4 justify-content-end"
               >
-                10 {pair.raiseToken?.displayName}
-              </div>
-            )}
-            {pair.raiseToken?.balance.gte(100) && (
-              <div
-                onClick={() => {
-                  state.setDepositAmount("100");
-                }}
-                className="cursor-pointer text-white text-base font-bold leading-3 tracking-[0.16px] underline"
-              >
-                100 {pair.raiseToken?.displayName}
-              </div>
-            )}
-            {pair.raiseToken?.balance.gte(1000) && (
-              <div
-                onClick={() => {
-                  state.setDepositAmount("1000");
-                }}
-                className="cursor-pointer text-white text-base font-bold leading-3 tracking-[0.16px] underline"
-              >
-                1000 {pair.raiseToken?.displayName}
-              </div>
-            )}
-            <div
-              onClick={() => {
-                state.setDepositAmount(
-                  pair.raiseToken?.balance.toFixed() ?? "0"
-                );
-                pair.raiseToken?.getBalance();
-              }}
-              className="  cursor-pointer text-white text-base font-bold leading-3 tracking-[0.16px] underline"
-            >
-              Max
+                {pair.raiseToken?.balance.gte(10) && (
+                  <SelectItem value="10">
+                    10 {pair.raiseToken?.symbol}
+                  </SelectItem>
+                )}
+                {pair.raiseToken?.balance.gte(100) && (
+                  <SelectItem value="100">
+                    100 {pair.raiseToken?.symbol}
+                  </SelectItem>
+                )}
+                {pair.raiseToken?.balance.gte(1000) && (
+                  <SelectItem value="1000">
+                    1000 {pair.raiseToken?.symbol}
+                  </SelectItem>
+                )}
+                <SelectItem value="max">Max</SelectItem>
+              </ItemSelect>
             </div>
+
+            <Button
+              className="w-full"
+              isDisabled={!Number(state.depositAmount)}
+              isLoading={pair.deposit.loading}
+              onPress={async () => {
+                try {
+                  await pair.deposit.call({
+                    amount: state.depositAmount,
+                  });
+                  state.setDepositAmount("");
+                  onSuccess?.();
+                  pair.raiseToken?.getBalance();
+                } catch (error) {
+                  console.error("Deposit failed:", error);
+                }
+              }}
+            >
+              Deposit
+            </Button>
           </div>
-          <Button
-            className="w-full"
-            isDisabled={!Number(state.depositAmount)}
-            isLoading={pair.deposit.loading}
-            onClick={async () => {
-              await pair.deposit.call({
-                amount: state.depositAmount,
-              });
-              state.setDepositAmount("");
-            }}
-          >
-            Deposit
-          </Button>
+          <div className="bg-[url('/images/swap/bottom-border.jpg')] bg-[size:100%_150%] bg-no-repeat bg-left-bottom h-[50px] absolute bottom-0 left-0 w-full"></div>
         </div>
       )
     );
@@ -185,20 +229,30 @@ const ProcessingAction = observer(
 );
 
 const Action = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+  ({
+    pair,
+    onSuccess,
+  }: {
+    pair: FtoPairContract | MemePairContract;
+    onSuccess?: () => void;
+  }) => {
     switch (pair.state) {
       case 0:
         return <SuccessAction pair={pair}></SuccessAction>;
       case 1:
         return <FailAction pair={pair}></FailAction>;
       case 2:
-        // return <PauseAction pair={pair}></PauseAction>;
         return <></>;
       case 3:
         if (pair.isCompleted) {
           return <></>;
         }
-        return <ProcessingAction pair={pair}></ProcessingAction>;
+        return (
+          <ProcessingAction
+            pair={pair}
+            onSuccess={onSuccess}
+          ></ProcessingAction>
+        );
     }
   }
 );
