@@ -12,7 +12,7 @@ interface IShareSocialMedialPopUpProps
   extends React.HTMLAttributes<HTMLDivElement> {
   shareUrl: string;
   shareText: string;
-  text?: string;
+  text?: React.ReactNode;
 }
 
 export function ShareMediaDisplay(props: IShareSocialMedialPopUpProps) {
@@ -69,7 +69,6 @@ export default function ShareSocialMedialPopUp(
       className="flex items-center gap-2 cursor-pointer hover:text-primary"
     >
       <span className="">{props.text}</span>
-      <BiLinkExternal className="cursor-pointer" />
     </div>
   );
 }

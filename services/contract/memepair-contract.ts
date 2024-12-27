@@ -9,6 +9,11 @@ import { AsyncState, ContractWrite } from "../utils";
 import { BaseLaunchContract } from "./base-launch-contract";
 import { ICHIVaultContract } from "./aquabera/ICHIVault-contract";
 import { pot2PumpPairABI } from "@/lib/abis/Pot2Pump/pot2PumpPair";
+import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import {
+  getPot2PumpDetail,
+  subgraphPot2PumpToMemePair,
+} from "@/lib/algebra/graphql/clients/pot2pump";
 
 export class MemePairContract implements BaseLaunchContract {
   databaseId: number | undefined = undefined;
@@ -52,6 +57,24 @@ export class MemePairContract implements BaseLaunchContract {
     Object.assign(this, args);
     this.getIsValidated();
     makeAutoObservable(this);
+  }
+
+  get priceChangeDisplay() {
+    return this.launchedToken?.derivedUSD &&
+      Number(this.launchedToken?.derivedUSD) &&
+      this.launchedToken?.initialUSD &&
+      Number(this.launchedToken.initialUSD)
+      ? Number(this.launchedToken.derivedUSD) >
+        Number(this.launchedToken.initialUSD)
+        ? `${formatAmount((Number(this.launchedToken.derivedUSD) / Number(this.launchedToken.initialUSD)).toFixed(2), 2)}%`
+        : `-${formatAmount((Number(this.launchedToken.initialUSD) / Number(this.launchedToken.derivedUSD)).toFixed(2), 2)}%`
+      : "--";
+  }
+
+  get pottingPercentageDisplay() {
+    return this.depositedRaisedToken && this.raisedTokenMinCap
+      ? `${formatAmount((Number(this.depositedRaisedToken) / Number(this.raisedTokenMinCap)).toFixed(2), 2)}%`
+      : "--";
   }
 
   get startTimeDisplay() {
@@ -393,6 +416,7 @@ export class MemePairContract implements BaseLaunchContract {
       this.getRaisedTokenMinCap(),
       this.getUserParticipated(),
       this.getVaultBalance(),
+      this.getIndexerData(),
     ]).catch((error) => {
       console.error(error, `init-memepair-error-${this.address}`);
       trpcClient.projects.revalidateProjectType.mutate({
@@ -405,6 +429,15 @@ export class MemePairContract implements BaseLaunchContract {
     this.getCanRefund();
 
     this.isInit = true;
+  }
+
+  async getIndexerData() {
+    const res = await subgraphPot2PumpToMemePair(this.address);
+    if (res) {
+      Object.assign(this, res);
+    } else {
+      console.error("getIndexerData", `getIndexerData-error-${this.address}`);
+    }
   }
 
   async getRaisedTokenMinCap() {

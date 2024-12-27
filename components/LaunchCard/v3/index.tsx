@@ -481,15 +481,7 @@ const SimpleLaunchCard = observer(
                           : "text-red-500")
                     )}
                   >
-                    {pair?.launchedToken?.derivedUSD &&
-                    Number(pair?.launchedToken?.derivedUSD) &&
-                    pair?.launchedToken?.initialUSD &&
-                    Number(pair.launchedToken.initialUSD)
-                      ? Number(pair.launchedToken.derivedUSD) >
-                        Number(pair.launchedToken.initialUSD)
-                        ? `${formatAmount((Number(pair.launchedToken.derivedUSD) / Number(pair.launchedToken.initialUSD)).toFixed(2), 2)}%`
-                        : `-${formatAmount((Number(pair.launchedToken.initialUSD) / Number(pair.launchedToken.derivedUSD)).toFixed(2), 2)}%`
-                      : "--"}
+                    {pair.priceChangeDisplay}
                   </span>
                 </span>
                 <div className="text-right flex flex-row gap-2 items-center *:flex-grow-[1]">

@@ -12799,6 +12799,13 @@ export type PoolsByTokenPairQueryVariables = Exact<{
 
 export type PoolsByTokenPairQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null } }> };
 
+export type GetPot2PumpDetailQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetPot2PumpDetailQuery = { __typename?: 'Query', pot2Pump?: { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, LaunchTokenTVLUSD: any, LaunchTokenMCAPUSD: any, raisedTokenMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }>, participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, canClaim: boolean }> } | null };
+
 export type Pot2PumpPottingNewTokensQueryVariables = Exact<{
   endTime?: InputMaybe<Scalars['BigInt']['input']>;
 }>;
@@ -13686,6 +13693,46 @@ export type PoolsByTokenPairQueryHookResult = ReturnType<typeof usePoolsByTokenP
 export type PoolsByTokenPairLazyQueryHookResult = ReturnType<typeof usePoolsByTokenPairLazyQuery>;
 export type PoolsByTokenPairSuspenseQueryHookResult = ReturnType<typeof usePoolsByTokenPairSuspenseQuery>;
 export type PoolsByTokenPairQueryResult = Apollo.QueryResult<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>;
+export const GetPot2PumpDetailDocument = gql`
+    query GetPot2PumpDetail($id: ID!) {
+  pot2Pump(id: $id) {
+    ...Pot2PumpField
+  }
+}
+    ${Pot2PumpFieldFragmentDoc}`;
+
+/**
+ * __useGetPot2PumpDetailQuery__
+ *
+ * To run a query within a React component, call `useGetPot2PumpDetailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPot2PumpDetailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPot2PumpDetailQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPot2PumpDetailQuery(baseOptions: Apollo.QueryHookOptions<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables> & ({ variables: GetPot2PumpDetailQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables>(GetPot2PumpDetailDocument, options);
+      }
+export function useGetPot2PumpDetailLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables>(GetPot2PumpDetailDocument, options);
+        }
+export function useGetPot2PumpDetailSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables>(GetPot2PumpDetailDocument, options);
+        }
+export type GetPot2PumpDetailQueryHookResult = ReturnType<typeof useGetPot2PumpDetailQuery>;
+export type GetPot2PumpDetailLazyQueryHookResult = ReturnType<typeof useGetPot2PumpDetailLazyQuery>;
+export type GetPot2PumpDetailSuspenseQueryHookResult = ReturnType<typeof useGetPot2PumpDetailSuspenseQuery>;
+export type GetPot2PumpDetailQueryResult = Apollo.QueryResult<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables>;
 export const Pot2PumpPottingNewTokensDocument = gql`
     query Pot2PumpPottingNewTokens($endTime: BigInt) {
   pot2Pumps(

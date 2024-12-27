@@ -29,6 +29,11 @@ import { UpdateProjectModal } from "../[pair]";
 import TransactionHistory from "./TransactionHistory";
 import { getTokenTop10Holders } from "@/lib/algebra/graphql/clients/token";
 import BigNumber from "bignumber.js";
+import ShareSocialMedialPopUp, {
+  ShareMediaDisplay,
+} from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import { pot2PumpTGShareContent } from "@/data/socialSharingContents";
+import { popmodal } from "@/services/popmodal";
 
 const universalMenuItems = [
   { key: "info", label: "Token Info" },
@@ -228,7 +233,7 @@ const Tabs = observer(
               <h1 className="text-[var(--Heading,#0D0D0D)] text-center text-shadow-[2px_4px_0px_#AF7F3D] webkit-text-stroke-[2px] text-stroke-white font-gliker text-[32px] md:text-[64px] font-normal leading-[110%] tracking-[1.28px] mb-6 md:mb-12 px-4">
                 About Project
               </h1>
-              
+
               <OptionsDropdown
                 className="p-0 m-0 absolute right-2 top-2 lg:top-4 "
                 options={[
@@ -267,6 +272,7 @@ const Tabs = observer(
                   },
                 ]}
               />
+
               <div className="w-full overflow-hidden p-4 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-x-8">
                 <div className="w-full md:w-[40%]">
                   <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
@@ -294,17 +300,42 @@ const Tabs = observer(
                         Token type
                       </div>
                     </div>
+                    <div className="space-y-4 text-center md:text-left col-span-2">
+                      <Button
+                        onPress={(e) => {
+                          popmodal.openModal({
+                            content: (
+                              <ShareMediaDisplay
+                                shareText={pot2PumpTGShareContent(
+                                  pair as MemePairContract
+                                )}
+                                shareUrl={``}
+                              />
+                            ),
+                          });
+                        }}
+                        className="w-full"
+                      >
+                        Share
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
                 <div className="flex flex-col items-center gap-6 w-full md:w-[60%]">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                     <div className="w-full bg-white rounded-[32px] px-4 md:px-8 text-center border-[3px] border-white shadow-[4px_4px_0px_0px_#202020,-2px_4px_0px_0px_#202020] space-y-4 py-8">
-                      <div className={`text-stroke-black text-shadow-custom font-gliker ${
-                        String((pair as MemePairContract)?.depositedLaunchedToken?.toNumber()).length > 6
-                        ? 'text-[16px] md:text-[24px]' 
-                        : 'text-[24px] md:text-[34px]'
-                      }`}>
+                      <div
+                        className={`text-stroke-black text-shadow-custom font-gliker ${
+                          String(
+                            (
+                              pair as MemePairContract
+                            )?.depositedLaunchedToken?.toNumber()
+                          ).length > 6
+                            ? "text-[16px] md:text-[24px]"
+                            : "text-[24px] md:text-[34px]"
+                        }`}
+                      >
                         {(
                           pair as MemePairContract
                         )?.depositedLaunchedToken?.toNumber()}
@@ -314,14 +345,18 @@ const Tabs = observer(
                       </div>
                     </div>
                     <div className="w-full bg-white rounded-[32px] px-4 md:px-8 text-center border-[3px] border-white shadow-[4px_4px_0px_0px_#202020,-2px_4px_0px_0px_#202020] space-y-4 py-8">
-                      <div className={`text-stroke-black text-shadow-custom font-gliker ${
-                        String(amountFormatted(pair?.depositedRaisedToken, {
-                          decimals: 0,
-                          fixed: 3,
-                        })).length > 6
-                        ? 'text-[16px] md:text-[24px]' 
-                        : 'text-[24px] md:text-[34px]'
-                      }`}>
+                      <div
+                        className={`text-stroke-black text-shadow-custom font-gliker ${
+                          String(
+                            amountFormatted(pair?.depositedRaisedToken, {
+                              decimals: 0,
+                              fixed: 3,
+                            })
+                          ).length > 6
+                            ? "text-[16px] md:text-[24px]"
+                            : "text-[24px] md:text-[34px]"
+                        }`}
+                      >
                         ${" "}
                         {amountFormatted(pair?.depositedRaisedToken, {
                           decimals: 0,
@@ -352,7 +387,7 @@ const Tabs = observer(
                   </div>
                 </div>
               </div>
-              
+
               <div className="w-full px-4">
                 <p className="text-center text-black">
                   {pair?.description ?? "No description"}

@@ -1,5 +1,13 @@
 import { gql } from "@apollo/client";
 
+export const GET_POT2_PUMP_DETAIL = gql`
+  query GetPot2PumpDetail($id: ID!) {
+    pot2Pump(id: $id) {
+      ...Pot2PumpField
+    }
+  }
+`;
+
 export const POT_2_PUMP_POTTING_NEW_TOKENS = gql`
   query Pot2PumpPottingNewTokens($endTime: BigInt) {
     pot2Pumps(
