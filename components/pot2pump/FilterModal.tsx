@@ -12,8 +12,8 @@ import { Pot2PumpPumpingService as Pot2PumpService } from "@/services/launchpad/
 import { Button } from "@/components/button/button-next";
 import { FaSlidersH } from "react-icons/fa";
 import { FilterState } from "@/constants/pot2pump.type";
-import { key } from "localforage";
 import FilterItem from "./components/FilterItem";
+import { defaultFilterState } from "@/constants/pot2pump";
 
 interface FilterProps {
   filters: FilterState;
@@ -114,6 +114,7 @@ export const Filter = observer(
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
+          onClose={() => setFilters(defaultFilterState)}
           classNames={{
             base: "bg-transparent",
             wrapper: "bg-transparent",

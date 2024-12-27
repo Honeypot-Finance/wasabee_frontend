@@ -110,6 +110,114 @@ export const AvgAPR = ({
   );
 };
 
+// export const poolsColumns: ColumnDef<Pool>[] = [
+//   {
+//     accessorKey: "pair",
+//     header: () => <HeaderItem className="ml-2">Pool name</HeaderItem>,
+//     cell: ({ row }) => <PoolPair {...row.original} />,
+//     filterFn: (v, _, value) =>
+//       [
+//         v.original.pair.token0.symbol,
+//         v.original.pair.token1.symbol,
+//         v.original.pair.token0.name,
+//         v.original.pair.token1.name,
+//       ]
+//         .join(" ")
+//         .toLowerCase()
+//         .includes(value),
+//   },
+//   {
+//     accessorKey: "plugins",
+//     header: () => <HeaderItem>Plugins</HeaderItem>,
+//     cell: ({ row }) => <Plugins poolId={row.original.id} />,
+//     filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
+//   },
+//   {
+//     accessorKey: "tvlUSD",
+//     header: ({ column }) => (
+//       <HeaderItem
+//         sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
+//         isAsc={column.getIsSorted() === "asc"}
+//       >
+//         TVL
+//       </HeaderItem>
+//     ),
+//     cell: ({ getValue }) => formatUSD.format(getValue() as number),
+//   },
+//   {
+//     accessorKey: "volume24USD",
+//     header: ({ column }) => (
+//       <HeaderItem
+//         sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
+//         isAsc={column.getIsSorted() === "asc"}
+//       >
+//         Volume 24H
+//       </HeaderItem>
+//     ),
+//     cell: ({ getValue }) => formatUSD.format(getValue() as number),
+//   },
+//   {
+//     accessorKey: "fees24USD",
+//     header: ({ column }) => (
+//       <HeaderItem
+//         sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
+//         isAsc={column.getIsSorted() === "asc"}
+//       >
+//         Fees 24H
+//       </HeaderItem>
+//     ),
+//     cell: ({ getValue }) => formatUSD.format(getValue() as number),
+//   },
+//   {
+//     accessorKey: "avgApr",
+//     header: ({ column }) => (
+//       <HeaderItem
+//         sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
+//         isAsc={column.getIsSorted() === "asc"}
+//       >
+//         Avg. APR
+//       </HeaderItem>
+//     ),
+//     cell: ({ getValue, row }) => {
+//       return (
+//         <AvgAPR
+//           avgApr={formatPercent.format(row.original.poolAvgApr / 100)}
+//           maxApr={formatPercent.format(row.original.poolMaxApr / 100)}
+//           farmApr={
+//             row.original.hasActiveFarming
+//               ? formatPercent.format(row.original.farmApr / 100)
+//               : undefined
+//           }
+//         >
+//           {formatPercent.format((getValue() as number) / 100)}
+//         </AvgAPR>
+//       );
+//     },
+//   },
+// {
+//   accessorKey: "actions",
+//   header: () => <></>,
+//   cell: () => {
+//     return (
+//       <div className="space-x-2">
+//         <button
+//           className="border border-[#E18A20]/40 text-black rounded-lg shrink-0 p-2.5"
+//           style={{
+//             background:
+//               "var(--f-7931-a-2-paints, linear-gradient(180deg, rgba(232, 211, 124, 0.13) 33.67%, #FCD729 132.5%), #F7931A)",
+//           }}
+//         >
+//           Add
+//         </button>
+//         <button className="border border-[#E18A20]/40 bg-[#E18A20]/40 text-white rounded-lg p-2.5 shrink-0">
+//           Remove
+//         </button>
+//       </div>
+//     );
+//   },
+// },
+//];
+
 export const poolsColumns: ColumnDef<Pool>[] = [
   {
     accessorKey: "pair",
@@ -127,93 +235,60 @@ export const poolsColumns: ColumnDef<Pool>[] = [
         .includes(value),
   },
   {
-    accessorKey: "plugins",
-    header: () => <HeaderItem>Plugins</HeaderItem>,
-    cell: ({ row }) => <Plugins poolId={row.original.id} />,
-    filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
+    accessorKey: "price",
+    header: () => <HeaderItem className="uppercase">Price</HeaderItem>,
+    cell: ({ getValue }) => 1,
   },
   {
-    accessorKey: "tvlUSD",
-    header: ({ column }) => (
-      <HeaderItem
-        sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        isAsc={column.getIsSorted() === "asc"}
-      >
-        TVL
-      </HeaderItem>
-    ),
-    cell: ({ getValue }) => formatUSD.format(getValue() as number),
+    accessorKey: "age",
+    header: () => <HeaderItem className="uppercase">Age</HeaderItem>,
+    cell: ({ getValue }) => 1,
   },
   {
-    accessorKey: "volume24USD",
-    header: ({ column }) => (
-      <HeaderItem
-        sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        isAsc={column.getIsSorted() === "asc"}
-      >
-        Volume 24H
-      </HeaderItem>
-    ),
-    cell: ({ getValue }) => formatUSD.format(getValue() as number),
+    accessorKey: "txns",
+    header: () => <HeaderItem className="uppercase">txns</HeaderItem>,
+    cell: ({ getValue }) => 1,
   },
   {
-    accessorKey: "fees24USD",
-    header: ({ column }) => (
-      <HeaderItem
-        sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        isAsc={column.getIsSorted() === "asc"}
-      >
-        Fees 24H
-      </HeaderItem>
-    ),
-    cell: ({ getValue }) => formatUSD.format(getValue() as number),
+    accessorKey: "volumn",
+    header: () => <HeaderItem className="uppercase">volumn</HeaderItem>,
+    cell: ({ getValue }) => 1,
   },
   {
-    accessorKey: "avgApr",
-    header: ({ column }) => (
-      <HeaderItem
-        sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        isAsc={column.getIsSorted() === "asc"}
-      >
-        Avg. APR
-      </HeaderItem>
-    ),
-    cell: ({ getValue, row }) => {
-      return (
-        <AvgAPR
-          avgApr={formatPercent.format(row.original.poolAvgApr / 100)}
-          maxApr={formatPercent.format(row.original.poolMaxApr / 100)}
-          farmApr={
-            row.original.hasActiveFarming
-              ? formatPercent.format(row.original.farmApr / 100)
-              : undefined
-          }
-        >
-          {formatPercent.format((getValue() as number) / 100)}
-        </AvgAPR>
-      );
-    },
+    accessorKey: "markers",
+    header: () => <HeaderItem className="uppercase">volumn</HeaderItem>,
+    cell: ({ getValue }) => 1,
   },
-  // {
-  //   accessorKey: "actions",
-  //   header: () => <></>,
-  //   cell: () => {
-  //     return (
-  //       <div className="space-x-2">
-  //         <button
-  //           className="border border-[#E18A20]/40 text-black rounded-lg shrink-0 p-2.5"
-  //           style={{
-  //             background:
-  //               "var(--f-7931-a-2-paints, linear-gradient(180deg, rgba(232, 211, 124, 0.13) 33.67%, #FCD729 132.5%), #F7931A)",
-  //           }}
-  //         >
-  //           Add
-  //         </button>
-  //         <button className="border border-[#E18A20]/40 bg-[#E18A20]/40 text-white rounded-lg p-2.5 shrink-0">
-  //           Remove
-  //         </button>
-  //       </div>
-  //     );
-  //   },
-  // },
+  {
+    accessorKey: "24h",
+    header: () => <HeaderItem className="uppercase">24h</HeaderItem>,
+    cell: ({ getValue }) => 1,
+  },
+  {
+    accessorKey: "weekly",
+    header: () => <HeaderItem className="uppercase">weekly</HeaderItem>,
+    cell: ({ getValue }) => 1,
+  },
+  {
+    accessorKey: "monthly",
+    header: () => <HeaderItem className="uppercase">monthly</HeaderItem>,
+    cell: ({ getValue }) => 1,
+  },
+  {
+    accessorKey: "yearly",
+    header: () => <HeaderItem className="uppercase">yearly</HeaderItem>,
+    cell: ({ getValue }) => 1,
+  },
+  {
+    accessorKey: "liquidity",
+    header: () => <HeaderItem className="uppercase">liquidity</HeaderItem>,
+    cell: ({ getValue }) => 1,
+  },
+  {
+    accessorKey: "marktet cap",
+    header: () => <HeaderItem className="uppercase">marktet cap</HeaderItem>,
+    cell: ({ getValue }) => 1,
+  },
 ];
+
+//for hours gain maybe change it to weekly monthly yearly as in our subgraph
