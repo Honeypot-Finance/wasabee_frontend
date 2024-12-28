@@ -221,7 +221,7 @@ export const LaunchDetailSwapCard = observer(
               </Button>
             </LoadingContainer>
           )}
-          <div className="bg-[url('/images/swap/bottom-border.jpg')] bg-cover bg-no-repeat bg-left-top h-[70px] absolute bottom-0 left-0 w-full rounded-[20px]"></div>
+          <div className="bg-[url('/images/swap/bottom-border.svg')] bg-cover bg-no-repeat bg-left-top h-[70px] absolute bottom-0 left-0 w-full rounded-[20px]"></div>
         </div>
         {extraTokenAction}
       </SpinnerContainer>

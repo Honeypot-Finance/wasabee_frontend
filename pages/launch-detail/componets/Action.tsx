@@ -221,7 +221,7 @@ const ProcessingAction = observer(
               Deposit
             </Button>
           </div>
-          <div className="bg-[url('/images/swap/bottom-border.jpg')] bg-[size:100%_150%] bg-no-repeat bg-left-bottom h-[50px] absolute bottom-0 left-0 w-full"></div>
+          <div className="bg-[url('/images/swap/bottom-border.svg')] bg-[size:100%_150%] bg-no-repeat bg-left-bottom h-[50px] absolute bottom-0 left-0 w-full"></div>
         </div>
       )
     );
