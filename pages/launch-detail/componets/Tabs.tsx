@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { amountFormatted, truncate } from "@/lib/format";
-import { chart } from "@/services/chart";
 import { ChevronDown, LucideFileEdit } from "lucide-react";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { DiscussionArea } from "@/components/Discussion/DiscussionArea/DiscussionArea";
-import { SimplePriceFeedGraph } from "@/components/PriceFeedGraph/SimplePriceFeedGraph";
-import LaunchChart from "./LaunchChart";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/button";
@@ -16,7 +13,6 @@ import BeraVoteForm from "@/components/beravote/components/NewSpace/Steps/BeraVo
 import { observer } from "mobx-react-lite";
 import { VscCopy } from "react-icons/vsc";
 import { Copy } from "@/components/copy";
-import TokenAddress from "./TokenAddress";
 import { Trigger } from "@/components/Trigger";
 import {
   OptionsDropdown,
@@ -29,9 +25,7 @@ import { UpdateProjectModal } from "../[pair]";
 import TransactionHistory from "./TransactionHistory";
 import { getTokenTop10Holders } from "@/lib/algebra/graphql/clients/token";
 import BigNumber from "bignumber.js";
-import ShareSocialMedialPopUp, {
-  ShareMediaDisplay,
-} from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
+import { ShareMediaDisplay } from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { pot2PumpTGShareContent } from "@/data/socialSharingContents";
 import { popmodal } from "@/services/popmodal";
 
@@ -62,7 +56,13 @@ interface Holder {
 }
 
 const Tabs = observer(
-  ({ pair, refreshTrigger }: { pair: FtoPairContract | MemePairContract | null; refreshTrigger?: number }) => {
+  ({
+    pair,
+    refreshTrigger,
+  }: {
+    pair: FtoPairContract | MemePairContract | null;
+    refreshTrigger?: number;
+  }) => {
     const [tab, setTab] = useState(universalMenuItems[0].key);
     const [holders, setHolders] = useState<Holder[]>([]);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();

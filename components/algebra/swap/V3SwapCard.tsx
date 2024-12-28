@@ -25,7 +25,7 @@ export function V3SwapCard({
   return (
     <div
       className={cn(
-        "flex flex-col w-full relative z-[100]",
+        "flex flex-col w-full relative z-[100] space-y-4",
         !boarderless &&
           "items-center gap-2 bg-[#FFCD4D] rounded-2xl px-4 py-3 relative pt-4 md:pt-12 pb-[90px] text-black"
       )}
@@ -58,7 +58,7 @@ export function V3SwapCard({
       <SwapButtonV3 />
       {/* <PoweredByAlgebra /> */}
       {!boarderless && (
-        <div className="bg-[url('/images/swap/bottom-border.jpg')] bg-[size:100%_150%] bg-no-repeat bg-left-bottom h-[50px] absolute bottom-0 left-0 w-full"></div>
+        <div className="bg-[url('/images/swap/bottom-border.svg')] bg-cover bg-left-top bg-no-repeat absolute bottom-0 left-0 w-full h-[50px]"></div>
       )}
     </div>
   );
