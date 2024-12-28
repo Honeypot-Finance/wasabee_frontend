@@ -37,7 +37,12 @@ import {
 } from "./launchCardComponents";
 import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
 
-export type launchCardVariants = "list" | "detail" | "trending" | "simple";
+export type launchCardVariants =
+  | "list"
+  | "detail"
+  | "trending"
+  | "simple"
+  | "featured";
 
 export const LaunchCardComponentContainer = ({
   children,
@@ -292,7 +297,7 @@ const TrendingLaunchCard = observer(
           <div className="flex justify-between items-start mt-4">
             <div>
               <h3 className="font-bold text-xl">{pair?.launchedToken?.name}</h3>
-              <p className="text-sm text-muted-foreground text-[#202020]/[0.67]">
+              <p className="text-sm text-[#202020]/[0.67]">
                 {pair?.launchedToken?.symbol}
               </p>
             </div>
@@ -541,6 +546,128 @@ const SimpleLaunchCard = observer(
   }
 );
 
+const FeaturedLaunchCard = observer(
+  ({
+    pair,
+    projectType,
+  }: {
+    pair: MemePairContract | FtoPairContract;
+    projectType: projectType;
+  }) => {
+    return (
+      <div className="flex min-h-[200px] bg-white px-4 py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative transition-all duration-100">
+        <div className="bg-[url('/images/pumping/inline-border.svg')] h-6 absolute top-0 left-0 w-full bg-contain bg-left-top bg-repeat-x"></div>
+        <div className="flex gap-4 w-full">
+          <div className="rounded-full overflow-hidden bg-gold-primary aspect-square flex items-center justify-center">
+            <Image
+              alt="logo"
+              width={200}
+              height={200}
+              objectFit="cover"
+              className="rounded-full h-full aspect-square object-contain"
+              src={!!pair.logoUrl ? pair.logoUrl : "/images/empty-logo.png"}
+            />
+          </div>
+          <div className="flex flex-col justify-between">
+            <div>
+              <h2 className="font-bold text-[3rem]">
+                {pair?.launchedToken?.symbol}
+              </h2>
+              <p className="text-xl text-[#202020]/[0.67]">
+                {pair?.launchedToken?.name}
+              </p>
+            </div>
+            <div>
+              <div className="font-bold text-xl">
+                <span>Token Price: </span>
+                <span>
+                  {formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$
+                </span>
+              </div>{" "}
+              <div className="font-bold text-xl">
+                <span>Price Change: </span>
+                <span
+                  className={cn(
+                    Number(pair?.launchedToken?.initialUSD) &&
+                      Number(pair?.launchedToken?.derivedUSD) &&
+                      (Number(pair?.launchedToken?.derivedUSD) >
+                      Number(pair?.launchedToken?.initialUSD)
+                        ? "text-green-500"
+                        : "text-red-500")
+                  )}
+                >
+                  {pair.priceChangeDisplay}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-y-2 p-4 bg-yellow-300/30 rounded-3xl flex-grow border-2 border-black">
+            <div className="flex gap-2 items-center *:flex-grow-[1] justify-between">
+              <span>Market Cap:</span>{" "}
+              <span className="text-right">
+                {formatAmount(
+                  pair.launchedToken?.totalValueLockedUSD ?? "0",
+                  5
+                )}
+                $
+              </span>
+            </div>
+            <hr />{" "}
+            <div className="flex gap-2 items-center *:flex-grow-[1] justify-between">
+              <span>TX:</span>
+              <div className="text-right">
+                <span className="text-green-400">
+                  {pair?.launchedTokenBuyCount?.toFixed(0) ?? 0}
+                </span>
+                <span>/</span>
+                <span className="text-red-400">
+                  {pair?.launchedTokenSellCount?.toFixed(0) ?? 0}
+                </span>
+              </div>
+            </div>
+            <hr />
+            <div className="flex gap-2 items-center *:flex-grow-[1] justify-between">
+              <span>Holders:</span>
+
+              <span className="text-right">
+                {pair?.launchedToken?.holderCount ?? 0}
+              </span>
+            </div>
+            <hr />
+            <div className="flex gap-2 items-center *:flex-grow-[1] justify-between">
+              <span>Volume:</span>
+              <span className="text-right">
+                {pair?.launchedToken?.volumeUSD
+                  ? "$ " + formatAmount(pair.launchedToken?.volumeUSD ?? "0", 5)
+                  : "--"}
+              </span>
+            </div>
+            <hr />
+            <div className="flex gap-2 items-center *:flex-grow-[1] justify-between">
+              <span>TVL:</span>
+              <span className="text-right">
+                {pair?.launchedToken?.totalValueLockedUSD
+                  ? "$ " +
+                    formatAmount(
+                      pair.launchedToken?.totalValueLockedUSD ?? "0",
+                      5
+                    )
+                  : "--"}
+              </span>
+            </div>
+          </div>
+          <Link
+            className="absolute bottom-0 right-0 w-[200px] transition-all duration-100 translate-y-1/2 -translate-x-1/4"
+            href={`/launch-detail/${pair.address}`}
+          >
+            <Button className="w-full border-yellow-500">Token Details</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+);
+
 export const LaunchCardV3 = observer(
   ({
     pair,
@@ -584,6 +711,9 @@ export const LaunchCardV3 = observer(
             )}
             {type === "simple" && pair && (
               <SimpleLaunchCard pair={pair} projectType={projectType} />
+            )}
+            {type === "featured" && pair && (
+              <FeaturedLaunchCard pair={pair} projectType={projectType} />
             )}
           </motion.div>
         ) : (
