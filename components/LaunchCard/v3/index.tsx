@@ -557,7 +557,7 @@ const FeaturedLaunchCard = observer(
     return (
       <div className="flex min-h-[200px] bg-white px-4 py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative transition-all duration-100">
         <div className="bg-[url('/images/pumping/inline-border.svg')] h-6 absolute top-0 left-0 w-full bg-contain bg-left-top bg-repeat-x"></div>
-        <div className="flex gap-4 w-full">
+        <div className="flex gap-4 w-full  flex-col sm:flex-row ">
           <div className="rounded-full overflow-hidden bg-gold-primary aspect-square flex items-center justify-center">
             <Image
               alt="logo"
