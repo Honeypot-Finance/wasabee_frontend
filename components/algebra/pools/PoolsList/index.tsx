@@ -71,10 +71,14 @@ const PoolsList = () => {
 
         // 池子的 APR 是 24H 的 fee 除以 TVL，position 的 APR 是 24H 的 fee 除以 TVL
         const poolMaxApr = !!Number(totalValueLockedUSD)
-          ? (Number(currentPool.feesUSD) * 365) / Number(totalValueLockedUSD)
+          ? ((Number(currentPool.feesUSD) * 365) /
+              Number(totalValueLockedUSD)) *
+            100
           : 0;
         const poolAvgApr = !!Number(totalValueLockedUSD)
-          ? (Number(currentPool.feesUSD) * 365) / Number(totalValueLockedUSD)
+          ? ((Number(currentPool.feesUSD) * 365) /
+              Number(totalValueLockedUSD)) *
+            100
           : 0;
         const farmApr = 0;
         const avgApr = poolAvgApr;

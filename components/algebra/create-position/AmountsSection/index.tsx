@@ -69,15 +69,17 @@ const AmountsSection = ({
       <div className="w-full rounded-2xl border bg-white shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] p-4">
         <div className="flex justify-between items-center">
           <div>
-            <div className="text-sm font-medium text-[#202020]">ESTIMATED POSITION APR</div>
+            <div className="text-sm font-medium text-[#202020]">
+              ESTIMATED POSITION APR
+            </div>
             <div className="text-xl font-bold text-[#FFCD4D]">
-              {apr ? `${apr.toFixed(2)}%` : '0%'}
+              {apr ? `${apr.toFixed(2)}%` : "0%"}
             </div>
           </div>
           <div className="text-right">
             <div className="text-sm font-medium text-[#202020]">POOL APR</div>
             <div className="text-xl font-bold text-[#0ea5e9]">
-              {poolAPR !== undefined ? `${poolAPR}%` : '0%'}
+              {poolAPR !== undefined ? `${poolAPR}%` : "0%"}
             </div>
           </div>
         </div>
