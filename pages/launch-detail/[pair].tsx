@@ -658,7 +658,7 @@ const MemeView = observer(() => {
 
   return (
     <div className="w-full px-4 md:px-8 xl:px-0 space-y-4 md:space-y-8">
-      <div className="px-4 md:px-8 xl:max-w-[1200px] mx-auto pb-20 relative pt-[90px] bg-[#202020] border-3 border-[#F2C34A] rounded-3xl overflow-hidden">
+      <div className="px-4 md:px-8 xl:max-w-[min(1500px,100%)] mx-auto pb-20 relative pt-[90px] bg-[#202020] border-3 border-[#F2C34A] rounded-3xl overflow-hidden">
         <div className="bg-[url('/images/pumping/outline-border.png')] h-[90px] absolute top-0 left-0 w-full bg-contain bg-[left_-90px_top] bg-repeat-x"></div>
         {state.pair.value && (
           <Modal
@@ -671,7 +671,7 @@ const MemeView = observer(() => {
             <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
           </Modal>
         )}
-        <div className="grid grid-cols-2 gap-x-4 gap-y-14 w-full">
+        <div className="grid grid-cols-[1fr_500px] gap-x-4 gap-y-14 w-full">
           <div className="bg-white col-span-2 px-8 py-5 rounded-3xl flex md:items-center md:justify-between md:flex-row flex-col gap-2 md:gap-0 text-black">
             <div className="flex items-center justify-between gap-x-4 md:gap-x-[7.5px]">
               <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
@@ -724,7 +724,7 @@ const MemeView = observer(() => {
                       Visit Vault
                     </Button>
                   )}
-                  <KlineChart height={300} />
+                  <KlineChart height={500} />
                 </>
               )}
 

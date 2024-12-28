@@ -8,6 +8,9 @@ import {
   CanClaimPot2PumpParticipantQuery,
   CanRefundPot2PumpParticipantQuery,
   CanRefundPot2PumpParticipantDocument,
+  CanClaimPot2PumpParticipantQueryVariables,
+  CanRefundPot2PumpParticipantQueryVariables,
+  Scalars,
 } from "../generated/graphql";
 import { pot2PumpListToMemePairList, pot2PumpToMemePair } from "./pair";
 
@@ -26,23 +29,46 @@ export const subgraphPot2PumpToMemePair = async (id: string) => {
 };
 
 export const canClaimPot2Pump = async (accountId: string) => {
-  const res = await infoClient.query<CanClaimPot2PumpParticipantQuery>({
+  const res = await infoClient.query<
+    CanClaimPot2PumpParticipantQuery,
+    CanClaimPot2PumpParticipantQueryVariables
+  >({
     query: CanClaimPot2PumpParticipantDocument,
-    variables: { accountId },
+    variables: {
+      accountId: accountId.toLowerCase(),
+    },
+    fetchPolicy: "network-only",
   });
 
   return pot2PumpListToMemePairList(
-    res.data?.participants.map((p) => p.pot2Pump) as Partial<Pot2Pump>[]
+    res.data.participants.map((p) => p.pot2Pump) as Partial<Pot2Pump>[]
   );
 };
 
 export const canRefundPot2Pump = async (accountId: string) => {
-  const res = await infoClient.query<CanRefundPot2PumpParticipantQuery>({
+  const timeNow = Math.floor(Date.now() / 1000);
+
+  const res = await infoClient.query<
+    CanRefundPot2PumpParticipantQuery,
+    CanRefundPot2PumpParticipantQueryVariables
+  >({
     query: CanRefundPot2PumpParticipantDocument,
-    variables: { accountId, timeNow: Math.floor(Date.now() / 1000).toFixed(0) },
+    variables: {
+      accountId: accountId.toLowerCase(),
+      timeNow: timeNow,
+    },
+    fetchPolicy: "network-only",
   });
 
+  if (!res.data?.participants) {
+    console.error(
+      "Failed to fetch refundable pot2pump participants:",
+      res.error
+    );
+    return [];
+  }
+
   return pot2PumpListToMemePairList(
-    res.data?.participants.map((p) => p.pot2Pump) as Partial<Pot2Pump>[]
+    res.data.participants.map((p) => p.pot2Pump) as Partial<Pot2Pump>[]
   );
 };
