@@ -17,8 +17,8 @@ export const MemeProjectActions = observer(
         <ClaimAction pair={pair} />
         <RefundAction pair={pair} />
         <ToTokenDetailsPage pair={pair} />
-        <BuyToken pair={pair} />
-        <AddLP pair={pair} />
+        {/* <BuyToken pair={pair} />
+        <AddLP pair={pair} /> */}
       </>
     );
   }

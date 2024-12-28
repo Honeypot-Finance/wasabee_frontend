@@ -10,21 +10,30 @@ import {
   CanRefundPot2PumpParticipantDocument,
   CanClaimPot2PumpParticipantQueryVariables,
   CanRefundPot2PumpParticipantQueryVariables,
-  Scalars,
+  GetParticipantDetailDocument,
+  GetParticipantDetailQuery,
+  GetParticipantDetailQueryVariables,
+  GetPot2PumpDetailQueryVariables,
 } from "../generated/graphql";
 import { pot2PumpListToMemePairList, pot2PumpToMemePair } from "./pair";
 
-export const getPot2PumpDetail = async (id: string) => {
-  const res = await infoClient.query<GetPot2PumpDetailQuery>({
+export const getPot2PumpDetail = async (id: string, accountId?: string) => {
+  const res = await infoClient.query<
+    GetPot2PumpDetailQuery,
+    GetPot2PumpDetailQueryVariables
+  >({
     query: GetPot2PumpDetailDocument,
-    variables: { id },
+    variables: { id, accountId: accountId },
   });
 
   return res.data?.pot2Pump;
 };
 
-export const subgraphPot2PumpToMemePair = async (id: string) => {
-  const pot2Pump = await getPot2PumpDetail(id);
+export const subgraphPot2PumpToMemePair = async (
+  id: string,
+  accountId?: string
+) => {
+  const pot2Pump = await getPot2PumpDetail(id, accountId);
   return pot2Pump ? pot2PumpToMemePair(pot2Pump as Partial<Pot2Pump>) : null;
 };
 
@@ -40,9 +49,15 @@ export const canClaimPot2Pump = async (accountId: string) => {
     fetchPolicy: "network-only",
   });
 
-  return pot2PumpListToMemePairList(
+  const memeList = await pot2PumpListToMemePairList(
     res.data.participants.map((p) => p.pot2Pump) as Partial<Pot2Pump>[]
   );
+
+  memeList.map((meme) => {
+    meme.canClaimLP = true;
+  });
+
+  return memeList;
 };
 
 export const canRefundPot2Pump = async (accountId: string) => {
@@ -68,7 +83,32 @@ export const canRefundPot2Pump = async (accountId: string) => {
     return [];
   }
 
-  return pot2PumpListToMemePairList(
+  const memeList = await pot2PumpListToMemePairList(
     res.data.participants.map((p) => p.pot2Pump) as Partial<Pot2Pump>[]
   );
+
+  memeList.map((meme) => {
+    meme.canRefund = true;
+  });
+
+  return memeList;
+};
+
+export const getParticipantDetail = async (
+  accountId: string,
+  pot2PumpId: string
+) => {
+  const res = await infoClient.query<
+    GetParticipantDetailQuery,
+    GetParticipantDetailQueryVariables
+  >({
+    query: GetParticipantDetailDocument,
+    variables: { accountId, pot2PumpId },
+  });
+  console.log("accountId", accountId);
+  console.log("pot2PumpId", pot2PumpId);
+
+  console.log("res", res);
+
+  return res.data?.participants[0] ?? null;
 };

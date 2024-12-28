@@ -157,7 +157,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 </div>
               }
             />
-            <Tab
+            {/* <Tab
               title={
                 <Link
                   href="/memewar"
@@ -168,7 +168,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                   </span>
                 </Link>
               }
-            />
+            /> */}
           </Tabs>
         </div>
       </div>

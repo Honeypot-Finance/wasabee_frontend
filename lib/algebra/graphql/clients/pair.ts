@@ -125,6 +125,7 @@ export const pot2PumpListToMemePairList = async (
 export const pot2PumpToMemePair = async (
   pot2Pump: Partial<Pot2Pump>
 ): Promise<MemePairContract> => {
+  pot2Pump.participants && console.log("pot2Pump", pot2Pump);
   const contract = new MemePairContract({
     address: pot2Pump.id,
     depositedLaunchedTokenWithoutDecimals: new BigNumber(
@@ -141,6 +142,17 @@ export const pot2PumpToMemePair = async (
     launchedTokenSellCount: new BigNumber(pot2Pump.sellCount),
     endTime: pot2Pump.endTime,
     startTime: pot2Pump.createdAt,
+    canClaimLP:
+      pot2Pump.raisedTokenReachingMinCap &&
+      pot2Pump.participants &&
+      pot2Pump.participants.length > 0 &&
+      !pot2Pump.participants[0].claimed,
+    canRefund:
+      !pot2Pump.raisedTokenReachingMinCap &&
+      pot2Pump.participants &&
+      pot2Pump.participants.length > 0 &&
+      !pot2Pump.participants[0].refunded &&
+      pot2Pump.endTime < dayjs().unix(),
     launchedToken: Token.getToken({
       address: pot2Pump.launchToken?.id!,
       name: pot2Pump.launchToken?.name,

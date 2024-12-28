@@ -11,6 +11,7 @@ import { ICHIVaultContract } from "./aquabera/ICHIVault-contract";
 import { pot2PumpPairABI } from "@/lib/abis/Pot2Pump/pot2PumpPair";
 import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
 import {
+  getParticipantDetail,
   getPot2PumpDetail,
   subgraphPot2PumpToMemePair,
 } from "@/lib/algebra/graphql/clients/pot2pump";
@@ -417,6 +418,7 @@ export class MemePairContract implements BaseLaunchContract {
       this.getUserParticipated(),
       this.getVaultBalance(),
       this.getIndexerData(),
+      this.getParticipantDetail(),
     ]).catch((error) => {
       console.error(error, `init-memepair-error-${this.address}`);
       trpcClient.projects.revalidateProjectType.mutate({
@@ -431,8 +433,25 @@ export class MemePairContract implements BaseLaunchContract {
     this.isInit = true;
   }
 
+  async getParticipantDetail() {
+    if (!wallet.account) {
+      return;
+    }
+
+    const res = await getParticipantDetail(wallet.account, this.address);
+    console.log("res", res);
+
+    if (res) {
+      this.canClaimLP = !res.claimed && res.pot2Pump.raisedTokenReachingMinCap;
+      this.canRefund =
+        !res.refunded &&
+        !res.pot2Pump.raisedTokenReachingMinCap &&
+        res.pot2Pump.endTime > dayjs().unix();
+    }
+  }
+
   async getIndexerData() {
-    const res = await subgraphPot2PumpToMemePair(this.address);
+    const res = await subgraphPot2PumpToMemePair(this.address, wallet.account);
     if (res) {
       Object.assign(this, res);
     } else {

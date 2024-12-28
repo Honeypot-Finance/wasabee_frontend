@@ -1,9 +1,28 @@
 import { gql } from "@apollo/client";
 
 export const GET_POT2_PUMP_DETAIL = gql`
-  query GetPot2PumpDetail($id: ID!) {
+  query GetPot2PumpDetail($id: ID!, $accountId: ID) {
     pot2Pump(id: $id) {
       ...Pot2PumpField
+      participants(where: { account_: { id: $accountId } }) {
+        ...ParticipantFields
+      }
+    }
+  }
+`;
+
+export const GET_PARTICIPANT_DETAIL = gql`
+  query GetParticipantDetail($accountId: ID!, $pot2PumpId: ID!) {
+    participants(
+      where: { account_: { id: $accountId }, pot2Pump_: { id: $pot2PumpId } }
+    ) {
+      ...ParticipantFields
+      pot2Pump {
+        ...Pot2PumpField
+      }
+      account {
+        ...AccountField
+      }
     }
   }
 `;
@@ -76,7 +95,7 @@ export const POT2_PUMP_FRAGMENT = gql`
     participantTransactionHistorys {
       ...ParticipantTransactionHistoryFields
     }
-    # participants(first: 10) {
+    # participants {
     #   ...ParticipantFields
     # }
   }
@@ -94,6 +113,8 @@ export const PARTICIPANT_FRAGMENT = gql`
     amount
     totalRefundAmount
     totalclaimLqAmount
+    claimed
+    refunded
     account {
       ...AccountField
     }
