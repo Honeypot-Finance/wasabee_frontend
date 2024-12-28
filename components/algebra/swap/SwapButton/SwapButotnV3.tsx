@@ -162,7 +162,6 @@ const SwapButtonV3 = () => {
   if (showApproveFlow)
     return (
       <>
-        <div>{approvalState}</div>
         <Button
           isDisabled={approvalState !== ApprovalState.NOT_APPROVED}
           disabled={approvalState !== ApprovalState.NOT_APPROVED}
@@ -181,10 +180,6 @@ const SwapButtonV3 = () => {
 
   return (
     <>
-      <div>{isValid}</div>
-      <div>{priceImpactTooHigh}</div>
-      <div>{swapCallbackError}</div>
-      <div>{isSwapLoading}</div>
       <Button
         onPress={() => handleSwap()}
         disabled={
