@@ -34,28 +34,28 @@ export const chartTimeRanges: {
 } = {
   "5M": {
     label: "5M",
-    value: dayjs().unix() - 60 * 5 * 10,
+    value: dayjs().unix() - 60 * 5 * 100,
     resolution: "1",
   },
   "15M": {
     label: "15M",
-    value: dayjs().unix() - 60 * 15 * 10,
-    resolution: "1",
+    value: dayjs().unix() - 60 * 15 * 100,
+    resolution: "5",
   },
   "30M": {
     label: "30M",
-    value: dayjs().unix() - 60 * 30 * 10,
-    resolution: "1",
+    value: dayjs().unix() - 60 * 30 * 100,
+    resolution: "15",
   },
   "4H": {
     label: "4H",
-    value: dayjs().unix() - 60 * 60 * 4 * 10,
-    resolution: "15",
+    value: dayjs().unix() - 60 * 60 * 4 * 100,
+    resolution: "30",
   },
   "1D": {
     label: "1D",
-    value: dayjs().unix() - 60 * 60 * 24 * 10,
-    resolution: "30",
+    value: dayjs().unix() - 60 * 60 * 24 * 20,
+    resolution: "60",
   },
 };
 
