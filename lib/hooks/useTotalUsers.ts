@@ -1,12 +1,17 @@
 import { useQuery } from "@apollo/client";
-import { TOTAL_USERS_QUERY, AccountsData } from "../algebra/graphql/clients/leaderboard";
+import {
+  DexAccountCountDocument,
+  DexAccountCountQuery,
+} from "../algebra/graphql/generated/graphql";
 
 export function useTotalUsers() {
-  const { data, loading, error } = useQuery<AccountsData>(TOTAL_USERS_QUERY);
+  const { data, loading, error } = useQuery<DexAccountCountQuery>(
+    DexAccountCountDocument
+  );
 
   return {
-    totalUsers: data?.accounts.length ?? 0,
+    totalUsers: data?.factories[0]?.accountCount ?? 0,
     loading,
     error,
   };
-} 
+}

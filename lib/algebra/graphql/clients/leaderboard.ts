@@ -13,15 +13,6 @@ export const LEADERBOARD_QUERY = gql`
   }
 `;
 
-//todo: fix this query
-export const TOTAL_USERS_QUERY = gql`
-  query TotalUsers {
-    accounts(first: 1000) {
-      id
-    }
-  }
-`;
-
 export const ACCOUNTS_WITH_ADDRESS_QUERY = gql`
   query accounts($skip: Int!, $first: Int!, $address: String!) {
     accounts(
@@ -29,11 +20,6 @@ export const ACCOUNTS_WITH_ADDRESS_QUERY = gql`
       first: $first
       orderBy: totalSpendUSD
       orderDirection: desc
-      where: {
-        id: $address
-        id_gt: "0x"
-        id_lt: "0xffffffffffffffffffffffffffffffffffffffff"
-      }
     ) {
       id
       swapCount
@@ -56,10 +42,6 @@ export const ACCOUNTS_WITHOUT_ADDRESS_QUERY = gql`
       first: $first
       orderBy: totalSpendUSD
       orderDirection: desc
-      where: {
-        id_gt: "0x"
-        id_lt: "0xffffffffffffffffffffffffffffffffffffffff"
-      }
     ) {
       id
       swapCount
@@ -125,10 +107,6 @@ type Factory = {
 
 export type FactoryData = {
   factories: Factory[];
-};
-
-export type AccountsData = {
-  accounts: { id: string }[];
 };
 
 export type Account = {

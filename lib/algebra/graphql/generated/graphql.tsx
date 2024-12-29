@@ -12751,6 +12751,11 @@ export type NativePriceQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type NativePriceQuery = { __typename?: 'Query', bundles: Array<{ __typename?: 'Bundle', id: string, maticPriceUSD: any }> };
 
+export type DexAccountCountQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DexAccountCountQuery = { __typename?: 'Query', factories: Array<{ __typename?: 'Factory', id: string, accountCount: any }> };
+
 export type AllRacersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -13466,6 +13471,46 @@ export type NativePriceQueryHookResult = ReturnType<typeof useNativePriceQuery>;
 export type NativePriceLazyQueryHookResult = ReturnType<typeof useNativePriceLazyQuery>;
 export type NativePriceSuspenseQueryHookResult = ReturnType<typeof useNativePriceSuspenseQuery>;
 export type NativePriceQueryResult = Apollo.QueryResult<NativePriceQuery, NativePriceQueryVariables>;
+export const DexAccountCountDocument = gql`
+    query DexAccountCount {
+  factories {
+    id
+    accountCount
+  }
+}
+    `;
+
+/**
+ * __useDexAccountCountQuery__
+ *
+ * To run a query within a React component, call `useDexAccountCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDexAccountCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDexAccountCountQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDexAccountCountQuery(baseOptions?: Apollo.QueryHookOptions<DexAccountCountQuery, DexAccountCountQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DexAccountCountQuery, DexAccountCountQueryVariables>(DexAccountCountDocument, options);
+      }
+export function useDexAccountCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DexAccountCountQuery, DexAccountCountQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DexAccountCountQuery, DexAccountCountQueryVariables>(DexAccountCountDocument, options);
+        }
+export function useDexAccountCountSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DexAccountCountQuery, DexAccountCountQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<DexAccountCountQuery, DexAccountCountQueryVariables>(DexAccountCountDocument, options);
+        }
+export type DexAccountCountQueryHookResult = ReturnType<typeof useDexAccountCountQuery>;
+export type DexAccountCountLazyQueryHookResult = ReturnType<typeof useDexAccountCountLazyQuery>;
+export type DexAccountCountSuspenseQueryHookResult = ReturnType<typeof useDexAccountCountSuspenseQuery>;
+export type DexAccountCountQueryResult = Apollo.QueryResult<DexAccountCountQuery, DexAccountCountQueryVariables>;
 export const AllRacersDocument = gql`
     query AllRacers {
   memeRacers {
