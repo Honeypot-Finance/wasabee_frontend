@@ -548,7 +548,7 @@ const FeaturedLaunchCard = observer(
               width={200}
               height={200}
               objectFit="cover"
-              className="rounded-full h-full aspect-square object-contain"
+              className="h-full w-full object-cover"
               src={!!pair.logoUrl ? pair.logoUrl : "/images/empty-logo.png"}
             />
           </div>
