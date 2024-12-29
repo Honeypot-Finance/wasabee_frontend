@@ -35,6 +35,7 @@ export const POOL_HOUR_DATA_FRAGMENT = gql`
     id
     tvlUSD
     txCount
+    volumeUSD
     periodStartUnix
   }
 `;
@@ -44,6 +45,7 @@ export const POOL_DAY_DATA_FRAGMENT = gql`
     feesUSD
     id
     txCount
+    volumeUSD
     tvlUSD
     date
   }
