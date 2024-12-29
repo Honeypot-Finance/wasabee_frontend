@@ -27,12 +27,27 @@ import { MyPools } from "./MyPools";
 import PortfolioTab from "./Portfolio";
 import { ProtfolioBalanceChart } from "./ProtfolioBalanceChart";
 import { portfolio } from "@/services/portfolio";
+import {
+  getLiquidatorDatas,
+  UserPoolProfit,
+} from "@/lib/algebra/graphql/clients/userProfit";
+import { LiquidatorDataQuery } from "@/lib/algebra/graphql/generated/graphql";
+import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
 
 export const Profile = observer(() => {
   const { chainId } = useAccount();
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(0);
-  const [timeRange, setTimeRange] = useState<"1D" | "1W" | "1M" | "1Y">("1D");
+  const [timeRange, setTimeRange] = useState<"1D" | "1W" | "1M">("1D");
+  const [userPoolsProfit, setUserPoolsProfit] = useState<UserPoolProfit[]>([]);
+
+  useEffect(() => {
+    if (wallet.account) {
+      getLiquidatorDatas(wallet.account).then((data) => {
+        setUserPoolsProfit(data);
+      });
+    }
+  }, [wallet.account]);
 
   useEffect(() => {
     if (chartContainerRef.current) {
@@ -91,31 +106,46 @@ export const Profile = observer(() => {
                   </div>
                 </div>
 
-                <div className="flex  gap-2">
-                  <span className="text-[#FAFAFC] text-[48px] leading-none">
-                    {portfolio.totalBalanceFormatted} USD
+                <div className="flex flex-col gap-2">
+                  <span className="text-[#FAFAFC] text-[24px] leading-none p-2">
+                    <span>Token Value: </span>
+                    {formatAmount(portfolio.totalBalanceFormatted, 2)} USD
                   </span>
-                  {/* <div>
-                    <span className="text-[#FAFAFC]/60 text-sm ml-1">
-                      {timeRange}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <span className="text-[#FF5555] text-sm">-$0.5531</span>
-                      <span className="text-[#FF5555] text-sm">(-1.41%)</span>
-                    </div>
-                  </div> */}
+                  <span className="text-[#FAFAFC] text-[24px] leading-none p-2">
+                    <span>Total LP Value: </span>
+                    {formatAmount(
+                      userPoolsProfit
+                        .reduce((acc, curr) => acc + curr.totalValueUSD, 0)
+                        .toFixed(2),
+                      2
+                    )}{" "}
+                    USD
+                  </span>
+                  <span className="text-[#FAFAFC] text-[24px] leading-none p-2">
+                    <span>Total LP Fees Gained: </span>
+                    {formatAmount(
+                      userPoolsProfit
+                        .reduce((acc, curr) => acc + curr.collectedFeesUSD, 0)
+                        .toFixed(2),
+                      2
+                    )}{" "}
+                    USD
+                  </span>
                 </div>
               </div>
 
-              {/* <div className="w-[300px] flex flex-col gap-2">
+              <div className="w-[300px] flex flex-col gap-2">
                 <div
                   className="h-30 w-full rounded-lg overflow-hidden"
                   ref={chartContainerRef}
                 >
-                  <ProtfolioBalanceChart />
+                  <ProtfolioBalanceChart
+                    userPoolsProfits={userPoolsProfit}
+                    timeRange={timeRange}
+                  />
                 </div>
                 <div className="flex items-center justify-end gap-6">
-                  {(["1D", "1W", "1M", "1Y"] as const).map((range) => (
+                  {(["1D", "1W", "1M"] as const).map((range) => (
                     <span
                       key={range}
                       className={`text-sm cursor-pointer ${
@@ -129,7 +159,7 @@ export const Profile = observer(() => {
                     </span>
                   ))}
                 </div>
-              </div> */}
+              </div>
             </div>
 
             <Tabs

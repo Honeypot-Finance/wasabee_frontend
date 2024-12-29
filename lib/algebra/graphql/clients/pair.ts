@@ -125,7 +125,6 @@ export const pot2PumpListToMemePairList = async (
 export const pot2PumpToMemePair = async (
   pot2Pump: Partial<Pot2Pump>
 ): Promise<MemePairContract> => {
-  pot2Pump.participants && console.log("pot2Pump", pot2Pump);
   const contract = new MemePairContract({
     address: pot2Pump.id,
     depositedLaunchedTokenWithoutDecimals: new BigNumber(

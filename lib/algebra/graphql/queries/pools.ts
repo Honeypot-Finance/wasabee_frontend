@@ -20,8 +20,35 @@ export const POOL_FRAGMENT = gql`
     untrackedFeesUSD
     token0Price
     token1Price
+    poolDayData(first: 100, orderBy: date, orderDirection: desc) {
+      ...PoolDayDataFields
+    }
+    poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
+      ...PoolHourDataFields
+    }
   }
 `;
+
+export const POOL_HOUR_DATA_FRAGMENT = gql`
+  fragment PoolHourDataFields on PoolHourData {
+    feesUSD
+    id
+    tvlUSD
+    txCount
+    periodStartUnix
+  }
+`;
+
+export const POOL_DAY_DATA_FRAGMENT = gql`
+  fragment PoolDayDataFields on PoolDayData {
+    feesUSD
+    id
+    txCount
+    tvlUSD
+    date
+  }
+`;
+
 export const TICK_FRAGMENT = gql`
   fragment TickFields on Tick {
     tickIdx
@@ -38,23 +65,10 @@ export const POOL_FEE_DATA_FRAGMENT = gql`
   }
 `;
 
-export const POOL_DAY_DATA_FRAGMENT = gql`
-  fragment PoolDayDataFields on PoolDayData {
-    feesUSD
-    tvlUSD
-    volumeUSD
-    id
-    date
-  }
-`;
-
 export const POOLS_LIST = gql`
   query PoolsList {
     pools {
       ...PoolFields
-      poolDayData(first: 1, orderBy: date, orderDirection: desc) {
-        ...PoolDayDataFields
-      }
     }
   }
 `;
@@ -103,6 +117,24 @@ export const POOL_FEE_DATA = gql`
 export const POOLS_BY_TOKEN_PAIR = gql`
   query PoolsByTokenPair($token0: ID!, $token1: ID!) {
     pools(where: { token0_: { id: $token0 }, token1_: { id: $token1 } }) {
+      ...PoolFields
+    }
+  }
+`;
+
+export const LIQUIDATOR_DATA = gql`
+  query LiquidatorData($account: String!) {
+    liquidatorDatas(where: { account: $account }) {
+      ...LiquidatorDataFields
+    }
+  }
+`;
+
+export const LIQUIDATOR_DATA_FIELDS = gql`
+  fragment LiquidatorDataFields on LiquidatorData {
+    id
+    totalLiquidityUsd
+    pool {
       ...PoolFields
     }
   }

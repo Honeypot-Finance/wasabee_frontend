@@ -12756,18 +12756,20 @@ export type AllRacersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type AllRacersQuery = { __typename?: 'Query', memeRacers: Array<{ __typename?: 'MemeRacer', id: string, currentScore: any, token: { __typename?: 'Token', symbol: string, initialUSD: any, derivedUSD: any, totalSupply: any }, hourData: Array<{ __typename?: 'MemeRacerHourData', timestamp: any, score: any, usdAtThisHour: any }> }> };
 
-export type PoolFieldsFragment = { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null } };
+export type PoolFieldsFragment = { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, tvlUSD: any, date: number }>, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, periodStartUnix: number }> };
+
+export type PoolHourDataFieldsFragment = { __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, periodStartUnix: number };
+
+export type PoolDayDataFieldsFragment = { __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, tvlUSD: any, date: number };
 
 export type TickFieldsFragment = { __typename?: 'Tick', tickIdx: any, liquidityNet: any, liquidityGross: any, price0: any, price1: any };
 
 export type PoolFeeDataFieldsFragment = { __typename?: 'PoolDayData', feesUSD: any };
 
-export type PoolDayDataFieldsFragment = { __typename?: 'PoolDayData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, date: number };
-
 export type PoolsListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type PoolsListQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, date: number }>, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null } }> };
+export type PoolsListQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, tvlUSD: any, date: number }>, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, periodStartUnix: number }> }> };
 
 export type AllTicksQueryVariables = Exact<{
   poolAddress: Scalars['String']['input'];
@@ -12782,14 +12784,14 @@ export type SinglePoolQueryVariables = Exact<{
 }>;
 
 
-export type SinglePoolQuery = { __typename?: 'Query', pool?: { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null } } | null };
+export type SinglePoolQuery = { __typename?: 'Query', pool?: { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, tvlUSD: any, date: number }>, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, periodStartUnix: number }> } | null };
 
 export type MultiplePoolsQueryVariables = Exact<{
   poolIds?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
 }>;
 
 
-export type MultiplePoolsQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null } }> };
+export type MultiplePoolsQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, tvlUSD: any, date: number }>, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, periodStartUnix: number }> }> };
 
 export type PoolFeeDataQueryVariables = Exact<{
   poolId?: InputMaybe<Scalars['String']['input']>;
@@ -12804,7 +12806,16 @@ export type PoolsByTokenPairQueryVariables = Exact<{
 }>;
 
 
-export type PoolsByTokenPairQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null } }> };
+export type PoolsByTokenPairQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, tvlUSD: any, date: number }>, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, periodStartUnix: number }> }> };
+
+export type LiquidatorDataQueryVariables = Exact<{
+  account: Scalars['String']['input'];
+}>;
+
+
+export type LiquidatorDataQuery = { __typename?: 'Query', liquidatorDatas: Array<{ __typename?: 'LiquidatorData', id: string, totalLiquidityUsd: any, pool: { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, tvlUSD: any, date: number }>, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, periodStartUnix: number }> } }> };
+
+export type LiquidatorDataFieldsFragment = { __typename?: 'LiquidatorData', id: string, totalLiquidityUsd: any, pool: { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, tvlUSD: any, date: number }>, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, periodStartUnix: number }> } };
 
 export type GetPot2PumpDetailQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -12923,6 +12934,20 @@ export const BundleFieldsFragmentDoc = gql`
   maticPriceUSD
 }
     `;
+export const TickFieldsFragmentDoc = gql`
+    fragment TickFields on Tick {
+  tickIdx
+  liquidityNet
+  liquidityGross
+  price0
+  price1
+}
+    `;
+export const PoolFeeDataFieldsFragmentDoc = gql`
+    fragment PoolFeeDataFields on PoolDayData {
+  feesUSD
+}
+    `;
 export const TokenFieldsFragmentDoc = gql`
     fragment TokenFields on Token {
   id
@@ -12940,6 +12965,24 @@ export const TokenFieldsFragmentDoc = gql`
   pot2Pump {
     id
   }
+}
+    `;
+export const PoolDayDataFieldsFragmentDoc = gql`
+    fragment PoolDayDataFields on PoolDayData {
+  feesUSD
+  id
+  txCount
+  tvlUSD
+  date
+}
+    `;
+export const PoolHourDataFieldsFragmentDoc = gql`
+    fragment PoolHourDataFields on PoolHourData {
+  feesUSD
+  id
+  tvlUSD
+  txCount
+  periodStartUnix
 }
     `;
 export const PoolFieldsFragmentDoc = gql`
@@ -12962,31 +13005,25 @@ export const PoolFieldsFragmentDoc = gql`
   untrackedFeesUSD
   token0Price
   token1Price
+  poolDayData(first: 100, orderBy: date, orderDirection: desc) {
+    ...PoolDayDataFields
+  }
+  poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
+    ...PoolHourDataFields
+  }
 }
-    ${TokenFieldsFragmentDoc}`;
-export const TickFieldsFragmentDoc = gql`
-    fragment TickFields on Tick {
-  tickIdx
-  liquidityNet
-  liquidityGross
-  price0
-  price1
-}
-    `;
-export const PoolFeeDataFieldsFragmentDoc = gql`
-    fragment PoolFeeDataFields on PoolDayData {
-  feesUSD
-}
-    `;
-export const PoolDayDataFieldsFragmentDoc = gql`
-    fragment PoolDayDataFields on PoolDayData {
-  feesUSD
-  tvlUSD
-  volumeUSD
+    ${TokenFieldsFragmentDoc}
+${PoolDayDataFieldsFragmentDoc}
+${PoolHourDataFieldsFragmentDoc}`;
+export const LiquidatorDataFieldsFragmentDoc = gql`
+    fragment LiquidatorDataFields on LiquidatorData {
   id
-  date
+  totalLiquidityUsd
+  pool {
+    ...PoolFields
+  }
 }
-    `;
+    ${PoolFieldsFragmentDoc}`;
 export const AlgebraVaultFieldFragmentDoc = gql`
     fragment AlgebraVaultField on IchiVault {
   id
@@ -13482,13 +13519,9 @@ export const PoolsListDocument = gql`
     query PoolsList {
   pools {
     ...PoolFields
-    poolDayData(first: 1, orderBy: date, orderDirection: desc) {
-      ...PoolDayDataFields
-    }
   }
 }
-    ${PoolFieldsFragmentDoc}
-${PoolDayDataFieldsFragmentDoc}`;
+    ${PoolFieldsFragmentDoc}`;
 
 /**
  * __usePoolsListQuery__
@@ -13728,6 +13761,46 @@ export type PoolsByTokenPairQueryHookResult = ReturnType<typeof usePoolsByTokenP
 export type PoolsByTokenPairLazyQueryHookResult = ReturnType<typeof usePoolsByTokenPairLazyQuery>;
 export type PoolsByTokenPairSuspenseQueryHookResult = ReturnType<typeof usePoolsByTokenPairSuspenseQuery>;
 export type PoolsByTokenPairQueryResult = Apollo.QueryResult<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>;
+export const LiquidatorDataDocument = gql`
+    query LiquidatorData($account: String!) {
+  liquidatorDatas(where: {account: $account}) {
+    ...LiquidatorDataFields
+  }
+}
+    ${LiquidatorDataFieldsFragmentDoc}`;
+
+/**
+ * __useLiquidatorDataQuery__
+ *
+ * To run a query within a React component, call `useLiquidatorDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLiquidatorDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLiquidatorDataQuery({
+ *   variables: {
+ *      account: // value for 'account'
+ *   },
+ * });
+ */
+export function useLiquidatorDataQuery(baseOptions: Apollo.QueryHookOptions<LiquidatorDataQuery, LiquidatorDataQueryVariables> & ({ variables: LiquidatorDataQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LiquidatorDataQuery, LiquidatorDataQueryVariables>(LiquidatorDataDocument, options);
+      }
+export function useLiquidatorDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LiquidatorDataQuery, LiquidatorDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LiquidatorDataQuery, LiquidatorDataQueryVariables>(LiquidatorDataDocument, options);
+        }
+export function useLiquidatorDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<LiquidatorDataQuery, LiquidatorDataQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<LiquidatorDataQuery, LiquidatorDataQueryVariables>(LiquidatorDataDocument, options);
+        }
+export type LiquidatorDataQueryHookResult = ReturnType<typeof useLiquidatorDataQuery>;
+export type LiquidatorDataLazyQueryHookResult = ReturnType<typeof useLiquidatorDataLazyQuery>;
+export type LiquidatorDataSuspenseQueryHookResult = ReturnType<typeof useLiquidatorDataSuspenseQuery>;
+export type LiquidatorDataQueryResult = Apollo.QueryResult<LiquidatorDataQuery, LiquidatorDataQueryVariables>;
 export const GetPot2PumpDetailDocument = gql`
     query GetPot2PumpDetail($id: ID!, $accountId: ID) {
   pot2Pump(id: $id) {

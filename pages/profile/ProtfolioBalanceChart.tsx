@@ -1,193 +1,74 @@
 import { PriceChart } from "@/components/PriceChart/PriceChart";
+import { UserPoolProfit } from "@/lib/algebra/graphql/clients/userProfit";
 import { UTCTimestamp } from "lightweight-charts";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { useMemo } from "react";
 
-export const ProtfolioBalanceChart = observer(() => {
-  const [timeRange, setTimeRange] = useState<"1D" | "1W" | "1M" | "1Y">("1D");
+export const ProtfolioBalanceChart = observer(
+  ({
+    userPoolsProfits,
+    timeRange,
+  }: {
+    userPoolsProfits: UserPoolProfit[];
+    timeRange: "1D" | "1W" | "1M";
+  }) => {
+    const chartData = useMemo(() => {
+      const now = new Date();
+      const ranges = {
+        "1D": 24 * 60 * 60 * 1000, // 1 day in ms
+        "1W": 7 * 24 * 60 * 60 * 1000,
+        "1M": 30 * 24 * 60 * 60 * 1000,
+      };
 
-  const chartData = {
-    "1D": [
-      {
-        time: Math.floor(
-          new Date("2024-01-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.5,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 39.2,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.9,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 39.5,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.7,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.9,
-      },
-    ],
-    "1W": [
-      {
-        time: Math.floor(
-          new Date("2024-01-06").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 37.5,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-07").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.2,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-08").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.9,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-09").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 39.5,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-10").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.7,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-11").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.4,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.9,
-      },
-    ],
-    "1M": [
-      {
-        time: Math.floor(
-          new Date("2023-12-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 36.5,
-      },
-      {
-        time: Math.floor(
-          new Date("2023-12-17").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 37.2,
-      },
-      {
-        time: Math.floor(
-          new Date("2023-12-22").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 37.9,
-      },
-      {
-        time: Math.floor(
-          new Date("2023-12-27").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.5,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-01").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.7,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-06").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.4,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.9,
-      },
-    ],
-    "1Y": [
-      {
-        time: Math.floor(
-          new Date("2023-01-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 35.5,
-      },
-      {
-        time: Math.floor(
-          new Date("2023-03-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 36.2,
-      },
-      {
-        time: Math.floor(
-          new Date("2023-05-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 37.9,
-      },
-      {
-        time: Math.floor(
-          new Date("2023-07-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.5,
-      },
-      {
-        time: Math.floor(
-          new Date("2023-09-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.7,
-      },
-      {
-        time: Math.floor(
-          new Date("2023-11-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.4,
-      },
-      {
-        time: Math.floor(
-          new Date("2024-01-12").getTime() / 1000
-        ) as UTCTimestamp,
-        value: 38.9,
-      },
-    ],
-  };
-  return (
-    <>
-      <PriceChart
-        data={chartData[timeRange]}
-        width={300}
-        height={120}
-        timeRange={timeRange}
-      />
-    </>
-  );
-});
+      const startTime = now.getTime() - ranges[timeRange];
+
+      // Aggregate data based on time range
+      const data = userPoolsProfits.reduce(
+        (acc, pool) => {
+          const hourData = timeRange === "1D" ? pool.pool.poolHoursData : [];
+          const dayData = timeRange !== "1D" ? pool.pool.poolDaysData : [];
+          const relevantData = timeRange === "1D" ? hourData : dayData;
+
+          relevantData.forEach((dataPoint) => {
+            const timestamp = new Date(
+              ("date" in dataPoint
+                ? dataPoint.date
+                : dataPoint.periodStartUnix) * 1000
+            ).getTime();
+            if (timestamp >= startTime) {
+              const time = Math.floor(timestamp / 1000) as UTCTimestamp;
+              if (!acc[time]) {
+                acc[time] = 0;
+              }
+              acc[time] += Number(dataPoint.feesUSD);
+            }
+          });
+          return acc;
+        },
+        {} as Record<number, number>
+      );
+
+      // Convert to array format required by the chart
+      return Object.entries(data)
+        .map(([time, value]) => ({
+          time: Number(time) as UTCTimestamp,
+          value,
+        }))
+        .sort((a, b) => a.time - b.time);
+    }, [userPoolsProfits, timeRange]);
+
+    return (
+      <>
+        <h3 className="text-white text-2xl font-bold">Fees Gained</h3>
+        <PriceChart
+          data={chartData}
+          width={300}
+          height={120}
+          timeRange={timeRange}
+        />
+      </>
+    );
+  }
+);
 
 export default ProtfolioBalanceChart;
