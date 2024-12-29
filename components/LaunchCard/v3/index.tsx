@@ -527,14 +527,21 @@ const SimpleLaunchCard = observer(
               </p>
             </div>{" "}
             <div>
-              <p className="text-xs opacity-60">Current Price</p>
+              <p className="text-xs opacity-60">Market Cap</p>
               <p className="font-semibold">
                 <span>
                   {pair?.launchedToken?.derivedUSD
                     ? "$ " +
-                      (Number(pair.launchedToken.derivedUSD) < 0.001
-                        ? "<0.001"
-                        : Number(pair.launchedToken.derivedUSD).toFixed(3))
+                      formatAmount(
+                        (
+                          Number(pair.launchedToken.derivedUSD) *
+                          Number(
+                            pair?.launchedToken?.totalSupplyWithoutDecimals.div(
+                              Math.pow(10, 18)
+                            )
+                          )
+                        ).toFixed(2)
+                      )
                     : "--"}
                 </span>
               </p>

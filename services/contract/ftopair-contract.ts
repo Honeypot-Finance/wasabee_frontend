@@ -76,10 +76,7 @@ export class FtoPairContract implements BaseLaunchContract {
       Number(this.launchedToken?.derivedUSD) &&
       this.launchedToken?.initialUSD &&
       Number(this.launchedToken.initialUSD)
-      ? Number(this.launchedToken.derivedUSD) >
-        Number(this.launchedToken.initialUSD)
-        ? `${formatAmount((Number(this.launchedToken.derivedUSD) / Number(this.launchedToken.initialUSD)).toFixed(2), 2)}%`
-        : `-${formatAmount((Number(this.launchedToken.initialUSD) / Number(this.launchedToken.derivedUSD)).toFixed(2), 2)}%`
+      ? `${formatAmount((Number(this.launchedToken.derivedUSD) / Number(this.launchedToken.initialUSD)).toFixed(2), 2)}%`
       : "--";
   }
 
