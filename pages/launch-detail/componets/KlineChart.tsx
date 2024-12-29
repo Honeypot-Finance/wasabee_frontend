@@ -231,7 +231,7 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
   ]);
 
   return (
-    <div className="w-full relative rounded-2xl bg-[#202020] overflow-hidden p-4">
+    <div className="w-full relative rounded-2xl bg-[#202020] overflow-hidden p-4 h-full">
       <div className="flex flex-col gap-1">
         {/* Token Info */}
         <div className="flex items-center gap-2">
