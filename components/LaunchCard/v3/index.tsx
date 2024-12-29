@@ -17,12 +17,12 @@ import CardContianer from "../../CardContianer/CardContianer";
 import BigNumber from "bignumber.js";
 import { wallet } from "@/services/wallet";
 import {
-  TimeLineComponent,
   LaunchProgress,
   FtoProjectActions,
   MemeProjectActions,
 } from "./components";
 import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import { Button } from "@/components/button/button-next";
 
 export type launchCardVariants =
   | "list"
