@@ -231,7 +231,7 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
   ]);
 
   return (
-    <div className="w-full relative rounded-2xl bg-[#202020] overflow-hidden p-4 h-full">
+    <div className="w-full relative rounded-2xl bg-[#202020] overflow-hidden p-4">
       <div className="flex flex-col gap-1">
         {/* Token Info */}
         <div className="flex items-center gap-2">
@@ -331,7 +331,7 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
 
       {/* Chart or Placeholder */}
       {!chart.range ? (
-        <div className="w-full h-[300px] mt-2 flex items-center justify-center">
+        <div style={{ height: typeof height === 'number' ? `${height}px` : height }} className="w-full mt-2 flex items-center justify-center">
           <div className="text-center">
             <div className="text-white/50 text-sm mb-2">
               Please select a time range
@@ -366,14 +366,9 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
             </div>
           </div>
         </div>
-      ) : chartData.length > 0 ? (
-        <div ref={chartRef} className="w-full mt-2" />
-      ) : (
-        <div className="w-full h-[300px] mt-2 flex items-center justify-center">
+      ) : !chartData || chartData.length === 0 ? (
+        <div style={{ height: typeof height === 'number' ? `${height}px` : height }} className="w-full mt-2 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-white/50 text-sm mb-2">
-              No chart data available
-            </div>
             <div className="flex justify-center">
               <svg
                 className="animate-spin h-8 w-8 text-[#FFCD4D]"
@@ -398,6 +393,8 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
             </div>
           </div>
         </div>
+      ) : (
+        <div ref={chartRef} className="w-full mt-2" />
       )}
     </div>
   );

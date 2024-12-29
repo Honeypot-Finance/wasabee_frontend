@@ -522,24 +522,6 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 )}
               </div>
 
-              <div className="relative w-full h-[5rem] border-dashed border-black hover:border-black/70 border-2 rounded-2xl mb-5 transition-all text-black hover:text-black/70">
-                <Controller
-                  control={control}
-                  name="bannerUrl"
-                  render={({ field: { onChange, value } }) => (
-                    <UploadImage
-                      blobName={"banner"}
-                      imagePath={value}
-                      onUpload={onChange}
-                      variant="banner"
-                    />
-                  )}
-                />
-                <h3 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold pointer-events-none">
-                  Upload Banner
-                </h3>
-              </div>
-
               <div className="flex flex-col gap-2">
                 <label className="text-black text-base font-medium">
                   Token Name <span className="text-red-500">*</span>
@@ -580,6 +562,28 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                       content: "space-y-4",
                     }}
                   >
+                    <div className="relative w-full h-[5rem] border-dashed border-black hover:border-black/70 border-2 rounded-2xl mb-5 transition-all text-black hover:text-black/70">
+                      <Controller
+                        control={control}
+                        name="bannerUrl"
+                        render={({ field: { onChange, value } }) => (
+                          <>
+                            <UploadImage
+                              blobName={"banner"}
+                              imagePath={value}
+                              onUpload={onChange}
+                              variant="banner"
+                            />
+                            {!value && (
+                              <h3 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold pointer-events-none">
+                                Upload Banner
+                              </h3>
+                            )}
+                          </>
+                        )}
+                      />
+                    </div>
+
                     <div className="flex flex-col gap-2">
                       <label className="text-black text-base font-medium">
                         Description{" "}

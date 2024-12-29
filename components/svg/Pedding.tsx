@@ -1,5 +1,7 @@
 import { cn } from "@/lib/tailwindcss";
 
+// TODO: merge rocket and pedding svg
+
 export const PeddingSvg = ({ className }: { className?: string }) => {
   return (
     <svg

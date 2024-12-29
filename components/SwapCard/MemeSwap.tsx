@@ -173,7 +173,7 @@ export const LaunchDetailSwapCard = observer(
               <V3SwapCard
                 fromTokenAddress={inputAddress}
                 toTokenAddress={outputAddress}
-                boarderless
+                bordered={false}
               />
             </LoadingContainer>
           )}

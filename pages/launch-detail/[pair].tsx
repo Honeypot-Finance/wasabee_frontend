@@ -22,7 +22,7 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { trpcClient } from "@/lib/trpc";
-import ProjectStatus from "@/components/atoms/TokenStatusDisplay/TokenStatus";
+import PairStatus from "@/components/atoms/TokenStatusDisplay/PairStatus";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
 import { useAccount } from "wagmi";
 import { chart } from "@/services/chart";
@@ -443,6 +443,10 @@ const FtoView = observer(() => {
             <ProjectTitle
               name={pair?.launchedToken?.name}
               displayName={pair?.launchedToken?.displayName}
+              telegram={pair?.telegram}
+              twitter={pair?.twitter}
+              website={pair?.website}
+              address={pair?.launchedToken?.address}
             />
           </div>
           <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
@@ -451,8 +455,11 @@ const FtoView = observer(() => {
               ftoState={state.pair.value?.state}
               endTimeDisplay={state.pair.value?.endTimeDisplay}
             />
-            {/* TODO: update style */}
-            <ProjectStatus pair={pair} />
+            <PairStatus
+              ftoStatusDisplayColor={pair?.ftoStatusDisplay?.color}
+              ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+              isValidated={pair?.isValidated}
+            />
           </div>
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
@@ -690,6 +697,10 @@ const MemeView = observer(() => {
               <ProjectTitle
                 name={pair?.launchedToken?.name}
                 displayName={pair?.launchedToken?.displayName}
+                telegram={pair?.telegram}
+                twitter={pair?.twitter}
+                website={pair?.website}
+                address={pair?.launchedToken?.address}
               />
             </div>
             <CountdownTimer
@@ -698,8 +709,11 @@ const MemeView = observer(() => {
               endTimeDisplay={state.pair.value?.endTimeDisplay}
             />
             <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
-              {/* TODO: update style */}
-              <ProjectStatus pair={pair} />
+              <PairStatus
+                ftoStatusDisplayColor={pair?.ftoStatusDisplay?.color}
+                ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+                isValidated={pair?.isValidated}
+              />
             </div>
           </div>
 
