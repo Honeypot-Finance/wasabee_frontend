@@ -21,9 +21,9 @@ let customWallets = [
   walletConnectWallet,
   bitgetWallet,
   okxWallet,
-  holdstationWallet,
-  berasigWallet,
-  capsuleWallet,
+  // holdstationWallet,
+  // berasigWallet,
+  // capsuleWallet,
 ];
 // if(!window.bitkeep){
 //   customWallets.unshift(bitgetWallet);
