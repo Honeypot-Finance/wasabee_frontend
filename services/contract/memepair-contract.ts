@@ -581,6 +581,9 @@ export class MemePairContract implements BaseLaunchContract {
   }
 
   get state(): number {
+    if (!this.raiseToken) {
+      return -1;
+    }
     if (
       !this.depositedRaisedToken ||
       !this.endTime ||
@@ -591,7 +594,9 @@ export class MemePairContract implements BaseLaunchContract {
 
     if (
       this.depositedRaisedToken.toNumber() >=
-      this.raisedTokenMinCap.div(Math.pow(10, 18)).toNumber()
+      this.raisedTokenMinCap
+        .div(Math.pow(10, this.raiseToken.decimals))
+        .toNumber()
     ) {
       return 0;
     } else if (dayjs.unix(Number(this.endTime)).isBefore(dayjs())) {

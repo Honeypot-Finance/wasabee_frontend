@@ -1,12 +1,13 @@
 import { FtoPairContract } from "@/services/contract/ftopair-contract";
 import { MemePairContract } from "@/services/contract/memepair-contract";
+import { cn } from "@/lib/tailwindcss";
 import BigNumber from "bignumber.js";
 import { observer } from "mobx-react-lite";
 import ProgressBar from "../../../atoms/ProgressBar/ProgressBar";
 import TimeLineComponent from "./TimeLineComponent";
 
 export const LaunchProgress = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+  ({ pair, className }: { pair: FtoPairContract | MemePairContract; className?: string }) => {
     // 计算进度百分比
     const progressPercentage = new BigNumber(
       pair.depositedRaisedToken?.toNumber() ?? 0
@@ -30,11 +31,11 @@ export const LaunchProgress = observer(
 
     // 如果进度超过100%，不显示组件
     if (Number(progressPercentage) >= 100) {
-      return <div className="mt-4"></div>;
+      return <div className={cn("mt-4", className)}></div>;
     }
 
     return (
-      <div className="space-y-1.5 text-[#202020]">
+      <div className={cn("space-y-1.5 text-[#202020]", className)}>
         <div className="relative">
           <ProgressBar
             className="rounded-[24px] border border-black bg-white shadow-[2px_2px_0px_0px_#D29A0D]"
@@ -51,7 +52,6 @@ export const LaunchProgress = observer(
             </span>
             <span> {pair?.raiseToken?.displayName}</span>
             <span>
-              {" "}
               (
               {pair?.depositedRaisedToken && pair.raiseToken
                 ? "$" +
