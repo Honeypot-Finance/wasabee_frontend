@@ -49,7 +49,7 @@ export const appPathsList: Menu[] = [
     title: "Pot2pump",
   },
   {
-    title: "Dex",
+    title: "DEX",
     path: [
       {
         path: "/swap",
