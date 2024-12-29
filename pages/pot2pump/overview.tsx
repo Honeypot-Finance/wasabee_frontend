@@ -75,7 +75,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
         {/* Near Success Tokens Section */}
         <section className="overflow-y-auto px-4">
           <h2 className="text-xl font-bold mb-4 sticky top-0 bg-[#FFCD4D] z-10 py-2">
-            Almost Pumping 99%
+            Almost Pumping
           </h2>
           <div className="flex flex-col gap-4">
             {nearSuccessTokens &&

@@ -408,7 +408,7 @@ const SimpleLaunchCard = observer(
     return (
       <Link
         href={`/launch-detail/${pair.address}`}
-        className="flex flex-col gap-y-1 bg-white px-4 py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative overflow-hidden hover:scale-95 hover:shadow-[2px_2px_0px_0px_#FFCD4D] hover:opacity-90 cursor-pointer transition-all duration-100"
+        className="flex flex-col text-sm gap-y-1 bg-white px-4 py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative overflow-hidden hover:scale-95 hover:shadow-[2px_2px_0px_0px_#FFCD4D] hover:opacity-90 cursor-pointer transition-all duration-100"
       >
         <div className="bg-[url('/images/pumping/inline-border.svg')] h-6 absolute top-0 left-0 w-full bg-contain bg-left-top bg-repeat-x"></div>
         <div className="flex gap-4 w-full">
@@ -428,7 +428,7 @@ const SimpleLaunchCard = observer(
               {pair?.launchedToken?.symbol}
             </p>
           </div>
-          <div className="flex-grow-[1] text-right text-sm flex flex-col justify-start items-end">
+          <div className="flex-grow-[1]  gap-y-2 text-right text-sm flex flex-col justify-start items-end">
             <div>
               {pair.state === 3 &&
                 pair?.participantsCount &&
@@ -449,7 +449,7 @@ const SimpleLaunchCard = observer(
 
         {pair.state === 0 && (
           <div className="grid grid-cols-3 gap-1 text-black">
-            <div className="text-lg font-bold text-right col-span-3 flex flex-row justify-start items-center">
+            <div className="text-md font-bold text-right col-span-3 flex flex-row justify-start items-center">
               <p className="flex flex-row gap-2 items-start justify-between w-full text-left">
                 <span>
                   Price Change:{" "}
@@ -478,7 +478,7 @@ const SimpleLaunchCard = observer(
                 </div>
               </p>
             </div>
-            <div>
+            <div className="text-xs ">
               <p className="text-xs opacity-60">Volume</p>
               <p className="font-semibold">
                 <span>
@@ -489,7 +489,7 @@ const SimpleLaunchCard = observer(
                 </span>
               </p>
             </div>
-            <div>
+            <div className="text-xs ">
               <p className="text-xs opacity-60">TVL</p>
               <p className="font-semibold">
                 <span>
@@ -503,7 +503,7 @@ const SimpleLaunchCard = observer(
                 </span>
               </p>
             </div>{" "}
-            <div>
+            <div className="text-xs ">
               <p className="text-xs opacity-60">Market Cap</p>
               <p className="font-semibold">
                 <span>
