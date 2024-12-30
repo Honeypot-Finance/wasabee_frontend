@@ -11,6 +11,8 @@ import {
 } from "@/lib/algebra/graphql/clients/pair";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { wallet } from "@/services/wallet";
+import { Button } from "@/components/button";
+import Link from "next/link";
 
 const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   const [newTokens, setNewTokens] = useState<MemePairContract[]>();
@@ -93,6 +95,18 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
                 onClick={() => setCurrentSlide(index)}
               />
             ))}
+        </div>
+      </div>
+      <div className="w-full m-2 p-2 relative flex justify-center">
+        <div className="py-2">
+          <Link
+            href="/launch-token?launchType=meme"
+            className="text-black font-bold"
+          >
+            <Button className="w-full text-3xl py-5">
+              🍯 Launch Your Token 🍯
+            </Button>
+          </Link>
         </div>
       </div>
       <div className="w-full max-w-[1200px] grid grid-cols-3 h-[80vh]  bg-[#FFCD4D] rounded-2xl px-4 py-3 relative pt-4 md:pt-12 mb-[90px] text-black">
