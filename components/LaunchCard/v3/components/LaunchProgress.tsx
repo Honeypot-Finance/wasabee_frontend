@@ -6,8 +6,19 @@ import { observer } from "mobx-react-lite";
 import ProgressBar from "../../../atoms/ProgressBar/ProgressBar";
 import TimeLineComponent from "./TimeLineComponent";
 
+interface LaunchProgressProps {
+  barOnly?: boolean;
+}
 export const LaunchProgress = observer(
-  ({ pair, className }: { pair: FtoPairContract | MemePairContract; className?: string }) => {
+  ({
+    pair,
+    className,
+    barOnly,
+  }: {
+    pair: FtoPairContract | MemePairContract;
+    className?: string;
+    barOnly?: boolean;
+  }) => {
     // 计算进度百分比
     const progressPercentage = new BigNumber(
       pair.depositedRaisedToken?.toNumber() ?? 0
@@ -34,8 +45,8 @@ export const LaunchProgress = observer(
       return <div className={cn("mt-4", className)}></div>;
     }
 
-    return (
-      <div className={cn("space-y-1.5 text-[#202020]", className)}>
+    if (barOnly) {
+      return (
         <div className="relative">
           <ProgressBar
             className="rounded-[24px] border border-black bg-white shadow-[2px_2px_0px_0px_#D29A0D]"
@@ -45,6 +56,12 @@ export const LaunchProgress = observer(
             {progressPercentage}%
           </span>
         </div>
+      );
+    }
+
+    return (
+      <div className={cn("space-y-1.5 text-[#202020]", className)}>
+        {" "}
         <div className="flex items-center justify-between text-sm *:flex-grow-[1]">
           <span className="space-x-0.5">
             <span>
@@ -62,6 +79,17 @@ export const LaunchProgress = observer(
               )
             </span>
           </span>
+        </div>
+        <div className="relative">
+          <ProgressBar
+            className="rounded-[24px] border border-black bg-white shadow-[2px_2px_0px_0px_#D29A0D]"
+            value={progressValue}
+          />
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-sm font-bold">
+            {progressPercentage}%
+          </span>
+        </div>
+        <div className="flex items-center justify-between text-sm *:flex-grow-[1]">
           <span>
             <TimeLineComponent pair={pair} launchCardVariants="simple" />
           </span>

@@ -60,6 +60,8 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
 
   const getActionTypeDisplay = (type: string) => {
     switch (type.toUpperCase()) {
+      case "SWAP":
+        return "Swap";
       case "DEPOSIT":
         return "Deposit";
       case "REFUND":
@@ -77,6 +79,10 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
     const decimals = pair.raiseToken.decimals;
 
     switch (tx.actionType.toUpperCase()) {
+      case "SWAP":
+        return new BigNumber(tx.swapAmount)
+          .div(new BigNumber(10).pow(decimals))
+          .toFixed(3);
       case "DEPOSIT":
         return new BigNumber(tx.depositAmount)
           .div(new BigNumber(10).pow(decimals))

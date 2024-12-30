@@ -13,7 +13,13 @@ import {
 } from "@/components/ItemSelect/v3";
 
 const SuccessAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+  ({
+    pair,
+    refreshTxsCallback,
+  }: {
+    pair: FtoPairContract | MemePairContract;
+    refreshTxsCallback?: () => void;
+  }) => {
     return (
       // <div className="flex gap-[16px] justify-center items-center flex-col lg:flex-row">
       //   {wallet.account != pair.provider && (
@@ -53,13 +59,20 @@ const SuccessAction = observer(
           inputAddress={pair.raiseToken?.address ?? ""}
           outputAddress={pair.launchedToken?.address}
           memePairContract={pair as MemePairContract}
+          onSwapSuccess={refreshTxsCallback}
         />
       </>
     );
   }
 );
 const FailAction = observer(
-  ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
+  ({
+    pair,
+    refreshTxsCallback,
+  }: {
+    pair: FtoPairContract | MemePairContract;
+    refreshTxsCallback?: () => void;
+  }) => {
     return (
       <div className="flex flex-col gap-[16px]">
         {pair instanceof FtoPairContract && pair.isProvider && (
@@ -95,10 +108,10 @@ const FailAction = observer(
 const ProcessingAction = observer(
   ({
     pair,
-    onSuccess,
+    refreshTxsCallback: onSuccess,
   }: {
     pair: FtoPairContract | MemePairContract;
-    onSuccess?: () => void;
+    refreshTxsCallback?: () => void;
   }) => {
     const state = useLocalObservable(() => ({
       depositAmount: "",
@@ -231,16 +244,26 @@ const ProcessingAction = observer(
 const Action = observer(
   ({
     pair,
-    onSuccess,
+    refreshTxsCallback,
   }: {
     pair: FtoPairContract | MemePairContract;
-    onSuccess?: () => void;
+    refreshTxsCallback?: () => void;
   }) => {
     switch (pair.state) {
       case 0:
-        return <SuccessAction pair={pair}></SuccessAction>;
+        return (
+          <SuccessAction
+            pair={pair}
+            refreshTxsCallback={refreshTxsCallback}
+          ></SuccessAction>
+        );
       case 1:
-        return <FailAction pair={pair}></FailAction>;
+        return (
+          <FailAction
+            pair={pair}
+            refreshTxsCallback={refreshTxsCallback}
+          ></FailAction>
+        );
       case 2:
         return <></>;
       case 3:
@@ -250,7 +273,7 @@ const Action = observer(
         return (
           <ProcessingAction
             pair={pair}
-            onSuccess={onSuccess}
+            refreshTxsCallback={refreshTxsCallback}
           ></ProcessingAction>
         );
     }

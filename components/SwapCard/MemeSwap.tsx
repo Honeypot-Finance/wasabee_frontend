@@ -36,12 +36,14 @@ export const LaunchDetailSwapCard = observer(
     extraTokenAction,
     noBoarder,
     memePairContract,
+    onSwapSuccess,
   }: {
     inputAddress?: string;
     outputAddress?: string;
     extraTokenAction?: React.ReactNode;
     noBoarder?: boolean;
     memePairContract: MemePairContract;
+    onSwapSuccess?: () => void;
   }) => {
     const [currentTab, setCurrentTab] = useState<"Swap" | "LP">("Swap");
     const router = useRouter();
@@ -174,6 +176,7 @@ export const LaunchDetailSwapCard = observer(
                 fromTokenAddress={inputAddress}
                 toTokenAddress={outputAddress}
                 bordered={false}
+                onSwapSuccess={onSwapSuccess}
               />
             </LoadingContainer>
           )}

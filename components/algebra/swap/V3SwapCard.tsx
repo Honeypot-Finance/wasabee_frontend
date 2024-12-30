@@ -9,6 +9,7 @@ interface V3SwapCardProps {
   disableSelection?: boolean;
   bordered?: boolean;
   borderHeight?: string;
+  onSwapSuccess?: () => void;
 }
 
 export function V3SwapCard({
@@ -17,11 +18,12 @@ export function V3SwapCard({
   disableSelection,
   bordered = true,
   borderHeight = "40px",
+  onSwapSuccess,
 }: V3SwapCardProps) {
   return (
     <div className="w-full @container">
       <div
-        style={{ '--border-height': borderHeight } as React.CSSProperties}
+        style={{ "--border-height": borderHeight } as React.CSSProperties}
         className={cn(
           "flex flex-col w-full gap-y-4 items-center bg-[#FFCD4D] rounded-2xl text-black",
           bordered &&
@@ -34,7 +36,7 @@ export function V3SwapCard({
           disableSelection={disableSelection}
         />
         <SwapParamsV3 />
-        <SwapButtonV3 />
+        <SwapButtonV3 onSwapSuccess={onSwapSuccess} />
       </div>
     </div>
   );

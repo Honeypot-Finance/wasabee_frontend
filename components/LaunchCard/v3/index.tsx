@@ -411,41 +411,44 @@ const SimpleLaunchCard = observer(
         className="flex flex-col text-sm gap-y-1 bg-white px-4 py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative overflow-hidden hover:scale-95 hover:shadow-[2px_2px_0px_0px_#FFCD4D] hover:opacity-90 cursor-pointer transition-all duration-100"
       >
         <div className="bg-[url('/images/pumping/inline-border.svg')] h-6 absolute top-0 left-0 w-full bg-contain bg-left-top bg-repeat-x"></div>
-        <div className="flex gap-4 w-full">
+        <div className="flex gap-4 w-full justify-center items-center">
           <div>
             <Image
               alt="logo"
-              width={48}
-              height={48}
+              width={100}
+              height={100}
               objectFit="cover"
               className="rounded-full"
               src={!!pair.logoUrl ? pair.logoUrl : "/images/empty-logo.png"}
             />
           </div>
-          <div className="flex flex-col gap-y-2">
-            <h3 className="font-bold text-xl">{pair?.launchedToken?.name}</h3>
-            <p className="text-sm text-[#202020]/[0.67]">
-              {pair?.launchedToken?.symbol}
-            </p>
-          </div>
-          <div className="flex-grow-[1]  gap-y-2 text-right text-sm flex flex-col justify-start items-end">
-            <div>
-              {pair.state === 3 &&
-                pair?.participantsCount &&
-                pair.participantsCount.toFormat(0) + " Participants"}
-              {pair.state === 0 &&
-                pair?.launchedToken?.holderCount &&
-                pair?.launchedToken?.holderCount + " Holders"}
+          <div className="grid grid-cols-2 gap-2 flex-grow-[1]">
+            <div className="flex flex-col gap-y-2">
+              <h3 className="font-bold text-md">{pair?.launchedToken?.name}</h3>
+              <p className="text-sm text-[#202020]/[0.67]">
+                {pair?.launchedToken?.symbol}
+              </p>
             </div>
-            {pair.state === 0 && (
-              <div className="font-bold text-lg">
-                {formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$
+            <div className="flex-grow-[1]  gap-y-2 text-right text-sm flex flex-col justify-start items-end">
+              <div>
+                {pair.state === 3 &&
+                  pair?.participantsCount &&
+                  pair.participantsCount.toFormat(0) + " Participants"}
+                {pair.state === 0 &&
+                  pair?.launchedToken?.holderCount &&
+                  pair?.launchedToken?.holderCount + " Holders"}
               </div>
-            )}
+              {pair.state === 0 && (
+                <div className="font-bold text-lg">
+                  {formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$
+                </div>
+              )}
+            </div>
+            <div className="col-span-2">
+              {pair.state === 3 && <LaunchProgress pair={pair} />}
+            </div>
           </div>
         </div>
-
-        {pair.state === 3 && <LaunchProgress pair={pair} />}
 
         {pair.state === 0 && (
           <div className="grid grid-cols-3 gap-1 text-black">

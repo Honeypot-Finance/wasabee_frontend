@@ -18,9 +18,9 @@ import { useToastify } from "@/lib/hooks/useContractToastify";
 import { ApprovalState } from "@/types/algebra/types/approve-state";
 import { SwapField } from "@/types/algebra/types/swap-field";
 import { TradeState } from "@/types/algebra/types/trade-state";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
-const SwapButtonV3 = () => {
+const SwapButtonV3 = ({ onSwapSuccess }: { onSwapSuccess?: () => void }) => {
   const { isExpertMode } = useUserState();
   const { independentField, typedValue } = useSwapState();
   const {
@@ -111,9 +111,15 @@ const SwapButtonV3 = () => {
     isSuccess: isSwapSuccess,
   } = useSwapCallback(trade, allowedSlippage, approvalState);
 
-  console.log(trade);
+  const isSwapSuccessMemo = useMemo(() => {
+    return isSwapSuccess;
+  }, [isSwapSuccess]);
 
-  console.log("swapCallbackError", swapCallbackError);
+  useEffect(() => {
+    if (isSwapSuccessMemo && onSwapSuccess) {
+      onSwapSuccess();
+    }
+  }, [isSwapSuccessMemo, onSwapSuccess]);
 
   const swapToast = useToastify({
     title: `Swap ${trade?.inputAmount.toSignificant()} ${trade?.inputAmount.currency.symbol}`,

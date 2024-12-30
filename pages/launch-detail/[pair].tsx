@@ -522,7 +522,7 @@ const FtoView = observer(() => {
           </div>
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-          {pair && <Action pair={pair} onSuccess={triggerRefresh} />}
+          {pair && <Action pair={pair} refreshTxsCallback={triggerRefresh} />}
         </div>
       </div>
 
@@ -749,7 +749,7 @@ const MemeView = observer(() => {
           </div>
 
           <div className="bg-transparent rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-            {pair && <Action pair={pair} onSuccess={triggerRefresh} />}
+            {pair && <Action pair={pair} refreshTxsCallback={triggerRefresh} />}
           </div>
         </div>
 
