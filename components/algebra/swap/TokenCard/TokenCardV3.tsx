@@ -371,40 +371,42 @@ const TokenCardV3 = ({
         </div>
       </div>
 
-      <div className="w-full rounded-2xl border bg-card-dark shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] flex items-center justify-between px-4 py-2.5 gap-x-2">
-        <div className="flex flex-row flex-1">
-          <TokenSelector
-            value={
-              currency?.wrapped.address
-                ? Token.getToken({
-                    address: currency?.wrapped.address,
-                    isNative: currency.isNative,
-                  })
-                : undefined
-            }
-            disableSelection={disableSelection}
-            onSelect={async (token) => {
-              await token.init();
-              handleTokenSelect(
-                token.isNative
-                  ? new AlgebraToken(
-                      wallet.currentChainId,
-                      zeroAddress,
-                      wallet.currentChain.nativeToken.decimals,
-                      wallet.currentChain.nativeToken.symbol,
-                      wallet.currentChain.nativeToken.name
-                    ) && ({ isNative: true } as Currency)
-                  : new AlgebraToken(
-                      wallet.currentChainId,
-                      token.address,
-                      Number(token.decimals),
-                      token.symbol,
-                      token.name
-                    )
-              );
-            }}
-          />
-          <div className="flex flex-col grow items-end">
+      <div className="w-full  rounded-2xl border bg-card-dark shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] flex items-center justify-between px-4 py-2.5 gap-x-2">
+        <div className="grid grid-cols-[max-content_auto]">
+          <div className="flex-grow">
+            <TokenSelector
+              value={
+                currency?.wrapped.address
+                  ? Token.getToken({
+                      address: currency?.wrapped.address,
+                      isNative: currency.isNative,
+                    })
+                  : undefined
+              }
+              disableSelection={disableSelection}
+              onSelect={async (token) => {
+                await token.init();
+                handleTokenSelect(
+                  token.isNative
+                    ? new AlgebraToken(
+                        wallet.currentChainId,
+                        zeroAddress,
+                        wallet.currentChain.nativeToken.decimals,
+                        wallet.currentChain.nativeToken.symbol,
+                        wallet.currentChain.nativeToken.name
+                      ) && ({ isNative: true } as Currency)
+                    : new AlgebraToken(
+                        wallet.currentChainId,
+                        token.address,
+                        Number(token.decimals),
+                        token.symbol,
+                        token.name
+                      )
+                );
+              }}
+            />
+          </div>
+          <div className="flex flex-col items-end">
             <Input
               disabled={disabled}
               type="text"

@@ -6,13 +6,14 @@ import {
   Divider,
   useDisclosure,
   Link,
+  Tooltip,
 } from "@nextui-org/react";
 import { IoSearchOutline } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 import { Token } from "@/services/contract/token";
 import { Observer, observer, useLocalObservable } from "mobx-react-lite";
 import { liquidity } from "@/services/liquidity";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { isEthAddress } from "@/lib/address";
 import { Input } from "../../input/index";
 import { SpinnerContainer } from "../../Spinner";
@@ -24,6 +25,9 @@ import TokenLogo from "../../TokenLogo/TokenLogo";
 import TruncateMarkup from "react-truncate-markup";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import Image from "next/image";
+import pot2pumpIcon from "@/public/images/bera/smoking_bera.png";
+import { Address, zeroAddress } from "viem";
 
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
@@ -76,6 +80,9 @@ export const TokenSelector = observer(
       tokens: [] as Token[],
       currentAnimationVariant: "initial",
     }));
+
+    const [pot2PumpAddress, setPot2PumpAddress] = useState<string | null>(null);
+
     const animationVariants = {
       dropDownIcon: {
         initial: { y: 0 },
@@ -86,8 +93,21 @@ export const TokenSelector = observer(
     };
 
     useEffect(() => {
+      if (value) {
+        wallet.contracts.memeFactory.contract.read
+          .getPair([value.address as Address])
+          .then((res) => {
+            if (res != zeroAddress) {
+              setPot2PumpAddress(res);
+            }
+          });
+      }
+    }, [value]);
+
+    useEffect(() => {
       state.filterTokensBySearch();
     }, [state.search]);
+
     return (
       <motion.div
         className="flex items-center group"
@@ -250,7 +270,7 @@ export const TokenSelector = observer(
           </PopoverContent>
         </Popover>
         {value && (
-          <div className="text-black flex items-center gap-x-2">
+          <div className="text-black flex items-center gap-x-2 z-10">
             <Link
               href={`${wallet.currentChain?.chain.blockExplorers?.default.url}/token/${value.address}`}
               target="_blank"
@@ -258,6 +278,19 @@ export const TokenSelector = observer(
               <BiLinkExternal className=" cursor-pointer text-[#140E06]" />
             </Link>
             <Copy value={value.address} className="size-4 text-[#140E06]" />
+            {pot2PumpAddress && (
+              <Tooltip content="This token is launched on Pot2Pump">
+                <Link href={`/launch-detail/${pot2PumpAddress}`}>
+                  <Image
+                    width={16}
+                    height={16}
+                    src={pot2pumpIcon}
+                    alt="pot2pump"
+                    className="size-4 cursor-pointer"
+                  />
+                </Link>
+              </Tooltip>
+            )}
           </div>
         )}
       </motion.div>

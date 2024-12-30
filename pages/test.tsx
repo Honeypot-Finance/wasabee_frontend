@@ -4,6 +4,9 @@ import BigNumber from "bignumber.js";
 import { Address } from "viem";
 
 export default function TestPage() {
+  const tHpotAddress = "0xfc5e3743e9fac8bb60408797607352e24db7d65e";
+  const pHpotAddress = "0xb6a43168ffb37e03e48a723fcb3895ae7d596078";
+
   const removeMemeFactoryRaisedToken = async () => {
     const contract =
       wallet.contracts.memeFactory.contract.write.removeRaisedToken(
