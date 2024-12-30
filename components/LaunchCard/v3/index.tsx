@@ -135,8 +135,8 @@ const DetailLaunchCard = observer(
             />
           </div>
           <LaunchProgress pair={pair} className="my-3" />
-          <div className="grid grid-cols-2 gap-4 text-black">
-            <div>
+          <div className="grid grid-cols-2 gap-4 text-black [&>*:nth-child(odd)]:text-left [&>*:nth-child(even)]:text-right">
+            {/* <div>
               <p className="text-xs opacity-60">Total Raised Token</p>
               <p className="font-semibold">
                 <span>
@@ -150,19 +150,43 @@ const DetailLaunchCard = observer(
                   {pair?.raiseToken?.displayName}
                 </span>
               </p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs opacity-60">Participants Count</p>
-              <p className="font-semibold">
-                <span>
-                  {pair?.participantsCount
-                    ? pair.participantsCount.toFormat(0)
-                    : "-"}
-                </span>
-              </p>
-            </div>
+            </div> */}
+            {pair.state === 3 && (
+              <div>
+                <p className="text-xs opacity-60">Participants Count</p>
+                <p className="font-semibold">
+                  <span>
+                    {pair?.participantsCount
+                      ? pair.participantsCount.toFormat(0)
+                      : "-"}
+                  </span>
+                </p>
+              </div>
+            )}
+
             {pair.state === 0 && (
               <>
+                {" "}
+                <div>
+                  <p className="text-xs opacity-60">Token Holders</p>
+                  <p className="font-semibold">
+                    <span>
+                      {pair?.launchedToken?.holderCount
+                        ? pair.launchedToken.holderCount
+                        : "--"}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs opacity-60">LP Count</p>
+                  <p className="font-semibold">
+                    <span>
+                      {pair?.launchedToken?.poolCount
+                        ? pair.launchedToken.poolCount
+                        : "--"}
+                    </span>
+                  </p>
+                </div>
                 <div>
                   <p className="text-xs opacity-60">Volume</p>
                   <p className="font-semibold">
@@ -176,7 +200,7 @@ const DetailLaunchCard = observer(
                     </span>
                   </p>
                 </div>
-                <div className="text-right">
+                <div>
                   <p className="text-xs opacity-60">TVL</p>
                   <p className="font-semibold">
                     <span>
@@ -205,7 +229,7 @@ const DetailLaunchCard = observer(
                     </span>
                   </p>
                 </div>
-                <div className="text-right">
+                <div className="">
                   <p className="text-xs opacity-60">Price Change</p>
                   <p className="font-semibold">
                     <span

@@ -60,6 +60,7 @@ export class Token implements BaseContract {
   volumeUSD = "";
   initialUSD = "";
   totalValueLockedUSD = "";
+  poolCount = 0;
 
   // determines the order of the token in the list
   get priority() {
