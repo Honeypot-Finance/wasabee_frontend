@@ -8,6 +8,7 @@ import useWrapCallback, {
 import {
   useSwapState,
   useDerivedSwapInfo,
+  useSwapActionHandlers,
 } from "@/lib/algebra/state/swapStore";
 import { useUserState } from "@/lib/algebra/state/userStore";
 import {
@@ -31,6 +32,9 @@ const SwapButtonV3 = ({ onSwapSuccess }: { onSwapSuccess?: () => void }) => {
     currencies,
     inputError: swapInputError,
   } = useDerivedSwapInfo();
+
+  const { onSwitchTokens, onCurrencySelection, onUserInput } =
+    useSwapActionHandlers();
 
   const {
     wrapType,
@@ -116,10 +120,12 @@ const SwapButtonV3 = ({ onSwapSuccess }: { onSwapSuccess?: () => void }) => {
   }, [isSwapSuccess]);
 
   useEffect(() => {
-    if (isSwapSuccessMemo && onSwapSuccess) {
-      onSwapSuccess();
+    if (isSwapSuccessMemo) {
+      if (onSwapSuccess) {
+        onSwapSuccess();
+      }
     }
-  }, [isSwapSuccessMemo, onSwapSuccess]);
+  }, [isSwapSuccessMemo, onSwapSuccess, onUserInput]);
 
   const swapToast = useToastify({
     title: `Swap ${trade?.inputAmount.toSignificant()} ${trade?.inputAmount.currency.symbol}`,

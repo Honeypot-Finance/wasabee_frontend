@@ -14,6 +14,8 @@ import {
   useSimulateAlgebraRouterMulticall,
 } from "@/wagmi-generated";
 import { wallet } from "@/services/wallet";
+import { SwapField } from "@/types/algebra/types/swap-field";
+import { useSwapActionHandlers } from "../../state/swapStore";
 
 interface SwapCallEstimate {
   calldata: string;
@@ -42,6 +44,8 @@ export function useSwapCallback(
   const [bestCall, setBestCall] = useState<any>();
 
   const swapCalldata = useSwapCallArguments(trade, allowedSlippage);
+
+  const { onUserInput } = useSwapActionHandlers();
 
   useEffect(() => {
     async function findBestCall() {
@@ -151,6 +155,13 @@ export function useSwapCallback(
     tokenB: trade?.outputAmount.currency.wrapped.address as Address,
     type: TransactionType.SWAP,
   });
+
+  useEffect(() => {
+    if (isSuccess) {
+      onUserInput(SwapField.INPUT, "0");
+      onUserInput(SwapField.OUTPUT, "0");
+    }
+  }, [isSuccess, onUserInput]);
 
   return useMemo(() => {
     if (!trade)
