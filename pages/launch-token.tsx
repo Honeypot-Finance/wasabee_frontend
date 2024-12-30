@@ -562,7 +562,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                       content: "space-y-4",
                     }}
                   >
-                    <div className="relative w-full h-[5rem] border-dashed border-black hover:border-black/70 border-2 rounded-2xl mb-5 transition-all text-black hover:text-black/70">
+                    {/* <div className="relative w-full h-[5rem] border-dashed border-black hover:border-black/70 border-2 rounded-2xl mb-5 transition-all text-black hover:text-black/70">
                       <Controller
                         control={control}
                         name="bannerUrl"
@@ -582,7 +582,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                           </>
                         )}
                       />
-                    </div>
+                    </div> */}
 
                     <div className="flex flex-col gap-2">
                       <label className="text-black text-base font-medium">
