@@ -247,13 +247,12 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
           <span className="text-white text-lg font-bold">
             {chart.chartLabel}
           </span>
-          <AiOutlineSwap className="text-white size-5 font-bold" />
         </div>
 
         {/* Price and Change */}
         <div className="flex items-center gap-2">
           <span className="text-white text-3xl font-bold">
-            ${chart.currentPrice?.toFixed(6)}
+            {chart.currentPrice?.toFixed(6)}
           </span>
           <span
             className={`text-base ${
@@ -331,7 +330,12 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
 
       {/* Chart or Placeholder */}
       {!chart.range ? (
-        <div style={{ height: typeof height === 'number' ? `${height}px` : height }} className="w-full mt-2 flex items-center justify-center">
+        <div
+          style={{
+            height: typeof height === "number" ? `${height}px` : height,
+          }}
+          className="w-full mt-2 flex items-center justify-center"
+        >
           <div className="text-center">
             <div className="text-white/50 text-sm mb-2">
               Please select a time range
@@ -367,7 +371,12 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
           </div>
         </div>
       ) : !chartData || chartData.length === 0 ? (
-        <div style={{ height: typeof height === 'number' ? `${height}px` : height }} className="w-full mt-2 flex items-center justify-center">
+        <div
+          style={{
+            height: typeof height === "number" ? `${height}px` : height,
+          }}
+          className="w-full mt-2 flex items-center justify-center"
+        >
           <div className="text-center">
             <div className="flex justify-center">
               <svg
