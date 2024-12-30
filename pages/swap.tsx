@@ -8,6 +8,7 @@ import { wallet } from "@/services/wallet";
 import { liquidity } from "@/services/liquidity";
 import { useSearchParams } from "next/navigation";
 import { itemPopUpVariants } from "@/lib/animation";
+import { DarkContainer } from "@/components/CardContianer";
 import V3SwapCard from "@/components/algebra/swap/V3SwapCard";
 import KlineChart from "./launch-detail/componets/KlineChart";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
@@ -40,11 +41,9 @@ const SwapPage = observer(() => {
             transition={{ duration: 0.5 }}
             className="w-full col-span-2 lg:col-span-1"
           >
-            <div className="w-full bg-[#FFCD4D] relative py-6 px-4 rounded-2xl overflow-hidden">
-              <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
+            <DarkContainer>
               <KlineChart height={479} />
-              <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-contain"></div>
-            </div>
+            </DarkContainer>
           </motion.div>
         )}
         <motion.div

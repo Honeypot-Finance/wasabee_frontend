@@ -10,6 +10,7 @@ import { SwapField } from "@/types/algebra/types/swap-field";
 import { button } from "@nextui-org/theme";
 import { useDerivedSwapInfo } from "@/lib/algebra/state/swapStore";
 import { zeroAddress } from "viem";
+import { HoneyContainer } from "@/components/CardContianer";
 
 const SwapTransactionHistory = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -48,9 +49,7 @@ const SwapTransactionHistory = () => {
   };
 
   return (
-    <div className="bg-[#FFCD4D] rounded-2xl overflow-hidden relative md:pt-12 pb-6 w-full">
-      <div className="bg-[url('/images/pumping/outline-border.png')] bg-left-top h-4 md:h-12 absolute top-0 left-0 w-full bg-contain bg-repeat-x"></div>
-
+    <HoneyContainer variant="dense">
       <div className="p-2 sm:p-6 w-full">
         <div className="bg-[#202020] rounded-2xl overflow-hidden w-full">
           <div className="p-2 sm:p-6 w-full">
@@ -225,9 +224,7 @@ const SwapTransactionHistory = () => {
           </div>
         </div>
       </div>
-
-      <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-top h-12 absolute -bottom-1 left-0 w-full bg-contain bg-repeat-x"></div>
-    </div>
+    </HoneyContainer>
   );
 };
 
