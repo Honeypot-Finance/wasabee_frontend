@@ -164,6 +164,7 @@ export const pot2PumpToMemePair = async (
       volumeUSD: pot2Pump.launchToken?.volumeUSD,
       initialUSD: pot2Pump.launchToken?.initialUSD,
       totalValueLockedUSD: pot2Pump.launchToken?.totalValueLockedUSD,
+      poolCount: Number(pot2Pump.launchToken?.poolCount),
     }),
     raiseToken: Token.getToken({
       address: pot2Pump.raisedToken?.id!,
@@ -177,6 +178,7 @@ export const pot2PumpToMemePair = async (
       volumeUSD: pot2Pump.raisedToken?.volumeUSD,
       initialUSD: pot2Pump.raisedToken?.initialUSD,
       totalValueLockedUSD: pot2Pump.raisedToken?.totalValueLockedUSD,
+      poolCount: Number(pot2Pump.raisedToken?.poolCount),
     }),
   });
 

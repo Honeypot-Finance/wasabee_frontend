@@ -14,6 +14,7 @@ import { Filter, FilterState } from "@/components/pot2pump/FilterModal";
 import { Pot2PumpTracker } from "@/components/MemeWarBanner/Pot2PumpTracker";
 import { Pot2PumpPumpingService } from "@/services/launchpad/pot2pump/pumping";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
+import HoneyContainer from "@/components/CardContianer/HoneyContainer";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pumpingProjects, setPumpingProjects] =
@@ -45,7 +46,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   return (
     <div className="w-full grow flex flex-col font-gliker">
       <div className="px-4 md:px-6 w-full xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
-        <Pot2PumpTracker />
+        <HoneyContainer>
+          <Pot2PumpTracker />
+        </HoneyContainer>
 
         <div>
           <div
