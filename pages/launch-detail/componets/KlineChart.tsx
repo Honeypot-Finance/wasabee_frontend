@@ -62,173 +62,205 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
 
   const handleResize = useCallback(() => {
     if (chartCreated && chartRef?.current?.parentElement) {
-      const newWidth = chartRef.current.parentElement.clientWidth - 48;
-      chartCreated.resize(newWidth, Number(height));
+      try {
+        const newWidth = chartRef.current.parentElement.clientWidth - 48;
+        chartCreated.resize(newWidth, Number(height));
 
-      // Reload data to ensure correct display
-      if (candleSeries && volumeSeries && chartData.length) {
-        volumeSeries.setData(
+        // Reload data to ensure correct display
+        if (candleSeries && volumeSeries && chartData.length) {
+          volumeSeries.setData(
+            chartData.map((d) => ({
+              time: d.time,
+              value: d.volume,
+              color: d.close >= d.open ? "#08998150" : "#F2364550",
+            }))
+          );
+          candleSeries.setData(chartData);
+        }
+
+        chartCreated.timeScale().fitContent();
+      } catch (error) {
+        console.warn("Chart resize failed:", error);
+      }
+    }
+  }, [chartCreated, height, candleSeries, volumeSeries, chartData]);
+
+  // Update chart cleanup
+  useEffect(() => {
+    return () => {
+      if (chartCreated) {
+        try {
+          chartCreated.remove();
+        } catch (error) {
+          console.warn("Chart cleanup failed:", error);
+        }
+      }
+    };
+  }, [chartCreated]);
+
+  // Separate effect for window resize
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [handleResize]);
+
+  // Update chart data effect
+  useEffect(() => {
+    if (!candleSeries || !volumeSeries || !chartData.length || !chartCreated)
+      return;
+
+    try {
+      // Clear existing price lines
+      candleSeries.removeAllPriceLines();
+
+      // Set volume data
+      volumeSeries.setData(
+        chartData.map((d) => ({
+          time: d.time,
+          value: d.volume,
+          color: d.close >= d.open ? "#08998150" : "#F2364550",
+        }))
+      );
+
+      // Set candlestick data
+      candleSeries.setData(chartData);
+
+      // Update price line only if we have valid data
+      if (chartData.length > 0) {
+        const lastPrice = chartData[chartData.length - 1].close;
+        candleSeries.createPriceLine({
+          price: lastPrice,
+          color:
+            lastPrice >= chartData[chartData.length - 1].open
+              ? "#089981"
+              : "#F23645",
+          lineWidth: 1,
+          lineStyle: LightweightCharts.LineStyle.Dashed,
+          axisLabelVisible: true,
+          title: lastPrice.toFixed(6),
+        });
+      }
+
+      // Fit content after data is loaded
+      chartCreated.timeScale().fitContent();
+    } catch (error) {
+      console.warn("Chart update failed:", error);
+    }
+  }, [chartData, candleSeries, volumeSeries, chartCreated]);
+
+  // Chart initialization effect
+  useLayoutEffect(() => {
+    if (!chartRef.current) return;
+
+    let chartInstance: LightweightCharts.IChartApi | undefined;
+    let candlestickSeries: any;
+    let volumeHistogramSeries: any;
+
+    try {
+      chartInstance = LightweightCharts.createChart(chartRef.current, {
+        width: (chartRef.current.parentElement?.clientWidth || 600) - 48,
+        height: typeof height === "string" ? parseInt(height) : height,
+        layout: {
+          background: { color: "#202020" },
+          textColor: "rgba(255, 255, 255, 0.5)",
+          fontFamily: "Roboto, sans-serif",
+        },
+        rightPriceScale: {
+          borderVisible: false,
+          scaleMargins: {
+            top: 0.1,
+            bottom: 0.4,
+          },
+        },
+        leftPriceScale: {
+          visible: true,
+          borderVisible: false,
+          scaleMargins: {
+            top: 0.8,
+            bottom: 0,
+          },
+        },
+        grid: {
+          vertLines: { visible: false },
+          horzLines: { color: "rgba(43, 43, 43, 0.5)" },
+        },
+        crosshair: {
+          mode: LightweightCharts.CrosshairMode.Normal,
+          vertLine: {
+            color: "rgba(255, 255, 255, 0.1)",
+            width: 1,
+            style: 1,
+            labelBackgroundColor: "#202020",
+          },
+          horzLine: {
+            color: "rgba(255, 255, 255, 0.1)",
+            width: 1,
+            style: 1,
+            labelBackgroundColor: "#202020",
+          },
+        },
+        timeScale: {
+          borderVisible: false,
+          timeVisible: true,
+          secondsVisible: false,
+          tickMarkFormatter: (time: number) => {
+            return dayjs(time * 1000).format("HH:mm");
+          },
+        },
+        watermark: {
+          visible: false,
+        },
+      });
+
+      volumeHistogramSeries = chartInstance.addHistogramSeries({
+        priceFormat: {
+          type: "volume",
+        },
+        priceScaleId: "left",
+        color: "rgba(255, 255, 255, 0.5)",
+      });
+
+      candlestickSeries = chartInstance.addCandlestickSeries({
+        upColor: "#089981",
+        downColor: "#F23645",
+        borderVisible: false,
+        wickUpColor: "#089981",
+        wickDownColor: "#F23645",
+        priceLineVisible: false,
+        lastValueVisible: false,
+        priceScaleId: "right",
+      });
+
+      // Set initial data if available
+      if (chartData.length > 0) {
+        volumeHistogramSeries.setData(
           chartData.map((d) => ({
             time: d.time,
             value: d.volume,
             color: d.close >= d.open ? "#08998150" : "#F2364550",
           }))
         );
-        candleSeries.setData(chartData);
+        candlestickSeries.setData(chartData);
+        chartInstance.timeScale().fitContent();
       }
 
-      chartCreated.timeScale().fitContent();
+      setChart(chartInstance);
+      setCandleSeries(candlestickSeries);
+      setVolumeSeries(volumeHistogramSeries);
+    } catch (error) {
+      console.warn("Chart creation failed:", error);
     }
-  }, [
-    chartCreated,
-    height,
-    candleSeries,
-    volumeSeries,
-    chartData,
-    chart.chartData.value,
-    chart.chartTarget,
-    chart.chartLabel,
-    chart.range,
-  ]);
-
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [handleResize]);
-
-  // Update chart when data changes
-  useEffect(() => {
-    if (!candleSeries || !volumeSeries || !chartData.length) return;
-
-    // Set volume data
-    volumeSeries.setData(
-      chartData.map((d) => ({
-        time: d.time,
-        value: d.volume,
-        color: d.close >= d.open ? "#08998150" : "#F2364550",
-      }))
-    );
-
-    // Set candlestick data
-    candleSeries.setData(chartData);
-
-    // Update price line only if we have valid data
-    if (chartData.length > 0) {
-      const lastPrice = chartData[chartData.length - 1].close;
-      candleSeries.createPriceLine({
-        price: lastPrice,
-        color:
-          lastPrice >= chartData[chartData.length - 1].open
-            ? "#089981"
-            : "#F23645",
-        lineWidth: 1,
-        lineStyle: LightweightCharts.LineStyle.Dashed,
-        axisLabelVisible: true,
-        title: lastPrice.toFixed(6),
-      });
-    }
-  }, [
-    chartData,
-    candleSeries,
-    volumeSeries,
-    chart.chartData.value,
-    chart.chartTarget,
-    chart.chartLabel,
-    chart.range,
-  ]);
-
-  useLayoutEffect(() => {
-    if (!chartRef.current) return;
-
-    const chartInstance = LightweightCharts.createChart(chartRef.current, {
-      width: (chartRef.current.parentElement?.clientWidth || 600) - 48,
-      height: typeof height === "string" ? parseInt(height) : height,
-      layout: {
-        background: { color: "#202020" },
-        textColor: "rgba(255, 255, 255, 0.5)",
-        fontFamily: "Roboto, sans-serif",
-      },
-      rightPriceScale: {
-        borderVisible: false,
-        scaleMargins: {
-          top: 0.1,
-          bottom: 0.4,
-        },
-      },
-      leftPriceScale: {
-        visible: true,
-        borderVisible: false,
-        scaleMargins: {
-          top: 0.8,
-          bottom: 0,
-        },
-      },
-      grid: {
-        vertLines: { visible: false },
-        horzLines: { color: "rgba(43, 43, 43, 0.5)" },
-      },
-      crosshair: {
-        mode: LightweightCharts.CrosshairMode.Normal,
-        vertLine: {
-          color: "rgba(255, 255, 255, 0.1)",
-          width: 1,
-          style: 1,
-          labelBackgroundColor: "#202020",
-        },
-        horzLine: {
-          color: "rgba(255, 255, 255, 0.1)",
-          width: 1,
-          style: 1,
-          labelBackgroundColor: "#202020",
-        },
-      },
-      timeScale: {
-        borderVisible: false,
-        timeVisible: true,
-        secondsVisible: false,
-        tickMarkFormatter: (time: number) => {
-          return dayjs(time * 1000).format("HH:mm");
-        },
-      },
-      watermark: {
-        visible: false,
-      },
-    });
-
-    const volumeSeries = chartInstance.addHistogramSeries({
-      priceFormat: {
-        type: "volume",
-      },
-      priceScaleId: "left",
-      color: "rgba(255, 255, 255, 0.5)",
-    });
-
-    const candlestickSeries = chartInstance.addCandlestickSeries({
-      upColor: "#089981",
-      downColor: "#F23645",
-      borderVisible: false,
-      wickUpColor: "#089981",
-      wickDownColor: "#F23645",
-      priceLineVisible: false,
-      lastValueVisible: false,
-      priceScaleId: "right",
-    });
-
-    setChart(chartInstance);
-    setCandleSeries(candlestickSeries);
-    setVolumeSeries(volumeSeries);
 
     return () => {
-      chartInstance.remove();
+      if (chartInstance) {
+        try {
+          chartInstance.remove();
+        } catch (error) {
+          console.warn("Chart cleanup failed:", error);
+        }
+      }
     };
-  }, [
-    chartData,
-    height,
-    chart.chartData.value,
-    chart.chartTarget,
-    chart.chartLabel,
-    chart.range,
-  ]);
+  }, [height, chartData]); // Added chartData dependency
 
   return (
     <div className="w-full relative rounded-2xl bg-[#202020] overflow-hidden p-4">
