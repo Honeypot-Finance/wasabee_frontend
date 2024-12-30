@@ -17,6 +17,7 @@ import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { ReactNode } from "react";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
+import { locale } from "dayjs";
 
 interface Pair {
   token0: TokenFieldsFragment;
@@ -35,6 +36,27 @@ interface Pool {
   farmApr: number;
   isMyPool: boolean;
   hasActiveFarming: boolean;
+  createdAtTimestamp: number;
+  liquidity: any;
+  token0Price: any;
+  changeHour: any;
+  change24h: any;
+  changeWeek: any;
+  changeMonth: any;
+  txCount: any;
+  volumeUSD: any;
+}
+
+function timeSince(timestamp: number): string {
+  const now = Math.floor(Date.now() / 1000); // Current time in seconds
+  const diff = now - timestamp; // Time difference in seconds
+
+  if (diff < 60) return `${diff}s`; // Seconds
+  if (diff < 3600) return `${Math.floor(diff / 60)}m`; // Minutes
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h`; // Hours
+  if (diff < 2592000) return `${Math.floor(diff / 86400)}d`; // Days
+  if (diff < 31536000) return `${Math.floor(diff / 2592000)}mo`; // Months
+  return `${Math.floor(diff / 31536000)}y`; // Years
 }
 
 const PoolPair = ({ pair, fee }: Pool) => {
@@ -237,57 +259,119 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   {
     accessorKey: "price",
     header: () => <HeaderItem className="uppercase">Price</HeaderItem>,
-    cell: ({ getValue }) => 1,
+    cell: ({ row }) => {
+      console.log("price");
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(row.original.token0Price);
+    },
   },
   {
     accessorKey: "age",
     header: () => <HeaderItem className="uppercase">Age</HeaderItem>,
-    cell: ({ getValue }) => 1,
+    cell: ({ row }) => timeSince(row?.original?.createdAtTimestamp ?? 0),
   },
   {
     accessorKey: "txns",
     header: () => <HeaderItem className="uppercase">txns</HeaderItem>,
-    cell: ({ getValue }) => 1,
+    cell: ({ row }) => row.original.txCount,
   },
   {
     accessorKey: "volumn",
     header: () => <HeaderItem className="uppercase">volumn</HeaderItem>,
-    cell: ({ getValue }) => 1,
+    cell: ({ row }) => (
+      <span>
+        {new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(row?.original?.volumeUSD)}
+      </span>
+    ),
   },
   {
-    accessorKey: "markers",
-    header: () => <HeaderItem className="uppercase">volumn</HeaderItem>,
-    cell: ({ getValue }) => 1,
+    accessorKey: "changeHour",
+    header: () => <HeaderItem className="uppercase">hour</HeaderItem>,
+    cell: ({ row }) => {
+      const changeHour =
+        row.original.changeHour == Infinity
+          ? 100
+          : Number(row.original.changeHour).toFixed(2);
+      return (
+        <span
+          style={{ color: row.original.changeHour > 0 ? "#48bb78" : "#F56565" }}
+        >
+          {changeHour}%
+        </span>
+      );
+    },
   },
   {
-    accessorKey: "24h",
+    accessorKey: "change24h",
     header: () => <HeaderItem className="uppercase">24h</HeaderItem>,
-    cell: ({ getValue }) => 1,
+    cell: ({ row }) => {
+      const change24h =
+        row.original.change24h == Infinity
+          ? 100
+          : Number(row.original.change24h).toFixed(2);
+      return (
+        <span
+          style={{ color: row.original.change24h > 0 ? "#48bb78" : "#F56565" }}
+        >
+          {change24h}%
+        </span>
+      );
+    },
   },
   {
-    accessorKey: "weekly",
-    header: () => <HeaderItem className="uppercase">weekly</HeaderItem>,
-    cell: ({ getValue }) => 1,
+    accessorKey: "changeWeek",
+    header: () => <HeaderItem className="uppercase">Week</HeaderItem>,
+    cell: ({ row }) => {
+      const changeWeek =
+        row.original.changeWeek == Infinity
+          ? 100
+          : Number(row.original.changeWeek).toFixed(2);
+      return (
+        <span
+          style={{ color: row.original.changeWeek > 0 ? "#48bb78" : "#F56565" }}
+        >
+          {changeWeek}%
+        </span>
+      );
+    },
   },
   {
-    accessorKey: "monthly",
-    header: () => <HeaderItem className="uppercase">monthly</HeaderItem>,
-    cell: ({ getValue }) => 1,
-  },
-  {
-    accessorKey: "yearly",
-    header: () => <HeaderItem className="uppercase">yearly</HeaderItem>,
-    cell: ({ getValue }) => 1,
+    accessorKey: "changeMonth",
+    header: () => <HeaderItem className="uppercase">Month</HeaderItem>,
+    cell: ({ row }) => {
+      const changeMonth =
+        row.original.changeMonth == Infinity
+          ? 100
+          : Number(row.original.changeMonth).toFixed(2);
+      return (
+        <span
+          style={{
+            color: row.original.changeMonth > 0 ? "#48bb78" : "#F56565",
+          }}
+        >
+          {changeMonth}%
+        </span>
+      );
+    },
   },
   {
     accessorKey: "liquidity",
     header: () => <HeaderItem className="uppercase">liquidity</HeaderItem>,
-    cell: ({ getValue }) => 1,
+    cell: ({ row }) => row.original.liquidity,
   },
   {
     accessorKey: "marktet cap",
     header: () => <HeaderItem className="uppercase">marktet cap</HeaderItem>,
-    cell: ({ getValue }) => 1,
+    cell: ({ row }) => row.original.pair.token0.marketCap,
   },
 ];
 

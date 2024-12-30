@@ -14,12 +14,6 @@ import PoolCardList from "./PoolCardList";
 const PoolsList = () => {
   const { data: pools, loading: isPoolsListLoading } = usePoolsListQuery();
 
-  useEffect(() => {
-    if (pools) {
-      console.log("Pools data:", pools);
-    }
-  }, [pools]);
-
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
       client: farmingClient,
@@ -38,10 +32,55 @@ const PoolsList = () => {
     if (isLoading || !pools) return [];
 
     return pools.pools.map(
-      ({ id, token0, token1, fee, totalValueLockedUSD, poolDayData }) => {
+      ({
+        id,
+        token0,
+        token1,
+        fee,
+        totalValueLockedUSD,
+        poolHourData,
+        poolDayData,
+        poolWeekData,
+        poolMonthData,
+        txCount,
+        volumeUSD,
+        token0Price,
+        createdAtTimestamp,
+        liquidity,
+      }) => {
         const currentPool = poolDayData[0];
         const lastDate = currentPool ? currentPool.date * 1000 : 0;
         const currentDate = new Date().getTime();
+
+        console.log("poolHourData", poolHourData);
+
+        const changeHour = poolHourData[0]
+          ? poolHourData[1]
+            ? (poolHourData[0].volumeUSD - poolHourData[1].volumeUSD) /
+              poolHourData[1].volumeUSD
+            : 100
+          : "";
+
+        const change24h = poolDayData[0]
+          ? poolDayData[1]
+            ? (poolDayData[0].volumeUSD - poolDayData[1].volumeUSD) /
+              poolDayData[1].volumeUSD
+            : 100
+          : "";
+
+        const changeWeek = poolWeekData[0]
+          ? poolWeekData[1]
+            ? (poolWeekData[0].volumeUSD - poolWeekData[1].volumeUSD) /
+              poolWeekData[1].volumeUSD
+            : 100
+          : "";
+
+        const changeMonth = poolMonthData[0]
+          ? poolMonthData[1]
+            ? (poolMonthData[0].volumeUSD - poolMonthData[1].volumeUSD) /
+              poolMonthData[1].volumeUSD
+            : 100
+          : "";
 
         /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
         const timeDifference = currentDate - lastDate;
@@ -54,22 +93,6 @@ const PoolsList = () => {
           (farming) => farming.pool === id
         );
 
-        // const poolMaxApr =
-        //   poolsMaxApr && poolsMaxApr[id]
-        //     ? Number(poolsMaxApr[id].toFixed(2))
-        //     : 0;
-        // const poolAvgApr =
-        //   poolsAvgApr && poolsAvgApr[id]
-        //     ? Number(poolsAvgApr[id].toFixed(2))
-        //     : 0;
-        // const farmApr =
-        //   activeFarming && farmingsAPR && farmingsAPR[activeFarming.id] > 0
-        //     ? farmingsAPR[activeFarming.id]
-        //     : 0;
-
-        // const avgApr = farmApr + poolAvgApr;
-
-        // 池子的 APR 是 24H 的 fee 除以 TVL，position 的 APR 是 24H 的 fee 除以 TVL
         const poolMaxApr = !!Number(totalValueLockedUSD)
           ? (Number(currentPool.feesUSD) * 365) / Number(totalValueLockedUSD)
           : 0;
@@ -96,6 +119,15 @@ const PoolsList = () => {
           avgApr,
           isMyPool: Boolean(openPositions?.length),
           hasActiveFarming: Boolean(activeFarming),
+          createdAtTimestamp,
+          liquidity,
+          token0Price,
+          changeHour,
+          change24h,
+          changeWeek,
+          changeMonth,
+          txCount,
+          volumeUSD,
         };
       }
     );
