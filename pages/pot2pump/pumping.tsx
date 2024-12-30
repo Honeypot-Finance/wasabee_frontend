@@ -96,14 +96,12 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               setFilters={setFilters}
               pumpingProjects={pumpingProjects}
             />
-            <Button className="w-full">
-              <Link
-                href="/launch-token?launchType=meme"
-                className="text-black font-bold"
-              >
-                Launch Token
-              </Link>
-            </Button>
+            <Link
+              href="/launch-token?launchType=meme"
+              className="text-black font-bold"
+            >
+              <Button className="w-full">Launch Token</Button>
+            </Link>
           </div>
 
           <Tabs
