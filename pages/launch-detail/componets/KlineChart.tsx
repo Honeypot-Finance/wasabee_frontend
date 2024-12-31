@@ -4,7 +4,9 @@ import { chart } from "@/services/chart";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
 import { RotateCcw } from "lucide-react";
-import { APIHOST } from "@/lib/constants";
+import { getBaseUrl } from "@/lib/trpc";
+import { strParams } from "@/lib/advancedChart.util";
+import { wallet } from "@/services/wallet";
 
 // 为 Window 对象添加 TradingView 相关的类型定义
 declare global {
@@ -96,69 +98,79 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
     };
 
     const interval = "5";
-    const datafeed = new window.Datafeeds.UDFCompatibleDatafeed("", 5000);
+    const datafeed = new window.Datafeeds.UDFCompatibleDatafeed(
+      `${getBaseUrl()}/api/udf-data-feed`,
+      5000
+    );
 
     console.log("chart.chartTarget", chart.chartTarget);
 
-    window.tvWidget = new window.TradingView.widget({
-      symbol: chart.chartLabel || "kline",
-      interval: interval as any,
-      container: "tv_chart_container",
-      width: chartWidth,
-      height: Number(height),
-      formatting_price_precision: 10,
-      timezone: timeZone as any,
-      datafeed: datafeed,
-      library_path: "/charting_library/",
-      locale: "en",
-      disabled_features: [
-        "use_localstorage_for_settings",
-        "header_symbol_search",
-        "header_settings",
-        "header_indicators",
-        "header_compare",
-        "header_undo_redo",
-        "header_screenshot",
-        "header_fullscreen_button",
-        "border_around_the_chart",
-        "header_saveload",
-        "drawing_templates",
-        "volume_force_overlay",
-      ],
-      enabled_features: ["header_widget", "left_toolbar", "control_bar"],
-      charts_storage_url: "https://saveload.tradingview.com",
-      charts_storage_api_version: "1.1",
-      client_id: "tradingview.com",
-      user_id: "public_user_id",
-      preset: "mobile",
-      custom_css_url: "/css/tradingViews.css",
-      loading_screen: {
-        backgroundColor: "#202020",
-        foregroundColor: "#FFCD4D",
-      },
-      theme: "dark",
-      overrides: {
-        "paneProperties.backgroundType": "solid",
-        "paneProperties.background": "#202020",
-        "scalesProperties.lineColor": "#202020",
-        "mainSeriesProperties.candleStyle.barColorsOnPrevClose": true,
-        "mainSeriesProperties.haStyle.barColorsOnPrevClose": true,
-        "mainSeriesProperties.barStyle.barColorsOnPrevClose": true,
-        "mainSeriesProperties.candleStyle.upColor": "#089981",
-        "mainSeriesProperties.candleStyle.borderUpColor": "#089981",
-        "mainSeriesProperties.candleStyle.downColor": "#F23645",
-        "mainSeriesProperties.candleStyle.borderDownColor": "#F23645",
-        "mainSeriesProperties.candleStyle.wickUpColor": "#089981",
-        "mainSeriesProperties.candleStyle.wickDownColor": "#F23645",
-      },
-    });
+    if (chart.chartTarget) {
+      window.tvWidget = new window.TradingView.widget({
+        symbol: strParams(
+          chart.chartTarget as Token,
+          wallet.currentChainId,
+          chart.tokenNumber,
+          chart.currencyCode
+        ),
+        interval: interval as any,
+        container: "tv_chart_container",
+        width: chartWidth,
+        height: Number(height),
+        formatting_price_precision: 10,
+        timezone: timeZone as any,
+        datafeed: datafeed,
+        library_path: "/charting_library/",
+        locale: "en",
+        disabled_features: [
+          "use_localstorage_for_settings",
+          "header_symbol_search",
+          "header_settings",
+          "header_indicators",
+          "header_compare",
+          "header_undo_redo",
+          "header_screenshot",
+          "header_fullscreen_button",
+          "border_around_the_chart",
+          "header_saveload",
+          "drawing_templates",
+          "volume_force_overlay",
+        ],
+        enabled_features: ["header_widget", "left_toolbar", "control_bar"],
+        charts_storage_url: "https://saveload.tradingview.com",
+        charts_storage_api_version: "1.1",
+        client_id: "tradingview.com",
+        user_id: "public_user_id",
+        preset: "mobile",
+        custom_css_url: "/css/tradingViews.css",
+        loading_screen: {
+          backgroundColor: "#202020",
+          foregroundColor: "#FFCD4D",
+        },
+        theme: "dark",
+        overrides: {
+          "paneProperties.backgroundType": "solid",
+          "paneProperties.background": "#202020",
+          "scalesProperties.lineColor": "#202020",
+          "mainSeriesProperties.candleStyle.barColorsOnPrevClose": true,
+          "mainSeriesProperties.haStyle.barColorsOnPrevClose": true,
+          "mainSeriesProperties.barStyle.barColorsOnPrevClose": true,
+          "mainSeriesProperties.candleStyle.upColor": "#089981",
+          "mainSeriesProperties.candleStyle.borderUpColor": "#089981",
+          "mainSeriesProperties.candleStyle.downColor": "#F23645",
+          "mainSeriesProperties.candleStyle.borderDownColor": "#F23645",
+          "mainSeriesProperties.candleStyle.wickUpColor": "#089981",
+          "mainSeriesProperties.candleStyle.wickDownColor": "#F23645",
+        },
+      });
 
-    window.tvWidget.onChartReady(() => {
-      setSpinning(false);
-      const chart = window.tvWidget.chart();
-      chart.priceFormatter().format = formatNumber;
-      onReady?.();
-    });
+      window.tvWidget.onChartReady(() => {
+        setSpinning(false);
+        const chart = window.tvWidget.chart();
+        chart.priceFormatter().format = formatNumber;
+        onReady?.();
+      });
+    }
   }, [chartWidth, height, chart.chartTarget, onReady]);
 
   useEffect(() => {

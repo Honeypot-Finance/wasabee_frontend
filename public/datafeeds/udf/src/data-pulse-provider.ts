@@ -99,8 +99,6 @@ export class DataPulseProvider {
     const rangeStartTime =
       rangeEndTime - periodLengthSeconds(subscriptionRecord.resolution, 10);
 
-    console.log("getBars", getBars);
-
     return this._historyProvider
       .getBars(subscriptionRecord.symbolInfo, subscriptionRecord.resolution, {
         from: rangeStartTime,
