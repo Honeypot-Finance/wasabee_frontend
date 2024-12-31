@@ -36,12 +36,14 @@ export const LaunchDetailSwapCard = observer(
     extraTokenAction,
     noBoarder,
     memePairContract,
+    onSwapSuccess,
   }: {
     inputAddress?: string;
     outputAddress?: string;
     extraTokenAction?: React.ReactNode;
     noBoarder?: boolean;
     memePairContract: MemePairContract;
+    onSwapSuccess?: () => void;
   }) => {
     const [currentTab, setCurrentTab] = useState<"Swap" | "LP">("Swap");
     const router = useRouter();
@@ -153,11 +155,11 @@ export const LaunchDetailSwapCard = observer(
       >
         <div
           className={cn(
-            " w-full flex flex-1 flex-col justify-center items-start gap-[23px] bg-[#FFCD4D] px-5 pt-[90px] pb-[70px] rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all relative",
+            " w-full flex flex-1 flex-col justify-center items-start gap-[23px] bg-[#FFCD4D] px-5 pt-[70px] pb-[45px] rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all relative",
             noBoarder && "border-0"
           )}
         >
-          <div className="bg-[url('/images/swap/top-border.png')] bg-cover bg-no-repeat bg-left-top h-[90px] absolute top-0 left-0 w-full rounded-[20px]"></div>
+          <div className="bg-[url('/images/swap/top-border.png')] bg-cover bg-no-repeat bg-left-bottom h-[70px] absolute top-0 left-0 w-full rounded-t-[20px]"></div>
           <Trigger
             tab={operate}
             capitalize={true}
@@ -173,7 +175,8 @@ export const LaunchDetailSwapCard = observer(
               <V3SwapCard
                 fromTokenAddress={inputAddress}
                 toTokenAddress={outputAddress}
-                boarderless
+                bordered={false}
+                onSwapSuccess={onSwapSuccess}
               />
             </LoadingContainer>
           )}
@@ -221,7 +224,7 @@ export const LaunchDetailSwapCard = observer(
               </Button>
             </LoadingContainer>
           )}
-          <div className="bg-[url('/images/swap/bottom-border.jpg')] bg-cover bg-no-repeat bg-left-top h-[70px] absolute bottom-0 left-0 w-full rounded-[20px]"></div>
+          <div className="bg-[url('/images/swap/bottom-border.svg')] bg-cover bg-no-repeat bg-left-top h-[45px] absolute bottom-0 left-0 w-full rounded-b-[20px] origin-bottom"></div>
         </div>
         {extraTokenAction}
       </SpinnerContainer>

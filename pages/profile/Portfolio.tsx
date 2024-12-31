@@ -4,6 +4,8 @@ import { TokenBalanceCard } from "@/components/TokenBalanceCard/TokenBalanceCard
 import { portfolio } from "@/services/portfolio";
 import { useEffect, useState } from "react";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { getLiquidatorDatas } from "@/lib/algebra/graphql/clients/userProfit";
+import { wallet } from "@/services/wallet";
 
 type SortField = "name" | "price" | "balance" | "value";
 type SortDirection = "asc" | "desc";

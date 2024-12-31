@@ -25,8 +25,6 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
 
   return (
     <div className="flex flex-col items-center gap-y-2.5">
-      {/* TODO: gradient color */}
-      <div className="xs:text-lg md:text-xl">Ends In</div>
       {endTime ? (
         <Countdown
           date={parseInt(endTime) * 1000}

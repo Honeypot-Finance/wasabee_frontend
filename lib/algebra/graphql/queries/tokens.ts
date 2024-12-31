@@ -15,6 +15,7 @@ export const TOKEN_FRAGMENT = gql`
     volumeUSD
     totalValueLockedUSD
     marketCap
+    poolCount
     pot2Pump {
       id
     }

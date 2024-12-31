@@ -1,4 +1,10 @@
-import { createChart, ColorType, UTCTimestamp, LineData } from "lightweight-charts";
+import {
+  createChart,
+  ColorType,
+  UTCTimestamp,
+  LineData,
+  IChartApi,
+} from "lightweight-charts";
 import { useEffect, useRef } from "react";
 
 interface PriceChartProps {
@@ -15,6 +21,7 @@ export const PriceChart = ({
   timeRange,
 }: PriceChartProps) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<IChartApi | null>(null);
 
   useEffect(() => {
     if (!chartContainerRef.current) return;
@@ -27,66 +34,81 @@ export const PriceChart = ({
         textColor: "#FAFAFC",
       },
       grid: {
-        vertLines: { visible: false },
-        horzLines: { visible: false },
+        vertLines: { color: "#2D2D2D" },
+        horzLines: { color: "#2D2D2D" },
       },
       rightPriceScale: {
-        visible: false,
+        visible: true,
+        borderColor: "#2D2D2D",
         scaleMargins: {
-          top: 0,
-          bottom: 0
-        }
+          top: 0.1,
+          bottom: 0.1,
+        },
       },
       timeScale: {
-        visible: false,
-        borderVisible: false,
-        fixLeftEdge: true,
-        fixRightEdge: true,
-        barSpacing: 6,
-        minBarSpacing: 0,
-        rightBarStaysOnScroll: true
+        visible: true,
+        borderColor: "#2D2D2D",
+        timeVisible: true,
+        secondsVisible: false,
+        tickMarkFormatter: (time: UTCTimestamp) => {
+          const date = new Date(time * 1000);
+          switch (timeRange) {
+            case "1D":
+              return date.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+            case "1W":
+              return date.toLocaleDateString([], {
+                month: "short",
+                day: "numeric",
+              });
+            case "1M":
+            case "1Y":
+              return date.toLocaleDateString([], {
+                month: "short",
+                day: "numeric",
+              });
+          }
+        },
       },
       crosshair: {
-        vertLine: { visible: false },
-        horzLine: { visible: false },
+        vertLine: {
+          color: "#FF3B9A",
+          width: 1,
+          style: 3,
+        },
+        horzLine: {
+          color: "#FF3B9A",
+          width: 1,
+          style: 3,
+        },
       },
       handleScroll: false,
       handleScale: false,
-      watermark: {
-        visible: false,
-      },
     });
 
     const series = chart.addLineSeries({
       color: "#FF3B9A",
       lineWidth: 2,
-      priceLineVisible: false,
-      lastValueVisible: false,
-      crosshairMarkerVisible: false,
+      priceFormat: {
+        type: "custom",
+        formatter: (price: number) => `$${price.toFixed(2)}`,
+        minMove: 0.01,
+      },
     });
 
-    const generatePixelatedData = () => {
-      const baseValue = 38.5;
-      const points = 50;
-      const startTime = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000);
-
-      return Array.from({ length: points }, (_, i) => ({
-        time: (startTime + i * 300) as UTCTimestamp,
-        value:
-          baseValue + Math.sin(i / (points / 8)) * 1.5 + Math.random() * 0.5,
-      }));
-    };
-
-    const formattedData = timeRange === "1D" ? generatePixelatedData() : data;
-
-    series.setData(formattedData);
+    series.setData(data);
     chart.timeScale().fitContent();
+    chartRef.current = chart;
 
     const handleResize = () => {
-      chart.applyOptions({
-        width: chartContainerRef.current!.clientWidth,
-        height: chartContainerRef.current!.clientHeight,
-      });
+      if (chartRef.current && chartContainerRef.current) {
+        chartRef.current.applyOptions({
+          width: chartContainerRef.current.clientWidth,
+          height: chartContainerRef.current.clientHeight,
+        });
+      }
     };
 
     window.addEventListener("resize", handleResize);

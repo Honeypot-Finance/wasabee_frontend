@@ -15,7 +15,7 @@ import {
   ApprovalState,
 } from "@/types/algebra/types/approve-state";
 import { TransactionType } from "../../state/pendingTransactionsStore";
-import { Address } from "viem";
+import { Address, maxInt256 } from "viem";
 import { useContractWrite, useSimulateContract } from "wagmi";
 import { erc20Abi } from "viem";
 import { useToastify } from "@/lib/hooks/useContractToastify";
@@ -44,7 +44,9 @@ export function useApprove(
     functionName: "approve",
     args: [
       spender,
-      amountToApprove ? BigInt(amountToApprove.quotient.toString()) : 0,
+      BigInt(maxInt256),
+      //   amountToApprove ? BigInt(amountToApprove.quotient.toString()) : 0,
+      //
     ] as [Address, bigint],
   });
 

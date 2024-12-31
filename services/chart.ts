@@ -40,22 +40,22 @@ export const chartTimeRanges: {
   "15M": {
     label: "15M",
     value: dayjs().unix() - 60 * 15 * 10,
-    resolution: "1",
+    resolution: "5",
   },
   "30M": {
     label: "30M",
     value: dayjs().unix() - 60 * 30 * 10,
-    resolution: "1",
+    resolution: "15",
   },
   "4H": {
     label: "4H",
     value: dayjs().unix() - 60 * 60 * 4 * 10,
-    resolution: "15",
+    resolution: "30",
   },
   "1D": {
     label: "1D",
     value: dayjs().unix() - 60 * 60 * 24 * 10,
-    resolution: "30",
+    resolution: "60",
   },
 };
 

@@ -16,6 +16,7 @@ import { Pot2PumpPumpingService } from "@/services/launchpad/pot2pump/pumping";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 import { FilterState } from "@/constants/pot2pump.type";
 import { defaultFilterState } from "@/constants/pot2pump";
+import HoneyContainer from "@/components/CardContianer/HoneyContainer";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pumpingProjects, setPumpingProjects] =
@@ -43,7 +44,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   return (
     <div className="w-full grow flex flex-col font-gliker">
       <div className="px-4 md:px-6 w-full xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
-        <Pot2PumpTracker />
+        <HoneyContainer>
+          <Pot2PumpTracker />
+        </HoneyContainer>
 
         <div>
           <div
@@ -94,14 +97,12 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               setFilters={setFilters}
               pumpingProjects={pumpingProjects}
             />
-            <Button className="w-full">
-              <Link
-                href="/launch-token?launchType=meme"
-                className="text-black font-bold"
-              >
-                Launch Token
-              </Link>
-            </Button>
+            <Link
+              href="/launch-token?launchType=meme"
+              className="text-black font-bold"
+            >
+              <Button className="w-full">Launch Token</Button>
+            </Link>
           </div>
 
           <Tabs
@@ -155,7 +156,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 </div>
               }
             />
-            <Tab
+            {/* <Tab
               title={
                 <Link
                   href="/memewar"
@@ -166,7 +167,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                   </span>
                 </Link>
               }
-            />
+            /> */}
           </Tabs>
         </div>
       </div>

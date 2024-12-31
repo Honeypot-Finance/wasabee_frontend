@@ -34,7 +34,7 @@ export async function fetchPot2PumpTransactions(
   pageSize: number = 10
 ): Promise<TransactionsResponse> {
   const skip = (page - 1) * pageSize;
-  
+
   const query = `
     query GetPot2PumpTransactions {
       pot2Pump(id: "${pairAddress.toLowerCase()}") {
@@ -60,6 +60,7 @@ export async function fetchPot2PumpTransactions(
 
   const { data } = await infoClient.query<Pot2PumpTransactions>({
     query: gql(query),
+    fetchPolicy: "network-only",
   });
 
   return {
@@ -67,7 +68,8 @@ export async function fetchPot2PumpTransactions(
     message: "Success",
     data: data.pot2Pump.participantTransactionHistorys,
     pageInfo: {
-      hasNextPage: data.pot2Pump.participantTransactionHistorys.length === pageSize,
+      hasNextPage:
+        data.pot2Pump.participantTransactionHistorys.length === pageSize,
     },
   };
-} 
+}

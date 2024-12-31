@@ -32,6 +32,9 @@ import { popmodal } from "@/services/popmodal";
 import store from "store2";
 import { cn } from "@/lib/tailwindcss";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
+import BigNumber from "bignumber.js";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
+import { Token } from "@/services/contract/token";
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
 
@@ -154,11 +157,18 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                 )}
               </div>
 
-              <Accordion variant="bordered" keepContentMounted>
+              <Accordion variant="bordered" keepContentMounted className="!p-0">
                 <AccordionItem
                   key="advanced"
                   aria-label="advanced"
                   title="Advanced Options"
+                  className="text-black"
+                  classNames={{
+                    title: "text-black",
+                    trigger: "text-black",
+                    content: "text-black",
+                    base: "!p-0",
+                  }}
                 >
                   <div className="flex flex-col gap-4">
                     <div>Token Amount</div>
@@ -412,10 +422,9 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     try {
       const [pairAddress] = await launchpad.createLaunchProject.call({
         ...data,
-        // @ts-ignore
-        tokenAmount: 1_000_000,
-        raisedToken: wallet.currentChain?.contracts.ftoTokens[0]
-          .address as string,
+        tokenAmount: wallet.currentChain.raisedTokenData.find(
+          (token) => token.address === data.raisedToken
+        )?.amount,
         launchType: "meme",
         raisingCycle: dayjs().unix(),
       });
@@ -509,31 +518,15 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                   Click icon to upload new token icon
                 </div>
                 {errors.logoUrl && (
-                  <span className="text-red-500 text-center">{errors.logoUrl.message as string}</span>
+                  <span className="text-red-500 text-center">
+                    {errors.logoUrl.message as string}
+                  </span>
                 )}
-              </div>
-
-              <div className="relative w-full h-[5rem] border-dashed border-black hover:border-black/70 border-2 rounded-2xl mb-5 transition-all text-black hover:text-black/70">
-                <Controller
-                  control={control}
-                  name="bannerUrl"
-                  render={({ field: { onChange, value } }) => (
-                    <UploadImage
-                      blobName={"banner"}
-                      imagePath={value}
-                      onUpload={onChange}
-                      variant="banner"
-                    />
-                  )}
-                />
-                <h3 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold pointer-events-none">
-                  Upload Banner
-                </h3>
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-black text-base font-medium">
-                  Token Name
+                  Token Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -547,7 +540,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-black text-base font-medium">
-                  Token Symbol
+                  Token Symbol <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -559,48 +552,126 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 )}
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-black text-base font-medium">
-                  Description
-                </label>
-                <input
-                  type="text"
-                  {...register("description")}
-                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                />
-              </div>
+              <div className="custom-dashed">
+                <Accordion variant="bordered">
+                  <AccordionItem
+                    key="advanced"
+                    aria-label="advanced"
+                    title="Advanced Options"
+                    classNames={{
+                      title: "text-black/50",
+                      trigger: "text-black/50",
+                      content: "space-y-4",
+                    }}
+                  >
+                    {/* <div className="relative w-full h-[5rem] border-dashed border-black hover:border-black/70 border-2 rounded-2xl mb-5 transition-all text-black hover:text-black/70">
+                      <Controller
+                        control={control}
+                        name="bannerUrl"
+                        render={({ field: { onChange, value } }) => (
+                          <>
+                            <UploadImage
+                              blobName={"banner"}
+                              imagePath={value}
+                              onUpload={onChange}
+                              variant="banner"
+                            />
+                            {!value && (
+                              <h3 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold pointer-events-none">
+                                Upload Banner
+                              </h3>
+                            )}
+                          </>
+                        )}
+                      />
+                    </div> */}
+                    {wallet.isInit && (
+                      <div>
+                        <label className="text-black text-base font-medium">
+                          Raise Token{" "}
+                        </label>
+                        <WarppedNextSelect
+                          isRequired
+                          defaultSelectedKeys={[
+                            wallet.currentChain.raisedTokenData[0].address,
+                          ]}
+                          items={wallet.currentChain?.raisedTokenData}
+                          {...register("raisedToken")}
+                        >
+                          {wallet.currentChain?.raisedTokenData.map((token) => (
+                            <SelectItem
+                              key={token.address}
+                              value={token.address}
+                              startContent={
+                                <TokenLogo
+                                  size={24}
+                                  token={Token.getToken({
+                                    address: token.address,
+                                  })}
+                                  addtionalClasses="rounded-full"
+                                />
+                              }
+                            >
+                              {token.symbol} -{" "}
+                              {new BigNumber(token.amount.toString())
+                                .div(10 ** 18)
+                                .toString()}
+                              &nbsp;tokens
+                            </SelectItem>
+                          ))}
+                        </WarppedNextSelect>
+                      </div>
+                    )}
 
-              <div className="flex flex-col gap-2">
-                <label className="text-black text-base font-medium">
-                  Twitter
-                </label>
-                <input
-                  type="text"
-                  {...register("twitter")}
-                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                />
-              </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-black text-base font-medium">
+                        Description{" "}
+                        <span className="text-black/50">(Optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        {...register("description")}
+                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
+                      />
+                    </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-black text-base font-medium">
-                  Website
-                </label>
-                <input
-                  type="text"
-                  {...register("website")}
-                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                />
-              </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-black text-base font-medium">
+                        Twitter{" "}
+                        <span className="text-black/50">(Optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        {...register("twitter")}
+                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
+                      />
+                    </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-black text-base font-medium">
-                  Telegram
-                </label>
-                <input
-                  type="text"
-                  {...register("telegram")}
-                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                />
+                    <div className="flex flex-col gap-2">
+                      <label className="text-black text-base font-medium">
+                        Website{" "}
+                        <span className="text-black/50">(Optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        {...register("website")}
+                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-black text-base font-medium">
+                        Telegram{" "}
+                        <span className="text-black/50">(Optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        {...register("telegram")}
+                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
+                      />
+                    </div>
+                  </AccordionItem>
+                </Accordion>
               </div>
 
               {state.pairAddress ? (

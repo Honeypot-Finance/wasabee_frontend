@@ -13,10 +13,11 @@ interface useToastifyArgs {
   txnHash?: string;
 }
 
-type contractToastState = "isLoading" | "isSuccess" | "isError";
+type contractToastState = "isLoading" | "isSuccess" | "isError" | "Idle";
 
 export const useToastify = (transactionState: useToastifyArgs) => {
   const { isLoading, isSuccess, isError } = transactionState;
+  const [isIdle, setIsIdle] = useState(true);
   const [pendingToast, setPendingToast] = useState<React.ReactText | null>(
     null
   );
@@ -28,9 +29,8 @@ export const useToastify = (transactionState: useToastifyArgs) => {
     }
   };
 
-
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading && isIdle) {
       const pendingT = WrappedToastify.pending({
         message: transactionState.message,
         title: transactionState.title,
@@ -39,8 +39,9 @@ export const useToastify = (transactionState: useToastifyArgs) => {
       });
 
       setPendingToast(pendingT);
+      setIsIdle(false);
     }
-    if (isSuccess) {
+    if (isSuccess && !isIdle) {
       WrappedToastify.success({
         message: transactionState.message,
         title: transactionState.title,
@@ -49,8 +50,9 @@ export const useToastify = (transactionState: useToastifyArgs) => {
       });
 
       closePendingToast();
+      setIsIdle(true);
     }
-    if (isError) {
+    if (isError && !isIdle) {
       WrappedToastify.error({
         message: transactionState.message,
         title: transactionState.title,
@@ -59,6 +61,7 @@ export const useToastify = (transactionState: useToastifyArgs) => {
       });
 
       closePendingToast();
+      setIsIdle(true);
     }
   }, [isLoading, isSuccess, isError]);
 };

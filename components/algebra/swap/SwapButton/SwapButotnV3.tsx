@@ -8,6 +8,7 @@ import useWrapCallback, {
 import {
   useSwapState,
   useDerivedSwapInfo,
+  useSwapActionHandlers,
 } from "@/lib/algebra/state/swapStore";
 import { useUserState } from "@/lib/algebra/state/userStore";
 import {
@@ -18,9 +19,9 @@ import { useToastify } from "@/lib/hooks/useContractToastify";
 import { ApprovalState } from "@/types/algebra/types/approve-state";
 import { SwapField } from "@/types/algebra/types/swap-field";
 import { TradeState } from "@/types/algebra/types/trade-state";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
-const SwapButtonV3 = () => {
+const SwapButtonV3 = ({ onSwapSuccess }: { onSwapSuccess?: () => void }) => {
   const { isExpertMode } = useUserState();
   const { independentField, typedValue } = useSwapState();
   const {
@@ -31,6 +32,9 @@ const SwapButtonV3 = () => {
     currencies,
     inputError: swapInputError,
   } = useDerivedSwapInfo();
+
+  const { onSwitchTokens, onCurrencySelection, onUserInput } =
+    useSwapActionHandlers();
 
   const {
     wrapType,
@@ -111,9 +115,17 @@ const SwapButtonV3 = () => {
     isSuccess: isSwapSuccess,
   } = useSwapCallback(trade, allowedSlippage, approvalState);
 
-  console.log(trade);
+  const isSwapSuccessMemo = useMemo(() => {
+    return isSwapSuccess;
+  }, [isSwapSuccess]);
 
-  console.log("swapCallbackError", swapCallbackError);
+  useEffect(() => {
+    if (isSwapSuccessMemo) {
+      if (onSwapSuccess) {
+        onSwapSuccess();
+      }
+    }
+  }, [isSwapSuccessMemo, onSwapSuccess, onUserInput]);
 
   const swapToast = useToastify({
     title: `Swap ${trade?.inputAmount.toSignificant()} ${trade?.inputAmount.currency.symbol}`,
@@ -162,7 +174,6 @@ const SwapButtonV3 = () => {
   if (showApproveFlow)
     return (
       <>
-        {/* <div>{approvalState}</div> */}
         <Button
           isDisabled={approvalState !== ApprovalState.NOT_APPROVED}
           disabled={approvalState !== ApprovalState.NOT_APPROVED}
@@ -181,10 +192,6 @@ const SwapButtonV3 = () => {
 
   return (
     <>
-      {/* <div>{isValid}</div>
-      <div>{priceImpactTooHigh}</div>
-      <div>{swapCallbackError}</div>
-      <div>{isSwapLoading}</div> */}
       <Button
         onPress={() => handleSwap()}
         disabled={

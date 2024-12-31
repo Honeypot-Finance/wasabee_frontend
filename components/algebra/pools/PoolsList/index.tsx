@@ -94,10 +94,14 @@ const PoolsList = () => {
         );
 
         const poolMaxApr = !!Number(totalValueLockedUSD)
-          ? (Number(currentPool.feesUSD) * 365) / Number(totalValueLockedUSD)
+          ? ((Number(currentPool.feesUSD) * 365) /
+              Number(totalValueLockedUSD)) *
+            100
           : 0;
         const poolAvgApr = !!Number(totalValueLockedUSD)
-          ? (Number(currentPool.feesUSD) * 365) / Number(totalValueLockedUSD)
+          ? ((Number(currentPool.feesUSD) * 365) /
+              Number(totalValueLockedUSD)) *
+            100
           : 0;
         const farmApr = 0;
         const avgApr = poolAvgApr;

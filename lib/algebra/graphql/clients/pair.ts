@@ -141,6 +141,17 @@ export const pot2PumpToMemePair = async (
     launchedTokenSellCount: new BigNumber(pot2Pump.sellCount),
     endTime: pot2Pump.endTime,
     startTime: pot2Pump.createdAt,
+    canClaimLP:
+      pot2Pump.raisedTokenReachingMinCap &&
+      pot2Pump.participants &&
+      pot2Pump.participants.length > 0 &&
+      !pot2Pump.participants[0].claimed,
+    canRefund:
+      !pot2Pump.raisedTokenReachingMinCap &&
+      pot2Pump.participants &&
+      pot2Pump.participants.length > 0 &&
+      !pot2Pump.participants[0].refunded &&
+      pot2Pump.endTime < dayjs().unix(),
     launchedToken: Token.getToken({
       address: pot2Pump.launchToken?.id!,
       name: pot2Pump.launchToken?.name,
@@ -153,6 +164,7 @@ export const pot2PumpToMemePair = async (
       volumeUSD: pot2Pump.launchToken?.volumeUSD,
       initialUSD: pot2Pump.launchToken?.initialUSD,
       totalValueLockedUSD: pot2Pump.launchToken?.totalValueLockedUSD,
+      poolCount: Number(pot2Pump.launchToken?.poolCount),
     }),
     raiseToken: Token.getToken({
       address: pot2Pump.raisedToken?.id!,
@@ -166,6 +178,7 @@ export const pot2PumpToMemePair = async (
       volumeUSD: pot2Pump.raisedToken?.volumeUSD,
       initialUSD: pot2Pump.raisedToken?.initialUSD,
       totalValueLockedUSD: pot2Pump.raisedToken?.totalValueLockedUSD,
+      poolCount: Number(pot2Pump.raisedToken?.poolCount),
     }),
   });
 

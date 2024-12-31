@@ -12,6 +12,7 @@ import { trpcClient } from "@/lib/trpc";
 import { ZodError } from "zod";
 import launchpad, { statusTextToNumber } from "../launchpad";
 import { BaseLaunchContract } from "./base-launch-contract";
+import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
 
 export class FtoPairContract implements BaseLaunchContract {
   databaseId: number | undefined = undefined;
@@ -68,6 +69,15 @@ export class FtoPairContract implements BaseLaunchContract {
           new BigNumber(this.endTime).multipliedBy(1000).toNumber()
         ).toISOString()
       : "-";
+  }
+
+  get priceChangeDisplay() {
+    return this.launchedToken?.derivedUSD &&
+      Number(this.launchedToken?.derivedUSD) &&
+      this.launchedToken?.initialUSD &&
+      Number(this.launchedToken.initialUSD)
+      ? `${formatAmount((Number(this.launchedToken.derivedUSD) / Number(this.launchedToken.initialUSD)).toFixed(2), 2)}%`
+      : "--";
   }
 
   get depositedRaisedToken() {

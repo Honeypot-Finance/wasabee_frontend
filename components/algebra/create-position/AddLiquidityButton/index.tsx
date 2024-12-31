@@ -1,10 +1,6 @@
 import Loader from "@/components/algebra/common/Loader";
 import { Button } from "@/components/button/button-next";
 import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
-import {
-  DEFAULT_CHAIN_ID,
-  DEFAULT_CHAIN_NAME,
-} from "@/data/algebra/default-chain-id";
 import { useApprove } from "@/lib/algebra/hooks/common/useApprove";
 import { useTransactionAwait } from "@/lib/algebra/hooks/common/useTransactionAwait";
 import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
@@ -19,7 +15,6 @@ import {
   ZERO,
   ADDRESS_ZERO,
 } from "@cryptoalgebra/sdk";
-import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 import { Address } from "viem";
 import JSBI from "jsbi";
 import { useMemo } from "react";

@@ -266,7 +266,7 @@ export const Pot2PumpTracker = observer(() => {
   };
 
   return (
-    <div className="relative w-full h-[80vh] md:h-auto m-auto flex-col flex-1 p-2 bg-black/20 rounded-md md:aspect-video max-h-[95vh] max-w-[95%]">
+    <div className="relative w-full h-[80vh] md:h-auto m-auto flex-col flex-1 p-2 bg-black/80 rounded-md md:aspect-video max-h-[95vh] max-w-[95%]">
       {state && (
         <Chart
           options={state.options}

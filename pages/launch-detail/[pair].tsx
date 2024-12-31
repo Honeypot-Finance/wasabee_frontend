@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { Logo } from "@/components/svg/logo";
 import { observer, useLocalObservable } from "mobx-react-lite";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import launchpad from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { AsyncState } from "@/services/utils";
@@ -22,7 +22,7 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { trpcClient } from "@/lib/trpc";
-import ProjectStatus from "@/components/atoms/TokenStatusDisplay/TokenStatus";
+import PairStatus from "@/components/atoms/TokenStatusDisplay/PairStatus";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
 import { useAccount } from "wagmi";
 import { chart } from "@/services/chart";
@@ -251,6 +251,11 @@ export const UpdateProjectModal = observer(
 
 const FtoView = observer(() => {
   const router = useRouter();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const triggerRefresh = useCallback(() => {
+    setRefreshTrigger((prev) => prev + 1);
+  }, []);
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { pair: pairAddress } = router.query;
   const [votes, setVotes] = useState({
@@ -438,6 +443,10 @@ const FtoView = observer(() => {
             <ProjectTitle
               name={pair?.launchedToken?.name}
               displayName={pair?.launchedToken?.displayName}
+              telegram={pair?.telegram}
+              twitter={pair?.twitter}
+              website={pair?.website}
+              address={pair?.launchedToken?.address}
             />
           </div>
           <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
@@ -446,8 +455,11 @@ const FtoView = observer(() => {
               ftoState={state.pair.value?.state}
               endTimeDisplay={state.pair.value?.endTimeDisplay}
             />
-            {/* TODO: update style */}
-            <ProjectStatus pair={pair} />
+            <PairStatus
+              ftoStatusDisplayColor={pair?.ftoStatusDisplay?.color}
+              ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+              isValidated={pair?.isValidated}
+            />
           </div>
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
@@ -510,7 +522,7 @@ const FtoView = observer(() => {
           </div>
         </div>
         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-          {pair && <Action pair={pair} />}
+          {pair && <Action pair={pair} refreshTxsCallback={triggerRefresh} />}
         </div>
       </div>
 
@@ -524,13 +536,18 @@ const FtoView = observer(() => {
         </div>
       </div>
 
-      <Tabs pair={pair} />
+      <Tabs pair={pair} refreshTrigger={refreshTrigger} />
     </div>
   );
 });
 
 const MemeView = observer(() => {
   const router = useRouter();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const triggerRefresh = useCallback(() => {
+    console.log("triggerRefresh");
+    setRefreshTrigger((prev) => prev + 1);
+  }, []);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { pair: pairAddress } = router.query;
@@ -647,8 +664,8 @@ const MemeView = observer(() => {
   const pair = useMemo(() => state.pair.value, [state.pair.value]);
 
   return (
-    <div className="w-full space-y-4 md:space-y-8">
-      <div className="px-4 md:px-8 xl:max-w-[1200px] mx-auto pb-20 relative pt-[90px] bg-[#202020] border-3 border-[#F2C34A] rounded-3xl overflow-hidden">
+    <div className="w-full px-4 md:px-8 xl:px-0 space-y-4 md:space-y-8">
+      <div className="px-4 md:px-8 xl:max-w-[min(1500px,100%)] mx-auto pb-20 relative pt-[90px] bg-[#202020] border-3 border-[#F2C34A] rounded-3xl overflow-hidden">
         <div className="bg-[url('/images/pumping/outline-border.png')] h-[90px] absolute top-0 left-0 w-full bg-contain bg-[left_-90px_top] bg-repeat-x"></div>
         {state.pair.value && (
           <Modal
@@ -661,7 +678,7 @@ const MemeView = observer(() => {
             <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
           </Modal>
         )}
-        <div className="grid grid-cols-2 gap-x-4 gap-y-14 w-full">
+        <div className="grid grid-cols-[1fr_500px] gap-x-4 gap-y-14 w-full">
           <div className="bg-white col-span-2 px-8 py-5 rounded-3xl flex md:items-center md:justify-between md:flex-row flex-col gap-2 md:gap-0 text-black">
             <div className="flex items-center justify-between gap-x-4 md:gap-x-[7.5px]">
               <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
@@ -680,6 +697,10 @@ const MemeView = observer(() => {
               <ProjectTitle
                 name={pair?.launchedToken?.name}
                 displayName={pair?.launchedToken?.displayName}
+                telegram={pair?.telegram}
+                twitter={pair?.twitter}
+                website={pair?.website}
+                address={pair?.launchedToken?.address}
               />
             </div>
             <CountdownTimer
@@ -688,59 +709,53 @@ const MemeView = observer(() => {
               endTimeDisplay={state.pair.value?.endTimeDisplay}
             />
             <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
-              {/* TODO: update style */}
-              <ProjectStatus pair={pair} />
+              <PairStatus
+                ftoStatusDisplayColor={pair?.ftoStatusDisplay?.color}
+                ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+                isValidated={pair?.isValidated}
+              />
             </div>
           </div>
-          <div className="col-span-2 lg:col-span-1">
-            <div className="bg-[#FFCD4D] min-h-[408px] p-4 py-6 rounded-2xl space-y-3 relative overflow-hidden">
-              <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
-              {state.pair.value?.state === 0 && (
-                <>
-                  {state.pair.value?.canClaimTokens && (
-                    <Button
-                      className="w-full"
-                      onClick={async () => {
-                        //navigate to vault/[vaultaddress]
-                        const lpTokenAddress =
-                          await state.pair.value?.contract.read.lpToken();
-                        window.location.href = `/vault/${lpTokenAddress}`;
 
-                        // pair.claimVaultTokens();
-                      }}
-                      isLoading={state.pair.value?.claimLP.loading}
-                      // isDisabled={!pair.canClaimLP}
-                    >
-                      Visit Vault
-                    </Button>
-                  )}
-                  <KlineChart height={300} />
-                </>
-              )}
+          <div className="bg-[#FFCD4D] min-h-[665px] px-4 py-6 rounded-2xl space-y-3 relative overflow-hidden col-span-2 lg:col-span-1">
+            <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
+            {state.pair.value?.state === 0 && (
+              <>
+                {state.pair.value?.canClaimTokens && (
+                  <Button
+                    className="w-full"
+                    onPress={async () => {
+                      //navigate to vault/[vaultaddress]
+                      const lpTokenAddress =
+                        await state.pair.value?.contract.read.lpToken();
+                      window.location.href = `/vault/${lpTokenAddress}`;
 
-              {state.pair.value?.state === 3 && (
-                <LaunchDataProgress pair={state.pair.value} />
-              )}
-              <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-repeat-x bg-auto"></div>
-            </div>
+                      // pair.claimVaultTokens();
+                    }}
+                    isLoading={state.pair.value?.claimLP.loading}
+                    // isDisabled={!pair.canClaimLP}
+                  >
+                    Visit Vault
+                  </Button>
+                )}
+                <KlineChart height={500} />
+              </>
+            )}
+
+            {state.pair.value?.state === 3 && (
+              <LaunchDataProgress pair={state.pair.value} />
+            )}
+            <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-repeat-x bg-auto"></div>
           </div>
+
           <div className="bg-transparent rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-            {/* <div className="bg-[url('/images/pumping/outline-border.png')] h-[50px] absolute top-0 left-0 w-full bg-repeat-x bg-[length:130%]"></div> */}
-            {pair && <Action pair={pair} />}
+            {pair && <Action pair={pair} refreshTxsCallback={triggerRefresh} />}
           </div>
         </div>
 
-        <div className="w-full flex items-center justify-between my-4 md:my-12">
-          <div className="text-lg md:text-xl">Project Details</div>
-          <div className="flex items-center gap-x-1">
-            <Logo />
-            <span className='text-[#FFCD4D] [font-family:"Bebas_Neue"] text-lg md:text-3xl'>
-              Honeypot Finance
-            </span>
-          </div>
+        <div className="mt-6 md:mt-16">
+          <Tabs pair={pair} refreshTrigger={refreshTrigger} />
         </div>
-
-        <Tabs pair={pair} />
       </div>
       <footer>
         <Image

@@ -1,5 +1,32 @@
 import { gql } from "@apollo/client";
 
+export const GET_POT2_PUMP_DETAIL = gql`
+  query GetPot2PumpDetail($id: ID!, $accountId: ID) {
+    pot2Pump(id: $id) {
+      ...Pot2PumpField
+      participants(where: { account_: { id: $accountId } }) {
+        ...ParticipantFields
+      }
+    }
+  }
+`;
+
+export const GET_PARTICIPANT_DETAIL = gql`
+  query GetParticipantDetail($accountId: ID!, $pot2PumpId: ID!) {
+    participants(
+      where: { account_: { id: $accountId }, pot2Pump_: { id: $pot2PumpId } }
+    ) {
+      ...ParticipantFields
+      pot2Pump {
+        ...Pot2PumpField
+      }
+      account {
+        ...AccountField
+      }
+    }
+  }
+`;
+
 export const POT_2_PUMP_POTTING_NEW_TOKENS = gql`
   query Pot2PumpPottingNewTokens($endTime: BigInt) {
     pot2Pumps(
@@ -68,9 +95,9 @@ export const POT2_PUMP_FRAGMENT = gql`
     participantTransactionHistorys {
       ...ParticipantTransactionHistoryFields
     }
-    participants(first: 10) {
-      ...ParticipantFields
-    }
+    # participants {
+    #   ...ParticipantFields
+    # }
   }
 `;
 
@@ -86,6 +113,45 @@ export const PARTICIPANT_FRAGMENT = gql`
     amount
     totalRefundAmount
     totalclaimLqAmount
-    canClaim
+    claimed
+    refunded
+    account {
+      ...AccountField
+    }
+    pot2Pump {
+      ...Pot2PumpField
+    }
+  }
+`;
+
+export const CAN_CLAIM_POT2_PUMP_PARTICIPANT = gql`
+  query CanClaimPot2PumpParticipant($accountId: ID!) {
+    participants(
+      where: {
+        account_: { id: $accountId }
+        claimed: false
+        pot2Pump_: { raisedTokenReachingMinCap: true }
+      }
+      orderBy: createdAt
+      orderDirection: desc
+    ) {
+      ...ParticipantFields
+    }
+  }
+`;
+
+export const CAN_REFUND_POT2_PUMP_PARTICIPANT = gql`
+  query CanRefundPot2PumpParticipant($accountId: ID!, $timeNow: BigInt!) {
+    participants(
+      where: {
+        account_: { id: $accountId }
+        refunded: false
+        pot2Pump_: { raisedTokenReachingMinCap: false, endTime_lt: $timeNow }
+      }
+      orderBy: createdAt
+      orderDirection: desc
+    ) {
+      ...ParticipantFields
+    }
   }
 `;
