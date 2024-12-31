@@ -1,18 +1,46 @@
 import { poolsColumns } from "@/components/algebra/common/Table/poolsColumns";
-import { useEffect, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Address } from "viem";
-import useSWR from "swr";
 import PoolsTable from "@/components/algebra/common/Table/poolsTable";
 import { usePositions } from "@/lib/algebra/hooks/positions/usePositions";
 import { farmingClient } from "@/lib/algebra/graphql/clients";
 import {
   usePoolsListQuery,
   useActiveFarmingsQuery,
+  OrderDirection,
+  Pool_OrderBy,
 } from "@/lib/algebra/graphql/generated/graphql";
 import PoolCardList from "./PoolCardList";
+import { SortingState } from "@tanstack/react-table";
+
+const mappingSortKeys: Record<any, Pool_OrderBy> = {
+  tvlUSD: Pool_OrderBy.TotalValueLockedUsd,
+  price: Pool_OrderBy.Token0Price,
+  age: Pool_OrderBy.CreatedAtTimestamp,
+  txns: Pool_OrderBy.TxCount,
+  volume: Pool_OrderBy.VolumeUsd,
+  changeHour: Pool_OrderBy.Id,
+  change24h: Pool_OrderBy.Id,
+  changeWeek: Pool_OrderBy.Id,
+  changeMonth: Pool_OrderBy.Id,
+  liquidity: Pool_OrderBy.Liquidity,
+  "marktet cap": Pool_OrderBy.Token0MarketCap,
+};
 
 const PoolsList = () => {
-  const { data: pools, loading: isPoolsListLoading } = usePoolsListQuery();
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "tvlUSD", desc: true },
+  ]);
+
+  const orderBy = mappingSortKeys[sorting[0].id];
+  const { data: pools, loading: isPoolsListLoading } = usePoolsListQuery({
+    variables: {
+      orderBy: orderBy,
+      orderDirection: sorting[0].desc
+        ? OrderDirection.Desc
+        : OrderDirection.Asc,
+    },
+  });
 
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
@@ -137,13 +165,24 @@ const PoolsList = () => {
     );
   }, [isLoading, pools, positions, activeFarmings]);
 
+  const handleSort = (callback: any) => {
+    const sort = callback();
+    if (sort.length > 0) {
+      console.log(sort);
+      setSorting(sort);
+    } else {
+      setSorting([{ id: "tvlUSD", desc: true }]);
+    }
+  };
+
   return (
     <div>
       <div className="hidden xl:block">
         <PoolsTable
           columns={poolsColumns}
           data={formattedPools}
-          defaultSortingID={"tvlUSD"}
+          sorting={sorting}
+          setSorting={handleSort}
           link={"pooldetail"}
           showPagination={true}
           loading={isLoading}

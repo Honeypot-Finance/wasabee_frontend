@@ -36,6 +36,8 @@ interface PoolsTableProps<TData, TValue> {
   showPagination?: boolean;
   searchID?: string;
   loading?: boolean;
+  sorting: any;
+  setSorting: any;
 }
 
 const PoolsTable = <TData, TValue>({
@@ -43,9 +45,10 @@ const PoolsTable = <TData, TValue>({
   data,
   action,
   link,
-  defaultSortingID,
   showPagination = true,
   loading,
+  sorting,
+  setSorting,
 }: PoolsTableProps<TData, TValue>) => {
   const [selectedFilter, setSelectedFilter] = useState<string>("trending");
   const [isCreatePoolOpen, setIsCreatePoolOpen] = useState(false);
@@ -57,9 +60,6 @@ const PoolsTable = <TData, TValue>({
     { key: "myPools", label: "My Pools" },
   ];
 
-  const [sorting, setSorting] = useState<SortingState>(
-    defaultSortingID ? [{ id: defaultSortingID, desc: true }] : []
-  );
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
@@ -203,15 +203,26 @@ const PoolsTable = <TData, TValue>({
             >
               {headerGroup.headers.map((header) => (
                 <TableHead
+                  onClick={header.column.getToggleSortingHandler()}
                   key={header.id}
-                  className="rounded-xl text-white font-semibold [&_svg]:mt-auto"
+                  className={`rounded-xl text-white font-semibold [&_svg]:mt-auto ${
+                    header.column.getCanSort()
+                      ? "cursor-pointer select-none"
+                      : ""
+                  }`}
                 >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                  <div className="flex items-center">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                    {{
+                      asc: " 🔼",
+                      desc: " 🔽",
+                    }[header.column.getIsSorted() as string] ?? null}
+                  </div>
                 </TableHead>
               ))}
             </TableRow>
