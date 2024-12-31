@@ -1,266 +1,180 @@
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  useMemo,
-} from "react";
-import * as LightweightCharts from "lightweight-charts";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { chart, chartTimeRanges } from "@/services/chart";
-import { AiOutlineSwap } from "react-icons/ai";
+import { chart } from "@/services/chart";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
-import dayjs from "dayjs";
-import { ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
+import { RotateCcw } from "lucide-react";
+import { APIHOST } from "@/lib/constants";
 
-interface KlineChartProps {
-  height: number | string;
+// 为 Window 对象添加 TradingView 相关的类型定义
+declare global {
+  interface Window {
+    TradingView: any;
+    tvWidget: any;
+    Datafeeds: any;
+  }
 }
 
-const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
-  const chartRef = useRef<HTMLDivElement>(null);
-  const [chartCreated, setChart] = useState<
-    LightweightCharts.IChartApi | undefined
-  >();
-  const [candleSeries, setCandleSeries] = useState<any | undefined>();
-  const [volumeSeries, setVolumeSeries] = useState<any | undefined>();
-  const [isTimeRangeOpen, setIsTimeRangeOpen] = useState(false);
+// 格式化数字的工具函数
+const formatNumber = (number: number) => {
+  if (isNaN(number)) return 0;
+  number = +number;
+  if (number === 0) return 0;
+  if (number < 0) number = Math.abs(number);
 
-  // Convert chart service data to candlestick format
-  const chartData = useMemo(() => {
-    if (!chart.chartData.value?.getBars) return [];
-
-    const { t, o, h, l, c, v } = chart.chartData.value.getBars;
-
-    return t
-      .map((time, index) => {
-        // Skip data points where any required value is null/undefined
-        if (
-          o[index] === null ||
-          h[index] === null ||
-          l[index] === null ||
-          c[index] === null ||
-          v[index] === null
-        ) {
-          return null;
-        }
-
-        return {
-          time: time as number,
-          open: o[index] as number,
-          high: h[index] as number,
-          low: l[index] as number,
-          close: c[index] as number,
-          volume: (v?.[index] as number) || 0,
-        };
-      })
-      .filter((item): item is NonNullable<typeof item> => item !== null);
-  }, [chart.chartData.value, chart.chartTarget, chart.chartLabel, chart.range]);
-
-  const handleResize = useCallback(() => {
-    if (chartCreated && chartRef?.current?.parentElement) {
-      try {
-        const newWidth = chartRef.current.parentElement.clientWidth - 48;
-        chartCreated.resize(newWidth, Number(height));
-
-        // Reload data to ensure correct display
-        if (candleSeries && volumeSeries && chartData.length) {
-          volumeSeries.setData(
-            chartData.map((d) => ({
-              time: d.time,
-              value: d.volume,
-              color: d.close >= d.open ? "#08998150" : "#F2364550",
-            }))
-          );
-          candleSeries.setData(chartData);
-        }
-
-        chartCreated.timeScale().fitContent();
-      } catch (error) {
-        console.warn("Chart resize failed:", error);
-      }
+  if (number >= 1000) return new Intl.NumberFormat("en-US").format(number);
+  else if (number > 100)
+    return parseFloat(String(number)).toFixed(2).toString();
+  else if (number > 1) return parseFloat(String(number)).toFixed(3).toString();
+  else if (number > 1e-4)
+    return parseFloat(parseFloat(String(number)).toExponential(4)).toString();
+  else {
+    const endNumbers = Number(number)
+      .toExponential()
+      .split("e")[0]
+      .replace(".", "")
+      .substring(0, 4);
+    const zeros = -Math.floor(Math.log10(number) + 1);
+    let subNumber;
+    if (zeros > 9) {
+      subNumber =
+        String.fromCharCode(parseInt(`2081`, 16)) +
+        String.fromCharCode(parseInt(`208${zeros - 10}`, 16));
+    } else {
+      subNumber = String.fromCharCode(parseInt(`208${zeros}`, 16));
     }
-  }, [chartCreated, height, candleSeries, volumeSeries, chartData]);
+    return "0.0" + subNumber + endNumbers;
+  }
+};
 
-  // Update chart cleanup
-  useEffect(() => {
-    return () => {
-      if (chartCreated) {
-        try {
-          chartCreated.remove();
-        } catch (error) {
-          console.warn("Chart cleanup failed:", error);
-        }
-      }
+interface KlineChartProps {
+  height?: number | string;
+  onReady?: () => void;
+}
+
+const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
+  const chartWrapRef = useRef<HTMLDivElement>(null);
+  const [spinning, setSpinning] = useState(true);
+  const [chartWidth, setChartWidth] = useState(200);
+  const listener = useRef<any>(null);
+
+  const initOnReady = useCallback(() => {
+    window.Datafeeds.UDFCompatibleDatafeed.prototype.resolveSymbol = function (
+      symbolName: string,
+      onSymbolResolvedCallback: any,
+      onResolveErrorCallback: any
+    ) {
+      onSymbolResolvedCallback({
+        name: symbolName,
+        ticker: "",
+        description: "",
+        type: "stock",
+        exchange: "DEX",
+        minmove2: 0,
+        session: "24x7",
+        timezone: timeZone,
+        minmov: 1,
+        pricescale: 100000000,
+        has_intraday: true,
+        volume_precision: 6,
+      });
     };
-  }, [chartCreated]);
 
-  // Separate effect for window resize
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [handleResize]);
-
-  // Update chart data effect
-  useEffect(() => {
-    if (!candleSeries || !volumeSeries || !chartData.length || !chartCreated)
-      return;
-
-    try {
-      // Clear existing price lines
-      candleSeries.removeAllPriceLines();
-
-      // Set volume data
-      volumeSeries.setData(
-        chartData.map((d) => ({
-          time: d.time,
-          value: d.volume,
-          color: d.close >= d.open ? "#08998150" : "#F2364550",
-        }))
-      );
-
-      // Set candlestick data
-      candleSeries.setData(chartData);
-
-      // Update price line only if we have valid data
-      if (chartData.length > 0) {
-        const lastPrice = chartData[chartData.length - 1].close;
-        candleSeries.createPriceLine({
-          price: lastPrice,
-          color:
-            lastPrice >= chartData[chartData.length - 1].open
-              ? "#089981"
-              : "#F23645",
-          lineWidth: 1,
-          lineStyle: LightweightCharts.LineStyle.Dashed,
-          axisLabelVisible: true,
-          title: lastPrice.toFixed(6),
-        });
-      }
-
-      // Fit content after data is loaded
-      chartCreated.timeScale().fitContent();
-    } catch (error) {
-      console.warn("Chart update failed:", error);
-    }
-  }, [chartData, candleSeries, volumeSeries, chartCreated]);
-
-  // Chart initialization effect
-  useLayoutEffect(() => {
-    if (!chartRef.current) return;
-
-    let chartInstance: LightweightCharts.IChartApi | undefined;
-    let candlestickSeries: any;
-    let volumeHistogramSeries: any;
-
-    try {
-      chartInstance = LightweightCharts.createChart(chartRef.current, {
-        width: (chartRef.current.parentElement?.clientWidth || 600) - 48,
-        height: typeof height === "string" ? parseInt(height) : height,
-        layout: {
-          background: { color: "#202020" },
-          textColor: "rgba(255, 255, 255, 0.5)",
-          fontFamily: "Roboto, sans-serif",
-        },
-        rightPriceScale: {
-          borderVisible: false,
-          scaleMargins: {
-            top: 0.1,
-            bottom: 0.4,
-          },
-        },
-        leftPriceScale: {
-          visible: true,
-          borderVisible: false,
-          scaleMargins: {
-            top: 0.8,
-            bottom: 0,
-          },
-        },
-        grid: {
-          vertLines: { visible: false },
-          horzLines: { color: "rgba(43, 43, 43, 0.5)" },
-        },
-        crosshair: {
-          mode: LightweightCharts.CrosshairMode.Normal,
-          vertLine: {
-            color: "rgba(255, 255, 255, 0.1)",
-            width: 1,
-            style: 1,
-            labelBackgroundColor: "#202020",
-          },
-          horzLine: {
-            color: "rgba(255, 255, 255, 0.1)",
-            width: 1,
-            style: 1,
-            labelBackgroundColor: "#202020",
-          },
-        },
-        timeScale: {
-          borderVisible: false,
-          timeVisible: true,
-          secondsVisible: false,
-          tickMarkFormatter: (time: number) => {
-            return dayjs(time * 1000).format("HH:mm");
-          },
-        },
-        watermark: {
-          visible: false,
-        },
-      });
-
-      volumeHistogramSeries = chartInstance.addHistogramSeries({
-        priceFormat: {
-          type: "volume",
-        },
-        priceScaleId: "left",
-        color: "rgba(255, 255, 255, 0.5)",
-      });
-
-      candlestickSeries = chartInstance.addCandlestickSeries({
-        upColor: "#089981",
-        downColor: "#F23645",
-        borderVisible: false,
-        wickUpColor: "#089981",
-        wickDownColor: "#F23645",
-        priceLineVisible: false,
-        lastValueVisible: false,
-        priceScaleId: "right",
-      });
-
-      // Set initial data if available
-      if (chartData.length > 0) {
-        volumeHistogramSeries.setData(
-          chartData.map((d) => ({
-            time: d.time,
-            value: d.volume,
-            color: d.close >= d.open ? "#08998150" : "#F2364550",
-          }))
-        );
-        candlestickSeries.setData(chartData);
-        chartInstance.timeScale().fitContent();
-      }
-
-      setChart(chartInstance);
-      setCandleSeries(candlestickSeries);
-      setVolumeSeries(volumeHistogramSeries);
-    } catch (error) {
-      console.warn("Chart creation failed:", error);
-    }
-
-    return () => {
-      if (chartInstance) {
-        try {
-          chartInstance.remove();
-        } catch (error) {
-          console.warn("Chart cleanup failed:", error);
-        }
-      }
+    window.Datafeeds.UDFCompatibleDatafeed.prototype.subscribeBars = (
+      symbolInfo: any,
+      resolution: any,
+      onRealtimeCallback: any,
+      subscribeUID: any,
+      onResetCacheNeededCallback: any
+    ) => {
+      listener.current = {
+        onRealtimeCallback,
+        resolution,
+      };
     };
-  }, [height, chartData]); // Added chartData dependency
+
+    const interval = "5";
+    const datafeed = new window.Datafeeds.UDFCompatibleDatafeed("", 5000);
+
+    console.log("chart.chartTarget", chart.chartTarget);
+
+    window.tvWidget = new window.TradingView.widget({
+      symbol: chart.chartLabel || "kline",
+      interval: interval as any,
+      container: "tv_chart_container",
+      width: chartWidth,
+      height: Number(height),
+      formatting_price_precision: 10,
+      timezone: timeZone as any,
+      datafeed: datafeed,
+      library_path: "/charting_library/",
+      locale: "en",
+      disabled_features: [
+        "use_localstorage_for_settings",
+        "header_symbol_search",
+        "header_settings",
+        "header_indicators",
+        "header_compare",
+        "header_undo_redo",
+        "header_screenshot",
+        "header_fullscreen_button",
+        "border_around_the_chart",
+        "header_saveload",
+        "drawing_templates",
+        "volume_force_overlay",
+      ],
+      enabled_features: ["header_widget", "left_toolbar", "control_bar"],
+      charts_storage_url: "https://saveload.tradingview.com",
+      charts_storage_api_version: "1.1",
+      client_id: "tradingview.com",
+      user_id: "public_user_id",
+      preset: "mobile",
+      custom_css_url: "/css/tradingViews.css",
+      loading_screen: {
+        backgroundColor: "#202020",
+        foregroundColor: "#FFCD4D",
+      },
+      theme: "dark",
+      overrides: {
+        "paneProperties.backgroundType": "solid",
+        "paneProperties.background": "#202020",
+        "scalesProperties.lineColor": "#202020",
+        "mainSeriesProperties.candleStyle.barColorsOnPrevClose": true,
+        "mainSeriesProperties.haStyle.barColorsOnPrevClose": true,
+        "mainSeriesProperties.barStyle.barColorsOnPrevClose": true,
+        "mainSeriesProperties.candleStyle.upColor": "#089981",
+        "mainSeriesProperties.candleStyle.borderUpColor": "#089981",
+        "mainSeriesProperties.candleStyle.downColor": "#F23645",
+        "mainSeriesProperties.candleStyle.borderDownColor": "#F23645",
+        "mainSeriesProperties.candleStyle.wickUpColor": "#089981",
+        "mainSeriesProperties.candleStyle.wickDownColor": "#F23645",
+      },
+    });
+
+    window.tvWidget.onChartReady(() => {
+      setSpinning(false);
+      const chart = window.tvWidget.chart();
+      chart.priceFormatter().format = formatNumber;
+      onReady?.();
+    });
+  }, [chartWidth, height, chart.chartTarget, onReady]);
+
+  useEffect(() => {
+    const resizeChart = () => {
+      if (chartWrapRef.current)
+        setChartWidth(chartWrapRef.current.clientWidth - 48 || 0);
+    };
+    resizeChart();
+    window.addEventListener("resize", resizeChart);
+    return () => window.removeEventListener("resize", resizeChart);
+  }, []);
+
+  useEffect(() => {
+    setSpinning(true);
+    initOnReady();
+  }, [initOnReady]);
 
   return (
     <div className="w-full relative rounded-2xl bg-[#202020] overflow-hidden p-4">
@@ -269,11 +183,7 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
         <div className="flex items-center gap-2">
           <div className="flex items-center">
             {chart.TargetLogoDisplay.map((token: Token) => (
-              <>
-                {token && token.address && (
-                  <TokenLogo key={token.address} token={token} />
-                )}
-              </>
+              <TokenLogo key={token.address} token={token} />
             ))}
           </div>
           <span className="text-white text-lg font-bold">
@@ -297,146 +207,27 @@ const KlineChart = observer(({ height = 400 }: KlineChartProps) => {
             {chart.chartPricePercentageChange.toFixed(2)}%
           </span>
         </div>
-
-        {/* Time Range Selector - Desktop */}
-        <div className="absolute top-4 right-4 hidden sm:flex items-center">
-          <div className="flex items-center bg-[#FFCD4D] rounded-xl p-1 space-x-1">
-            {Object.values(chartTimeRanges).map((range) => (
-              <button
-                key={range.label}
-                onClick={() => chart.setRange(range.label)}
-                className={`w-12 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                  chart.range === range.label
-                    ? "bg-[#202020] text-white/80"
-                    : "text-black hover:bg-black/10"
-                }`}
-              >
-                {range.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Time Range Selector - Mobile */}
-        <div className="absolute top-4 right-4 sm:hidden">
-          <button
-            onBlur={() => setIsTimeRangeOpen(false)}
-            onClick={() => setIsTimeRangeOpen(!isTimeRangeOpen)}
-            className="inline-flex justify-center w-full rounded-2xl border border-[#202020] bg-white px-4 py-2 text-[#202020] text-sm font-medium shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] focus:outline-none space-x-0.5"
-          >
-            <span>{chart.range || "Select Range"}</span>
-            <ChevronDown className="size-4" />
-          </button>
-
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{
-              height: isTimeRangeOpen ? "auto" : 0,
-              opacity: isTimeRangeOpen ? 1 : 0,
-            }}
-            transition={{ duration: 0.3 }}
-            className="absolute right-0 w-32 mt-1 rounded-2xl overflow-hidden z-10 border border-[#202020] bg-white shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020]"
-          >
-            <div className="py-1">
-              {Object.values(chartTimeRanges).map((range) => (
-                <button
-                  key={range.label}
-                  onClick={() => {
-                    chart.setRange(range.label);
-                    setIsTimeRangeOpen(false);
-                  }}
-                  className={[
-                    "block px-4 py-2 text-sm w-full text-left transition-all",
-                    chart.range === range.label
-                      ? "bg-[#202020] text-white"
-                      : "text-[#202020] hover:bg-[#20202010]",
-                  ].join(" ")}
-                >
-                  {range.label}
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        </div>
       </div>
 
-      {/* Chart or Placeholder */}
-      {!chart.range ? (
+      <div ref={chartWrapRef} className="relative my-4">
         <div
           style={{
-            height: typeof height === "number" ? `${height}px` : height,
+            opacity: spinning ? 0.8 : 0,
+            transition: "opacity 0.3s ease-out",
           }}
-          className="w-full mt-2 flex items-center justify-center"
+          className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center"
         >
-          <div className="text-center">
-            <div className="text-white/50 text-sm mb-2">
-              Please select a time range
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <svg
-                className="w-8 h-8 text-[#FFCD4D]"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <div className="flex gap-1">
-                {Object.values(chartTimeRanges)
-                  .slice(0, 3)
-                  .map((range) => (
-                    <button
-                      key={range.label}
-                      onClick={() => chart.setRange(range.label)}
-                      className="px-3 py-1 rounded-md text-xs font-medium bg-[#FFCD4D] text-black hover:bg-[#FFCD4D]/80 transition-colors"
-                    >
-                      {range.label}
-                    </button>
-                  ))}
-              </div>
-            </div>
-          </div>
+          <RotateCcw className="animate-spin" />
         </div>
-      ) : !chartData || chartData.length === 0 ? (
+
         <div
+          id="tv_chart_container"
           style={{
-            height: typeof height === "number" ? `${height}px` : height,
+            opacity: spinning ? 0 : 1,
+            transition: "opacity 0.3s ease-out",
           }}
-          className="w-full mt-2 flex items-center justify-center"
-        >
-          <div className="text-center">
-            <div className="flex justify-center">
-              <svg
-                className="animate-spin h-8 w-8 text-[#FFCD4D]"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div ref={chartRef} className="w-full mt-2" />
-      )}
+        />
+      </div>
     </div>
   );
 });
