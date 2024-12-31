@@ -32,6 +32,9 @@ import { popmodal } from "@/services/popmodal";
 import store from "store2";
 import { cn } from "@/lib/tailwindcss";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
+import BigNumber from "bignumber.js";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
+import { Token } from "@/services/contract/token";
 
 const positiveIntegerPattern = /^[1-9]\d*$/;
 
@@ -419,10 +422,9 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     try {
       const [pairAddress] = await launchpad.createLaunchProject.call({
         ...data,
-        // @ts-ignore
-        tokenAmount: 1_000_000,
-        raisedToken: wallet.currentChain?.contracts.ftoTokens[0]
-          .address as string,
+        tokenAmount: wallet.currentChain.raisedTokenData.find(
+          (token) => token.address === data.raisedToken
+        )?.amount,
         launchType: "meme",
         raisingCycle: dayjs().unix(),
       });
@@ -583,6 +585,43 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                         )}
                       />
                     </div> */}
+                    {wallet.isInit && (
+                      <div>
+                        <label className="text-black text-base font-medium">
+                          Raise Token{" "}
+                        </label>
+                        <WarppedNextSelect
+                          isRequired
+                          defaultSelectedKeys={[
+                            wallet.currentChain.raisedTokenData[0].address,
+                          ]}
+                          items={wallet.currentChain?.raisedTokenData}
+                          {...register("raisedToken")}
+                        >
+                          {wallet.currentChain?.raisedTokenData.map((token) => (
+                            <SelectItem
+                              key={token.address}
+                              value={token.address}
+                              startContent={
+                                <TokenLogo
+                                  size={24}
+                                  token={Token.getToken({
+                                    address: token.address,
+                                  })}
+                                  addtionalClasses="rounded-full"
+                                />
+                              }
+                            >
+                              {token.symbol} -{" "}
+                              {new BigNumber(token.amount.toString())
+                                .div(10 ** 18)
+                                .toString()}
+                              &nbsp;tokens
+                            </SelectItem>
+                          ))}
+                        </WarppedNextSelect>
+                      </div>
+                    )}
 
                     <div className="flex flex-col gap-2">
                       <label className="text-black text-base font-medium">

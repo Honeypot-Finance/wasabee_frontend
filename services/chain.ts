@@ -31,6 +31,11 @@ export class Network {
     ftoTokens: Partial<Token>[];
   };
   nativeToken!: Token;
+  raisedTokenData!: {
+    symbol: string;
+    address: string;
+    amount: bigint;
+  }[];
   faucetTokens: Token[] = [];
   nativeFaucet?: {
     address: string;
@@ -105,6 +110,23 @@ export const berachainBartioTestnetNetwork = new Network({
     isNative: true,
     logoURI: "/images/icons/tokens/wbera-token-icon.png",
   },
+  raisedTokenData: [
+    {
+      symbol: "tHpot",
+      address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
+      amount: BigInt("200000000000000000000000"),
+    },
+    {
+      symbol: "WBERA",
+      address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
+      amount: BigInt("4000000000000000000"),
+    },
+    {
+      symbol: "pHpot",
+      address: "0xb6a43168ffb37e03e48a723fcb3895ae7d596078",
+      amount: BigInt("200000000000000000000000"),
+    },
+  ],
   nativeFaucet: {
     address: "0x1bd43f7f55b700236c92256a0fd90266363119f7",
     name: "Daily Faucet",

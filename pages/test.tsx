@@ -6,11 +6,12 @@ import { Address } from "viem";
 export default function TestPage() {
   const tHpotAddress = "0xfc5e3743e9fac8bb60408797607352e24db7d65e";
   const pHpotAddress = "0xb6a43168ffb37e03e48a723fcb3895ae7d596078";
+  const wberaAddress = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
 
   const removeMemeFactoryRaisedToken = async () => {
     const contract =
       wallet.contracts.memeFactory.contract.write.removeRaisedToken(
-        ["0xfc5e3743e9fac8bb60408797607352e24db7d65e"],
+        [wberaAddress],
         {
           account: wallet.account as Address,
           chain: wallet.currentChain.chain,
@@ -21,8 +22,8 @@ export default function TestPage() {
   const addMemeFactoryRaisedToken = async () => {
     const contract = wallet.contracts.memeFactory.contract.write.addRaisedToken(
       [
-        "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
-        BigInt("200000000000000000000000"), // 200000 * 10 ** 18
+        wberaAddress,
+        BigInt("4000000000000000000"), // 4 * 10 ** 18
       ],
       {
         account: wallet.account as Address,
