@@ -339,9 +339,10 @@ const Tabs = observer(
                         {amountFormatted(
                           (pair as MemePairContract)?.depositedLaunchedToken,
                           {
-                            prefix: "$",
+                            prefix: "",
                             decimals: 0,
                             fixed: 3,
+                            symbol: " tokens",
                           }
                         )}
                       </div>
@@ -366,6 +367,7 @@ const Tabs = observer(
                           prefix: "$",
                           decimals: 0,
                           fixed: 3,
+                          symbol: "",
                         })}
                       </div>
                       <div className="text-base md:text-lg text-[#0D0D0D] font-gliker">
