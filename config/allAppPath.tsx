@@ -1,6 +1,10 @@
 import { StaticImageData } from "next/image";
 import { ReactNode } from "react";
 import Image from "next/image";
+export type PathChatConfig = {
+  autoPopUpQuestion: ReactNode;
+  pageTrendingQuestions: ReactNode[];
+};
 export type Menu = {
   path:
     | string
@@ -9,18 +13,21 @@ export type Menu = {
         title: string;
         icon?: StaticImageData;
         footer?: ReactNode;
+        chatConfig?: PathChatConfig;
       }[];
   title: string;
   icon?: StaticImageData;
+  chatConfig?: PathChatConfig;
 };
 
 export type flatMenu = {
   path: string;
   title: string;
   icon?: StaticImageData;
+  chatConfig?: PathChatConfig;
 };
 
-export const footerData = {
+export const footerData: Record<string, ReactNode> = {
   pot2pump: (
     <div className="flex justify-center items-center">
       <Image

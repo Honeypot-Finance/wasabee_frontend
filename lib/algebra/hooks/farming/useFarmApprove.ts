@@ -5,7 +5,7 @@ import { useTransactionAwait } from "../common/useTransactionAwait";
 import {
   ALGEBRA_POSITION_MANAGER,
   FARMING_CENTER,
-} from "@/data/algebra/addresses";
+} from "@/config/algebra/addresses";
 import { algebraPositionManagerABI } from "@cryptoalgebra/sdk";
 import { TransactionType } from "../../state/pendingTransactionsStore";
 

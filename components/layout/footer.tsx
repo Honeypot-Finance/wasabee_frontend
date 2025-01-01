@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { footerData } from "@/data/allAppPath";
-import { usePathname } from "next/navigation";
+import { footerData } from "@/config/allAppPath";
 import { ReactNode } from "react";
+import { useRouter } from "next/router";
 
 export const Footer = () => {
   return (
@@ -13,8 +13,8 @@ export const Footer = () => {
 };
 
 export const CurrentPageFooter = () => {
-  const paths = usePathname().split("/");
-  const footer: ReactNode = footerData[paths[1] as keyof typeof footerData];
+  const paths = useRouter().pathname.split("/");
+  const footer: ReactNode = footerData[paths[1]];
 
   return footer ?? <></>;
 };

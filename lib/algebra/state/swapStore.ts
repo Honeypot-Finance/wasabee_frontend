@@ -1,5 +1,5 @@
-import { ALGEBRA_ROUTER } from "@/data/algebra/addresses";
-import { STABLECOINS } from "@/data/algebra/tokens";
+import { ALGEBRA_ROUTER } from "@/config/algebra/addresses";
+import { STABLECOINS } from "@/config/algebra/tokens";
 import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
 import {
   useBestTradeExactIn,

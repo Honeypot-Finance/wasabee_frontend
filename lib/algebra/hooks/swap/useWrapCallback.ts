@@ -4,8 +4,8 @@ import { useAccount, useBalance, useChainId, useContractWrite } from "wagmi";
 import { useTransactionAwait } from "../common/useTransactionAwait";
 
 import { Address } from "viem";
-import { DEFAULT_NATIVE_SYMBOL } from "@/data/algebra/default-chain-id";
-import { WNATIVE_EXTENDED } from "@/data/algebra/routing";
+import { DEFAULT_NATIVE_SYMBOL } from "@/config/algebra/default-chain-id";
+import { WNATIVE_EXTENDED } from "@/config/algebra/routing";
 import {
   useSimulateWrappedNativeDeposit,
   useSimulateWrappedNativeWithdraw,

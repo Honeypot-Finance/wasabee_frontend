@@ -18,7 +18,7 @@ import {
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { cn } from "@/lib/tailwindcss";
-import { Menu, appPathsList as menuList } from "@/data/allAppPath";
+import { Menu, appPathsList as menuList } from "@/config/allAppPath";
 import {
   WarppedNextDropdownMenu,
   WarppedNextDropdown,

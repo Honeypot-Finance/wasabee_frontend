@@ -17,7 +17,7 @@ import {
   SelectState,
   SelectItem,
 } from "@/components/ItemSelect/v3";
-import { WNATIVE_EXTENDED } from "@/data/algebra/routing";
+import { WNATIVE_EXTENDED } from "@/config/algebra/routing";
 import { cn } from "@/lib/tailwindcss";
 import { Button } from "@/components/algebra/ui/button";
 import {

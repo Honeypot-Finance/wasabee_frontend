@@ -1,6 +1,6 @@
 import { Address } from "viem";
-import { fetcher } from "@/data/algebra/api";
-import { apiOrigin } from "@/data/algebra/api";
+import { fetcher } from "@/config/algebra/api";
+import { apiOrigin } from "@/config/algebra/api";
 
 export async function getPoolAPR(poolId: Address) {
   if (!poolId) return;

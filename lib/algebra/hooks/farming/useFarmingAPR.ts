@@ -1,4 +1,4 @@
-import { ETERNAL_FARMINGS_API, fetcher } from "@/data/algebra/api";
+import { ETERNAL_FARMINGS_API, fetcher } from "@/config/algebra/api";
 import { useMemo } from "react";
 import useSWR from "swr";
 

@@ -9,7 +9,7 @@ import {
 import { useNeedAllowance } from "./useNeedAllowance";
 import { useMemo } from "react";
 import { useTransactionAwait } from "./useTransactionAwait";
-import { ALGEBRA_ROUTER } from "@/data/algebra/addresses";
+import { ALGEBRA_ROUTER } from "@/config/algebra/addresses";
 import {
   ApprovalStateType,
   ApprovalState,
