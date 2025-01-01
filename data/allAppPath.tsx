@@ -1,5 +1,6 @@
 import { StaticImageData } from "next/image";
-
+import { ReactNode } from "react";
+import Image from "next/image";
 export type Menu = {
   path:
     | string
@@ -7,6 +8,7 @@ export type Menu = {
         path: string;
         title: string;
         icon?: StaticImageData;
+        footer?: ReactNode;
       }[];
   title: string;
   icon?: StaticImageData;
@@ -16,6 +18,20 @@ export type flatMenu = {
   path: string;
   title: string;
   icon?: StaticImageData;
+};
+
+export const footerData = {
+  pot2pump: (
+    <div className="flex justify-center items-center">
+      <Image
+        src="/images/pumping/toast-bear.png"
+        width={1000}
+        height={0}
+        alt="toast bear"
+        className="w-full"
+      />
+    </div>
+  ),
 };
 
 export const appPathsList: Menu[] = [

@@ -14,6 +14,7 @@ import { metadata } from "@/config/metadata";
 import AnnouncementBar from "./AnnouncementBar";
 import Link from "next/link";
 import ChatWidget from "../ServiceChat";
+import { Footer } from "./footer";
 
 export const Layout = ({
   children,
@@ -111,7 +112,7 @@ export const Layout = ({
       ) : (
         <NotConnetctedDisplay />
       )}
-      {/* <Footer></Footer> */}
+      <Footer />
     </div>
   );
 };
