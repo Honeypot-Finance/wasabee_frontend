@@ -25,7 +25,6 @@ interface Pair {
 }
 
 interface Pool {
-  marktetcap: any;
   id: Address;
   pair: Pair;
   fee: number;
@@ -354,9 +353,9 @@ export const poolsColumns: ColumnDef<Pool>[] = [
     cell: ({ row }) => row.original.liquidity,
   },
   {
-    accessorKey: "marktetcap",
+    accessorKey: "pair.token0.marketCap",
     header: () => <HeaderItem className="uppercase">marktet cap</HeaderItem>,
-    cell: ({ row }) => row.original.marktetcap,
+    cell: ({ row }) => row.original.pair.token0.marketCap,
   },
 ];
 

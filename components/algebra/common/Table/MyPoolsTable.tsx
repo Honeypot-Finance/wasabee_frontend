@@ -20,12 +20,6 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { LoadingState } from "./loadingState";
-import { Input } from "@/components/algebra/ui/input";
-import { Search, Plus, LayoutGrid } from "lucide-react";
-import { Switch } from "@/components/algebra/ui/switch";
-import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
-import CreatePoolForm from "../../create-pool/CreatePoolForm";
-import { cn } from "@/lib/tailwindcss";
 
 interface PoolsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

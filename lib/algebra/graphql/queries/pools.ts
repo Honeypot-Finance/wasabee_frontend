@@ -86,8 +86,8 @@ export const POOL_MONTH_DATA_FRAGMENT = gql`
 `;
 
 export const POOLS_LIST = gql`
-  query PoolsList ($orderBy: Pool_orderBy =id, $orderDirection: OrderDirection = asc){
-    pools (orderBy: $orderBy, orderDirection: $orderDirection){
+  query PoolsList {
+    pools {
       ...PoolFields
       poolHourData(first: 100,orderBy: periodStartUnix, orderDirection: desc) {
         ...PoolHourDataFields

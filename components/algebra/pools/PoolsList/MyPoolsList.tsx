@@ -57,8 +57,6 @@ const MyPoolsList = () => {
         const lastDate = currentPool ? currentPool.date * 1000 : 0;
         const currentDate = new Date().getTime();
 
-        console.log("poolHourData", poolHourData);
-
         const changeHour = poolHourData[0]
           ? poolHourData[1]
             ? (poolHourData[0].volumeUSD - poolHourData[1].volumeUSD) /
