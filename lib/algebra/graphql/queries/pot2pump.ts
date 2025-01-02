@@ -44,7 +44,7 @@ export const POT_2_PUMP_POTTING_NEAR_SUCCESS = gql`
   query Pot2PumpPottingNearSuccess($endTime: BigInt) {
     pot2Pumps(
       first: 25
-      orderBy: DepositRaisedToken
+      orderBy: depositRaisedTokenPercentageToMinCap
       orderDirection: desc
       where: { raisedTokenReachingMinCap: false, endTime_gt: $endTime }
     ) {
@@ -74,6 +74,7 @@ export const POT2_PUMP_FRAGMENT = gql`
     LaunchTokenTVLUSD
     LaunchTokenMCAPUSD
     raisedTokenMinCap
+    depositRaisedTokenPercentageToMinCap
     raisedTokenReachingMinCap
     DepositRaisedToken
     creator

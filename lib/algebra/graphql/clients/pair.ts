@@ -197,7 +197,11 @@ export async function fetchNearSuccessPot2Pump() {
     },
   });
 
-  console.log("data", data.pot2Pumps);
+  console.log(
+    "Pot2PumpPottingNearSuccessDocument",
+    Pot2PumpPottingNearSuccessDocument
+  );
+  console.log("fetchNearSuccessPot2Pump", data.pot2Pumps);
 
   return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
 }
@@ -210,13 +214,6 @@ export async function fetchPottingNewTokens() {
     },
   });
 
-  console.log(
-    "Pot2PumpPottingNewTokensDocument",
-    Pot2PumpPottingNewTokensDocument
-  );
-
-  console.log("data", data.pot2Pumps);
-
   return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
 }
 
@@ -224,8 +221,6 @@ export async function fetchPumpingHighPricePot2Pump() {
   const { data } = await infoClient.query<Pot2PumpPottingHighPriceQuery>({
     query: Pot2PumpPottingHighPriceDocument,
   });
-
-  console.log("data", data.pot2Pumps);
 
   return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
 }
