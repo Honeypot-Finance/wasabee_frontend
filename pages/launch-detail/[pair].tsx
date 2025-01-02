@@ -38,6 +38,7 @@ import TokenAddress from "./componets/TokenAddress";
 import TokenDetails from "./componets/TokenDetails";
 import KlineChart from "./componets/KlineChart";
 import { LaunchDataProgress } from "./componets/LaunchDataProgress";
+import { cn } from "@/lib/tailwindcss";
 
 export const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -717,7 +718,11 @@ const MemeView = observer(() => {
             </div>
           </div>
 
-          <div className="bg-[#FFCD4D] min-h-[665px] px-4 py-6 rounded-2xl space-y-3 relative overflow-hidden col-span-2 lg:col-span-1">
+          <div
+            className={cn(
+              "bg-[#FFCD4D] min-h-[665px] px-4 py-6 rounded-2xl space-y-3 relative overflow-hidden col-span-2 lg:col-span-1"
+            )}
+          >
             <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
             {state.pair.value?.state === 0 && (
               <>
@@ -740,6 +745,23 @@ const MemeView = observer(() => {
                 )}
                 <KlineChart height={500} />
               </>
+            )}
+
+            {state.pair.value?.state === 1 && (
+              <div className="flex flex-col gap-y-5">
+                <div className="flex flex-col gap-y-2">
+                  <h2 className="text-2xl font-bold text-black text-center w-full">
+                    This Project has Failed!
+                  </h2>
+                  <Image
+                    className="w-full h-auto"
+                    src="/images/bera/deadfaceBear.webp"
+                    width={1000}
+                    height={0}
+                    alt="dead face"
+                  />
+                </div>
+              </div>
             )}
 
             {state.pair.value?.state === 3 && (

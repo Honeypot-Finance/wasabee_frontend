@@ -73,6 +73,10 @@ const FailAction = observer(
     pair: FtoPairContract | MemePairContract;
     refreshTxsCallback?: () => void;
   }) => {
+    console.log(pair);
+    if (pair instanceof MemePairContract) {
+      pair.getCanRefund();
+    }
     return (
       <div className="flex flex-col gap-[16px]">
         {pair instanceof FtoPairContract && pair.isProvider && (
@@ -86,7 +90,7 @@ const FailAction = observer(
             Provider Withdraw
           </Button>
         )}
-        {pair instanceof MemePairContract && pair.canRefund && (
+        {pair instanceof MemePairContract && pair.canRefund ? (
           <Button
             className="w-full"
             onClick={() => {
@@ -98,6 +102,10 @@ const FailAction = observer(
             }}
           >
             Refund LP
+          </Button>
+        ) : (
+          <Button className="w-full bg-gray-500" disabled>
+            You have Refunded
           </Button>
         )}
       </div>
@@ -265,7 +273,7 @@ const Action = observer(
           ></FailAction>
         );
       case 2:
-        return <></>;
+        return <>Case 2</>;
       case 3:
         if (pair.isCompleted) {
           return <></>;
