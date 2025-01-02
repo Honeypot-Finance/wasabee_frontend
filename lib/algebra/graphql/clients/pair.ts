@@ -514,7 +514,6 @@ export async function fetchPot2PumpList ({
     }
   `;
 
-  console.log("query fetchPot2PumpList", query);
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),
@@ -577,7 +576,7 @@ export async function fetchPot2PumpList ({
       data: {
         pairs,
         filterUpdates: {
-          currentPage: filter.currentPage + 1,
+          currentPage: filter?.currentPage ? filter?.currentPage + 1 : 1,
           hasNextPage: pairs.length === filter.limit,
         },
       },

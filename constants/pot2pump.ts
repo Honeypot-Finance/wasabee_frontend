@@ -37,5 +37,4 @@ export const defaultFilterState: FilterState = {
         min: "",
         max: ""
     },
-    search: "",
 }

@@ -23,6 +23,8 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     useState<Pot2PumpPumpingService>();
   const [filters, setFilters] = useState<FilterState>(defaultFilterState);
 
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
     if (!wallet.isInit) {
       return;
@@ -41,6 +43,20 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     newPumpingProjects.projectsPage.reloadPage();
   }, [wallet.isInit]);
 
+  useEffect(() => {
+    if (pumpingProjects) {
+      pumpingProjects.projectsPage.updateFilter({
+        search: search.length > 0 ? search : undefined,
+        currentPage: 0,
+        hasNextPage: true,
+      });
+    }
+  }, [search, pumpingProjects]);
+
+  const onChangeFilter = (data: any) => {
+    setSearch("");
+    setFilters(data);
+  };
   return (
     <div className="w-full grow flex flex-col font-gliker">
       <div className="px-4 md:px-6 w-full xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
@@ -54,38 +70,10 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             className="flex flex-col sm:flex-row items-center gap-2 my-4 sm:my-0"
           >
             <WrappedNextInputSearchBar
-              value={filters.search}
+              value={search}
               placeholder="Search by token name, symbol or address"
               className="border border-[#FFCD4D] shadow-[1px_2px_0px_0px_#9B7D2F] placeholder:text-xs"
-              onChange={(e) => {
-                const newFilters = {
-                  ...filters,
-                  search: e.target.value,
-                };
-                setFilters(newFilters);
-
-                if (pumpingProjects) {
-                  pumpingProjects.projectsPage.updateFilter({
-                    search: newFilters.search,
-                    tvlRange: {
-                      min: newFilters.tvl.min
-                        ? Number(newFilters.tvl.min)
-                        : undefined,
-                      max: newFilters.tvl.max
-                        ? Number(newFilters.tvl.max)
-                        : undefined,
-                    },
-                    participantsRange: {
-                      min: newFilters.participants.min
-                        ? Number(newFilters.participants.min)
-                        : undefined,
-                      max: newFilters.participants.max
-                        ? Number(newFilters.participants.max)
-                        : undefined,
-                    },
-                  });
-                }
-              }}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
         </div>
@@ -94,7 +82,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           <div className="py-2 sm:py-0 sm:absolute right-0 top-0 flex gap-2">
             <Filter
               filters={filters}
-              setFilters={setFilters}
+              setFilters={onChangeFilter}
               pumpingProjects={pumpingProjects}
             />
             <Link

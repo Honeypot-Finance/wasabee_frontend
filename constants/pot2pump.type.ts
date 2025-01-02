@@ -36,5 +36,4 @@ export interface FilterState {
         max: string;
     };
 
-    search: string;
 }
