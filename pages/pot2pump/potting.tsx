@@ -26,9 +26,9 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     MemePairContract[] | null
   >(null);
   const [filters, setFilters] = useState<FilterState>(defaultFilterState);
+  const [search, setSearch] = useState("");
 
   const updateMostSuccessProjects = useCallback(() => {
-    console.log("updating most success projects", mostSuccessProjects);
     mostSuccessProjects?.forEach((pair) => {
       pair.getDepositedRaisedToken();
     });
@@ -49,6 +49,21 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     setPottingProjects(newProjects);
     newProjects.projectsPage.reloadPage();
   }, [wallet.isInit]);
+
+  useEffect(() => {
+    if (pottingProjects) {
+      pottingProjects.projectsPage.updateFilter({
+        search: search.length > 0 ? search : undefined,
+        currentPage: 0,
+        hasNextPage: true,
+      });
+    }
+  }, [search, pottingProjects]);
+
+  const onChangeFilter = (data: any) => {
+    setSearch("");
+    setFilters(data);
+  };
 
   return (
     <div className="w-full grow flex flex-col font-gliker">
@@ -137,7 +152,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           <WrappedNextInputSearchBar
             className="border border-[#FFCD4D] shadow-[1px_2px_0px_0px_#9B7D2F] placeholder:text-xs"
             onChange={(e) => {
-              launchpad.pairFilterSearch = e.target.value;
+              setSearch(e.target.value);
             }}
           />
         </div>
@@ -147,7 +162,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             <div className="flex gap-2">
               <Filter
                 filters={filters}
-                setFilters={setFilters}
+                setFilters={onChangeFilter}
                 pumpingProjects={pottingProjects}
               />
               <Link

@@ -89,7 +89,6 @@ export const Filter = observer(
 
     const onChange =
       (category: category) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("onChange", category);
         const regex = /^\d*\.?\d*$/;
         console.log(e.target.value, regex.test(e.target.value));
         if (regex.test(e.target.value)) {
@@ -114,7 +113,7 @@ export const Filter = observer(
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
-          onClose={() => setFilters(defaultFilterState)}
+          hideCloseButton={true}
           classNames={{
             base: "bg-transparent",
             wrapper: "bg-transparent",
@@ -127,10 +126,19 @@ export const Filter = observer(
               <>
                 <div className="bg-[url('/images/pumping/outline-border.png')] h-[50px] absolute top-0 left-0 w-full bg-contain bg-[left_-90px_top] bg-repeat-x"></div>
 
-                <ModalHeader className="pt-14 bg-[#FFCD4D]">
+                <ModalHeader className="pt-14 bg-[#FFCD4D] flex justify-between items-center">
                   <h3 className="text-xl font-bold text-black">
                     Customize Filters
                   </h3>
+                  <div
+                    className="!font-normal text-black cursor-pointer p-1"
+                    onClick={() => {
+                      setFilters(defaultFilterState);
+                      onOpenChange();
+                    }}
+                  >
+                    x
+                  </div>
                 </ModalHeader>
 
                 <ModalBody className="px-6 bg-[#FFCD4D]">
