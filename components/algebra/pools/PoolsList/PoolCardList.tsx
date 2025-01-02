@@ -6,6 +6,7 @@ import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { formatPercent } from "@/lib/algebra/utils/common/formatPercent";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
 
 type TokenAsset = {
   __typename?: string;
@@ -36,7 +37,7 @@ type Pool = {
   hasActiveFarming: boolean;
 };
 
-const PoolCardList = ({ data }: { data: Pool[] }) => {
+const PoolCardList = observer(({ data }: { data: Pool[] }) => {
   return (
     <div className="xl:hidden flex flex-col gap-y-5">
       {data.map((pool) => {
@@ -46,9 +47,6 @@ const PoolCardList = ({ data }: { data: Pool[] }) => {
         const token2 = Token.getToken({
           address: pool.pair.token1.id,
         });
-
-        token1.init();
-        token2.init();
 
         return (
           <Link
@@ -69,7 +67,7 @@ const PoolCardList = ({ data }: { data: Pool[] }) => {
                   </div>
                 </div>
                 <span className="text-[#FAFAFC] text-sm">
-                  {pool.pair.token0.symbol} - {pool.pair.token1.symbol}
+                  {token1.symbol} - {token2.symbol}
                 </span>
                 <span className="text-sm text-[#4BDF81]">{`${pool.fee}%`}</span>
               </div>
@@ -115,6 +113,6 @@ const PoolCardList = ({ data }: { data: Pool[] }) => {
       })}
     </div>
   );
-};
+});
 
 export default PoolCardList;
