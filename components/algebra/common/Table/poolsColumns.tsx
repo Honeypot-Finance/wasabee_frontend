@@ -25,6 +25,7 @@ interface Pair {
 }
 
 interface Pool {
+  marktetcap: any;
   id: Address;
   pair: Pair;
   fee: number;
@@ -257,10 +258,10 @@ export const poolsColumns: ColumnDef<Pool>[] = [
         .includes(value),
   },
   {
-    accessorKey: "price",
+    accessorKey: "token0Price",
+    id: "token0Price",
     header: () => <HeaderItem className="uppercase">Price</HeaderItem>,
     cell: ({ row }) => {
-      console.log("price");
       return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -270,17 +271,17 @@ export const poolsColumns: ColumnDef<Pool>[] = [
     },
   },
   {
-    accessorKey: "age",
+    accessorKey: "createdAtTimestamp",
     header: () => <HeaderItem className="uppercase">Age</HeaderItem>,
     cell: ({ row }) => timeSince(row?.original?.createdAtTimestamp ?? 0),
   },
   {
-    accessorKey: "txns",
+    accessorKey: "txCount",
     header: () => <HeaderItem className="uppercase">txns</HeaderItem>,
     cell: ({ row }) => row.original.txCount,
   },
   {
-    accessorKey: "volumn",
+    accessorKey: "volumeUSD",
     header: () => <HeaderItem className="uppercase">volumn</HeaderItem>,
     cell: ({ row }) => (
       <span>
@@ -297,15 +298,11 @@ export const poolsColumns: ColumnDef<Pool>[] = [
     accessorKey: "changeHour",
     header: () => <HeaderItem className="uppercase">hour</HeaderItem>,
     cell: ({ row }) => {
-      const changeHour =
-        row.original.changeHour == Infinity
-          ? 100
-          : Number(row.original.changeHour).toFixed(2);
       return (
         <span
           style={{ color: row.original.changeHour > 0 ? "#48bb78" : "#F56565" }}
         >
-          {changeHour}%
+          {row.original.changeHour}%
         </span>
       );
     },
@@ -314,15 +311,11 @@ export const poolsColumns: ColumnDef<Pool>[] = [
     accessorKey: "change24h",
     header: () => <HeaderItem className="uppercase">24h</HeaderItem>,
     cell: ({ row }) => {
-      const change24h =
-        row.original.change24h == Infinity
-          ? 100
-          : Number(row.original.change24h).toFixed(2);
       return (
         <span
           style={{ color: row.original.change24h > 0 ? "#48bb78" : "#F56565" }}
         >
-          {change24h}%
+          {row.original.change24h}%
         </span>
       );
     },
@@ -331,15 +324,11 @@ export const poolsColumns: ColumnDef<Pool>[] = [
     accessorKey: "changeWeek",
     header: () => <HeaderItem className="uppercase">Week</HeaderItem>,
     cell: ({ row }) => {
-      const changeWeek =
-        row.original.changeWeek == Infinity
-          ? 100
-          : Number(row.original.changeWeek).toFixed(2);
       return (
         <span
           style={{ color: row.original.changeWeek > 0 ? "#48bb78" : "#F56565" }}
         >
-          {changeWeek}%
+          {row.original.changeWeek}%
         </span>
       );
     },
@@ -348,17 +337,13 @@ export const poolsColumns: ColumnDef<Pool>[] = [
     accessorKey: "changeMonth",
     header: () => <HeaderItem className="uppercase">Month</HeaderItem>,
     cell: ({ row }) => {
-      const changeMonth =
-        row.original.changeMonth == Infinity
-          ? 100
-          : Number(row.original.changeMonth).toFixed(2);
       return (
         <span
           style={{
             color: row.original.changeMonth > 0 ? "#48bb78" : "#F56565",
           }}
         >
-          {changeMonth}%
+          {row.original.changeMonth}%
         </span>
       );
     },
@@ -369,9 +354,9 @@ export const poolsColumns: ColumnDef<Pool>[] = [
     cell: ({ row }) => row.original.liquidity,
   },
   {
-    accessorKey: "marktet cap",
+    accessorKey: "marktetcap",
     header: () => <HeaderItem className="uppercase">marktet cap</HeaderItem>,
-    cell: ({ row }) => row.original.pair.token0.marketCap,
+    cell: ({ row }) => row.original.marktetcap,
   },
 ];
 

@@ -12,6 +12,7 @@ import {
 } from "@/lib/algebra/graphql/generated/graphql";
 import PoolCardList from "./PoolCardList";
 import { SortingState } from "@tanstack/react-table";
+import { id } from "ethers/lib/utils";
 
 const mappingSortKeys: Record<any, Pool_OrderBy> = {
   tvlUSD: Pool_OrderBy.TotalValueLockedUsd,
@@ -29,18 +30,11 @@ const mappingSortKeys: Record<any, Pool_OrderBy> = {
 
 const PoolsList = () => {
   const [sorting, setSorting] = useState<SortingState>([
-    { id: "tvlUSD", desc: true },
+    { id: "id", desc: true },
   ]);
 
   const orderBy = mappingSortKeys[sorting[0].id];
-  const { data: pools, loading: isPoolsListLoading } = usePoolsListQuery({
-    variables: {
-      orderBy: orderBy,
-      orderDirection: sorting[0].desc
-        ? OrderDirection.Desc
-        : OrderDirection.Asc,
-    },
-  });
+  const { data: pools, loading: isPoolsListLoading } = usePoolsListQuery();
 
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
@@ -80,35 +74,32 @@ const PoolsList = () => {
         const lastDate = currentPool ? currentPool.date * 1000 : 0;
         const currentDate = new Date().getTime();
 
-        console.log("poolHourData", poolHourData);
+        const handlePoolChange = (poolTimeData0: any, poolTimeData1: any) => {
+          if (!poolTimeData0) return "0"; // No data available
+          if (
+            !poolTimeData1 ||
+            poolTimeData1.volumeUSD == 0 ||
+            !isFinite(poolTimeData1.volumeUSD)
+          )
+            return 100; // Only one day of data, return 100
 
-        const changeHour = poolHourData[0]
-          ? poolHourData[1]
-            ? (poolHourData[0].volumeUSD - poolHourData[1].volumeUSD) /
-              poolHourData[1].volumeUSD
-            : 100
-          : "";
+          const volumeChange =
+            poolTimeData0.volumeUSD - poolTimeData1.volumeUSD;
+          const changePercentage = volumeChange / poolTimeData1.volumeUSD;
+          if (isNaN(changePercentage)) return 100;
+          return Math.round(changePercentage * 100) / 100;
+        };
 
-        const change24h = poolDayData[0]
-          ? poolDayData[1]
-            ? (poolDayData[0].volumeUSD - poolDayData[1].volumeUSD) /
-              poolDayData[1].volumeUSD
-            : 100
-          : "";
+        const changeHour = handlePoolChange(poolHourData[0], poolHourData[1]);
 
-        const changeWeek = poolWeekData[0]
-          ? poolWeekData[1]
-            ? (poolWeekData[0].volumeUSD - poolWeekData[1].volumeUSD) /
-              poolWeekData[1].volumeUSD
-            : 100
-          : "";
+        const change24h = handlePoolChange(poolDayData[0], poolDayData[1]);
 
-        const changeMonth = poolMonthData[0]
-          ? poolMonthData[1]
-            ? (poolMonthData[0].volumeUSD - poolMonthData[1].volumeUSD) /
-              poolMonthData[1].volumeUSD
-            : 100
-          : "";
+        const changeWeek = handlePoolChange(poolWeekData[0], poolWeekData[1]);
+
+        const changeMonth = handlePoolChange(
+          poolMonthData[0],
+          poolMonthData[1]
+        );
 
         /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
         const timeDifference = currentDate - lastDate;
@@ -160,6 +151,7 @@ const PoolsList = () => {
           changeMonth,
           txCount,
           volumeUSD,
+          marktetcap: token0.marketCap,
         };
       }
     );
@@ -168,10 +160,9 @@ const PoolsList = () => {
   const handleSort = (callback: any) => {
     const sort = callback();
     if (sort.length > 0) {
-      console.log(sort);
       setSorting(sort);
     } else {
-      setSorting([{ id: "tvlUSD", desc: true }]);
+      setSorting([]);
     }
   };
 
