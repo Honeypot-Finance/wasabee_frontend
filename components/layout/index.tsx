@@ -14,6 +14,8 @@ import { metadata } from "@/config/metadata";
 import AnnouncementBar from "./AnnouncementBar";
 import Link from "next/link";
 import ChatWidget from "../ServiceChat";
+import { Footer } from "./footer";
+import { chatService, presetQuestions, questionTitles } from "@/services/chat";
 
 export const Layout = ({
   children,
@@ -25,6 +27,23 @@ export const Layout = ({
   const router = useRouter();
   const { chainId } = useAccount();
   const currentChain = chainId ? networksMap[chainId] : null;
+
+  useEffect(() => {
+    //if its user first time visit, open chat
+    const questions = chatService.findRelatedQuestionsByPath(router.pathname);
+    const pageVisited = window.localStorage.getItem(
+      `pageVisited ${router.pathname}`
+    );
+
+    if (!pageVisited && questions) {
+      chatService.clearChat();
+      chatService.setChatIsOpen(true);
+      chatService.agentMessage(
+        chatService.getPresetQuestions()[questions[0] as questionTitles].answer
+      );
+      window.localStorage.setItem(`pageVisited ${router.pathname}`, "true");
+    }
+  }, [router.pathname]);
 
   useEffect(() => {
     trpcClient.metadata.getServerMetadata.query().then((res) => {
@@ -58,10 +77,6 @@ export const Layout = ({
       });
     });
   }, []);
-
-  // const allowedPaths = ["/swap"];
-  const allowedPaths = [""];
-  const currentPath = router.pathname;
 
   const slogans = [
     <>
@@ -97,7 +112,7 @@ export const Layout = ({
       ) : (
         <Header />
       )}
-      {currentChain || allowedPaths.includes(currentPath) ? (
+      {currentChain ? (
         currentChain?.isActive ? (
           <div className="pt-6 sm:pt-12 flex-1 flex">{children}</div>
         ) : (
@@ -111,7 +126,7 @@ export const Layout = ({
       ) : (
         <NotConnetctedDisplay />
       )}
-      {/* <Footer></Footer> */}
+      <Footer />
     </div>
   );
 };

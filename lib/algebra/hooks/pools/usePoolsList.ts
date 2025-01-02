@@ -1,4 +1,4 @@
-import { ALGEBRA_FACTORY } from "@/data/algebra/addresses";
+import { ALGEBRA_FACTORY } from "@/config/algebra/addresses";
 import { algebraFactoryABI } from "@/lib/abis/algebra-contracts/ABIs";
 import { useEffect, useState } from "react";
 import { Address, decodeEventLog, parseAbiItem } from "viem";

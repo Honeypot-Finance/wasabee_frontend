@@ -1,6 +1,6 @@
 import NavigationWidget from "@/components/atoms/NavigationWidget/NavigationWidget";
 import { Button } from "@/components/button";
-import { flatAppPath, flatMenu } from "@/data/allAppPath";
+import { flatAppPath, flatMenu } from "@/config/allAppPath";
 import { useCallback, useRef, useState } from "react";
 
 const filteredMap = (appPath: flatMenu[]) =>

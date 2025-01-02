@@ -8,7 +8,7 @@ import {
   ALGEBRA_QUOTER_V2,
   ALGEBRA_ROUTER,
   FARMING_CENTER,
-} from "./data/algebra/addresses";
+} from "./config/algebra/addresses";
 import {
   algebraFactoryABI,
   algebraPoolABI,

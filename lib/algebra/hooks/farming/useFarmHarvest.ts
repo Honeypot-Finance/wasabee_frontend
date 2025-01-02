@@ -2,7 +2,7 @@ import { useContractWrite, useSimulateContract } from "wagmi";
 import { encodeFunctionData } from "viem";
 import { useTransactionAwait } from "../common/useTransactionAwait";
 import { Address } from "viem";
-import { FARMING_CENTER } from "@/data/algebra/addresses";
+import { FARMING_CENTER } from "@/config/algebra/addresses";
 import { farmingCenterABI } from "@/lib/abis/algebra-contracts/ABIs";
 import { Deposit } from "../../graphql/generated/graphql";
 import { TransactionType } from "../../state/pendingTransactionsStore";

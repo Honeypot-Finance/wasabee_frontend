@@ -9,7 +9,7 @@ import {
   sprotoTestnet,
   //sepolia,
 } from "@/lib/chain";
-import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
+import { ALGEBRA_POSITION_MANAGER } from "@/config/algebra/addresses";
 import { zeroAddress } from "viem";
 export class Network {
   isActive: boolean = true;

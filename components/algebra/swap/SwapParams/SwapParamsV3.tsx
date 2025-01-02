@@ -1,7 +1,7 @@
 import Loader from "@/components/algebra/common/Loader";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
-import { ALGEBRA_ROUTER } from "@/data/algebra/addresses";
-import { MAX_UINT128 } from "@/data/algebra/max-uint128";
+import { ALGEBRA_ROUTER } from "@/config/algebra/addresses";
+import { MAX_UINT128 } from "@/config/algebra/max-uint128";
 import { usePoolPlugins } from "@/lib/algebra/hooks/pools/usePoolPlugins";
 import useWrapCallback, {
   WrapType,

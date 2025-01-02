@@ -6,7 +6,7 @@ import {
   DEFAULT_CHAIN_ID,
   DEFAULT_NATIVE_SYMBOL,
   DEFAULT_NATIVE_NAME,
-} from "@/data/algebra/default-chain-id";
+} from "@/config/algebra/default-chain-id";
 
 export function useCurrency(
   address: Address | undefined,

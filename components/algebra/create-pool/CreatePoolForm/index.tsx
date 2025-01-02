@@ -12,7 +12,7 @@ import { Address } from "viem";
 import Loader from "@/components/algebra/common/Loader";
 import { PoolState, usePool } from "@/lib/algebra/hooks/pools/usePool";
 import SelectPair from "../SelectPair";
-import { STABLECOINS } from "@/data/algebra/tokens";
+import { STABLECOINS } from "@/config/algebra/tokens";
 import {
   useMintState,
   useDerivedMintInfo,

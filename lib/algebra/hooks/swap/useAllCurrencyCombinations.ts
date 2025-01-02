@@ -1,4 +1,4 @@
-import { BASES_TO_CHECK_TRADES_AGAINST } from "@/data/algebra/routing";
+import { BASES_TO_CHECK_TRADES_AGAINST } from "@/config/algebra/routing";
 import { Currency, Token } from "@cryptoalgebra/sdk";
 import { useMemo } from "react";
 import { useChainId } from "wagmi";

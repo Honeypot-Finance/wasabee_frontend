@@ -2,7 +2,7 @@ import { Currency, Token, computePoolAddress } from "@cryptoalgebra/sdk";
 import { useEffect, useMemo, useState } from "react";
 import { useAllCurrencyCombinations } from "./useAllCurrencyCombinations";
 import { Address } from "viem";
-import { DEFAULT_CHAIN_ID } from "@/data/algebra/default-chain-id";
+import { DEFAULT_CHAIN_ID } from "@/config/algebra/default-chain-id";
 import {
   TokenFieldsFragment,
   useMultiplePoolsLazyQuery,
