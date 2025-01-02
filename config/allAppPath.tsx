@@ -1,6 +1,7 @@
 import { StaticImageData } from "next/image";
 import { ReactNode } from "react";
 import Image from "next/image";
+
 export type PathChatConfig = {
   autoPopUpQuestion: ReactNode;
   pageTrendingQuestions: ReactNode[];
