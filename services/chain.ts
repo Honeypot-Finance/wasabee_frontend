@@ -114,7 +114,7 @@ export const berachainBartioTestnetNetwork = new Network({
     {
       symbol: "tHpot",
       address: "0xfc5e3743e9fac8bb60408797607352e24db7d65e",
-      amount: BigInt("200000000000000000000000"),
+      amount: BigInt("2000000000000000000000000"),
     },
     {
       symbol: "WBERA",

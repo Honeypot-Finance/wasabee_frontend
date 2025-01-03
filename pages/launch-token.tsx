@@ -35,7 +35,7 @@ import { UploadImage } from "@/components/UploadImage/UploadImage";
 import BigNumber from "bignumber.js";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
-
+import { amountFormatted, formatAmount } from "@/lib/format";
 const positiveIntegerPattern = /^[1-9]\d*$/;
 
 const FTOLaunchModal: NextLayoutPage = observer(() => {
@@ -613,10 +613,17 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                               }
                             >
                               {token.symbol} -{" "}
-                              {new BigNumber(token.amount.toString())
-                                .div(10 ** 18)
-                                .toString()}
-                              &nbsp;tokens
+                              {amountFormatted(
+                                new BigNumber(token.amount.toString())
+                                  .div(10 ** 18)
+                                  .toString(),
+                                {
+                                  prefix: "",
+                                  decimals: 0,
+                                  fixed: 3,
+                                  symbol: " tokens",
+                                }
+                              )}
                             </SelectItem>
                           ))}
                         </WarppedNextSelect>
