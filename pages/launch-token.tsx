@@ -405,6 +405,15 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     setPairAddress(pairAddress: string) {
       this.pairAddress = pairAddress;
     },
+    raisedTokenAddress: "",
+    raisedTokenAmount: BigInt(0),
+    setRaisedTokenAddress(raisedTokenAddress: string) {
+      this.raisedTokenAddress = raisedTokenAddress;
+      const amount = wallet.currentChain.raisedTokenData.find(
+        (token) => token.address === raisedTokenAddress
+      )?.amount;
+      this.raisedTokenAmount = amount ?? BigInt(0);
+    },
   }));
   const onSubmit = async (data: {
     provider: string;
@@ -422,9 +431,8 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     try {
       const [pairAddress] = await launchpad.createLaunchProject.call({
         ...data,
-        tokenAmount: wallet.currentChain.raisedTokenData.find(
-          (token) => token.address === data.raisedToken
-        )?.amount,
+        raisedToken: state.raisedTokenAddress,
+        tokenAmount: state.raisedTokenAmount,
         launchType: "meme",
         raisingCycle: dayjs().unix(),
       });
@@ -442,6 +450,14 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
       openInstructionModal();
     }
   }, []);
+
+  useEffect(() => {
+    if (wallet.isInit) {
+      state.setRaisedTokenAddress(
+        wallet.currentChain.raisedTokenData[0].address
+      );
+    }
+  }, [wallet.isInit]);
 
   const openInstructionModal = () => {
     popmodal.openModal({
@@ -553,7 +569,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
               </div>
 
               <div className="custom-dashed">
-                <Accordion variant="bordered">
+                <Accordion variant="bordered" keepContentMounted={true}>
                   <AccordionItem
                     key="advanced"
                     aria-label="advanced"
@@ -563,6 +579,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                       trigger: "text-black/50",
                       content: "space-y-4",
                     }}
+                    keepContentMounted={true}
                   >
                     {/* <div className="relative w-full h-[5rem] border-dashed border-black hover:border-black/70 border-2 rounded-2xl mb-5 transition-all text-black hover:text-black/70">
                       <Controller
@@ -596,6 +613,9 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                             wallet.currentChain.raisedTokenData[0].address,
                           ]}
                           items={wallet.currentChain?.raisedTokenData}
+                          onSelectionChange={(value) => {
+                            state.setRaisedTokenAddress(value.currentKey ?? "");
+                          }}
                           {...register("raisedToken")}
                         >
                           {wallet.currentChain?.raisedTokenData.map((token) => (
