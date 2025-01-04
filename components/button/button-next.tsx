@@ -12,7 +12,7 @@ export const Button = ({
   styleMode?: "plain" | "primary";
 } & ButtonProps) => {
   const baseClassNames = cn(
-    "border-5 border-black border-[#202020] rounded-lg bg-[#FFCD4D] text-black text-xs",
+    "border-5 border-black border-[#202020] rounded-lg bg-[#FFCD4D] text-black text-xs hover:bg-[#FFCD4D]/80 hover:border-black",
     className
   );
   return (

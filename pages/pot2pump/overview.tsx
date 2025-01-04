@@ -116,8 +116,8 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
           }
         ></div>
         {/* New Tokens Section */}
-        <section className="overflow-y-auto px-4">
-          <h2 className="text-xl font-bold mb-4 sticky top-0 bg-[#FFCD4D] z-10 py-2">
+        <section className="overflow-y-auto px-4 ">
+          <h2 className="text-xl font-bold mb-4 sticky top-0 bg-[#FFCD4D] z-20 py-2">
             New POTs 🍯
           </h2>
           <div className="flex flex-col gap-4">
@@ -131,7 +131,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
         </section>
         {/* Near Success Tokens Section */}
         <section className="overflow-y-auto px-4">
-          <h2 className="text-xl font-bold mb-4 sticky top-0 bg-[#FFCD4D] z-10 py-2">
+          <h2 className="text-xl font-bold mb-4 sticky top-0 bg-[#FFCD4D] z-20 py-2">
             Almost Pumping
           </h2>
           <div className="flex flex-col gap-4">
@@ -145,7 +145,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
         </section>
         {/* High Price Tokens Section */}
         <section className="overflow-y-auto px-4">
-          <h2 className="text-xl font-bold mb-4 sticky top-0 bg-[#FFCD4D] z-10 py-2">
+          <h2 className="text-xl font-bold mb-4 sticky top-0 bg-[#FFCD4D] z-20 py-2">
             To the Moon 🚀
           </h2>
           <div className="flex flex-col gap-4">

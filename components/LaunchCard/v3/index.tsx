@@ -4,10 +4,6 @@ import Link from "next/link";
 import { HTMLAttributes } from "react";
 import { cn } from "@/lib/tailwindcss";
 import Image from "next/image";
-import {
-  OptionsDropdown,
-  optionsPresets,
-} from "../../OptionsDropdown/OptionsDropdown";
 import { motion } from "framer-motion";
 import { itemPopUpVariants } from "@/lib/animation";
 import { MemePairContract } from "@/services/contract/memepair-contract";
@@ -23,6 +19,8 @@ import {
 } from "./components";
 import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
 import { Button } from "@/components/button/button-next";
+import { PottingModalButton } from "@/components/atoms/Pot2PumpComponents/PottingModalButton";
+import { PumpingModalButton } from "@/components/atoms/Pot2PumpComponents/PumpingModalButton";
 
 export type launchCardVariants =
   | "list"
@@ -430,129 +428,146 @@ const TrendingLaunchCard = observer(
 const SimpleLaunchCard = observer(
   ({ pair }: { pair: MemePairContract | FtoPairContract }) => {
     return (
-      <Link
-        href={`/launch-detail/${pair.address}`}
-        className="flex flex-col text-sm gap-y-1 bg-white px-4 py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative overflow-hidden hover:scale-95 hover:shadow-[2px_2px_0px_0px_#FFCD4D] hover:opacity-90 cursor-pointer transition-all duration-100"
-      >
-        <div className="bg-[url('/images/pumping/inline-border.svg')] h-6 absolute top-0 left-0 w-full bg-contain bg-left-top bg-repeat-x"></div>
-        <div className="flex gap-4 w-full justify-center items-center">
-          <div>
-            <Image
-              alt="logo"
-              width={100}
-              height={100}
-              objectFit="cover"
-              className="rounded-full"
-              src={!!pair.logoUrl ? pair.logoUrl : "/images/empty-logo.png"}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-2 flex-grow-[1]">
-            <div className="flex flex-col gap-y-2">
-              <h3 className="font-bold text-md">{pair?.launchedToken?.name}</h3>
-              <p className="text-sm text-[#202020]/[0.67]">
-                {pair?.launchedToken?.symbol}
-              </p>
+      <div className="relative group">
+        <Link
+          href={`/launch-detail/${pair.address}`}
+          className="flex flex-col text-sm gap-y-1 bg-white px-4 py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative transition-all duration-100 overflow-visible hover:shadow-[2px_2px_0px_0px_#FFCD4D] hover:bg-[#ffe6a8] cursor-pointer"
+        >
+          <div className="bg-[url('/images/pumping/inline-border.svg')] h-6 absolute top-0 left-0 w-full bg-contain bg-left-top bg-repeat-x"></div>
+          <div className="flex gap-4 w-full justify-center items-center">
+            <div>
+              <Image
+                alt="logo"
+                width={100}
+                height={100}
+                objectFit="cover"
+                className="rounded-full"
+                src={!!pair.logoUrl ? pair.logoUrl : "/images/empty-logo.png"}
+              />
             </div>
-            <div className="flex-grow-[1]  gap-y-2 text-right text-sm flex flex-col justify-start items-end">
-              <div>
-                {pair.state === 3 &&
-                  pair?.participantsCount &&
-                  pair.participantsCount.toFormat(0) + " Participants"}
-                {pair.state === 0 &&
-                  pair?.launchedToken?.holderCount &&
-                  pair?.launchedToken?.holderCount + " Holders"}
+            <div className="grid grid-cols-2 gap-2 flex-grow-[1]">
+              <div className="flex flex-col gap-y-2">
+                <h3 className="font-bold text-md">
+                  {pair?.launchedToken?.name}
+                </h3>
+                <p className="text-sm text-[#202020]/[0.67]">
+                  {pair?.launchedToken?.symbol}
+                </p>
               </div>
-              {pair.state === 0 && (
-                <div className="font-bold text-lg">
-                  {formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$
+              <div className="flex-grow-[1]  gap-y-2 text-right text-sm flex flex-col justify-start items-end">
+                <div>
+                  {pair.state === 3 &&
+                    pair?.participantsCount &&
+                    pair.participantsCount.toFormat(0) + " Participants"}
+                  {pair.state === 0 &&
+                    pair?.launchedToken?.holderCount &&
+                    pair?.launchedToken?.holderCount + " Holders"}
                 </div>
-              )}
-            </div>
-            <div className="col-span-2">
-              {pair.state === 3 && <LaunchProgress pair={pair} />}
+                {pair.state === 0 && (
+                  <div className="font-bold text-lg">
+                    {formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$
+                  </div>
+                )}
+              </div>
+              <div className="col-span-2">
+                {pair.state === 3 && <LaunchProgress pair={pair} />}
+              </div>
             </div>
           </div>
-        </div>
 
-        {pair.state === 0 && (
-          <div className="grid grid-cols-3 gap-1 text-black">
-            <div className="text-md font-bold text-right col-span-3 flex flex-row justify-start items-center">
-              <p className="flex flex-row gap-2 items-start justify-between w-full text-left">
-                <span>
-                  Price Change:{" "}
-                  <span
-                    className={cn(
-                      Number(pair?.launchedToken?.initialUSD) &&
-                        Number(pair?.launchedToken?.derivedUSD) &&
-                        (Number(pair?.launchedToken?.derivedUSD) >
-                        Number(pair?.launchedToken?.initialUSD)
-                          ? "text-green-500"
-                          : "text-red-500")
-                    )}
-                  >
-                    {pair.priceChangeDisplay}
+          {pair.state === 0 && (
+            <div className="grid grid-cols-3 gap-1 text-black">
+              <div className="text-md font-bold text-right col-span-3 flex flex-row justify-start items-center">
+                <p className="flex flex-row gap-2 items-start justify-between w-full text-left">
+                  <span>
+                    Price Change:{" "}
+                    <span
+                      className={cn(
+                        Number(pair?.launchedToken?.initialUSD) &&
+                          Number(pair?.launchedToken?.derivedUSD) &&
+                          (Number(pair?.launchedToken?.derivedUSD) >
+                          Number(pair?.launchedToken?.initialUSD)
+                            ? "text-green-500"
+                            : "text-red-500")
+                      )}
+                    >
+                      {pair.priceChangeDisplay}
+                    </span>
                   </span>
-                </span>
-                <div className="text-right flex flex-row gap-2 items-center *:flex-grow-[1]">
-                  <span>TX:</span>
-                  <span className="text-green-400">
-                    {pair?.launchedTokenBuyCount?.toFixed(0) ?? 0}
+                  <div className="text-right flex flex-row gap-2 items-center *:flex-grow-[1]">
+                    <span>TX:</span>
+                    <span className="text-green-400">
+                      {pair?.launchedTokenBuyCount?.toFixed(0) ?? 0}
+                    </span>
+                    <span>/</span>
+                    <span className="text-red-400">
+                      {pair?.launchedTokenSellCount?.toFixed(0) ?? 0}
+                    </span>
+                  </div>
+                </p>
+              </div>
+              <div className="text-xs ">
+                <p className="text-xs opacity-60">Volume</p>
+                <p className="font-semibold">
+                  <span>
+                    {pair?.launchedToken?.volumeUSD
+                      ? "$ " +
+                        formatAmount(pair.launchedToken?.volumeUSD ?? "0", 5)
+                      : "--"}
                   </span>
-                  <span>/</span>
-                  <span className="text-red-400">
-                    {pair?.launchedTokenSellCount?.toFixed(0) ?? 0}
+                </p>
+              </div>
+              <div className="text-xs ">
+                <p className="text-xs opacity-60">TVL</p>
+                <p className="font-semibold">
+                  <span>
+                    {pair?.launchedToken?.totalValueLockedUSD
+                      ? "$ " +
+                        formatAmount(
+                          pair.launchedToken?.totalValueLockedUSD ?? "0",
+                          5
+                        )
+                      : "--"}
                   </span>
-                </div>
-              </p>
-            </div>
-            <div className="text-xs ">
-              <p className="text-xs opacity-60">Volume</p>
-              <p className="font-semibold">
-                <span>
-                  {pair?.launchedToken?.volumeUSD
-                    ? "$ " +
-                      formatAmount(pair.launchedToken?.volumeUSD ?? "0", 5)
-                    : "--"}
-                </span>
-              </p>
-            </div>
-            <div className="text-xs ">
-              <p className="text-xs opacity-60">TVL</p>
-              <p className="font-semibold">
-                <span>
-                  {pair?.launchedToken?.totalValueLockedUSD
-                    ? "$ " +
-                      formatAmount(
-                        pair.launchedToken?.totalValueLockedUSD ?? "0",
-                        5
-                      )
-                    : "--"}
-                </span>
-              </p>
-            </div>{" "}
-            <div className="text-xs ">
-              <p className="text-xs opacity-60">Market Cap</p>
-              <p className="font-semibold">
-                <span>
-                  {pair?.launchedToken?.derivedUSD
-                    ? "$ " +
-                      formatAmount(
-                        (
-                          Number(pair.launchedToken.derivedUSD) *
-                          Number(
-                            pair?.launchedToken?.totalSupplyWithoutDecimals.div(
-                              Math.pow(10, 18)
+                </p>
+              </div>{" "}
+              <div className="text-xs ">
+                <p className="text-xs opacity-60">Market Cap</p>
+                <p className="font-semibold">
+                  <span>
+                    {pair?.launchedToken?.derivedUSD
+                      ? "$ " +
+                        formatAmount(
+                          (
+                            Number(pair.launchedToken.derivedUSD) *
+                            Number(
+                              pair?.launchedToken?.totalSupplyWithoutDecimals.div(
+                                Math.pow(10, 18)
+                              )
                             )
-                          )
-                        ).toFixed(2)
-                      )
-                    : "--"}
-                </span>
-              </p>
+                          ).toFixed(2)
+                        )
+                      : "--"}
+                  </span>
+                </p>
+              </div>
             </div>
-          </div>
+          )}
+        </Link>
+
+        {pair.state === 3 && (
+          <PottingModalButton
+            pair={pair}
+            className="pop-button absolute bottom-0 right-0 translate-y-1/2 -translate-x-1/4 z-10 opacity-0 group-hover:opacity-100"
+          />
         )}
-      </Link>
+        {pair.state === 0 && (
+          <PumpingModalButton
+            pair={pair}
+            className="absolute bottom-0 right-0 translate-y-1/2 -translate-x-1/4 z-10 opacity-0 group-hover:opacity-100"
+          />
+        )}
+      </div>
     );
   }
 );
@@ -667,12 +682,19 @@ const FeaturedLaunchCard = observer(
               </span>
             </div>
           </div>
-          <Link
-            className="absolute bottom-0 right-0 w-[200px] transition-all duration-100 translate-y-1/2 -translate-x-1/4"
-            href={`/launch-detail/${pair.address}`}
-          >
-            <Button className="w-full border-yellow-500">Token Details</Button>
-          </Link>
+          <div className="flex flex-col justify-center items-center gap-y-2  gap-2 bottom-0 right-0 transition-all md:absolute md:flex-row md:translate-y-1/2 md:-translate-x-1/4">
+            <Link
+              className=" w-[200px]"
+              href={`/launch-detail/${pair.address}`}
+            >
+              <Button className="w-full border-yellow-500">
+                Token Details
+              </Button>
+            </Link>
+            {pair.state === 0 && (
+              <PumpingModalButton pair={pair} className="" />
+            )}
+          </div>
         </div>
       </div>
     );

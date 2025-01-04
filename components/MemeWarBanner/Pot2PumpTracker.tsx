@@ -110,24 +110,6 @@ export const Pot2PumpTracker = observer(() => {
                   memePairContract={target as unknown as MemePairContract}
                   inputAddress={target.token1.id}
                   outputAddress={target.token0.id}
-                  extraTokenAction={
-                    <a
-                      href={`
-                        /launch-detail/${target.id}
-                      `}
-                    >
-                      {target.token0 && (
-                        <Button>
-                          <TokenLogo
-                            token={Token.getToken({
-                              address: target.token0.id,
-                            })}
-                          />
-                          View {target.token0.symbol} detail
-                        </Button>
-                      )}
-                    </a>
-                  }
                 />
               ),
             });

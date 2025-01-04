@@ -16,9 +16,16 @@ export const PopOverModal = observer(() => {
       onClose={() => {
         popmodal.closeModal();
       }}
+      boarderLess={popmodal.boarderLess}
     >
-      <WrappedNextModalContent className="md:max-w-[min(1024px,80vw)] max-h-[80vh] overflow-y-auto">
-        <WrappedNextModalBody className="max-h-[80vh]">
+      <WrappedNextModalContent
+        className="md:max-w-[min(1024px,80vw)] max-h-[80vh] overflow-y-auto"
+        boarderLess={popmodal.boarderLess}
+      >
+        <WrappedNextModalBody
+          className="max-h-[80vh]"
+          boarderLess={popmodal.boarderLess}
+        >
           {popmodal.modalContent}
         </WrappedNextModalBody>
         {!!popmodal.actions?.length && (
