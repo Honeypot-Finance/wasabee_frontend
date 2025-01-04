@@ -163,7 +163,7 @@ const LaunchProject = () => {
   };
 
   return (
-    <div className="md:p-6 md:max-w-full xl:max-w-[1440px] mx-auto mb-[30vh] grid grid-cols-3 gap-12">
+    <div className="md:p-6 md:max-w-full xl:max-w-[1440px] mx-auto grid grid-cols-3 gap-12">
       <div className="col-span-1 bg-[#271A0C] py-[60px] rounded-[28px] justify-center px-10">
         <Stepper
           steps={stepData}
