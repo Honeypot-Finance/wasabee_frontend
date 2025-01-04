@@ -86,6 +86,7 @@ const config: Config = {
     require("tailwindcss-animate"),
     require("tailwindcss-textshadow"),
     require("@tailwindcss/container-queries"),
+    require('tailwind-scrollbar')({ nocompatible: true }),
     nextui({
       // defaultTheme: "dark",
       themes: {
@@ -102,4 +103,5 @@ const config: Config = {
     }),
   ],
 };
+
 export default config;

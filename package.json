@@ -111,6 +111,7 @@
     "swagger-ui-react": "^5.17.14",
     "swr": "^2.2.5",
     "tailwind-merge": "^2.3.0",
+    "tailwind-scrollbar": "^4.0.0-beta.0",
     "tailwindcss-animate": "^1.0.7",
     "tween-functions": "^1.2.0",
     "use-sync-external-store": "^1.2.2",
