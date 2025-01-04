@@ -287,6 +287,7 @@ interface TokenSwapCardProps {
   disabled?: boolean;
   label?: string;
   disableSelection?: boolean;
+  showInput?: boolean;
 }
 
 const TokenCardV3 = ({
@@ -302,6 +303,7 @@ const TokenCardV3 = ({
   showNativeToken,
   disabled,
   label,
+  showInput = true,
   disableSelection,
 }: TokenSwapCardProps) => {
   const { address: account } = useAccount();
@@ -367,7 +369,7 @@ const TokenCardV3 = ({
               )}
             </div>
           )}
-          <Settings />
+          {showInput && <Settings />}
         </div>
       </div>
 
@@ -406,59 +408,61 @@ const TokenCardV3 = ({
               }}
             />
           </div>
-          <div className="flex flex-col items-end">
-            <Input
-              disabled={disabled}
-              type="text"
-              value={storedValue}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setStoredValue(e.target.value);
-                handleInput(e.target.value);
-              }}
-              className={cn(
-                "text-right",
-                "!bg-transparent",
-                "[&_*]:!bg-transparent",
-                "data-[invalid=true]:!bg-transparent"
-              )}
-              classNames={{
-                inputWrapper: cn(
-                  "!bg-transparent",
-                  "border-none",
-                  "shadow-none",
-                  "!transition-none",
-                  "data-[invalid=true]:!bg-transparent",
-                  "group-data-[invalid=true]:!bg-transparent"
-                ),
-                input: cn(
-                  "!bg-transparent",
-                  "!text-[#202020]",
+          {showInput && (
+            <div className="flex flex-col items-end">
+              <Input
+                disabled={disabled}
+                type="text"
+                value={storedValue}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setStoredValue(e.target.value);
+                  handleInput(e.target.value);
+                }}
+                className={cn(
                   "text-right",
-                  "text-xl",
-                  "!pr-0",
-                  "[appearance:textfield]",
-                  "[&::-webkit-outer-spin-button]:appearance-none",
-                  "[&::-webkit-inner-spin-button]:appearance-none",
+                  "!bg-transparent",
+                  "[&_*]:!bg-transparent",
                   "data-[invalid=true]:!bg-transparent"
-                ),
-                clearButton: cn(
-                  "opacity-70",
-                  "hover:opacity-100",
-                  "!text-black",
-                  "!p-0"
-                ),
-              }}
-              placeholder="0.0"
-              maxDecimals={currency?.decimals ?? 0 + 2}
-            />
-            {showBalance && fiatValue && (
-              <div className="text-sm">{formatUSD.format(fiatValue)}</div>
-            )}
-          </div>
+                )}
+                classNames={{
+                  inputWrapper: cn(
+                    "!bg-transparent",
+                    "border-none",
+                    "shadow-none",
+                    "!transition-none",
+                    "data-[invalid=true]:!bg-transparent",
+                    "group-data-[invalid=true]:!bg-transparent"
+                  ),
+                  input: cn(
+                    "!bg-transparent",
+                    "!text-[#202020]",
+                    "text-right",
+                    "text-xl",
+                    "!pr-0",
+                    "[appearance:textfield]",
+                    "[&::-webkit-outer-spin-button]:appearance-none",
+                    "[&::-webkit-inner-spin-button]:appearance-none",
+                    "data-[invalid=true]:!bg-transparent"
+                  ),
+                  clearButton: cn(
+                    "opacity-70",
+                    "hover:opacity-100",
+                    "!text-black",
+                    "!p-0"
+                  ),
+                }}
+                placeholder="0.0"
+                maxDecimals={currency?.decimals ?? 0 + 2}
+              />
+              {showBalance && fiatValue && (
+                <div className="text-sm">{formatUSD.format(fiatValue)}</div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-      {label?.toLowerCase() !== "to" && (
+      {showInput && label?.toLowerCase() !== "to" && (
         <div className="p-2 space-y-4">
           <Slider
             className="w-full"

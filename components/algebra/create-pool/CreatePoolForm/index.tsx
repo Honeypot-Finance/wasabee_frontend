@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/algebra/ui/button";
+import { Button } from "@/components/button/button-next";
 import { useEffect, useMemo, useState } from "react";
 import {
   ADDRESS_ZERO,
@@ -26,6 +26,7 @@ import { SwapField } from "@/types/algebra/types/swap-field";
 import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
 import { useToastify } from "@/lib/hooks/useContractToastify";
 import { Input } from "@/components/algebra/ui/input";
+import HoneyContainer from "@/components/CardContianer/HoneyContainer";
 
 const FEE_TIERS = [
   { value: 100, label: "0.01%", description: "Best for stable pairs" },
@@ -150,17 +151,18 @@ const CreatePoolForm = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-[#271A0C] rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all">
-      <h2 className="font-semibold text-xl">Select Pair</h2>
-      <SelectPair
-        mintInfo={mintInfo}
-        currencyA={currencyA}
-        currencyB={currencyB}
-      />
+    <HoneyContainer>
+      <div className="flex flex-col gap-4 p-4 rounded-3xl transition-all text-black">
+        <h2 className="font-semibold text-xl">Select Pair</h2>
+        <SelectPair
+          mintInfo={mintInfo}
+          currencyA={currencyA}
+          currencyB={currencyB}
+        />
 
-      {areCurrenciesSelected && !isSameToken && !isPoolExists && (
-        <>
-          {/* <div className="flex flex-col gap-2">
+        {areCurrenciesSelected && !isSameToken && !isPoolExists && (
+          <>
+            {/* <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-300">Select Fee Tier</label>
             <div className="grid grid-cols-2 gap-2">
               {FEE_TIERS.map((fee) => (
@@ -184,55 +186,59 @@ const CreatePoolForm = () => {
             </div>
           </div> */}
 
-          <div className="flex flex-col gap-2">
-            <label className="text-sm text-gray-300">
-              Initial price ({currencyB?.symbol} per {currencyA?.symbol} )
-            </label>
-            <Input
-              type="number"
-              placeholder="0.0"
-              value={startPriceTypedValue}
-              onChange={(e: { target: { value: string } }) =>
-                typeStartPriceInput(e.target.value)
-              }
-              className="bg-[#1A1207] border-[#F7931A20]"
-            />
-            <p className="text-xs text-gray-400">
-              {startPriceTypedValue
-                ? `1 ${currencyB?.symbol} = ${
-                    1 / Number(startPriceTypedValue)
-                  } ${currencyA?.symbol}`
-                : "Enter the initial price"}
-            </p>
-          </div>
-        </>
-      )}
-
-      <Button
-        className="mt-2"
-        disabled={
-          isLoading ||
-          (!startPriceTypedValue && !isPoolExists) ||
-          !areCurrenciesSelected ||
-          isSameToken
-        }
-        onClick={handleButtonClick}
-      >
-        {isLoading ? (
-          <Loader />
-        ) : isSameToken ? (
-          "Select another pair"
-        ) : !areCurrenciesSelected ? (
-          "Select currencies"
-        ) : !startPriceTypedValue && !isPoolExists ? (
-          "Enter initial price"
-        ) : isPoolExists ? (
-          "View Existing Pool"
-        ) : (
-          "Create Pool"
+            <div className="flex flex-col gap-2">
+              <label className="text-sm text-black">
+                Initial price ({currencyB?.symbol} per {currencyA?.symbol} )
+              </label>
+              <Input
+                type="number"
+                placeholder="0.0"
+                value={startPriceTypedValue}
+                onChange={(e: { target: { value: string } }) =>
+                  typeStartPriceInput(e.target.value)
+                }
+                className="bg-white  rounded-md"
+                classNames={{
+                  input: "!text-black",
+                }}
+              />
+              <p className="text-xs text-black">
+                {startPriceTypedValue
+                  ? `1 ${currencyB?.symbol} = ${
+                      1 / Number(startPriceTypedValue)
+                    } ${currencyA?.symbol}`
+                  : "Enter the initial price"}
+              </p>
+            </div>
+          </>
         )}
-      </Button>
-    </div>
+
+        <Button
+          className="mt-2"
+          disabled={
+            isLoading ||
+            (!startPriceTypedValue && !isPoolExists) ||
+            !areCurrenciesSelected ||
+            isSameToken
+          }
+          onPress={handleButtonClick}
+        >
+          {isLoading ? (
+            <Loader />
+          ) : isSameToken ? (
+            "Select another pair"
+          ) : !areCurrenciesSelected ? (
+            "Select currencies"
+          ) : !startPriceTypedValue && !isPoolExists ? (
+            "Enter initial price"
+          ) : isPoolExists ? (
+            "View Existing Pool"
+          ) : (
+            "Create Pool"
+          )}
+        </Button>
+      </div>
+    </HoneyContainer>
   );
 };
 

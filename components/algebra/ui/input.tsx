@@ -14,7 +14,18 @@ export interface InputProps {
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`);
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ onUserInput, maxDecimals = 18, onChange, value, className, classNames, ...props }, ref) => {
+  (
+    {
+      onUserInput,
+      maxDecimals = 18,
+      onChange,
+      value,
+      className,
+      classNames,
+      ...props
+    }: InputProps,
+    ref
+  ) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       let newValue = e.target.value.replace(/,/g, ".");
       newValue =
@@ -33,9 +44,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     const handleClear = () => {
       const e = {
-        target: { value: "" }
+        target: { value: "" },
       } as React.ChangeEvent<HTMLInputElement>;
-      
+
       onChange?.(e);
       onUserInput?.("");
     };

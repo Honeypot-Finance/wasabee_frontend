@@ -88,7 +88,7 @@ const DetailLaunchCard = observer(
     type: launchCardVariants;
   }) => {
     return (
-      <div className="flex flex-col gap-y-4 bg-white px-4 py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative overflow-hidden">
+      <div className="flex flex-col h-full justify-between gap-y-4 bg-white px-4 py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative overflow-hidden">
         {/* <OptionsDropdown
           className="ml-auto text-black absolute -top-1.5 right-3.5"
           options={[
@@ -115,7 +115,7 @@ const DetailLaunchCard = observer(
           ]}
         /> */}
         <div className="bg-[url('/images/pumping/inline-border.svg')] h-6 absolute top-0 left-0 w-full bg-contain bg-left-top bg-repeat-x"></div>
-        <div className="text-[#202020] space-y-4">
+        <div className="text-[#202020] space-y-4 h-full flex flex-col justify-between">
           <div className="flex justify-between items-start">
             <div>
               <h3 className="font-bold text-xl">{pair?.launchedToken?.name}</h3>
@@ -725,7 +725,7 @@ export const LaunchCardV3 = observer(
             animate="visible"
             whileInView="visible"
             variants={itemPopUpVariants}
-            className={cn("w-full", className)}
+            className={cn("w-full h-full", className)}
           >
             {(!type || type === "detail") && pair && (
               // FIXME: height issue

@@ -4,7 +4,7 @@ interface PageContainerProps {
 
 const PageContainer = ({ children }: PageContainerProps) => {
   return (
-    <div className="max-w-screen-xl mx-auto flex flex-col items-start">
+    <div className="max-w-screen-xl mx-auto w-full flex flex-col items-center justify-center">
       {children}
     </div>
   );

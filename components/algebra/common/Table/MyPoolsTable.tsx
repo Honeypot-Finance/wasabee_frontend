@@ -26,6 +26,7 @@ import { Switch } from "@/components/algebra/ui/switch";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
 import CreatePoolForm from "../../create-pool/CreatePoolForm";
 import { cn } from "@/lib/tailwindcss";
+import { HoneyContainer } from "@/components/CardContianer";
 
 interface PoolsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -184,96 +185,100 @@ const MyPoolsTable = <TData, TValue>({
         </div>
       )}
       {/* FIXME: border radius display */}
-      <Table className="bg-[#271A0C] rounded-[30px]">
-        <TableHeader className="[&_tr]:border-b border-[#D9D7E4]/5 [&_tr]:border-opacity-30 border-t border-opacity-60">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              className="hover:bg-transparent border-[#D9D7E4]/5"
+      <HoneyContainer>
+        <Table className="rounded-[30px]">
+          <TableHeader className="[&_tr]:border-b border-black [&_tr]:border-opacity-30  border-opacity-60  border-y-3">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow
+                key={headerGroup.id}
+                className="hover:bg-transparent border-black"
+              >
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="rounded-xl text-white font-semibold [&_svg]:mt-auto"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody className="hover:bg-transparent text-[16px]">
+            {!table.getRowModel().rows.length ? (
+              <TableRow className="hover:bg-card border-white h-full">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            ) : (
+              table.getRowModel().rows.map((row: any) => {
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="border-card-border/40 bg-card-dark hover:bg-card-hover cursor-pointer border-black hover:bg-black"
+                    onClick={() => {
+                      if (action) {
+                        action(row.original.id);
+                      } else if (link) {
+                        window.location.href = `/${link}/${row.original.id}`;
+                      }
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell: any) => (
+                      <TableCell
+                        key={cell.id}
+                        className="text-left min-w-[120px] first:min-w-[320px]"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+        {showPagination && (
+          <div className="flex items-center justify-end space-x-2 px-4 mt-2 text-white">
+            {totalRows > 0 && (
+              <p className="mr-2">
+                {startsFromRow === totalRows
+                  ? `${startsFromRow} of ${totalRows}`
+                  : `${startsFromRow} - ${endsAtRow} of ${totalRows}`}
+              </p>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
             >
-              {headerGroup.headers.map((header) => (
-                <TableHead
-                  key={header.id}
-                  className="rounded-xl text-white font-semibold [&_svg]:mt-auto"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody className="hover:bg-transparent text-[16px]">
-          {!table.getRowModel().rows.length ? (
-            <TableRow className="hover:bg-card border-[#D9D7E4]/5 h-full">
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          ) : (
-            table.getRowModel().rows.map((row: any) => {
-              return (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="border-card-border/40 bg-card-dark hover:bg-card-hover cursor-pointer border-[#D9D7E4]/5"
-                  onClick={() => {
-                    if (action) {
-                      action(row.original.id);
-                    } else if (link) {
-                      //navigate(`/${link}/${row.original.id}`);
-                      window.location.href = `/${link}/${row.original.id}`;
-                    }
-                  }}
-                >
-                  {row.getVisibleCells().map((cell: any) => (
-                    <TableCell
-                      key={cell.id}
-                      className="text-left min-w-[120px] first:min-w-[320px]"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              );
-            })
-          )}
-        </TableBody>
-      </Table>
-      {showPagination && (
-        <div className="flex items-center justify-end space-x-2 px-4 mt-2">
-          {totalRows > 0 && (
-            <p className="mr-2">
-              {startsFromRow === totalRows
-                ? `${startsFromRow} of ${totalRows}`
-                : `${startsFromRow} - ${endsAtRow} of ${totalRows}`}
-            </p>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      )}
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
+        )}
+      </HoneyContainer>
     </div>
   );
 };
