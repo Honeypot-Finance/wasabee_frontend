@@ -227,7 +227,7 @@ export default function VaultDetail() {
                   Withdraw
                 </Button>
                 <Button onClick={() => vault?.collectFees()}>
-                  Collect Fees {fees}
+                  Collect Fees
                 </Button>
               </>
             )}
@@ -267,36 +267,6 @@ export default function VaultDetail() {
           </div>
         </div>
 
-        {/* Recent Activity */}
-        {vaultData?.ichiVault && (
-          <div className="bg-[#1A1108] p-4 rounded-xl">
-            <h3 className="text-lg font-bold mb-4">Recent Activity</h3>
-            <div className="space-y-4">
-              {allTransactions.map((tx) => (
-                <div key={tx.id} className="flex justify-between items-center">
-                  <div>
-                    {tx.type === "deposit" && (
-                      <span className="text-green-500">Deposit</span>
-                    )}
-                    {tx.type === "withdraw" && (
-                      <span className="text-red-500">Withdraw</span>
-                    )}
-                    {tx.type === "fee" && (
-                      <span className="text-yellow-500">Fee Collection</span>
-                    )}
-                    {tx.to && ` by ${tx.to.slice(0, 6)}...${tx.to.slice(-4)}`}
-                  </div>
-                  <div className="text-sm text-gray-400">
-                    {new Date(
-                      Number(tx.createdAtTimestamp) * 1000
-                    ).toLocaleString()}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Vault Info */}
         <div className="bg-[#1A1108] p-4 rounded-xl mt-6">
           <h3 className="text-lg font-bold mb-4">Vault Information</h3>
@@ -313,6 +283,36 @@ export default function VaultDetail() {
           </div>
         </div>
       </div>
+
+      {/* Recent Activity */}
+      {vaultData?.ichiVault && (
+        <div className="bg-[#1A1108] p-4 rounded-xl">
+          <h3 className="text-lg font-bold mb-4">Recent Activity</h3>
+          <div className="space-y-4">
+            {allTransactions.map((tx) => (
+              <div key={tx.id} className="flex justify-between items-center">
+                <div>
+                  {tx.type === "deposit" && (
+                    <span className="text-green-500">Deposit</span>
+                  )}
+                  {tx.type === "withdraw" && (
+                    <span className="text-red-500">Withdraw</span>
+                  )}
+                  {tx.type === "fee" && (
+                    <span className="text-yellow-500">Fee Collection</span>
+                  )}
+                  {tx.to && ` by ${tx.to.slice(0, 6)}...${tx.to.slice(-4)}`}
+                </div>
+                <div className="text-sm text-gray-400">
+                  {new Date(
+                    Number(tx.createdAtTimestamp) * 1000
+                  ).toLocaleString()}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Modals */}
       {vault && tokenA && tokenB && (
