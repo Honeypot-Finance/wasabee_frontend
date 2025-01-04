@@ -105,10 +105,6 @@ export const getParticipantDetail = async (
     query: GetParticipantDetailDocument,
     variables: { accountId, pot2PumpId },
   });
-  console.log("accountId", accountId);
-  console.log("pot2PumpId", pot2PumpId);
-
-  console.log("res", res);
 
   return res.data?.participants[0] ?? null;
 };

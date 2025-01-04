@@ -12,7 +12,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { Chart } from "./chart";
 import { Skeleton } from "@/components/algebra/ui/skeleton";
-import { MAX_UINT128 } from "@/data/algebra/max-uint128";
+import { MAX_UINT128 } from "@/config/algebra/max-uint128";
 import { useMintState, Presets } from "@/lib/algebra/state/mintStore";
 interface LiquidityChartProps {
   currencyA: Currency | undefined;

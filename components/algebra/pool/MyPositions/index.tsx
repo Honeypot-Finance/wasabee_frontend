@@ -16,7 +16,7 @@ const MyPositions = ({
   selectPosition,
 }: MyPositionsProps) => {
   return (
-    <div className="flex flex-col min-h-[377px] pb-8 bg-[#271A0C] rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all">
+    <div className="flex flex-col min-h-[377px] pb-8 bg-white text-black rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all">
       <MyPositionsTable
         defaultSortingID="liquidityUSD"
         columns={myPositionsColumns}

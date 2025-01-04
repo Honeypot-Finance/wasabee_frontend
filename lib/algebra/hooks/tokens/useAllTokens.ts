@@ -5,7 +5,7 @@ import { ADDRESS_ZERO } from "@cryptoalgebra/sdk";
 import {
   DEFAULT_NATIVE_SYMBOL,
   DEFAULT_NATIVE_NAME,
-} from "@/data/algebra/default-chain-id";
+} from "@/config/algebra/default-chain-id";
 import {
   useAllTokensQuery,
   TokenFieldsFragment,

@@ -1,4 +1,4 @@
-import { MAX_UINT128 } from "@/data/algebra/max-uint128";
+import { MAX_UINT128 } from "@/config/algebra/max-uint128";
 import {
   useReadAlgebraPositionManagerOwnerOf,
   useSimulateAlgebraPositionManagerCollect,

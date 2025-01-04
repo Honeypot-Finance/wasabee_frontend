@@ -1,4 +1,4 @@
-import { MAX_UINT128 } from "@/data/algebra/max-uint128";
+import { MAX_UINT128 } from "@/config/algebra/max-uint128";
 import { useInfoTickData } from "@/lib/algebra/hooks/pools/usePoolTickData";
 import { useDerivedSwapInfo } from "@/lib/algebra/state/swapStore";
 import { formatCurrency } from "@/lib/algebra/utils/common/formatCurrency";

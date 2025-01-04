@@ -6,7 +6,7 @@ import {
 import { useMemo } from "react";
 import { useContractReads } from "wagmi";
 import { useAllRoutes } from "./useAllRoutes";
-import { ALGEBRA_QUOTER_V2 } from "@/data/algebra/addresses";
+import { ALGEBRA_QUOTER_V2 } from "@/config/algebra/addresses";
 import { algebraQuoterV2ABI } from "@/lib/abis/algebra-contracts/ABIs";
 
 export function useQuotesResults({

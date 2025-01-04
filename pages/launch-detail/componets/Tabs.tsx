@@ -26,7 +26,7 @@ import TransactionHistory from "./TransactionHistory";
 import { getTokenTop10Holders } from "@/lib/algebra/graphql/clients/token";
 import BigNumber from "bignumber.js";
 import { ShareMediaDisplay } from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
-import { pot2PumpTGShareContent } from "@/data/socialSharingContents";
+import { pot2PumpTGShareContent } from "@/config/socialSharingContents";
 import { popmodal } from "@/services/popmodal";
 
 const universalMenuItems = [

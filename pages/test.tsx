@@ -11,7 +11,7 @@ export default function TestPage() {
   const removeMemeFactoryRaisedToken = async () => {
     const contract =
       wallet.contracts.memeFactory.contract.write.removeRaisedToken(
-        [wberaAddress],
+        [tHpotAddress],
         {
           account: wallet.account as Address,
           chain: wallet.currentChain.chain,
@@ -22,8 +22,8 @@ export default function TestPage() {
   const addMemeFactoryRaisedToken = async () => {
     const contract = wallet.contracts.memeFactory.contract.write.addRaisedToken(
       [
-        wberaAddress,
-        BigInt("4000000000000000000"), // 4 * 10 ** 18
+        tHpotAddress,
+        BigInt("2000000000000000000000000"), // 2,000,000 * 10 ** 18
       ],
       {
         account: wallet.account as Address,

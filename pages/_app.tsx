@@ -20,7 +20,7 @@ import { wallet } from "@/services/wallet";
 import { DM_Sans, Inter } from "next/font/google";
 import { Inspector, InspectParams } from "react-dev-inspector";
 import { Analytics } from "@vercel/analytics/react";
-import { capsuleClient, capsuleModalProps } from "@/config/wagmi/capsualWallet";
+// import { capsuleClient, capsuleModalProps } from "@/config/wagmi/capsualWallet";
 import { ApolloProvider } from "@apollo/client";
 import { infoClient } from "@/lib/algebra/graphql/clients";
 
@@ -71,8 +71,8 @@ export default function App({
           <ApolloProvider client={infoClient}>
             <RainbowKitProvider
               avatar={CustomAvatar}
-              capsule={capsuleClient}
-              capsuleIntegratedProps={capsuleModalProps}
+              // capsule={capsuleClient}
+              // capsuleIntegratedProps={capsuleModalProps}
             >
               <NextUIProvider>
                 <Provider>

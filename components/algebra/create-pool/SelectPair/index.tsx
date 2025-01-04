@@ -10,6 +10,7 @@ import { SwapField } from "@/types/algebra/types/swap-field";
 import { Currency } from "@cryptoalgebra/sdk";
 import { ChevronsUpDownIcon } from "lucide-react";
 import { useCallback } from "react";
+import TokenCardV3 from "../../swap/TokenCard/TokenCardV3";
 
 interface ISelectPair {
   mintInfo: IDerivedMintInfo;
@@ -47,7 +48,7 @@ const SelectPair = ({ mintInfo, currencyA, currencyB }: ISelectPair) => {
 
   return (
     <div className="relative flex  gap-2 items-center">
-      <TokenCard
+      <TokenCardV3
         disabled
         showBalance={false}
         value={"1"}
@@ -65,7 +66,7 @@ const SelectPair = ({ mintInfo, currencyA, currencyB }: ISelectPair) => {
         <ChevronsUpDownIcon size={16} />
       </button> */}
 
-      <TokenCard
+      <TokenCardV3
         showBalance={false}
         value={startPriceTypedValue}
         handleTokenSelection={handleOutputSelect}

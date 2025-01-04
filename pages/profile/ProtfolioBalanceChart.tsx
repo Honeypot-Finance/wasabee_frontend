@@ -1,3 +1,4 @@
+import { HoneyContainer } from "@/components/CardContianer";
 import { PriceChart } from "@/components/PriceChart/PriceChart";
 import { UserPoolProfit } from "@/lib/algebra/graphql/clients/userProfit";
 import { UTCTimestamp } from "lightweight-charts";
@@ -58,7 +59,7 @@ export const ProtfolioBalanceChart = observer(
     }, [userPoolsProfits, timeRange]);
 
     return (
-      <>
+      <HoneyContainer>
         <h3 className="text-white text-2xl font-bold">Fees Gained</h3>
         <PriceChart
           data={chartData}
@@ -66,7 +67,7 @@ export const ProtfolioBalanceChart = observer(
           height={120}
           timeRange={timeRange}
         />
-      </>
+      </HoneyContainer>
     );
   }
 );

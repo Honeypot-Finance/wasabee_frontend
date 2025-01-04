@@ -24,6 +24,7 @@ import { Address } from "viem";
 import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
 import { Currency } from "@cryptoalgebra/sdk";
 import { DepositToVaultModal } from "../modals/DepositToVaultModal";
+import { HoneyContainer } from "@/components/CardContianer";
 
 export function MyAquaberaVaults() {
   const router = useRouter();
@@ -50,98 +51,100 @@ export function MyAquaberaVaults() {
   };
 
   return (
-    <div className="w-full">
-      <Table
-        aria-label="my-vaults"
-        classNames={{
-          base: "w-full",
-          table: "w-full",
-          thead: "w-full",
-        }}
-        selectionMode="single"
-        onRowAction={(key) => router.push(`/vault/${key}`)}
-      >
-        <TableHeader>
-          <TableColumn>Token Pair</TableColumn>
-          <TableColumn>Vault Address</TableColumn>
-          <TableColumn>TVL</TableColumn>
-          <TableColumn>24h Volume</TableColumn>
-          <TableColumn>24h Fees</TableColumn>
-          <TableColumn>My Vault Shares</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {myVaults?.vaultShares.map((vaultShare, index) => {
-            const tokenA = Token.getToken({
-              address: vaultShare.vault.tokenA,
-            });
-
-            const tokenB = Token.getToken({
-              address: vaultShare.vault.tokenB,
-            });
-
-            tokenA.init();
-            tokenB.init();
-
-            const tvl = Number(
-              vaultShare.vault.pool?.totalValueLockedUSD || 0
-            ).toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            });
-
-            const volume = Number(
-              vaultShare.vault.pool?.poolDayData?.[0]?.volumeUSD || 0
-            ).toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            });
-
-            const fees = Number(
-              vaultShare.vault.pool?.poolDayData?.[0]?.feesUSD || 0
-            ).toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            });
-
-            return (
-              <TableRow
-                key={vaultShare.vault.id}
-                className="cursor-pointer hover:bg-[#F7931A10]"
-              >
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    {vaultShare.vault.tokenA && <TokenLogo token={tokenA} />}
-                    {vaultShare.vault.tokenB && <TokenLogo token={tokenB} />}
-                    <span>
-                      {tokenA.symbol}/{tokenB.symbol}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>{vaultShare.vault.id}</TableCell>
-                <TableCell>{tvl}</TableCell>
-                <TableCell>{volume}</TableCell>
-                <TableCell>{fees}</TableCell>
-                <TableCell>{vaultShare.vaultShareBalance}</TableCell>
-              </TableRow>
-            );
-          }) || []}
-        </TableBody>
-      </Table>
-      {selectedVault && selectedTokenA && selectedTokenB && (
-        <DepositToVaultModal
-          isOpen={isDepositModalOpen}
-          onClose={() => {
-            setIsDepositModalOpen(false);
-            setSelectedVault(null);
-            setSelectedTokenA(null);
-            setSelectedTokenB(null);
+    <HoneyContainer className="w-full">
+      <div className="w-full">
+        <Table
+          aria-label="my-vaults"
+          classNames={{
+            base: "w-full text-white",
+            table: "w-full text-white",
+            thead: "w-full text-white",
           }}
-          vault={selectedVault}
-          tokenA={selectedTokenA}
-          tokenB={selectedTokenB}
-        />
-      )}
-    </div>
+          selectionMode="single"
+          onRowAction={(key) => router.push(`/vault/${key}`)}
+        >
+          <TableHeader>
+            <TableColumn>Token Pair</TableColumn>
+            <TableColumn>Vault Address</TableColumn>
+            <TableColumn>TVL</TableColumn>
+            <TableColumn>24h Volume</TableColumn>
+            <TableColumn>24h Fees</TableColumn>
+            <TableColumn>My Vault Shares</TableColumn>
+          </TableHeader>
+          <TableBody>
+            {myVaults?.vaultShares.map((vaultShare, index) => {
+              const tokenA = Token.getToken({
+                address: vaultShare.vault.tokenA,
+              });
+
+              const tokenB = Token.getToken({
+                address: vaultShare.vault.tokenB,
+              });
+
+              tokenA.init();
+              tokenB.init();
+
+              const tvl = Number(
+                vaultShare.vault.pool?.totalValueLockedUSD || 0
+              ).toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+              });
+
+              const volume = Number(
+                vaultShare.vault.pool?.poolDayData?.[0]?.volumeUSD || 0
+              ).toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+              });
+
+              const fees = Number(
+                vaultShare.vault.pool?.poolDayData?.[0]?.feesUSD || 0
+              ).toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+              });
+
+              return (
+                <TableRow
+                  key={vaultShare.vault.id}
+                  className="cursor-pointer hover:bg-[#F7931A10]"
+                >
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {vaultShare.vault.tokenA && <TokenLogo token={tokenA} />}
+                      {vaultShare.vault.tokenB && <TokenLogo token={tokenB} />}
+                      <span>
+                        {tokenA.symbol}/{tokenB.symbol}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>{vaultShare.vault.id}</TableCell>
+                  <TableCell>{tvl}</TableCell>
+                  <TableCell>{volume}</TableCell>
+                  <TableCell>{fees}</TableCell>
+                  <TableCell>{vaultShare.vaultShareBalance}</TableCell>
+                </TableRow>
+              );
+            }) || []}
+          </TableBody>
+        </Table>
+        {selectedVault && selectedTokenA && selectedTokenB && (
+          <DepositToVaultModal
+            isOpen={isDepositModalOpen}
+            onClose={() => {
+              setIsDepositModalOpen(false);
+              setSelectedVault(null);
+              setSelectedTokenA(null);
+              setSelectedTokenB(null);
+            }}
+            vault={selectedVault}
+            tokenA={selectedTokenA}
+            tokenB={selectedTokenB}
+          />
+        )}
+      </div>
+    </HoneyContainer>
   );
 }
 

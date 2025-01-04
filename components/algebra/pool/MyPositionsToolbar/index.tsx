@@ -23,16 +23,16 @@ const MyPositionsToolbar = ({ positionsData, poolId }: MyPositionsToolbar) => {
     : [];
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between w-full mb-6">
+    <div className="flex flex-col md:flex-row items-center justify-between w-full mb-6 bg-white rounded-3xl p-4">
       <div className="flex items-center gap-4 flex-wrap">
         <h3 className="font-semibold text-xl text-left">My Positions</h3>
-        <div className="text-gray-300 font-semibold">{`${
+        <div className="text-gray-600 font-semibold">{`${
           positionsData?.length
         } ${formatPlural(positionsData.length, "position", "positions")}`}</div>
-        <div className="text-cyan-300 font-semibold">{`${formatUSD.format(
+        <div className="text-cyan-600 font-semibold">{`${formatUSD.format(
           myLiquidityUSD || 0
         )} TVL`}</div>
-        <div className="text-green-300 font-semibold">{`${formatUSD.format(
+        <div className="text-green-600 font-semibold">{`${formatUSD.format(
           myFeesUSD || 0
         )} Fees`}</div>
       </div>
@@ -42,7 +42,7 @@ const MyPositionsToolbar = ({ positionsData, poolId }: MyPositionsToolbar) => {
         </FilterPopover> */}
         <Link
           className={cn(
-            "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
+            "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20] rounded-[10px]"
           )}
           href={`/new-position/${poolId}`}
         >

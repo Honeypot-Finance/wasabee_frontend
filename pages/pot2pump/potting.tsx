@@ -235,15 +235,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           </Tabs>
         </div>
       </div>
-      <footer className="mt-auto w-full">
-        <Image
-          src="/images/pumping/toast-bear.png"
-          width={1000}
-          height={0}
-          className="w-full"
-          alt="toast bear"
-        />
-      </footer>
     </div>
   );
 });

@@ -1,7 +1,5 @@
 import { networks } from "@/services/chain";
 import { connectorsForWallets, getDefaultConfig } from "@usecapsule/rainbowkit";
-import { berasigWallet } from "./berasigWallet";
-
 import {
   rainbowWallet,
   bitgetWallet,
@@ -11,8 +9,9 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 import { injected, safe } from "wagmi/connectors";
 import { mock } from "wagmi/connectors";
-import { holdstationWallet } from "./holdstationWallet";
-import { capsuleWallet } from "./capsualWallet";
+// import { holdstationWallet } from "./holdstationWallet";
+// import { capsuleWallet } from "./capsualWallet";
+// import { berasigWallet } from "./berasigWallet";
 
 const pId = "1d1c8b5204bfbd57502685fc0934a57d";
 let customWallets = [
@@ -25,9 +24,11 @@ let customWallets = [
   // berasigWallet,
   // capsuleWallet,
 ];
+
 // if(!window.bitkeep){
 //   customWallets.unshift(bitgetWallet);
 // }
+
 const connectors = [
   safe(),
   injected(),
@@ -45,13 +46,13 @@ const connectors = [
   ),
 ];
 
-if (process.env.NODE_ENV === "development") {
-  connectors.push(
-    mock({
-      accounts: ["0xb67daf60d82de28e54d479509b49b82d7157af6b"],
-    })
-  );
-}
+// if (process.env.NODE_ENV === "development") {
+//   connectors.push(
+//     mock({
+//       accounts: ["0xb67daf60d82de28e54d479509b49b82d7157af6b"],
+//     })
+//   );
+// }
 
 export const config = getDefaultConfig({
   connectors,

@@ -1,6 +1,6 @@
 import Loader from "@/components/algebra/common/Loader";
 import { Button } from "@/components/button/button-next";
-import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
+import { ALGEBRA_POSITION_MANAGER } from "@/config/algebra/addresses";
 import { useApprove } from "@/lib/algebra/hooks/common/useApprove";
 import { useTransactionAwait } from "@/lib/algebra/hooks/common/useTransactionAwait";
 import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
@@ -129,7 +129,11 @@ export const AddLiquidityButton = ({
   console.log("data", data);
 
   if (mintInfo.errorMessage)
-    return <Button disabled className="w-full">{mintInfo.errorMessage}</Button>;
+    return (
+      <Button disabled className="w-full">
+        {mintInfo.errorMessage}
+      </Button>
+    );
 
   if (showApproveA || showApproveB)
     return (

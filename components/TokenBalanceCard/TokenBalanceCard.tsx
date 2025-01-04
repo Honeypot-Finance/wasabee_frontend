@@ -47,14 +47,14 @@ export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
   console.log("formattedUSDPrice", token.derivedUSD);
 
   return (
-    <tr className="hover:bg-[#2D2D2D]/50 transition-colors">
+    <tr className="hover:bg-[#2D2D2D]/50 transition-colors bg-white text-black">
       {/* Asset Column */}
       <td className="py-4 px-6">
         <div className="flex items-center gap-3">
           <TokenLogo token={token} />
           <div className="flex flex-col">
-            <p className="text-[#FAFAFC] font-medium">{token.displayName}</p>
-            <p className="text-[#FAFAFC]/60 text-sm">{token.name}</p>
+            <p className="text-black font-medium">{token.displayName}</p>
+            <p className="text-black/60 text-sm">{token.name}</p>
           </div>
         </div>
       </td>
@@ -62,7 +62,7 @@ export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
       {/* Price Column */}
       <td className="py-4 px-6 text-right">
         <div className="flex flex-col">
-          <span className="text-[#FAFAFC]">{formattedUSDPrice}</span>
+          <span className="text-black">{formattedUSDPrice}</span>
           <span
             className={`text-xs ${
               Number(priceChangePercent) >= 0
@@ -79,8 +79,8 @@ export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
       {/* Balance Column */}
       <td className="py-4 px-6 text-right">
         <div className="flex flex-col">
-          <span className="text-[#FAFAFC]">{token.balanceFormatted}</span>
-          <span className="text-xs text-[#FAFAFC]/60">${tokenValue}</span>
+          <span className="text-black">{token.balanceFormatted}</span>
+          <span className="text-xs text-black/60">${tokenValue}</span>
         </div>
       </td>
 
@@ -93,14 +93,14 @@ export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
               style={{ width: `${proportion}%` }}
             />
           </div>
-          <span className="text-[#FAFAFC]">{proportion}%</span>
+          <span className="text-black">{proportion}%</span>
         </div>
       </td>
 
       {/* Action Column */}
       <td className="py-4 px-6 text-center">
         <OptionsDropdown
-          className="min-h-0 h-[unset]"
+          className="min-h-0 h-[unset] bg-white text-black"
           options={[
             optionsPresets.copy({
               copyText: token?.address ?? "",

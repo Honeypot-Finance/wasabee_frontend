@@ -8,7 +8,7 @@ import { ApprovalStateType } from "@/types/algebra/types/approve-state";
 import { SwapCallbackState } from "@/types/algebra/types/swap-state";
 import { TransactionType } from "../../state/pendingTransactionsStore";
 import { formatBalance } from "../../utils/common/formatBalance";
-import { ALGEBRA_ROUTER } from "@/data/algebra/addresses";
+import { ALGEBRA_ROUTER } from "@/config/algebra/addresses";
 import {
   algebraRouterAbi,
   useSimulateAlgebraRouterMulticall,

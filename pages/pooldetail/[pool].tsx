@@ -29,6 +29,7 @@ import { FormattedPosition } from "@/types/algebra/types/formatted-position";
 import { Address } from "viem";
 import { useParams } from "next/navigation";
 import { cn } from "@/lib/tailwindcss";
+import { HoneyContainer } from "@/components/CardContianer";
 
 const PoolPage = () => {
   const { address: account } = useAccount();
@@ -205,59 +206,60 @@ const PoolPage = () => {
 
   return (
     <PageContainer>
-      <PoolHeader pool={poolEntity} />
+      <HoneyContainer className="w-full">
+        <PoolHeader pool={poolEntity} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8">
+          <div className="col-span-2">
+            {!account ? (
+              <NoAccount />
+            ) : positionsLoading || isFarmingLoading || areDepositsLoading ? (
+              <LoadingState />
+            ) : noPositions ? (
+              <NoPositions poolId={poolId} />
+            ) : (
+              <>
+                <MyPositionsToolbar
+                  positionsData={positionsData}
+                  poolId={poolId}
+                />
+                <MyPositions
+                  positions={positionsData}
+                  poolId={poolId}
+                  selectedPosition={selectedPosition?.id}
+                  selectPosition={(positionId) =>
+                    selectPosition((prev) =>
+                      prev === positionId ? null : positionId
+                    )
+                  }
+                />
+                {farmingInfo &&
+                  deposits &&
+                  !isFarmingLoading &&
+                  !areDepositsLoading && (
+                    <div>
+                      <h2 className="font-semibold text-xl text-left mt-12">
+                        Farming
+                      </h2>
+                      <ActiveFarming
+                        deposits={deposits && deposits.deposits}
+                        farming={farmingInfo}
+                        positionsData={positionsData}
+                      />
+                    </div>
+                  )}
+              </>
+            )}
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8">
-        <div className="col-span-2">
-          {!account ? (
-            <NoAccount />
-          ) : positionsLoading || isFarmingLoading || areDepositsLoading ? (
-            <LoadingState />
-          ) : noPositions ? (
-            <NoPositions poolId={poolId} />
-          ) : (
-            <>
-              <MyPositionsToolbar
-                positionsData={positionsData}
-                poolId={poolId}
-              />
-              <MyPositions
-                positions={positionsData}
-                poolId={poolId}
-                selectedPosition={selectedPosition?.id}
-                selectPosition={(positionId) =>
-                  selectPosition((prev) =>
-                    prev === positionId ? null : positionId
-                  )
-                }
-              />
-              {farmingInfo &&
-                deposits &&
-                !isFarmingLoading &&
-                !areDepositsLoading && (
-                  <div>
-                    <h2 className="font-semibold text-xl text-left mt-12">
-                      Farming
-                    </h2>
-                    <ActiveFarming
-                      deposits={deposits && deposits.deposits}
-                      farming={farmingInfo}
-                      positionsData={positionsData}
-                    />
-                  </div>
-                )}
-            </>
-          )}
+          <div className="flex flex-col gap-8 w-full h-full">
+            <PositionCard
+              farming={farmingInfo}
+              closedFarmings={closedFarmings}
+              selectedPosition={selectedPosition}
+            />
+          </div>
         </div>
-
-        <div className="flex flex-col gap-8 w-full h-full">
-          <PositionCard
-            farming={farmingInfo}
-            closedFarmings={closedFarmings}
-            selectedPosition={selectedPosition}
-          />
-        </div>
-      </div>
+      </HoneyContainer>
     </PageContainer>
   );
 };

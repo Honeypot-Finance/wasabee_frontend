@@ -1,4 +1,4 @@
-import { ALGEBRA_POSITION_MANAGER } from "@/data/algebra/addresses";
+import { ALGEBRA_POSITION_MANAGER } from "@/config/algebra/addresses";
 import { useReadAlgebraPositionManagerTokenUri } from "@/wagmi-generated";
 import { ExternalLinkIcon } from "lucide-react";
 import { useEffect, useRef } from "react";

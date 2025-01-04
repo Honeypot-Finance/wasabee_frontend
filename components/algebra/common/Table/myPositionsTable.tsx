@@ -168,7 +168,7 @@ const MyPositionsTable = <TData, TValue>({
             {headerGroup.headers.map((header) => (
               <TableHead
                 key={header.id}
-                className="rounded-xl text-white font-semibold [&_svg]:mt-auto"
+                className="rounded-xl text-black font-semibold [&_svg]:mt-auto"
               >
                 {header.isPlaceholder
                   ? null
@@ -181,7 +181,7 @@ const MyPositionsTable = <TData, TValue>({
           </TableRow>
         ))}
       </TableHeader>
-      <TableBody className="[&_tr]:border-opacity-30 hover:bg-transparent text-[16px]">
+      <TableBody className="[&_tr]:border-opacity-30 bg-yellow-200 hover:bg-transparent text-[16px] transition-all">
         {table.getRowModel().rows?.length === 0 ||
         (!filterStatus.Open &&
           !filterStatus.Closed &&

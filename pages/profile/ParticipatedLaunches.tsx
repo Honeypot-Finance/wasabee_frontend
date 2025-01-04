@@ -17,6 +17,7 @@ import {
   canRefundPot2Pump,
 } from "@/lib/algebra/graphql/clients/pot2pump";
 import { MemePairContract } from "@/services/contract/memepair-contract";
+import { HoneyContainer } from "@/components/CardContianer";
 
 export const ParticipatedLaunches = observer(() => {
   const [myProjects, setMyProjects] = useState<Pot2PumpService>();
@@ -43,9 +44,8 @@ export const ParticipatedLaunches = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <Card className="next-card">
-      <CardBody>
-        {/* <div className="flex">
+    <HoneyContainer>
+      {/* <div className="flex">
           <NextButton
             isDisabled={launchpad.currentLaunchpadType.value === "meme"}
             className={
@@ -61,44 +61,43 @@ export const ParticipatedLaunches = observer(() => {
             MEME
           </NextButton>
         </div>{" "} */}
-        <Tabs>
-          <Tab key="participated" title="Participated">
-            {myProjects && (
-              <Pagination
-                paginationState={myProjects.participatedPairs}
-                render={(project) => (
-                  <LaunchCardV3
-                    key={project.address}
-                    pair={project}
-                    action={<></>}
-                  />
-                )}
-                classNames={{
-                  base: "",
-                  itemsContainer:
-                    "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6",
-                  item: "",
-                }}
-              />
-            )}
-          </Tab>
-          <Tab key="can-claim" title="Can Claim">
-            <div>
-              {canClaimPot2PumpList.map((pair) => (
-                <LaunchCardV3 key={pair.address} pair={pair} action={<></>} />
-              ))}
-            </div>
-          </Tab>
-          <Tab key="can-refund" title="Can Refund">
-            <div>
-              {canRefundPot2PumpList.map((pair) => (
-                <LaunchCardV3 key={pair.address} pair={pair} action={<></>} />
-              ))}
-            </div>
-          </Tab>
-        </Tabs>
-      </CardBody>
-    </Card>
+      <Tabs>
+        <Tab key="participated" title="Participated">
+          {myProjects && (
+            <Pagination
+              paginationState={myProjects.participatedPairs}
+              render={(project) => (
+                <LaunchCardV3
+                  key={project.address}
+                  pair={project}
+                  action={<></>}
+                />
+              )}
+              classNames={{
+                base: "",
+                itemsContainer:
+                  "grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:gap-6",
+                item: "",
+              }}
+            />
+          )}
+        </Tab>
+        <Tab key="can-claim" title="Can Claim">
+          <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:gap-6">
+            {canClaimPot2PumpList.map((pair) => (
+              <LaunchCardV3 key={pair.address} pair={pair} action={<></>} />
+            ))}
+          </div>
+        </Tab>
+        <Tab key="can-refund" title="Can Refund">
+          <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:gap-6">
+            {canRefundPot2PumpList.map((pair) => (
+              <LaunchCardV3 key={pair.address} pair={pair} action={<></>} />
+            ))}
+          </div>
+        </Tab>
+      </Tabs>
+    </HoneyContainer>
   );
 });
 
