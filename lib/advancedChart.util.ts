@@ -20,6 +20,25 @@ export const tokenToTicker = (token: Token, chainId: number) => {
   );
 };
 
+export const strParams = (
+  token: Token,
+  chainId: number,
+  tokenNumber: number,
+  currencyCode: string
+) => {
+  return (
+    token.name +
+    ":" +
+    networksMap[chainId as number].chain.id +
+    ":" +
+    token.address +
+    ":" +
+    tokenNumber +
+    ":" +
+    currencyCode
+  );
+};
+
 export const pairToTicker = (pair: PairContract, chainId: number) => {
   return (
     pair.token0.name +

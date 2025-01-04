@@ -14,6 +14,7 @@ import { metadata } from "@/config/metadata";
 import AnnouncementBar from "./AnnouncementBar";
 import Link from "next/link";
 import ChatWidget from "../ServiceChat";
+import Script from 'next/script'
 import { Footer } from "./footer";
 import { chatService, presetQuestions, questionTitles } from "@/services/chat";
 
@@ -100,6 +101,14 @@ export const Layout = ({
         className
       )}
     >
+      <Script
+        src="/charting_library/charting_library.standalone.js"
+        strategy="beforeInteractive"
+      />
+      <Script
+        src="/datafeeds/udf/dist/bundle.js"
+        strategy="beforeInteractive"
+      />
       <AnnouncementBar slogans={slogans} interval={5000} />
       {/* <GuideModal /> */}
       <ChatWidget />
