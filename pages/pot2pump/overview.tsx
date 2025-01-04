@@ -37,7 +37,11 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
       setHighPriceTokens(highPriceData);
     };
 
-    fetchData();
+    const fetchInterval = setInterval(() => {
+      fetchData();
+    }, 10000);
+
+    return () => clearInterval(fetchInterval);
   }, [wallet.isInit]);
 
   // Auto scroll effect
