@@ -114,7 +114,7 @@ export const Layout = ({
       )}
       {currentChain ? (
         currentChain?.isActive ? (
-          <div className="pt-6 sm:pt-12 flex-1 flex">{children}</div>
+          <div className="flex-1 flex">{children}</div>
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">

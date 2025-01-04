@@ -35,8 +35,30 @@ import { UploadImage } from "@/components/UploadImage/UploadImage";
 import BigNumber from "bignumber.js";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
-import { amountFormatted, formatAmount } from "@/lib/format";
+
 const positiveIntegerPattern = /^[1-9]\d*$/;
+
+const inputBaseClass =
+  "w-full bg-white rounded-[12px] md:rounded-[16px] px-3 md:px-4 py-2 md:py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-sm md:text-base font-medium h-[40px] md:h-[60px]";
+
+const labelBaseClass = "text-black text-sm md:text-base font-medium";
+
+// 添加表单类型定义
+type FormValues = {
+  provider: string;
+  raisedToken: string;
+  tokenName: string;
+  tokenSymbol: string;
+  tokenAmount: number;
+  description?: string;
+  twitter: string;
+  website: string;
+  telegram: string;
+  logoUrl: string;
+  bannerUrl: string;
+  raisingCycle: DateValue;
+  poolHandler?: string;
+};
 
 const FTOLaunchModal: NextLayoutPage = observer(() => {
   const {
@@ -44,7 +66,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormValues>();
   const router = useRouter();
   const state = useLocalObservable(() => ({
     pairAddress: "",
@@ -52,22 +74,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
       this.pairAddress = pairAddress;
     },
   }));
-  const onSubmit = async (data: {
-    provider: string;
-    raisedToken: string;
-    tokenName: string;
-    tokenSymbol: string;
-    tokenAmount: number;
-    poolHandler: string;
-    raisingCycle: DateValue;
-    projectName: string;
-    description: string;
-    twitter: string;
-    website: string;
-    telegram: string;
-    logoUrl: string;
-    bannerUrl: string;
-  }) => {
+  const onSubmit = async (data: FormValues) => {
     try {
       const [pairAddress] = await launchpad.createLaunchProject.call({
         ...data,
@@ -87,7 +94,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
     }
   };
   return (
-    <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto mb-[30vh]">
+    <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto">
       <div className=" flex items-center justify-center mt-[24px]">
         {launchpad.ftofactoryContract?.createFTO.loading ? (
           <div className="flex h-[566px] w-full sm:w-[583px] justify-center items-center [background:#121212] rounded-[54px]">
@@ -139,10 +146,12 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                 <input
                   type="text"
                   {...register("tokenName", { required: true })}
-                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                  className={inputBaseClass}
                 />
                 {errors.tokenName && (
-                  <span className="text-red-500">Token Name is required</span>
+                  <span className="text-red-500 text-sm md:text-sm">
+                    Token Name is required
+                  </span>
                 )}
               </div>
               <div className="flex flex-col gap-4">
@@ -150,24 +159,23 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                 <input
                   type="text"
                   {...register("tokenSymbol", { required: true })}
-                  className="outline-none w-full sm:w-[522px] h-[60px] lg:w-[800px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                  className={inputBaseClass}
                 />
                 {errors.tokenSymbol && (
                   <span className="text-red-500">Token Symbol is required</span>
                 )}
               </div>
 
-              <Accordion variant="bordered" keepContentMounted className="!p-0">
+              <Accordion variant="bordered" className="!px-2 md:!px-4">
                 <AccordionItem
                   key="advanced"
                   aria-label="advanced"
                   title="Advanced Options"
-                  className="text-black"
                   classNames={{
-                    title: "text-black",
-                    trigger: "text-black",
-                    content: "text-black",
-                    base: "!p-0",
+                    title: "text-black/50 text-sm md:text-base",
+                    trigger: "text-black/50 text-sm md:text-base py-1 md:py-4",
+                    content: "space-y-3",
+                    base: "min-h-8 md:min-h-12 md:py-2",
                   }}
                 >
                   <div className="flex flex-col gap-4">
@@ -227,7 +235,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                         );
                       }}
                     ></Controller>
-                    {errors.rasing_cycle && (
+                    {errors.raisingCycle && (
                       <span className="text-red-500">
                         {"Please select an end date"}
                       </span>
@@ -288,7 +296,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                 <Button
                   type="submit"
                   isLoading={launchpad.createLaunchProject.loading}
-                  className="text-black font-bold"
+                  className="w-full md:w-[200px] bg-black text-white font-bold rounded-[12px] md:rounded-[16px] px-3 py-2 md:py-[18px] border-2 border-black hover:bg-black/90 text-sm md:text-base h-[40px] md:h-[60px]"
                 >
                   Launch Token
                 </Button>
@@ -335,23 +343,18 @@ const MemePadInstruction = () => {
     },
   ];
   return (
-    <div className="p-5 flex flex-col gap-5">
-      <p className="text-xl">
+    <div className="p-3 md:p-5 flex flex-col gap-4 md:gap-5">
+      <p className="text-base md:text-xl">
         Pot2Pump mode stops rugs by ensuring all tokens are safe and integrate
         perfectly with PoL
       </p>
-      <p className=" font-sans font-light">
+      <p className="font-sans font-light text-xs md:text-base">
         Every token created with Pot2Pump mode is a fair-launch—no presales, no
         team allocations with a chance to mine BGT and other protocol interests.
       </p>
-      <h2 className="text-2xl">How it works</h2>
+      <h2 className="text-lg md:text-2xl">How it works</h2>
       <div className="relative">
-        {/* <div className="absolute w-[2px] h-[90%] bg-[#FFCD4D] left-[21px] top-[50%] translate-y-[-50%]"></div> */}
-        <ul
-          className=" flex flex-col pl-5 text-lg font-sans font-light            
-            list-none
-          "
-        >
+        <ul className="flex flex-col pl-3 md:pl-5 text-base md:text-lg font-sans font-light list-none">
           {steps.map((step, idx) => (
             <li key={idx} className="flex relative">
               <div className="flex flex-col items-center ">
@@ -365,7 +368,7 @@ const MemePadInstruction = () => {
               </div>
               <div
                 className={cn(
-                  "bg-[#3e2a0f]   px-5 py-2 ml-8 rounded-[2rem] relative overflow-visible",
+                  "bg-[#3e2a0f] px-3 md:px-5 py-2 ml-4 md:ml-8 rounded-[2rem] relative overflow-visible text-xs md:text-base",
                   idx !== 0 && idx !== steps.length - 1
                     ? "my-2"
                     : idx === 0
@@ -380,7 +383,7 @@ const MemePadInstruction = () => {
         </ul>
       </div>
       <Button
-        className="w-full mt-4"
+        className="w-full mt-2 md:mt-4"
         onClick={() => {
           popmodal.closeModal();
           store.set("pot2pump_notice_read", true);
@@ -398,41 +401,21 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormValues>();
   const router = useRouter();
   const state = useLocalObservable(() => ({
     pairAddress: "",
     setPairAddress(pairAddress: string) {
       this.pairAddress = pairAddress;
     },
-    raisedTokenAddress: "",
-    raisedTokenAmount: BigInt(0),
-    setRaisedTokenAddress(raisedTokenAddress: string) {
-      this.raisedTokenAddress = raisedTokenAddress;
-      const amount = wallet.currentChain.raisedTokenData.find(
-        (token) => token.address === raisedTokenAddress
-      )?.amount;
-      this.raisedTokenAmount = amount ?? BigInt(0);
-    },
   }));
-  const onSubmit = async (data: {
-    provider: string;
-    raisedToken: string;
-    tokenName: string;
-    tokenSymbol: string;
-    tokenAmount: number;
-    description?: string;
-    twitter: string;
-    website: string;
-    telegram: string;
-    logoUrl: string;
-    bannerUrl: string;
-  }) => {
+  const onSubmit = async (data: FormValues) => {
     try {
       const [pairAddress] = await launchpad.createLaunchProject.call({
         ...data,
-        raisedToken: state.raisedTokenAddress,
-        tokenAmount: state.raisedTokenAmount,
+        tokenAmount: wallet.currentChain.raisedTokenData.find(
+          (token) => token.address === data.raisedToken
+        )?.amount,
         launchType: "meme",
         raisingCycle: dayjs().unix(),
       });
@@ -451,14 +434,6 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     }
   }, []);
 
-  useEffect(() => {
-    if (wallet.isInit) {
-      state.setRaisedTokenAddress(
-        wallet.currentChain.raisedTokenData[0].address
-      );
-    }
-  }, [wallet.isInit]);
-
   const openInstructionModal = () => {
     popmodal.openModal({
       content: <MemePadInstruction />,
@@ -466,267 +441,211 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
   };
 
   return (
-    <div className="md:p-6 w-full mx-auto md:max-w-full xl:max-w-[1200px]  mb-[30vh]">
-      <div className=" flex w-full items-center justify-center mt-[24px]">
-        {launchpad.ftofactoryContract?.createFTO.loading ? (
-          <div className="flex h-[566px] w-full md:w-[583px] justify-center items-center [background:#121212] rounded-[54px]">
-            <div className="flex flex-col items-center">
-              <div className="relative">
-                <PeddingSvg />
-                <div className="absolute top-1/2 -translate-y-@1/2 left-1/2 -translate-x-1/2">
-                  <RocketSvg />
-                </div>
-              </div>
-              <div className="text-gold-primary mt-[59px] font-bold">
-                Transaction Pending
-              </div>
-              <div className="text-[#868B9A] mt-2 w-[250px] text-xs text-center">
-                We have received your transaction just waiting for approval
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-col w-full sm:w-[584px] lg:w-[900px] items-center border-[color:var(--Button-Gradient,#F7931A)] bg-[#FFCD4D] py-12 px-8 rounded-[54px] relative overflow-hidden">
-            <div className="bg-[url('/images/pumping/outline-border.png')] h-[50px] absolute top-0 left-0 w-full bg-contain bg-[left_-90px_top] bg-repeat-x"></div>
+    <div className="flex w-full items-center justify-center">
+      <div className="flex flex-col w-full md:w-[584px] lg:w-[900px] items-center border-[color:var(--Button-Gradient,#F7931A)] bg-[#FFCD4D] py-4 md:py-12 px-4 md:px-8 rounded-3xl md:rounded-[54px] relative overflow-hidden">
+        <div className="bg-[url('/images/pumping/outline-border.png')] h-[20px] md:h-[50px] absolute top-0 left-0 w-full bg-contain bg-[left_-90px_top] bg-repeat-x"></div>
 
-            <div className="flex items-center gap-2">
-              <DreampadSvg />
-              <span className="text-black text-xl font-bold">
-                Dreampad <br className="md:hidden" /> - MEME Launch
-              </span>{" "}
-              <FaQuestionCircle
-                onClick={() => openInstructionModal()}
-                className="cursor-pointer hover:scale-150 transition-all text-black"
+        <div className="flex items-center gap-2">
+          <DreampadSvg />
+          <span className="text-black text-base md:text-xl font-bold text-center">
+            Dreampad - MEME Launch
+          </span>{" "}
+          <FaQuestionCircle
+            onClick={() => openInstructionModal()}
+            className="cursor-pointer hover:scale-150 transition-all text-black"
+          />
+        </div>
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="w-full rounded-[24px] md:rounded-[32px] bg-white space-y-5 px-4 md:px-8 py-4 md:py-6 custom-dashed mx-3 md:mx-6 mt-4 md:mt-6"
+        >
+          <div className="flex flex-col gap-4 hidden">
+            <label htmlFor="provider">Token Provider</label>
+            {wallet.account && (
+              <input
+                type="text"
+                {...register("provider")}
+                defaultValue={wallet.account}
+                className="outline-none w-full sm:w-[522px] lg:w-[800px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
               />
-            </div>
+            )}
+          </div>
 
-            <form
-              //@ts-ignore
-              onSubmit={handleSubmit(onSubmit)}
-              className="w-full rounded-[32px] bg-white space-y-4 px-8 py-6 custom-dashed mx-6 mt-6"
-            >
-              <div className="flex-col gap-4 hidden">
-                <label htmlFor="provider">Token Provider</label>
-                {wallet.account && (
+          <div className="flex flex-col gap-4">
+            <label className={labelBaseClass}>
+              Token Name <span className="text-red-500 text-[10px]">*</span>
+            </label>
+            <input
+              type="text"
+              {...register("tokenName", { required: true })}
+              className={inputBaseClass}
+            />
+            {errors.tokenName && (
+              <span className="text-red-500 text-sm md:text-sm">
+                Token Name is required
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <label className={labelBaseClass}>
+              Token Symbol <span className="text-red-500 text-xs">*</span>
+            </label>
+            <input
+              type="text"
+              {...register("tokenSymbol", { required: true })}
+              className={inputBaseClass}
+            />
+            {errors.tokenSymbol && (
+              <span className="text-red-500">Token Symbol is required</span>
+            )}
+          </div>
+
+          <div className="custom-dashed-less-round">
+            <Accordion variant="bordered">
+              <AccordionItem
+                key="advanced"
+                aria-label="advanced"
+                title="Advanced Options"
+                classNames={{
+                  title: "text-black/50 text-sm md:text-base",
+                  trigger: "text-black/50 text-sm md:text-base py-1 md:py-4",
+                  content: "space-y-3",
+                  base: "min-h-8 md:min-h-12 md:py-2",
+                }}
+              >
+                {/* <div className="relative w-full h-[5rem] border-dashed border-black hover:border-black/70 border-2 rounded-2xl mb-5 transition-all text-black hover:text-black/70">
+                  <Controller
+                    control={control}
+                    name="bannerUrl"
+                    render={({ field: { onChange, value } }) => (
+                      <>
+                        <UploadImage
+                          blobName={"banner"}
+                          imagePath={value}
+                          onUpload={onChange}
+                          variant="banner"
+                        />
+                        {!value && (
+                          <h3 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold pointer-events-none">
+                            Upload Banner
+                          </h3>
+                        )}
+                      </>
+                    )}
+                  />
+                </div> */}
+                {wallet.isInit && (
+                  <div className="flex flex-col gap-2">
+                    <label className={labelBaseClass}>
+                      Raise Token <span className="text-red-500">*</span>
+                    </label>
+                    <WarppedNextSelect
+                      isRequired
+                      defaultSelectedKeys={[
+                        wallet.currentChain.raisedTokenData[0].address,
+                      ]}
+                      items={wallet.currentChain?.raisedTokenData}
+                      {...register("raisedToken")}
+                    >
+                      {wallet.currentChain?.raisedTokenData.map((token) => (
+                        <SelectItem
+                          key={token.address}
+                          value={token.address}
+                          startContent={
+                            <TokenLogo
+                              size={24}
+                              token={Token.getToken({
+                                address: token.address,
+                              })}
+                              addtionalClasses="rounded-full"
+                            />
+                          }
+                        >
+                          {token.symbol} -{" "}
+                          {new BigNumber(token.amount.toString())
+                            .div(10 ** 18)
+                            .toString()}
+                          &nbsp;tokens
+                        </SelectItem>
+                      ))}
+                    </WarppedNextSelect>
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-2">
+                  <label className={labelBaseClass}>
+                    Description{" "}
+                    <span className="text-black/50">(Optional)</span>
+                  </label>
                   <input
                     type="text"
-                    {...register("provider")}
-                    defaultValue={wallet.account}
-                    className="outline-none w-full sm:w-[522px] lg:w-[800px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
+                    {...register("description")}
+                    className={inputBaseClass}
                   />
-                )}
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <Controller
-                  control={control}
-                  name="logoUrl"
-                  rules={{ required: "Token Logo is required" }}
-                  render={({ field: { onChange, value } }) => (
-                    <UploadImage
-                      onUpload={onChange}
-                      imagePath={value}
-                      blobName="logo"
-                    />
-                  )}
-                />
-                <div className="text-black opacity-50 text-center">
-                  Click icon to upload new token icon
                 </div>
-                {errors.logoUrl && (
-                  <span className="text-red-500 text-center">
-                    {errors.logoUrl.message as string}
-                  </span>
-                )}
-              </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-black text-base font-medium">
-                  Token Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  {...register("tokenName", { required: true })}
-                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                />
-                {errors.tokenName && (
-                  <span className="text-red-500">Token Name is required</span>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-black text-base font-medium">
-                  Token Symbol <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  {...register("tokenSymbol", { required: true })}
-                  className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                />
-                {errors.tokenSymbol && (
-                  <span className="text-red-500">Token Symbol is required</span>
-                )}
-              </div>
-
-              <div className="custom-dashed">
-                <Accordion variant="bordered" keepContentMounted={true}>
-                  <AccordionItem
-                    key="advanced"
-                    aria-label="advanced"
-                    title="Advanced Options"
-                    classNames={{
-                      title: "text-black/50",
-                      trigger: "text-black/50",
-                      content: "space-y-4",
-                    }}
-                    keepContentMounted={true}
-                  >
-                    {/* <div className="relative w-full h-[5rem] border-dashed border-black hover:border-black/70 border-2 rounded-2xl mb-5 transition-all text-black hover:text-black/70">
-                      <Controller
-                        control={control}
-                        name="bannerUrl"
-                        render={({ field: { onChange, value } }) => (
-                          <>
-                            <UploadImage
-                              blobName={"banner"}
-                              imagePath={value}
-                              onUpload={onChange}
-                              variant="banner"
-                            />
-                            {!value && (
-                              <h3 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold pointer-events-none">
-                                Upload Banner
-                              </h3>
-                            )}
-                          </>
-                        )}
-                      />
-                    </div> */}
-                    {wallet.isInit && (
-                      <div>
-                        <label className="text-black text-base font-medium">
-                          Raise Token{" "}
-                        </label>
-                        <WarppedNextSelect
-                          isRequired
-                          defaultSelectedKeys={[
-                            wallet.currentChain.raisedTokenData[0].address,
-                          ]}
-                          items={wallet.currentChain?.raisedTokenData}
-                          onSelectionChange={(value) => {
-                            state.setRaisedTokenAddress(value.currentKey ?? "");
-                          }}
-                          {...register("raisedToken")}
-                        >
-                          {wallet.currentChain?.raisedTokenData.map((token) => (
-                            <SelectItem
-                              key={token.address}
-                              value={token.address}
-                              startContent={
-                                <TokenLogo
-                                  size={24}
-                                  token={Token.getToken({
-                                    address: token.address,
-                                  })}
-                                  addtionalClasses="rounded-full"
-                                />
-                              }
-                            >
-                              {token.symbol} -{" "}
-                              {amountFormatted(
-                                new BigNumber(token.amount.toString())
-                                  .div(10 ** 18)
-                                  .toString(),
-                                {
-                                  prefix: "",
-                                  decimals: 0,
-                                  fixed: 3,
-                                  symbol: " tokens",
-                                }
-                              )}
-                            </SelectItem>
-                          ))}
-                        </WarppedNextSelect>
-                      </div>
-                    )}
-
-                    <div className="flex flex-col gap-2">
-                      <label className="text-black text-base font-medium">
-                        Description{" "}
-                        <span className="text-black/50">(Optional)</span>
-                      </label>
-                      <input
-                        type="text"
-                        {...register("description")}
-                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                      />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <label className="text-black text-base font-medium">
-                        Twitter{" "}
-                        <span className="text-black/50">(Optional)</span>
-                      </label>
-                      <input
-                        type="text"
-                        {...register("twitter")}
-                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                      />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <label className="text-black text-base font-medium">
-                        Website{" "}
-                        <span className="text-black/50">(Optional)</span>
-                      </label>
-                      <input
-                        type="text"
-                        {...register("website")}
-                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                      />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <label className="text-black text-base font-medium">
-                        Telegram{" "}
-                        <span className="text-black/50">(Optional)</span>
-                      </label>
-                      <input
-                        type="text"
-                        {...register("telegram")}
-                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                      />
-                    </div>
-                  </AccordionItem>
-                </Accordion>
-              </div>
-
-              {state.pairAddress ? (
-                <div className="flex items-center text-black">
-                  Pair Address:&nbsp;
-                  <Link
-                    className="text-primary"
-                    href={`/launch-detail/${state.pairAddress}`}
-                    target="_blank"
-                  >
-                    {state.pairAddress}
-                  </Link>
-                  <Copy className="ml-[8px]" value={state.pairAddress}></Copy>
+                <div className="flex flex-col gap-2">
+                  <label className={labelBaseClass}>
+                    Twitter <span className="text-black/50">(Optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    {...register("twitter")}
+                    className={inputBaseClass}
+                  />
                 </div>
-              ) : (
-                <Button
-                  type="submit"
-                  isLoading={launchpad.createLaunchProject.loading}
-                  className="w-full bg-black text-white font-bold rounded-[16px] px-4 py-[18px] border-2 border-black hover:bg-black/90"
-                >
-                  Launch Token
-                </Button>
-              )}
-            </form>
 
-            <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-contain"></div>
+                <div className="flex flex-col gap-2">
+                  <label className={labelBaseClass}>
+                    Website <span className="text-black/50">(Optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    {...register("website")}
+                    className={inputBaseClass}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-2 pb-4">
+                  <label className={labelBaseClass}>
+                    Telegram <span className="text-black/50">(Optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    {...register("telegram")}
+                    className={inputBaseClass}
+                  />
+                </div>
+              </AccordionItem>
+            </Accordion>
           </div>
-        )}
+
+          {state.pairAddress ? (
+            <div className="flex items-center text-black">
+              Pair Address:&nbsp;
+              <Link
+                className="text-primary"
+                href={`/launch-detail/${state.pairAddress}`}
+                target="_blank"
+              >
+                {state.pairAddress}
+              </Link>
+              <Copy className="ml-[8px]" value={state.pairAddress}></Copy>
+            </div>
+          ) : (
+            <Button
+              type="submit"
+              isLoading={launchpad.createLaunchProject.loading}
+              className="w-full md:w-[200px] bg-black text-white font-bold rounded-[12px] md:rounded-[16px] px-3 py-2 md:py-[18px] border-2 border-black hover:bg-black/90 text-sm md:text-base h-[40px] md:h-[60px]"
+            >
+              Launch Token
+            </Button>
+          )}
+        </form>
+
+        <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-3 md:h-6 absolute -bottom-1 left-0 w-full bg-contain"></div>
       </div>
     </div>
   );
@@ -755,28 +674,30 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
   }, [launchType]);
 
   return (
-    <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto mb-[30vh]">
-      <Dropdown>
-        <DropdownTrigger>
-          <NextButton variant="bordered">
-            {selectedLaunch.toUpperCase()} Launch
-            <BiSolidDownArrow />
-          </NextButton>
-        </DropdownTrigger>
-        <DropdownMenu>
-          {launchs.map((launch) => (
-            <DropdownItem
-              key={launch.key}
-              onClick={() => setSelectedLaunch(launch.key as any)}
-              className={selectedLaunch === launch.key ? "bg-[#FFCD4D]" : ""}
-            >
-              {launch.label}
-            </DropdownItem>
-          ))}
-        </DropdownMenu>
-      </Dropdown>
-      <div className=" flex items-center justify-center mt-[24px]">
-        {selectedLaunch === "fto" ? <FTOLaunchModal /> : <MEMELaunchModal />}
+    <div className="w-full md:p-6 md:max-w-full xl:max-w-[1200px] mx-auto">
+      <div className="flex flex-col px-4 md:px-0 w-full md:w-[584px] lg:w-[900px] mx-auto">
+        <Dropdown>
+          <DropdownTrigger>
+            <NextButton variant="bordered" className="md:w-fit justify-between">
+              {selectedLaunch.toUpperCase()} Launch
+              <BiSolidDownArrow />
+            </NextButton>
+          </DropdownTrigger>
+          <DropdownMenu>
+            {launchs.map((launch) => (
+              <DropdownItem
+                key={launch.key}
+                onPress={() => setSelectedLaunch(launch.key as LaunchType)}
+                className={selectedLaunch === launch.key ? "bg-[#FFCD4D]" : ""}
+              >
+                {launch.label}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </Dropdown>
+        <div className="flex items-center justify-center mt-4 md:mt-8">
+          {selectedLaunch === "fto" ? <FTOLaunchModal /> : <MEMELaunchModal />}
+        </div>
       </div>
     </div>
   );

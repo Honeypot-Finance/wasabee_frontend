@@ -1,8 +1,7 @@
 export const DreampadSvg = () => {
   return (
     <svg
-      width="62"
-      height="56"
+      className="w-10 h-9 md:w-[62px] md:h-[56px]"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 62 56"
