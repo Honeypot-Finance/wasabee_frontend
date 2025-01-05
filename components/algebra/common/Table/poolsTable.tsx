@@ -179,60 +179,61 @@ const PoolsTable = <TData, TValue>({
           </div>
         </div>
       )}
-      {/* FIXME: border radius display */}
-      <Table className="bg-[#271A0C] rounded-[30px]">
-        <TableHeader className="[&_tr]:border-b border-[#D9D7E4]/5 [&_tr]:border-opacity-30 border-t border-opacity-60">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              className="hover:bg-transparent border-[#D9D7E4]/5"
-            >
-              {headerGroup.headers.map((header) => (
-                <TableHead
-                  onClick={header.column.getToggleSortingHandler()}
-                  key={header.id}
-                  className={`rounded-xl text-white font-semibold [&_svg]:mt-auto ${
-                    header.column.getCanSort()
-                      ? "cursor-pointer select-none"
-                      : ""
-                  }`}
+      <HoneyContainer>
+        <Table className="rounded-[30px]">
+          <TableHeader className="[&_tr]:border-b border-black [&_tr]:border-opacity-30 border-opacity-60 border-y-3">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow
+                key={headerGroup.id}
+                className="hover:bg-transparent border-black"
+              >
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    onClick={header.column.getToggleSortingHandler()}
+                    key={header.id}
+                    className={`rounded-xl text-white font-semibold [&_svg]:mt-auto ${
+                      header.column.getCanSort()
+                        ? "cursor-pointer select-none"
+                        : ""
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      {{
+                        asc: " 🔼",
+                        desc: " 🔽",
+                      }[header.column.getIsSorted() as string] ?? null}
+                    </div>
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody className="hover:bg-transparent text-[16px]">
+            {!table.getRowModel().rows.length ? (
+              <TableRow className="hover:bg-card border-white h-full">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
                 >
-                  <div className="flex items-center">
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    {{
-                      asc: " 🔼",
-                      desc: " 🔽",
-                    }[header.column.getIsSorted() as string] ?? null}
-                  </div>
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody className="hover:bg-transparent text-[16px]">
-          {!table.getRowModel().rows.length ? (
-            <TableRow className="hover:bg-card border-[#D9D7E4]/5 h-full">
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          ) : (
-            table.getRowModel().rows.map((row: any) => {
-              return (
+                  No results.
+                </TableCell>
+              </TableRow>
+            ) : (
+              table.getRowModel().rows.map((row: any) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="border-card-border/40 bg-card-dark hover:bg-card-hover cursor-pointer border-[#D9D7E4]/5"
+                  className="border-card-border/40 bg-card-dark hover:bg-card-hover cursor-pointer border-black hover:bg-black"
                   onClick={() => {
                     if (action) {
                       action(row.original.id);
                     } else if (link) {
-                      //navigate(`/${link}/${row.original.id}`);
                       window.location.href = `/${link}/${row.original.id}`;
                     }
                   }}
@@ -249,38 +250,39 @@ const PoolsTable = <TData, TValue>({
                     </TableCell>
                   ))}
                 </TableRow>
-              );
-            })
-          )}
-        </TableBody>
-      </Table>
-      {showPagination && (
-        <div className="flex items-center justify-end space-x-2 px-4 mt-2">
-          {totalRows > 0 && (
-            <p className="mr-2">
-              {startsFromRow === totalRows
-                ? `${startsFromRow} of ${totalRows}`
-                : `${startsFromRow} - ${endsAtRow} of ${totalRows}`}
-            </p>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      )}
+              ))
+            )}
+          </TableBody>
+        </Table>
+
+        {showPagination && (
+          <div className="flex items-center justify-end space-x-2 px-4 mt-2 text-white">
+            {totalRows > 0 && (
+              <p className="mr-2">
+                {startsFromRow === totalRows
+                  ? `${startsFromRow} of ${totalRows}`
+                  : `${startsFromRow} - ${endsAtRow} of ${totalRows}`}
+              </p>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
+        )}
+      </HoneyContainer>
     </div>
   );
 };

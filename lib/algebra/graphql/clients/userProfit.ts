@@ -57,7 +57,7 @@ export const getLiquidatorDatas = async (
       poolHoursData: [] as any[],
     };
 
-    for (let j = 0; j < poolHourData.length; j++) {
+    for (let j = 0; j < poolHourData?.length ?? 0; j++) {
       const prevId = j === 0 ? 0 : j - 1;
       const {
         feesUSD: fee,

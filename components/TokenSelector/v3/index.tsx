@@ -27,7 +27,6 @@ import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import pot2pumpIcon from "@/public/images/bera/smoking_bera.png";
-import { Address, zeroAddress } from "viem";
 
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
