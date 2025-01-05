@@ -395,17 +395,17 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
     setPriceType(newType);
     // 切换价格/市值显示
     if (window.tvWidget) {
-      chart.setCurrencyCode(newType);
+      // 将 PRICE 映射为 USD，将 MCAP 映射为 TOKEN
+      chart.setCurrencyCode(newType === 'PRICE' ? 'USD' : 'TOKEN');
       initOnReady();
     }
   };
-
+ 
   const handleUSDBeraClick = () => {
     const newType = currencyType === 'USD' ? 'BERA' : 'USD';
     setCurrencyType(newType);
-    // 切换 USD/BERA
     if (window.tvWidget) {
-      chart.setCurrencyCode(newType);
+      chart.setCurrencyCode(newType === 'USD' ? 'USD' : 'TOKEN');
       initOnReady();
     }
   };
