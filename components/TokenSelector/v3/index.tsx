@@ -93,6 +93,7 @@ export const TokenSelector = observer(
     };
 
     useEffect(() => {
+      setPot2PumpAddress(null);
       if (value) {
         wallet.contracts.memeFactory.contract.read
           .getPair([value.address as Address])

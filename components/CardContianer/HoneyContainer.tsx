@@ -8,6 +8,7 @@ interface HoneyContainerProps {
   bottomHeight?: string;
   variant?: "dense" | "wide";
   className?: string;
+  noNoneyDrop?: boolean;
 }
 
 export function HoneyContainer({
@@ -17,6 +18,7 @@ export function HoneyContainer({
   variant = "wide",
   borderHeight = "40px",
   bottomHeight = borderHeight,
+  noNoneyDrop = false,
 }: HoneyContainerProps) {
   return (
     <div className={cn("w-full @container", className)}>
@@ -26,11 +28,13 @@ export function HoneyContainer({
             "--honey-container-border-height": borderHeight,
             "--honey-container-bottom-height": bottomHeight,
 
-            backgroundImage: `url('/images/card-container/honey/outline-border.png'), url('${
-              variant === "wide"
-                ? "/images/card-container/honey/bottom-border.svg"
-                : "/images/card-container/dark/bottom-border.svg"
-            }')`,
+            backgroundImage: noNoneyDrop
+              ? ""
+              : `url('/images/card-container/honey/outline-border.png'), url('${
+                  variant === "wide"
+                    ? "/images/card-container/honey/bottom-border.svg"
+                    : "/images/card-container/dark/bottom-border.svg"
+                }')`,
           } as React.CSSProperties
         }
         className={cn(
