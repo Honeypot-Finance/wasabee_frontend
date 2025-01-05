@@ -57,33 +57,37 @@ const MyPoolsList = () => {
         const lastDate = currentPool ? currentPool.date * 1000 : 0;
         const currentDate = new Date().getTime();
 
-        const changeHour = poolHourData[0]
-          ? poolHourData[1]
-            ? (poolHourData[0].volumeUSD - poolHourData[1].volumeUSD) /
-              poolHourData[1].volumeUSD
-            : 100
-          : "";
+        const changeHour =
+          poolHourData[0] && poolHourData[0].volumeUSD != "0"
+            ? poolHourData[1] && poolHourData[1].volumeUSD != "0"
+              ? (poolHourData[0].volumeUSD - poolHourData[1].volumeUSD) /
+                poolHourData[1].volumeUSD
+              : 100
+            : "";
 
-        const change24h = poolDayData[0]
-          ? poolDayData[1]
-            ? (poolDayData[0].volumeUSD - poolDayData[1].volumeUSD) /
-              poolDayData[1].volumeUSD
-            : 100
-          : "";
+        const change24h =
+          poolDayData[0] && poolDayData[0].volumeUSD != "0"
+            ? poolDayData[1] && poolDayData[1].volumeUSD != "0"
+              ? (poolDayData[0].volumeUSD - poolDayData[1].volumeUSD) /
+                poolDayData[1].volumeUSD
+              : 100
+            : "";
 
-        const changeWeek = poolWeekData[0]
-          ? poolWeekData[1]
-            ? (poolWeekData[0].volumeUSD - poolWeekData[1].volumeUSD) /
-              poolWeekData[1].volumeUSD
-            : 100
-          : "";
+        const changeWeek =
+          poolWeekData[0] && poolWeekData[0].volumeUSD != "0"
+            ? poolWeekData[1] && poolWeekData[1].volumeUSD != "0"
+              ? (poolWeekData[0].volumeUSD - poolWeekData[1].volumeUSD) /
+                poolWeekData[1].volumeUSD
+              : 100
+            : "";
 
-        const changeMonth = poolMonthData[0]
-          ? poolMonthData[1]
-            ? (poolMonthData[0].volumeUSD - poolMonthData[1].volumeUSD) /
-              poolMonthData[1].volumeUSD
-            : 100
-          : "";
+        const changeMonth =
+          poolMonthData[0] && poolMonthData[0].volumeUSD != "0"
+            ? poolMonthData[1] && poolMonthData[1].volumeUSD != "0"
+              ? (poolMonthData[0].volumeUSD - poolMonthData[1].volumeUSD) /
+                poolMonthData[1].volumeUSD
+              : 100
+            : "";
 
         /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
         const timeDifference = currentDate - lastDate;

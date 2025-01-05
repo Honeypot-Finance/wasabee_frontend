@@ -12,12 +12,11 @@ import {
   HoverCardTrigger,
 } from "@/components/algebra/ui/hover-card";
 import { TokenFieldsFragment } from "@/lib/algebra/graphql/generated/graphql";
-import { formatPercent } from "@/lib/algebra/utils/common/formatPercent";
-import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { ReactNode } from "react";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
-import { locale } from "dayjs";
+import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import { observer } from "mobx-react-lite";
 
 interface Pair {
   token0: TokenFieldsFragment;
@@ -59,12 +58,14 @@ function timeSince(timestamp: number): string {
   return `${Math.floor(diff / 31536000)}y`; // Years
 }
 
-const PoolPair = ({ pair, fee }: Pool) => {
-  const token0 = pair.token0.id as Address;
-  const token1 = pair.token1.id as Address;
+const PoolPair = observer(({ pair, fee }: Pool) => {
+  const token0 = pair.token0;
+  const token1 = pair.token1;
+  const token0Address = token0.id as Address;
+  const token1Address = token1.id as Address;
 
-  const currencyA = useCurrency(token0, true);
-  const currencyB = useCurrency(token1, true);
+  const currencyA = useCurrency(token0Address, true);
+  const currencyB = useCurrency(token1Address, true);
 
   return (
     <div className="flex items-center gap-4 ml-2">
@@ -73,7 +74,7 @@ const PoolPair = ({ pair, fee }: Pool) => {
           <TokenLogo
             size={30}
             token={Token.getToken({
-              address: token0,
+              address: token0Address,
             })}
           />
         </div>
@@ -81,14 +82,14 @@ const PoolPair = ({ pair, fee }: Pool) => {
           <TokenLogo
             size={30}
             token={Token.getToken({
-              address: token1,
+              address: token1Address,
             })}
           />
         </div>
       </div>
 
       {currencyA && currencyB ? (
-        <div>{`${currencyA?.symbol} - ${currencyB?.symbol}`}</div>
+        <div>{`${token0.symbol} - ${token1.symbol}`}</div>
       ) : (
         <Skeleton className="h-[20px] w-[90px] bg-card" />
       )}
@@ -96,7 +97,7 @@ const PoolPair = ({ pair, fee }: Pool) => {
       <div className="bg-muted-primary text-primary-text rounded-xl px-2 py-1">{`${fee}%`}</div>
     </div>
   );
-};
+});
 
 export const Plugins = ({ poolId }: { poolId: Address }) => {
   const { dynamicFeePlugin, farmingPlugin } = usePoolPlugins(poolId);
@@ -256,6 +257,12 @@ export const poolsColumns: ColumnDef<Pool>[] = [
         .toLowerCase()
         .includes(value),
   },
+  // {
+  //   accessorKey: "plugins",
+  //   header: () => <HeaderItem>Plugins</HeaderItem>,
+  //   cell: ({ row }) => <Plugins poolId={row.original.id} />,
+  //   filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
+  // },
   {
     accessorKey: "token0Price",
     id: "token0Price",
@@ -301,7 +308,7 @@ export const poolsColumns: ColumnDef<Pool>[] = [
         <span
           style={{ color: row.original.changeHour > 0 ? "#48bb78" : "#F56565" }}
         >
-          {row.original.changeHour}%
+          {formatAmount(row.original.changeHour, 2)}%
         </span>
       );
     },
@@ -314,7 +321,7 @@ export const poolsColumns: ColumnDef<Pool>[] = [
         <span
           style={{ color: row.original.change24h > 0 ? "#48bb78" : "#F56565" }}
         >
-          {row.original.change24h}%
+          {formatAmount(row.original.change24h, 2)}%
         </span>
       );
     },
@@ -327,7 +334,7 @@ export const poolsColumns: ColumnDef<Pool>[] = [
         <span
           style={{ color: row.original.changeWeek > 0 ? "#48bb78" : "#F56565" }}
         >
-          {row.original.changeWeek}%
+          {formatAmount(row.original.changeWeek, 2)}%
         </span>
       );
     },
@@ -342,16 +349,16 @@ export const poolsColumns: ColumnDef<Pool>[] = [
             color: row.original.changeMonth > 0 ? "#48bb78" : "#F56565",
           }}
         >
-          {row.original.changeMonth}%
+          {formatAmount(row.original.changeMonth, 2)}%
         </span>
       );
     },
   },
-  {
-    accessorKey: "liquidity",
-    header: () => <HeaderItem className="uppercase">liquidity</HeaderItem>,
-    cell: ({ row }) => row.original.liquidity,
-  },
+  // {
+  //   accessorKey: "liquidity",
+  //   header: () => <HeaderItem className="uppercase">liquidity</HeaderItem>,
+  //   cell: ({ row }) => formatAmount(row.original.liquidity),
+  // },
   {
     accessorKey: "pair.token0.marketCap",
     header: () => <HeaderItem className="uppercase">marktet cap</HeaderItem>,
