@@ -105,21 +105,21 @@ export const PottingModal = observer(
                 className="grid grid-cols-[repeat(4,auto)] gap-4 w-full mt-4 justify-content-end"
               >
                 {pair.raiseToken?.balance.gte(10) && (
-                  <SelectItem value="10">
+                  <SelectItem key="10" value="10">
                     10 {pair.raiseToken?.symbol}
                   </SelectItem>
                 )}
                 {pair.raiseToken?.balance.gte(100) && (
-                  <SelectItem value="100">
+                  <SelectItem key="100" value="100">
                     100 {pair.raiseToken?.symbol}
                   </SelectItem>
                 )}
                 {pair.raiseToken?.balance.gte(1000) && (
-                  <SelectItem value="1000">
+                  <SelectItem key="1000" value="1000">
                     1000 {pair.raiseToken?.symbol}
                   </SelectItem>
                 )}
-                <SelectItem value="max">Max</SelectItem>
+                <SelectItem key="max" value="max">Max</SelectItem>
               </ItemSelect>
             </div>
 

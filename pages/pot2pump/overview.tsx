@@ -148,7 +148,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
               <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 bg-[#FFCD4D] z-20 py-2 px-2">
                 {POT_TABS.NEW}
               </h2>
-              <div className="flex flex-col gap-8 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
+              <div className="flex flex-col gap-2 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                 {newTokens?.map((pot2pump, index) => (
                   <motion.div key={index} variants={itemPopUpVariants}>
                     <LaunchCardV3

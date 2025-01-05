@@ -19,6 +19,7 @@ export const Button = ({
   const connectors = useConnectors();
   const mockConnector = connectors.find((connector) => connector.id === "mock");
   styleMode = styleMode || "primary";
+  // FIXME: hover bg color
   const baseClassNames = cn(
     "flex h-[45px] font-bold text-[#000] justify-center items-center gap-2.5 self-stretch outline outline-[4px] outline-base [background:var(--Button-Gradient,linear-gradient(180deg,rgba(232,211,124,0.13)_33.67%,#FCD729_132.5%),#F7931A)] px-6 py-3 rounded-2xl hover:opacity-80 active:opacity-60 border border-5 border-[#202020]",
     styleMode === "plain"

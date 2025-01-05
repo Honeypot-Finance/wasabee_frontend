@@ -5,6 +5,7 @@ import { observer, useLocalObservable } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import launchpad from "@/services/launchpad";
 import { Button } from "@/components/button/button-next";
+import { Button as FTOButton } from "@/components/button";
 import { NextLayoutPage } from "@/types/nextjs";
 import { RocketSvg } from "@/components/svg/Rocket";
 import { PeddingSvg } from "@/components/svg/Pedding";
@@ -31,7 +32,7 @@ import { FaQuestionCircle } from "react-icons/fa";
 import { popmodal } from "@/services/popmodal";
 import store from "store2";
 import { cn } from "@/lib/tailwindcss";
-import { UploadImage } from "@/components/UploadImage/UploadImage";
+// import { UploadImage } from "@/components/UploadImage/UploadImage";
 import BigNumber from "bignumber.js";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
@@ -94,92 +95,96 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
     }
   };
   return (
-    <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto">
-      <div className=" flex items-center justify-center mt-[24px]">
-        {launchpad.ftofactoryContract?.createFTO.loading ? (
-          <div className="flex h-[566px] w-full sm:w-[583px] justify-center items-center [background:#121212] rounded-[54px]">
-            <div className="flex flex-col items-center">
-              <div className="relative">
-                <PeddingSvg />
-                <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
-                  <RocketSvg />
-                </div>
+    <div className="flex w-full items-center justify-center">
+      {launchpad.ftofactoryContract?.createFTO.loading ? (
+        <div className="flex h-[566px] w-full sm:w-[583px] justify-center items-center [background:#121212] rounded-[54px]">
+          <div className="flex flex-col items-center">
+            <div className="relative">
+              <PeddingSvg />
+              <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
+                <RocketSvg />
               </div>
-              <div className="text-gold-primary mt-[59px] font-bold">
-                Transaction Pending
-              </div>
-              <div className="text-[#868B9A] mt-2 w-[250px] text-xs text-center">
-                We have received your transaction just waiting for approval
-              </div>
+            </div>
+            <div className="text-gold-primary mt-[59px] font-bold">
+              Transaction Pending
+            </div>
+            <div className="text-[#868B9A] mt-2 w-[250px] text-xs text-center">
+              We have received your transaction just waiting for approval
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col w-full sm:w-[584px] lg:w-[900px] items-center border-[color:var(--Button-Gradient,#F7931A)] bg-[#291C0A] py-4 px-[5px] rounded-[54px] border-2">
-            <div className="flex items-center gap-2">
-              <DreampadSvg />
-              <span>Dreampad - FTO Launch</span>
-            </div>
-            <div className="mt-4 opacity-50 w-full sm:w-[409px] lg:w-[800px] text-center mb-4 ">
-              Launch your token within three steps.{" "}
-              {/* <span className="underline cursor-pointer">Read more</span> about
-              Dreampad. */}
-            </div>
-            <form
-              //@ts-ignore
-              onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col gap-[22px] w-full px-4 sm:w-auto sm:px-0"
-            >
-              <div className="flex-col gap-4 hidden">
-                <label htmlFor="provider">Token Provider</label>
-                {wallet.account && (
-                  <input
-                    type="text"
-                    {...register("provider")}
-                    defaultValue={wallet.account}
-                    className="outline-none w-full sm:w-[522px] lg:w-[800px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
-                  />
-                )}
-              </div>
+        </div>
+      ) : (
+        <div className="flex flex-col w-full sm:w-[584px] lg:w-[900px] items-center bg-[#291C0A] py-4 md:py-12 px-4 md:px-8 rounded-3xl md:rounded-[54px] relative overflow-hidden">
+          <div className="flex items-center gap-2">
+            <DreampadSvg />
+            <span>Dreampad - FTO Launch</span>
+          </div>
 
-              <div className="flex flex-col gap-4">
-                <div>Token Name</div>
+          <div className="mt-4 opacity-50 w-full sm:w-[409px] lg:w-[800px] text-center mb-4">
+            Launch your token within three steps.
+          </div>
+
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-[22px] w-full"
+          >
+            <div className="flex-col gap-4 hidden">
+              <label htmlFor="provider">Token Provider</label>
+              {wallet.account && (
                 <input
                   type="text"
-                  {...register("tokenName", { required: true })}
-                  className={inputBaseClass}
+                  {...register("provider")}
+                  defaultValue={wallet.account}
+                  className="outline-none w-full sm:w-[522px] lg:w-[800px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
                 />
-                {errors.tokenName && (
-                  <span className="text-red-500 text-sm md:text-sm">
-                    Token Name is required
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-col gap-4">
-                <div>Token Symbol</div>
-                <input
-                  type="text"
-                  {...register("tokenSymbol", { required: true })}
-                  className={inputBaseClass}
-                />
-                {errors.tokenSymbol && (
-                  <span className="text-red-500">Token Symbol is required</span>
-                )}
-              </div>
+              )}
+            </div>
 
-              <Accordion variant="bordered" className="!px-2 md:!px-4">
+            <div className="flex flex-col gap-4">
+              <label className="text-sm md:text-base font-medium">
+                Token Name <span className="text-red-500 text-[10px]">*</span>
+              </label>
+              <input
+                type="text"
+                {...register("tokenName", { required: true })}
+                className={inputBaseClass}
+              />
+              {errors.tokenName && (
+                <span className="text-red-500 text-sm md:text-sm">
+                  Token Name is required
+                </span>
+              )}
+            </div>
+            <div className="flex flex-col gap-4">
+              <label className="text-sm md:text-base font-medium">
+                Token Symbol <span className="text-red-500 text-xs">*</span>
+              </label>
+              <input
+                type="text"
+                {...register("tokenSymbol", { required: true })}
+                className={inputBaseClass}
+              />
+              {errors.tokenSymbol && (
+                <span className="text-red-500">Token Symbol is required</span>
+              )}
+            </div>
+
+            <div className="custom-dashed-less-round">
+              <Accordion variant="bordered">
                 <AccordionItem
                   key="advanced"
                   aria-label="advanced"
                   title="Advanced Options"
                   classNames={{
-                    title: "text-black/50 text-sm md:text-base",
-                    trigger: "text-black/50 text-sm md:text-base py-1 md:py-4",
+                    title: "text-white/50 text-sm md:text-base",
+                    trigger: "text-white/50 text-sm md:text-base h-[36px] md:h-[56px] flex items-center",
                     content: "space-y-3",
-                    base: "min-h-8 md:min-h-12 md:py-2",
                   }}
                 >
                   <div className="flex flex-col gap-4">
-                    <div>Token Amount</div>
+                    <label className="text-sm md:text-base font-medium">
+                      Token Amount <span className="text-red-500 text-[10px]">*</span>
+                    </label>
                     <input
                       type="text"
                       {...register("tokenAmount", {
@@ -190,7 +195,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                         },
                         value: 1_000_000,
                       })}
-                      className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                      className="outline-none w-full h-[40px] md:h-[60px] bg-[#2F200B] px-3 md:px-4 py-2 md:py-[18px] rounded-[12px] md:rounded-[16px]"
                       defaultValue={1_000_000}
                     />
                     {errors.tokenAmount && (
@@ -242,7 +247,9 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                     )}
                   </div>{" "}
                   <div className="flex flex-col gap-4">
-                    <label htmlFor="raisedToken">Raised Token</label>
+                    <label className="text-sm md:text-base font-medium">
+                      Raised Token <span className="text-red-500 text-[10px]">*</span>
+                    </label>
                     {wallet.currentChain?.contracts.ftoTokens && (
                       <WarppedNextSelect
                         required
@@ -257,7 +264,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                           value: wallet.currentChain?.contracts.ftoTokens[0]
                             .address as string,
                         })}
-                        className="outline-none w-full  h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl"
+                        className="outline-none w-full h-[40px] md:h-[60px] bg-[#2F200B] px-3 md:px-4 py-2 md:py-[18px] rounded-[12px] md:rounded-[16px]"
                       >
                         {wallet.currentChain?.contracts.ftoTokens.map(
                           (token, idx) => (
@@ -279,32 +286,34 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                   </div>
                 </AccordionItem>
               </Accordion>
+            </div>
 
-              {(state.pairAddress && (
-                <div className="flex items-center">
-                  Pair Address:&nbsp;
-                  <Link
-                    className="text-primary"
-                    href={`/launch-detail/${state.pairAddress}`}
-                    target="_blank"
-                  >
-                    {state.pairAddress}
-                  </Link>
-                  <Copy className="ml-[8px]" value={state.pairAddress}></Copy>
-                </div>
-              )) || (
-                <Button
-                  type="submit"
-                  isLoading={launchpad.createLaunchProject.loading}
-                  className="w-full md:w-[200px] bg-black text-white font-bold rounded-[12px] md:rounded-[16px] px-3 py-2 md:py-[18px] border-2 border-black hover:bg-black/90 text-sm md:text-base h-[40px] md:h-[60px]"
+            {(state.pairAddress && (
+              <div className="flex items-center">
+                Pair Address:&nbsp;
+                <Link
+                  className="text-primary"
+                  href={`/launch-detail/${state.pairAddress}`}
+                  target="_blank"
                 >
-                  Launch Token
-                </Button>
-              )}
-            </form>
-          </div>
-        )}
-      </div>
+                  {state.pairAddress}
+                </Link>
+                <Copy className="ml-[8px]" value={state.pairAddress}></Copy>
+              </div>
+            )) || (
+              <FTOButton
+                type="submit"
+                isLoading={launchpad.createLaunchProject.loading}
+                className="w-full bg-black text-white font-bold rounded-[12px] md:rounded-[16px] px-3 py-2 md:py-[18px] border-2 border-black hover:bg-black/90 text-sm md:text-base h-[40px] md:h-[60px]"
+              >
+                Launch Token
+              </FTOButton>
+            )}
+          </form>
+
+          <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-3 md:h-6 absolute -bottom-1 left-0 w-full bg-contain"></div>
+        </div>
+      )}
     </div>
   );
 });
@@ -509,10 +518,9 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 aria-label="advanced"
                 title="Advanced Options"
                 classNames={{
-                  title: "text-black/50 text-sm md:text-base",
-                  trigger: "text-black/50 text-sm md:text-base py-1 md:py-4",
+                  title: "text-white/50 text-sm md:text-base",
+                  trigger: "text-white/50 text-sm md:text-base h-[36px] md:h-[56px] flex items-center",
                   content: "space-y-3",
-                  base: "min-h-8 md:min-h-12 md:py-2",
                 }}
               >
                 {/* <div className="relative w-full h-[5rem] border-dashed border-black hover:border-black/70 border-2 rounded-2xl mb-5 transition-all text-black hover:text-black/70">
@@ -638,7 +646,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
             <Button
               type="submit"
               isLoading={launchpad.createLaunchProject.loading}
-              className="w-full md:w-[200px] bg-black text-white font-bold rounded-[12px] md:rounded-[16px] px-3 py-2 md:py-[18px] border-2 border-black hover:bg-black/90 text-sm md:text-base h-[40px] md:h-[60px]"
+              className="w-full bg-black text-white font-bold rounded-[12px] md:rounded-[16px] px-3 py-2 md:py-[18px] border-2 border-black hover:bg-black/90 text-sm md:text-base h-[40px] md:h-[60px]"
             >
               Launch Token
             </Button>
@@ -657,21 +665,33 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
   const router = useRouter();
   const { launchType } = router.query || {};
   const [selectedLaunch, setSelectedLaunch] = useState<LaunchType>("fto");
+  
   const launchs = [
-    // {
-    //   key: "fto",
-    //   label: "FTO Launch",
-    // },
+    {
+      key: "fto",
+      label: "FTO Launch",
+    },
     {
       key: "meme",
       label: "Pot2pump launch",
     },
   ];
+
+  // Handle launch type changes from URL
   useEffect(() => {
     if (launchType) {
       setSelectedLaunch(launchType as LaunchType);
     }
   }, [launchType]);
+
+  // Handle launch type selection and update URL
+  const handleLaunchTypeChange = (type: LaunchType) => {
+    setSelectedLaunch(type);
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, launchType: type }
+    }, undefined, { shallow: true });
+  };
 
   return (
     <div className="w-full md:p-6 md:max-w-full xl:max-w-[1200px] mx-auto">
@@ -683,16 +703,22 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
               <BiSolidDownArrow />
             </NextButton>
           </DropdownTrigger>
-          <DropdownMenu>
-            {launchs.map((launch) => (
-              <DropdownItem
-                key={launch.key}
-                onPress={() => setSelectedLaunch(launch.key as LaunchType)}
-                className={selectedLaunch === launch.key ? "bg-[#FFCD4D]" : ""}
-              >
-                {launch.label}
-              </DropdownItem>
-            ))}
+          <DropdownMenu 
+            className="w-[calc(100vw-48px)] md:w-auto min-w-[200px]"
+            itemClasses={{
+              base: "data-[hover=true]:bg-[#FFCD4D] data-[hover=true]:text-black"
+            }}
+          >
+            {launchs
+              .filter((launch) => launch.key !== selectedLaunch)
+              .map((launch) => (
+                <DropdownItem
+                  key={launch.key}
+                  onPress={() => handleLaunchTypeChange(launch.key as LaunchType)}
+                >
+                  {launch.label}
+                </DropdownItem>
+              ))}
           </DropdownMenu>
         </Dropdown>
         <div className="flex items-center justify-center mt-4 md:mt-8">
