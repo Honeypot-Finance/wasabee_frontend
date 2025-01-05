@@ -18,7 +18,7 @@ export type PageInfo = {
   endCursor: string;
 };
 
-export async function fallbacks<T>(
+export async function fallbacks<T> (
   args: (() => T)[] | (() => Promise<T>)[]
 ): Promise<T | undefined> {
   for (let i = 0; i < args.length; i++) {
@@ -38,16 +38,16 @@ export class ValueState<T> {
     makeAutoObservable(this);
   }
 
-  get value() {
+  get value () {
     return this.getValue ? this.getValue(this._value) : this._value;
   }
-  set value(value) {
+  set value (value) {
     this._value = value;
   }
 
   getValue!: (value: T) => T;
 
-  setValue(value: T) {
+  setValue (value: T) {
     this._value = value;
   }
 }
@@ -84,7 +84,7 @@ export class AsyncState<
     makeAutoObservable(this);
   }
 
-  handleCacheConfig(cache: LRUCache.Options<string, any, any> | boolean) {
+  handleCacheConfig (cache: LRUCache.Options<string, any, any> | boolean) {
     const defaultCacheOptions = {
       allowStale: false,
       ttl: 1000 * 5,
@@ -98,7 +98,7 @@ export class AsyncState<
     }
   }
 
-  async call(...args: Parameters<K>) {
+  async call (...args: Parameters<K>) {
     const cachedValue = this.cache?.get(JSON.stringify(args));
     if (cachedValue) {
       this.setValue(cachedValue);
@@ -120,16 +120,16 @@ export class AsyncState<
     }
     return [this.value, this.error] as [T, Error | null];
   }
-  setLoading(loading: boolean) {
+  setLoading (loading: boolean) {
     this.loading = loading;
   }
-  setError(error: Error | null) {
+  setError (error: Error | null) {
     this.error = error;
   }
-  setValue(data: T | null) {
+  setValue (data: T | null) {
     this.value = data;
   }
-  reset() {
+  reset () {
     this.value = this.initialValue;
     this.error = null;
   }
@@ -154,21 +154,21 @@ export class ContractWrite<T extends (...args: any) => any> {
     makeAutoObservable(this);
   }
 
-  get successMsgAgg() {
+  get successMsgAgg () {
     if (this.successMsg) {
       return this.successMsg;
     }
     return this.action ? `${this.action} successfully` : `Transaction Success`;
   }
 
-  get failMsgAgg() {
+  get failMsgAgg () {
     if (this.failMsg) {
       return this.failMsg;
     }
     return this.action ? `${this.action} Failed` : `Transaction Failed`;
   }
 
-  async call(args: Parameters<T>[0] = [], options?: Partial<Parameters<T>[1]>) {
+  async call (args: Parameters<T>[0] = [], options?: Partial<Parameters<T>[1]>) {
     this.setLoading(true);
     try {
       const hash = await this._call(args, {
@@ -227,7 +227,7 @@ export class ContractWrite<T extends (...args: any) => any> {
       this.setLoading(false);
     }
   }
-  async callV2(...args: Parameters<T>) {
+  async callV2 (...args: Parameters<T>) {
     this.setLoading(true);
     try {
       const hash = await this._call(...args);
@@ -280,10 +280,10 @@ export class ContractWrite<T extends (...args: any) => any> {
       this.setLoading(false);
     }
   }
-  setLoading(loading: boolean) {
+  setLoading (loading: boolean) {
     this.loading = loading;
   }
-  setError(error: Error | null) {
+  setError (error: Error | null) {
     this.error = error;
   }
 }
@@ -298,18 +298,18 @@ export class PaginationState {
     makeAutoObservable(this);
   }
 
-  get offset() {
+  get offset () {
     return (this.page - 1) * this.limit;
   }
 
-  get end() {
+  get end () {
     return this.page * this.limit;
   }
 
-  get totalPage() {
+  get totalPage () {
     return Math.ceil(this.total / this.limit);
   }
-  setData(args: Partial<PaginationState>) {
+  setData (args: Partial<PaginationState>) {
     Object.assign(this, args);
   }
 
@@ -319,7 +319,7 @@ export class PaginationState {
   onSizeChange = (limit: number) => {
     this.limit = limit;
   };
-  setTotal(total: number) {
+  setTotal (total: number) {
     this.total = total;
   }
 }
@@ -330,7 +330,7 @@ export class PaginationDataState<T> {
   total: number = 0;
   data = {} as Record<number, T[]>;
 
-  get pageData() {
+  get pageData () {
     return this.data[this.page];
   }
 
@@ -339,20 +339,20 @@ export class PaginationDataState<T> {
     makeAutoObservable(this);
   }
 
-  get offset() {
+  get offset () {
     return (this.page - 1) * this.limit;
   }
 
-  get end() {
+  get end () {
     return this.page * this.limit;
   }
 
-  get totalPage() {
+  get totalPage () {
     return Math.ceil(this.total / this.limit);
   }
   fetch!: AsyncState<() => Promise<T[]>>;
 
-  setData(args: Partial<PaginationState>) {
+  setData (args: Partial<PaginationState>) {
     Object.assign(this, args);
   }
 
@@ -366,7 +366,7 @@ export class PaginationDataState<T> {
   onSizeChange = (limit: number) => {
     this.limit = limit;
   };
-  setTotal(total: number) {
+  setTotal (total: number) {
     this.total = total;
   }
 }
@@ -397,7 +397,7 @@ export class OldIndexerPaginationState<
     filter: FilterT,
     pageRequest: PageRequest
   ) => Promise<{ items: ItemT[]; pageInfo: PageInfo }> = async () =>
-    Promise.resolve({ items: [], pageInfo: this.pageInfo });
+      Promise.resolve({ items: [], pageInfo: this.pageInfo });
 
   constructor(args: Partial<OldIndexerPaginationState<FilterT, ItemT>>) {
     Object.assign(this, args);
@@ -478,11 +478,11 @@ export class OldIndexerPaginationState<
     this.pageItems.setValue(this.pageItems.value.filter((i) => i !== item));
   };
 
-  setIsInit(isInit: boolean) {
+  setIsInit (isInit: boolean) {
     this.isInit = isInit;
   }
 
-  setIsLoading(isLoading: boolean) {
+  setIsLoading (isLoading: boolean) {
     this.isLoading = isLoading;
   }
 }
@@ -514,11 +514,13 @@ export class IndexerPaginationState<
       ...this.filter,
       ...filter,
     };
+    console.log('this.filter', this.filter)
     this.reloadPage();
   }, 500);
 
   resetPage = () => {
-    this.filter = { ...this.filter, ...this.defaultFilter };
+    this.filter = { ...this.defaultFilter, ...this.filter };
+    console.log("resetPage", this.filter);
     this.isInit = false;
     this.pageItems.setValue([]);
   };
@@ -532,6 +534,8 @@ export class IndexerPaginationState<
   };
 
   loadMore = async () => {
+    console.log('load more...');
+    console.log("this.filter.hasNextPage", this.filter.hasNextPage)
     if (this.isLoading || !this.filter.hasNextPage) {
       return;
     }
@@ -542,6 +546,8 @@ export class IndexerPaginationState<
       const { items, filterUpdates: newFilter } =
         await this.LoadNextPageFunction(this.filter);
 
+      console.log("items,newFilter", items, newFilter)
+
       if (newFilter) {
         this.filter = {
           ...this.filter,
@@ -551,6 +557,7 @@ export class IndexerPaginationState<
 
       this.SetPageItems([...this.pageItems.value, ...items]);
     } catch (error) {
+      console.log('error', error);
       console.error(error);
     } finally {
       this.isLoading = false;
@@ -581,21 +588,21 @@ export class IndexerPaginationState<
     this.pageItems.setValue(this.pageItems.value.filter((i) => i !== item));
   };
 
-  setIsInit(isInit: boolean) {
+  setIsInit (isInit: boolean) {
     this.isInit = isInit;
   }
 
-  setIsLoading(isLoading: boolean) {
+  setIsLoading (isLoading: boolean) {
     this.isLoading = isLoading;
   }
 }
 
 export class StorageState<T = any, U = any> {
   static storages = {} as Record<string, StorageState>;
-  static register(key: string, storage: StorageState) {
+  static register (key: string, storage: StorageState) {
     StorageState.storages[key] = storage;
   }
-  static async sync() {
+  static async sync () {
     return Promise.all(
       Object.values(StorageState.storages).map(async (storage) => {
         return storage.syncValue();
@@ -618,11 +625,11 @@ export class StorageState<T = any, U = any> {
     makeAutoObservable(this);
   }
 
-  async transformAndSetValue(value: any) {
+  async transformAndSetValue (value: any) {
     await this.setValue(this.transform ? this.transform(value) : value);
   }
 
-  async setValue(value: T | null) {
+  async setValue (value: T | null) {
     this.value = value;
     await localforage.setItem(
       this.key,
@@ -630,7 +637,7 @@ export class StorageState<T = any, U = any> {
     );
   }
 
-  async syncValue() {
+  async syncValue () {
     if (!this.isInit) {
       const storedValue = await localforage.getItem(this.key);
       if (storedValue) {
@@ -650,8 +657,8 @@ export abstract class BaseState {
   constructor() {
     makeAutoObservable(this);
   }
-  refresh() {}
-  init() {
+  refresh () { }
+  init () {
     this.isInit = true;
   }
 }

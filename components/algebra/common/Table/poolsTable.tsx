@@ -38,6 +38,8 @@ interface PoolsTableProps<TData, TValue> {
   showPagination?: boolean;
   searchID?: string;
   loading?: boolean;
+  sorting: any;
+  setSorting: any;
 }
 
 const PoolsTable = <TData, TValue>({
@@ -45,9 +47,10 @@ const PoolsTable = <TData, TValue>({
   data,
   action,
   link,
-  defaultSortingID,
   showPagination = true,
   loading,
+  sorting,
+  setSorting,
 }: PoolsTableProps<TData, TValue>) => {
   const [selectedFilter, setSelectedFilter] = useState<string>("trending");
 
@@ -58,26 +61,23 @@ const PoolsTable = <TData, TValue>({
     { key: "myPools", label: "My Pools" },
   ];
 
-  const [sorting, setSorting] = useState<SortingState>(
-    defaultSortingID ? [{ id: defaultSortingID, desc: true }] : []
-  );
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: showPagination ? getPaginationRowModel() : undefined,
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
+    filterFns: {},
     state: {
-      sorting,
       columnFilters,
     },
-    globalFilterFn: (row: any, _, value: boolean | undefined) =>
-      row.original.isMyPool === value,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(), //client side filtering
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    debugTable: true,
+    debugHeaders: true,
+    debugColumns: false,
   });
 
   const searchID = "pair";
@@ -180,101 +180,107 @@ const PoolsTable = <TData, TValue>({
         </div>
       )}
       {/* FIXME: border radius display */}
-      <HoneyContainer>
-        <Table className="rounded-[30px]">
-          <TableHeader className="[&_tr]:border-b border-black [&_tr]:border-opacity-30  border-opacity-60  border-y-3">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                key={headerGroup.id}
-                className="hover:bg-transparent border-black"
-              >
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    className="rounded-xl text-white font-semibold [&_svg]:mt-auto"
-                  >
+      <Table className="bg-[#271A0C] rounded-[30px]">
+        <TableHeader className="[&_tr]:border-b border-[#D9D7E4]/5 [&_tr]:border-opacity-30 border-t border-opacity-60">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow
+              key={headerGroup.id}
+              className="hover:bg-transparent border-[#D9D7E4]/5"
+            >
+              {headerGroup.headers.map((header) => (
+                <TableHead
+                  onClick={header.column.getToggleSortingHandler()}
+                  key={header.id}
+                  className={`rounded-xl text-white font-semibold [&_svg]:mt-auto ${
+                    header.column.getCanSort()
+                      ? "cursor-pointer select-none"
+                      : ""
+                  }`}
+                >
+                  <div className="flex items-center">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
                           header.getContext()
                         )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody className="hover:bg-transparent text-[16px]">
-            {!table.getRowModel().rows.length ? (
-              <TableRow className="hover:bg-card border-white h-full">
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
+                    {{
+                      asc: " 🔼",
+                      desc: " 🔽",
+                    }[header.column.getIsSorted() as string] ?? null}
+                  </div>
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody className="hover:bg-transparent text-[16px]">
+          {!table.getRowModel().rows.length ? (
+            <TableRow className="hover:bg-card border-[#D9D7E4]/5 h-full">
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                No results.
+              </TableCell>
+            </TableRow>
+          ) : (
+            table.getRowModel().rows.map((row: any) => {
+              return (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className="border-card-border/40 bg-card-dark hover:bg-card-hover cursor-pointer border-[#D9D7E4]/5"
+                  onClick={() => {
+                    if (action) {
+                      action(row.original.id);
+                    } else if (link) {
+                      //navigate(`/${link}/${row.original.id}`);
+                      window.location.href = `/${link}/${row.original.id}`;
+                    }
+                  }}
                 >
-                  No results.
-                </TableCell>
-              </TableRow>
-            ) : (
-              table.getRowModel().rows.map((row: any) => {
-                return (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    className="border-card-border/40 bg-card-dark hover:bg-card-hover cursor-pointer border-black hover:bg-black"
-                    onClick={() => {
-                      if (action) {
-                        action(row.original.id);
-                      } else if (link) {
-                        //navigate(`/${link}/${row.original.id}`);
-                        window.location.href = `/${link}/${row.original.id}`;
-                      }
-                    }}
-                  >
-                    {row.getVisibleCells().map((cell: any) => (
-                      <TableCell
-                        key={cell.id}
-                        className="text-left min-w-[120px] first:min-w-[320px]"
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
-        {showPagination && (
-          <div className="flex items-center justify-end space-x-2 px-4 mt-2 text-white">
-            {totalRows > 0 && (
-              <p className="mr-2">
-                {startsFromRow === totalRows
-                  ? `${startsFromRow} of ${totalRows}`
-                  : `${startsFromRow} - ${endsAtRow} of ${totalRows}`}
-              </p>
-            )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
-          </div>
-        )}
-      </HoneyContainer>
+                  {row.getVisibleCells().map((cell: any) => (
+                    <TableCell
+                      key={cell.id}
+                      className="text-left min-w-[120px] first:min-w-[320px]"
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
+          )}
+        </TableBody>
+      </Table>
+      {showPagination && (
+        <div className="flex items-center justify-end space-x-2 px-4 mt-2">
+          {totalRows > 0 && (
+            <p className="mr-2">
+              {startsFromRow === totalRows
+                ? `${startsFromRow} of ${totalRows}`
+                : `${startsFromRow} - ${endsAtRow} of ${totalRows}`}
+            </p>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
