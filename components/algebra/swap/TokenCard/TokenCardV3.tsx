@@ -448,7 +448,8 @@ const TokenCardV3 = ({
                     "opacity-70",
                     "hover:opacity-100",
                     "!text-black",
-                    "!p-0"
+                    "!p-0",
+                    "end-0 start-auto"
                   ),
                 }}
                 placeholder="0.0"
