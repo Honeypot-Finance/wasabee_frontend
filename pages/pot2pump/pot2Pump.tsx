@@ -50,8 +50,8 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             id="filter"
             className="flex flex-col sm:flex-row items-center gap-2 my-4 sm:my-0"
           >
-            <WrappedNextInputSearchBar
-              value={filters.search}
+            {/* <WrappedNextInputSearchBar
+              value={filters}
               placeholder="Search by token name, symbol or address"
               className="border border-[#FFCD4D] shadow-[1px_2px_0px_0px_#9B7D2F] placeholder:text-xs"
               onChange={(e) => {
@@ -83,7 +83,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                   });
                 }
               }}
-            />
+            /> */}
           </div>
         </div>
 
