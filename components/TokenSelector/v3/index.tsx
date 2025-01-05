@@ -13,7 +13,7 @@ import { IoClose } from "react-icons/io5";
 import { Token } from "@/services/contract/token";
 import { Observer, observer, useLocalObservable } from "mobx-react-lite";
 import { liquidity } from "@/services/liquidity";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { isEthAddress } from "@/lib/address";
 import { Input } from "../../input/index";
 import { SpinnerContainer } from "../../Spinner";
@@ -81,8 +81,6 @@ export const TokenSelector = observer(
       currentAnimationVariant: "initial",
     }));
 
-    const [pot2PumpAddress, setPot2PumpAddress] = useState<string | null>(null);
-
     const animationVariants = {
       dropDownIcon: {
         initial: { y: 0 },
@@ -93,16 +91,7 @@ export const TokenSelector = observer(
     };
 
     useEffect(() => {
-      setPot2PumpAddress(null);
-      if (value) {
-        wallet.contracts.memeFactory.contract.read
-          .getPair([value.address as Address])
-          .then((res) => {
-            if (res != zeroAddress) {
-              setPot2PumpAddress(res);
-            }
-          });
-      }
+      value?.getPot2PumpAddress();
     }, [value]);
 
     useEffect(() => {
@@ -279,9 +268,9 @@ export const TokenSelector = observer(
               <BiLinkExternal className=" cursor-pointer text-[#140E06]" />
             </Link>
             <Copy value={value.address} className="size-4 text-[#140E06]" />
-            {pot2PumpAddress && (
+            {value.pot2pumpAddress && (
               <Tooltip content="This token is launched on Pot2Pump">
-                <Link href={`/launch-detail/${pot2PumpAddress}`}>
+                <Link href={`/launch-detail/${value.pot2pumpAddress}`}>
                   <Image
                     width={16}
                     height={16}

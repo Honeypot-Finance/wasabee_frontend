@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { BaseContract } from ".";
 import { wallet } from "../wallet";
 import { makeAutoObservable } from "mobx";
-import { getContract } from "viem";
+import { Address, getContract, zeroAddress } from "viem";
 import { ContractWrite } from "../utils";
 import { amountFormatted } from "@/lib/format";
 import { ERC20ABI } from "@/lib/abis/erc20";
@@ -61,6 +61,7 @@ export class Token implements BaseContract {
   initialUSD = "";
   totalValueLockedUSD = "";
   poolCount = 0;
+  pot2pumpAddress: Address | undefined | null = undefined;
 
   // determines the order of the token in the list
   get priority() {
@@ -251,6 +252,23 @@ export class Token implements BaseContract {
       return;
     }
     await this.approve.call([spender as `0x${string}`, BigInt(amount)]);
+  }
+
+  async getPot2PumpAddress() {
+    if (this.pot2pumpAddress !== undefined) {
+      return this.pot2pumpAddress;
+    }
+    const pot2pumpAddress =
+      await wallet.contracts.memeFactory.contract.read.getPair([
+        this.address as Address,
+      ]);
+
+    if (pot2pumpAddress === zeroAddress) {
+      this.pot2pumpAddress = null;
+      return null;
+    }
+    this.pot2pumpAddress = pot2pumpAddress;
+    return pot2pumpAddress;
   }
 
   async getClaimed(): Promise<boolean> {
