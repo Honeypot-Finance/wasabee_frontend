@@ -14,7 +14,7 @@ import { metadata } from "@/config/metadata";
 import AnnouncementBar from "./AnnouncementBar";
 import Link from "next/link";
 import ChatWidget from "../ServiceChat";
-import Script from 'next/script'
+import Script from "next/script";
 import { Footer } from "./footer";
 import { chatService, presetQuestions, questionTitles } from "@/services/chat";
 
@@ -32,9 +32,7 @@ export const Layout = ({
   useEffect(() => {
     //if its user first time visit, open chat
     const questions = chatService.findRelatedQuestionsByPath(router.pathname);
-    const pageVisited = window.localStorage.getItem(
-      `pageVisited ${router.pathname}`
-    );
+    const pageVisited = window.localStorage.getItem(`pageVisited`);
 
     if (!pageVisited && questions) {
       chatService.clearChat();
@@ -42,7 +40,7 @@ export const Layout = ({
       chatService.agentMessage(
         chatService.getPresetQuestions()[questions[0] as questionTitles].answer
       );
-      window.localStorage.setItem(`pageVisited ${router.pathname}`, "true");
+      window.localStorage.setItem(`pageVisited`, "true");
     }
   }, [router.pathname]);
 

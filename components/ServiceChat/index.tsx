@@ -7,7 +7,7 @@ import { observer } from "mobx-react-lite";
 
 export const ChatWidget = observer(() => {
   return (
-    <div className="z-20">
+    <div className="z-50">
       {chatService.chatIsOpen ? (
         <div className="fixed bottom-0 right-0 w-full sm:w-[450px] md:w-[550px]">
           <CustomerServiceChat />
