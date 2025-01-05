@@ -518,8 +518,8 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 aria-label="advanced"
                 title="Advanced Options"
                 classNames={{
-                  title: "text-white/50 text-sm md:text-base",
-                  trigger: "text-white/50 text-sm md:text-base h-[36px] md:h-[56px] flex items-center",
+                  title: "text-black/50 text-sm md:text-base",
+                  trigger: "h-9 md:h-14 flex items-center",
                   content: "space-y-3",
                 }}
               >
