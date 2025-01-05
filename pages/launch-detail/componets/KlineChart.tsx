@@ -7,12 +7,12 @@ import { RotateCcw } from "lucide-react";
 import { getBaseUrl } from "@/lib/trpc";
 import { strParams } from "@/lib/advancedChart.util";
 import { wallet } from "@/services/wallet";
-import { 
-  TbChartBar, 
-  TbChartCandle, 
-  TbChartLine, 
-  TbChartArea, 
-  TbChartDots, 
+import {
+  TbChartBar,
+  TbChartCandle,
+  TbChartLine,
+  TbChartArea,
+  TbChartDots,
   TbChartHistogram,
   TbChartArcs,
 } from "react-icons/tb";
@@ -66,7 +66,16 @@ interface KlineChartProps {
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 // 添加图表类型定义
-type ChartType = 'Bars' | 'Candles' | 'Line' | 'Area' | 'Heikin Ashi' | 'Hollow Candles' | 'Baseline' | 'High-low' | 'Columns';
+type ChartType =
+  | "Bars"
+  | "Candles"
+  | "Line"
+  | "Area"
+  | "Heikin Ashi"
+  | "Hollow Candles"
+  | "Baseline"
+  | "High-low"
+  | "Columns";
 
 const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
   const [currentInterval, setCurrentInterval] = useState("60");
@@ -74,9 +83,9 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
   const [spinning, setSpinning] = useState(true);
   const [chartWidth, setChartWidth] = useState(200);
   const listener = useRef<any>(null);
-  const [priceType, setPriceType] = useState<'PRICE' | 'MCAP'>('PRICE');
-  const [currencyType, setCurrencyType] = useState<'USD' | 'BERA'>('USD');
-  const [chartType, setChartType] = useState<ChartType>('Candles');
+  const [priceType, setPriceType] = useState<"PRICE" | "MCAP">("PRICE");
+  const [currencyType, setCurrencyType] = useState<"USD" | "BERA">("USD");
+  const [chartType, setChartType] = useState<ChartType>("Candles");
   const [showChartTypeMenu, setShowChartTypeMenu] = useState(false);
   const [showTrades, setShowTrades] = useState(true);
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
@@ -95,127 +104,215 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
   // 添加图表类型选项
   const chartTypes: { type: ChartType; icon: JSX.Element }[] = [
     {
-      type: 'Bars',
+      type: "Bars",
       icon: (
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="20" 
-          height="20" 
-          fill="currentColor" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          fill="currentColor"
           viewBox="0 0 20 20"
         >
-          <path fillRule="evenodd" clipRule="evenodd" d="M6 3.5a.5.5 0 01.5.5v4h2a.5.5 0 010 1h-2v7.5a.5.5 0 01-1 0V14H3a.5.5 0 010-1h2.5V4a.5.5 0 01.5-.5z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M13.5 3.5a.5.5 0 01.5.5v7h2.5a.5.5 0 010 1H14v4.5a.5.5 0 01-1 0v-10h-2a.5.5 0 010-1h2V4a.5.5 0 01.5-.5z" />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M6 3.5a.5.5 0 01.5.5v4h2a.5.5 0 010 1h-2v7.5a.5.5 0 01-1 0V14H3a.5.5 0 010-1h2.5V4a.5.5 0 01.5-.5z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M13.5 3.5a.5.5 0 01.5.5v7h2.5a.5.5 0 010 1H14v4.5a.5.5 0 01-1 0v-10h-2a.5.5 0 010-1h2V4a.5.5 0 01.5-.5z"
+          />
         </svg>
-      )
+      ),
     },
     {
-      type: 'Candles',
+      type: "Candles",
       icon: (
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="20" 
-          height="20" 
-          fill="currentColor" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          fill="currentColor"
           viewBox="0 0 20 20"
         >
-          <path fillRule="evenodd" clipRule="evenodd" d="M3 6a1.5 1.5 0 011.5-1.5h3A1.5 1.5 0 019 6v8a1.5 1.5 0 01-1.5 1.5h-3A1.5 1.5 0 013 14V6zm1.5-.5A.5.5 0 004 6v8a.5.5 0 00.5.5h3A.5.5 0 008 14V6a.5.5 0 00-.5-.5h-3z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M10.5 8A1.5 1.5 0 0112 6.5h3A1.5 1.5 0 0116.5 8v4a1.5 1.5 0 01-1.5 1.5h-3a1.5 1.5 0 01-1.5-1.5V8zm1.5-.5a.5.5 0 00-.5.5v4a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V8a.5.5 0 00-.5-.5h-3z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M6 2.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M13.5 4.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0V5a.5.5 0 01.5-.5z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M13.5 12.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M6 14.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5z" />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M3 6a1.5 1.5 0 011.5-1.5h3A1.5 1.5 0 019 6v8a1.5 1.5 0 01-1.5 1.5h-3A1.5 1.5 0 013 14V6zm1.5-.5A.5.5 0 004 6v8a.5.5 0 00.5.5h3A.5.5 0 008 14V6a.5.5 0 00-.5-.5h-3z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M10.5 8A1.5 1.5 0 0112 6.5h3A1.5 1.5 0 0116.5 8v4a1.5 1.5 0 01-1.5 1.5h-3a1.5 1.5 0 01-1.5-1.5V8zm1.5-.5a.5.5 0 00-.5.5v4a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V8a.5.5 0 00-.5-.5h-3z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M6 2.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M13.5 4.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0V5a.5.5 0 01.5-.5z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M13.5 12.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M6 14.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5z"
+          />
         </svg>
-      )
+      ),
     },
     {
-      type: 'Line',
+      type: "Line",
       icon: (
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="20" 
-          height="20" 
-          fill="currentColor" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          fill="currentColor"
           viewBox="0 0 20 20"
         >
-          <path fillRule="evenodd" clipRule="evenodd" d="M17.79 3.593a.5.5 0 01.117.698L15.257 8h-2.833l-1.066 6.393-4.27-3.202-3.698 4.621a.5.5 0 11-.78-.624l4.302-5.379 3.73 2.798L11.576 7h3.167l2.35-3.29a.5.5 0 01.698-.117z" />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M17.79 3.593a.5.5 0 01.117.698L15.257 8h-2.833l-1.066 6.393-4.27-3.202-3.698 4.621a.5.5 0 11-.78-.624l4.302-5.379 3.73 2.798L11.576 7h3.167l2.35-3.29a.5.5 0 01.698-.117z"
+          />
         </svg>
-      )
+      ),
     },
     {
-      type: 'Area',
-      icon: <TbChartArea size={16} />
+      type: "Area",
+      icon: <TbChartArea size={16} />,
     },
     {
-      type: 'Heikin Ashi',
+      type: "Heikin Ashi",
       icon: (
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="20" 
-          height="20" 
-          fill="currentColor" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          fill="currentColor"
           viewBox="0 0 20 20"
         >
-          <path fillRule="evenodd" clipRule="evenodd" d="M3 7.738a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5v8.184a1.5 1.5 0 01-1.5 1.5h-3a1.5 1.5 0 01-1.5-1.5V7.738zm1.5-.5a.5.5 0 00-.5.5v8.184a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V7.738a.5.5 0 00-.5-.5h-3z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M10.5 5.514a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5v5.316a1.5 1.5 0 01-1.5 1.5h-3a1.5 1.5 0 01-1.5-1.5V5.514zm1.5-.5a.5.5 0 00-.5.5v5.316a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V5.514a.5.5 0 00-.5-.5h-3z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M6 4.014a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M13.5 2.014a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5z" />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M3 7.738a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5v8.184a1.5 1.5 0 01-1.5 1.5h-3a1.5 1.5 0 01-1.5-1.5V7.738zm1.5-.5a.5.5 0 00-.5.5v8.184a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V7.738a.5.5 0 00-.5-.5h-3z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M10.5 5.514a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5v5.316a1.5 1.5 0 01-1.5 1.5h-3a1.5 1.5 0 01-1.5-1.5V5.514zm1.5-.5a.5.5 0 00-.5.5v5.316a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V5.514a.5.5 0 00-.5-.5h-3z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M6 4.014a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M13.5 2.014a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5z"
+          />
         </svg>
-      )
+      ),
     },
     {
-      type: 'Hollow Candles',
+      type: "Hollow Candles",
       icon: (
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="20" 
-          height="20" 
-          fill="currentColor" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          fill="currentColor"
           viewBox="0 0 20 20"
         >
           <path d="M3.5 6a1 1 0 011-1h3a1 1 0 011 1v8a1 1 0 01-1 1h-3a1 1 0 01-1-1V6z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M3 6a1.5 1.5 0 011.5-1.5h3A1.5 1.5 0 019 6v8a1.5 1.5 0 01-1.5 1.5h-3A1.5 1.5 0 013 14V6zm1.5-.5A.5.5 0 004 6v8a.5.5 0 00.5.5h3A.5.5 0 008 14V6a.5.5 0 00-.5-.5h-3z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M10.5 8A1.5 1.5 0 0112 6.5h3A1.5 1.5 0 0116.5 8v4a1.5 1.5 0 01-1.5 1.5h-3a1.5 1.5 0 01-1.5-1.5V8zm1.5-.5a.5.5 0 00-.5.5v4a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V8a.5.5 0 00-.5-.5h-3z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M6 2.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M13.5 4.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0V5a.5.5 0 01.5-.5z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M13.5 12.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M6 14.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5z" />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M3 6a1.5 1.5 0 011.5-1.5h3A1.5 1.5 0 019 6v8a1.5 1.5 0 01-1.5 1.5h-3A1.5 1.5 0 013 14V6zm1.5-.5A.5.5 0 004 6v8a.5.5 0 00.5.5h3A.5.5 0 008 14V6a.5.5 0 00-.5-.5h-3z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M10.5 8A1.5 1.5 0 0112 6.5h3A1.5 1.5 0 0116.5 8v4a1.5 1.5 0 01-1.5 1.5h-3a1.5 1.5 0 01-1.5-1.5V8zm1.5-.5a.5.5 0 00-.5.5v4a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V8a.5.5 0 00-.5-.5h-3z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M6 2.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M13.5 4.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0V5a.5.5 0 01.5-.5z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M13.5 12.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M6 14.5a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5z"
+          />
         </svg>
-      )
+      ),
     },
     {
-      type: 'Baseline',
+      type: "Baseline",
       icon: (
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="20" 
-          height="20" 
-          fill="currentColor" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          fill="currentColor"
           viewBox="0 0 20 20"
         >
-          <path fillRule="evenodd" clipRule="evenodd" d="M12.757 9.468a.5.5 0 11-.951.308l-1.437-4.424-2.296 4.415L6.366 7.59 5.262 9.842a.5.5 0 01-.898-.44L6.17 5.716l1.733 2.212 2.68-5.155 2.174 6.695zm1.26 3.88a.5.5 0 00-.951.31l1.234 3.801 1.59-3.761a.5.5 0 10-.92-.39l-.547 1.292-.406-1.252zm-10.656.375a.5.5 0 00-.898-.44L1.226 15.81a.5.5 0 00.898.44l1.237-2.527zm13.71-3.6a.5.5 0 00.46-.306l1.255-2.97a.5.5 0 00-.921-.39l-1.255 2.97a.5.5 0 00.46.695zm-15.396.94a.5.5 0 000 1h.469a.5.5 0 000-1h-.47zm2.346 0a.5.5 0 000 1h.938a.5.5 0 000-1h-.938zm2.815 0a.5.5 0 000 1h.938a.5.5 0 000-1h-.938zm2.815 0a.5.5 0 000 1h.939a.5.5 0 100-1H9.65zm2.816 0a.5.5 0 000 1h.938a.5.5 0 000-1h-.938zm2.815 0a.5.5 0 100 1h.939a.5.5 0 100-1h-.939zm2.815 0a.5.5 0 000 1h.47a.5.5 0 000-1h-.47z" />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M12.757 9.468a.5.5 0 11-.951.308l-1.437-4.424-2.296 4.415L6.366 7.59 5.262 9.842a.5.5 0 01-.898-.44L6.17 5.716l1.733 2.212 2.68-5.155 2.174 6.695zm1.26 3.88a.5.5 0 00-.951.31l1.234 3.801 1.59-3.761a.5.5 0 10-.92-.39l-.547 1.292-.406-1.252zm-10.656.375a.5.5 0 00-.898-.44L1.226 15.81a.5.5 0 00.898.44l1.237-2.527zm13.71-3.6a.5.5 0 00.46-.306l1.255-2.97a.5.5 0 00-.921-.39l-1.255 2.97a.5.5 0 00.46.695zm-15.396.94a.5.5 0 000 1h.469a.5.5 0 000-1h-.47zm2.346 0a.5.5 0 000 1h.938a.5.5 0 000-1h-.938zm2.815 0a.5.5 0 000 1h.938a.5.5 0 000-1h-.938zm2.815 0a.5.5 0 000 1h.939a.5.5 0 100-1H9.65zm2.816 0a.5.5 0 000 1h.938a.5.5 0 000-1h-.938zm2.815 0a.5.5 0 100 1h.939a.5.5 0 100-1h-.939zm2.815 0a.5.5 0 000 1h.47a.5.5 0 000-1h-.47z"
+          />
         </svg>
-      )
+      ),
     },
     {
-      type: 'High-low',
+      type: "High-low",
       icon: (
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="20" 
-          height="20" 
-          fill="currentColor" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          fill="currentColor"
           viewBox="0 0 20 20"
         >
-          <path fillRule="evenodd" clipRule="evenodd" d="M3 4.475a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5v11.05a1.5 1.5 0 01-1.5 1.5h-3a1.5 1.5 0 01-1.5-1.5V4.475zm1.5-.5a.5.5 0 00-.5.5v11.05a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V4.475a.5.5 0 00-.5-.5h-3z" />
-          <path fillRule="evenodd" clipRule="evenodd" d="M10.5 7.342a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5v5.316a1.5 1.5 0 01-1.5 1.5h-3a1.5 1.5 0 01-1.5-1.5V7.342zm1.5-.5a.5.5 0 00-.5.5v5.316a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V7.342a.5.5 0 00-.5-.5h-3z" />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M3 4.475a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5v11.05a1.5 1.5 0 01-1.5 1.5h-3a1.5 1.5 0 01-1.5-1.5V4.475zm1.5-.5a.5.5 0 00-.5.5v11.05a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V4.475a.5.5 0 00-.5-.5h-3z"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M10.5 7.342a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5v5.316a1.5 1.5 0 01-1.5 1.5h-3a1.5 1.5 0 01-1.5-1.5V7.342zm1.5-.5a.5.5 0 00-.5.5v5.316a.5.5 0 00.5.5h3a.5.5 0 00.5-.5V7.342a.5.5 0 00-.5-.5h-3z"
+          />
         </svg>
-      )
+      ),
     },
     {
-      type: 'Columns',
-      icon: <TbChartHistogram size={16} />
-    }
+      type: "Columns",
+      icon: <TbChartHistogram size={16} />,
+    },
   ];
 
   const initOnReady = useCallback(() => {
@@ -318,12 +415,12 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
           "mainSeriesProperties.candleStyle.barColorsOnPrevClose": true,
           "mainSeriesProperties.haStyle.barColorsOnPrevClose": true,
           "mainSeriesProperties.barStyle.barColorsOnPrevClose": true,
-          "mainSeriesProperties.candleStyle.upColor": "#202020",
-          "mainSeriesProperties.candleStyle.borderUpColor": "#202020",
-          "mainSeriesProperties.candleStyle.downColor": "#202020",
-          "mainSeriesProperties.candleStyle.borderDownColor": "#202020",
-          "mainSeriesProperties.candleStyle.wickUpColor": "#202020",
-          "mainSeriesProperties.candleStyle.wickDownColor": "#202020",
+          "mainSeriesProperties.candleStyle.upColor": "#089981",
+          "mainSeriesProperties.candleStyle.borderUpColor": "#089981",
+          "mainSeriesProperties.candleStyle.downColor": "#F23645",
+          "mainSeriesProperties.candleStyle.borderDownColor": "#F23645",
+          "mainSeriesProperties.candleStyle.wickUpColor": "#089981",
+          "mainSeriesProperties.candleStyle.wickDownColor": "#F23645",
         },
         fullscreen: false,
       });
@@ -332,22 +429,22 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
         setSpinning(false);
         const chart = window.tvWidget.chart();
         chart.priceFormatter().format = formatNumber;
-        
+
         // 设置初始图表类型
         try {
           switch (chartType) {
-            case 'Bars':
+            case "Bars":
               chart.setChartType(0);
               break;
-            case 'Candles':
+            case "Candles":
               chart.setChartType(1);
               break;
             // ... 其他类型
           }
         } catch (error) {
-          console.error('Error setting initial chart type:', error);
+          console.error("Error setting initial chart type:", error);
         }
-        
+
         onReady?.();
       });
     }
@@ -385,88 +482,91 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
         chart.executeActionById("toggleTrades");
         setShowTrades(!showTrades); // 切换状态
       } catch (error) {
-        console.error('Error toggling trades:', error);
+        console.error("Error toggling trades:", error);
       }
     }
   };
 
   const handlePriceMCapClick = () => {
-    const newType = priceType === 'PRICE' ? 'MCAP' : 'PRICE';
+    const newType = priceType === "PRICE" ? "MCAP" : "PRICE";
     setPriceType(newType);
     // 切换价格/市值显示
     if (window.tvWidget) {
       // 将 PRICE 映射为 USD，将 MCAP 映射为 TOKEN
-      chart.setCurrencyCode(newType === 'PRICE' ? 'USD' : 'TOKEN');
+      chart.setCurrencyCode(newType === "PRICE" ? "USD" : "TOKEN");
       initOnReady();
     }
   };
- 
+
   const handleUSDBeraClick = () => {
-    const newType = currencyType === 'USD' ? 'BERA' : 'USD';
+    const newType = currencyType === "USD" ? "BERA" : "USD";
     setCurrencyType(newType);
     if (window.tvWidget) {
-      chart.setCurrencyCode(newType === 'USD' ? 'USD' : 'TOKEN');
+      chart.setCurrencyCode(newType === "USD" ? "USD" : "TOKEN");
       initOnReady();
     }
   };
 
   // 添加切换图表类型的处理函数
   const handleChartTypeChange = (type: ChartType) => {
-    console.log('Changing chart type to:', type); // 添加日志
+    console.log("Changing chart type to:", type); // 添加日志
     setChartType(type);
     setShowChartTypeMenu(false);
-    
+
     if (window.tvWidget) {
       const chart = window.tvWidget.chart();
       try {
         switch (type) {
-          case 'Bars':
+          case "Bars":
             chart.setChartType(0); // 修改类型值
             break;
-          case 'Candles':
+          case "Candles":
             chart.setChartType(1); // 修改类型值
             break;
-          case 'Line':
+          case "Line":
             chart.setChartType(2); // 修改类型值
             break;
-          case 'Area':
+          case "Area":
             chart.setChartType(3); // 修改类型值
             break;
-          case 'Heikin Ashi':
+          case "Heikin Ashi":
             chart.setChartType(8);
             break;
-          case 'Hollow Candles':
+          case "Hollow Candles":
             chart.setChartType(9);
             break;
-          case 'Baseline':
+          case "Baseline":
             chart.setChartType(10);
             break;
-          case 'High-low':
+          case "High-low":
             chart.setChartType(12);
             break;
-          case 'Columns':
+          case "Columns":
             chart.setChartType(13);
             break;
         }
       } catch (error) {
-        console.error('Error setting chart type:', error);
+        console.error("Error setting chart type:", error);
       }
     } else {
-      console.error('TradingView widget not initialized');
+      console.error("TradingView widget not initialized");
     }
   };
 
   // 添加点击外部关闭下拉菜单的处理
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (showChartTypeMenu && !(event.target as Element).closest('.chart-type-dropdown')) {
+      if (
+        showChartTypeMenu &&
+        !(event.target as Element).closest(".chart-type-dropdown")
+      ) {
         setShowChartTypeMenu(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showChartTypeMenu]);
 
@@ -523,18 +623,18 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
         {/* 图表切换按钮 */}
         <div className="h-[20px] mx-1.5 w-[1px] bg-gray-600" />
         <div className="relative chart-type-dropdown">
-          <button 
+          <button
             onClick={() => setShowChartTypeMenu(!showChartTypeMenu)}
             className="px-1.5 py-0.5 text-sm text-[#808080] hover:text-[#FFCD4D] transition-colors flex items-center gap-1 min-w-[32px] justify-center"
           >
             <span className="opacity-60">
-              {chartTypes.find(ct => ct.type === chartType)?.icon}
+              {chartTypes.find((ct) => ct.type === chartType)?.icon}
             </span>
           </button>
-          
+
           {/* 下拉菜单 */}
           {showChartTypeMenu && (
-            <div 
+            <div
               className="absolute top-full left-0 mt-1 bg-[#1E1E1E] border border-gray-700 rounded-md py-1 z-50 min-w-[180px]"
               onClick={(e) => e.stopPropagation()} // 防止点击菜单时关闭
             >
@@ -543,11 +643,13 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
                   key={type}
                   onClick={() => handleChartTypeChange(type)}
                   className={`w-full px-4 py-1.5 flex items-center gap-3 hover:bg-[#2A2A2A] ${
-                    chartType === type ? 'text-[#FFCD4D]' : 'text-[#808080]'
+                    chartType === type ? "text-[#FFCD4D]" : "text-[#808080]"
                   }`}
                 >
                   <span className="opacity-60">{icon}</span>
-                  <span className="flex-1 text-left whitespace-nowrap">{type}</span>
+                  <span className="flex-1 text-left whitespace-nowrap">
+                    {type}
+                  </span>
                 </button>
               ))}
             </div>
@@ -585,7 +687,7 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
             onClick={handleHideTradesClick}
             className="px-1.5 py-0.5 text-sm text-[#808080] hover:text-[#FFCD4D] transition-colors"
           >
-            {showTrades ? 'Hide' : 'Show'} trades
+            {showTrades ? "Hide" : "Show"} trades
           </button>
         </div>
 
@@ -594,7 +696,7 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
         <button
           onClick={handlePriceMCapClick}
           className={`px-1 py-0.5 text-sm transition-colors ${
-            priceType === 'PRICE' ? "text-[#FFCD4D]" : "text-[#808080]"
+            priceType === "PRICE" ? "text-[#FFCD4D]" : "text-[#808080]"
           }`}
         >
           Price
@@ -603,7 +705,7 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
         <button
           onClick={handlePriceMCapClick}
           className={`px-1 py-0.5 text-sm transition-colors ${
-            priceType === 'MCAP' ? "text-[#FFCD4D]" : "text-[#808080]"
+            priceType === "MCAP" ? "text-[#FFCD4D]" : "text-[#808080]"
           }`}
         >
           MCap
@@ -612,7 +714,7 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
         <button
           onClick={handleUSDBeraClick}
           className={`px-1 py-0.5 text-sm transition-colors ${
-            currencyType === 'USD' ? "text-[#FFCD4D]" : "text-[#808080]"
+            currencyType === "USD" ? "text-[#FFCD4D]" : "text-[#808080]"
           }`}
         >
           USD
@@ -621,7 +723,7 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
         <button
           onClick={handleUSDBeraClick}
           className={`px-1 py-0.5 text-sm transition-colors ${
-            currencyType === 'BERA' ? "text-[#FFCD4D]" : "text-[#808080]"
+            currencyType === "BERA" ? "text-[#FFCD4D]" : "text-[#808080]"
           }`}
         >
           BERA
@@ -676,7 +778,11 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
                 </svg>
               </button>
             </div>
-            <img src={screenshotUrl} alt="Chart Screenshot" className="max-w-full" />
+            <img
+              src={screenshotUrl}
+              alt="Chart Screenshot"
+              className="max-w-full"
+            />
             <div className="mt-4 flex justify-end">
               <a
                 href={screenshotUrl}
