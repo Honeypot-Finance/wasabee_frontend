@@ -10,19 +10,17 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { Button } from "@/components/button/button-next";
 import Pagination from "@/components/Pagination/Pagination";
 import { LaunchCardV3 } from "@/components/LaunchCard/v3/pot2Pump";
-import { Filter, FilterState } from "@/components/pot2pump/FilterModal";
+import { Filter } from "@/components/pot2pump/FilterModal";
 import { Pot2PumpTracker } from "@/components/MemeWarBanner/Pot2PumpTracker";
 import { Pot2PumpPumpingService } from "@/services/launchpad/pot2pump/pot2Pump";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
+import { FilterState } from "@/constants/pot2pump.type";
+import { defaultFilterState } from "@/constants/pot2pump";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pumpingProjects, setPumpingProjects] =
     useState<Pot2PumpPumpingService>();
-  const [filters, setFilters] = useState<FilterState>({
-    search: "",
-    tvl: { min: "", max: "" },
-    participants: { min: "", max: "" },
-  });
+  const [filters, setFilters] = useState<FilterState>(defaultFilterState);
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -52,8 +50,8 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             id="filter"
             className="flex flex-col sm:flex-row items-center gap-2 my-4 sm:my-0"
           >
-            <WrappedNextInputSearchBar
-              value={filters.search}
+            {/* <WrappedNextInputSearchBar
+              value={filters}
               placeholder="Search by token name, symbol or address"
               className="border border-[#FFCD4D] shadow-[1px_2px_0px_0px_#9B7D2F] placeholder:text-xs"
               onChange={(e) => {
@@ -85,7 +83,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                   });
                 }
               }}
-            />
+            /> */}
           </div>
         </div>
 

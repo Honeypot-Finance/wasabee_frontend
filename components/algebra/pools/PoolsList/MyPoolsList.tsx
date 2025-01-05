@@ -37,10 +37,53 @@ const MyPoolsList = () => {
     if (isLoading || !pools) return [];
 
     return pools.pools.map(
-      ({ id, token0, token1, fee, totalValueLockedUSD, poolDayData }) => {
+      ({
+        id,
+        token0,
+        token1,
+        fee,
+        totalValueLockedUSD,
+        liquidity,
+        poolHourData,
+        poolDayData,
+        poolWeekData,
+        poolMonthData,
+        txCount,
+        volumeUSD,
+        token0Price,
+        createdAtTimestamp,
+      }) => {
         const currentPool = poolDayData[0];
         const lastDate = currentPool ? currentPool.date * 1000 : 0;
         const currentDate = new Date().getTime();
+
+        const changeHour = poolHourData[0]
+          ? poolHourData[1]
+            ? (poolHourData[0].volumeUSD - poolHourData[1].volumeUSD) /
+              poolHourData[1].volumeUSD
+            : 100
+          : "";
+
+        const change24h = poolDayData[0]
+          ? poolDayData[1]
+            ? (poolDayData[0].volumeUSD - poolDayData[1].volumeUSD) /
+              poolDayData[1].volumeUSD
+            : 100
+          : "";
+
+        const changeWeek = poolWeekData[0]
+          ? poolWeekData[1]
+            ? (poolWeekData[0].volumeUSD - poolWeekData[1].volumeUSD) /
+              poolWeekData[1].volumeUSD
+            : 100
+          : "";
+
+        const changeMonth = poolMonthData[0]
+          ? poolMonthData[1]
+            ? (poolMonthData[0].volumeUSD - poolMonthData[1].volumeUSD) /
+              poolMonthData[1].volumeUSD
+            : 100
+          : "";
 
         /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
         const timeDifference = currentDate - lastDate;
@@ -79,6 +122,15 @@ const MyPoolsList = () => {
           avgApr,
           isMyPool: Boolean(openPositions?.length),
           hasActiveFarming: Boolean(activeFarming),
+          createdAtTimestamp,
+          token0Price,
+          changeHour,
+          change24h,
+          changeWeek,
+          changeMonth,
+          txCount,
+          volumeUSD,
+          liquidity,
         };
       }
     );

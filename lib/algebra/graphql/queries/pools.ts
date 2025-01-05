@@ -10,6 +10,18 @@ export const POOL_FRAGMENT = gql`
     token1 {
       ...TokenFields
     }
+    poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
+      ...PoolHourDataFields
+    }
+    poolDayData(first: 100, orderBy: date, orderDirection: desc) {
+      ...PoolDayDataFields
+    }
+    poolWeekData(first: 2, orderBy: week, orderDirection: desc) {
+      ...PoolWeekDataFields
+    }
+    poolMonthData(first: 2, orderBy: month, orderDirection: desc) {
+      ...PoolMonthDataFields
+    }
     sqrtPrice
     liquidity
     tick
@@ -20,12 +32,8 @@ export const POOL_FRAGMENT = gql`
     untrackedFeesUSD
     token0Price
     token1Price
-    poolDayData(first: 100, orderBy: date, orderDirection: desc) {
-      ...PoolDayDataFields
-    }
-    poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
-      ...PoolHourDataFields
-    }
+    txCount
+    createdAtTimestamp
   }
 `;
 
@@ -67,10 +75,42 @@ export const POOL_FEE_DATA_FRAGMENT = gql`
   }
 `;
 
+export const POOL_WEEK_DATA_FRAGMENT = gql`
+  fragment PoolWeekDataFields on PoolWeekData {
+    feesUSD
+    tvlUSD
+    volumeUSD
+    id
+    week
+  }
+`;
+
+export const POOL_MONTH_DATA_FRAGMENT = gql`
+  fragment PoolMonthDataFields on PoolMonthData {
+    feesUSD
+    tvlUSD
+    volumeUSD
+    id
+    month
+  }
+`;
+
 export const POOLS_LIST = gql`
   query PoolsList {
     pools {
       ...PoolFields
+      poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
+        ...PoolHourDataFields
+      }
+      poolDayData(first: 100, orderBy: date, orderDirection: desc) {
+        ...PoolDayDataFields
+      }
+      poolWeekData(first: 2, orderBy: week, orderDirection: desc) {
+        ...PoolWeekDataFields
+      }
+      poolMonthData(first: 2, orderBy: month, orderDirection: desc) {
+        ...PoolMonthDataFields
+      }
     }
   }
 `;

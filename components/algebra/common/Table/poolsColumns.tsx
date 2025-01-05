@@ -17,6 +17,7 @@ import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { ReactNode } from "react";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
+import { locale } from "dayjs";
 
 interface Pair {
   token0: TokenFieldsFragment;
@@ -35,6 +36,27 @@ interface Pool {
   farmApr: number;
   isMyPool: boolean;
   hasActiveFarming: boolean;
+  createdAtTimestamp: number;
+  liquidity: any;
+  token0Price: any;
+  changeHour: any;
+  change24h: any;
+  changeWeek: any;
+  changeMonth: any;
+  txCount: any;
+  volumeUSD: any;
+}
+
+function timeSince(timestamp: number): string {
+  const now = Math.floor(Date.now() / 1000); // Current time in seconds
+  const diff = now - timestamp; // Time difference in seconds
+
+  if (diff < 60) return `${diff}s`; // Seconds
+  if (diff < 3600) return `${Math.floor(diff / 60)}m`; // Minutes
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h`; // Hours
+  if (diff < 2592000) return `${Math.floor(diff / 86400)}d`; // Days
+  if (diff < 31536000) return `${Math.floor(diff / 2592000)}mo`; // Months
+  return `${Math.floor(diff / 31536000)}y`; // Years
 }
 
 const PoolPair = ({ pair, fee }: Pool) => {
@@ -110,6 +132,114 @@ export const AvgAPR = ({
   );
 };
 
+// export const poolsColumns: ColumnDef<Pool>[] = [
+//   {
+//     accessorKey: "pair",
+//     header: () => <HeaderItem className="ml-2">Pool name</HeaderItem>,
+//     cell: ({ row }) => <PoolPair {...row.original} />,
+//     filterFn: (v, _, value) =>
+//       [
+//         v.original.pair.token0.symbol,
+//         v.original.pair.token1.symbol,
+//         v.original.pair.token0.name,
+//         v.original.pair.token1.name,
+//       ]
+//         .join(" ")
+//         .toLowerCase()
+//         .includes(value),
+//   },
+//   {
+//     accessorKey: "plugins",
+//     header: () => <HeaderItem>Plugins</HeaderItem>,
+//     cell: ({ row }) => <Plugins poolId={row.original.id} />,
+//     filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
+//   },
+//   {
+//     accessorKey: "tvlUSD",
+//     header: ({ column }) => (
+//       <HeaderItem
+//         sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
+//         isAsc={column.getIsSorted() === "asc"}
+//       >
+//         TVL
+//       </HeaderItem>
+//     ),
+//     cell: ({ getValue }) => formatUSD.format(getValue() as number),
+//   },
+//   {
+//     accessorKey: "volume24USD",
+//     header: ({ column }) => (
+//       <HeaderItem
+//         sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
+//         isAsc={column.getIsSorted() === "asc"}
+//       >
+//         Volume 24H
+//       </HeaderItem>
+//     ),
+//     cell: ({ getValue }) => formatUSD.format(getValue() as number),
+//   },
+//   {
+//     accessorKey: "fees24USD",
+//     header: ({ column }) => (
+//       <HeaderItem
+//         sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
+//         isAsc={column.getIsSorted() === "asc"}
+//       >
+//         Fees 24H
+//       </HeaderItem>
+//     ),
+//     cell: ({ getValue }) => formatUSD.format(getValue() as number),
+//   },
+//   {
+//     accessorKey: "avgApr",
+//     header: ({ column }) => (
+//       <HeaderItem
+//         sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
+//         isAsc={column.getIsSorted() === "asc"}
+//       >
+//         Avg. APR
+//       </HeaderItem>
+//     ),
+//     cell: ({ getValue, row }) => {
+//       return (
+//         <AvgAPR
+//           avgApr={formatPercent.format(row.original.poolAvgApr / 100)}
+//           maxApr={formatPercent.format(row.original.poolMaxApr / 100)}
+//           farmApr={
+//             row.original.hasActiveFarming
+//               ? formatPercent.format(row.original.farmApr / 100)
+//               : undefined
+//           }
+//         >
+//           {formatPercent.format((getValue() as number) / 100)}
+//         </AvgAPR>
+//       );
+//     },
+//   },
+// {
+//   accessorKey: "actions",
+//   header: () => <></>,
+//   cell: () => {
+//     return (
+//       <div className="space-x-2">
+//         <button
+//           className="border border-[#E18A20]/40 text-black rounded-lg shrink-0 p-2.5"
+//           style={{
+//             background:
+//               "var(--f-7931-a-2-paints, linear-gradient(180deg, rgba(232, 211, 124, 0.13) 33.67%, #FCD729 132.5%), #F7931A)",
+//           }}
+//         >
+//           Add
+//         </button>
+//         <button className="border border-[#E18A20]/40 bg-[#E18A20]/40 text-white rounded-lg p-2.5 shrink-0">
+//           Remove
+//         </button>
+//       </div>
+//     );
+//   },
+// },
+//];
+
 export const poolsColumns: ColumnDef<Pool>[] = [
   {
     accessorKey: "pair",
@@ -127,93 +257,106 @@ export const poolsColumns: ColumnDef<Pool>[] = [
         .includes(value),
   },
   {
-    accessorKey: "plugins",
-    header: () => <HeaderItem>Plugins</HeaderItem>,
-    cell: ({ row }) => <Plugins poolId={row.original.id} />,
-    filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
+    accessorKey: "token0Price",
+    id: "token0Price",
+    header: () => <HeaderItem className="uppercase">Price</HeaderItem>,
+    cell: ({ row }) => {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(row.original.token0Price);
+    },
   },
   {
-    accessorKey: "tvlUSD",
-    header: ({ column }) => (
-      <HeaderItem
-        sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        isAsc={column.getIsSorted() === "asc"}
-      >
-        TVL
-      </HeaderItem>
-    ),
-    cell: ({ getValue }) => formatUSD.format(getValue() as number),
+    accessorKey: "createdAtTimestamp",
+    header: () => <HeaderItem className="uppercase">Age</HeaderItem>,
+    cell: ({ row }) => timeSince(row?.original?.createdAtTimestamp ?? 0),
   },
   {
-    accessorKey: "volume24USD",
-    header: ({ column }) => (
-      <HeaderItem
-        sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        isAsc={column.getIsSorted() === "asc"}
-      >
-        Volume 24H
-      </HeaderItem>
-    ),
-    cell: ({ getValue }) => formatUSD.format(getValue() as number),
+    accessorKey: "txCount",
+    header: () => <HeaderItem className="uppercase">txns</HeaderItem>,
+    cell: ({ row }) => row.original.txCount,
   },
   {
-    accessorKey: "fees24USD",
-    header: ({ column }) => (
-      <HeaderItem
-        sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        isAsc={column.getIsSorted() === "asc"}
-      >
-        Fees 24H
-      </HeaderItem>
+    accessorKey: "volumeUSD",
+    header: () => <HeaderItem className="uppercase">volumn</HeaderItem>,
+    cell: ({ row }) => (
+      <span>
+        {new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(row?.original?.volumeUSD)}
+      </span>
     ),
-    cell: ({ getValue }) => formatUSD.format(getValue() as number),
   },
   {
-    accessorKey: "avgApr",
-    header: ({ column }) => (
-      <HeaderItem
-        sort={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        isAsc={column.getIsSorted() === "asc"}
-      >
-        Avg. APR
-      </HeaderItem>
-    ),
-    cell: ({ getValue, row }) => {
+    accessorKey: "changeHour",
+    header: () => <HeaderItem className="uppercase">hour</HeaderItem>,
+    cell: ({ row }) => {
       return (
-        <AvgAPR
-          avgApr={formatPercent.format(row.original.poolAvgApr / 100)}
-          maxApr={formatPercent.format(row.original.poolMaxApr / 100)}
-          farmApr={
-            row.original.hasActiveFarming
-              ? formatPercent.format(row.original.farmApr / 100)
-              : undefined
-          }
+        <span
+          style={{ color: row.original.changeHour > 0 ? "#48bb78" : "#F56565" }}
         >
-          {formatPercent.format((getValue() as number) / 100)}
-        </AvgAPR>
+          {row.original.changeHour}%
+        </span>
       );
     },
   },
-  // {
-  //   accessorKey: "actions",
-  //   header: () => <></>,
-  //   cell: () => {
-  //     return (
-  //       <div className="space-x-2">
-  //         <button
-  //           className="border border-[#E18A20]/40 text-black rounded-lg shrink-0 p-2.5"
-  //           style={{
-  //             background:
-  //               "var(--f-7931-a-2-paints, linear-gradient(180deg, rgba(232, 211, 124, 0.13) 33.67%, #FCD729 132.5%), #F7931A)",
-  //           }}
-  //         >
-  //           Add
-  //         </button>
-  //         <button className="border border-[#E18A20]/40 bg-[#E18A20]/40 text-white rounded-lg p-2.5 shrink-0">
-  //           Remove
-  //         </button>
-  //       </div>
-  //     );
-  //   },
-  // },
+  {
+    accessorKey: "change24h",
+    header: () => <HeaderItem className="uppercase">24h</HeaderItem>,
+    cell: ({ row }) => {
+      return (
+        <span
+          style={{ color: row.original.change24h > 0 ? "#48bb78" : "#F56565" }}
+        >
+          {row.original.change24h}%
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "changeWeek",
+    header: () => <HeaderItem className="uppercase">Week</HeaderItem>,
+    cell: ({ row }) => {
+      return (
+        <span
+          style={{ color: row.original.changeWeek > 0 ? "#48bb78" : "#F56565" }}
+        >
+          {row.original.changeWeek}%
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "changeMonth",
+    header: () => <HeaderItem className="uppercase">Month</HeaderItem>,
+    cell: ({ row }) => {
+      return (
+        <span
+          style={{
+            color: row.original.changeMonth > 0 ? "#48bb78" : "#F56565",
+          }}
+        >
+          {row.original.changeMonth}%
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "liquidity",
+    header: () => <HeaderItem className="uppercase">liquidity</HeaderItem>,
+    cell: ({ row }) => row.original.liquidity,
+  },
+  {
+    accessorKey: "pair.token0.marketCap",
+    header: () => <HeaderItem className="uppercase">marktet cap</HeaderItem>,
+    cell: ({ row }) => row.original.pair.token0.marketCap,
+  },
 ];
+
+//for hours gain maybe change it to weekly monthly yearly as in our subgraph
