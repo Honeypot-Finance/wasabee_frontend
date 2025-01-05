@@ -17,16 +17,17 @@ import { Trigger } from "@/components/Trigger";
 
 // 在组件外部定义常量
 const POT_TABS = {
-  NEW: 'New POTs',
-  ALMOST: 'Almost',
-  MOON: 'Moon 🚀'
+  NEW: "New POTs",
+  ALMOST: "Almost",
+  MOON: "Moon 🚀",
 } as const;
 
-type TabType = typeof POT_TABS[keyof typeof POT_TABS];
+type TabType = (typeof POT_TABS)[keyof typeof POT_TABS];
 
 const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   const [newTokens, setNewTokens] = useState<MemePairContract[]>();
-  const [nearSuccessTokens, setNearSuccessTokens] = useState<MemePairContract[]>();
+  const [nearSuccessTokens, setNearSuccessTokens] =
+    useState<MemePairContract[]>();
   const [highPriceTokens, setHighPriceTokens] = useState<MemePairContract[]>();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [activeTab, setActiveTab] = useState<TabType>(POT_TABS.NEW);
@@ -46,6 +47,8 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
       setNearSuccessTokens(nearSuccessData);
       setHighPriceTokens(highPriceData);
     };
+
+    fetchData();
 
     const fetchInterval = setInterval(() => {
       fetchData();
@@ -125,7 +128,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
       </div>
       <div className="w-full max-w-[1200px] bg-[#FFCD4D] rounded-2xl px-2 md:px-4 relative pt-4 md:pt-12 mb-[90px] text-black">
         <div className="bg-[url('/images/pumping/outline-border.png')] bg-left-top bg-contain bg-repeat-x h-4 md:h-12 absolute top-0 left-0 w-full rounded-t-2xl"></div>
-        
+
         {/* Mobile Trigger */}
         <div className="md:hidden absolute -top-8 left-1/2 -translate-x-1/2 w-[calc(100%-32px)] z-10">
           <Trigger
@@ -147,13 +150,10 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
               </h2>
               <div className="flex flex-col gap-8 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                 {newTokens?.map((pot2pump, index) => (
-                  <motion.div 
-                    key={index} 
-                    variants={itemPopUpVariants} 
-                  >
-                    <LaunchCardV3 
-                      type="simple" 
-                      pair={pot2pump} 
+                  <motion.div key={index} variants={itemPopUpVariants}>
+                    <LaunchCardV3
+                      type="simple"
+                      pair={pot2pump}
                       action={<></>}
                     />
                   </motion.div>
@@ -167,13 +167,10 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
               </h2>
               <div className="flex flex-col gap-8 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                 {nearSuccessTokens?.map((pot2pump, index) => (
-                  <motion.div 
-                    key={index} 
-                    variants={itemPopUpVariants}
-                  >
-                    <LaunchCardV3 
-                      type="simple" 
-                      pair={pot2pump} 
+                  <motion.div key={index} variants={itemPopUpVariants}>
+                    <LaunchCardV3
+                      type="simple"
+                      pair={pot2pump}
                       action={<></>}
                     />
                   </motion.div>
@@ -187,13 +184,10 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
               </h2>
               <div className="flex flex-col gap-8 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                 {highPriceTokens?.map((pot2pump, index) => (
-                  <motion.div 
-                    key={index} 
-                    variants={itemPopUpVariants}
-                  >
-                    <LaunchCardV3 
-                      type="simple" 
-                      pair={pot2pump} 
+                  <motion.div key={index} variants={itemPopUpVariants}>
+                    <LaunchCardV3
+                      type="simple"
+                      pair={pot2pump}
                       action={<></>}
                     />
                   </motion.div>
@@ -208,13 +202,10 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
               {activeTab === POT_TABS.NEW && (
                 <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                   {newTokens?.map((pot2pump, index) => (
-                    <motion.div 
-                      key={index} 
-                      variants={itemPopUpVariants}
-                    >
-                      <LaunchCardV3 
-                        type="simple" 
-                        pair={pot2pump} 
+                    <motion.div key={index} variants={itemPopUpVariants}>
+                      <LaunchCardV3
+                        type="simple"
+                        pair={pot2pump}
                         action={<></>}
                       />
                     </motion.div>
@@ -225,13 +216,10 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
               {activeTab === POT_TABS.ALMOST && (
                 <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                   {nearSuccessTokens?.map((pot2pump, index) => (
-                    <motion.div 
-                      key={index} 
-                      variants={itemPopUpVariants}
-                    >
-                      <LaunchCardV3 
-                        type="simple" 
-                        pair={pot2pump} 
+                    <motion.div key={index} variants={itemPopUpVariants}>
+                      <LaunchCardV3
+                        type="simple"
+                        pair={pot2pump}
                         action={<></>}
                       />
                     </motion.div>
@@ -242,13 +230,10 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
               {activeTab === POT_TABS.MOON && (
                 <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                   {highPriceTokens?.map((pot2pump, index) => (
-                    <motion.div 
-                      key={index} 
-                      variants={itemPopUpVariants}
-                    >
-                      <LaunchCardV3 
-                        type="simple" 
-                        pair={pot2pump} 
+                    <motion.div key={index} variants={itemPopUpVariants}>
+                      <LaunchCardV3
+                        type="simple"
+                        pair={pot2pump}
                         action={<></>}
                       />
                     </motion.div>
