@@ -225,7 +225,7 @@ const MyPoolsTable = <TData, TValue>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    className="border-card-border/40 bg-card-dark hover:bg-card-hover cursor-pointer border-black hover:bg-black"
+                    className="border-card-border/40 bg-card-dark  cursor-pointer border-black hover:bg-white"
                     onClick={() => {
                       if (action) {
                         action(row.original.id);

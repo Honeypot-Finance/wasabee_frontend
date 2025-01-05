@@ -216,7 +216,7 @@ const PoolsTable = <TData, TValue>({
           </TableHeader>
           <TableBody className="hover:bg-transparent text-[16px]">
             {!table.getRowModel().rows.length ? (
-              <TableRow className="hover:bg-card border-white h-full">
+              <TableRow className="hover:bg-white border-white h-full">
                 <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center"
@@ -229,7 +229,7 @@ const PoolsTable = <TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="border-card-border/40 bg-card-dark hover:bg-card-hover cursor-pointer border-black hover:bg-black"
+                  className="border-card-border/40 bg-card-dark hover:bg-white cursor-pointer border-black"
                   onClick={() => {
                     if (action) {
                       action(row.original.id);
