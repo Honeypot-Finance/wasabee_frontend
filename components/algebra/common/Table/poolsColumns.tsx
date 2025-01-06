@@ -288,7 +288,7 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   // },
   {
     accessorKey: "volumeUSD",
-    header: () => <HeaderItem className="uppercase">Total Volumn</HeaderItem>,
+    header: () => <HeaderItem className="uppercase">Total Volume</HeaderItem>,
     cell: ({ row }) => (
       <span>
         {new Intl.NumberFormat("en-US", {
@@ -302,7 +302,7 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   },
   {
     accessorKey: "volume24USD",
-    header: () => <HeaderItem className="uppercase">24h Volumn</HeaderItem>,
+    header: () => <HeaderItem className="uppercase">24h Volume</HeaderItem>,
     cell: ({ row }) => (
       <span>
         {new Intl.NumberFormat("en-US", {
