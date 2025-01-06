@@ -13022,16 +13022,6 @@ export type MintQueryVariables = Exact<{
 
 export type MintQuery = { __typename?: 'Query', mints: Array<{ __typename?: 'Mint', id: string }> };
 
-export type Pot2PumpTransactionsQueryVariables = Exact<{
-  first?: InputMaybe<Scalars['Int']['input']>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  pot2pumpAddress?: InputMaybe<Scalars['Bytes']['input']>;
-  launchTokenAddress?: InputMaybe<Scalars['ID']['input']>;
-}>;
-
-
-export type Pot2PumpTransactionsQuery = { __typename?: 'Query', transactions: Array<{ __typename?: 'Transaction', id: string, timestamp: any, type: TransactionType, gasLimit: any, gasPrice: any, blockNumber: any, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, mints: Array<{ __typename?: 'Mint', id: string }>, burns: Array<{ __typename?: 'Burn', id: string }>, swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', id: string }, token1: { __typename?: 'Token', id: string } }>, flashed: Array<{ __typename?: 'Flash', id: string }>, collects: Array<{ __typename?: 'Collect', id: string }>, depositRaisedTokens: Array<{ __typename?: 'DepositRaisedToken', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress?: any | null, transaction: { __typename?: 'Transaction', id: string } }>, refunds: Array<{ __typename?: 'Refund', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }>, claimLps: Array<{ __typename?: 'ClaimLp', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }> }> };
-
 export type VaultsSortedByHoldersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -15021,55 +15011,6 @@ export type MintQueryHookResult = ReturnType<typeof useMintQuery>;
 export type MintLazyQueryHookResult = ReturnType<typeof useMintLazyQuery>;
 export type MintSuspenseQueryHookResult = ReturnType<typeof useMintSuspenseQuery>;
 export type MintQueryResult = Apollo.QueryResult<MintQuery, MintQueryVariables>;
-export const Pot2PumpTransactionsDocument = gql`
-    query Pot2PumpTransactions($first: Int, $skip: Int, $pot2pumpAddress: Bytes, $launchTokenAddress: ID) {
-  transactions(
-    where: {type_in: [DEPOSIT, SWAP], or: [{swaps_: {token0_: {id: $launchTokenAddress}}}, {swaps_: {token1_: {id: $launchTokenAddress}}}, {depositRaisedTokens_: {poolAddress: $pot2pumpAddress}}]}
-    first: $first
-    skip: $skip
-    orderBy: timestamp
-    orderDirection: desc
-  ) {
-    ...TransactionFields
-  }
-}
-    ${TransactionFieldsFragmentDoc}`;
-
-/**
- * __usePot2PumpTransactionsQuery__
- *
- * To run a query within a React component, call `usePot2PumpTransactionsQuery` and pass it any options that fit your needs.
- * When your component renders, `usePot2PumpTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePot2PumpTransactionsQuery({
- *   variables: {
- *      first: // value for 'first'
- *      skip: // value for 'skip'
- *      pot2pumpAddress: // value for 'pot2pumpAddress'
- *      launchTokenAddress: // value for 'launchTokenAddress'
- *   },
- * });
- */
-export function usePot2PumpTransactionsQuery(baseOptions?: Apollo.QueryHookOptions<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>(Pot2PumpTransactionsDocument, options);
-      }
-export function usePot2PumpTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>(Pot2PumpTransactionsDocument, options);
-        }
-export function usePot2PumpTransactionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>(Pot2PumpTransactionsDocument, options);
-        }
-export type Pot2PumpTransactionsQueryHookResult = ReturnType<typeof usePot2PumpTransactionsQuery>;
-export type Pot2PumpTransactionsLazyQueryHookResult = ReturnType<typeof usePot2PumpTransactionsLazyQuery>;
-export type Pot2PumpTransactionsSuspenseQueryHookResult = ReturnType<typeof usePot2PumpTransactionsSuspenseQuery>;
-export type Pot2PumpTransactionsQueryResult = Apollo.QueryResult<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>;
 export const VaultsSortedByHoldersDocument = gql`
     query VaultsSortedByHolders {
   ichiVaults(first: 100, orderBy: holdersCount, orderDirection: desc) {
