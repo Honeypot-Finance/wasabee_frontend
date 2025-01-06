@@ -281,11 +281,11 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   //   header: () => <HeaderItem className="uppercase">Age</HeaderItem>,
   //   cell: ({ row }) => timeSince(row?.original?.createdAtTimestamp ?? 0),
   // },
-  {
-    accessorKey: "txCount",
-    header: () => <HeaderItem className="uppercase">txns</HeaderItem>,
-    cell: ({ row }) => row.original.txCount,
-  },
+  // {
+  //   accessorKey: "txCount",
+  //   header: () => <HeaderItem className="uppercase">txns</HeaderItem>,
+  //   cell: ({ row }) => row.original.txCount,
+  // },
   {
     accessorKey: "volumeUSD",
     header: () => <HeaderItem className="uppercase">Total Volumn</HeaderItem>,
@@ -314,21 +314,21 @@ export const poolsColumns: ColumnDef<Pool>[] = [
       </span>
     ),
   },
-  {
-    accessorKey: "changeHour",
-    header: () => (
-      <HeaderItem className="uppercase">Vol Hour Change</HeaderItem>
-    ),
-    cell: ({ row }) => {
-      return (
-        <span
-          style={{ color: row.original.changeHour > 0 ? "#48bb78" : "#F56565" }}
-        >
-          {formatAmount(row.original.changeHour, 2)}%
-        </span>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "changeHour",
+  //   header: () => (
+  //     <HeaderItem className="uppercase">Vol Hour Change</HeaderItem>
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{ color: row.original.changeHour > 0 ? "#48bb78" : "#F56565" }}
+  //       >
+  //         {formatAmount(row.original.changeHour, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "change24h",
     header: () => <HeaderItem className="uppercase">Vol Change 24h</HeaderItem>,
