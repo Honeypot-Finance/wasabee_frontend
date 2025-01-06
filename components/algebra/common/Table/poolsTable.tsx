@@ -10,7 +10,6 @@ import {
 import {
   ColumnDef,
   ColumnFiltersState,
-  SortingState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -18,16 +17,16 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoadingState } from "./loadingState";
-import { Input } from "@/components/algebra/ui/input";
 import { Search, Plus, LayoutGrid } from "lucide-react";
 import { Switch } from "@/components/algebra/ui/switch";
-import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
+import { Modal, ModalContent, ModalBody } from "@nextui-org/react";
 import CreatePoolForm from "../../create-pool/CreatePoolForm";
 import { cn } from "@/lib/tailwindcss";
 import { HoneyContainer } from "@/components/CardContianer/HoneyContainer";
 import { popmodal } from "@/services/popmodal";
+import { Pool } from "./poolsColumns";
 
 interface PoolsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -61,10 +60,12 @@ const PoolsTable = <TData, TValue>({
     { key: "myPools", label: "My Pools" },
   ];
 
+  const [tableData, setTableData] = useState<Pool[]>(data as Pool[]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [search, setSearch] = useState("");
 
   const table = useReactTable({
-    data,
+    data: tableData as TData[],
     columns,
     filterFns: {},
     state: {
@@ -91,6 +92,33 @@ const PoolsTable = <TData, TValue>({
     startsFromRow + table.getState().pagination.pageSize - 1,
     totalRows
   );
+
+  useEffect(() => {
+    const timerID = setTimeout(() => {
+      if (search) {
+        setTableData((prev) =>
+          prev.filter((data) => {
+            return (
+              data?.id?.includes(search) ||
+              data?.pair?.token0?.symbol?.toLowerCase()?.includes(search) ||
+              data?.pair?.token1?.symbol?.toLowerCase()?.includes(search) ||
+              data?.pair?.token1?.name?.toLowerCase()?.includes(search) ||
+              data?.pair?.token1?.name?.toLowerCase()?.includes(search) ||
+              data?.pair?.token0?.id?.toLowerCase()?.includes(search) ||
+              data?.pair?.token1?.id?.toLowerCase()?.includes(search)
+            );
+          })
+        );
+      } else {
+        setTableData(data as Pool[]);
+      }
+    }, 500);
+    if (timerID) {
+      return () => clearTimeout(timerID);
+    }
+  }, [data, search]);
+
+  console.log(tableData);
 
   if (loading) return <LoadingState />;
 
@@ -123,14 +151,13 @@ const PoolsTable = <TData, TValue>({
             </div>
             {/* TODO：placeholder text vertical-align: middle */}
             <div className="relative">
-              <Input
+              <input
                 placeholder="Search pool"
-                value={
-                  (table.getColumn(searchID)?.getFilterValue() as string) ?? ""
-                }
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  table.getColumn(searchID)?.setFilterValue(event.target.value)
-                }
+                value={search}
+                type="text"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setSearch(event.target.value);
+                }}
                 className="border border-[#E18A20]/10 bg-[#271A0C] pl-12 pr-4 h-12 w-[353px] focus:border-opacity-100 rounded-2xl placeholder:align-middle"
               />
               <Search

@@ -23,7 +23,7 @@ interface Pair {
   token1: TokenFieldsFragment;
 }
 
-interface Pool {
+export interface Pool {
   id: Address;
   pair: Pair;
   fee: number;
