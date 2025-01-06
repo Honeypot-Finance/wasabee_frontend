@@ -1,5 +1,17 @@
-import { gql } from "@apollo/client";
 import { infoClient } from ".";
+import {
+  SwapsQuery,
+  SwapsDocument,
+  SwapsQueryVariables,
+  DepositsQuery,
+  DepositsDocument,
+  DepositsQueryVariables,
+  TransactionsQuery,
+  TransactionsDocument,
+  TransactionsQueryVariables,
+  TransactionType,
+  Transaction,
+} from "../generated/graphql";
 
 type ParticipantTransaction = {
   id: string;
@@ -30,46 +42,59 @@ type TransactionsResponse = {
 
 export async function fetchPot2PumpTransactions(
   pairAddress: string,
+  launchTokenAddress: string,
   page: number = 1,
   pageSize: number = 10
-): Promise<TransactionsResponse> {
+): Promise<{
+  status: string;
+  message: string;
+  data: TransactionsQuery;
+  pageInfo: {
+    hasNextPage: boolean;
+  };
+}> {
   const skip = (page - 1) * pageSize;
 
-  const query = `
-    query GetPot2PumpTransactions {
-      pot2Pump(id: "${pairAddress.toLowerCase()}") {
-        participantTransactionHistorys(
-          first: ${pageSize}
-          skip: ${skip}
-          orderBy: createdAt
-          orderDirection: desc
-        ) {
-          id
-          account {
-            id
-          }
-          depositAmount
-          refundAmount
-          claimLqAmount
-          actionType
-          createdAt
-        }
-      }
-    }
-  `;
-
-  const { data } = await infoClient.query<Pot2PumpTransactions>({
-    query: gql(query),
+  const { data } = await infoClient.query<
+    TransactionsQuery,
+    TransactionsQueryVariables
+  >({
+    query: TransactionsDocument,
+    variables: {
+      where: {
+        or: [
+          {
+            type_in: [TransactionType.Swap, TransactionType.Deposit],
+            swaps_: {
+              token0: launchTokenAddress,
+            },
+          },
+          {
+            type_in: [TransactionType.Swap, TransactionType.Deposit],
+            swaps_: {
+              token1: launchTokenAddress,
+            },
+          },
+          {
+            type_in: [TransactionType.Swap, TransactionType.Deposit],
+            depositRaisedTokens_: {
+              poolAddress: pairAddress,
+            },
+          },
+        ],
+      },
+      first: pageSize,
+      skip,
+    },
     fetchPolicy: "network-only",
   });
 
   return {
     status: "success",
     message: "Success",
-    data: data.pot2Pump.participantTransactionHistorys,
+    data: data,
     pageInfo: {
-      hasNextPage:
-        data.pot2Pump.participantTransactionHistorys.length === pageSize,
+      hasNextPage: data.transactions.length === pageSize,
     },
   };
 }

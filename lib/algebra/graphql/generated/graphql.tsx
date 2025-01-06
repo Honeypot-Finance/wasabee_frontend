@@ -12923,6 +12923,115 @@ export type AllTokensQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type AllTokensQuery = { __typename?: 'Query', tokens: Array<{ __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }> };
 
+export type TransactionFieldsFragment = { __typename?: 'Transaction', id: string, timestamp: any, type: TransactionType, gasLimit: any, gasPrice: any, blockNumber: any, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, mints: Array<{ __typename?: 'Mint', id: string }>, burns: Array<{ __typename?: 'Burn', id: string }>, swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', id: string }, token1: { __typename?: 'Token', id: string } }>, flashed: Array<{ __typename?: 'Flash', id: string }>, collects: Array<{ __typename?: 'Collect', id: string }>, depositRaisedTokens: Array<{ __typename?: 'DepositRaisedToken', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress?: any | null, transaction: { __typename?: 'Transaction', id: string } }>, refunds: Array<{ __typename?: 'Refund', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }>, claimLps: Array<{ __typename?: 'ClaimLp', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }> };
+
+export type SwapFieldsFragment = { __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', id: string }, token1: { __typename?: 'Token', id: string } };
+
+export type DepositRaisedTokenFieldsFragment = { __typename?: 'DepositRaisedToken', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress?: any | null, transaction: { __typename?: 'Transaction', id: string } };
+
+export type RefundFieldsFragment = { __typename?: 'Refund', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } };
+
+export type ClaimLpFieldsFragment = { __typename?: 'ClaimLp', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } };
+
+export type FlashedFieldsFragment = { __typename?: 'Flash', id: string };
+
+export type CollectFieldsFragment = { __typename?: 'Collect', id: string };
+
+export type BurnFieldsFragment = { __typename?: 'Burn', id: string };
+
+export type MintFieldsFragment = { __typename?: 'Mint', id: string };
+
+export type TransactionsQueryVariables = Exact<{
+  where?: InputMaybe<Transaction_Filter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type TransactionsQuery = { __typename?: 'Query', transactions: Array<{ __typename?: 'Transaction', id: string, timestamp: any, type: TransactionType, gasLimit: any, gasPrice: any, blockNumber: any, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, mints: Array<{ __typename?: 'Mint', id: string }>, burns: Array<{ __typename?: 'Burn', id: string }>, swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', id: string }, token1: { __typename?: 'Token', id: string } }>, flashed: Array<{ __typename?: 'Flash', id: string }>, collects: Array<{ __typename?: 'Collect', id: string }>, depositRaisedTokens: Array<{ __typename?: 'DepositRaisedToken', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress?: any | null, transaction: { __typename?: 'Transaction', id: string } }>, refunds: Array<{ __typename?: 'Refund', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }>, claimLps: Array<{ __typename?: 'ClaimLp', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }> }> };
+
+export type SwapsQueryVariables = Exact<{
+  where?: InputMaybe<Swap_Filter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SwapsQuery = { __typename?: 'Query', swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', id: string }, token1: { __typename?: 'Token', id: string } }> };
+
+export type DepositRaisedTokenQueryVariables = Exact<{
+  where?: InputMaybe<DepositRaisedToken_Filter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type DepositRaisedTokenQuery = { __typename?: 'Query', depositRaisedTokens: Array<{ __typename?: 'DepositRaisedToken', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress?: any | null, transaction: { __typename?: 'Transaction', id: string } }> };
+
+export type RefundQueryVariables = Exact<{
+  where?: InputMaybe<Refund_Filter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type RefundQuery = { __typename?: 'Query', refunds: Array<{ __typename?: 'Refund', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }> };
+
+export type ClaimLpQueryVariables = Exact<{
+  where?: InputMaybe<ClaimLp_Filter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type ClaimLpQuery = { __typename?: 'Query', claimLps: Array<{ __typename?: 'ClaimLp', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }> };
+
+export type FlashesQueryVariables = Exact<{
+  where?: InputMaybe<Flash_Filter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type FlashesQuery = { __typename?: 'Query', flashes: Array<{ __typename?: 'Flash', id: string }> };
+
+export type CollectQueryVariables = Exact<{
+  where?: InputMaybe<Collect_Filter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type CollectQuery = { __typename?: 'Query', collects: Array<{ __typename?: 'Collect', id: string }> };
+
+export type BurnQueryVariables = Exact<{
+  where?: InputMaybe<Burn_Filter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type BurnQuery = { __typename?: 'Query', burns: Array<{ __typename?: 'Burn', id: string }> };
+
+export type MintQueryVariables = Exact<{
+  where?: InputMaybe<Mint_Filter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type MintQuery = { __typename?: 'Query', mints: Array<{ __typename?: 'Mint', id: string }> };
+
+export type Pot2PumpTransactionsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  pot2pumpAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  launchTokenAddress?: InputMaybe<Scalars['ID']['input']>;
+}>;
+
+
+export type Pot2PumpTransactionsQuery = { __typename?: 'Query', transactions: Array<{ __typename?: 'Transaction', id: string, timestamp: any, type: TransactionType, gasLimit: any, gasPrice: any, blockNumber: any, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, mints: Array<{ __typename?: 'Mint', id: string }>, burns: Array<{ __typename?: 'Burn', id: string }>, swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', id: string }, token1: { __typename?: 'Token', id: string } }>, flashed: Array<{ __typename?: 'Flash', id: string }>, collects: Array<{ __typename?: 'Collect', id: string }>, depositRaisedTokens: Array<{ __typename?: 'DepositRaisedToken', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress?: any | null, transaction: { __typename?: 'Transaction', id: string } }>, refunds: Array<{ __typename?: 'Refund', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }>, claimLps: Array<{ __typename?: 'ClaimLp', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }> }> };
+
 export type VaultsSortedByHoldersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -13209,6 +13318,138 @@ export const ParticipantFieldsFragmentDoc = gql`
 }
     ${AccountFieldFragmentDoc}
 ${Pot2PumpFieldFragmentDoc}`;
+export const MintFieldsFragmentDoc = gql`
+    fragment MintFields on Mint {
+  id
+}
+    `;
+export const BurnFieldsFragmentDoc = gql`
+    fragment BurnFields on Burn {
+  id
+}
+    `;
+export const SwapFieldsFragmentDoc = gql`
+    fragment SwapFields on Swap {
+  id
+  transaction {
+    id
+  }
+  timestamp
+  pool {
+    id
+  }
+  token0 {
+    id
+  }
+  token1 {
+    id
+  }
+  sender
+  recipient
+  liquidity
+  origin
+  amount0
+  amount1
+  amountUSD
+  price
+  tick
+  logIndex
+}
+    `;
+export const FlashedFieldsFragmentDoc = gql`
+    fragment FlashedFields on Flash {
+  id
+}
+    `;
+export const CollectFieldsFragmentDoc = gql`
+    fragment CollectFields on Collect {
+  id
+}
+    `;
+export const DepositRaisedTokenFieldsFragmentDoc = gql`
+    fragment DepositRaisedTokenFields on DepositRaisedToken {
+  id
+  transaction {
+    id
+  }
+  timestamp
+  amount
+  origin
+  logIndex
+  poolAddress
+}
+    `;
+export const RefundFieldsFragmentDoc = gql`
+    fragment RefundFields on Refund {
+  id
+  transaction {
+    id
+  }
+  timestamp
+  amount
+  origin
+  logIndex
+  poolAddress
+}
+    `;
+export const ClaimLpFieldsFragmentDoc = gql`
+    fragment ClaimLpFields on ClaimLp {
+  id
+  transaction {
+    id
+  }
+  timestamp
+  amount
+  origin
+  logIndex
+  poolAddress
+}
+    `;
+export const TransactionFieldsFragmentDoc = gql`
+    fragment TransactionFields on Transaction {
+  id
+  timestamp
+  type
+  gasLimit
+  gasPrice
+  blockNumber
+  account {
+    ...AccountField
+  }
+  mints {
+    ...MintFields
+  }
+  burns {
+    ...BurnFields
+  }
+  swaps {
+    ...SwapFields
+  }
+  flashed {
+    ...FlashedFields
+  }
+  collects {
+    ...CollectFields
+  }
+  depositRaisedTokens {
+    ...DepositRaisedTokenFields
+  }
+  refunds {
+    ...RefundFields
+  }
+  claimLps {
+    ...ClaimLpFields
+  }
+}
+    ${AccountFieldFragmentDoc}
+${MintFieldsFragmentDoc}
+${BurnFieldsFragmentDoc}
+${SwapFieldsFragmentDoc}
+${FlashedFieldsFragmentDoc}
+${CollectFieldsFragmentDoc}
+${DepositRaisedTokenFieldsFragmentDoc}
+${RefundFieldsFragmentDoc}
+${ClaimLpFieldsFragmentDoc}`;
 export const VaultUserFieldFragmentDoc = gql`
     fragment VaultUserField on Account {
   id
@@ -14396,6 +14637,439 @@ export type AllTokensQueryHookResult = ReturnType<typeof useAllTokensQuery>;
 export type AllTokensLazyQueryHookResult = ReturnType<typeof useAllTokensLazyQuery>;
 export type AllTokensSuspenseQueryHookResult = ReturnType<typeof useAllTokensSuspenseQuery>;
 export type AllTokensQueryResult = Apollo.QueryResult<AllTokensQuery, AllTokensQueryVariables>;
+export const TransactionsDocument = gql`
+    query Transactions($where: Transaction_filter, $first: Int, $skip: Int) {
+  transactions(
+    where: $where
+    first: $first
+    skip: $skip
+    orderBy: timestamp
+    orderDirection: desc
+  ) {
+    ...TransactionFields
+  }
+}
+    ${TransactionFieldsFragmentDoc}`;
+
+/**
+ * __useTransactionsQuery__
+ *
+ * To run a query within a React component, call `useTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionsQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useTransactionsQuery(baseOptions?: Apollo.QueryHookOptions<TransactionsQuery, TransactionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TransactionsQuery, TransactionsQueryVariables>(TransactionsDocument, options);
+      }
+export function useTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionsQuery, TransactionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TransactionsQuery, TransactionsQueryVariables>(TransactionsDocument, options);
+        }
+export function useTransactionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TransactionsQuery, TransactionsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<TransactionsQuery, TransactionsQueryVariables>(TransactionsDocument, options);
+        }
+export type TransactionsQueryHookResult = ReturnType<typeof useTransactionsQuery>;
+export type TransactionsLazyQueryHookResult = ReturnType<typeof useTransactionsLazyQuery>;
+export type TransactionsSuspenseQueryHookResult = ReturnType<typeof useTransactionsSuspenseQuery>;
+export type TransactionsQueryResult = Apollo.QueryResult<TransactionsQuery, TransactionsQueryVariables>;
+export const SwapsDocument = gql`
+    query Swaps($where: Swap_filter, $first: Int, $skip: Int) {
+  swaps(where: $where, first: $first, skip: $skip) {
+    ...SwapFields
+  }
+}
+    ${SwapFieldsFragmentDoc}`;
+
+/**
+ * __useSwapsQuery__
+ *
+ * To run a query within a React component, call `useSwapsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSwapsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSwapsQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useSwapsQuery(baseOptions?: Apollo.QueryHookOptions<SwapsQuery, SwapsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SwapsQuery, SwapsQueryVariables>(SwapsDocument, options);
+      }
+export function useSwapsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SwapsQuery, SwapsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SwapsQuery, SwapsQueryVariables>(SwapsDocument, options);
+        }
+export function useSwapsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SwapsQuery, SwapsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<SwapsQuery, SwapsQueryVariables>(SwapsDocument, options);
+        }
+export type SwapsQueryHookResult = ReturnType<typeof useSwapsQuery>;
+export type SwapsLazyQueryHookResult = ReturnType<typeof useSwapsLazyQuery>;
+export type SwapsSuspenseQueryHookResult = ReturnType<typeof useSwapsSuspenseQuery>;
+export type SwapsQueryResult = Apollo.QueryResult<SwapsQuery, SwapsQueryVariables>;
+export const DepositRaisedTokenDocument = gql`
+    query DepositRaisedToken($where: DepositRaisedToken_filter, $first: Int, $skip: Int) {
+  depositRaisedTokens(where: $where, first: $first, skip: $skip) {
+    ...DepositRaisedTokenFields
+  }
+}
+    ${DepositRaisedTokenFieldsFragmentDoc}`;
+
+/**
+ * __useDepositRaisedTokenQuery__
+ *
+ * To run a query within a React component, call `useDepositRaisedTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDepositRaisedTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDepositRaisedTokenQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useDepositRaisedTokenQuery(baseOptions?: Apollo.QueryHookOptions<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>(DepositRaisedTokenDocument, options);
+      }
+export function useDepositRaisedTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>(DepositRaisedTokenDocument, options);
+        }
+export function useDepositRaisedTokenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>(DepositRaisedTokenDocument, options);
+        }
+export type DepositRaisedTokenQueryHookResult = ReturnType<typeof useDepositRaisedTokenQuery>;
+export type DepositRaisedTokenLazyQueryHookResult = ReturnType<typeof useDepositRaisedTokenLazyQuery>;
+export type DepositRaisedTokenSuspenseQueryHookResult = ReturnType<typeof useDepositRaisedTokenSuspenseQuery>;
+export type DepositRaisedTokenQueryResult = Apollo.QueryResult<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>;
+export const RefundDocument = gql`
+    query Refund($where: Refund_filter, $first: Int, $skip: Int) {
+  refunds(where: $where, first: $first, skip: $skip) {
+    ...RefundFields
+  }
+}
+    ${RefundFieldsFragmentDoc}`;
+
+/**
+ * __useRefundQuery__
+ *
+ * To run a query within a React component, call `useRefundQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRefundQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRefundQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useRefundQuery(baseOptions?: Apollo.QueryHookOptions<RefundQuery, RefundQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RefundQuery, RefundQueryVariables>(RefundDocument, options);
+      }
+export function useRefundLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RefundQuery, RefundQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RefundQuery, RefundQueryVariables>(RefundDocument, options);
+        }
+export function useRefundSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<RefundQuery, RefundQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<RefundQuery, RefundQueryVariables>(RefundDocument, options);
+        }
+export type RefundQueryHookResult = ReturnType<typeof useRefundQuery>;
+export type RefundLazyQueryHookResult = ReturnType<typeof useRefundLazyQuery>;
+export type RefundSuspenseQueryHookResult = ReturnType<typeof useRefundSuspenseQuery>;
+export type RefundQueryResult = Apollo.QueryResult<RefundQuery, RefundQueryVariables>;
+export const ClaimLpDocument = gql`
+    query ClaimLp($where: ClaimLp_filter, $first: Int, $skip: Int) {
+  claimLps(where: $where, first: $first, skip: $skip) {
+    ...ClaimLpFields
+  }
+}
+    ${ClaimLpFieldsFragmentDoc}`;
+
+/**
+ * __useClaimLpQuery__
+ *
+ * To run a query within a React component, call `useClaimLpQuery` and pass it any options that fit your needs.
+ * When your component renders, `useClaimLpQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useClaimLpQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useClaimLpQuery(baseOptions?: Apollo.QueryHookOptions<ClaimLpQuery, ClaimLpQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ClaimLpQuery, ClaimLpQueryVariables>(ClaimLpDocument, options);
+      }
+export function useClaimLpLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ClaimLpQuery, ClaimLpQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ClaimLpQuery, ClaimLpQueryVariables>(ClaimLpDocument, options);
+        }
+export function useClaimLpSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ClaimLpQuery, ClaimLpQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ClaimLpQuery, ClaimLpQueryVariables>(ClaimLpDocument, options);
+        }
+export type ClaimLpQueryHookResult = ReturnType<typeof useClaimLpQuery>;
+export type ClaimLpLazyQueryHookResult = ReturnType<typeof useClaimLpLazyQuery>;
+export type ClaimLpSuspenseQueryHookResult = ReturnType<typeof useClaimLpSuspenseQuery>;
+export type ClaimLpQueryResult = Apollo.QueryResult<ClaimLpQuery, ClaimLpQueryVariables>;
+export const FlashesDocument = gql`
+    query Flashes($where: Flash_filter, $first: Int, $skip: Int) {
+  flashes(where: $where, first: $first, skip: $skip) {
+    ...FlashedFields
+  }
+}
+    ${FlashedFieldsFragmentDoc}`;
+
+/**
+ * __useFlashesQuery__
+ *
+ * To run a query within a React component, call `useFlashesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFlashesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFlashesQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useFlashesQuery(baseOptions?: Apollo.QueryHookOptions<FlashesQuery, FlashesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FlashesQuery, FlashesQueryVariables>(FlashesDocument, options);
+      }
+export function useFlashesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FlashesQuery, FlashesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FlashesQuery, FlashesQueryVariables>(FlashesDocument, options);
+        }
+export function useFlashesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<FlashesQuery, FlashesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<FlashesQuery, FlashesQueryVariables>(FlashesDocument, options);
+        }
+export type FlashesQueryHookResult = ReturnType<typeof useFlashesQuery>;
+export type FlashesLazyQueryHookResult = ReturnType<typeof useFlashesLazyQuery>;
+export type FlashesSuspenseQueryHookResult = ReturnType<typeof useFlashesSuspenseQuery>;
+export type FlashesQueryResult = Apollo.QueryResult<FlashesQuery, FlashesQueryVariables>;
+export const CollectDocument = gql`
+    query Collect($where: Collect_filter, $first: Int, $skip: Int) {
+  collects(where: $where, first: $first, skip: $skip) {
+    ...CollectFields
+  }
+}
+    ${CollectFieldsFragmentDoc}`;
+
+/**
+ * __useCollectQuery__
+ *
+ * To run a query within a React component, call `useCollectQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCollectQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCollectQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useCollectQuery(baseOptions?: Apollo.QueryHookOptions<CollectQuery, CollectQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CollectQuery, CollectQueryVariables>(CollectDocument, options);
+      }
+export function useCollectLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CollectQuery, CollectQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CollectQuery, CollectQueryVariables>(CollectDocument, options);
+        }
+export function useCollectSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CollectQuery, CollectQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CollectQuery, CollectQueryVariables>(CollectDocument, options);
+        }
+export type CollectQueryHookResult = ReturnType<typeof useCollectQuery>;
+export type CollectLazyQueryHookResult = ReturnType<typeof useCollectLazyQuery>;
+export type CollectSuspenseQueryHookResult = ReturnType<typeof useCollectSuspenseQuery>;
+export type CollectQueryResult = Apollo.QueryResult<CollectQuery, CollectQueryVariables>;
+export const BurnDocument = gql`
+    query Burn($where: Burn_filter, $first: Int, $skip: Int) {
+  burns(where: $where, first: $first, skip: $skip) {
+    ...BurnFields
+  }
+}
+    ${BurnFieldsFragmentDoc}`;
+
+/**
+ * __useBurnQuery__
+ *
+ * To run a query within a React component, call `useBurnQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBurnQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBurnQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useBurnQuery(baseOptions?: Apollo.QueryHookOptions<BurnQuery, BurnQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<BurnQuery, BurnQueryVariables>(BurnDocument, options);
+      }
+export function useBurnLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BurnQuery, BurnQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<BurnQuery, BurnQueryVariables>(BurnDocument, options);
+        }
+export function useBurnSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<BurnQuery, BurnQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<BurnQuery, BurnQueryVariables>(BurnDocument, options);
+        }
+export type BurnQueryHookResult = ReturnType<typeof useBurnQuery>;
+export type BurnLazyQueryHookResult = ReturnType<typeof useBurnLazyQuery>;
+export type BurnSuspenseQueryHookResult = ReturnType<typeof useBurnSuspenseQuery>;
+export type BurnQueryResult = Apollo.QueryResult<BurnQuery, BurnQueryVariables>;
+export const MintDocument = gql`
+    query Mint($where: Mint_filter, $first: Int, $skip: Int) {
+  mints(where: $where, first: $first, skip: $skip) {
+    ...MintFields
+  }
+}
+    ${MintFieldsFragmentDoc}`;
+
+/**
+ * __useMintQuery__
+ *
+ * To run a query within a React component, call `useMintQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMintQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMintQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useMintQuery(baseOptions?: Apollo.QueryHookOptions<MintQuery, MintQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MintQuery, MintQueryVariables>(MintDocument, options);
+      }
+export function useMintLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MintQuery, MintQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MintQuery, MintQueryVariables>(MintDocument, options);
+        }
+export function useMintSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MintQuery, MintQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<MintQuery, MintQueryVariables>(MintDocument, options);
+        }
+export type MintQueryHookResult = ReturnType<typeof useMintQuery>;
+export type MintLazyQueryHookResult = ReturnType<typeof useMintLazyQuery>;
+export type MintSuspenseQueryHookResult = ReturnType<typeof useMintSuspenseQuery>;
+export type MintQueryResult = Apollo.QueryResult<MintQuery, MintQueryVariables>;
+export const Pot2PumpTransactionsDocument = gql`
+    query Pot2PumpTransactions($first: Int, $skip: Int, $pot2pumpAddress: Bytes, $launchTokenAddress: ID) {
+  transactions(
+    where: {type_in: [DEPOSIT, SWAP], or: [{swaps_: {token0_: {id: $launchTokenAddress}}}, {swaps_: {token1_: {id: $launchTokenAddress}}}, {depositRaisedTokens_: {poolAddress: $pot2pumpAddress}}]}
+    first: $first
+    skip: $skip
+    orderBy: timestamp
+    orderDirection: desc
+  ) {
+    ...TransactionFields
+  }
+}
+    ${TransactionFieldsFragmentDoc}`;
+
+/**
+ * __usePot2PumpTransactionsQuery__
+ *
+ * To run a query within a React component, call `usePot2PumpTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePot2PumpTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePot2PumpTransactionsQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *      pot2pumpAddress: // value for 'pot2pumpAddress'
+ *      launchTokenAddress: // value for 'launchTokenAddress'
+ *   },
+ * });
+ */
+export function usePot2PumpTransactionsQuery(baseOptions?: Apollo.QueryHookOptions<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>(Pot2PumpTransactionsDocument, options);
+      }
+export function usePot2PumpTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>(Pot2PumpTransactionsDocument, options);
+        }
+export function usePot2PumpTransactionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>(Pot2PumpTransactionsDocument, options);
+        }
+export type Pot2PumpTransactionsQueryHookResult = ReturnType<typeof usePot2PumpTransactionsQuery>;
+export type Pot2PumpTransactionsLazyQueryHookResult = ReturnType<typeof usePot2PumpTransactionsLazyQuery>;
+export type Pot2PumpTransactionsSuspenseQueryHookResult = ReturnType<typeof usePot2PumpTransactionsSuspenseQuery>;
+export type Pot2PumpTransactionsQueryResult = Apollo.QueryResult<Pot2PumpTransactionsQuery, Pot2PumpTransactionsQueryVariables>;
 export const VaultsSortedByHoldersDocument = gql`
     query VaultsSortedByHolders {
   ichiVaults(first: 100, orderBy: holdersCount, orderDirection: desc) {

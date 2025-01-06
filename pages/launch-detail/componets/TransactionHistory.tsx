@@ -1,5 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { fetchPot2PumpTransactions } from "@/lib/algebra/graphql/clients/transactions";
+import {
+  Transaction,
+  TransactionsQuery,
+  TransactionsQueryResult,
+  TransactionType,
+} from "@/lib/algebra/graphql/generated/graphql";
 import { truncate } from "@/lib/format";
 import { Copy } from "@/components/copy";
 import { VscCopy } from "react-icons/vsc";
@@ -19,82 +25,79 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   pair,
   refreshTrigger,
 }) => {
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactionsQuery, setTransactionsQuery] =
+    useState<TransactionsQuery>();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const pageSize = 10;
 
-  const loadTransactions = async (
-    pairAddress: string,
-    currentPage: number,
-    pageSize: number
-  ) => {
-    if (!pairAddress) return;
-    setLoading(true);
-    try {
-      const response = await fetchPot2PumpTransactions(
-        pairAddress,
-        currentPage,
-        pageSize
-      );
-      console.log("response", response);
-      setTransactions(response.data);
-      setHasNextPage(response.pageInfo.hasNextPage);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loadTransactions = useCallback(
+    async (currentPage: number, pageSize: number) => {
+      if (!pair || !pair.launchedToken) return;
+      setLoading(true);
+      try {
+        const response = await fetchPot2PumpTransactions(
+          pairAddress,
+          pair.launchedToken.address.toLowerCase(),
+          currentPage,
+          pageSize
+        );
+        console.log("response", response);
+        setTransactionsQuery(response.data);
+        setHasNextPage(response.pageInfo.hasNextPage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [pairAddress, pair]
+  );
 
   useEffect(() => {
-    if (pairAddress) {
-      loadTransactions(pairAddress, page, pageSize);
+    if (pair) {
+      loadTransactions(page, pageSize);
     }
-  }, [pairAddress, page]);
+  }, [pair, page, loadTransactions]);
 
   useEffect(() => {
-    if (pairAddress) {
-      loadTransactions(pairAddress, 1, pageSize);
+    if (pair) {
+      loadTransactions(1, pageSize);
     }
   }, [refreshTrigger]);
 
-  const getActionTypeDisplay = (type: string) => {
-    switch (type.toUpperCase()) {
-      case "SWAP":
+  const getActionTypeDisplay = (type: TransactionType) => {
+    switch (type) {
+      case TransactionType.Swap:
         return "Swap";
-      case "DEPOSIT":
+      case TransactionType.Deposit:
         return "Deposit";
-      case "REFUND":
+      case TransactionType.Refund:
         return "Refund";
-      case "CLAIM_LP":
+      case TransactionType.ClaimLp:
         return "Claim LP";
       default:
         return type;
     }
   };
 
-  const getAmountByType = (tx: any) => {
+  const getAmountByType = (tx: Transaction) => {
     if (!pair?.raiseToken?.decimals) return "0";
 
     const decimals = pair.raiseToken.decimals;
 
-    switch (tx.actionType.toUpperCase()) {
-      case "SWAP":
-        return new BigNumber(tx.swapAmount)
+    switch (tx.type) {
+      case TransactionType.Swap:
+        return new BigNumber(tx.swaps[0].amount0).toFixed(3);
+      case TransactionType.Deposit:
+        return new BigNumber(tx.depositRaisedTokens[0].amount)
           .div(new BigNumber(10).pow(decimals))
           .toFixed(3);
-      case "DEPOSIT":
-        return new BigNumber(tx.depositAmount)
+      case TransactionType.Refund:
+        return new BigNumber(tx.refunds[0].amount)
           .div(new BigNumber(10).pow(decimals))
           .toFixed(3);
-      case "REFUND":
-        return new BigNumber(tx.refundAmount)
-          .div(new BigNumber(10).pow(decimals))
-          .toFixed(3);
-      case "CLAIM_LP":
-        return new BigNumber(tx.claimLqAmount)
-          .div(new BigNumber(10).pow(decimals))
-          .toFixed(3);
+      case TransactionType.ClaimLp:
+        "-";
       default:
         return "0";
     }
@@ -131,14 +134,14 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                     Loading...
                   </td>
                 </tr>
-              ) : transactions.length === 0 ? (
+              ) : transactionsQuery?.transactions.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-4 px-6 text-center">
                     No transactions found
                   </td>
                 </tr>
               ) : (
-                transactions.map((tx) => (
+                transactionsQuery?.transactions.map((tx) => (
                   <tr
                     key={tx.id}
                     className="hover:bg-[#2a2a2a] transition-colors"
@@ -146,7 +149,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 bg-[#FFCD4D] rounded"></div>
-                        {getActionTypeDisplay(tx.actionType)}
+                        {getActionTypeDisplay(tx.type)}
                       </div>
                     </td>
                     <td className="py-4 px-6 text-base font-mono">
@@ -190,10 +193,15 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                       </div>
                     </td>
                     <td className="py-4 px-6 text-right text-base">
-                      {getAmountByType(tx)} {pair?.raiseToken?.symbol}
+                      {getAmountByType(tx as Transaction)}{" "}
+                      {tx.type === TransactionType.Swap &&
+                        pair?.launchedToken?.symbol}
+                      {(tx.type === TransactionType.Deposit ||
+                        tx.type === TransactionType.Refund) &&
+                        pair?.raiseToken?.symbol}
                     </td>
                     <td className="py-4 px-6 text-right text-base">
-                      {dayjs(parseInt(tx.createdAt) * 1000).format(
+                      {dayjs(parseInt(tx.timestamp) * 1000).format(
                         "YYYY-MM-DD HH:mm:ss"
                       )}
                     </td>
