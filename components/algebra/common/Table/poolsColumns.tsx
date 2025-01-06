@@ -264,23 +264,23 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   //   filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
   // },
   {
-    accessorKey: "token0Price",
-    id: "token0Price",
-    header: () => <HeaderItem className="uppercase">Price</HeaderItem>,
+    accessorKey: "tvlUSD",
+    id: "tvlUSD",
+    header: () => <HeaderItem className="uppercase">TVL</HeaderItem>,
     cell: ({ row }) => {
       return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-      }).format(row.original.token0Price);
+      }).format(row.original.tvlUSD);
     },
   },
-  {
-    accessorKey: "createdAtTimestamp",
-    header: () => <HeaderItem className="uppercase">Age</HeaderItem>,
-    cell: ({ row }) => timeSince(row?.original?.createdAtTimestamp ?? 0),
-  },
+  // {
+  //   accessorKey: "createdAtTimestamp",
+  //   header: () => <HeaderItem className="uppercase">Age</HeaderItem>,
+  //   cell: ({ row }) => timeSince(row?.original?.createdAtTimestamp ?? 0),
+  // },
   {
     accessorKey: "txCount",
     header: () => <HeaderItem className="uppercase">txns</HeaderItem>,
@@ -288,7 +288,7 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   },
   {
     accessorKey: "volumeUSD",
-    header: () => <HeaderItem className="uppercase">volumn</HeaderItem>,
+    header: () => <HeaderItem className="uppercase">Total Volumn</HeaderItem>,
     cell: ({ row }) => (
       <span>
         {new Intl.NumberFormat("en-US", {
@@ -301,8 +301,24 @@ export const poolsColumns: ColumnDef<Pool>[] = [
     ),
   },
   {
+    accessorKey: "volume24USD",
+    header: () => <HeaderItem className="uppercase">24h Volumn</HeaderItem>,
+    cell: ({ row }) => (
+      <span>
+        {new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(row?.original?.volume24USD)}
+      </span>
+    ),
+  },
+  {
     accessorKey: "changeHour",
-    header: () => <HeaderItem className="uppercase">hour</HeaderItem>,
+    header: () => (
+      <HeaderItem className="uppercase">Vol Hour Change</HeaderItem>
+    ),
     cell: ({ row }) => {
       return (
         <span
@@ -315,7 +331,7 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   },
   {
     accessorKey: "change24h",
-    header: () => <HeaderItem className="uppercase">24h</HeaderItem>,
+    header: () => <HeaderItem className="uppercase">Vol Change 24h</HeaderItem>,
     cell: ({ row }) => {
       return (
         <span
@@ -328,7 +344,9 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   },
   {
     accessorKey: "changeWeek",
-    header: () => <HeaderItem className="uppercase">Week</HeaderItem>,
+    header: () => (
+      <HeaderItem className="uppercase">Vol Change Week</HeaderItem>
+    ),
     cell: ({ row }) => {
       return (
         <span
@@ -341,7 +359,9 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   },
   {
     accessorKey: "changeMonth",
-    header: () => <HeaderItem className="uppercase">Month</HeaderItem>,
+    header: () => (
+      <HeaderItem className="uppercase">Vol Change Month</HeaderItem>
+    ),
     cell: ({ row }) => {
       return (
         <span
@@ -359,11 +379,11 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   //   header: () => <HeaderItem className="uppercase">liquidity</HeaderItem>,
   //   cell: ({ row }) => formatAmount(row.original.liquidity),
   // },
-  {
-    accessorKey: "pair.token0.marketCap",
-    header: () => <HeaderItem className="uppercase">marktet cap</HeaderItem>,
-    cell: ({ row }) => row.original.pair.token0.marketCap,
-  },
+  // {
+  //   accessorKey: "pair.token0.marketCap",
+  //   header: () => <HeaderItem className="uppercase">marktet cap</HeaderItem>,
+  //   cell: ({ row }) => row.original.pair.token0.marketCap,
+  // },
 ];
 
 //for hours gain maybe change it to weekly monthly yearly as in our subgraph
