@@ -48,6 +48,7 @@ export class ValueState<T> {
   getValue!: (value: T) => T;
 
   setValue (value: T) {
+    console.log("SetPageItem", value)
     this._value = value;
   }
 }
