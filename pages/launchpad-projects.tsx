@@ -19,6 +19,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [selectedTab, setSelectedTab] = useState<"all" | "my">("all");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [result, setResult] = useState<any[]>([]);
 
   const owner = selectedTab == "my" ? wallet.account : "";
 
@@ -44,7 +45,17 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     }
   }, [wallet.isInit]);
 
-  console.log("launchpad.projectsPage", launchpad.projectsPage);
+  const resetPage = () => {
+    setPage(1);
+    setSearch("");
+    setResult([]);
+  };
+
+  useEffect(() => {
+    if (pools?.data && pools.data.length > 0) {
+      setResult((prev) => [...prev, ...pools.data]);
+    }
+  }, [pools?.data]);
 
   const mostSuccessProjects: any[] = [];
 
@@ -124,6 +135,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             } else if (key === "my") {
               setSelectedTab(key);
             }
+            resetPage();
           }}
         >
           <Tab key="all" title="All Projects" />
@@ -136,6 +148,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
             className="max-w-[305px] w-[305px] h-[46px] flex"
             onChange={(e) => {
               setSearch(e.target.value);
+              resetPage();
             }}
           />
 
@@ -151,7 +164,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
       </div>
       <div>
         <DataContainer
-          hasData={pools?.data && pools?.data?.length > 0}
+          hasData={result.length > 0 || isLoading || isFetching}
           isLoading={isLoading || isFetching}
         >
           <div>
@@ -163,7 +176,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-x-4 xl:gap-y-5 xl:grid-cols-4"
               }
             >
-              {pools?.data?.map((pair, idx) => (
+              {result.map((pair, idx) => (
                 <motion.div variants={itemPopUpVariants} key={idx}>
                   <LaunchPadProjectCard
                     status={
