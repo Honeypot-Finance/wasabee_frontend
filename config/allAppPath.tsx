@@ -101,6 +101,13 @@ export const appPathsList: Menu[] = [
     title: "Faucet",
     path: "/faucet",
   },
+  // {
+  //   title: "DreamPad",
+  //   path: {
+  //     path: "/launchpad-projects",
+  //     title: "DreamPad",
+  //   },
+  // },
   {
     path: "/profile",
     title: "Profile",
