@@ -34,6 +34,7 @@ export const POOL_FRAGMENT = gql`
     token1Price
     txCount
     createdAtTimestamp
+    aprPercentage
   }
 `;
 

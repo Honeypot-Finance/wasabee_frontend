@@ -44,6 +44,7 @@ export interface Pool {
   changeMonth: any;
   txCount: any;
   volumeUSD: any;
+  apr24h: string;
 }
 
 function timeSince(timestamp: number): string {
@@ -94,7 +95,7 @@ const PoolPair = observer(({ pair, fee }: Pool) => {
         <Skeleton className="h-[20px] w-[90px] bg-card" />
       )}
 
-      <div className="bg-muted-primary text-primary-text rounded-xl px-2 py-1">{`${fee}%`}</div>
+      {/* <div className="bg-muted-primary text-primary-text rounded-xl px-2 py-1">{`${fee}%`}</div> */}
     </div>
   );
 });
@@ -244,7 +245,7 @@ export const AvgAPR = ({
 export const poolsColumns: ColumnDef<Pool>[] = [
   {
     accessorKey: "pair",
-    header: () => <HeaderItem className="ml-2">Pool name</HeaderItem>,
+    header: () => <HeaderItem className="ml-2">Pool</HeaderItem>,
     cell: ({ row }) => <PoolPair {...row.original} />,
     filterFn: (v, _, value) =>
       [
@@ -263,6 +264,16 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   //   cell: ({ row }) => <Plugins poolId={row.original.id} />,
   //   filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
   // },
+  {
+    accessorKey: "fee",
+    header: () => <HeaderItem className="uppercase">Fee</HeaderItem>,
+    cell: ({ row }) => `${row.original.fee}%`,
+  },
+  {
+    accessorKey: "apr24h",
+    header: () => <HeaderItem className="uppercase">APR 24H</HeaderItem>,
+    cell: ({ row }) => `${formatAmount(row.original.apr24h, 2)}%`,
+  },
   {
     accessorKey: "tvlUSD",
     id: "tvlUSD",

@@ -52,6 +52,7 @@ const MyPoolsList = () => {
         volumeUSD,
         token0Price,
         createdAtTimestamp,
+        aprPercentage,
       }) => {
         const currentPool = poolDayData[0];
         const lastDate = currentPool ? currentPool.date * 1000 : 0;
@@ -100,14 +101,10 @@ const MyPoolsList = () => {
           (farming) => farming.pool === id
         );
 
-        const poolMaxApr = !!Number(totalValueLockedUSD)
-          ? (Number(currentPool.feesUSD) * 365) / Number(totalValueLockedUSD)
-          : 0;
-        const poolAvgApr = !!Number(totalValueLockedUSD)
-          ? (Number(currentPool.feesUSD) * 365) / Number(totalValueLockedUSD)
-          : 0;
+        const poolMaxApr = aprPercentage;
+        const poolAvgApr = aprPercentage;
         const farmApr = 0;
-        const avgApr = poolAvgApr;
+        const avgApr = aprPercentage;
 
         return {
           id: id as Address,
@@ -135,6 +132,7 @@ const MyPoolsList = () => {
           txCount,
           volumeUSD,
           liquidity,
+          apr24h: aprPercentage,
         };
       }
     );
