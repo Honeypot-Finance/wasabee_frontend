@@ -126,6 +126,11 @@ export const berachainBartioTestnetNetwork = new Network({
       address: "0xb6a43168ffb37e03e48a723fcb3895ae7d596078",
       amount: BigInt("200000000000000000000000"),
     },
+    {
+      symbol: "Honey",
+      address: "0x0e4aaf1351de4c0264c5c7056ef3777b41bd8e03",
+      amount: BigInt("30000000000000000000"),
+    },
   ],
   nativeFaucet: {
     address: "0x1bd43f7f55b700236c92256a0fd90266363119f7",
