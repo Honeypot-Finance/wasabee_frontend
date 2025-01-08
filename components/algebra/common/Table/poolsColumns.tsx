@@ -340,51 +340,51 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   //     );
   //   },
   // },
-  {
-    accessorKey: "change24h",
-    header: () => <HeaderItem className="uppercase">Vol Change 24h</HeaderItem>,
-    cell: ({ row }) => {
-      return (
-        <span
-          style={{ color: row.original.change24h > 0 ? "#48bb78" : "#F56565" }}
-        >
-          {formatAmount(row.original.change24h, 2)}%
-        </span>
-      );
-    },
-  },
-  {
-    accessorKey: "changeWeek",
-    header: () => (
-      <HeaderItem className="uppercase">Vol Change Week</HeaderItem>
-    ),
-    cell: ({ row }) => {
-      return (
-        <span
-          style={{ color: row.original.changeWeek > 0 ? "#48bb78" : "#F56565" }}
-        >
-          {formatAmount(row.original.changeWeek, 2)}%
-        </span>
-      );
-    },
-  },
-  {
-    accessorKey: "changeMonth",
-    header: () => (
-      <HeaderItem className="uppercase">Vol Change Month</HeaderItem>
-    ),
-    cell: ({ row }) => {
-      return (
-        <span
-          style={{
-            color: row.original.changeMonth > 0 ? "#48bb78" : "#F56565",
-          }}
-        >
-          {formatAmount(row.original.changeMonth, 2)}%
-        </span>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "change24h",
+  //   header: () => <HeaderItem className="uppercase">Vol Change 24h</HeaderItem>,
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{ color: row.original.change24h > 0 ? "#48bb78" : "#F56565" }}
+  //       >
+  //         {formatAmount(row.original.change24h, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "changeWeek",
+  //   header: () => (
+  //     <HeaderItem className="uppercase">Vol Change Week</HeaderItem>
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{ color: row.original.changeWeek > 0 ? "#48bb78" : "#F56565" }}
+  //       >
+  //         {formatAmount(row.original.changeWeek, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "changeMonth",
+  //   header: () => (
+  //     <HeaderItem className="uppercase">Vol Change Month</HeaderItem>
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{
+  //           color: row.original.changeMonth > 0 ? "#48bb78" : "#F56565",
+  //         }}
+  //       >
+  //         {formatAmount(row.original.changeMonth, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
   // {
   //   accessorKey: "liquidity",
   //   header: () => <HeaderItem className="uppercase">liquidity</HeaderItem>,
