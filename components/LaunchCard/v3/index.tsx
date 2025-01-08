@@ -691,7 +691,7 @@ const FeaturedLaunchCard = observer(
             </div>
 
             <div className="flex-1 bg-yellow-300/30 rounded-2xl border-2 border-black text-sm p-3 ml-6">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col justify-between gap-2">
                 <div className="flex items-center justify-between">
                   <span>Market Cap:</span>
                   <span>
