@@ -8,6 +8,7 @@ import {
   fetchNearSuccessPot2Pump,
   fetchPumpingHighPricePot2Pump,
   fetchPottingNewTokens,
+  fetchPottingTrendingPot2Pump,
 } from "@/lib/algebra/graphql/clients/pair";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 import { wallet } from "@/services/wallet";
@@ -20,6 +21,7 @@ const POT_TABS = {
   NEW: "New POTs",
   ALMOST: "Almost",
   MOON: "Moon 🚀",
+  TRENDING: "Trending",
 } as const;
 
 type TabType = (typeof POT_TABS)[keyof typeof POT_TABS];
@@ -29,23 +31,25 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   const [nearSuccessTokens, setNearSuccessTokens] =
     useState<MemePairContract[]>();
   const [highPriceTokens, setHighPriceTokens] = useState<MemePairContract[]>();
+  const [trendingTokens, setTrendingTokens] = useState<MemePairContract[]>();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [activeTab, setActiveTab] = useState<TabType>(POT_TABS.NEW);
 
   useEffect(() => {
     if (!wallet.isInit) return;
     const fetchData = async () => {
-      const [newTokensData, nearSuccessData, highPriceData] = await Promise.all(
-        [
+      const [newTokensData, nearSuccessData, highPriceData, trendingData] =
+        await Promise.all([
           fetchPottingNewTokens(),
           fetchNearSuccessPot2Pump(),
           fetchPumpingHighPricePot2Pump(),
-        ]
-      );
+          fetchPottingTrendingPot2Pump(),
+        ]);
 
       setNewTokens(newTokensData);
       setNearSuccessTokens(nearSuccessData);
       setHighPriceTokens(highPriceData);
+      setTrendingTokens(trendingData);
     };
 
     fetchData();
@@ -88,7 +92,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
               action={<></>}
             />
           </div>
-          {highPriceTokens?.slice(0, 5).map((token, index) => (
+          {trendingTokens?.slice(0, 5).map((token, index) => (
             <div
               key={index}
               className={`transition-opacity duration-500 absolute inset-0 ${
@@ -143,7 +147,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
         {/* Content Area - 添加顶部内边距 */}
         <div className="pt-6">
           {/* Desktop Grid */}
-          <div className="hidden md:grid grid-cols-3 min-h-[600px] h-[calc(100vh-300px)] gap-6">
+          <div className="hidden md:grid grid-cols-3 min-h-[600px] h-[calc(100vh-300px)] gap-2">
             <section className="relative flex flex-col px-2 overflow-hidden">
               <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 bg-[#FFCD4D] z-20 py-2 px-2">
                 {POT_TABS.NEW}
@@ -178,12 +182,29 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
               </div>
             </section>
 
-            <section className="relative flex flex-col px-2 overflow-hidden">
+            {/* <section className="relative flex flex-col px-2 overflow-hidden">
               <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 bg-[#FFCD4D] z-20 py-2 px-2">
                 {POT_TABS.MOON}
               </h2>
               <div className="flex flex-col gap-8 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                 {highPriceTokens?.map((pot2pump, index) => (
+                  <motion.div key={index} variants={itemPopUpVariants}>
+                    <LaunchCardV3
+                      type="simple"
+                      pair={pot2pump}
+                      action={<></>}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </section> */}
+
+            <section className="relative flex flex-col px-2 overflow-hidden">
+              <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 bg-[#FFCD4D] z-20 py-2 px-2">
+                {POT_TABS.TRENDING}
+              </h2>
+              <div className="flex flex-col gap-8 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
+                {trendingTokens?.map((pot2pump, index) => (
                   <motion.div key={index} variants={itemPopUpVariants}>
                     <LaunchCardV3
                       type="simple"
@@ -230,6 +251,20 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
               {activeTab === POT_TABS.MOON && (
                 <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                   {highPriceTokens?.map((pot2pump, index) => (
+                    <motion.div key={index} variants={itemPopUpVariants}>
+                      <LaunchCardV3
+                        type="simple"
+                        pair={pot2pump}
+                        action={<></>}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+
+              {activeTab === POT_TABS.TRENDING && (
+                <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
+                  {trendingTokens?.map((pot2pump, index) => (
                     <motion.div key={index} variants={itemPopUpVariants}>
                       <LaunchCardV3
                         type="simple"

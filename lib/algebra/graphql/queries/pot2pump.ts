@@ -66,6 +66,19 @@ export const POT_2_PUMP_PUMPING_HIGH_PRICE = gql`
   }
 `;
 
+export const POT_2_PUMP_POTTING_TRENDING = gql`
+  query Pot2PumpPottingTrending {
+    pot2Pumps(
+      first: 25
+      orderBy: launchToken__priceChange24hPercentage
+      orderDirection: desc
+      where: { raisedTokenReachingMinCap: true }
+    ) {
+      ...Pot2PumpField
+    }
+  }
+`;
+
 export const POT2_PUMP_FRAGMENT = gql`
   fragment Pot2PumpField on Pot2Pump {
     id

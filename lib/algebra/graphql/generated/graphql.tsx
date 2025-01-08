@@ -13000,6 +13000,7 @@ export type PoolFieldsFragment = {
     totalValueLockedUSD: any;
     marketCap: any;
     poolCount: any;
+    priceChange24hPercentage: any;
     pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
   };
   token1: {
@@ -13018,6 +13019,7 @@ export type PoolFieldsFragment = {
     totalValueLockedUSD: any;
     marketCap: any;
     poolCount: any;
+    priceChange24hPercentage: any;
     pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
   };
   poolHourData: Array<{
@@ -13179,6 +13181,7 @@ export type PoolsListQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     token1: {
@@ -13197,6 +13200,7 @@ export type PoolsListQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
   }>;
@@ -13258,6 +13262,7 @@ export type SinglePoolQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     token1: {
@@ -13276,6 +13281,7 @@ export type SinglePoolQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     poolHourData: Array<{
@@ -13354,6 +13360,7 @@ export type MultiplePoolsQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     token1: {
@@ -13372,6 +13379,7 @@ export type MultiplePoolsQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     poolHourData: Array<{
@@ -13460,6 +13468,7 @@ export type PoolsByTokenPairQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     token1: {
@@ -13478,6 +13487,7 @@ export type PoolsByTokenPairQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     poolHourData: Array<{
@@ -13560,6 +13570,7 @@ export type LiquidatorDataQuery = {
         totalValueLockedUSD: any;
         marketCap: any;
         poolCount: any;
+        priceChange24hPercentage: any;
         pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
       };
       token1: {
@@ -13578,6 +13589,7 @@ export type LiquidatorDataQuery = {
         totalValueLockedUSD: any;
         marketCap: any;
         poolCount: any;
+        priceChange24hPercentage: any;
         pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
       };
       poolHourData: Array<{
@@ -13655,6 +13667,7 @@ export type LiquidatorDataFieldsFragment = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     token1: {
@@ -13673,6 +13686,7 @@ export type LiquidatorDataFieldsFragment = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     poolHourData: Array<{
@@ -13823,6 +13837,7 @@ export type GetPot2PumpDetailQuery = {
           totalValueLockedUSD: any;
           marketCap: any;
           poolCount: any;
+          priceChange24hPercentage: any;
           pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
         };
         raisedToken: {
@@ -13841,6 +13856,7 @@ export type GetPot2PumpDetailQuery = {
           totalValueLockedUSD: any;
           marketCap: any;
           poolCount: any;
+          priceChange24hPercentage: any;
           pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
         };
         participantTransactionHistorys: Array<{
@@ -13865,6 +13881,7 @@ export type GetPot2PumpDetailQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     raisedToken: {
@@ -13883,6 +13900,7 @@ export type GetPot2PumpDetailQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     participantTransactionHistorys: Array<{
@@ -13944,6 +13962,7 @@ export type GetParticipantDetailQuery = {
         totalValueLockedUSD: any;
         marketCap: any;
         poolCount: any;
+        priceChange24hPercentage: any;
         pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
       };
       raisedToken: {
@@ -13962,6 +13981,7 @@ export type GetParticipantDetailQuery = {
         totalValueLockedUSD: any;
         marketCap: any;
         poolCount: any;
+        priceChange24hPercentage: any;
         pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
       };
       participantTransactionHistorys: Array<{
@@ -14053,6 +14073,7 @@ export type Pot2PumpPottingNewTokensQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     raisedToken: {
@@ -14071,6 +14092,7 @@ export type Pot2PumpPottingNewTokensQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     participantTransactionHistorys: Array<{
@@ -14123,6 +14145,7 @@ export type Pot2PumpPottingNearSuccessQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     raisedToken: {
@@ -14141,6 +14164,7 @@ export type Pot2PumpPottingNearSuccessQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     participantTransactionHistorys: Array<{
@@ -14193,6 +14217,7 @@ export type Pot2PumpPottingHighPriceQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     raisedToken: {
@@ -14211,6 +14236,79 @@ export type Pot2PumpPottingHighPriceQuery = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
+      pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
+    };
+    participantTransactionHistorys: Array<{
+      __typename?: "ParticipantTransactionHistory";
+      id: string;
+    }>;
+  }>;
+};
+
+export type Pot2PumpPottingTrendingQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type Pot2PumpPottingTrendingQuery = {
+  __typename?: "Query";
+  pot2Pumps: Array<{
+    __typename?: "Pot2Pump";
+    id: string;
+    launchTokenInitialPrice: any;
+    DepositLaunchToken: any;
+    LaunchTokenTVLUSD: any;
+    LaunchTokenMCAPUSD: any;
+    raisedTokenMinCap: any;
+    depositRaisedTokenPercentageToMinCap: any;
+    raisedTokenReachingMinCap: boolean;
+    DepositRaisedToken: any;
+    creator: string;
+    participantsCount: any;
+    totalRefundAmount: any;
+    totalClaimLpAmount: any;
+    buyCount: any;
+    sellCount: any;
+    createdAt: any;
+    endTime: any;
+    state: any;
+    searchString: string;
+    launchToken: {
+      __typename?: "Token";
+      id: string;
+      symbol: string;
+      name: string;
+      decimals: any;
+      derivedMatic: any;
+      derivedUSD: any;
+      initialUSD: any;
+      txCount: any;
+      holderCount: any;
+      totalSupply: any;
+      volumeUSD: any;
+      totalValueLockedUSD: any;
+      marketCap: any;
+      poolCount: any;
+      priceChange24hPercentage: any;
+      pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
+    };
+    raisedToken: {
+      __typename?: "Token";
+      id: string;
+      symbol: string;
+      name: string;
+      decimals: any;
+      derivedMatic: any;
+      derivedUSD: any;
+      initialUSD: any;
+      txCount: any;
+      holderCount: any;
+      totalSupply: any;
+      volumeUSD: any;
+      totalValueLockedUSD: any;
+      marketCap: any;
+      poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     participantTransactionHistorys: Array<{
@@ -14257,6 +14355,7 @@ export type Pot2PumpFieldFragment = {
     totalValueLockedUSD: any;
     marketCap: any;
     poolCount: any;
+    priceChange24hPercentage: any;
     pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
   };
   raisedToken: {
@@ -14275,6 +14374,7 @@ export type Pot2PumpFieldFragment = {
     totalValueLockedUSD: any;
     marketCap: any;
     poolCount: any;
+    priceChange24hPercentage: any;
     pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
   };
   participantTransactionHistorys: Array<{
@@ -14371,6 +14471,7 @@ export type ParticipantFieldsFragment = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     raisedToken: {
@@ -14389,6 +14490,7 @@ export type ParticipantFieldsFragment = {
       totalValueLockedUSD: any;
       marketCap: any;
       poolCount: any;
+      priceChange24hPercentage: any;
       pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
     };
     participantTransactionHistorys: Array<{
@@ -14487,6 +14589,7 @@ export type CanClaimPot2PumpParticipantQuery = {
         totalValueLockedUSD: any;
         marketCap: any;
         poolCount: any;
+        priceChange24hPercentage: any;
         pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
       };
       raisedToken: {
@@ -14505,6 +14608,7 @@ export type CanClaimPot2PumpParticipantQuery = {
         totalValueLockedUSD: any;
         marketCap: any;
         poolCount: any;
+        priceChange24hPercentage: any;
         pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
       };
       participantTransactionHistorys: Array<{
@@ -14605,6 +14709,7 @@ export type CanRefundPot2PumpParticipantQuery = {
         totalValueLockedUSD: any;
         marketCap: any;
         poolCount: any;
+        priceChange24hPercentage: any;
         pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
       };
       raisedToken: {
@@ -14623,6 +14728,7 @@ export type CanRefundPot2PumpParticipantQuery = {
         totalValueLockedUSD: any;
         marketCap: any;
         poolCount: any;
+        priceChange24hPercentage: any;
         pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
       };
       participantTransactionHistorys: Array<{
@@ -14649,6 +14755,7 @@ export type TokenFieldsFragment = {
   totalValueLockedUSD: any;
   marketCap: any;
   poolCount: any;
+  priceChange24hPercentage: any;
   pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
 };
 
@@ -14674,6 +14781,7 @@ export type MultipleTokensQuery = {
     totalValueLockedUSD: any;
     marketCap: any;
     poolCount: any;
+    priceChange24hPercentage: any;
     pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
   }>;
 };
@@ -14700,6 +14808,7 @@ export type SingleTokenQuery = {
     totalValueLockedUSD: any;
     marketCap: any;
     poolCount: any;
+    priceChange24hPercentage: any;
     pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
   } | null;
 };
@@ -14743,6 +14852,7 @@ export type AllTokensQuery = {
     totalValueLockedUSD: any;
     marketCap: any;
     poolCount: any;
+    priceChange24hPercentage: any;
     pot2Pump?: { __typename?: "Pot2Pump"; id: string } | null;
   }>;
 };
@@ -15469,6 +15579,7 @@ export const TokenFieldsFragmentDoc = gql`
     totalValueLockedUSD
     marketCap
     poolCount
+    priceChange24hPercentage
     pot2Pump {
       id
     }
@@ -17532,6 +17643,89 @@ export type Pot2PumpPottingHighPriceSuspenseQueryHookResult = ReturnType<
 export type Pot2PumpPottingHighPriceQueryResult = Apollo.QueryResult<
   Pot2PumpPottingHighPriceQuery,
   Pot2PumpPottingHighPriceQueryVariables
+>;
+export const Pot2PumpPottingTrendingDocument = gql`
+  query Pot2PumpPottingTrending {
+    pot2Pumps(
+      first: 25
+      orderBy: launchToken__priceChange24hPercentage
+      orderDirection: desc
+      where: { raisedTokenReachingMinCap: true }
+    ) {
+      ...Pot2PumpField
+    }
+  }
+  ${Pot2PumpFieldFragmentDoc}
+`;
+
+/**
+ * __usePot2PumpPottingTrendingQuery__
+ *
+ * To run a query within a React component, call `usePot2PumpPottingTrendingQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePot2PumpPottingTrendingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePot2PumpPottingTrendingQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePot2PumpPottingTrendingQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    Pot2PumpPottingTrendingQuery,
+    Pot2PumpPottingTrendingQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    Pot2PumpPottingTrendingQuery,
+    Pot2PumpPottingTrendingQueryVariables
+  >(Pot2PumpPottingTrendingDocument, options);
+}
+export function usePot2PumpPottingTrendingLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    Pot2PumpPottingTrendingQuery,
+    Pot2PumpPottingTrendingQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    Pot2PumpPottingTrendingQuery,
+    Pot2PumpPottingTrendingQueryVariables
+  >(Pot2PumpPottingTrendingDocument, options);
+}
+export function usePot2PumpPottingTrendingSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        Pot2PumpPottingTrendingQuery,
+        Pot2PumpPottingTrendingQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    Pot2PumpPottingTrendingQuery,
+    Pot2PumpPottingTrendingQueryVariables
+  >(Pot2PumpPottingTrendingDocument, options);
+}
+export type Pot2PumpPottingTrendingQueryHookResult = ReturnType<
+  typeof usePot2PumpPottingTrendingQuery
+>;
+export type Pot2PumpPottingTrendingLazyQueryHookResult = ReturnType<
+  typeof usePot2PumpPottingTrendingLazyQuery
+>;
+export type Pot2PumpPottingTrendingSuspenseQueryHookResult = ReturnType<
+  typeof usePot2PumpPottingTrendingSuspenseQuery
+>;
+export type Pot2PumpPottingTrendingQueryResult = Apollo.QueryResult<
+  Pot2PumpPottingTrendingQuery,
+  Pot2PumpPottingTrendingQueryVariables
 >;
 export const CanClaimPot2PumpParticipantDocument = gql`
   query CanClaimPot2PumpParticipant($accountId: ID!) {

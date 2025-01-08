@@ -479,7 +479,7 @@ const SimpleLaunchCard = observer(
             <div className="grid grid-cols-3 gap-1 text-black">
               <div className="text-md font-bold text-right col-span-3 flex flex-row justify-start items-center">
                 <p className="flex flex-row gap-2 items-start justify-between w-full text-left">
-                  <span>
+                  {/* <span>
                     Price Change:{" "}
                     <span
                       className={cn(
@@ -492,6 +492,25 @@ const SimpleLaunchCard = observer(
                       )}
                     >
                       {pair.priceChangeDisplay}
+                    </span>
+                  </span> */}
+                  <span>
+                    Price Change(24h):{" "}
+                    <span
+                      className={cn(
+                        Number(pair?.launchedToken?.priceChange24hPercentage) &&
+                          Number(
+                            pair?.launchedToken?.priceChange24hPercentage
+                          ) > 1
+                          ? "text-green-500"
+                          : "text-red-500"
+                      )}
+                    >
+                      {formatAmount(
+                        pair?.launchedToken?.priceChange24hPercentage ?? "0",
+                        2
+                      )}
+                      %
                     </span>
                   </span>
                   <div className="text-right flex flex-row gap-2 items-center *:flex-grow-[1]">
@@ -609,19 +628,25 @@ const FeaturedLaunchCard = observer(
             <div className="sm:hidden space-y-1">
               <div className="font-bold text-base">
                 <span>Token Price: </span>
-                <span>{formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$</span>
+                <span>
+                  {formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$
+                </span>
               </div>
               <div className="font-bold text-base">
-                <span>Price Change: </span>
-                <span className={cn(
-                  Number(pair?.launchedToken?.initialUSD) &&
-                  Number(pair?.launchedToken?.derivedUSD) &&
-                  (Number(pair?.launchedToken?.derivedUSD) >
-                  Number(pair?.launchedToken?.initialUSD)
-                    ? "text-green-500"
-                    : "text-red-500")
-                )}>
-                  {pair.priceChangeDisplay}
+                <span>Price Change(24h): </span>
+                <span
+                  className={cn(
+                    Number(pair?.launchedToken?.priceChange24hPercentage) &&
+                      Number(pair?.launchedToken?.priceChange24hPercentage) > 1
+                      ? "text-green-500"
+                      : "text-red-500"
+                  )}
+                >
+                  {formatAmount(
+                    pair?.launchedToken?.priceChange24hPercentage ?? "0",
+                    2
+                  )}
+                  %
                 </span>
               </div>
             </div>
@@ -640,18 +665,21 @@ const FeaturedLaunchCard = observer(
 
               <div className="space-y-2">
                 <div className="font-bold text-2xl">
-                  Token Price: {formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$
+                  Token Price:{" "}
+                  {formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$
                 </div>
                 <div className="font-bold text-2xl">
                   Price Change:{" "}
-                  <span className={cn(
-                    Number(pair?.launchedToken?.initialUSD) &&
-                    Number(pair?.launchedToken?.derivedUSD) &&
-                    (Number(pair?.launchedToken?.derivedUSD) >
-                    Number(pair?.launchedToken?.initialUSD)
-                      ? "text-green-500"
-                      : "text-red-500")
-                  )}>
+                  <span
+                    className={cn(
+                      Number(pair?.launchedToken?.initialUSD) &&
+                        Number(pair?.launchedToken?.derivedUSD) &&
+                        (Number(pair?.launchedToken?.derivedUSD) >
+                        Number(pair?.launchedToken?.initialUSD)
+                          ? "text-green-500"
+                          : "text-red-500")
+                    )}
+                  >
                     {pair.priceChangeDisplay}
                   </span>
                 </div>
@@ -662,14 +690,24 @@ const FeaturedLaunchCard = observer(
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex items-center justify-between">
                   <span>Market Cap:</span>
-                  <span>{formatAmount(pair.launchedToken?.totalValueLockedUSD ?? "0", 5)}$</span>
+                  <span>
+                    {formatAmount(
+                      pair.launchedToken?.totalValueLockedUSD ?? "0",
+                      5
+                    )}
+                    $
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>TX:</span>
                   <div>
-                    <span className="text-green-400">{pair?.launchedTokenBuyCount?.toFixed(0) ?? 0}</span>
+                    <span className="text-green-400">
+                      {pair?.launchedTokenBuyCount?.toFixed(0) ?? 0}
+                    </span>
                     <span>/</span>
-                    <span className="text-red-400">{pair?.launchedTokenSellCount?.toFixed(0) ?? 0}</span>
+                    <span className="text-red-400">
+                      {pair?.launchedTokenSellCount?.toFixed(0) ?? 0}
+                    </span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
@@ -678,26 +716,42 @@ const FeaturedLaunchCard = observer(
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Volume:</span>
-                  <span>{pair?.launchedToken?.volumeUSD ? "$ " + formatAmount(pair.launchedToken?.volumeUSD ?? "0", 5) : "--"}</span>
+                  <span>
+                    {pair?.launchedToken?.volumeUSD
+                      ? "$ " +
+                        formatAmount(pair.launchedToken?.volumeUSD ?? "0", 5)
+                      : "--"}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between col-span-2">
                   <span>TVL:</span>
-                  <span>{pair?.launchedToken?.totalValueLockedUSD ? "$ " + formatAmount(pair.launchedToken?.totalValueLockedUSD ?? "0", 5) : "--"}</span>
+                  <span>
+                    {pair?.launchedToken?.totalValueLockedUSD
+                      ? "$ " +
+                        formatAmount(
+                          pair.launchedToken?.totalValueLockedUSD ?? "0",
+                          5
+                        )
+                      : "--"}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2 mt-3 sm:mt-0 sm:absolute sm:bottom-0 sm:right-0 sm:translate-y-1/2 sm:-translate-x-1/4">
-            <Link className="w-full sm:w-[160px]" href={`/launch-detail/${pair.address}`}>
+            <Link
+              className="w-full sm:w-[160px]"
+              href={`/launch-detail/${pair.address}`}
+            >
               <Button className="w-full border-yellow-500 text-sm sm:text-base py-1.5 sm:py-2">
                 Token Details
               </Button>
             </Link>
             {pair.state === 0 && (
-              <PumpingModalButton 
-                pair={pair} 
-                className="w-full sm:w-auto text-sm sm:text-base py-1.5 sm:py-2" 
+              <PumpingModalButton
+                pair={pair}
+                className="w-full sm:w-auto text-sm sm:text-base py-1.5 sm:py-2"
               />
             )}
           </div>

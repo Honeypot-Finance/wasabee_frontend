@@ -62,6 +62,7 @@ export class Token implements BaseContract {
   totalValueLockedUSD = "";
   poolCount = 0;
   pot2pumpAddress: Address | undefined | null = undefined;
+  priceChange24hPercentage = "";
 
   // determines the order of the token in the list
   get priority() {
