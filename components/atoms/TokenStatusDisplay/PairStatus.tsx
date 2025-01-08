@@ -5,19 +5,19 @@ import { observer } from "mobx-react-lite";
 
 interface PairStatusProps {
   isValidated?: boolean;
-  ftoStatusDisplayColor?: string;
-  ftoStatusDisplayStatus?: string;
+  statusColor?: string;
+  status?: string;
 }
 
 const PairStatus = observer(
   ({
-    ftoStatusDisplayColor,
-    ftoStatusDisplayStatus,
+    statusColor,
+    status,
     isValidated,
   }: PairStatusProps) => {
     return (
       <div className="flex flex-col gap-[5px]">
-        {ftoStatusDisplayStatus ? (
+        {status ? (
           <motion.div
             animate={{
               boxShadow: [
@@ -32,12 +32,12 @@ const PairStatus = observer(
             }}
             className={cn(
               "flex px-[8px] h-[29px] justify-center items-center gap-[5px] rounded-[20px] select-none",
-              ftoStatusDisplayColor
+              statusColor
             )}
           >
             <div className="rounded-full bg-current w-2 h-2"></div>
             <span className="text-ss text-current xs:text-xs">
-              {ftoStatusDisplayStatus}
+              {status}
             </span>
           </motion.div>
         ) : (

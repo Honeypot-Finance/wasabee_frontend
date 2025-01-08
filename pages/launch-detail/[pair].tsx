@@ -448,6 +448,9 @@ const FtoView = observer(() => {
               twitter={pair?.twitter}
               website={pair?.website}
               address={pair?.launchedToken?.address}
+              statusColor={pair?.ftoStatusDisplay?.color}
+              status={pair?.ftoStatusDisplay?.status}
+              isValidated={pair?.isValidated}
             />
           </div>
           <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
@@ -457,8 +460,8 @@ const FtoView = observer(() => {
               endTimeDisplay={state.pair.value?.endTimeDisplay}
             />
             <PairStatus
-              ftoStatusDisplayColor={pair?.ftoStatusDisplay?.color}
-              ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+              statusColor={pair?.ftoStatusDisplay?.color}
+              status={pair?.ftoStatusDisplay?.status}
               isValidated={pair?.isValidated}
             />
           </div>
@@ -679,9 +682,13 @@ const MemeView = observer(() => {
             <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
           </Modal>
         )}
-        <div className="grid grid-cols-[1fr_500px] gap-x-4 gap-y-14 w-full">
-          <div className="bg-white col-span-2 px-8 py-5 rounded-3xl flex md:items-center md:justify-between md:flex-row flex-col gap-2 md:gap-0 text-black">
-            <div className="flex items-center justify-between gap-x-4 md:gap-x-[7.5px]">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_500px] gap-4 md:gap-x-4 md:gap-y-14 w-full @container">
+          <div
+            className={cn(
+              "bg-white col-span-1 lg:col-span-2 px-4 md:px-8 py-3 md:py-5 rounded-3xl flex md:items-center flex-col @[450px]:flex-row justify-between gap-2 md:gap-0 text-black"
+            )}
+          >
+            <div className="flex items-center gap-x-4 md:gap-x-[7.5px] justify-center sm:justify-start">
               <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
                 <Image
                   alt={state.pair.value?.launchedToken?.name || "honey"}
@@ -702,25 +709,170 @@ const MemeView = observer(() => {
                 twitter={pair?.twitter}
                 website={pair?.website}
                 address={pair?.launchedToken?.address}
-              />
-            </div>
-            <CountdownTimer
-              endTime={pair?.endTime}
-              ftoState={state.pair.value?.state}
-              endTimeDisplay={state.pair.value?.endTimeDisplay}
-            />
-            <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
-              <PairStatus
-                ftoStatusDisplayColor={pair?.ftoStatusDisplay?.color}
-                ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+                statusColor={pair?.ftoStatusDisplay?.color}
+                status={pair?.ftoStatusDisplay?.status}
                 isValidated={pair?.isValidated}
               />
+            </div>
+            <div className="md:block hidden">
+              {state.pair.value?.state !== 0 && (
+                <CountdownTimer
+                  endTime={pair?.endTime}
+                  ftoState={state.pair.value?.state}
+                  endTimeDisplay={state.pair.value?.endTimeDisplay}
+                />
+              )}
+            </div>
+            <div className="flex flex-col md:flex-row items-center gap-3 md:gap-8">
+              <div className="md:hidden block">
+                {state.pair.value?.state !== 0 && (
+                  <CountdownTimer
+                    endTime={pair?.endTime}
+                    ftoState={state.pair.value?.state}
+                    endTimeDisplay={state.pair.value?.endTimeDisplay}
+                  />
+                )}
+              </div>
+              {state.pair.value?.state !== 0 ? (
+                <div className="flex flex-wrap items-center justify-center gap-x-4 md:gap-x-6 gap-y-2 md:gap-y-3 text-xs">
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Current Raise
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      $
+                      {Number(pair?.depositedRaisedToken || 0).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Participants
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      {Number(pair?.participantsCount || 0).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-wrap items-center justify-center gap-x-3 md:gap-x-6 gap-y-2 md:gap-y-3 text-xs w-full md:w-[400px]">
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      24H
+                    </span>
+                    <span
+                      className={cn(
+                        "text-sm md:text-[15px] font-bold",
+                        pair?.priceChangeDisplay?.startsWith("-")
+                          ? "text-red-500"
+                          : "text-green-500"
+                      )}
+                    >
+                      {pair?.priceChangeDisplay}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      MCap
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      $
+                      {Number(pair?.marketValue || 0).toLocaleString(
+                        undefined,
+                        {
+                          maximumFractionDigits: 2,
+                        }
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Price
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      $
+                      {Number(
+                        pair?.launchedToken?.derivedUSD || 0
+                      ).toLocaleString(undefined, { maximumFractionDigits: 6 })}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Volume
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      $
+                      {Number(
+                        pair?.launchedToken?.volumeUSD || 0
+                      ).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      TVL
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      $
+                      {Number(
+                        pair?.launchedToken?.totalValueLockedUSD || 0
+                      ).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Pools
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      {pair?.launchedToken?.poolCount || 0}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Buys
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      {Number(
+                        pair?.launchedTokenBuyCount || 0
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Sells
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      {Number(
+                        pair?.launchedTokenSellCount || 0
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Holders
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      {Number(
+                        pair?.launchedToken?.holderCount || 0
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Swaps
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      {Number(
+                        pair?.launchedToken?.swapCount || 0
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           <div
             className={cn(
-              "bg-[#FFCD4D] min-h-[665px] px-4 py-6 rounded-2xl space-y-3 relative overflow-hidden col-span-2 lg:col-span-1"
+              "bg-[#FFCD4D] min-h-[500px] md:min-h-[665px] px-4 py-6 rounded-2xl space-y-3 relative overflow-hidden col-span-1"
             )}
           >
             <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
@@ -730,27 +882,28 @@ const MemeView = observer(() => {
                   <Button
                     className="w-full"
                     onPress={async () => {
-                      //navigate to vault/[vaultaddress]
                       const lpTokenAddress =
                         await state.pair.value?.contract.read.lpToken();
                       window.location.href = `/vault/${lpTokenAddress}`;
-
-                      // pair.claimVaultTokens();
                     }}
                     isLoading={state.pair.value?.claimLP.loading}
-                    // isDisabled={!pair.canClaimLP}
                   >
                     Visit Vault
                   </Button>
                 )}
-                <KlineChart height={500} />
+                <div className="hidden md:block">
+                  <KlineChart height={500} />
+                </div>
+                <div className="md:hidden">
+                  <KlineChart height={400} />
+                </div>
               </>
             )}
 
             {state.pair.value?.state === 1 && (
-              <div className="flex flex-col gap-y-5">
+              <div className="flex flex-col gap-y-3 md:gap-y-5">
                 <div className="flex flex-col gap-y-2">
-                  <h2 className="text-2xl font-bold text-black text-center w-full">
+                  <h2 className="text-xl md:text-2xl font-bold text-black text-center w-full">
                     This Project has Failed!
                   </h2>
                   <Image
@@ -770,7 +923,7 @@ const MemeView = observer(() => {
             <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-repeat-x bg-auto"></div>
           </div>
 
-          <div className="bg-transparent rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+          <div className="bg-transparent rounded-2xl space-y-3 col-span-1">
             {pair && <Action pair={pair} refreshTxsCallback={triggerRefresh} />}
           </div>
         </div>

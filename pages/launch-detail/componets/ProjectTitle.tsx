@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FaTelegram, FaGlobe } from "react-icons/fa";
 import { Copy } from "@/components/copy";
 import { VscCopy } from "react-icons/vsc";
+import PairStatus from "@/components/atoms/TokenStatusDisplay/PairStatus";
 
 interface ProjectTitleProps {
   name?: string;
@@ -12,6 +13,9 @@ interface ProjectTitleProps {
   twitter?: string;
   website?: string;
   address?: string;
+  statusColor?: string;
+  status?: string;
+  isValidated?: boolean;
 }
 
 const ProjectTitle: React.FC<ProjectTitleProps> = ({
@@ -21,6 +25,9 @@ const ProjectTitle: React.FC<ProjectTitleProps> = ({
   twitter,
   website,
   address,
+  statusColor,
+  status,
+  isValidated,
 }) => {
   return (
     <div className="flex flex-col gap-2">
@@ -79,6 +86,11 @@ const ProjectTitle: React.FC<ProjectTitleProps> = ({
             }
           />
         )}
+        <PairStatus
+          statusColor={statusColor}
+          status={status}
+          isValidated={isValidated}
+        />
       </div>
     </div>
   );
