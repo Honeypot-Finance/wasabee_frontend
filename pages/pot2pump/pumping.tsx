@@ -142,7 +142,13 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               {pumpingProjects && (
                 <Pagination
                   paginationState={pumpingProjects.projectsPage}
-                  render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
+                  render={(pair) => (
+                    <LaunchCardV3
+                      pair={pair}
+                      action={<></>}
+                      key={pair.address}
+                    />
+                  )}
                   classNames={{
                     itemsContainer:
                       "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",

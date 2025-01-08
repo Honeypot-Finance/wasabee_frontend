@@ -228,26 +228,27 @@ const DetailLaunchCard = observer(
                   </p>
                 </div>
                 <div className="">
-                  <p className="text-xs opacity-60">Price Change</p>
+                  <p className="text-xs opacity-60">Price Change(24h)</p>
                   <p className="font-semibold">
                     <span
                       className={cn(
-                        Number(pair?.launchedToken?.initialUSD) &&
-                          Number(pair?.launchedToken?.derivedUSD) &&
-                          (Number(pair?.launchedToken?.derivedUSD) >
-                          Number(pair?.launchedToken?.initialUSD)
-                            ? "text-green-500"
-                            : "text-red-500")
+                        Number(pair?.launchedToken?.priceChange24hPercentage) >
+                          1
+                          ? "text-green-500"
+                          : "text-red-500",
+                        Number(
+                          pair?.launchedToken?.priceChange24hPercentage
+                        ) === 0 && "text-black"
                       )}
                     >
-                      {pair?.launchedToken?.derivedUSD &&
-                      Number(pair?.launchedToken?.derivedUSD) &&
-                      pair?.launchedToken?.initialUSD &&
-                      Number(pair.launchedToken.initialUSD)
-                        ? Number(pair.launchedToken.derivedUSD) >
-                          Number(pair.launchedToken.initialUSD)
-                          ? `${((Number(pair.launchedToken.derivedUSD) / Number(pair.launchedToken.initialUSD)) * 100).toFixed(2)}%`
-                          : `-${((Number(pair.launchedToken.initialUSD) / Number(pair.launchedToken.derivedUSD)) * 100).toFixed(2)}%`
+                      {pair?.launchedToken?.priceChange24hPercentage &&
+                      Number(pair?.launchedToken?.priceChange24hPercentage) !==
+                        0
+                        ? `${formatAmount(
+                            pair?.launchedToken?.priceChange24hPercentage ??
+                              "0",
+                            2
+                          )}%`
                         : "--"}
                     </span>
                   </p>

@@ -88,16 +88,20 @@ type Pot2PumpListResponse = {
 
 const subgraphTokenQuery = `
   id
-  name
   symbol
+  name
   decimals
-  holderCount
   derivedMatic
-  totalSupply
   derivedUSD
-  volumeUSD
   initialUSD
+  txCount
+  holderCount
+  totalSupply
+  volumeUSD
   totalValueLockedUSD
+  marketCap
+  poolCount
+  priceChange24hPercentage
 `;
 
 const pop2PumpQuery = `
@@ -117,6 +121,7 @@ const pop2PumpQuery = `
   raisedTokenReachingMinCap
   raisedTokenMinCap
   creator
+
 `;
 
 export const pot2PumpListToMemePairList = async (
@@ -528,71 +533,19 @@ export async function fetchPot2PumpList({
     query: gql(query),
   });
 
-  function transformPairsListData(
-    data: Pot2PumpListData
-  ): Pot2PumpListResponse {
-    const pairs = data.pot2Pumps.map((pot2Pump) => {
-      const memePair = new MemePairContract({
-        address: pot2Pump.id,
-        launchedToken: new Token({
-          address: pot2Pump.launchToken.id,
-          name: pot2Pump.launchToken.name,
-          symbol: pot2Pump.launchToken.symbol,
-          decimals: Number(pot2Pump.launchToken.decimals),
-          holderCount: pot2Pump.launchToken.holderCount,
-          derivedETH: pot2Pump.launchToken.derivedMatic,
-          totalSupplyWithoutDecimals: BigNumber(
-            pot2Pump.launchToken.totalSupply
-          ),
-          derivedUSD: pot2Pump.launchToken.derivedUSD,
-          volumeUSD: pot2Pump.launchToken.volumeUSD,
-          initialUSD: pot2Pump.launchToken.initialUSD,
-          totalValueLockedUSD: pot2Pump.launchToken.totalValueLockedUSD,
-        }),
-        raiseToken: new Token({
-          address: pot2Pump.raisedToken.id,
-          name: pot2Pump.raisedToken.name,
-          symbol: pot2Pump.raisedToken.symbol,
-          decimals: Number(pot2Pump.raisedToken.decimals),
-          holderCount: pot2Pump.raisedToken.holderCount,
-          derivedETH: pot2Pump.raisedToken.derivedMatic,
-          totalSupplyWithoutDecimals: BigNumber(
-            pot2Pump.raisedToken.totalSupply
-          ),
-        }),
-        depositedRaisedTokenWithoutDecimals: BigNumber(
-          pot2Pump.DepositRaisedToken
-        ),
-        depositedLaunchedTokenWithoutDecimals: BigNumber(
-          pot2Pump.DepositLaunchToken
-        ),
-        startTime: pot2Pump.createdAt,
-        endTime: pot2Pump.endTime,
-        //state: pot2Pump.state,
-        participantsCount: new BigNumber(pot2Pump.participantsCount),
-        raisedTokenMinCap: BigNumber(pot2Pump.raisedTokenMinCap),
-        provider: pot2Pump.creator,
-      });
-
-      memePair.getProjectInfo();
-
-      return memePair;
-    });
-
-    return {
-      status: "success",
-      message: "Success",
-      data: {
-        pairs,
-        filterUpdates: {
-          currentPage: filter?.currentPage ? filter?.currentPage + 1 : 1,
-          hasNextPage: pairs.length === filter.limit,
-        },
+  return {
+    status: "success",
+    message: "Success",
+    data: {
+      pairs: await pot2PumpListToMemePairList(
+        data.pot2Pumps as Partial<Pot2Pump>[]
+      ),
+      filterUpdates: {
+        currentPage: filter?.currentPage ? filter?.currentPage + 1 : 1,
+        hasNextPage: data.pot2Pumps.length === filter.limit,
       },
-    };
-  }
-
-  return transformPairsListData(data);
+    },
+  };
 }
 
 export async function fetchPot2Pumps({
@@ -674,7 +627,7 @@ export async function fetchPot2Pumps({
       pot2Pumps(
         ${queryParts.join(",\n")}
       ) {
-        ${pop2PumpQuery}
+        ...pot2Pump
       }
     }
   `;

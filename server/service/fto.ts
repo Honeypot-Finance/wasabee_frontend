@@ -16,23 +16,30 @@ import { record } from "zod";
 
 const super_api_key = process.env.FTO_API_KEY ?? "";
 
-
 const fto_api_key_list = [
   "b3a3a02a-a665-4fb5-bb17-153d05863efe", //bera boyz
 ];
 
-const fotProjectDataloader = new DataLoader(async (pairs: readonly { pair: string, chain_id: string }[]) => {
-  //重构下使sql能根据pair和chain_id批量查询,pair和chain_id是联合主键,这种不行
-  const res = await pg<projectColumn[]>`select * from fto_project where (pair, chain_id) in (select pair, chain_id from (values ${pg(pairs.map(({ pair, chain_id }) => [pair, chain_id]))}) as t(pair, chain_id))`;
-  const projectMap = res.reduce((acc, project) => {
-    acc[`${project.pair}-${project.chain_id}`] = project;
-    return acc;
-  }, {} as Record<string, projectColumn>);
-  return pairs.map(({ pair, chain_id }) => projectMap[`${pair}-${chain_id}`]);
-}, {
-  maxBatchSize: 100,
-  cache: false,
-});
+const fotProjectDataloader = new DataLoader(
+  async (pairs: readonly { pair: string; chain_id: string }[]) => {
+    //重构下使sql能根据pair和chain_id批量查询,pair和chain_id是联合主键,这种不行
+    const res = await pg<
+      projectColumn[]
+    >`select * from fto_project where (pair, chain_id) in (select pair, chain_id from (values ${pg(pairs.map(({ pair, chain_id }) => [pair, chain_id]))}) as t(pair, chain_id))`;
+    const projectMap = res.reduce(
+      (acc, project) => {
+        acc[`${project.pair}-${project.chain_id}`] = project;
+        return acc;
+      },
+      {} as Record<string, projectColumn>
+    );
+    return pairs.map(({ pair, chain_id }) => projectMap[`${pair}-${chain_id}`]);
+  },
+  {
+    maxBatchSize: 100,
+    cache: false,
+  }
+);
 
 interface projectColumn {
   id: number;
@@ -43,7 +50,7 @@ interface projectColumn {
   logo_url: string;
   name: string;
   provider: string;
-  project_type: 'meme' | 'fto' | null
+  project_type: "meme" | "fto" | null;
   banner_url: string;
   beravote_space_id: string;
   launch_token: string;
@@ -102,44 +109,53 @@ export const ftoService = {
       pair: data.pair,
       provider: "",
       project_type: "",
-    }
+    };
     let updateFlag = false;
     const publicClient = createPublicClientByChain(chainsMap[data.chain_id]);
-    const readQueue = []
+    const readQueue = [];
     if (!project.provider) {
       updateFlag = true;
-      readQueue.push(publicClient.readContract({
-        address: data.pair as `0x${string}`,
-        abi: MUBAI_FTO_PAIR_ABI,
-        functionName: "launchedTokenProvider",
-      }).catch(() => {
-        return ""
-      }).then(provider => {
-        if (provider) {
-          project.provider = provider
-          project.project_type = "fto"
-        }
-      }), publicClient.readContract({
-        address: data.pair as `0x${string}`,
-        abi: MemePairABI.abi,
-        functionName: "tokenDeployer",
-      }).catch(() => {
-        return ""
-      }).then(provider => {
-        if (provider) {
-          project.provider = provider
-          project.project_type = "meme"
-        }
-      }))
+      readQueue.push(
+        publicClient
+          .readContract({
+            address: data.pair as `0x${string}`,
+            abi: MUBAI_FTO_PAIR_ABI,
+            functionName: "launchedTokenProvider",
+          })
+          .catch(() => {
+            return "";
+          })
+          .then((provider) => {
+            if (provider) {
+              project.provider = provider;
+              project.project_type = "fto";
+            }
+          }),
+        publicClient
+          .readContract({
+            address: data.pair as `0x${string}`,
+            abi: MemePairABI.abi,
+            functionName: "tokenDeployer",
+          })
+          .catch(() => {
+            return "";
+          })
+          .then((provider) => {
+            if (provider) {
+              project.provider = provider;
+              project.project_type = "meme";
+            }
+          })
+      );
     }
-    await Promise.all(readQueue)
+    await Promise.all(readQueue);
 
     if (updateFlag) {
       console.log("updateFtoProject: ", project);
       await updateFtoProject(project);
     }
 
-    return project
+    return project;
   },
   getFtoProjectsByAccount: async ({
     provider,
@@ -168,7 +184,12 @@ export const ftoService = {
     ) {
       return false;
     }
-    return await updateFtoProject({ ...data });
+    try {
+      return await updateFtoProject({ ...data });
+    } catch (e) {
+      console.log("createOrUpdateProjectInfo error: ", e);
+      return false;
+    }
   },
   createOrUpdateProjectVotes: async (data: {
     project_pair: string;
@@ -198,8 +219,9 @@ export const ftoService = {
       pair: data.pair.toLowerCase(),
       chain_id: data.chain_id,
       banner_url: data.banner_url,
-    })} ON CONFLICT (pair, chain_id) DO UPDATE SET banner_url = ${data.banner_url
-      }`;
+    })} ON CONFLICT (pair, chain_id) DO UPDATE SET banner_url = ${
+      data.banner_url
+    }`;
   },
   updateFtoLogo: async (data: {
     logo_url: string;
@@ -279,9 +301,11 @@ const createFtoProject = async (data: {
   })}`;
 };
 
-export const updateFtoProject = async (data: Partial<projectColumn> & {
-  creator_api_key?: string;
-}) => {
+export const updateFtoProject = async (
+  data: Partial<projectColumn> & {
+    creator_api_key?: string;
+  }
+) => {
   try {
     const fieldsToUpdate = Object.entries(data)
       .filter(([key, value]) => {
@@ -295,8 +319,8 @@ export const updateFtoProject = async (data: Partial<projectColumn> & {
     //console.log("fieldsToUpdate: ", fieldsToUpdate);
 
     await pg`
-    INSERT INTO fto_project ${pg(data, ...fieldsToUpdate as any)} 
-    ON CONFLICT (pair, chain_id) DO UPDATE SET ${pg(data, ...fieldsToUpdate as any)} 
+    INSERT INTO fto_project ${pg(data, ...(fieldsToUpdate as any))} 
+    ON CONFLICT (pair, chain_id) DO UPDATE SET ${pg(data, ...(fieldsToUpdate as any))} 
   `;
 
     return true;
@@ -375,7 +399,7 @@ const revalidateProject = async (data: {
     return fotProjectDataloader.load({
       pair: data.pair,
       chain_id: data.chain_id.toString(),
-    })
+    });
   } else {
     //revalidate
     let needUpdate = false;
@@ -439,7 +463,7 @@ const revalidateProject = async (data: {
       return fotProjectDataloader.load({
         pair: data.pair,
         chain_id: data.chain_id.toString(),
-      })
+      });
     }
   }
 };
@@ -447,8 +471,9 @@ const revalidateProject = async (data: {
 const selectFtoProject = async (data: { pair: string; chain_id: number }) => {
   const res = await pg<
     projectColumn[]
-  >`SELECT * FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${data.chain_id
-    }`;
+  >`SELECT * FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
+    data.chain_id
+  }`;
   console.log("res: ", res);
   return res;
 };
