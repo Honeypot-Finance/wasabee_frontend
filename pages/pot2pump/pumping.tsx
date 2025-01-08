@@ -17,6 +17,10 @@ import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/
 import { FilterState } from "@/constants/pot2pump.type";
 import { defaultFilterState } from "@/constants/pot2pump";
 import HoneyContainer from "@/components/CardContianer/HoneyContainer";
+import { filter } from "lodash";
+import search from "../api/udf-data-feed/search";
+import { hasValue } from "@/lib/utils";
+import { PAGE_LIMIT } from "@/services/launchpad";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pumpingProjects, setPumpingProjects] =
@@ -43,20 +47,47 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     newPumpingProjects.projectsPage.reloadPage();
   }, [wallet.isInit]);
 
-  useEffect(() => {
-    if (pumpingProjects) {
-      pumpingProjects.projectsPage.updateFilter({
-        search: search.length > 0 ? search : undefined,
-        currentPage: 0,
-        hasNextPage: true,
-      });
-    }
-  }, [search, pumpingProjects]);
+  // useEffect(() => {
+  //   if (pumpingProjects) {
+  //     pumpingProjects.projectsPage.updateFilter({
+  //       search: search.length > 0 ? search : undefined,
+  //       currentPage: 0,
+  //       hasNextPage: true,
+  //     });
+  //   }
+  // }, [search, pumpingProjects]);
 
   const onChangeFilter = (data: any) => {
     setSearch("");
     setFilters(data);
   };
+
+  useEffect(() => {
+    if (pumpingProjects) {
+      if (hasValue(filters)) {
+        console.log("hasValue(filters)", hasValue(filters));
+        pumpingProjects.projectsPage.updateFilter({
+          currentPage: 0,
+          limit: 0,
+          hasNextPage: true,
+        });
+
+        const timer = setTimeout(() => {
+          pumpingProjects.projectsPage.SetPageItems([]);
+        }, 700);
+      } else {
+        pumpingProjects.projectsPage.updateFilter({
+          currentPage: 0,
+          status: "success",
+          limit: PAGE_LIMIT,
+          hasNextPage: true,
+          orderBy: "endTime",
+          orderDirection: "desc",
+        });
+      }
+    }
+  }, [filters, pumpingProjects]);
+
   return (
     <div className="w-full grow flex flex-col font-gliker">
       <div className="px-4 md:px-6 w-full xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
