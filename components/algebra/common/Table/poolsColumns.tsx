@@ -258,12 +258,12 @@ export const poolsColumns: ColumnDef<Pool>[] = [
         .toLowerCase()
         .includes(value),
   },
-  // {
-  //   accessorKey: "plugins",
-  //   header: () => <HeaderItem>Plugins</HeaderItem>,
-  //   cell: ({ row }) => <Plugins poolId={row.original.id} />,
-  //   filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
-  // },
+  {
+    accessorKey: "plugins",
+    header: () => <HeaderItem>Plugins</HeaderItem>,
+    cell: ({ row }) => <Plugins poolId={row.original.id} />,
+    filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
+  },
   {
     accessorKey: "fee",
     header: () => <HeaderItem className="uppercase">Fee</HeaderItem>,

@@ -346,8 +346,8 @@ export class MemePairContract implements BaseLaunchContract {
       this.projectName = res.name;
     }
     await this.getLaunchedTokenProvider(res.provider);
-    await this.getLaunchedToken(Token.getToken({address: res.launch_token}));
-    await this.getRaisedToken(Token.getToken({address: res.raising_token}));
+    await this.getLaunchedToken(Token.getToken({ address: res.launch_token }));
+    await this.getRaisedToken(Token.getToken({ address: res.raising_token }));
     if (res.logo_url) {
       this.logoUrl = res.logo_url;
       this.launchedToken?.setLogoURI(res.logo_url);
@@ -358,7 +358,6 @@ export class MemePairContract implements BaseLaunchContract {
     if (res.beravote_space_id) {
       this.beravoteSpaceId = res.beravote_space_id;
     }
-
   }
 
   async init({
@@ -480,7 +479,7 @@ export class MemePairContract implements BaseLaunchContract {
   async getRaisedToken(token?: Token) {
     if (token) {
       this.raiseToken = token;
-      this.raiseToken.init();
+      //this.raiseToken.init();
     } else {
       const res = (await this.contract.read.raisedToken()) as `0x${string}`;
       this.raiseToken = Token.getToken({ address: res });
@@ -491,7 +490,7 @@ export class MemePairContract implements BaseLaunchContract {
   async getLaunchedToken(launchedToken?: Token) {
     if (launchedToken) {
       this.launchedToken = launchedToken;
-      this.launchedToken.init();
+      //this.launchedToken.init();
     } else {
       const res = (await this.contract.read.launchedToken()) as `0x${string}`;
       this.launchedToken = Token.getToken({ address: res });
