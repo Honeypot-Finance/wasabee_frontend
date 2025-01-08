@@ -670,18 +670,21 @@ const FeaturedLaunchCard = observer(
                   {formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$
                 </div>
                 <div className="font-bold text-2xl">
-                  Price Change:{" "}
+                  Price Change(24h):{" "}
                   <span
                     className={cn(
-                      Number(pair?.launchedToken?.initialUSD) &&
-                        Number(pair?.launchedToken?.derivedUSD) &&
-                        (Number(pair?.launchedToken?.derivedUSD) >
-                        Number(pair?.launchedToken?.initialUSD)
-                          ? "text-green-500"
-                          : "text-red-500")
+                      Number(pair?.launchedToken?.priceChange24hPercentage) &&
+                        Number(pair?.launchedToken?.priceChange24hPercentage) >
+                          1
+                        ? "text-green-500"
+                        : "text-red-500"
                     )}
                   >
-                    {pair.priceChangeDisplay}
+                    {formatAmount(
+                      pair?.launchedToken?.priceChange24hPercentage ?? "0",
+                      2
+                    )}
+                    %
                   </span>
                 </div>
               </div>
