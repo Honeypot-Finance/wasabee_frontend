@@ -28,7 +28,7 @@ export interface PositionFromTokenId {
   pool: Address;
 }
 
-function usePositionsFromTokenIds(tokenIds: any[] | undefined): {
+function usePositionsFromTokenIds (tokenIds: any[] | undefined): {
   isLoading: boolean;
   positions: PositionFromTokenId[] | undefined;
   refetch: () => void;
@@ -100,7 +100,7 @@ function usePositionsFromTokenIds(tokenIds: any[] | undefined): {
   }, [isLoading, positions, refetch]);
 }
 
-export function usePositions() {
+export function usePositions () {
   const { address: account } = useAccount();
 
   const { data: balanceResult, isLoading: balanceLoading } =
@@ -155,7 +155,7 @@ export function usePositions() {
   };
 }
 
-export function usePosition(tokenId: string | number | undefined): {
+export function usePosition (tokenId: string | number | undefined): {
   loading: boolean;
   position: PositionFromTokenId | undefined;
   refetch: () => void;
@@ -177,7 +177,7 @@ export function usePosition(tokenId: string | number | undefined): {
   }, [isLoading, positions, refetch]);
 }
 
-export function usePositionInFarming(tokenId: string | number | undefined) {
+export function usePositionInFarming (tokenId: string | number | undefined) {
   const { position } = usePosition(tokenId);
 
   const { address: account } = useAccount();
