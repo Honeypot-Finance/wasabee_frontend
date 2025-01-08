@@ -118,6 +118,16 @@ const PoolsTable = <TData, TValue>({
     }
   }, [data, search]);
 
+  const handleChangePools = (filter: string) => {
+    if (filter === "myPools") {
+      setTableData((prev) => {
+        return prev.filter((data) => data.isMyPool);
+      });
+    } else {
+      setTableData(data as Pool[]);
+    }
+  };
+
   if (loading) return <LoadingState />;
 
   return (
@@ -130,11 +140,7 @@ const PoolsTable = <TData, TValue>({
                 <button
                   key={filter.key}
                   onClick={() => {
-                    if (filter.key === "myPools") {
-                      table.setGlobalFilter(true);
-                    } else {
-                      table.setGlobalFilter(undefined);
-                    }
+                    handleChangePools(filter.key);
                     setSelectedFilter(filter.key);
                   }}
                   className={`p-2.5 cursor-pointer ${
