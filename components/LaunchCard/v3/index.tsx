@@ -555,17 +555,11 @@ const SimpleLaunchCard = observer(
                 <p className="text-xs opacity-60">Market Cap</p>
                 <p className="font-semibold">
                   <span>
-                    {pair?.launchedToken?.derivedUSD
+                    {pair?.launchedToken?.marketCap
                       ? "$ " +
                         formatAmount(
-                          (
-                            Number(pair.launchedToken.derivedUSD) *
-                            Number(
-                              pair?.launchedToken?.totalSupplyWithoutDecimals.div(
-                                Math.pow(10, 18)
-                              )
-                            )
-                          ).toFixed(2)
+                          pair.launchedToken?.marketCap?.toString() ?? "0",
+                          5
                         )
                       : "--"}
                   </span>
@@ -696,7 +690,7 @@ const FeaturedLaunchCard = observer(
                   <span>Market Cap:</span>
                   <span>
                     {formatAmount(
-                      pair.launchedToken?.totalValueLockedUSD ?? "0",
+                      pair.launchedToken?.marketCap?.toString() ?? "0",
                       5
                     )}
                     $

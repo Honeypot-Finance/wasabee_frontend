@@ -345,9 +345,9 @@ export class MemePairContract implements BaseLaunchContract {
     if (res.name) {
       this.projectName = res.name;
     }
-    await this.getLaunchedTokenProvider(res.provider);
-    await this.getLaunchedToken(Token.getToken({ address: res.launch_token }));
-    await this.getRaisedToken(Token.getToken({ address: res.raising_token }));
+    // await this.getLaunchedTokenProvider(res.provider);
+    // await this.getLaunchedToken(Token.getToken({ address: res.launch_token }));
+    // await this.getRaisedToken(Token.getToken({ address: res.raising_token }));
     if (res.logo_url) {
       this.logoUrl = res.logo_url;
       this.launchedToken?.setLogoURI(res.logo_url);

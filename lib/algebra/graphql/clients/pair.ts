@@ -192,9 +192,11 @@ export const pot2PumpToMemePair = async (
     }),
   });
 
+  //console.log("pot2Pump:", pot2Pump);
+
   contract.getProjectInfo();
-  contract.launchedToken?.loadLogoURI();
-  contract.raiseToken?.loadLogoURI();
+  // contract.launchedToken?.loadLogoURI();
+  // contract.raiseToken?.loadLogoURI();
 
   return contract;
 };
@@ -211,7 +213,6 @@ export async function fetchNearSuccessPot2Pump() {
     "Pot2PumpPottingNearSuccessDocument",
     Pot2PumpPottingNearSuccessDocument
   );
-  console.log("fetchNearSuccessPot2Pump", data.pot2Pumps);
 
   return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
 }
@@ -318,8 +319,6 @@ export async function fetchPairsList({
       }
     }
   `;
-
-  console.log("query fetchPairsList", query);
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),
@@ -526,8 +525,6 @@ export async function fetchPot2PumpList({
       }
     }
   `;
-
-  console.log("query", query);
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),

@@ -87,6 +87,13 @@ export class Token implements BaseContract {
     return this.symbol || this.name;
   }
 
+  get marketCap() {
+    return (
+      Number(this.derivedUSD) *
+      this.totalSupplyWithoutDecimals.div(10 ** this.decimals).toNumber()
+    );
+  }
+
   get faucetContract() {
     return getContract({
       address: this.address as `0x${string}`,
