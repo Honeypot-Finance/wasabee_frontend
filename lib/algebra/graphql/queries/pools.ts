@@ -98,7 +98,7 @@ export const POOL_MONTH_DATA_FRAGMENT = gql`
 
 export const POOLS_LIST = gql`
   query PoolsList {
-    pools {
+    pools(orderBy: totalValueLockedUSD, orderDirection: desc, first: 1000) {
       ...PoolFields
       poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
         ...PoolHourDataFields
