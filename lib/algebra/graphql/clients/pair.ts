@@ -509,6 +509,7 @@ export async function fetchPot2PumpList ({
     }
   `;
 
+  console.log('query', query)
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),

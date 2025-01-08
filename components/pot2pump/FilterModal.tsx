@@ -159,26 +159,26 @@ export const Filter = observer(
                   <Button
                     className="w-full"
                     onPress={() => {
-                      if (pumpingProjects) {
-                        pumpingProjects.projectsPage.updateFilter({
-                          tvlRange: {
-                            min: filters.tvl.min
-                              ? Number(filters.tvl.min)
-                              : undefined,
-                            max: filters.tvl.max
-                              ? Number(filters.tvl.max)
-                              : undefined,
-                          },
-                          participantsRange: {
-                            min: filters.participants.min
-                              ? Number(filters.participants.min)
-                              : undefined,
-                            max: filters.participants.max
-                              ? Number(filters.participants.max)
-                              : undefined,
-                          },
-                        });
-                      }
+                      // if (pumpingProjects) {
+                      //   pumpingProjects.projectsPage.updateFilter({
+                      //     tvlRange: {
+                      //       min: filters.tvl.min
+                      //         ? Number(filters.tvl.min)
+                      //         : undefined,
+                      //       max: filters.tvl.max
+                      //         ? Number(filters.tvl.max)
+                      //         : undefined,
+                      //     },
+                      //     participantsRange: {
+                      //       min: filters.participants.min
+                      //         ? Number(filters.participants.min)
+                      //         : undefined,
+                      //       max: filters.participants.max
+                      //         ? Number(filters.participants.max)
+                      //         : undefined,
+                      //     },
+                      //   });
+                      // }
                       onClose();
                     }}
                   >

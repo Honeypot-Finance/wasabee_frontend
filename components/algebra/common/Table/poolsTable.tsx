@@ -118,8 +118,6 @@ const PoolsTable = <TData, TValue>({
     }
   }, [data, search]);
 
-  console.log(tableData);
-
   if (loading) return <LoadingState />;
 
   return (
