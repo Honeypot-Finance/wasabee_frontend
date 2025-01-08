@@ -36,6 +36,7 @@ import BigNumber from "bignumber.js";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
 import { amountFormatted, formatAmount } from "@/lib/format";
+import { trpcClient } from "@/lib/trpc";
 const positiveIntegerPattern = /^[1-9]\d*$/;
 
 const FTOLaunchModal: NextLayoutPage = observer(() => {
@@ -86,6 +87,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
       console.error(error);
     }
   };
+
   return (
     <div className="md:p-6  md:max-w-full xl:max-w-[1200px] mx-auto mb-[30vh]">
       <div className=" flex items-center justify-center mt-[24px]">
@@ -465,6 +467,15 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     });
   };
 
+  const handleAiLaunch = async () => {
+    const res = await trpcClient.aiLaunchProject.generateAiProject.query({
+      wallet_address: wallet.account,
+      prompt_input:
+        "I love McDonald's and I want to generate a token for McDonald's first step into the blockchain",
+    });
+    console.log(res);
+  };
+
   return (
     <div className="md:p-6 w-full mx-auto md:max-w-full xl:max-w-[1200px]  mb-[30vh]">
       <div className=" flex w-full items-center justify-center mt-[24px]">
@@ -498,6 +509,13 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 onClick={() => openInstructionModal()}
                 className="cursor-pointer hover:scale-150 transition-all text-black"
               />
+              <Button
+                onClick={() => {
+                  handleAiLaunch();
+                }}
+              >
+                AI Launch
+              </Button>
             </div>
 
             <form
@@ -612,6 +630,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                           defaultSelectedKeys={[
                             wallet.currentChain.raisedTokenData[0].address,
                           ]}
+                          selectorIcon={<></>}
                           items={wallet.currentChain?.raisedTokenData}
                           onSelectionChange={(value) => {
                             state.setRaisedTokenAddress(value.currentKey ?? "");
@@ -652,18 +671,6 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
 
                     <div className="flex flex-col gap-2">
                       <label className="text-black text-base font-medium">
-                        Description{" "}
-                        <span className="text-black/50">(Optional)</span>
-                      </label>
-                      <input
-                        type="text"
-                        {...register("description")}
-                        className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
-                      />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <label className="text-black text-base font-medium">
                         Twitter{" "}
                         <span className="text-black/50">(Optional)</span>
                       </label>
@@ -695,6 +702,17 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                         type="text"
                         {...register("telegram")}
                         className="w-full bg-white rounded-[16px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-black text-base font-medium">
+                        Description{" "}
+                        <span className="text-black/50">(Optional)</span>
+                      </label>
+                      <textarea
+                        {...register("description")}
+                        className="w-full bg-white rounded-[16px] h-[300px] px-4 py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-base font-medium"
                       />
                     </div>
                   </AccordionItem>

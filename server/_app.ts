@@ -6,6 +6,7 @@ import { discussionRouter } from "./router/discussion";
 import { publicProcedure, router, t } from "./trpc";
 import { tokenRouter } from "./router/token";
 import { metadataRouter } from "./router/metadata";
+import { aiLaunchProjectRouter } from "./router/AILaunchProject";
 
 export const appRouter = router({
   pair: pairRouter,
@@ -15,6 +16,7 @@ export const appRouter = router({
   discussionRouter: discussionRouter,
   token: tokenRouter,
   metadata: metadataRouter,
+  aiLaunchProject: aiLaunchProjectRouter,
 });
 
 // Export only the type of a router!
