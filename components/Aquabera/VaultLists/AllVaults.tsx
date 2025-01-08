@@ -15,7 +15,7 @@ import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contra
 import { Token } from "@/services/contract/token";
 import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
 import { wallet } from "@/services/wallet";
-import { Tabs, Tab, Link } from "@nextui-org/react";
+import { Tabs, Tab, Link, Pagination } from "@nextui-org/react";
 import {
   Table,
   TableHeader,
@@ -24,7 +24,7 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Address } from "viem";
 import { DepositToVaultModal } from "../modals/DepositToVaultModal";
 import { Currency } from "@cryptoalgebra/sdk";
@@ -45,6 +45,8 @@ export function AllAquaberaVaults() {
   );
   const [selectedTokenA, setSelectedTokenA] = useState<Currency | null>(null);
   const [selectedTokenB, setSelectedTokenB] = useState<Currency | null>(null);
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 10;
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -69,10 +71,15 @@ export function AllAquaberaVaults() {
     }
   };
 
+  const pages = useMemo(() => {
+    if (!vaults?.ichiVaults) return 0;
+    return Math.ceil(vaults.ichiVaults.length / rowsPerPage);
+  }, [vaults?.ichiVaults]);
+
   const getSortedVaults = () => {
     if (!vaults?.ichiVaults) return [];
 
-    return [...vaults.ichiVaults].sort((a, b) => {
+    const sortedVaults = [...vaults.ichiVaults].sort((a, b) => {
       const multiplier = sortDirection === "asc" ? 1 : -1;
 
       switch (sortField) {
@@ -104,6 +111,10 @@ export function AllAquaberaVaults() {
           return 0;
       }
     });
+
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    return sortedVaults.slice(start, end);
   };
 
   return (
@@ -287,6 +298,18 @@ export function AllAquaberaVaults() {
             })}
           </TableBody>
         </Table>
+
+        <div className="flex w-full justify-center py-4">
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            color="warning"
+            page={page}
+            total={pages}
+            onChange={(page) => setPage(page)}
+          />
+        </div>
 
         {selectedVault && selectedTokenA && selectedTokenB && (
           <DepositToVaultModal
