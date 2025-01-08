@@ -345,16 +345,9 @@ export class MemePairContract implements BaseLaunchContract {
     if (res.name) {
       this.projectName = res.name;
     }
-    if (res.provider) {
-      this.provider = res.provider;
-    } else {
-      await this.getLaunchedTokenProvider();
-      trpcClient.projects.createOrUpdateProjectInfo.mutate({
-        chain_id: wallet.currentChainId,
-        pair: this.address,
-        provider: this.launchedTokenProvider,
-      });
-    }
+    await this.getLaunchedTokenProvider(res.provider);
+    await this.getLaunchedToken(Token.getToken({address: res.launch_token}));
+    await this.getRaisedToken(Token.getToken({address: res.raising_token}));
     if (res.logo_url) {
       this.logoUrl = res.logo_url;
       this.launchedToken?.setLogoURI(res.logo_url);
@@ -365,22 +358,7 @@ export class MemePairContract implements BaseLaunchContract {
     if (res.beravote_space_id) {
       this.beravoteSpaceId = res.beravote_space_id;
     }
-    if (!res.launch_token) {
-      await this.getLaunchedToken();
-      trpcClient.projects.createOrUpdateProjectInfo.mutate({
-        chain_id: wallet.currentChainId,
-        pair: this.address,
-        launch_token: this.launchedToken?.address ?? "",
-      });
-    }
-    if (!res.raising_token) {
-      await this.getRaisedToken();
-      trpcClient.projects.createOrUpdateProjectInfo.mutate({
-        chain_id: wallet.currentChainId,
-        pair: this.address,
-        raising_token: this.raiseToken?.address ?? "",
-      });
-    }
+
   }
 
   async init({
@@ -606,9 +584,13 @@ export class MemePairContract implements BaseLaunchContract {
     }
   }
 
-  async getLaunchedTokenProvider() {
-    const res = await this.contract.read.tokenDeployer();
-    this.launchedTokenProvider = res;
+  async getLaunchedTokenProvider(launchedTokenProvider?: string) {
+    if (launchedTokenProvider) {
+      this.launchedTokenProvider = launchedTokenProvider;
+    } else {
+      const res = await this.contract.read.tokenDeployer();
+      this.launchedTokenProvider = res;
+    }
   }
 
   get canClaimTokens() {
