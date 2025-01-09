@@ -17,10 +17,15 @@ import {
   FtoProjectActions,
   MemeProjectActions,
 } from "./components";
-import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import {
+  DynamicFormatAmount,
+  formatAmountWithAlphabetSymbol,
+  formatAmountWithScientificNotation,
+} from "@/lib/algebra/utils/common/formatAmount";
 import { Button } from "@/components/button/button-next";
 import { PottingModalButton } from "@/components/atoms/Pot2PumpComponents/PottingModalButton";
 import { PumpingModalButton } from "@/components/atoms/Pot2PumpComponents/PumpingModalButton";
+import { amountFormatted } from "@/lib/format";
 
 export type launchCardVariants =
   | "list"
@@ -244,7 +249,7 @@ const DetailLaunchCard = observer(
                       {pair?.launchedToken?.priceChange24hPercentage &&
                       Number(pair?.launchedToken?.priceChange24hPercentage) !==
                         0
-                        ? `${formatAmount(
+                        ? `${formatAmountWithAlphabetSymbol(
                             pair?.launchedToken?.priceChange24hPercentage ??
                               "0",
                             2
@@ -466,7 +471,11 @@ const SimpleLaunchCard = observer(
                 </div>
                 {pair.state === 0 && (
                   <div className="font-bold text-lg">
-                    {formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$
+                    {DynamicFormatAmount(
+                      pair.launchedToken?.derivedUSD ?? "0",
+                      5
+                    )}
+                    $
                   </div>
                 )}
               </div>
@@ -507,7 +516,7 @@ const SimpleLaunchCard = observer(
                           : "text-red-500"
                       )}
                     >
-                      {formatAmount(
+                      {formatAmountWithAlphabetSymbol(
                         pair?.launchedToken?.priceChange24hPercentage ?? "0",
                         2
                       )}
@@ -532,7 +541,10 @@ const SimpleLaunchCard = observer(
                   <span>
                     {pair?.launchedToken?.volumeUSD
                       ? "$ " +
-                        formatAmount(pair.launchedToken?.volumeUSD ?? "0", 5)
+                        formatAmountWithAlphabetSymbol(
+                          pair.launchedToken?.volumeUSD ?? "0",
+                          5
+                        )
                       : "--"}
                   </span>
                 </p>
@@ -543,7 +555,7 @@ const SimpleLaunchCard = observer(
                   <span>
                     {pair?.launchedToken?.totalValueLockedUSD
                       ? "$ " +
-                        formatAmount(
+                        formatAmountWithAlphabetSymbol(
                           pair.launchedToken?.totalValueLockedUSD ?? "0",
                           5
                         )
@@ -557,7 +569,7 @@ const SimpleLaunchCard = observer(
                   <span>
                     {pair?.launchedToken?.marketCap
                       ? "$ " +
-                        formatAmount(
+                        formatAmountWithAlphabetSymbol(
                           pair.launchedToken?.marketCap?.toString() ?? "0",
                           5
                         )
@@ -624,7 +636,11 @@ const FeaturedLaunchCard = observer(
               <div className="font-bold text-base">
                 <span>Token Price: </span>
                 <span>
-                  {formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$
+                  {DynamicFormatAmount(
+                    pair.launchedToken?.derivedUSD ?? "0",
+                    5
+                  )}
+                  $
                 </span>
               </div>
               <div className="font-bold text-base">
@@ -637,7 +653,7 @@ const FeaturedLaunchCard = observer(
                       : "text-red-500"
                   )}
                 >
-                  {formatAmount(
+                  {formatAmountWithAlphabetSymbol(
                     pair?.launchedToken?.priceChange24hPercentage ?? "0",
                     2
                   )}
@@ -661,7 +677,11 @@ const FeaturedLaunchCard = observer(
               <div className="space-y-2">
                 <div className="font-bold text-2xl">
                   Token Price:{" "}
-                  {formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)}$
+                  {DynamicFormatAmount(
+                    pair.launchedToken?.derivedUSD ?? "0",
+                    5
+                  )}
+                  $
                 </div>
                 <div className="font-bold text-2xl">
                   Price Change(24h):{" "}
@@ -674,7 +694,7 @@ const FeaturedLaunchCard = observer(
                         : "text-red-500"
                     )}
                   >
-                    {formatAmount(
+                    {formatAmountWithAlphabetSymbol(
                       pair?.launchedToken?.priceChange24hPercentage ?? "0",
                       2
                     )}
@@ -689,7 +709,7 @@ const FeaturedLaunchCard = observer(
                 <div className="flex items-center justify-between">
                   <span>Market Cap:</span>
                   <span>
-                    {formatAmount(
+                    {formatAmountWithAlphabetSymbol(
                       pair.launchedToken?.marketCap?.toString() ?? "0",
                       5
                     )}
@@ -717,7 +737,10 @@ const FeaturedLaunchCard = observer(
                   <span>
                     {pair?.launchedToken?.volumeUSD
                       ? "$ " +
-                        formatAmount(pair.launchedToken?.volumeUSD ?? "0", 5)
+                        formatAmountWithAlphabetSymbol(
+                          pair.launchedToken?.volumeUSD ?? "0",
+                          5
+                        )
                       : "--"}
                   </span>
                 </div>
@@ -726,7 +749,7 @@ const FeaturedLaunchCard = observer(
                   <span>
                     {pair?.launchedToken?.totalValueLockedUSD
                       ? "$ " +
-                        formatAmount(
+                        formatAmountWithAlphabetSymbol(
                           pair.launchedToken?.totalValueLockedUSD ?? "0",
                           5
                         )

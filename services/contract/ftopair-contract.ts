@@ -12,7 +12,7 @@ import { trpcClient } from "@/lib/trpc";
 import { ZodError } from "zod";
 import launchpad, { statusTextToNumber } from "../launchpad";
 import { BaseLaunchContract } from "./base-launch-contract";
-import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import { formatAmountWithAlphabetSymbol } from "@/lib/algebra/utils/common/formatAmount";
 
 export class FtoPairContract implements BaseLaunchContract {
   databaseId: number | undefined = undefined;
@@ -76,7 +76,7 @@ export class FtoPairContract implements BaseLaunchContract {
       Number(this.launchedToken?.derivedUSD) &&
       this.launchedToken?.initialUSD &&
       Number(this.launchedToken.initialUSD)
-      ? `${formatAmount((Number(this.launchedToken.derivedUSD) / Number(this.launchedToken.initialUSD)).toFixed(2), 2)}%`
+      ? `${formatAmountWithAlphabetSymbol((Number(this.launchedToken.derivedUSD) / Number(this.launchedToken.initialUSD)).toFixed(2), 2)}%`
       : "--";
   }
 

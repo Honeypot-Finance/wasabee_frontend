@@ -32,7 +32,7 @@ import {
   UserPoolProfit,
 } from "@/lib/algebra/graphql/clients/userProfit";
 import { LiquidatorDataQuery } from "@/lib/algebra/graphql/generated/graphql";
-import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import { formatAmountWithAlphabetSymbol } from "@/lib/algebra/utils/common/formatAmount";
 
 export const Profile = observer(() => {
   const { chainId } = useAccount();
@@ -109,11 +109,15 @@ export const Profile = observer(() => {
                 <div className="flex flex-col gap-2">
                   <span className="text-[#FAFAFC] text-[24px] leading-none p-2">
                     <span>Token Value: </span>
-                    {formatAmount(portfolio.totalBalanceFormatted, 2)} USD
+                    {formatAmountWithAlphabetSymbol(
+                      portfolio.totalBalanceFormatted,
+                      2
+                    )}{" "}
+                    USD
                   </span>
                   <span className="text-[#FAFAFC] text-[24px] leading-none p-2">
                     <span>Total LP Value: </span>
-                    {formatAmount(
+                    {formatAmountWithAlphabetSymbol(
                       userPoolsProfit
                         .reduce((acc, curr) => acc + curr.totalValueUSD, 0)
                         .toFixed(2),
@@ -123,7 +127,7 @@ export const Profile = observer(() => {
                   </span>
                   <span className="text-[#FAFAFC] text-[24px] leading-none p-2">
                     <span>Total LP Fees Gained: </span>
-                    {formatAmount(
+                    {formatAmountWithAlphabetSymbol(
                       userPoolsProfit
                         .reduce((acc, curr) => acc + curr.collectedFeesUSD, 0)
                         .toFixed(2),

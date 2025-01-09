@@ -9,7 +9,7 @@ import { AsyncState, ContractWrite } from "../utils";
 import { BaseLaunchContract } from "./base-launch-contract";
 import { ICHIVaultContract } from "./aquabera/ICHIVault-contract";
 import { pot2PumpPairABI } from "@/lib/abis/Pot2Pump/pot2PumpPair";
-import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import { formatAmountWithAlphabetSymbol } from "@/lib/algebra/utils/common/formatAmount";
 import {
   getParticipantDetail,
   getPot2PumpDetail,
@@ -67,14 +67,14 @@ export class MemePairContract implements BaseLaunchContract {
       Number(this.launchedToken.initialUSD)
       ? Number(this.launchedToken.derivedUSD) >
         Number(this.launchedToken.initialUSD)
-        ? `${formatAmount((Number(this.launchedToken.derivedUSD) / Number(this.launchedToken.initialUSD)).toFixed(2), 2)}%`
-        : `-${formatAmount((Number(this.launchedToken.initialUSD) / Number(this.launchedToken.derivedUSD)).toFixed(2), 2)}%`
+        ? `${formatAmountWithAlphabetSymbol((Number(this.launchedToken.derivedUSD) / Number(this.launchedToken.initialUSD)).toFixed(2), 2)}%`
+        : `-${formatAmountWithAlphabetSymbol((Number(this.launchedToken.initialUSD) / Number(this.launchedToken.derivedUSD)).toFixed(2), 2)}%`
       : "--";
   }
 
   get pottingPercentageDisplay() {
     return this.depositedRaisedToken && this.raisedTokenMinCap
-      ? `${formatAmount((Number(this.depositedRaisedToken) / Number(this.raisedTokenMinCap)).toFixed(2), 2)}%`
+      ? `${formatAmountWithAlphabetSymbol((Number(this.depositedRaisedToken) / Number(this.raisedTokenMinCap)).toFixed(2), 2)}%`
       : "--";
   }
 

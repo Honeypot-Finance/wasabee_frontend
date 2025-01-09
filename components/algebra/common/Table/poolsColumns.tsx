@@ -15,7 +15,10 @@ import { TokenFieldsFragment } from "@/lib/algebra/graphql/generated/graphql";
 import { ReactNode } from "react";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
-import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import {
+  DynamicFormatAmount,
+  formatAmountWithAlphabetSymbol,
+} from "@/lib/algebra/utils/common/formatAmount";
 import { observer } from "mobx-react-lite";
 
 interface Pair {
@@ -272,7 +275,7 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   {
     accessorKey: "apr24h",
     header: () => <HeaderItem className="uppercase">APR 24H</HeaderItem>,
-    cell: ({ row }) => `${formatAmount(row.original.apr24h, 2)}%`,
+    cell: ({ row }) => `${DynamicFormatAmount(row.original.apr24h, 2)}%`,
   },
   {
     accessorKey: "tvlUSD",

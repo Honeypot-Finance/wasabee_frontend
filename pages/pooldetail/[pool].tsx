@@ -12,7 +12,7 @@ import { usePool } from "@/lib/algebra/hooks/pools/usePool";
 import { usePositions } from "@/lib/algebra/hooks/positions/usePositions";
 import { getPositionAPR } from "@/lib/algebra/utils/positions/getPositionAPR";
 import { getPositionFees } from "@/lib/algebra/utils/positions/getPositionFees";
-import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import { formatAmountWithAlphabetSymbol } from "@/lib/algebra/utils/common/formatAmount";
 import { Position, ZERO } from "@cryptoalgebra/sdk";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { MoveRightIcon, Plus } from "lucide-react";
@@ -175,7 +175,7 @@ const PoolPage = () => {
         outOfRange:
           poolEntity.tickCurrent < position.tickLower ||
           poolEntity.tickCurrent > position.tickUpper,
-        range: `${formatAmount(position.token0PriceLower.toFixed(6), 6)} — ${formatAmount(position.token0PriceUpper.toFixed(6), 6)}`,
+        range: `${formatAmountWithAlphabetSymbol(position.token0PriceLower.toFixed(6), 6)} — ${formatAmountWithAlphabetSymbol(position.token0PriceUpper.toFixed(6), 6)}`,
         liquidityUSD: formatLiquidityUSD(position),
         feesUSD: formatFeesUSD(idx),
         apr: formatAPR(idx),

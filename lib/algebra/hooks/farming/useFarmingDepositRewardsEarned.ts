@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRewardEarnedUSD } from "./useRewardEarnedUSD";
 import { formatUnits } from "viem";
-import { formatAmount } from "../../utils/common/formatAmount";
+import { formatAmountWithAlphabetSymbol } from "../../utils/common/formatAmount";
 import {
   EternalFarming,
   useSingleTokenQuery,
@@ -73,11 +73,26 @@ export function useFarmingDepositRewardsEarned({
   }, [fetchDepositRewards]);
 
   return {
-    rewardEarned: formatAmount(formattedRewardEarned.toString(), 2),
-    bonusRewardEarned: formatAmount(formattedBonusRewardEarned.toString(), 2),
-    rewardEarnedUSD: formatAmount(rewardEarnedUSD.toString(), 4),
-    bonusRewardEarnedUSD: formatAmount(bonusRewardEarnedUSD.toString(), 4),
-    totalEarned: formatAmount(formattedTotalEarned.toString(), 2),
+    rewardEarned: formatAmountWithAlphabetSymbol(
+      formattedRewardEarned.toString(),
+      2
+    ),
+    bonusRewardEarned: formatAmountWithAlphabetSymbol(
+      formattedBonusRewardEarned.toString(),
+      2
+    ),
+    rewardEarnedUSD: formatAmountWithAlphabetSymbol(
+      rewardEarnedUSD.toString(),
+      4
+    ),
+    bonusRewardEarnedUSD: formatAmountWithAlphabetSymbol(
+      bonusRewardEarnedUSD.toString(),
+      4
+    ),
+    totalEarned: formatAmountWithAlphabetSymbol(
+      formattedTotalEarned.toString(),
+      2
+    ),
     totalEarnedUSD,
     refetch: fetchDepositRewards,
   };

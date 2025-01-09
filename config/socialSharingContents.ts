@@ -1,4 +1,4 @@
-import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
 import { MemePairContract } from "@/services/contract/memepair-contract";
 
 export const pot2PumpPumpingTGShareContent = (pair: MemePairContract) => `
@@ -7,8 +7,8 @@ export const pot2PumpPumpingTGShareContent = (pair: MemePairContract) => `
 🔹 Full Name: ${pair.launchedToken?.displayName}  
 
 📈 Price Growth since Launch: ${pair.priceChangeDisplay}     
-💵 USD Price: $${formatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)} 
-📊 Total Supply: ${formatAmount(
+💵 USD Price: $${DynamicFormatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)} 
+📊 Total Supply: ${DynamicFormatAmount(
   pair.launchedToken?.totalSupplyWithoutDecimals
     .div(10 ** (pair.launchedToken?.decimals ?? 18))
     .toFixed(2) ?? "0",
