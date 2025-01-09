@@ -389,7 +389,6 @@ export class MemePairContract implements BaseLaunchContract {
       this.getDepositedLaunchedToken(depositedLaunchedToken),
       this.getEndTime(endTime),
       this.getLaunchedTokenProvider(),
-      this.getProjectInfo(),
       this.getCanClaimLP(),
       this.getRaisedTokenMinCap(),
       this.getUserParticipated(),
@@ -405,7 +404,7 @@ export class MemePairContract implements BaseLaunchContract {
       return;
     });
 
-    this.getCanRefund();
+    this.getProjectInfo(), this.getCanRefund();
 
     this.isInit = true;
   }

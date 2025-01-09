@@ -530,7 +530,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
             )}
           </div>
 
-          <div className="flex flex-col gap-4 hidden">
+          <div className=" flex-col gap-4 hidden">
             <label htmlFor="provider">Token Provider</label>
             {wallet.account && (
               <input
@@ -577,13 +577,13 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
           </div>
 
           <div className="custom-dashed-less-round">
-            <Accordion variant="bordered">
+            <Accordion variant="bordered" title="Advanced Options">
               <AccordionItem
                 key="advanced"
                 aria-label="advanced"
                 title="Advanced Options"
                 classNames={{
-                  title: "text-white/50 text-sm md:text-base",
+                  title: "text-black font-bold text-sm md:text-base",
                   trigger:
                     "text-white/50 text-sm md:text-base h-[36px] md:h-[56px] flex items-center",
                   content: "space-y-3",
@@ -601,6 +601,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                         wallet.currentChain.raisedTokenData[0].address,
                       ]}
                       items={wallet.currentChain?.raisedTokenData}
+                      selectorIcon={<></>}
                       onSelectionChange={(value) => {
                         state.setRaisedTokenAddress(value.currentKey ?? "");
                       }}
