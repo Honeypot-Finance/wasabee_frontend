@@ -744,13 +744,30 @@ const FeaturedLaunchCard = observer(
                       : "--"}
                   </span>
                 </div>
+                {pair?.launchedToken?.totalValueLockedUSD &&
+                  Number(pair?.launchedToken?.totalValueLockedUSD) > 1000 && (
+                    <div className="flex items-center justify-between col-span-2">
+                      <span>TVL:</span>
+                      <span>
+                        {pair?.launchedToken?.totalValueLockedUSD
+                          ? "$ " +
+                            formatAmountWithAlphabetSymbol(
+                              pair.launchedToken?.totalValueLockedUSD ?? "0",
+                              5
+                            )
+                          : "--"}
+                      </span>
+                    </div>
+                  )}
                 <div className="flex items-center justify-between col-span-2">
-                  <span>TVL:</span>
+                  <span>Total Supply:</span>
                   <span>
-                    {pair?.launchedToken?.totalValueLockedUSD
+                    {pair?.launchedToken?.totalSupplyWithoutDecimals
                       ? "$ " +
                         formatAmountWithAlphabetSymbol(
-                          pair.launchedToken?.totalValueLockedUSD ?? "0",
+                          pair.launchedToken?.totalSupplyWithoutDecimals
+                            .div(10 ** Number(pair.launchedToken?.decimals))
+                            .toString() ?? "0",
                           5
                         )
                       : "--"}
