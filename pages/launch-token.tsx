@@ -479,7 +479,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
   useEffect(() => {
     if (wallet.isInit) {
       state.setRaisedTokenAddress(
-        wallet.currentChain.raisedTokenData[0].address
+        wallet.currentChain.raisedTokenData[1].address
       );
     }
   }, [wallet.isInit]);
@@ -598,7 +598,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                     <WarppedNextSelect
                       isRequired
                       defaultSelectedKeys={[
-                        wallet.currentChain.raisedTokenData[0].address,
+                        wallet.currentChain.raisedTokenData[1].address,
                       ]}
                       items={wallet.currentChain?.raisedTokenData}
                       selectorIcon={<></>}
