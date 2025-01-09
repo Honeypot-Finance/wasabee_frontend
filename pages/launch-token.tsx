@@ -37,6 +37,7 @@ import BigNumber from "bignumber.js";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
 import { amountFormatted, formatAmount } from "@/lib/format";
+import { HoneyContainer } from "@/components/CardContianer";
 const positiveIntegerPattern = /^[1-9]\d*$/;
 
 type FormValues = {
@@ -491,9 +492,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
 
   return (
     <div className="flex w-full items-center justify-center">
-      <div className="flex flex-col w-full md:w-[584px] lg:w-[900px] items-center border-[color:var(--Button-Gradient,#F7931A)] bg-[#FFCD4D] py-4 md:py-12 px-4 md:px-8 rounded-3xl md:rounded-[54px] relative overflow-hidden">
-        <div className="bg-[url('/images/pumping/outline-border.png')] h-[20px] md:h-[50px] absolute top-0 left-0 w-full bg-contain bg-[left_-90px_top] bg-repeat-x"></div>
-
+      <HoneyContainer>
         <div className="flex items-center gap-2">
           <DreampadSvg />
           <span className="text-black text-base md:text-xl font-bold text-center">
@@ -504,7 +503,6 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
             className="cursor-pointer hover:scale-150 transition-all text-black"
           />
         </div>
-
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="w-full rounded-[24px] md:rounded-[32px] bg-white space-y-5 px-4 md:px-8 py-4 md:py-6 custom-dashed mx-3 md:mx-6 mt-4 md:mt-6"
@@ -714,9 +712,8 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
             </Button>
           )}
         </form>
-
         {/* 移除底部边框 */}
-      </div>
+      </HoneyContainer>
     </div>
   );
 });
