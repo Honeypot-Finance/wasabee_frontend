@@ -31,6 +31,8 @@ import { motion } from "framer-motion";
 import { itemPopUpVariants } from "@/lib/animation";
 import V3SwapCard from "@/components/algebra/swap/V3SwapCard";
 import { wallet } from "@/services/wallet";
+import KlineChart from "../launch-detail/componets/KlineChart";
+import { cn } from "@/lib/tailwindcss";
 
 const RankProjectData = [
   { icon: "🚀", value: 10 },
@@ -190,7 +192,12 @@ const LBPDetail = () => {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-4 xl:w-[1170px]">
+          <div
+            className={cn(
+              "grid grid-cols-2 gap-4 xl:w-[1170px]",
+              isSaleEnd && "grid-cols-[1fr_400px]"
+            )}
+          >
             <div className="bg-[#271A0C] col-span-2 px-5 py-2.5 rounded-[30px] flex md:items-center md:justify-between md:flex-row flex-col gap-2 md:gap-0">
               <div className="flex items-center gap-x-4 md:gap-x-[7.5px]">
                 <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
@@ -218,70 +225,76 @@ const LBPDetail = () => {
               </div>
             </div>
 
-            <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-              <TokenRaised
-                depositedAmount={Number(
-                  formatUnits(data?.args?.totalPurchased, token.decimals)
-                ).toFixed(3)}
-                minCapAmount={Number(
-                  formatUnits(data?.args?.shares, token.decimals)
-                ).toFixed(3)}
-              />
-
-              <SaleProgress
-                progressValue={percentOfTokenSold}
-                progressLabel={`${percentOfTokenSold.toFixed(2)}%`}
-                depositedAmount={amountFormatted(data?.args?.totalPurchased, {
-                  decimals: token.decimals,
-                  fixed: 3,
-                  prefix: "$",
-                })}
-                raisedTokenMinCap={amountFormatted(data?.args?.shares, {
-                  decimals: token.decimals,
-                  fixed: 3,
-                  prefix: "$",
-                })}
-              />
-
-              <TokenAddress address={data?.args?.share} />
-
-              <TokenDetails
-                fullDiluted={formatUnits(
-                  data?.args?.maxTotalAssetsInDeviation,
-                  14
-                )}
-                price={formatUnits(
-                  previewAssetsIn ?? BigInt(0),
-                  assetToken?.decimals ?? 18
-                )}
-                fundsRaised={formatUnits(
-                  data?.totalAssetsIn ?? 0,
-                  assetToken?.decimals || 18
-                )}
-                startTimeDisplay={dayjs
-                  .unix(Number(data?.args?.saleStart ?? 0))
-                  .format("MMMM D, YYYY")}
-                endTimeDisplay={dayjs
-                  .unix(Number(data?.args?.saleEnd ?? 0))
-                  .format("MMMM D, YYYY")}
-              />
-
-              <hr />
-              <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
-              <div className="flex gap-5">
-                {RankProjectData.map((project, i) => {
-                  return (
-                    <div
-                      key={i}
-                      className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
-                    >
-                      <p>{project.icon}</p>
-                      <p> {project.value}</p>
-                    </div>
-                  );
-                })}
+            {isSaleEnd ? (
+              <div className="hidden md:block">
+                <KlineChart height={500} />
               </div>
-            </div>
+            ) : (
+              <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+                <TokenRaised
+                  depositedAmount={Number(
+                    formatUnits(data?.args?.totalPurchased, token.decimals)
+                  ).toFixed(3)}
+                  minCapAmount={Number(
+                    formatUnits(data?.args?.shares, token.decimals)
+                  ).toFixed(3)}
+                />
+
+                <SaleProgress
+                  progressValue={percentOfTokenSold}
+                  progressLabel={`${percentOfTokenSold.toFixed(2)}%`}
+                  depositedAmount={amountFormatted(data?.args?.totalPurchased, {
+                    decimals: token.decimals,
+                    fixed: 3,
+                    prefix: "$",
+                  })}
+                  raisedTokenMinCap={amountFormatted(data?.args?.shares, {
+                    decimals: token.decimals,
+                    fixed: 3,
+                    prefix: "$",
+                  })}
+                />
+
+                <TokenAddress address={data?.args?.share} />
+
+                <TokenDetails
+                  fullDiluted={formatUnits(
+                    data?.args?.maxTotalAssetsInDeviation,
+                    14
+                  )}
+                  price={formatUnits(
+                    previewAssetsIn ?? BigInt(0),
+                    assetToken?.decimals ?? 18
+                  )}
+                  fundsRaised={formatUnits(
+                    data?.totalAssetsIn ?? 0,
+                    assetToken?.decimals || 18
+                  )}
+                  startTimeDisplay={dayjs
+                    .unix(Number(data?.args?.saleStart ?? 0))
+                    .format("MMMM D, YYYY")}
+                  endTimeDisplay={dayjs
+                    .unix(Number(data?.args?.saleEnd ?? 0))
+                    .format("MMMM D, YYYY")}
+                />
+
+                <hr />
+                <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
+                <div className="flex gap-5">
+                  {RankProjectData.map((project, i) => {
+                    return (
+                      <div
+                        key={i}
+                        className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
+                      >
+                        <p>{project.icon}</p>
+                        <p> {project.value}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             <div className="rounded-2xl space-y-3 col-span-2 lg:col-span-1">
               {isSaleEnd ? (
@@ -289,7 +302,7 @@ const LBPDetail = () => {
                   variants={itemPopUpVariants}
                   initial="hidden"
                   animate="visible"
-                  className="relative w-full flex flex-col items-center justify-start col-span-2 lg:col-span-1"
+                  className="relative w-full h-full flex flex-col items-center justify-start col-span-2 lg:col-span-1"
                 >
                   <V3SwapCard
                     fromTokenAddress={data?.args?.share ?? undefined}

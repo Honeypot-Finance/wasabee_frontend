@@ -19,7 +19,7 @@ export function V3SwapCard({
   bordered = true,
 }: V3SwapCardProps) {
   return (
-    <HoneyContainer bordered={bordered} noNoneyDrop>
+    <HoneyContainer bordered={bordered}>
       <SwapPairV3
         fromTokenAddress={fromTokenAddress}
         toTokenAddress={toTokenAddress}
