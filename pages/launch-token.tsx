@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import launchpad from "@/services/launchpad";
-import { Button } from "@/components/button/button-next";
+import { Button } from "@nextui-org/react";
 import { NextLayoutPage } from "@/types/nextjs";
 import { RocketSvg } from "@/components/svg/Rocket";
 import { PeddingSvg } from "@/components/svg/Pedding";
@@ -31,12 +31,17 @@ import { FaQuestionCircle } from "react-icons/fa";
 import { popmodal } from "@/services/popmodal";
 import store from "store2";
 import { cn } from "@/lib/tailwindcss";
-import { UploadImage } from "@/components/UploadImage/UploadImage";
+import { uploadFile, UploadImage } from "@/components/UploadImage/UploadImage";
 import BigNumber from "bignumber.js";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
 import { amountFormatted, formatAmount } from "@/lib/format";
 import { trpcClient } from "@/lib/trpc";
+import { Blob, File } from "buffer";
+import { base64ToFile } from "@/lib/blob/uploadProjectIcon";
+import AITokenGenerator, {
+  TokenGeneratedSuccessValues,
+} from "@/components/AI/AITokenGenerator/AITokenGenerator";
 const positiveIntegerPattern = /^[1-9]\d*$/;
 
 const FTOLaunchModal: NextLayoutPage = observer(() => {
@@ -400,6 +405,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     handleSubmit,
     control,
     formState: { errors },
+    setValue,
   } = useForm();
   const router = useRouter();
   const state = useLocalObservable(() => ({
@@ -467,13 +473,11 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     });
   };
 
-  const handleAiLaunch = async () => {
-    const res = await trpcClient.aiLaunchProject.generateAiProject.query({
-      wallet_address: wallet.account,
-      prompt_input:
-        "I love McDonald's and I want to generate a token for McDonald's first step into the blockchain",
-    });
-    console.log(res);
+  const tokenGeneratedCallback = (tokenInfo: TokenGeneratedSuccessValues) => {
+    setValue("logoUrl", tokenInfo.image);
+    setValue("tokenName", tokenInfo.name);
+    setValue("description", tokenInfo.description);
+    setValue("tokenSymbol", tokenInfo.symbol);
   };
 
   return (
@@ -509,13 +513,6 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 onClick={() => openInstructionModal()}
                 className="cursor-pointer hover:scale-150 transition-all text-black"
               />
-              <Button
-                onClick={() => {
-                  handleAiLaunch();
-                }}
-              >
-                AI Launch
-              </Button>
             </div>
 
             <form
@@ -523,6 +520,10 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
               onSubmit={handleSubmit(onSubmit)}
               className="w-full rounded-[32px] bg-white space-y-4 px-8 py-6 custom-dashed mx-6 mt-6"
             >
+              <AITokenGenerator
+                tokenGeneratedCallback={tokenGeneratedCallback}
+              />
+
               <div className="flex-col gap-4 hidden">
                 <label htmlFor="provider">Token Provider</label>
                 {wallet.account && (
