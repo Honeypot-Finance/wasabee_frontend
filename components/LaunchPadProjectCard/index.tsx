@@ -7,7 +7,7 @@ import { shortenAddress } from "@/lib/format";
 import { Address } from "viem";
 import Link from "next/link";
 
-type IProjectCardStatus = "live" | "comming";
+type IProjectCardStatus = "live" | "comming" | "ended";
 
 type ILaunchPadProjectCard = {
   status: IProjectCardStatus;
@@ -47,7 +47,9 @@ const ProjectCardStatus = observer(
           ></div>
         </div>
         <div className="font-bold text-white text-[1rem] leading-[1.3rem] min-w-[110px] text-center">
-          {status == "live" ? "Live now" : "Coming Soon"}
+          {status != "ended" && (
+            <div>{status == "live" ? "Live now" : "Coming Soon"}</div>
+          )}
         </div>
       </div>
     );
@@ -113,9 +115,11 @@ const LaunchPadProjectBody = observer(
     symbol = "tHpot",
     fundsRaised,
   }: ILaunchPadProjectBody) => {
+    console.log("end date: ", endDate);
+
     return (
       <div className="my-[10px] py-[8px] flex items-center flex-col justify-between w-full bg-[#31220C] rounded-2xl gap-[18px]">
-        <ProjectCardStatus status={status} />
+        <ProjectCardStatus status={"ended"} />
 
         <Countdown
           date={status == "live" ? endDate : startDate}
