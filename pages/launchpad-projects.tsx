@@ -48,7 +48,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   }, [wallet.isInit]);
 
   const resetPage = () => {
-    setPage(1);
+    setTake(10);
     setSearch("");
     setResult([]);
   };
