@@ -37,6 +37,8 @@ interface PoolsTableProps<TData, TValue> {
   loading?: boolean;
   sorting: any;
   setSorting: any;
+  search: string;
+  setSearch: (value: string) => void;
 }
 
 const PoolsTable = <TData, TValue>({
@@ -48,9 +50,12 @@ const PoolsTable = <TData, TValue>({
   loading,
   sorting,
   setSorting,
+  search,
+  setSearch,
 }: PoolsTableProps<TData, TValue>) => {
   const [selectedFilter, setSelectedFilter] = useState<string>("trending");
   const [isCreatePoolOpen, setIsCreatePoolOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState<string>(search);
 
   const filters = [
     { key: "trending", label: "All Pools" },
@@ -61,7 +66,6 @@ const PoolsTable = <TData, TValue>({
 
   const [tableData, setTableData] = useState<Pool[]>(data as Pool[]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [search, setSearch] = useState("");
 
   const table = useReactTable({
     data: tableData as TData[],
@@ -92,32 +96,9 @@ const PoolsTable = <TData, TValue>({
     totalRows
   );
 
-  useEffect(() => {
-    const timerID = setTimeout(() => {
-      if (search) {
-        setTableData((prev) =>
-          prev.filter((data) => {
-            return (
-              data?.id?.includes(search) ||
-              data?.pair?.token0?.symbol?.toLowerCase()?.includes(search) ||
-              data?.pair?.token1?.symbol?.toLowerCase()?.includes(search) ||
-              data?.pair?.token1?.name?.toLowerCase()?.includes(search) ||
-              data?.pair?.token1?.name?.toLowerCase()?.includes(search) ||
-              data?.pair?.token0?.id?.toLowerCase()?.includes(search) ||
-              data?.pair?.token1?.id?.toLowerCase()?.includes(search)
-            );
-          })
-        );
-      } else {
-        setTableData(data as Pool[]);
-      }
-    }, 500);
-    if (timerID) {
-      return () => clearTimeout(timerID);
-    }
-  }, [data, search]);
-
   const handleChangePools = (filter: string) => {
+    setSearchValue("");
+    setSearch("");
     if (filter === "myPools") {
       setTableData((prev) => {
         return prev.filter((data) => data.isMyPool);
@@ -127,103 +108,106 @@ const PoolsTable = <TData, TValue>({
     }
   };
 
+  useEffect(() => {
+    setTableData(data as Pool[]);
+  }, [data]);
+
   if (loading) return <LoadingState />;
 
   return (
     <div>
-      {searchID && (
-        <div className="flex flex-col xl:flex-row gap-4 w-full xl:justify-between xl:items-center py-4">
-          <div className="flex items-center xl:gap-x-6 w-full xl:w-fit justify-between">
-            <div className="flex items-center">
-              {filters.map((filter) => (
-                <button
-                  key={filter.key}
-                  onClick={() => {
-                    handleChangePools(filter.key);
-                    setSelectedFilter(filter.key);
-                  }}
-                  className={`p-2.5 cursor-pointer ${
-                    selectedFilter === filter.key
-                      ? "border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
-                      : ""
-                  }`}
-                >
-                  {filter.label}
-                </button>
-              ))}
-            </div>
-            {/* TODO：placeholder text vertical-align: middle */}
-            <div className="relative">
-              <input
-                placeholder="Search pool"
-                value={search}
-                type="text"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setSearch(event.target.value);
+      <div className="flex flex-col xl:flex-row gap-4 w-full xl:justify-between xl:items-center py-4">
+        <div className="flex items-center xl:gap-x-6 w-full xl:w-fit justify-between">
+          <div className="flex items-center">
+            {filters.map((filter) => (
+              <button
+                key={filter.key}
+                onClick={() => {
+                  handleChangePools(filter.key);
+                  setSelectedFilter(filter.key);
                 }}
-                className="border border-[#E18A20]/10 bg-[#271A0C] pl-12 pr-4 h-12 w-[353px] focus:border-opacity-100 rounded-2xl placeholder:align-middle"
-              />
-              <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-border"
-                size={20}
-              />
-            </div>
-          </div>
-          <div className="flex items-center gap-x-5">
-            <Button
-              className={cn(
-                "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
-              )}
-              onClick={() => setIsCreatePoolOpen(true)}
-            >
-              <Plus />
-              <span>Create Pool</span>
-            </Button>
-
-            <Modal
-              isOpen={isCreatePoolOpen}
-              onOpenChange={setIsCreatePoolOpen}
-              classNames={{
-                base: "bg-[#271A0C] dark:bg-[#271A0C]", // modal background
-                header: "border-b border-[#F7931A20]",
-                body: "py-6",
-                closeButton: "hover:bg-white/5 active:bg-white/10",
-              }}
-            >
-              <ModalContent>
-                {/* <ModalHeader className="flex flex-col gap-1">
-                  Create New Pool
-                </ModalHeader> */}
-                <ModalBody>
-                  <CreatePoolForm />
-                </ModalBody>
-              </ModalContent>
-            </Modal>
-
-            <div className="flex gap-2 max-md:gap-4 items-center w-fit ml-auto max-sm:hidden">
-              <label
-                className="flex gap-2 items-center"
-                htmlFor="farmingAvailable"
+                className={`p-2.5 cursor-pointer ${
+                  selectedFilter === filter.key
+                    ? "border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
+                    : ""
+                }`}
               >
-                <span className="max-md:hidden">Farming Available</span>
-              </label>
-              {/* TODO: switch color */}
-              <Switch
-                className="bg-[#865215]"
-                id="farmingAvailable"
-                checked={table.getColumn("plugins")?.getFilterValue() === true}
-                onCheckedChange={() => {
-                  const column = table.getColumn("plugins");
-                  if (column?.getFilterValue() === undefined)
-                    column?.setFilterValue(true);
-                  else column?.setFilterValue(undefined);
-                }}
-              />
-              <LayoutGrid className="text-[#F7941D80]/50 cursor-pointer text-xl" />
-            </div>
+                {filter.label}
+              </button>
+            ))}
+          </div>
+          {/* TODO：placeholder text vertical-align: middle */}
+          <div className="relative">
+            <input
+              placeholder="Search pool"
+              value={searchValue}
+              type="text"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setSearchValue(event.target.value);
+                setSearch(event.target.value);
+              }}
+              className="border border-[#E18A20]/10 bg-[#271A0C] pl-12 pr-4 h-12 w-[353px] focus:border-opacity-100 rounded-2xl placeholder:align-middle"
+            />
+            <Search
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-border"
+              size={20}
+            />
           </div>
         </div>
-      )}
+        <div className="flex items-center gap-x-5">
+          <Button
+            className={cn(
+              "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
+            )}
+            onClick={() => setIsCreatePoolOpen(true)}
+          >
+            <Plus />
+            <span>Create Pool</span>
+          </Button>
+
+          <Modal
+            isOpen={isCreatePoolOpen}
+            onOpenChange={setIsCreatePoolOpen}
+            classNames={{
+              base: "bg-[#271A0C] dark:bg-[#271A0C]", // modal background
+              header: "border-b border-[#F7931A20]",
+              body: "py-6",
+              closeButton: "hover:bg-white/5 active:bg-white/10",
+            }}
+          >
+            <ModalContent>
+              {/* <ModalHeader className="flex flex-col gap-1">
+                  Create New Pool
+                </ModalHeader> */}
+              <ModalBody>
+                <CreatePoolForm />
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+
+          <div className="flex gap-2 max-md:gap-4 items-center w-fit ml-auto max-sm:hidden">
+            <label
+              className="flex gap-2 items-center"
+              htmlFor="farmingAvailable"
+            >
+              <span className="max-md:hidden">Farming Available</span>
+            </label>
+            {/* TODO: switch color */}
+            <Switch
+              className="bg-[#865215]"
+              id="farmingAvailable"
+              checked={table.getColumn("plugins")?.getFilterValue() === true}
+              onCheckedChange={() => {
+                const column = table.getColumn("plugins");
+                if (column?.getFilterValue() === undefined)
+                  column?.setFilterValue(true);
+                else column?.setFilterValue(undefined);
+              }}
+            />
+            <LayoutGrid className="text-[#F7941D80]/50 cursor-pointer text-xl" />
+          </div>
+        </div>
+      </div>
       {/* FIXME: border radius display */}
       <Table className="bg-[#271A0C] rounded-[30px]">
         <TableHeader className="[&_tr]:border-b border-[#D9D7E4]/5 [&_tr]:border-opacity-30 border-t border-opacity-60">

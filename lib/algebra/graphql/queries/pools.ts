@@ -22,7 +22,6 @@ export const POOL_FRAGMENT = gql`
     token1Price
     txCount
     createdAtTimestamp
-   
   }
 `;
 
@@ -64,7 +63,6 @@ export const POOL_FEE_DATA_FRAGMENT = gql`
   }
 `;
 
-
 export const POOL_WEEK_DATA_FRAGMENT = gql`
   fragment PoolWeekDataFields on PoolWeekData {
     feesUSD
@@ -86,13 +84,13 @@ export const POOL_MONTH_DATA_FRAGMENT = gql`
 `;
 
 export const POOLS_LIST = gql`
-  query PoolsList {
-    pools {
+  query PoolsList($search: String) {
+    pools(where: { searchString_contains: $search }) {
       ...PoolFields
-      poolHourData(first: 100,orderBy: periodStartUnix, orderDirection: desc) {
+      poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
         ...PoolHourDataFields
       }
-      poolDayData(first: 100,orderBy: date, orderDirection: desc) {
+      poolDayData(first: 100, orderBy: date, orderDirection: desc) {
         ...PoolDayDataFields
       }
       poolWeekData(first: 2, orderBy: week, orderDirection: desc) {

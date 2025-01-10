@@ -13,6 +13,7 @@ import {
 import PoolCardList from "./PoolCardList";
 import { SortingState } from "@tanstack/react-table";
 import { id } from "ethers/lib/utils";
+import { debounce } from "lodash";
 
 const mappingSortKeys: Record<any, Pool_OrderBy> = {
   tvlUSD: Pool_OrderBy.TotalValueLockedUsd,
@@ -33,9 +34,18 @@ const PoolsList = () => {
     { id: "id", desc: true },
   ]);
 
+  const [search, setSearch] = useState("");
+
   const orderBy = mappingSortKeys[sorting[0].id];
-  const { data: pools, loading: isPoolsListLoading } = usePoolsListQuery();
-  console.log("pools: ", pools);
+  const {
+    data: pools,
+    loading: isPoolsListLoading,
+    refetch,
+  } = usePoolsListQuery({
+    variables: {
+      search: search,
+    },
+  });
 
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
@@ -156,7 +166,7 @@ const PoolsList = () => {
         };
       }
     );
-  }, [isLoading, pools, positions, activeFarmings]);
+  }, [isLoading, pools, positions, activeFarmings, search]);
 
   const handleSort = (callback: any) => {
     const sort = callback();
@@ -166,6 +176,14 @@ const PoolsList = () => {
       setSorting([]);
     }
   };
+
+  const handleChangeSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setSearch(value);
+      }, 900),
+    []
+  );
 
   return (
     <div>
@@ -178,6 +196,8 @@ const PoolsList = () => {
           link={"pooldetail"}
           showPagination={true}
           loading={isLoading}
+          search={search}
+          setSearch={(value) => handleChangeSearch(value)}
         />
       </div>
       <div className="block xl:hidden">
