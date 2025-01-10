@@ -27,6 +27,10 @@ import ProjectDetails from "./components/ProjectDetails";
 import { useQuery } from "@tanstack/react-query";
 import FjordHoneySdk from "@/services/fjord_honeypot_sdk";
 import { SwapCard } from "./components/Swap";
+import { motion } from "framer-motion";
+import { itemPopUpVariants } from "@/lib/animation";
+import V3SwapCard from "@/components/algebra/swap/V3SwapCard";
+import { wallet } from "@/services/wallet";
 
 const RankProjectData = [
   { icon: "🚀", value: 10 },
@@ -176,6 +180,8 @@ const LBPDetail = () => {
   const isStart =
     data?.args?.saleStart && dayjs().unix() - data?.args?.saleStart > 0;
 
+  const isSaleEnd = data?.args?.saleEnd * 1000 < Date.now();
+
   return (
     <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
       {isErc20Loading || isArgsLoading ? (
@@ -208,7 +214,7 @@ const LBPDetail = () => {
                       : data.args.saleStart * 1000
                   }
                 />
-                <ProjectStatus isStart={isStart} />
+                {!isSaleEnd && <ProjectStatus isStart={isStart} />}
               </div>
             </div>
 
@@ -278,27 +284,44 @@ const LBPDetail = () => {
             </div>
 
             <div className="rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-              <SwapCard
-                sharePriceInAsset={previewAssetsIn?.toString() ?? ""}
-                poolId={pool?.id ?? ""}
-                asset={{
-                  decimals: assetToken.decimals,
-                  name: assetToken.name,
-                  symbol: assetToken.symbol,
-                  totalSupply: assetToken.totalSupply,
-                  address: data?.args?.asset as Address,
-                }}
-                share={{
-                  decimals: token.decimals,
-                  name: token.name,
-                  symbol: token.symbol,
-                  totalSupply: token.totalSupply,
-                  address: data?.args?.share as Address,
-                }}
-                poolAddress={pairAddress as Address}
-                allowSell={Boolean(data?.args?.sellingAllowed)}
-                refetchArgs={refetchArgs}
-              />
+              {isSaleEnd ? (
+                <motion.div
+                  variants={itemPopUpVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="relative w-full flex flex-col items-center justify-start col-span-2 lg:col-span-1"
+                >
+                  <V3SwapCard
+                    fromTokenAddress={data?.args?.share ?? undefined}
+                    toTokenAddress={
+                      data?.args?.asset ??
+                      wallet.currentChain.platformTokenAddress.HPOT
+                    }
+                  />
+                </motion.div>
+              ) : (
+                <SwapCard
+                  sharePriceInAsset={previewAssetsIn?.toString() ?? ""}
+                  poolId={pool?.id ?? ""}
+                  asset={{
+                    decimals: assetToken.decimals,
+                    name: assetToken.name,
+                    symbol: assetToken.symbol,
+                    totalSupply: assetToken.totalSupply,
+                    address: data?.args?.asset as Address,
+                  }}
+                  share={{
+                    decimals: token.decimals,
+                    name: token.name,
+                    symbol: token.symbol,
+                    totalSupply: token.totalSupply,
+                    address: data?.args?.share as Address,
+                  }}
+                  poolAddress={pairAddress as Address}
+                  allowSell={Boolean(data?.args?.sellingAllowed)}
+                  refetchArgs={refetchArgs}
+                />
+              )}
             </div>
           </div>
 
