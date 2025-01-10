@@ -46,8 +46,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet.isInit]);
 
-  console.log("launchpad.projectsPage", launchpad.projectsPage);
-
   const mostSuccessProjects: any[] = [];
 
   return (
