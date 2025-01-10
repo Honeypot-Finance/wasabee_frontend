@@ -804,6 +804,8 @@ export enum Burn_OrderBy {
   Token0MarketCap = 'token0__marketCap',
   Token0Name = 'token0__name',
   Token0PoolCount = 'token0__poolCount',
+  Token0PriceChange24h = 'token0__priceChange24h',
+  Token0PriceChange24hPercentage = 'token0__priceChange24hPercentage',
   Token0Symbol = 'token0__symbol',
   Token0TotalSupply = 'token0__totalSupply',
   Token0TotalValueLocked = 'token0__totalValueLocked',
@@ -824,6 +826,8 @@ export enum Burn_OrderBy {
   Token1MarketCap = 'token1__marketCap',
   Token1Name = 'token1__name',
   Token1PoolCount = 'token1__poolCount',
+  Token1PriceChange24h = 'token1__priceChange24h',
+  Token1PriceChange24hPercentage = 'token1__priceChange24hPercentage',
   Token1Symbol = 'token1__symbol',
   Token1TotalSupply = 'token1__totalSupply',
   Token1TotalValueLocked = 'token1__totalValueLocked',
@@ -2215,6 +2219,8 @@ export enum HoldingToken_OrderBy {
   TokenMarketCap = 'token__marketCap',
   TokenName = 'token__name',
   TokenPoolCount = 'token__poolCount',
+  TokenPriceChange24h = 'token__priceChange24h',
+  TokenPriceChange24hPercentage = 'token__priceChange24hPercentage',
   TokenSymbol = 'token__symbol',
   TokenTotalSupply = 'token__totalSupply',
   TokenTotalValueLocked = 'token__totalValueLocked',
@@ -2739,6 +2745,8 @@ export enum LiquidatorData_OrderBy {
   Token0MarketCap = 'token0__marketCap',
   Token0Name = 'token0__name',
   Token0PoolCount = 'token0__poolCount',
+  Token0PriceChange24h = 'token0__priceChange24h',
+  Token0PriceChange24hPercentage = 'token0__priceChange24hPercentage',
   Token0Symbol = 'token0__symbol',
   Token0TotalSupply = 'token0__totalSupply',
   Token0TotalValueLocked = 'token0__totalValueLocked',
@@ -2759,6 +2767,8 @@ export enum LiquidatorData_OrderBy {
   Token1MarketCap = 'token1__marketCap',
   Token1Name = 'token1__name',
   Token1PoolCount = 'token1__poolCount',
+  Token1PriceChange24h = 'token1__priceChange24h',
+  Token1PriceChange24hPercentage = 'token1__priceChange24hPercentage',
   Token1Symbol = 'token1__symbol',
   Token1TotalSupply = 'token1__totalSupply',
   Token1TotalValueLocked = 'token1__totalValueLocked',
@@ -3016,6 +3026,8 @@ export enum MemeRacer_OrderBy {
   TokenMarketCap = 'token__marketCap',
   TokenName = 'token__name',
   TokenPoolCount = 'token__poolCount',
+  TokenPriceChange24h = 'token__priceChange24h',
+  TokenPriceChange24hPercentage = 'token__priceChange24hPercentage',
   TokenSymbol = 'token__symbol',
   TokenTotalSupply = 'token__totalSupply',
   TokenTotalValueLocked = 'token__totalValueLocked',
@@ -3303,6 +3315,8 @@ export enum Mint_OrderBy {
   Token0MarketCap = 'token0__marketCap',
   Token0Name = 'token0__name',
   Token0PoolCount = 'token0__poolCount',
+  Token0PriceChange24h = 'token0__priceChange24h',
+  Token0PriceChange24hPercentage = 'token0__priceChange24hPercentage',
   Token0Symbol = 'token0__symbol',
   Token0TotalSupply = 'token0__totalSupply',
   Token0TotalValueLocked = 'token0__totalValueLocked',
@@ -3323,6 +3337,8 @@ export enum Mint_OrderBy {
   Token1MarketCap = 'token1__marketCap',
   Token1Name = 'token1__name',
   Token1PoolCount = 'token1__poolCount',
+  Token1PriceChange24h = 'token1__priceChange24h',
+  Token1PriceChange24hPercentage = 'token1__priceChange24hPercentage',
   Token1Symbol = 'token1__symbol',
   Token1TotalSupply = 'token1__totalSupply',
   Token1TotalValueLocked = 'token1__totalValueLocked',
@@ -3524,10 +3540,13 @@ export enum ParticipantTransactionHistory_OrderBy {
   Pot2PumpDepositLaunchToken = 'pot2Pump__DepositLaunchToken',
   Pot2PumpDepositRaisedToken = 'pot2Pump__DepositRaisedToken',
   Pot2PumpLaunchTokenMcapusd = 'pot2Pump__LaunchTokenMCAPUSD',
+  Pot2PumpLaunchTokenPriceChange24h = 'pot2Pump__LaunchTokenPriceChange24h',
+  Pot2PumpLaunchTokenPriceChange24hPercentage = 'pot2Pump__LaunchTokenPriceChange24hPercentage',
   Pot2PumpLaunchTokenTvlusd = 'pot2Pump__LaunchTokenTVLUSD',
   Pot2PumpBuyCount = 'pot2Pump__buyCount',
   Pot2PumpCreatedAt = 'pot2Pump__createdAt',
   Pot2PumpCreator = 'pot2Pump__creator',
+  Pot2PumpDepositRaisedTokenPercentageToMinCap = 'pot2Pump__depositRaisedTokenPercentageToMinCap',
   Pot2PumpEndTime = 'pot2Pump__endTime',
   Pot2PumpId = 'pot2Pump__id',
   Pot2PumpLaunchTokenInitialPrice = 'pot2Pump__launchTokenInitialPrice',
@@ -3659,10 +3678,13 @@ export enum Participant_OrderBy {
   Pot2PumpDepositLaunchToken = 'pot2Pump__DepositLaunchToken',
   Pot2PumpDepositRaisedToken = 'pot2Pump__DepositRaisedToken',
   Pot2PumpLaunchTokenMcapusd = 'pot2Pump__LaunchTokenMCAPUSD',
+  Pot2PumpLaunchTokenPriceChange24h = 'pot2Pump__LaunchTokenPriceChange24h',
+  Pot2PumpLaunchTokenPriceChange24hPercentage = 'pot2Pump__LaunchTokenPriceChange24hPercentage',
   Pot2PumpLaunchTokenTvlusd = 'pot2Pump__LaunchTokenTVLUSD',
   Pot2PumpBuyCount = 'pot2Pump__buyCount',
   Pot2PumpCreatedAt = 'pot2Pump__createdAt',
   Pot2PumpCreator = 'pot2Pump__creator',
+  Pot2PumpDepositRaisedTokenPercentageToMinCap = 'pot2Pump__depositRaisedTokenPercentageToMinCap',
   Pot2PumpEndTime = 'pot2Pump__endTime',
   Pot2PumpId = 'pot2Pump__id',
   Pot2PumpLaunchTokenInitialPrice = 'pot2Pump__launchTokenInitialPrice',
@@ -3796,6 +3818,7 @@ export enum Plugin_OrderBy {
 export type Pool = {
   __typename?: 'Pool';
   aprDayData: Array<PoolDayData>;
+  aprHourData: Array<PoolHourData>;
   aprMonthData: Array<PoolMonthData>;
   aprPercentage: Scalars['BigDecimal']['output'];
   aprWeekData: Array<PoolWeekData>;
@@ -3856,6 +3879,15 @@ export type PoolAprDayDataArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<PoolDayData_Filter>;
+};
+
+
+export type PoolAprHourDataArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<PoolHourData_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<PoolHourData_Filter>;
 };
 
 
@@ -4339,6 +4371,7 @@ export enum PoolFeeData_OrderBy {
 
 export type PoolHourData = {
   __typename?: 'PoolHourData';
+  aprPercentage: Scalars['BigDecimal']['output'];
   close: Scalars['BigDecimal']['output'];
   feeGrowthGlobal0X128: Scalars['BigInt']['output'];
   feeGrowthGlobal1X128: Scalars['BigInt']['output'];
@@ -4366,6 +4399,14 @@ export type PoolHourData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<PoolHourData_Filter>>>;
+  aprPercentage?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  aprPercentage_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  aprPercentage_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   close?: InputMaybe<Scalars['BigDecimal']['input']>;
   close_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   close_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -4551,6 +4592,7 @@ export type PoolHourData_Filter = {
 };
 
 export enum PoolHourData_OrderBy {
+  AprPercentage = 'aprPercentage',
   Close = 'close',
   FeeGrowthGlobal0X128 = 'feeGrowthGlobal0X128',
   FeeGrowthGlobal1X128 = 'feeGrowthGlobal1X128',
@@ -5436,6 +5478,7 @@ export type Pool_Filter = {
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Pool_Filter>>>;
   aprDayData_?: InputMaybe<PoolDayData_Filter>;
+  aprHourData_?: InputMaybe<PoolHourData_Filter>;
   aprMonthData_?: InputMaybe<PoolMonthData_Filter>;
   aprPercentage?: InputMaybe<Scalars['BigDecimal']['input']>;
   aprPercentage_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -5807,6 +5850,7 @@ export type Pool_Filter = {
 
 export enum Pool_OrderBy {
   AprDayData = 'aprDayData',
+  AprHourData = 'aprHourData',
   AprMonthData = 'aprMonthData',
   AprPercentage = 'aprPercentage',
   AprWeekData = 'aprWeekData',
@@ -5854,6 +5898,8 @@ export enum Pool_OrderBy {
   Token0MarketCap = 'token0__marketCap',
   Token0Name = 'token0__name',
   Token0PoolCount = 'token0__poolCount',
+  Token0PriceChange24h = 'token0__priceChange24h',
+  Token0PriceChange24hPercentage = 'token0__priceChange24hPercentage',
   Token0Symbol = 'token0__symbol',
   Token0TotalSupply = 'token0__totalSupply',
   Token0TotalValueLocked = 'token0__totalValueLocked',
@@ -5875,6 +5921,8 @@ export enum Pool_OrderBy {
   Token1MarketCap = 'token1__marketCap',
   Token1Name = 'token1__name',
   Token1PoolCount = 'token1__poolCount',
+  Token1PriceChange24h = 'token1__priceChange24h',
+  Token1PriceChange24hPercentage = 'token1__priceChange24hPercentage',
   Token1Symbol = 'token1__symbol',
   Token1TotalSupply = 'token1__totalSupply',
   Token1TotalValueLocked = 'token1__totalValueLocked',
@@ -6565,6 +6613,8 @@ export enum Position_OrderBy {
   Token0MarketCap = 'token0__marketCap',
   Token0Name = 'token0__name',
   Token0PoolCount = 'token0__poolCount',
+  Token0PriceChange24h = 'token0__priceChange24h',
+  Token0PriceChange24hPercentage = 'token0__priceChange24hPercentage',
   Token0Symbol = 'token0__symbol',
   Token0TotalSupply = 'token0__totalSupply',
   Token0TotalValueLocked = 'token0__totalValueLocked',
@@ -6586,6 +6636,8 @@ export enum Position_OrderBy {
   Token1MarketCap = 'token1__marketCap',
   Token1Name = 'token1__name',
   Token1PoolCount = 'token1__poolCount',
+  Token1PriceChange24h = 'token1__priceChange24h',
+  Token1PriceChange24hPercentage = 'token1__priceChange24hPercentage',
   Token1Symbol = 'token1__symbol',
   Token1TotalSupply = 'token1__totalSupply',
   Token1TotalValueLocked = 'token1__totalValueLocked',
@@ -6611,10 +6663,13 @@ export type Pot2Pump = {
   DepositLaunchToken: Scalars['BigInt']['output'];
   DepositRaisedToken: Scalars['BigInt']['output'];
   LaunchTokenMCAPUSD: Scalars['BigDecimal']['output'];
+  LaunchTokenPriceChange24h: Scalars['BigDecimal']['output'];
+  LaunchTokenPriceChange24hPercentage: Scalars['BigDecimal']['output'];
   LaunchTokenTVLUSD: Scalars['BigDecimal']['output'];
   buyCount: Scalars['BigInt']['output'];
   createdAt: Scalars['BigInt']['output'];
   creator: Scalars['String']['output'];
+  depositRaisedTokenPercentageToMinCap: Scalars['BigDecimal']['output'];
   endTime: Scalars['BigInt']['output'];
   id: Scalars['ID']['output'];
   launchToken: Token;
@@ -6675,6 +6730,22 @@ export type Pot2Pump_Filter = {
   LaunchTokenMCAPUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
   LaunchTokenMCAPUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
   LaunchTokenMCAPUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  LaunchTokenPriceChange24h?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenPriceChange24hPercentage?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenPriceChange24hPercentage_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenPriceChange24hPercentage_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenPriceChange24hPercentage_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  LaunchTokenPriceChange24hPercentage_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenPriceChange24hPercentage_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenPriceChange24hPercentage_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenPriceChange24hPercentage_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  LaunchTokenPriceChange24h_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenPriceChange24h_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenPriceChange24h_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  LaunchTokenPriceChange24h_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenPriceChange24h_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenPriceChange24h_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  LaunchTokenPriceChange24h_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   LaunchTokenTVLUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   LaunchTokenTVLUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   LaunchTokenTVLUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -6722,6 +6793,14 @@ export type Pot2Pump_Filter = {
   creator_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   creator_starts_with?: InputMaybe<Scalars['String']['input']>;
   creator_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  depositRaisedTokenPercentageToMinCap?: InputMaybe<Scalars['BigDecimal']['input']>;
+  depositRaisedTokenPercentageToMinCap_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  depositRaisedTokenPercentageToMinCap_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  depositRaisedTokenPercentageToMinCap_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  depositRaisedTokenPercentageToMinCap_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  depositRaisedTokenPercentageToMinCap_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  depositRaisedTokenPercentageToMinCap_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  depositRaisedTokenPercentageToMinCap_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   endTime?: InputMaybe<Scalars['BigInt']['input']>;
   endTime_gt?: InputMaybe<Scalars['BigInt']['input']>;
   endTime_gte?: InputMaybe<Scalars['BigInt']['input']>;
@@ -6869,10 +6948,13 @@ export enum Pot2Pump_OrderBy {
   DepositLaunchToken = 'DepositLaunchToken',
   DepositRaisedToken = 'DepositRaisedToken',
   LaunchTokenMcapusd = 'LaunchTokenMCAPUSD',
+  LaunchTokenPriceChange24h = 'LaunchTokenPriceChange24h',
+  LaunchTokenPriceChange24hPercentage = 'LaunchTokenPriceChange24hPercentage',
   LaunchTokenTvlusd = 'LaunchTokenTVLUSD',
   BuyCount = 'buyCount',
   CreatedAt = 'createdAt',
   Creator = 'creator',
+  DepositRaisedTokenPercentageToMinCap = 'depositRaisedTokenPercentageToMinCap',
   EndTime = 'endTime',
   Id = 'id',
   LaunchToken = 'launchToken',
@@ -6887,6 +6969,8 @@ export enum Pot2Pump_OrderBy {
   LaunchTokenMarketCap = 'launchToken__marketCap',
   LaunchTokenName = 'launchToken__name',
   LaunchTokenPoolCount = 'launchToken__poolCount',
+  LaunchTokenPriceChange24h = 'launchToken__priceChange24h',
+  LaunchTokenPriceChange24hPercentage = 'launchToken__priceChange24hPercentage',
   LaunchTokenSymbol = 'launchToken__symbol',
   LaunchTokenTotalSupply = 'launchToken__totalSupply',
   LaunchTokenTotalValueLocked = 'launchToken__totalValueLocked',
@@ -6912,6 +6996,8 @@ export enum Pot2Pump_OrderBy {
   RaisedTokenMarketCap = 'raisedToken__marketCap',
   RaisedTokenName = 'raisedToken__name',
   RaisedTokenPoolCount = 'raisedToken__poolCount',
+  RaisedTokenPriceChange24h = 'raisedToken__priceChange24h',
+  RaisedTokenPriceChange24hPercentage = 'raisedToken__priceChange24hPercentage',
   RaisedTokenSymbol = 'raisedToken__symbol',
   RaisedTokenTotalSupply = 'raisedToken__totalSupply',
   RaisedTokenTotalValueLocked = 'raisedToken__totalValueLocked',
@@ -9630,6 +9716,8 @@ export enum Swap_OrderBy {
   Token0MarketCap = 'token0__marketCap',
   Token0Name = 'token0__name',
   Token0PoolCount = 'token0__poolCount',
+  Token0PriceChange24h = 'token0__priceChange24h',
+  Token0PriceChange24hPercentage = 'token0__priceChange24hPercentage',
   Token0Symbol = 'token0__symbol',
   Token0TotalSupply = 'token0__totalSupply',
   Token0TotalValueLocked = 'token0__totalValueLocked',
@@ -9650,6 +9738,8 @@ export enum Swap_OrderBy {
   Token1MarketCap = 'token1__marketCap',
   Token1Name = 'token1__name',
   Token1PoolCount = 'token1__poolCount',
+  Token1PriceChange24h = 'token1__priceChange24h',
+  Token1PriceChange24hPercentage = 'token1__priceChange24hPercentage',
   Token1Symbol = 'token1__symbol',
   Token1TotalSupply = 'token1__totalSupply',
   Token1TotalValueLocked = 'token1__totalValueLocked',
@@ -10382,8 +10472,11 @@ export type Token = {
   name: Scalars['String']['output'];
   poolCount: Scalars['BigInt']['output'];
   pot2Pump?: Maybe<Pot2Pump>;
+  priceChange24h: Scalars['BigDecimal']['output'];
+  priceChange24hPercentage: Scalars['BigDecimal']['output'];
   symbol: Scalars['String']['output'];
   tokenDayData: Array<TokenDayData>;
+  tokenHourData: Array<TokenHourData>;
   totalSupply: Scalars['BigInt']['output'];
   totalValueLocked: Scalars['BigDecimal']['output'];
   totalValueLockedUSD: Scalars['BigDecimal']['output'];
@@ -10411,6 +10504,15 @@ export type TokenTokenDayDataArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<TokenDayData_Filter>;
+};
+
+
+export type TokenTokenHourDataArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<TokenHourData_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<TokenHourData_Filter>;
 };
 
 
@@ -10592,6 +10694,8 @@ export enum TokenDayData_OrderBy {
   TokenMarketCap = 'token__marketCap',
   TokenName = 'token__name',
   TokenPoolCount = 'token__poolCount',
+  TokenPriceChange24h = 'token__priceChange24h',
+  TokenPriceChange24hPercentage = 'token__priceChange24hPercentage',
   TokenSymbol = 'token__symbol',
   TokenTotalSupply = 'token__totalSupply',
   TokenTotalValueLocked = 'token__totalValueLocked',
@@ -10778,6 +10882,8 @@ export enum TokenHourData_OrderBy {
   TokenMarketCap = 'token__marketCap',
   TokenName = 'token__name',
   TokenPoolCount = 'token__poolCount',
+  TokenPriceChange24h = 'token__priceChange24h',
+  TokenPriceChange24hPercentage = 'token__priceChange24hPercentage',
   TokenSymbol = 'token__symbol',
   TokenTotalSupply = 'token__totalSupply',
   TokenTotalValueLocked = 'token__totalValueLocked',
@@ -10893,6 +10999,22 @@ export type Token_Filter = {
   poolCount_not?: InputMaybe<Scalars['BigInt']['input']>;
   poolCount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pot2Pump_?: InputMaybe<Pot2Pump_Filter>;
+  priceChange24h?: InputMaybe<Scalars['BigDecimal']['input']>;
+  priceChange24hPercentage?: InputMaybe<Scalars['BigDecimal']['input']>;
+  priceChange24hPercentage_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  priceChange24hPercentage_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  priceChange24hPercentage_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  priceChange24hPercentage_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  priceChange24hPercentage_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  priceChange24hPercentage_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  priceChange24hPercentage_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  priceChange24h_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  priceChange24h_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  priceChange24h_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  priceChange24h_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  priceChange24h_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  priceChange24h_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  priceChange24h_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   symbol?: InputMaybe<Scalars['String']['input']>;
   symbol_contains?: InputMaybe<Scalars['String']['input']>;
   symbol_contains_nocase?: InputMaybe<Scalars['String']['input']>;
@@ -10914,6 +11036,7 @@ export type Token_Filter = {
   symbol_starts_with?: InputMaybe<Scalars['String']['input']>;
   symbol_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   tokenDayData_?: InputMaybe<TokenDayData_Filter>;
+  tokenHourData_?: InputMaybe<TokenHourData_Filter>;
   totalSupply?: InputMaybe<Scalars['BigInt']['input']>;
   totalSupply_gt?: InputMaybe<Scalars['BigInt']['input']>;
   totalSupply_gte?: InputMaybe<Scalars['BigInt']['input']>;
@@ -11003,10 +11126,13 @@ export enum Token_OrderBy {
   Pot2PumpDepositLaunchToken = 'pot2Pump__DepositLaunchToken',
   Pot2PumpDepositRaisedToken = 'pot2Pump__DepositRaisedToken',
   Pot2PumpLaunchTokenMcapusd = 'pot2Pump__LaunchTokenMCAPUSD',
+  Pot2PumpLaunchTokenPriceChange24h = 'pot2Pump__LaunchTokenPriceChange24h',
+  Pot2PumpLaunchTokenPriceChange24hPercentage = 'pot2Pump__LaunchTokenPriceChange24hPercentage',
   Pot2PumpLaunchTokenTvlusd = 'pot2Pump__LaunchTokenTVLUSD',
   Pot2PumpBuyCount = 'pot2Pump__buyCount',
   Pot2PumpCreatedAt = 'pot2Pump__createdAt',
   Pot2PumpCreator = 'pot2Pump__creator',
+  Pot2PumpDepositRaisedTokenPercentageToMinCap = 'pot2Pump__depositRaisedTokenPercentageToMinCap',
   Pot2PumpEndTime = 'pot2Pump__endTime',
   Pot2PumpId = 'pot2Pump__id',
   Pot2PumpLaunchTokenInitialPrice = 'pot2Pump__launchTokenInitialPrice',
@@ -11018,8 +11144,11 @@ export enum Token_OrderBy {
   Pot2PumpState = 'pot2Pump__state',
   Pot2PumpTotalClaimLpAmount = 'pot2Pump__totalClaimLpAmount',
   Pot2PumpTotalRefundAmount = 'pot2Pump__totalRefundAmount',
+  PriceChange24h = 'priceChange24h',
+  PriceChange24hPercentage = 'priceChange24hPercentage',
   Symbol = 'symbol',
   TokenDayData = 'tokenDayData',
+  TokenHourData = 'tokenHourData',
   TotalSupply = 'totalSupply',
   TotalValueLocked = 'totalValueLocked',
   TotalValueLockedUsd = 'totalValueLockedUSD',

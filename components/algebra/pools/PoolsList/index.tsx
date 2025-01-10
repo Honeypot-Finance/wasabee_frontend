@@ -35,6 +35,7 @@ const PoolsList = () => {
 
   const orderBy = mappingSortKeys[sorting[0].id];
   const { data: pools, loading: isPoolsListLoading } = usePoolsListQuery();
+  console.log("pools: ", pools);
 
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
