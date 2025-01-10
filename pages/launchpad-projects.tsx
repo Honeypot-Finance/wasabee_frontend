@@ -17,7 +17,7 @@ import dayjs from "dayjs";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [selectedTab, setSelectedTab] = useState<"all" | "my">("all");
-  const [page, setPage] = useState(1);
+  const [take, setTake] = useState(10);
   const [search, setSearch] = useState("");
 
   const owner = selectedTab == "my" ? wallet.account : "";
@@ -27,10 +27,11 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     isLoading,
     isFetching,
   } = useQuery({
-    queryKey: ["trendingMEMEs", search, page, owner],
+    queryKey: ["trendingMEMEs", search, owner, take],
     queryFn: () => {
       return FjordHoneySdk.findManyPools({
-        page: page,
+        page: 1,
+        take: take,
         search: search,
         filters: { owner: owner },
       });
@@ -42,6 +43,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     if (!wallet.isInit) {
       return;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet.isInit]);
 
   console.log("launchpad.projectsPage", launchpad.projectsPage);
@@ -188,7 +190,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         <div className="flex justify-around my-5">
           <Button
             onClick={() => {
-              setPage((prev) => (prev += 1));
+              setTake((prev) => (prev += 10));
             }}
           >
             {isFetching ? "Loading..." : "Load More"}

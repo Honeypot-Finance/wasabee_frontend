@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import Image from "next/image";
 import Countdown from "react-countdown";
 import { Button } from "@/components/button";
 import { shortenAddress } from "@/lib/format";
@@ -72,6 +71,11 @@ const TokenInfo = observer(
               src={symbol}
               alt={name}
               className="w-full h-full object-cover rounded-full"
+              onError={({ currentTarget }) => {
+                currentTarget.onerror = null;
+                currentTarget.src =
+                  "/images/icons/tokens/thpot-token-yellow-icon.png";
+              }}
             />
           </div>
           <div className="">
@@ -191,6 +195,8 @@ const LaunchPadProjectCard = observer(
     shareTokenSymbol,
     pairAddress,
   }: ILaunchPadProjectCard) => {
+    console.log("coverImg: ", coverImg);
+
     return (
       <div
         className={clsx(
@@ -199,11 +205,15 @@ const LaunchPadProjectCard = observer(
       >
         {isShowCoverImage && (
           <div className="h-[78px] relative w-full bg-[radial-gradient(at_center,#FFCD4D,#83C2E9)]">
-            {coverImg && coverImg?.length > 0 && (
+            {!!coverImg && coverImg?.length > 0 && (
               <img
                 alt="Cover Image"
                 src={coverImg}
                 className="object-cover h-[78px] w-full"
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  currentTarget.className = "hidden";
+                }}
               />
             )}
           </div>
