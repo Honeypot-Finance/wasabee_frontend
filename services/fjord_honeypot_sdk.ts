@@ -105,6 +105,7 @@ class FjordHoneySdk {
       skip,
       take,
       where,
+      orderBy: { createdAt: "desc" },
     })) as any as { data: Pool[] };
   };
   static findPool = async (address: string): Pool | null => {
