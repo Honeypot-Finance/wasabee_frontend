@@ -289,6 +289,9 @@ export class Token implements BaseContract {
   }
 
   async getBalance() {
+    if (this.isNative) {
+      return wallet.balance;
+    }
     try {
       const balance = this.isNative
         ? await wallet.publicClient.getBalance({

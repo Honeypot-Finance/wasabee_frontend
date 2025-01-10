@@ -28,7 +28,7 @@ export async function getSingleAccountDetails(accountId: string) {
     >({
       query: SingleAccountDetailsDocument,
       variables: {
-        accountId,
+        accountId: accountId.toLowerCase(),
       },
       fetchPolicy: "network-only",
     });

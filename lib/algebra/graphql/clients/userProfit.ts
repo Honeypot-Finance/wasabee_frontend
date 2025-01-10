@@ -36,7 +36,7 @@ export const getLiquidatorDatas = async (
   });
 
   const liquidatorDatas = liquidatorDataQuery.data.liquidatorDatas;
-  console.log(liquidatorDatas);
+
   const userPoolsProfit = [];
 
   for (let i = 0; i < liquidatorDatas.length; i++) {
@@ -105,6 +105,5 @@ export const getLiquidatorDatas = async (
     });
   }
 
-  console.log(userPoolsProfit);
   return userPoolsProfit;
 };

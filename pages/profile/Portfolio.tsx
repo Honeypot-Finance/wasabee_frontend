@@ -16,8 +16,10 @@ export const PortfolioTab = observer(() => {
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   useEffect(() => {
-    portfolio.initPortfolio();
-  }, []);
+    if (wallet.isInit) {
+      portfolio.initPortfolio();
+    }
+  }, [wallet.isInit]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {

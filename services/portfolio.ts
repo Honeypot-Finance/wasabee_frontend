@@ -29,6 +29,8 @@ class Portfolio {
   async initPortfolio() {
     if (this.isInit || !wallet.isInit) return;
 
+    console.log("initPortfolio");
+
     this.isLoading = true;
 
     try {
@@ -52,17 +54,28 @@ class Portfolio {
       console.log("allTokenIds", allTokenIds);
       const tokensData = await getMultipleTokensData(allTokenIds);
       console.log("tokensData", tokensData);
-      const tokens = tokensData?.tokens.map((token) =>
-        Token.getToken({
-          ...token,
+      const tokens = tokensData?.tokens.map((token) => {
+        //remove marketCap from token
+        const { marketCap, ...rest } = token;
+
+        return Token.getToken({
+          ...rest,
           address: token.id.toLowerCase(),
           derivedETH: token.derivedMatic,
           derivedUSD: token.derivedUSD,
-        })
-      );
+        });
+      });
       // Filter tokens with balance
 
-      await Promise.all(tokens?.map((token) => token.getBalance()) ?? []);
+      await Promise.all(
+        tokens?.map((token) => {
+          try {
+            token.getBalance();
+          } catch (error) {
+            console.error("Error getting balance for token", token.address);
+          }
+        }) ?? []
+      );
 
       this.tokens =
         tokens?.filter((token) => token.balance.toNumber() > 0) ?? [];
@@ -107,6 +120,7 @@ class Portfolio {
   });
 
   get sortedTokens() {
+    console.log("sortedTokens", this.tokens);
     return [...this.tokens].sort((a, b) => {
       const aValue = new BigNumber(a.derivedUSD || 0).multipliedBy(a.balance);
       const bValue = new BigNumber(b.derivedUSD || 0).multipliedBy(b.balance);

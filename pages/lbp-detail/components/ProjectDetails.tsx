@@ -6,7 +6,6 @@ import CardContianer from "@/components/CardContianer/CardContianer";
 const universalMenuItems = [
   { label: "Token Info", key: "info" },
   { label: "About the Project", key: "about" },
-  { label: "Transactions", key: "txs" },
 ];
 
 interface ProjectDetailsProps extends TokenInfoProps {}
@@ -45,12 +44,6 @@ const ProjectDetails = observer(
                   ? description
                   : "this project does not have description info"}
               </p>
-            </div>
-          )}
-
-          {tab === "txs" && (
-            <div>
-              <h2 className="text-[2rem] text-center">Coming Thoon</h2>
             </div>
           )}
         </CardContianer>

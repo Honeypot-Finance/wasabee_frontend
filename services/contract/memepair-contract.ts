@@ -1,6 +1,6 @@
 import { Token } from "./token";
 import { wallet } from "../wallet";
-import { getContract } from "viem";
+import { getContract, zeroAddress } from "viem";
 import { dayjs } from "@/lib/dayjs";
 import BigNumber from "bignumber.js";
 import { trpcClient } from "@/lib/trpc";
@@ -96,7 +96,7 @@ export class MemePairContract implements BaseLaunchContract {
 
   get depositedRaisedToken() {
     if (!this.raiseToken) {
-      console.log("token is not initialized");
+      //console.log("token is not initialized");
       return undefined;
     }
 
@@ -415,7 +415,6 @@ export class MemePairContract implements BaseLaunchContract {
     }
 
     const res = await getParticipantDetail(wallet.account, this.address);
-    console.log("res", res);
 
     if (res) {
       this.canClaimLP = !res.claimed && res.pot2Pump.raisedTokenReachingMinCap;
@@ -460,13 +459,9 @@ export class MemePairContract implements BaseLaunchContract {
         `0x${string}`,
       ]);
 
-      console.log("claimed", claimed);
-
       const claimable = await this.contract.read.claimableLP([
         wallet.account,
       ] as [`0x${string}`]);
-
-      console.log("claimable", claimable);
 
       this.canClaimLP = claimable > claimed;
     } catch (error) {
@@ -597,7 +592,11 @@ export class MemePairContract implements BaseLaunchContract {
 
   async getVaultBalance() {
     const lpTokenAddress = await this.contract.read.lpToken();
-    console.log("lpTokenAddress", lpTokenAddress);
+
+    if (!lpTokenAddress || lpTokenAddress === zeroAddress) {
+      return;
+    }
+
     const aquaberaVaultContract = new ICHIVaultContract({
       address: lpTokenAddress,
     });
@@ -606,7 +605,6 @@ export class MemePairContract implements BaseLaunchContract {
       wallet.account as `0x${string}`,
     ]);
 
-    console.log("vaultBalance", vaultBalance.toString());
     this.vaultBalance = vaultBalance;
   }
 
@@ -617,7 +615,7 @@ export class MemePairContract implements BaseLaunchContract {
     }
     //get lp token, lp token is going to be aquabera vault address
     const lpTokenAddress = await this.contract.read.lpToken();
-    //console.log("lpTokenAddress", lpTokenAddress);
+
     const aquaberaVaultContract = new ICHIVaultContract({
       address: lpTokenAddress,
     });
@@ -625,8 +623,6 @@ export class MemePairContract implements BaseLaunchContract {
     const vaultBalance = await aquaberaVaultContract.contract.read.balanceOf([
       wallet.account as `0x${string}`,
     ]);
-
-    console.log("vaultBalance", vaultBalance.toString());
 
     await new ContractWrite(aquaberaVaultContract.contract.write.withdraw, {
       action: "Claim Tokens",
