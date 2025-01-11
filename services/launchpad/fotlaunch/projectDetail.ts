@@ -4,7 +4,7 @@ import { createSiweMessage } from "@/lib/siwe";
 import { AsyncState } from "@/services/utils";
 import { wallet } from "@/services/wallet";
 import { trpcClient } from "@/lib/trpc";
-import { FtoPairContract } from "@/services/contract/ftopair-contract";
+import { FtoPairContract } from "@/services/contract/launches/fto/ftopair-contract";
 
 class ProjectDetail extends PageController {
   updateProject = new AsyncState(
@@ -31,20 +31,18 @@ class ProjectDetail extends PageController {
     pair.raiseToken?.init();
     pair.launchedToken?.init();
     return pair;
-  })
+  });
   init = new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
-     await Promise.all([
-        this.project.call({pairAddress})
-     ])
-  })
+    await Promise.all([this.project.call({ pairAddress })]);
+  });
 
   get needUpdateWarning() {
-    return this.init.isInit && this.project.value && this.project.value.isProvider
+    return (
+      this.init.isInit && this.project.value && this.project.value.isProvider
+    );
   }
 
-  
-
   dispose() {
-    this.project.reset()
+    this.project.reset();
   }
 }

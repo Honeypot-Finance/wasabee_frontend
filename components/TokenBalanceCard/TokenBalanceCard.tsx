@@ -44,8 +44,6 @@ export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
     ? "<0.01"
     : `$${Number(token.derivedUSD).toFixed(2)}`;
 
-  console.log("formattedUSDPrice", token.derivedUSD);
-
   return (
     <tr className="hover:bg-[#2D2D2D]/50 transition-colors bg-white text-black">
       {/* Asset Column */}

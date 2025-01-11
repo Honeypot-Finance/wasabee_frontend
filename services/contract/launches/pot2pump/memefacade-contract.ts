@@ -1,8 +1,8 @@
-import { BaseContract } from ".";
-import { wallet } from "../wallet";
+import { BaseContract } from "@/services/contract";
+import { wallet } from "@/services/wallet";
 import { getContract } from "viem";
 import { makeAutoObservable } from "mobx";
-import { ContractWrite } from "../utils";
+import { ContractWrite } from "@/services/utils";
 import { pot2PumpFacadeABI } from "@/lib/abis/Pot2Pump/pot2PumpFacade";
 
 export class MEMEFacadeContract implements BaseContract {

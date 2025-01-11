@@ -16,7 +16,7 @@ import {
   canClaimPot2Pump,
   canRefundPot2Pump,
 } from "@/lib/algebra/graphql/clients/pot2pump";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import { HoneyContainer } from "@/components/CardContianer";
 
 export const ParticipatedLaunches = observer(() => {

@@ -104,8 +104,10 @@ const SwapParamsV3 = () => {
           const [, overrideFee, pluginFee] = beforeSwap || ["", 0, 0];
 
           if (overrideFee) {
+            // console.log("overrideFee", overrideFee);
             fees.push(overrideFee + pluginFee);
           } else {
+            // console.log("pool.fee", pool.fee);
             fees.push(pool.fee + pluginFee);
           }
         }

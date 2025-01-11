@@ -3,7 +3,7 @@ import TokenLogo from "../TokenLogo/TokenLogo";
 import { Copy } from "../copy";
 import { observer } from "mobx-react-lite";
 import CardContianer from "../CardContianer/CardContianer";
-import { PairContract } from "@/services/contract/pair-contract";
+import { PairContract } from "@/services/contract/dex/liquidity/pair-contract";
 import PopUp from "../PopUp/PopUp";
 import { Button } from "../button";
 import { liquidity } from "@/services/liquidity";

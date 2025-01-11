@@ -1,9 +1,9 @@
-import { BaseContract } from ".";
-import { wallet } from "../wallet";
+import { BaseContract } from "../..";
+import { wallet } from "../../../wallet";
 import { getContract } from "viem";
 import { makeAutoObservable } from "mobx";
 import { ftoFacadeABI } from "@/lib/abis/ftoFacade";
-import { ContractWrite } from "../utils";
+import { ContractWrite } from "../../../utils";
 
 export class FtoFacadeContract implements BaseContract {
   address = "";

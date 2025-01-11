@@ -1,24 +1,26 @@
-import { BaseContract } from ".";
-import { wallet } from "../wallet";
-import { getContract } from "viem";
-import { AsyncState, ContractWrite } from "../utils";
-import { makeAutoObservable } from "mobx";
-import { MUBAI_FTO_PAIR_ABI } from "@/lib/abis/ftoPair";
-import BigNumber from "bignumber.js";
-import { Token } from "./token";
+import { Token } from "@/services/contract/token";
+import { getContract, zeroAddress } from "viem";
 import { dayjs } from "@/lib/dayjs";
-import { cn } from "@/lib/tailwindcss";
+import BigNumber from "bignumber.js";
 import { trpcClient } from "@/lib/trpc";
-import { ZodError } from "zod";
-import launchpad, { statusTextToNumber } from "../launchpad";
-import { BaseLaunchContract } from "./base-launch-contract";
+import { makeAutoObservable } from "mobx";
+import { AsyncState, ContractWrite } from "@/services/utils";
+import { pot2PumpPairABI } from "@/lib/abis/Pot2Pump/pot2PumpPair";
 import { formatAmountWithAlphabetSymbol } from "@/lib/algebra/utils/common/formatAmount";
+import {
+  getParticipantDetail,
+  getPot2PumpDetail,
+  subgraphPot2PumpToMemePair,
+} from "@/lib/algebra/graphql/clients/pot2pump";
+import { wallet } from "@/services/wallet";
+import { ICHIVaultContract } from "../../aquabera/ICHIVault-contract";
+import { BaseLaunchContract } from "../base-launch-contract";
 
-export class FtoPairContract implements BaseLaunchContract {
+export class MemePairContract implements BaseLaunchContract {
   databaseId: number | undefined = undefined;
   address = "";
   name: string = "";
-  abi = MUBAI_FTO_PAIR_ABI;
+  abi = pot2PumpPairABI;
   raiseToken: Token | undefined = undefined;
   launchedToken: Token | undefined = undefined;
   depositedRaisedTokenWithoutDecimals: BigNumber | null = null;
@@ -27,9 +29,7 @@ export class FtoPairContract implements BaseLaunchContract {
   launchedTokenSellCount: BigNumber | null = null;
   endTime: string = "";
   startTime: string = "";
-  state: number = 3;
   launchedTokenProvider: string = "";
-  userDepositedRaisedToken: BigNumber | null = null;
   projectName = "";
   description = "";
   telegram = "";
@@ -39,6 +39,10 @@ export class FtoPairContract implements BaseLaunchContract {
   isInit = false;
   provider = "";
   canClaimLP = false;
+  canRefund = false;
+  isRefundable = false;
+  raisedTokenMinCap: BigNumber | undefined = undefined;
+  userParticipated = false;
   socials: {
     name: string;
     link: string;
@@ -48,11 +52,30 @@ export class FtoPairContract implements BaseLaunchContract {
   bannerUrl = "";
   participantsCount = new BigNumber(0);
   beravoteSpaceId = "";
+  vaultBalance = BigInt(0);
 
-  constructor(args: Partial<FtoPairContract>) {
+  constructor(args: Partial<MemePairContract>) {
     Object.assign(this, args);
     this.getIsValidated();
     makeAutoObservable(this);
+  }
+
+  get priceChangeDisplay() {
+    return this.launchedToken?.derivedUSD &&
+      Number(this.launchedToken?.derivedUSD) &&
+      this.launchedToken?.initialUSD &&
+      Number(this.launchedToken.initialUSD)
+      ? Number(this.launchedToken.derivedUSD) >
+        Number(this.launchedToken.initialUSD)
+        ? `${formatAmountWithAlphabetSymbol((Number(this.launchedToken.derivedUSD) / Number(this.launchedToken.initialUSD)).toFixed(2), 2)}%`
+        : `-${formatAmountWithAlphabetSymbol((Number(this.launchedToken.initialUSD) / Number(this.launchedToken.derivedUSD)).toFixed(2), 2)}%`
+      : "--";
+  }
+
+  get pottingPercentageDisplay() {
+    return this.depositedRaisedToken && this.raisedTokenMinCap
+      ? `${formatAmountWithAlphabetSymbol((Number(this.depositedRaisedToken) / Number(this.raisedTokenMinCap)).toFixed(2), 2)}%`
+      : "--";
   }
 
   get startTimeDisplay() {
@@ -71,18 +94,9 @@ export class FtoPairContract implements BaseLaunchContract {
       : "-";
   }
 
-  get priceChangeDisplay() {
-    return this.launchedToken?.derivedUSD &&
-      Number(this.launchedToken?.derivedUSD) &&
-      this.launchedToken?.initialUSD &&
-      Number(this.launchedToken.initialUSD)
-      ? `${formatAmountWithAlphabetSymbol((Number(this.launchedToken.derivedUSD) / Number(this.launchedToken.initialUSD)).toFixed(2), 2)}%`
-      : "--";
-  }
-
   get depositedRaisedToken() {
     if (!this.raiseToken) {
-      console.log("token is not initialized");
+      //console.log("token is not initialized");
       return undefined;
     }
 
@@ -95,9 +109,7 @@ export class FtoPairContract implements BaseLaunchContract {
 
   get depositedLaunchedToken() {
     if (!this.launchedToken) {
-      console.log("token is not initialized");
       return undefined;
-      return;
     }
 
     return this.depositedLaunchedTokenWithoutDecimals &&
@@ -124,27 +136,39 @@ export class FtoPairContract implements BaseLaunchContract {
   }
 
   get facadeContract() {
-    return wallet.contracts.ftofacade;
+    return wallet.contracts.memeFacade;
   }
 
-  get fotFactoryContract() {
-    return wallet.contracts.ftofactory;
+  get factoryContract() {
+    return wallet.contracts.memeFactory;
   }
 
   get price() {
     if (this.state === 0) {
-      return this.launchedToken?.derivedUSD
-        ? new BigNumber(this.launchedToken.derivedUSD)
-        : new BigNumber(0);
+      return this.priceAfterSuccess;
     } else {
-      return this.depositedRaisedToken &&
-        this.depositedLaunchedToken &&
-        this.raiseToken?.derivedUSD
-        ? this.depositedRaisedToken
-            .multipliedBy(this.raiseToken.derivedUSD)
-            .div(this.depositedLaunchedToken)
-        : undefined;
+      return this.priceBeforeSuccess;
     }
+  }
+
+  get priceAfterSuccess(): BigNumber {
+    if (!(this.state === 0)) {
+      return new BigNumber(0);
+    }
+
+    return this.launchedToken?.derivedUSD
+      ? new BigNumber(this.launchedToken.derivedUSD)
+      : new BigNumber(0);
+  }
+
+  get priceBeforeSuccess(): BigNumber {
+    return this.depositedRaisedToken &&
+      this.depositedLaunchedToken &&
+      this.raiseToken?.derivedUSD
+      ? this.depositedRaisedToken
+          .multipliedBy(this.raiseToken.derivedUSD)
+          .div(this.depositedLaunchedToken)
+      : new BigNumber(0);
   }
 
   get marketValue() {
@@ -164,14 +188,12 @@ export class FtoPairContract implements BaseLaunchContract {
     if (!this.endTime) {
       return "-";
     }
-    //console.log("this.endTime", this.endTime);
     const targetTime = dayjs(
       new BigNumber(this.endTime).multipliedBy(1000).toNumber()
     );
     if (!targetTime.isValid()) {
       return "Invalid Date";
     }
-
     const diffDays = targetTime.diff(now, "days");
 
     if (Math.abs(diffDays) >= 1) {
@@ -189,13 +211,9 @@ export class FtoPairContract implements BaseLaunchContract {
     }
 
     const diffMinutes = targetTime.diff(now, "minutes");
-    if (Math.abs(diffMinutes) >= 1) {
-      return `${Math.abs(diffMinutes)} ${
-        diffMinutes > 0 ? "minutes later" : "minutes ago"
-      }`;
-    }
-
-    return "Ends in a minute";
+    return `${Math.abs(diffMinutes)} ${
+      diffMinutes > 0 ? "minutes later" : "minutes ago"
+    }`;
   }
 
   deposit = new AsyncState(async ({ amount }: { amount: string }) => {
@@ -210,22 +228,29 @@ export class FtoPairContract implements BaseLaunchContract {
       amount,
       spender: this.facadeContract.address,
     });
-    console.log(
-      this.raiseToken.address as `0x${string}`,
-      this.launchedToken.address as `0x${string}`,
-      BigInt(amount),
-      BigInt(0)
-    );
+
     await this.facadeContract.deposit.call([
-      this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
       BigInt(amount),
-      BigInt(0),
     ]);
     await Promise.all([
       this.getDepositedRaisedToken(),
       this.raiseToken.getBalance(),
     ]);
+  });
+
+  refund = new AsyncState(async () => {
+    if (!this.raiseToken || !this.launchedToken) {
+      throw new Error("token is not initialized");
+    }
+
+    await new ContractWrite(this.contract.write.refundRaisedToken, {
+      action: "Refund",
+    }).call([wallet.account as `0x${string}`]);
+
+    await this.raiseToken?.getBalance();
+
+    this.canRefund = false;
   });
 
   claimLP = new AsyncState(async () => {
@@ -234,42 +259,16 @@ export class FtoPairContract implements BaseLaunchContract {
     }
 
     await this.facadeContract.claimLP.call([
-      this.raiseToken.address as `0x${string}`,
       this.launchedToken.address as `0x${string}`,
     ]);
-
     this.canClaimLP = false;
-  });
-
-  resume = new AsyncState(async () => {
-    if (!this.raiseToken || !this.launchedToken) {
-      throw new Error("token is not initialized");
-    }
-
-    await this.fotFactoryContract.resume.call([
-      this.raiseToken.address as `0x${string}`,
-      this.launchedToken.address as `0x${string}`,
-    ]);
-
-    await this.getFTOState();
-  });
-
-  pause = new AsyncState(async () => {
-    if (!this.raiseToken || !this.launchedToken) {
-      throw new Error("token is not initialized");
-    }
-
-    await this.fotFactoryContract.pause.call([
-      this.raiseToken.address as `0x${string}`,
-      this.launchedToken.address as `0x${string}`,
-    ]);
-
-    await this.getFTOState();
+    this.getVaultBalance();
   });
 
   get withdraw() {
-    return new ContractWrite(this.contract.write.withdraw, {
+    return new ContractWrite(this.contract.write.claimLP, {
       action: "Withdraw",
+      isSuccessEffect: true,
     });
   }
 
@@ -346,15 +345,18 @@ export class FtoPairContract implements BaseLaunchContract {
     if (res.name) {
       this.projectName = res.name;
     }
-    if (res.provider) {
-      this.provider = res.provider;
-    }
+    // await this.getLaunchedTokenProvider(res.provider);
+    // await this.getLaunchedToken(Token.getToken({ address: res.launch_token }));
+    // await this.getRaisedToken(Token.getToken({ address: res.raising_token }));
     if (res.logo_url) {
       this.logoUrl = res.logo_url;
       this.launchedToken?.setLogoURI(res.logo_url);
     }
     if (res.banner_url) {
       this.bannerUrl = res.banner_url;
+    }
+    if (res.beravote_space_id) {
+      this.beravoteSpaceId = res.beravote_space_id;
     }
   }
 
@@ -382,24 +384,60 @@ export class FtoPairContract implements BaseLaunchContract {
     await Promise.all([
       this.getRaisedToken(raisedToken),
       this.getLaunchedToken(launchedToken),
-      this.getDepositedRaisedToken(depositedRaisedToken),
+      this.getDepositedRaisedToken(),
+      //depositedRaisedToken
       this.getDepositedLaunchedToken(depositedLaunchedToken),
-      this.getStartTime(startTime),
       this.getEndTime(endTime),
-      this.getFTOState(ftoState),
       this.getLaunchedTokenProvider(),
-      this.getProjectInfo(),
       this.getCanClaimLP(),
-      this.getUserDepositeAmount(),
+      this.getRaisedTokenMinCap(),
+      this.getUserParticipated(),
+      this.getVaultBalance(),
+      this.getIndexerData(),
+      this.getParticipantDetail(),
     ]).catch((error) => {
-      console.error(error, `init-${this.address}`);
+      console.error(error, `init-memepair-error-${this.address}`);
       trpcClient.projects.revalidateProjectType.mutate({
         chain_id: wallet.currentChainId,
         pair: this.address,
       });
       return;
     });
+
+    this.getProjectInfo(), this.getCanRefund();
+
     this.isInit = true;
+  }
+
+  async getParticipantDetail() {
+    if (!wallet.account) {
+      return;
+    }
+
+    const res = await getParticipantDetail(wallet.account, this.address);
+
+    if (res) {
+      this.canClaimLP = !res.claimed && res.pot2Pump.raisedTokenReachingMinCap;
+      this.canRefund =
+        !res.refunded &&
+        !res.pot2Pump.raisedTokenReachingMinCap &&
+        res.pot2Pump.endTime > dayjs().unix();
+    }
+  }
+
+  async getIndexerData() {
+    const res = await subgraphPot2PumpToMemePair(this.address, wallet.account);
+    if (res) {
+      Object.assign(this, res);
+    } else {
+      console.error("getIndexerData", `getIndexerData-error-${this.address}`);
+    }
+  }
+
+  async getRaisedTokenMinCap() {
+    const res = await this.contract.read.raisedTokenMinCap();
+
+    this.raisedTokenMinCap = new BigNumber(res.toString());
   }
 
   getIsValidated() {
@@ -407,17 +445,16 @@ export class FtoPairContract implements BaseLaunchContract {
       this.address.toLowerCase()
     );
   }
-
   async getCanClaimLP() {
-    if (
-      !wallet.account ||
-      // provider can't claim LP
-      wallet.account.toLowerCase() === this.provider.toLowerCase()
-    ) {
-      return false;
-    }
-
     try {
+      if (
+        !wallet.account ||
+        // provider can't claim LP
+        wallet.account.toLowerCase() === this.provider.toLowerCase()
+      ) {
+        return false;
+      }
+
       const claimed = await this.contract.read.claimedLp([wallet.account] as [
         `0x${string}`,
       ]);
@@ -428,6 +465,7 @@ export class FtoPairContract implements BaseLaunchContract {
 
       this.canClaimLP = claimable > claimed;
     } catch (error) {
+      // console.error(error);
       this.canClaimLP = false;
     }
   }
@@ -435,7 +473,7 @@ export class FtoPairContract implements BaseLaunchContract {
   async getRaisedToken(token?: Token) {
     if (token) {
       this.raiseToken = token;
-      this.raiseToken.init();
+      //this.raiseToken.init();
     } else {
       const res = (await this.contract.read.raisedToken()) as `0x${string}`;
       this.raiseToken = Token.getToken({ address: res });
@@ -446,7 +484,7 @@ export class FtoPairContract implements BaseLaunchContract {
   async getLaunchedToken(launchedToken?: Token) {
     if (launchedToken) {
       this.launchedToken = launchedToken;
-      this.launchedToken.init();
+      //this.launchedToken.init();
     } else {
       const res = (await this.contract.read.launchedToken()) as `0x${string}`;
       this.launchedToken = Token.getToken({ address: res });
@@ -464,7 +502,7 @@ export class FtoPairContract implements BaseLaunchContract {
   }
 
   async getDepositedLaunchedToken(amount?: string) {
-    if (amount) {
+    if (amount && Number(amount) !== 0) {
       this.depositedLaunchedTokenWithoutDecimals = new BigNumber(amount);
     } else {
       const res = (await this.contract.read.depositedLaunchedToken()) as bigint;
@@ -472,14 +510,6 @@ export class FtoPairContract implements BaseLaunchContract {
         res.toString()
       );
     }
-  }
-
-  async getUserDepositeAmount() {
-    const res = await this.contract.read.raisedTokenDeposit([
-      wallet.account as `0x${string}`,
-    ]);
-
-    this.userDepositedRaisedToken = new BigNumber(res.toString());
   }
 
   async getEndTime(endtime?: string) {
@@ -491,31 +521,114 @@ export class FtoPairContract implements BaseLaunchContract {
     }
   }
 
-  async getStartTime(startTime?: string) {
-    if (startTime) {
-      this.startTime = startTime;
-    } else {
-      const res = await this.contract.read.startTime();
-      this.startTime = res.toString();
+  getCanRefund() {
+    if (
+      !this.userParticipated ||
+      !this.depositedRaisedToken ||
+      !this.raisedTokenMinCap ||
+      (this.state !== 1 && this.state !== 2)
+    ) {
+      this.canRefund = false;
+      return;
+    }
+
+    if (!this.depositedRaisedToken.isZero()) {
+      this.canRefund = true;
     }
   }
 
-  async getFTOState(state?: number) {
-    if (state) {
-      this.state = state;
+  async getUserParticipated() {
+    if (!wallet.account) {
+      return;
+    }
+
+    const res = await this.contract.read.raisedTokenDeposit([
+      wallet.account,
+    ] as [`0x${string}`]);
+
+    // console.log("userParticipated", res);
+
+    this.userParticipated = res > 0;
+  }
+
+  get state(): number {
+    if (!this.raiseToken) {
+      return -1;
+    }
+    if (
+      !this.depositedRaisedToken ||
+      !this.endTime ||
+      !this.raisedTokenMinCap
+    ) {
+      return 3;
+    }
+
+    if (
+      this.depositedRaisedToken.toNumber() >=
+      this.raisedTokenMinCap
+        .div(Math.pow(10, this.raiseToken.decimals))
+        .toNumber()
+    ) {
+      return 0;
+    } else if (dayjs.unix(Number(this.endTime)).isBefore(dayjs())) {
+      return 1;
     } else {
-      const res = await this.contract.read.FTOState();
-      this.state = res;
+      return 3;
     }
   }
-  async getLaunchedTokenProvider() {
-    if (this.provider) {
-      this.launchedTokenProvider = this.provider;
-      return;
+
+  async getLaunchedTokenProvider(launchedTokenProvider?: string) {
+    if (launchedTokenProvider) {
+      this.launchedTokenProvider = launchedTokenProvider;
     } else {
-      const res = await this.contract.read.launchedTokenProvider();
+      const res = await this.contract.read.tokenDeployer();
       this.launchedTokenProvider = res;
-      this.provider = res;
     }
+  }
+
+  get canClaimTokens() {
+    return this.vaultBalance > BigInt(0);
+  }
+
+  async getVaultBalance() {
+    const lpTokenAddress = await this.contract.read.lpToken();
+
+    if (!lpTokenAddress || lpTokenAddress === zeroAddress) {
+      return;
+    }
+
+    const aquaberaVaultContract = new ICHIVaultContract({
+      address: lpTokenAddress,
+    });
+
+    const vaultBalance = await aquaberaVaultContract.contract.read.balanceOf([
+      wallet.account as `0x${string}`,
+    ]);
+
+    this.vaultBalance = vaultBalance;
+  }
+
+  async claimVaultTokens() {
+    //only work when state is success
+    if (this.state !== 0) {
+      return;
+    }
+    //get lp token, lp token is going to be aquabera vault address
+    const lpTokenAddress = await this.contract.read.lpToken();
+
+    const aquaberaVaultContract = new ICHIVaultContract({
+      address: lpTokenAddress,
+    });
+
+    const vaultBalance = await aquaberaVaultContract.contract.read.balanceOf([
+      wallet.account as `0x${string}`,
+    ]);
+
+    await new ContractWrite(aquaberaVaultContract.contract.write.withdraw, {
+      action: "Claim Tokens",
+      isSuccessEffect: true,
+    }).call([this.vaultBalance, wallet.account as `0x${string}`]);
+
+    this.getVaultBalance();
   }
 }

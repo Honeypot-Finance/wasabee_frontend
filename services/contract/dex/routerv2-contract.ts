@@ -1,9 +1,9 @@
 import { routerV2ABI } from "@/lib/abis/routerv2";
-import { BaseContract } from ".";
+import { BaseContract } from "..";
 
-import { wallet } from "../wallet";
+import { wallet } from "../../wallet";
 import { getContract } from "viem";
-import { ContractWrite } from "../utils";
+import { ContractWrite } from "../../utils";
 
 export class RouterV2Contract implements BaseContract {
   address = "";

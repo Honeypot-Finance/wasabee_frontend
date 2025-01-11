@@ -3,7 +3,7 @@ import { infoClient } from ".";
 import { PairFilter, SubgraphProjectFilter } from "@/services/launchpad";
 import { PageRequest } from "@/services/indexer/indexerTypes";
 import dayjs from "dayjs";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import BigNumber from "bignumber.js";
 import { Token } from "@/services/contract/token";
 import { Pot2Pump } from "../generated/graphql";

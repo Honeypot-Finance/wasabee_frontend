@@ -14,6 +14,7 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { DataContainer } from "@/components/DataContainer";
 import FjordHoneySdk from "@/services/fjord_honeypot_sdk";
 import dayjs from "dayjs";
+import { LaunchCardV3 } from "@/components/LaunchCard/v3";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [selectedTab, setSelectedTab] = useState<"all" | "my">("all");
@@ -46,65 +47,8 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet.isInit]);
 
-  const mostSuccessProjects: any[] = [];
-
   return (
     <div className="px-7 xl:max-w-[1280px] mx-auto flex flex-col sm:gap-y-5">
-      {mostSuccessProjects && mostSuccessProjects.length > 0 && (
-        <>
-          <h2 className="w-full text-center text-[1.75rem] leading-4 font-bold text-neutral-100 ">
-            Trending Projects
-          </h2>
-          <motion.div
-            variants={defaultContainerVariants}
-            initial="hidden"
-            animate="visible"
-            className="w-full flex flex-col lg:flex-row gap-4 flex-grow-[1] mt-8"
-          >
-            <LaunchPadProjectCard
-              status="comming"
-              coverImg={""}
-              endDate={0}
-              tokenName={""}
-              projectAuthor={""}
-              startDate={0}
-              fundsRaised={0}
-              pairAddress={"0x"}
-            />
-            <LaunchPadProjectCard
-              status="live"
-              coverImg={""}
-              endDate={0}
-              tokenName={""}
-              projectAuthor={""}
-              startDate={0}
-              fundsRaised={0}
-              pairAddress={"0x0"}
-            />
-            <LaunchPadProjectCard
-              status="live"
-              coverImg={""}
-              endDate={0}
-              tokenName={""}
-              projectAuthor={""}
-              startDate={0}
-              fundsRaised={0}
-              pairAddress={"0x0"}
-            />
-            <LaunchPadProjectCard
-              status="live"
-              coverImg={""}
-              endDate={0}
-              tokenName={""}
-              projectAuthor={""}
-              startDate={0}
-              fundsRaised={0}
-              pairAddress={"0x0"}
-            />
-          </motion.div>
-        </>
-      )}
-
       <div className="flex justify-between">
         <Tabs
           aria-label="Options"

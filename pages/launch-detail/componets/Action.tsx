@@ -1,16 +1,11 @@
 import { observer, useLocalObservable } from "mobx-react-lite";
-import { FtoPairContract } from "@/services/contract/ftopair-contract";
+import { FtoPairContract } from "@/services/contract/launches/fto/ftopair-contract";
 import { Button } from "@/components/button/button-next";
 import { Input } from "@/components/input";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { useAccount } from "wagmi";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import { LaunchDetailSwapCard } from "@/components/SwapCard/MemeSwap";
-import {
-  ItemSelect,
-  SelectItem,
-  SelectState,
-} from "@/components/ItemSelect/v3";
 import PottingModal from "@/components/atoms/Pot2PumpComponents/PottingModal";
 
 const SuccessAction = observer(

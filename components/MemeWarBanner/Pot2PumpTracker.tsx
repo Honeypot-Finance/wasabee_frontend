@@ -10,7 +10,7 @@ import { fetchMemetrackerList, Pair } from "@/lib/algebra/graphql/clients/pair";
 import { wallet } from "@/services/wallet";
 import { Token } from "@/services/contract/token";
 import { trpcClient } from "@/lib/trpc";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 

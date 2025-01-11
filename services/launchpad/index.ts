@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { wallet } from "./../wallet";
 import BigNumber from "bignumber.js";
-import { FtoPairContract } from "./../contract/ftopair-contract";
+import { FtoPairContract } from "../contract/launches/fto/ftopair-contract";
 import {
   AsyncState,
   OldIndexerPaginationState,
@@ -14,7 +14,7 @@ import { createSiweMessage } from "@/lib/siwe";
 import { Token } from "./../contract/token";
 import { parseEventLogs } from "viem";
 import { ERC20ABI } from "@/lib/abis/erc20";
-import { MemePairContract } from "./../contract/memepair-contract";
+import { MemePairContract } from "./../contract/launches/pot2pump/memepair-contract";
 import { PageRequest } from "./../indexer/indexerTypes";
 import { fetchPairsList } from "@/lib/algebra/graphql/clients/pair";
 
@@ -102,7 +102,7 @@ export const statusTextToNumber = (status: string) => {
   }
 };
 
-function calculateTimeDifference (timestamp: number): string {
+function calculateTimeDifference(timestamp: number): string {
   if (timestamp.toString().length !== 13) {
     return "Invaild";
   }
@@ -189,37 +189,37 @@ class LaunchPad {
     },
   });
 
-  set pairFilterSearch (search: string) {
+  set pairFilterSearch(search: string) {
     this.projectsPage.updateFilter({ search });
     this.myLaunches.updateFilter({ search });
     this.participatedPairs.updateFilter({ search });
   }
 
-  set pairFilterStatus (status: "all" | "processing" | "success" | "fail") {
+  set pairFilterStatus(status: "all" | "processing" | "success" | "fail") {
     this.projectsPage.updateFilter({ status });
     this.myLaunches.updateFilter({ status });
     this.participatedPairs.updateFilter({ status });
   }
 
-  set showNotValidatedPairs (show: boolean) {
+  set showNotValidatedPairs(show: boolean) {
     this.projectsPage.updateFilter({ showNotValidatedPairs: show });
     this.myLaunches.updateFilter({ showNotValidatedPairs: show });
     this.participatedPairs.updateFilter({ showNotValidatedPairs: show });
   }
 
-  get memeFactoryContract () {
+  get memeFactoryContract() {
     return wallet.contracts.memeFactory;
   }
 
-  get memefacadeContract () {
+  get memefacadeContract() {
     return wallet.contracts.memeFacade;
   }
 
-  get ftofactoryContract () {
+  get ftofactoryContract() {
     return wallet.contracts.ftofactory;
   }
 
-  get ftofacadeContract () {
+  get ftofacadeContract() {
     return wallet.contracts.ftofacade;
   }
 
@@ -229,7 +229,7 @@ class LaunchPad {
   getPairAddress = async (index: bigint) =>
     await this.ftofactoryContract.allPairs.call([index]);
 
-  async mostSuccessfulFtos (): Promise<FtoPairContract[]> {
+  async mostSuccessfulFtos(): Promise<FtoPairContract[]> {
     const mostSuccessfulFtos =
       await trpcClient.indexerFeedRouter.getMostSuccessfulFtos.query({
         chainId: String(wallet.currentChainId),
@@ -244,24 +244,24 @@ class LaunchPad {
 
         const raisedToken = this.isRaiseToken(pairAddress.token1.id)
           ? Token.getToken({
-            ...pairAddress.token1,
-            address: pairAddress.token1.id,
-          })
+              ...pairAddress.token1,
+              address: pairAddress.token1.id,
+            })
           : Token.getToken({
-            address: pairAddress.token0.id,
-          });
+              address: pairAddress.token0.id,
+            });
 
         const launchedToken =
           raisedToken.address.toLowerCase() ===
-            pairAddress.token1.id.toLowerCase()
+          pairAddress.token1.id.toLowerCase()
             ? Token.getToken({
-              ...pairAddress.token0,
-              address: pairAddress.token0.id,
-            })
+                ...pairAddress.token0,
+                address: pairAddress.token0.id,
+              })
             : Token.getToken({
-              ...pairAddress.token1,
-              address: pairAddress.token1.id,
-            });
+                ...pairAddress.token1,
+                address: pairAddress.token1.id,
+              });
 
         if (!pair.isInit) {
           pair.init({
@@ -282,7 +282,7 @@ class LaunchPad {
     }
   }
 
-  async trendingMEMEs (): Promise<MemePairContract[]> {
+  async trendingMEMEs(): Promise<MemePairContract[]> {
     const mostSuccessfulFtos =
       await trpcClient.indexerFeedRouter.getTrendingMEMEPairs.query();
     if (mostSuccessfulFtos.status === "success") {
@@ -293,24 +293,24 @@ class LaunchPad {
 
         const raisedToken = this.isRaiseToken(pairAddress.token1.id)
           ? Token.getToken({
-            ...pairAddress.token1,
-            address: pairAddress.token1.id,
-          })
+              ...pairAddress.token1,
+              address: pairAddress.token1.id,
+            })
           : Token.getToken({
-            address: pairAddress.token0.id,
-          });
+              address: pairAddress.token0.id,
+            });
 
         const launchedToken =
           raisedToken.address.toLowerCase() ===
-            pairAddress.token1.id.toLowerCase()
+          pairAddress.token1.id.toLowerCase()
             ? Token.getToken({
-              ...pairAddress.token0,
-              address: pairAddress.token0.id,
-            })
+                ...pairAddress.token0,
+                address: pairAddress.token0.id,
+              })
             : Token.getToken({
-              ...pairAddress.token1,
-              address: pairAddress.token1.id,
-            });
+                ...pairAddress.token1,
+                address: pairAddress.token1.id,
+              });
 
         if (!pair.isInit) {
           pair.init({
@@ -382,41 +382,41 @@ class LaunchPad {
           const pair =
             this.currentLaunchpadType.value === "fto"
               ? new FtoPairContract({
-                address: pairAddress.id,
-                participantsCount: new BigNumber(
-                  pairAddress.participantsCount
-                ),
-              })
+                  address: pairAddress.id,
+                  participantsCount: new BigNumber(
+                    pairAddress.participantsCount
+                  ),
+                })
               : new MemePairContract({
-                address: pairAddress.id,
-                participantsCount: new BigNumber(
-                  pairAddress.participantsCount
-                ),
-              });
+                  address: pairAddress.id,
+                  participantsCount: new BigNumber(
+                    pairAddress.participantsCount
+                  ),
+                });
 
           const raisedToken = this.isRaiseToken(pairAddress.token1.id)
             ? Token.getToken({
-              ...pairAddress.token1,
-              address: pairAddress.token1.id,
-              decimals: Number(pairAddress.token1.decimals),
-            })
-            : Token.getToken({
-              address: pairAddress.token0.id,
-            });
-
-          const launchedToken =
-            raisedToken.address.toLowerCase() ===
-              pairAddress.token1.id.toLowerCase()
-              ? Token.getToken({
-                ...pairAddress.token0,
-                address: pairAddress.token0.id,
-                decimals: Number(pairAddress.token0.decimals),
-              })
-              : Token.getToken({
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
                 decimals: Number(pairAddress.token1.decimals),
+              })
+            : Token.getToken({
+                address: pairAddress.token0.id,
               });
+
+          const launchedToken =
+            raisedToken.address.toLowerCase() ===
+            pairAddress.token1.id.toLowerCase()
+              ? Token.getToken({
+                  ...pairAddress.token0,
+                  address: pairAddress.token0.id,
+                  decimals: Number(pairAddress.token0.decimals),
+                })
+              : Token.getToken({
+                  ...pairAddress.token1,
+                  address: pairAddress.token1.id,
+                  decimals: Number(pairAddress.token1.decimals),
+                });
 
           pair.init({
             raisedToken: raisedToken,
@@ -462,38 +462,38 @@ class LaunchPad {
           const pair =
             this.currentLaunchpadType.value === "fto"
               ? new FtoPairContract({
-                address: pairAddress.pairId,
-                participantsCount: new BigNumber(
-                  pairAddress.pair.participantsCount
-                ),
-              })
+                  address: pairAddress.pairId,
+                  participantsCount: new BigNumber(
+                    pairAddress.pair.participantsCount
+                  ),
+                })
               : new MemePairContract({
-                address: pairAddress.pairId,
-                participantsCount: new BigNumber(
-                  pairAddress.pair.participantsCount
-                ),
-              });
+                  address: pairAddress.pairId,
+                  participantsCount: new BigNumber(
+                    pairAddress.pair.participantsCount
+                  ),
+                });
 
           const raisedToken = this.isRaiseToken(pairAddress.pair.token1.id)
             ? Token.getToken({
-              ...pairAddress.pair.token1,
-              address: pairAddress.pair.token1.id,
-            })
+                ...pairAddress.pair.token1,
+                address: pairAddress.pair.token1.id,
+              })
             : Token.getToken({
-              address: pairAddress.pair.token0.id,
-            });
+                address: pairAddress.pair.token0.id,
+              });
 
           const launchedToken =
             raisedToken.address.toLowerCase() ===
-              pairAddress.pair.token1.id.toLowerCase()
+            pairAddress.pair.token1.id.toLowerCase()
               ? Token.getToken({
-                ...pairAddress.pair.token0,
-                address: pairAddress.pair.token0.id,
-              })
+                  ...pairAddress.pair.token0,
+                  address: pairAddress.pair.token0.id,
+                })
               : Token.getToken({
-                ...pairAddress.pair.token1,
-                address: pairAddress.pair.token1.id,
-              });
+                  ...pairAddress.pair.token1,
+                  address: pairAddress.pair.token1.id,
+                });
 
           pair.init({
             raisedToken: raisedToken,
@@ -538,38 +538,38 @@ class LaunchPad {
           const pair =
             this.currentLaunchpadType.value === "fto"
               ? new FtoPairContract({
-                address: pairAddress.id,
-                participantsCount: new BigNumber(
-                  pairAddress.participantsCount
-                ),
-              })
+                  address: pairAddress.id,
+                  participantsCount: new BigNumber(
+                    pairAddress.participantsCount
+                  ),
+                })
               : new MemePairContract({
-                address: pairAddress.id,
-                participantsCount: new BigNumber(
-                  pairAddress.participantsCount
-                ),
-              });
+                  address: pairAddress.id,
+                  participantsCount: new BigNumber(
+                    pairAddress.participantsCount
+                  ),
+                });
 
           const raisedToken = this.isRaiseToken(pairAddress.token1.id)
             ? Token.getToken({
-              ...pairAddress.token1,
-              address: pairAddress.token1.id,
-            })
+                ...pairAddress.token1,
+                address: pairAddress.token1.id,
+              })
             : Token.getToken({
-              address: pairAddress.token0.id,
-            });
+                address: pairAddress.token0.id,
+              });
 
           const launchedToken =
             raisedToken.address.toLowerCase() ===
-              pairAddress.token1.id.toLowerCase()
+            pairAddress.token1.id.toLowerCase()
               ? Token.getToken({
-                ...pairAddress.token0,
-                address: pairAddress.token0.id,
-              })
+                  ...pairAddress.token0,
+                  address: pairAddress.token0.id,
+                })
               : Token.getToken({
-                ...pairAddress.token1,
-                address: pairAddress.token1.id,
-              });
+                  ...pairAddress.token1,
+                  address: pairAddress.token1.id,
+                });
 
           pair.init({
             raisedToken: raisedToken,
@@ -599,7 +599,7 @@ class LaunchPad {
     }
   };
 
-  createLaunchProject = new AsyncState<({ }: any) => Promise<string>>(
+  createLaunchProject = new AsyncState<({}: any) => Promise<string>>(
     async ({
       launchType,
       provider,
@@ -739,7 +739,7 @@ class LaunchPad {
     }
   );
 
-  isRaiseToken (tokenAddress: string): boolean {
+  isRaiseToken(tokenAddress: string): boolean {
     return wallet.currentChain.contracts.ftoTokens.some(
       (ftoToken) =>
         ftoToken.address?.toLowerCase() === tokenAddress.toLowerCase()

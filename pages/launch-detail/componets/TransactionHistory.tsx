@@ -12,7 +12,7 @@ import { VscCopy } from "react-icons/vsc";
 import { ExternalLink } from "lucide-react";
 import dayjs from "dayjs";
 import BigNumber from "bignumber.js";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 
 interface TransactionHistoryProps {
   pairAddress: string;

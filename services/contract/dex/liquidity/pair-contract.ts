@@ -1,15 +1,15 @@
-import { Token } from "./token";
+import { Token } from "@/services/contract/token";
 import BigNumber from "bignumber.js";
-import { BaseContract } from ".";
-import { wallet } from "../wallet";
+import { BaseContract } from "@/services/contract";
+import { wallet } from "@/services/wallet";
 import IUniswapV2Pair from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import { makeAutoObservable } from "mobx";
 import { getContract, zeroAddress } from "viem";
-import { AsyncState } from "../utils";
+import { AsyncState } from "@/services/utils";
 import { toCompactLocaleString } from "@/lib/utils";
 import { amountFormatted, formatAmount } from "@/lib/format";
 import dayjs from "dayjs";
-import { liquidity } from "../liquidity";
+import { liquidity } from "@/services/liquidity";
 
 // const totalSupply = await pairContract.methods.totalSupply().call()
 // const LPTokenBalance = await this.balanceOf(pairAddress)

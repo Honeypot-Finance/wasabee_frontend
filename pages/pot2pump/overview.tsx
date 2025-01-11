@@ -10,7 +10,7 @@ import {
   fetchPottingNewTokens,
   fetchPottingTrendingPot2Pump,
 } from "@/lib/algebra/graphql/clients/pair";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import { wallet } from "@/services/wallet";
 import { Button } from "@/components/button";
 import Link from "next/link";

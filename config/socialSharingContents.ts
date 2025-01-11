@@ -1,5 +1,5 @@
 import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 
 export const pot2PumpPumpingTGShareContent = (pair: MemePairContract) => `
 🚀 Pot2Pump

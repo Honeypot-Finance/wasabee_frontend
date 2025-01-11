@@ -3,14 +3,9 @@ import TokenLogo from "../TokenLogo/TokenLogo";
 import { Copy } from "../copy";
 import { observer } from "mobx-react-lite";
 import CardContianer from "../CardContianer/CardContianer";
-import { PairContract } from "@/services/contract/pair-contract";
-import PopUp from "../PopUp/PopUp";
-import { Button } from "../button";
-import { liquidity } from "@/services/liquidity";
 import { RemoveLiquidity } from "../LPCard";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import ShareSocialMedialPopUp from "../ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import {
   OptionsDropdown,
   optionsPresets,

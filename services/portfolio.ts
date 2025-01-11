@@ -29,8 +29,6 @@ class Portfolio {
   async initPortfolio() {
     if (this.isInit || !wallet.isInit) return;
 
-    console.log("initPortfolio");
-
     this.isLoading = true;
 
     try {
@@ -80,8 +78,6 @@ class Portfolio {
       this.tokens =
         tokens?.filter((token) => token.balance.toNumber() > 0) ?? [];
 
-      console.log("this.tokens", this.tokens);
-
       // Calculate total balance in USD`
       this.calculateTotalBalance();
     } catch (error) {
@@ -120,7 +116,6 @@ class Portfolio {
   });
 
   get sortedTokens() {
-    console.log("sortedTokens", this.tokens);
     return [...this.tokens].sort((a, b) => {
       const aValue = new BigNumber(a.derivedUSD || 0).multipliedBy(a.balance);
       const bValue = new BigNumber(b.derivedUSD || 0).multipliedBy(b.balance);

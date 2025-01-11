@@ -1,5 +1,5 @@
 import { chart, chartTimeRanges } from "@/services/chart";
-import { PairContract } from "@/services/contract/pair-contract";
+import { PairContract } from "@/services/contract/dex/liquidity/pair-contract";
 import { swap } from "@/services/swap";
 import { Button, cn } from "@nextui-org/react";
 import { ApexOptions } from "apexcharts";

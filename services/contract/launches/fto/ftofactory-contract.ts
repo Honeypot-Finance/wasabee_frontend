@@ -1,8 +1,8 @@
-import { BaseContract } from ".";
-import { wallet } from "../wallet";
+import { BaseContract } from "../..";
+import { wallet } from "../../../wallet";
 import { Address, getContract } from "viem";
 import { makeAutoObservable } from "mobx";
-import { ContractWrite, AsyncState } from "../utils";
+import { ContractWrite, AsyncState } from "../../../utils";
 import { ftoFactoryABI } from "@/lib/abis/ftoFactory";
 import { FtoPairContract } from "./ftopair-contract";
 
