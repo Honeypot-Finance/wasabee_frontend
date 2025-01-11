@@ -53,7 +53,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
 
   return (
     <>
-      <div className={clsx("relative z-[1001]", props.className)}>
+      <div className={clsx("relative z-[1001] mb-5", props.className)}>
         <Navbar
           classNames={{
             wrapper: "max-w-[1200px] px-4 sm:px-6 !h-auto items-start",

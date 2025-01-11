@@ -113,12 +113,7 @@ export const Layout = ({
 
       <ConfettiComponent />
       <PopOverModal />
-      {router.pathname.startsWith("/launch") ||
-      router.pathname.startsWith("/pools") ? (
-        <LaunchHeader />
-      ) : (
-        <Header />
-      )}
+      <Header />
       {currentChain ? (
         currentChain?.isActive ? (
           <div className="flex-1 flex">{children}</div>
