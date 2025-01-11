@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Header } from "./header";
+import { Header } from "./header/v3";
 import { useRouter } from "next/router";
 import { useAccount } from "wagmi";
 import { networksMap } from "@/services/chain";
