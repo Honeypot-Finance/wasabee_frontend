@@ -8,7 +8,6 @@ import {
   metaMaskWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { injected, safe } from "wagmi/connectors";
-import { mock } from "wagmi/connectors";
 import {
   Environment,
   getCapsuleWallet,
@@ -19,7 +18,7 @@ import {
 // import { berasigWallet } from "./berasigWallet";
 
 const pId = "1d1c8b5204bfbd57502685fc0934a57d";
-const CAPSULE_API_KEY = process.env.CAPSULE_API_KEY!;
+const CAPSULE_API_KEY = process.env.NEXT_PUBLIC_CAPSULE_API_KEY!;
 const CAPSULE_ENVIRONMENT = Environment.DEVELOPMENT; // Use Environment.PRODUCTION for live apps
 
 const capsuleWalletOptions = {

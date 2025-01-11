@@ -8,7 +8,7 @@ import { NextLayoutPage } from "@/types/nextjs";
 import { WagmiProvider, useWalletClient } from "wagmi";
 import { AvatarComponent, RainbowKitProvider } from "@usecapsule/rainbowkit";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import "@rainbow-me/rainbowkit/styles.css";
+// import "@rainbow-me/rainbowkit/styles.css";
 import "@usecapsule/rainbowkit/styles.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { ToastContainer } from "react-toastify";
@@ -24,6 +24,12 @@ import { Analytics } from "@vercel/analytics/react";
 import { ApolloProvider } from "@apollo/client";
 import { infoClient } from "@/lib/algebra/graphql/clients";
 import Image from "next/image";
+
+import {
+  DynamicContextProvider,
+  DynamicWidget,
+} from "@dynamic-labs/sdk-react-core";
+import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 
 // enableStaticRendering(true)
 const queryClient = new QueryClient();

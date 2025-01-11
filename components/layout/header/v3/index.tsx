@@ -129,6 +129,6 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
           }
         `}</style>
       )}
-    </div>
+    </>
   );
 };
