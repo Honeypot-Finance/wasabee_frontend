@@ -1,6 +1,6 @@
 import React, { HtmlHTMLAttributes, useRef, useState } from "react";
-import { Logo } from "../svg/logo";
-import { WalletConnect, WalletConnectMobile } from "../walletconnect";
+import { Logo } from "../../svg/logo";
+import { WalletConnect, WalletConnectMobile } from "../../walletconnect";
 import clsx from "clsx";
 import {
   Dropdown,
@@ -22,7 +22,7 @@ import { Menu, appPathsList as menuList } from "@/config/allAppPath";
 import {
   WarppedNextDropdownMenu,
   WarppedNextDropdown,
-} from "../wrappedNextUI/Dropdown/Dropdown";
+} from "../../wrappedNextUI/Dropdown/Dropdown";
 
 export const Header = (props: HtmlHTMLAttributes<any>) => {
   const router = useRouter();
