@@ -31,7 +31,7 @@ import { motion } from "framer-motion";
 import { itemPopUpVariants } from "@/lib/animation";
 import V3SwapCard from "@/components/algebra/swap/V3SwapCard";
 import { wallet } from "@/services/wallet";
-import KlineChart from "../launch-detail/componets/KlineChart";
+import KlineChart from "@/pages/launch-detail/componets/KlineChart";
 import { cn } from "@/lib/tailwindcss";
 
 const RankProjectData = [

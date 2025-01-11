@@ -98,16 +98,16 @@ const SwapParamsV3 = () => {
                 { account: address as Address }
               )
               .then((v) => v.result as [string, number, number]);
+
+            console.log("beforeSwap", beforeSwap);
           } catch (error) {
             beforeSwap = ["", 0, 0];
           }
           const [, overrideFee, pluginFee] = beforeSwap || ["", 0, 0];
 
           if (overrideFee) {
-            // console.log("overrideFee", overrideFee);
             fees.push(overrideFee + pluginFee);
           } else {
-            // console.log("pool.fee", pool.fee);
             fees.push(pool.fee + pluginFee);
           }
         }

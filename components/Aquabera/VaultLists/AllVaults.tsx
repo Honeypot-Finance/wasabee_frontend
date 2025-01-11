@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { Button } from "@/components/button";
-import TokenLogo from "@/components/TokenLogo/TokenLogo";
+import Image from "next/image";
 import {
   getAccountVaultsList,
   getVaultPageData,
@@ -254,8 +254,24 @@ export function AllAquaberaVaults() {
                       href={`/vault/${vault.id}`}
                       className="flex items-center gap-2 cursor-pointer"
                     >
-                      {vault.tokenA && <TokenLogo token={tokenA} />}
-                      {vault.tokenB && <TokenLogo token={tokenB} />}
+                      {vault.tokenA && (
+                        <Image
+                          src={tokenA.logoURI}
+                          alt={tokenA.symbol}
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
+                      )}
+                      {vault.tokenB && (
+                        <Image
+                          src={tokenB.logoURI}
+                          alt={tokenB.symbol}
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
+                      )}
                       <span>
                         {tokenA.symbol}/{tokenB.symbol}
                       </span>

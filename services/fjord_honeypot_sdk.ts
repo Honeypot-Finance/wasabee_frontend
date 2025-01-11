@@ -1,4 +1,3 @@
-import search from "@/pages/api/udf-data-feed/search";
 import {
   FjordSdk,
   PoolCreateArgs,
@@ -14,7 +13,7 @@ type TFindManyPools = {
   page: number;
   take: number;
   search: string;
-  filters?: { owner?: string };
+  filters?: { owner?: string; endsAt?: { gt?: string; lt?: string } };
 };
 type TUpdatePool = { poolAddress: string };
 export type TCreatePool = {
@@ -93,21 +92,27 @@ class FjordHoneySdk {
     const skip = page - 1;
     const where: any = {};
 
-    if (search) {
-      where.shareTokenSymbol = search;
-    }
-
-    if (filters?.owner) {
-      where.owner = filters.owner;
-    }
-
     return (await sdk.request.rest.findManyPools({
       skip,
       take,
-      where,
+
+      where: {
+        OR: search
+          ? [
+              { shareTokenSymbol: { contains: search } },
+              { assetTokenSymbol: { contains: search } },
+              { name: { contains: search } },
+              { shareTokenAddress: { contains: search } },
+              { assetTokenAddress: { contains: search } },
+            ]
+          : undefined,
+        owner: !!filters?.owner ? filters.owner : undefined,
+        endsAt: filters?.endsAt,
+      },
       orderBy: { createdAt: "desc" },
     })) as any as { data: Pool[] };
   };
+
   static findPool = async (address: string): Pool | null => {
     const pool = (await sdk.request.rest.findManyPools({
       where: {
