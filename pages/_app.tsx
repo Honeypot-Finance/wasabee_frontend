@@ -23,6 +23,7 @@ import { Analytics } from "@vercel/analytics/react";
 // import { capsuleClient, capsuleModalProps } from "@/config/wagmi/capsualWallet";
 import { ApolloProvider } from "@apollo/client";
 import { infoClient } from "@/lib/algebra/graphql/clients";
+import Image from "next/image";
 
 // enableStaticRendering(true)
 const queryClient = new QueryClient();
@@ -47,8 +48,9 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
 
 const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
   return (
-    <img
+    <Image
       src={"/images/empty-logo.png"}
+      alt="User avatar"
       width={size}
       height={size}
       style={{ borderRadius: 999 }}

@@ -1,14 +1,14 @@
+import clsx from "clsx";
+import Link from "next/link";
+import Image from "next/image";
+import { cn } from "@/lib/tailwindcss";
+import { useRouter } from "next/router";
+import { IoClose } from "react-icons/io5";
+import { CustomNavbar } from "./components/Navbar";
+import { Navbar, NavbarContent } from "@nextui-org/react";
 import React, { HtmlHTMLAttributes, useState } from "react";
 import { WalletConnect } from "@/components/walletconnect/v3";
-import clsx from "clsx";
-import { Navbar, NavbarContent } from "@nextui-org/react";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { cn } from "@/lib/tailwindcss";
 import { Menu, appPathsList as menuList } from "@/config/allAppPath";
-import { CustomNavbar } from "./components/Navbar";
-import Image from "next/image";
-import { IoClose } from "react-icons/io5";
 
 export const Header = (props: HtmlHTMLAttributes<any>) => {
   const router = useRouter();
@@ -129,6 +129,6 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
           }
         `}</style>
       )}
-    </>
+    </div>
   );
 };

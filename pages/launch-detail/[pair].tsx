@@ -28,16 +28,16 @@ import { useAccount } from "wagmi";
 import { chart } from "@/services/chart";
 import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import { WrappedToastify } from "@/lib/wrappedToastify";
-import Action from "./componets/Action";
-import Tabs from "./componets/Tabs";
-import CountdownTimer from "./componets/Countdown";
-import ProjectTitle from "./componets/ProjectTitle";
-import TokenRaised from "./componets/TokenRaised";
-import SaleProgress from "./componets/SaleProgress";
-import TokenAddress from "./componets/TokenAddress";
-import TokenDetails from "./componets/TokenDetails";
-import KlineChart from "./componets/KlineChart";
-import { LaunchDataProgress } from "./componets/LaunchDataProgress";
+import Action from "./components/Action";
+import Tabs from "./components/Tabs";
+import CountdownTimer from "./components/Countdown";
+import ProjectTitle from "./components/ProjectTitle";
+import TokenRaised from "./components/TokenRaised";
+import SaleProgress from "./components/SaleProgress";
+import TokenAddress from "./components/TokenAddress";
+import TokenDetails from "./components/TokenDetails";
+import KlineChart from "./components/KlineChart";
+import { LaunchDataProgress } from "./components/LaunchDataProgress";
 import { cn } from "@/lib/tailwindcss";
 
 export const UpdateProjectModal = observer(
