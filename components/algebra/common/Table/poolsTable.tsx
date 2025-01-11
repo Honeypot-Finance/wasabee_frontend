@@ -30,6 +30,7 @@ import { Pool } from "./poolsColumns";
 
 interface PoolsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
+  columnsMy: ColumnDef<TData, TValue>[];
   data: TData[];
   action?: (args?: any) => void;
   defaultSortingID?: string;
@@ -43,6 +44,7 @@ interface PoolsTableProps<TData, TValue> {
 
 const PoolsTable = <TData, TValue>({
   columns,
+  columnsMy,
   data,
   action,
   link,
@@ -66,7 +68,7 @@ const PoolsTable = <TData, TValue>({
 
   const table = useReactTable({
     data: tableData as TData[],
-    columns,
+    columns: selectedFilter === "myPools" ? columnsMy : columns,
     filterFns: {},
     state: {
       columnFilters,

@@ -1,4 +1,7 @@
-import { poolsColumns } from "@/components/algebra/common/Table/poolsColumns";
+import {
+  poolsColumns,
+  poolsColumnsMy,
+} from "@/components/algebra/common/Table/poolsColumns";
 import { useMemo, useState } from "react";
 import { Address } from "viem";
 import PoolsTable from "@/components/algebra/common/Table/poolsTable";
@@ -164,6 +167,7 @@ const PoolsList = () => {
     <div>
       <div className="hidden xl:block">
         <PoolsTable
+          columnsMy={poolsColumnsMy}
           columns={poolsColumns}
           data={formattedPools}
           sorting={sorting}

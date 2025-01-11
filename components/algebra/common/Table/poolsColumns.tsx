@@ -400,4 +400,159 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   // },
 ];
 
+export const poolsColumnsMy: ColumnDef<Pool>[] = [
+  {
+    accessorKey: "pair",
+    header: () => <HeaderItem className="ml-2">Pool</HeaderItem>,
+    cell: ({ row }) => <PoolPair {...row.original} />,
+    filterFn: (v, _, value) =>
+      [
+        v.original.pair.token0.symbol,
+        v.original.pair.token1.symbol,
+        v.original.pair.token0.name,
+        v.original.pair.token1.name,
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(value),
+  },
+  {
+    accessorKey: "plugins",
+    header: () => <HeaderItem>Plugins</HeaderItem>,
+    cell: ({ row }) => <Plugins poolId={row.original.id} />,
+    filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
+  },
+  {
+    accessorKey: "fee",
+    header: () => <HeaderItem className="uppercase">Fee</HeaderItem>,
+    cell: ({ row }) => `${row.original.fee}%`,
+  },
+  {
+    accessorKey: "apr24h",
+    header: () => <HeaderItem className="uppercase">APR 24H</HeaderItem>,
+    cell: ({ row }) => `${DynamicFormatAmount(row.original.apr24h, 2)}%`,
+  },
+  {
+    accessorKey: "tvlUSD",
+    id: "tvlUSD",
+    header: () => <HeaderItem className="uppercase">TVL</HeaderItem>,
+    cell: ({ row }) => {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(row.original.tvlUSD);
+    },
+  },
+  // {
+  //   accessorKey: "createdAtTimestamp",
+  //   header: () => <HeaderItem className="uppercase">Age</HeaderItem>,
+  //   cell: ({ row }) => timeSince(row?.original?.createdAtTimestamp ?? 0),
+  // },
+  // {
+  //   accessorKey: "txCount",
+  //   header: () => <HeaderItem className="uppercase">txns</HeaderItem>,
+  //   cell: ({ row }) => row.original.txCount,
+  // },
+  {
+    accessorKey: "volumeUSD",
+    header: () => <HeaderItem className="uppercase">Total Volume</HeaderItem>,
+    cell: ({ row }) => (
+      <span>
+        {new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(row?.original?.volumeUSD)}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "volume24USD",
+    header: () => <HeaderItem className="uppercase">24h Volume</HeaderItem>,
+    cell: ({ row }) => (
+      <span>
+        {new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(row?.original?.volume24USD)}
+      </span>
+    ),
+  },
+  // {
+  //   accessorKey: "changeHour",
+  //   header: () => (
+  //     <HeaderItem className="uppercase">Vol Hour Change</HeaderItem>
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{ color: row.original.changeHour > 0 ? "#48bb78" : "#F56565" }}
+  //       >
+  //         {formatAmount(row.original.changeHour, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "change24h",
+  //   header: () => <HeaderItem className="uppercase">Vol Change 24h</HeaderItem>,
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{ color: row.original.change24h > 0 ? "#48bb78" : "#F56565" }}
+  //       >
+  //         {formatAmount(row.original.change24h, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "changeWeek",
+  //   header: () => (
+  //     <HeaderItem className="uppercase">Vol Change Week</HeaderItem>
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{ color: row.original.changeWeek > 0 ? "#48bb78" : "#F56565" }}
+  //       >
+  //         {formatAmount(row.original.changeWeek, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "changeMonth",
+  //   header: () => (
+  //     <HeaderItem className="uppercase">Vol Change Month</HeaderItem>
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{
+  //           color: row.original.changeMonth > 0 ? "#48bb78" : "#F56565",
+  //         }}
+  //       >
+  //         {formatAmount(row.original.changeMonth, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "liquidity",
+  //   header: () => <HeaderItem className="uppercase">liquidity</HeaderItem>,
+  //   cell: ({ row }) => formatAmount(row.original.liquidity),
+  // },
+  // {
+  //   accessorKey: "pair.token0.marketCap",
+  //   header: () => <HeaderItem className="uppercase">marktet cap</HeaderItem>,
+  //   cell: ({ row }) => row.original.pair.token0.marketCap,
+  // },
+];
+
 //for hours gain maybe change it to weekly monthly yearly as in our subgraph
