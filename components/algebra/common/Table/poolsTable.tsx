@@ -181,6 +181,7 @@ const PoolsTable = <TData, TValue>({
                 popmodal.openModal({
                   content: <CreatePoolForm />,
                   boarderLess: true,
+                  shouldCloseOnInteractOutside: false,
                 })
               }
             >
