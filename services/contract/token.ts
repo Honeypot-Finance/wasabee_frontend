@@ -289,6 +289,7 @@ export class Token implements BaseContract {
   }
 
   async getBalance() {
+    console.log("token", this);
     if (this.isNative) {
       return wallet.balance;
     }

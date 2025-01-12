@@ -161,7 +161,6 @@ const SwapPairV3 = ({
           return;
         }
 
-        console.log("token", token);
         handleInputSelect(
           new AlgebraToken(
             wallet.currentChainId,

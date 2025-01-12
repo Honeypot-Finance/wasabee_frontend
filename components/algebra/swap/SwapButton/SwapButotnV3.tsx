@@ -16,6 +16,8 @@ import {
   warningSeverity,
 } from "@/lib/algebra/utils/swap/prices";
 import { useToastify } from "@/lib/hooks/useContractToastify";
+import { Token } from "@/services/contract/token";
+import { wallet } from "@/services/wallet";
 import { ApprovalState } from "@/types/algebra/types/approve-state";
 import { SwapField } from "@/types/algebra/types/swap-field";
 import { TradeState } from "@/types/algebra/types/trade-state";
@@ -119,8 +121,29 @@ const SwapButtonV3 = ({ onSwapSuccess }: { onSwapSuccess?: () => void }) => {
     return isSwapSuccess;
   }, [isSwapSuccess]);
 
+  const isWrapSuccessMemo = useMemo(() => {
+    return isWrapSuccess;
+  }, [isWrapSuccess]);
+
+  useEffect(() => {
+    if (isWrapSuccessMemo) {
+      Token.getToken({
+        address: wallet.currentChain.nativeToken.address,
+      }).getBalance();
+    }
+  }, [isWrapSuccessMemo]);
+
   useEffect(() => {
     if (isSwapSuccessMemo) {
+      trade?.inputAmount.currency.wrapped.address &&
+        Token.getToken({
+          address: trade?.inputAmount.currency.wrapped.address,
+        }).getBalance();
+      trade?.outputAmount.currency.wrapped.address &&
+        Token.getToken({
+          address: trade?.outputAmount.currency.wrapped.address,
+        }).getBalance();
+
       if (onSwapSuccess) {
         onSwapSuccess();
       }
