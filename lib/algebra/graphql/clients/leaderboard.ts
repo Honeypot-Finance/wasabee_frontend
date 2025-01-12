@@ -9,6 +9,8 @@ export const LEADERBOARD_QUERY = gql`
       totalVolumeMatic
       totalValueLockedUSD
       totalValueLockedMatic
+      untrackedVolumeUSD
+      totalValueLockedUSDUntracked
     }
   }
 `;

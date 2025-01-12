@@ -30,6 +30,7 @@ import { Switch } from "@/components/algebra/ui/switch";
 import CardContianer from "@/components/CardContianer/CardContianer";
 import { useUserState } from "@/lib/algebra/state/userStore";
 import { SettingsIcon } from "lucide-react";
+import BigNumber from "bignumber.js";
 
 // Settings Component
 const Settings = () => {
@@ -471,8 +472,16 @@ const TokenCardV3 = ({
             maxValue={Number(balance?.formatted)}
             minValue={0}
             onChange={(value) => {
-              setStoredValue(value.toString());
-              handleInput(value.toString());
+              const maxValue = BigNumber(balance?.value.toString() ?? 0).div(
+                10 ** (balance?.decimals ?? 18)
+              );
+              if (maxValue.lt(value.toString())) {
+                handleInput(maxValue.toString());
+                setStoredValue(maxValue.toString());
+              } else {
+                setStoredValue(value.toString());
+                handleInput(value.toString());
+              }
             }}
             value={Number(storedValue)}
             step={Math.pow(0.1, 18)}
@@ -483,9 +492,20 @@ const TokenCardV3 = ({
               new SelectState({
                 value: Number(storedValue),
                 onSelectChange: (value) => {
-                  handleInput(
-                    (Number(balance?.formatted) * Number(value)).toString()
-                  );
+                  if (value == 1) {
+                    handleInput(
+                      BigNumber(balance?.value.toString() ?? 0)
+                        .div(10 ** (balance?.decimals ?? 18))
+                        .toString()
+                    );
+                  } else {
+                    handleInput(
+                      BigNumber(balance?.value.toString() ?? 0)
+                        .div(10 ** (balance?.decimals ?? 18))
+                        .times(value)
+                        .toString()
+                    );
+                  }
                 },
               })
             }
