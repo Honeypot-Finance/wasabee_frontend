@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { infoClient } from ".";
 import {
   PoolsByTokenPairQuery,
@@ -6,6 +7,7 @@ import {
   UserActivePositionsDocument,
   UserActivePositionsQuery,
   UserActivePositionsQueryVariables,
+  useUserActivePositionsQuery,
 } from "../generated/graphql";
 
 export const poolsByTokenPair = async (token0: string, token1: string) => {
@@ -26,10 +28,21 @@ export const userPools = async (userAddress: string) => {
     UserActivePositionsQueryVariables
   >({
     query: UserActivePositionsDocument,
-    variables: { account: userAddress },
+    variables: { account: userAddress.toLowerCase() },
   });
 
   const pools = data?.positions.map((position) => position.pool);
 
   return pools;
+};
+
+export const useUserPools = (userAddress: string) => {
+  const { data, loading } = useUserActivePositionsQuery({
+    variables: { account: userAddress.toLowerCase() },
+  });
+
+  return {
+    data: { pools: data?.positions.map((position) => position.pool) || [] },
+    loading,
+  };
 };

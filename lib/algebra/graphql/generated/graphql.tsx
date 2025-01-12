@@ -14381,7 +14381,7 @@ export type UserPositionsSuspenseQueryHookResult = ReturnType<typeof useUserPosi
 export type UserPositionsQueryResult = Apollo.QueryResult<UserPositionsQuery, UserPositionsQueryVariables>;
 export const UserActivePositionsDocument = gql`
     query UserActivePositions($account: Bytes!) {
-  positions(where: {owner: $account, liquidity: {gt: 0}}) {
+  positions(where: {owner: $account, liquidity_gt: 0}) {
     ...PositionFields
   }
 }

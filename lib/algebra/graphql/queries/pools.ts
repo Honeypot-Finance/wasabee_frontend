@@ -193,7 +193,7 @@ export const USER_POSITIONS = gql`
 
 export const USER_ACTIVE_POSITIONS = gql`
   query UserActivePositions($account: Bytes!) {
-    positions(where: { owner: $account, liquidity: { gt: 0 } }) {
+    positions(where: { owner: $account, liquidity_gt: 0 }) {
       ...PositionFields
     }
   }

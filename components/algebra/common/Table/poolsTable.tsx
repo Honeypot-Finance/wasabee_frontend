@@ -32,6 +32,7 @@ interface PoolsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   columnsMy: ColumnDef<TData, TValue>[];
   data: TData[];
+  userPools: TData[];
   action?: (args?: any) => void;
   defaultSortingID?: string;
   link?: string;
@@ -46,6 +47,7 @@ const PoolsTable = <TData, TValue>({
   columns,
   columnsMy,
   data,
+  userPools,
   action,
   link,
   showPagination = true,
@@ -112,13 +114,18 @@ const PoolsTable = <TData, TValue>({
           })
         );
       } else {
-        setTableData(data as Pool[]);
+        if (selectedFilter === "myPools") {
+          setTableData(userPools as Pool[]);
+        } else {
+          setTableData(data as Pool[]);
+        }
       }
     }, 500);
+
     if (timerID) {
       return () => clearTimeout(timerID);
     }
-  }, [data, search]);
+  }, [data, search, userPools, selectedFilter]);
 
   const handleChangePools = (filter: string) => {
     if (filter === "myPools") {
