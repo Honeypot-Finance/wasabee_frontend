@@ -3,6 +3,9 @@ import { ButtonHTMLAttributes } from "react";
 import Image from "next/image";
 import { useConnect, useConnectors } from "wagmi";
 import { BiWallet } from "react-icons/bi";
+import { TbPictureInPictureTopFilled } from "react-icons/tb";
+import { BsPerson } from "react-icons/bs";
+import Link from "next/link";
 
 const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   return (
@@ -28,6 +31,14 @@ export const WalletConnect = () => {
         className="mb-[-20px]"
       />
       <div className="bg-[#FFCD4D] rounded-xl pb-8 bg-[url('/images/card-container/dark/bottom-border.svg')] bg-left-bottom bg-repeat-x bg-clip-padding pt-4 px-2.5">
+        <div className="flex items-center gap-x-2 justify-center mb-2">
+          <Link
+            href="/profile"
+            className="flex flex-col items-center justify-center bg-white rounded-full p-2"
+          >
+            <BsPerson size={30} color="#202020" />
+          </Link>
+        </div>
         <ConnectButton.Custom>
           {({
             account,

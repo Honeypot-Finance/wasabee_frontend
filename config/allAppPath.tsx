@@ -106,10 +106,10 @@ export const appPathsList: Menu[] = [
       },
     ],
   },
-  {
-    path: "/profile",
-    title: "Profile",
-  },
+  // {
+  //   path: "/profile",
+  //   title: "Profile",
+  // },
 ];
 
 const getFlatPaths = (paths: Menu[]): flatMenu[] => {
