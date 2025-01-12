@@ -19,7 +19,9 @@ import {
 
 const pId = "1d1c8b5204bfbd57502685fc0934a57d";
 const CAPSULE_API_KEY = process.env.NEXT_PUBLIC_CAPSULE_API_KEY!;
-const CAPSULE_ENVIRONMENT = Environment.DEVELOPMENT; // Use Environment.PRODUCTION for live apps
+const CAPSULE_ENVIRONMENT = process.env.NODE_ENV === 'production' 
+  ? Environment.PRODUCTION 
+  : Environment.DEVELOPMENT;
 
 const capsuleWalletOptions = {
   capsule: {
