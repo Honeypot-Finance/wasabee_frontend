@@ -72,8 +72,9 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
           </NavbarContent>
 
           <NavbarContent className="flex gap-4 items-start" justify="center">
-            <div
-              className="sm:pointer-events-none cursor-pointer z-10"
+            <Link
+              href="/"
+              className="pointer-events-none md:pointer-events-auto cursor-pointer z-[1000]"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               <Image
@@ -83,7 +84,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
                 height={100}
                 className={cn("w-[200px]", isMenuOpen ? "sm:block hidden" : "")}
               />
-            </div>
+            </Link>
           </NavbarContent>
 
           <NavbarContent className="flex gap-4" justify="end">

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-before-interactive-script-outside-document */
 import { useEffect } from "react";
 import { Header } from "./header/v3";
 import { useRouter } from "next/router";
@@ -107,6 +108,7 @@ export const Layout = ({
         src="/datafeeds/udf/dist/bundle.js"
         strategy="beforeInteractive"
       />
+
       <AnnouncementBar slogans={slogans} interval={5000} />
       {/* <GuideModal /> */}
       <ChatWidget />
