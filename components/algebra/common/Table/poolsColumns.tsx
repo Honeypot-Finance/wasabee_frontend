@@ -275,7 +275,12 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   {
     accessorKey: "apr24h",
     header: () => <HeaderItem className="uppercase">APR 24H</HeaderItem>,
-    cell: ({ row }) => `${DynamicFormatAmount(row.original.apr24h, 2)}%`,
+    cell: ({ row }) =>
+      `${DynamicFormatAmount({
+        amount: row.original.apr24h,
+        decimals: 2,
+        endWith: "%",
+      })}`,
   },
   {
     accessorKey: "tvlUSD",
@@ -430,7 +435,12 @@ export const poolsColumnsMy: ColumnDef<Pool>[] = [
   {
     accessorKey: "apr24h",
     header: () => <HeaderItem className="uppercase">APR 24H</HeaderItem>,
-    cell: ({ row }) => `${DynamicFormatAmount(row.original.apr24h, 2)}%`,
+    cell: ({ row }) =>
+      `${DynamicFormatAmount({
+        amount: row.original.apr24h,
+        decimals: 2,
+        endWith: "%",
+      })}`,
   },
   {
     accessorKey: "tvlUSD",

@@ -7,13 +7,19 @@ export const pot2PumpPumpingTGShareContent = (pair: MemePairContract) => `
 🔹 Full Name: ${pair.launchedToken?.displayName}  
 
 📈 Price Growth since Launch: ${pair.priceChangeDisplay}     
-💵 USD Price: $${DynamicFormatAmount(pair.launchedToken?.derivedUSD ?? "0", 5)} 
-📊 Total Supply: ${DynamicFormatAmount(
-  pair.launchedToken?.totalSupplyWithoutDecimals
-    .div(10 ** (pair.launchedToken?.decimals ?? 18))
-    .toFixed(2) ?? "0",
-  2
-)}  
+💵 USD Price: $${DynamicFormatAmount({
+  amount: pair.launchedToken?.derivedUSD ?? "0",
+  decimals: 5,
+  endWith: "$",
+})} 
+📊 Total Supply: ${DynamicFormatAmount({
+  amount:
+    pair.launchedToken?.totalSupplyWithoutDecimals
+      .div(10 ** (pair.launchedToken?.decimals ?? 18))
+      .toFixed(2) ?? "0",
+  decimals: 2,
+  endWith: " ",
+})}  
 🔄 Transactions: 🟢 ${pair.launchedTokenBuyCount} / 🔴 ${pair.launchedTokenSellCount}
 
 🔗 ${window.location.origin}/launch-detail/${pair.address}

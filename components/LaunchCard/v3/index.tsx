@@ -440,11 +440,11 @@ const SimpleLaunchCard = observer(({ pair }: { pair: LaunchContract }) => {
                 </div>
                 {pair.state === 0 && (
                   <div className="font-bold text-lg">
-                    {DynamicFormatAmount(
-                      pair.launchedToken?.derivedUSD ?? "0",
-                      5
-                    )}
-                    $
+                    {DynamicFormatAmount({
+                      amount: pair.launchedToken?.derivedUSD ?? "0",
+                      decimals: 5,
+                      endWith: "$",
+                    })}
                   </div>
                 )}
               </div>
@@ -610,11 +610,11 @@ const FeaturedLaunchCard = observer(
                 <div className="font-bold text-base">
                   <span>Token Price: </span>
                   <span>
-                    {DynamicFormatAmount(
-                      pair.launchedToken?.derivedUSD ?? "0",
-                      5
-                    )}
-                    $
+                    {DynamicFormatAmount({
+                      amount: pair.launchedToken?.derivedUSD ?? "0",
+                      decimals: 5,
+                      endWith: "$",
+                    })}
                   </span>
                 </div>
                 <div className="font-bold text-base">
@@ -652,11 +652,11 @@ const FeaturedLaunchCard = observer(
                 <div className="space-y-2">
                   <div className="font-bold text-2xl">
                     Token Price:{" "}
-                    {DynamicFormatAmount(
-                      pair.launchedToken?.derivedUSD ?? "0",
-                      5
-                    )}
-                    $
+                    {DynamicFormatAmount({
+                      amount: pair.launchedToken?.derivedUSD ?? "0",
+                      decimals: 5,
+                      endWith: "$",
+                    })}
                   </div>
                   <div className="font-bold text-2xl">
                     Price Change(24h):{" "}

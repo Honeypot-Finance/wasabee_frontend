@@ -182,3 +182,39 @@ export const LIQUIDATOR_DATA_FIELDS = gql`
     }
   }
 `;
+
+export const USER_POSITIONS = gql`
+  query UserPositions($account: Bytes!) {
+    positions(where: { owner: $account }) {
+      ...PositionFields
+    }
+  }
+`;
+
+export const USER_ACTIVE_POSITIONS = gql`
+  query UserActivePositions($account: Bytes!) {
+    positions(where: { owner: $account, liquidity: { gt: 0 } }) {
+      ...PositionFields
+    }
+  }
+`;
+
+export const POSITION_FRAGMENT = gql`
+  fragment PositionFields on Position {
+    owner
+    pool {
+      ...PoolFields
+    }
+    token0 {
+      ...TokenFields
+    }
+    token1 {
+      ...TokenFields
+    }
+    liquidity
+    depositedToken0
+    depositedToken1
+    withdrawnToken0
+    withdrawnToken1
+  }
+`;

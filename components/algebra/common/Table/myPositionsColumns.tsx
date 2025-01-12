@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { HeaderItem } from "./common";
 import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
+import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
 
 interface MyPosition {
   id: number;
@@ -39,7 +40,12 @@ export const myPositionsColumns: ColumnDef<MyPosition>[] = [
         Fees
       </HeaderItem>
     ),
-    cell: ({ getValue }) => formatUSD.format(getValue() as number),
+    cell: ({ getValue }) =>
+      DynamicFormatAmount({
+        amount: (getValue() as number).toString(),
+        decimals: 6,
+        beginWith: "$",
+      }),
   },
   {
     accessorKey: "outOfRange",

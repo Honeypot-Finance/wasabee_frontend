@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { formatCurrency } from "./formatCurrency";
 
 export function formatAmountWithAlphabetSymbol(
@@ -29,10 +30,24 @@ export function formatAmountWithScientificNotation(
   return amountNum.toExponential(decimals);
 }
 
-export function DynamicFormatAmount(amount: string, decimals = 3): string {
-  if (getFirstDecimalPlace(amount) < decimals)
-    return formatAmountWithAlphabetSymbol(amount);
-  return formatAmountWithScientificNotation(amount);
+export function DynamicFormatAmount({
+  amount,
+  decimals = 3,
+  beginWith,
+  endWith,
+}: {
+  amount: string | number;
+  decimals?: number;
+  beginWith?: ReactNode;
+  endWith?: ReactNode;
+}): string {
+  const amountStr = amount.toString();
+  const output =
+    getFirstDecimalPlace(amountStr) < decimals
+      ? formatAmountWithAlphabetSymbol(amountStr, decimals)
+      : formatAmountWithScientificNotation(amountStr, decimals);
+
+  return `${beginWith ? `${beginWith} ` : ""}${output}${endWith ? ` ${endWith}` : ""}`;
 }
 
 export function getFirstDecimalPlace(amount: string): number {
