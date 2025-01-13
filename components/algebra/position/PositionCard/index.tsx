@@ -87,7 +87,7 @@ const PositionCard = ({
   return (
     <div className="flex flex-col gap-6 rounded-3xl p-4 animate-fade-in bg-white text-black">
       <div className="relative flex w-full justify-end text-right">
-        <div className="absolute left-0 top-0">
+        <div className="">
           <PositionNFT positionId={selectedPosition.id} />
         </div>
         <div className="flex flex-col gap-4 w-full">

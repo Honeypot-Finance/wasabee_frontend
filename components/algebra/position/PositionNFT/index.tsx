@@ -17,7 +17,7 @@ const PositionNFT = ({ positionId }: PositionNFTProps) => {
   const json =
     uri && JSON.parse(atob(uri.slice("data:application/json;base64,".length)));
 
-  const openSeaLink = `https://testnets.opensea.io/assets/holesky/${ALGEBRA_POSITION_MANAGER}/${positionId}`;
+  const openSeaLink = `https://bartio.beratrail.io/nft/${ALGEBRA_POSITION_MANAGER}/${positionId}`;
 
   useEffect(() => {
     if (!imgRef?.current || !json) return;
@@ -26,23 +26,19 @@ const PositionNFT = ({ positionId }: PositionNFTProps) => {
   }, [imgRef, json]);
 
   return (
-    <div className="inline-block relative w-[160px] h-[160px] overflow-hidden rounded-full">
+    <div className="inline-block relative w-[160px] h-[280px] overflow-hidden ">
       {json ? (
-        <img
-          ref={imgRef}
-          style={{ transform: "scale(2)" }}
-          className="mt-4 absolute"
-        />
+        <img ref={imgRef} className="absolute w-full" />
       ) : (
         <div className="w-full h-full bg-white/10"></div>
       )}
       {json && (
-        <div className="absolute w-full h-full flex items-center justify-center duration-200 bg-black/40 opacity-0 hover:opacity-100">
+        <div className="absolute w-full h-full flex items-center justify-center duration-200 bg-black/40 opacity-0 hover:opacity-100 rounded-xl">
           <a
             href={openSeaLink}
             target={"_blank"}
             rel={"noreferrer noopener"}
-            className="inline-flex gap-2 p-2 hover:bg-gray-600/60 rounded-xl"
+            className="inline-flex  hover:bg-gray-600/60 rounded-xl"
           >
             <span className="font-semibold">OpenSea</span>
             <ExternalLinkIcon />
