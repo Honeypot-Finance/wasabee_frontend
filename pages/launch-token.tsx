@@ -621,7 +621,6 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                             />
                           }
                         >
-                          {token.symbol} -{" "}
                           {amountFormatted(
                             new BigNumber(token.amount.toString())
                               .div(10 ** 18)
@@ -630,7 +629,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                               prefix: "",
                               decimals: 0,
                               fixed: 3,
-                              symbol: " tokens",
+                              symbol: ` ${token.symbol}`,
                             }
                           )}
                         </SelectItem>
