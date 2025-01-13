@@ -496,7 +496,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
         <div className="flex items-center gap-2">
           <DreampadSvg />
           <span className="text-black text-base md:text-xl font-bold text-center">
-            Dreampad - MEME Launch
+            Pot2Pump
           </span>{" "}
           <FaQuestionCircle
             onClick={() => openInstructionModal()}
@@ -758,7 +758,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
   return (
     <div className="w-full md:p-6 md:max-w-full xl:max-w-[1200px] mx-auto">
       <div className="flex flex-col px-4 md:px-0 w-full md:w-[584px] lg:w-[900px] mx-auto">
-        <Dropdown>
+        {/* <Dropdown>
           <DropdownTrigger>
             <NextButton variant="bordered" className="md:w-fit justify-between">
               {selectedLaunch.toUpperCase()} Launch
@@ -784,7 +784,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
                 </DropdownItem>
               ))}
           </DropdownMenu>
-        </Dropdown>
+        </Dropdown> */}
         <div className="flex items-center justify-center mt-4 md:mt-8">
           {selectedLaunch === "fto" ? <FTOLaunchModal /> : <MEMELaunchModal />}
         </div>
