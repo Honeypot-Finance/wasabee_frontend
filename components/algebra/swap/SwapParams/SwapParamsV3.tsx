@@ -125,6 +125,7 @@ const SwapParamsV3 = () => {
   }, [trade, tradeState.fee]);
 
   const { realizedLPFee, priceImpact } = useMemo(() => {
+    // console.log("trade", trade?.priceImpact);
     try {
       if (
         !trade ||
@@ -269,7 +270,7 @@ const PriceImpact = ({ priceImpact }: { priceImpact: Percent | undefined }) => {
     severity === 3 || severity === 4
       ? "text-[#FF5449]"
       : severity === 2
-        ? "text-yellow-400"
+        ? "text-orange-600"
         : "text-black";
 
   return (
