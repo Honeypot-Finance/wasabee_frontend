@@ -201,6 +201,7 @@ export const USER_ACTIVE_POSITIONS = gql`
 
 export const POSITION_FRAGMENT = gql`
   fragment PositionFields on Position {
+    id
     owner
     pool {
       ...PoolFields

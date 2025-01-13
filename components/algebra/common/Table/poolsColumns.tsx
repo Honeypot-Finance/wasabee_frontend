@@ -20,6 +20,7 @@ import {
   formatAmountWithAlphabetSymbol,
 } from "@/lib/algebra/utils/common/formatAmount";
 import { observer } from "mobx-react-lite";
+import BigNumber from "bignumber.js";
 
 interface Pair {
   token0: TokenFieldsFragment;
@@ -48,6 +49,7 @@ export interface Pool {
   txCount: any;
   volumeUSD: any;
   apr24h: string;
+  unclaimedFees?: BigNumber;
 }
 
 function timeSince(timestamp: number): string {
@@ -465,33 +467,43 @@ export const poolsColumnsMy: ColumnDef<Pool>[] = [
   //   header: () => <HeaderItem className="uppercase">txns</HeaderItem>,
   //   cell: ({ row }) => row.original.txCount,
   // },
+  // {
+  //   accessorKey: "volumeUSD",
+  //   header: () => <HeaderItem className="uppercase">Total Volume</HeaderItem>,
+  //   cell: ({ row }) => (
+  //     <span>
+  //       {new Intl.NumberFormat("en-US", {
+  //         style: "currency",
+  //         currency: "USD",
+  //         minimumFractionDigits: 2,
+  //         maximumFractionDigits: 2,
+  //       }).format(row?.original?.volumeUSD)}
+  //     </span>
+  //   ),
+  // },
+  // {
+  //   accessorKey: "volume24USD",
+  //   header: () => <HeaderItem className="uppercase">24h Volume</HeaderItem>,
+  //   cell: ({ row }) => (
+  //     <span>
+  //       {new Intl.NumberFormat("en-US", {
+  //         style: "currency",
+  //         currency: "USD",
+  //         minimumFractionDigits: 2,
+  //         maximumFractionDigits: 2,
+  //       }).format(row?.original?.volume24USD)}
+  //     </span>
+  //   ),
+  // },
   {
-    accessorKey: "volumeUSD",
-    header: () => <HeaderItem className="uppercase">Total Volume</HeaderItem>,
-    cell: ({ row }) => (
-      <span>
-        {new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }).format(row?.original?.volumeUSD)}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "volume24USD",
-    header: () => <HeaderItem className="uppercase">24h Volume</HeaderItem>,
-    cell: ({ row }) => (
-      <span>
-        {new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }).format(row?.original?.volume24USD)}
-      </span>
-    ),
+    accessorKey: "unclaimedFees",
+    header: () => <HeaderItem className="uppercase">Unclaimed Fees</HeaderItem>,
+    cell: ({ row }) =>
+      DynamicFormatAmount({
+        amount: row.original.unclaimedFees?.toString() ?? 0,
+        decimals: 5,
+        endWith: "USD",
+      }),
   },
   // {
   //   accessorKey: "changeHour",

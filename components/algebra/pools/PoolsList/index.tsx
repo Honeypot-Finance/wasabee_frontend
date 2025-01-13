@@ -18,6 +18,7 @@ import { SortingState } from "@tanstack/react-table";
 import { id } from "ethers/lib/utils";
 import { useUserPools } from "@/lib/algebra/graphql/clients/pool";
 import { wallet } from "@/services/wallet";
+import BigNumber from "bignumber.js";
 
 const mappingSortKeys: Record<any, Pool_OrderBy> = {
   tvlUSD: Pool_OrderBy.TotalValueLockedUsd,
@@ -179,6 +180,7 @@ const PoolsList = () => {
         createdAtTimestamp,
         liquidity,
         aprPercentage,
+        fees,
       }) => {
         const currentPool = poolDayData[0];
         const lastDate = currentPool ? currentPool.date * 1000 : 0;
@@ -227,6 +229,8 @@ const PoolsList = () => {
         const farmApr = 0;
         const avgApr = aprPercentage;
 
+        const unclaimedFees = BigNumber(fees.toString());
+
         return {
           id: id as Address,
           pair: {
@@ -255,6 +259,7 @@ const PoolsList = () => {
           volumeUSD,
           marktetcap: token0.marketCap,
           apr24h: avgApr,
+          unclaimedFees,
         };
       }
     );
