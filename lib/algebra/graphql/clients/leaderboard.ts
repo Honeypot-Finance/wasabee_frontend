@@ -105,6 +105,8 @@ type Factory = {
   totalVolumeMatic: string;
   totalValueLockedUSD: string;
   totalValueLockedMatic: string;
+  untrackedVolumeUSD: string;
+  totalValueLockedUSDUntracked: string;
 };
 
 export type FactoryData = {

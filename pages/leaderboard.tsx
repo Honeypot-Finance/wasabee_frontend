@@ -8,7 +8,7 @@ import {
   useTopSwapAccounts,
 } from "@/lib/hooks/useAccounts";
 import { shortenAddressString, formatVolume } from "@/lib/utils";
-import { Tooltip } from "@nextui-org/react";
+import { Link, Tooltip } from "@nextui-org/react";
 
 interface LeaderboardItem {
   rank: number;
@@ -205,7 +205,7 @@ const LeaderboardPage = () => {
                           </div>
                         </th>
                         <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">
-                          Total Volume
+                          Total P2P Deposit
                         </th>
                         <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
                           Swaps
@@ -217,7 +217,7 @@ const LeaderboardPage = () => {
                           Meme Tokens
                         </th>
                         <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
-                          Pot2Pump Participations
+                          P2P Participations
                         </th>
                       </tr>
                     </thead>
@@ -241,12 +241,18 @@ const LeaderboardPage = () => {
                                   content={item.walletAddress}
                                   placement="top"
                                 >
-                                  {shortenAddressString(item.walletAddress)}
+                                  <Link
+                                    href={`https://bartio.beratrail.io/address/${item.walletAddress}`}
+                                    target="_blank"
+                                    className="text-blue-400"
+                                  >
+                                    {shortenAddressString(item.walletAddress)}
+                                  </Link>
                                 </Tooltip>
                               </div>
                             </td>
                             <td className="py-4 px-6 text-base">
-                              {formatVolume(item.totalVolume)}
+                              {formatVolume(item.totalPot2PumpDeposit)}
                             </td>
                             <td className="py-4 px-6 text-center text-base">
                               {item.swapCount}
