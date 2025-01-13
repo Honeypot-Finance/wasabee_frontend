@@ -32,7 +32,13 @@ import {
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 
 // enableStaticRendering(true)
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+       retry: 12
+    },
+  },
+});
 
 const dmSans = DM_Sans({
   weight: ["300", "400", "500", "600", "700"],
