@@ -74,8 +74,14 @@ export class MemePairContract implements BaseLaunchContract {
 
   get pottingPercentageDisplay() {
     return this.depositedRaisedToken && this.raisedTokenMinCap
-      ? `${formatAmountWithAlphabetSymbol((Number(this.depositedRaisedToken) / Number(this.raisedTokenMinCap)).toFixed(2), 2)}%`
+      ? `${formatAmountWithAlphabetSymbol(this.pottingPercentageNumber.toFixed(2), 2)}%`
       : "--";
+  }
+
+  get pottingPercentageNumber() {
+    return this.depositedRaisedToken && this.raisedTokenMinCap
+      ? Number(this.depositedRaisedToken) / Number(this.raisedTokenMinCap)
+      : 0;
   }
 
   get startTimeDisplay() {
