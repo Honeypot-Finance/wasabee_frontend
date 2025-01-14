@@ -102,21 +102,21 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
     const list = pot2PumpListToMemePairList(
       (pottingNewTokens?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
     );
+    console.log(list);
+    if (!list.length || list.length == 0) return;
     setNewTokensList((prev) => {
-      const newList = prev;
-
-      newList.map((item) => {
+      prev.map((item) => {
         const i = list.find((item2) => item.address === item2.address);
         if (!i) {
-          newList.splice(newList.indexOf(item), 1);
+          prev;
         }
       });
 
       list.map((item) => {
-        if (!newList.find((item2) => item.address === item2.address)) {
-          newList.push(item);
+        if (!prev.find((item2) => item.address === item2.address)) {
+          prev.push(item);
         } else {
-          const existItem = newList.find(
+          const existItem = prev.find(
             (item2) => item.address === item2.address
           );
           if (existItem) {
@@ -127,7 +127,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
           }
         }
       });
-      return newList.sort((a, b) => Number(b.startTime) - Number(a.startTime));
+      return prev;
     });
   }, [pottingNewTokens]);
 
@@ -135,21 +135,24 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
     const list = pot2PumpListToMemePairList(
       (pottingNearSuccessTokens?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
     );
+    console.log(list);
+    if (!list.length || list.length == 0) return;
     setNearSuccessTokensList((prev) => {
-      const newList = prev;
-
-      newList.map((item2) => {
-        const i = list.find((item) => item.address === item2.address);
+      prev.map((item2) => {
+        const i = list.find((item) => item.address == item2.address);
         if (!i) {
-          newList.splice(newList.indexOf(item2), 1);
+          console.log(prev.slice());
+          console.log("remove", item2.address);
+          prev.splice(prev.indexOf(item2), 1);
         }
       });
 
       list.map((item) => {
-        if (!newList.find((item2) => item.address === item2.address)) {
-          newList.push(item);
+        if (!prev.find((item2) => item.address === item2.address)) {
+          console.log("add", item.address);
+          prev.unshift(item);
         } else {
-          const existItem = newList.find(
+          const existItem = prev.find(
             (item2) => item.address === item2.address
           );
 
@@ -161,10 +164,8 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
           }
         }
       });
-      return newList.sort(
-        (a, b) =>
-          Number(b.pottingPercentageNumber) - Number(a.pottingPercentageNumber)
-      );
+
+      return prev;
     });
   }, [pottingNearSuccessTokens]);
 
@@ -173,12 +174,11 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
       (pottingHighPriceTokens?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
     );
     setHighPriceTokensList((prev) => {
-      const newList = prev;
       list.map((item) => {
-        if (!newList.find((item2) => item.address === item2.address)) {
-          newList.push(item);
+        if (!prev.find((item2) => item.address === item2.address)) {
+          prev.push(item);
         } else {
-          const existItem = newList.find(
+          const existItem = prev.find(
             (item2) => item.address === item2.address
           );
           if (existItem) {
@@ -189,11 +189,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
           }
         }
       });
-      return newList.sort(
-        (a, b) =>
-          Number(b.launchedToken?.derivedUSD) -
-          Number(a.launchedToken?.derivedUSD)
-      );
+      return prev;
     });
   }, [pottingHighPriceTokens]);
 
@@ -202,12 +198,11 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
       (pottingTrendingTokens?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
     );
     setTrendingTokensList((prev) => {
-      const newList = prev;
       list.map((item) => {
-        if (!newList.find((item2) => item.address === item2.address)) {
-          newList.push(item);
+        if (!prev.find((item2) => item.address === item2.address)) {
+          prev.push(item);
         } else {
-          const existItem = newList.find(
+          const existItem = prev.find(
             (item2) => item.address === item2.address
           );
 
@@ -219,11 +214,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
           }
         }
       });
-      return newList.sort(
-        (a, b) =>
-          Number(b.launchedToken?.priceChange24hPercentage) -
-          Number(a.launchedToken?.priceChange24hPercentage)
-      );
+      return prev;
     });
   }, [pottingTrendingTokens]);
 
@@ -258,16 +249,23 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
               action={<></>}
             />
           </div>
-          {trendingTokensList?.slice(0, 5).map((token, index) => (
-            <div
-              key={index}
-              className={`transition-opacity duration-500 absolute inset-0 ${
-                currentSlide === index ? "opacity-100 z-10" : "opacity-0 z-0"
-              }`}
-            >
-              <LaunchCardV3 type="featured" pair={token} action={<></>} />
-            </div>
-          ))}
+          {trendingTokensList
+            ?.sort(
+              (a, b) =>
+                Number(b.launchedToken?.priceChange24hPercentage) -
+                Number(a.launchedToken?.priceChange24hPercentage)
+            )
+            ?.slice(0, 5)
+            ?.map((token, index) => (
+              <div
+                key={index}
+                className={`transition-opacity duration-500 absolute inset-0 ${
+                  currentSlide === index ? "opacity-100 z-10" : "opacity-0 z-0"
+                }`}
+              >
+                <LaunchCardV3 type="featured" pair={token} action={<></>} />
+              </div>
+            ))}
         </div>
         {/* Slide Indicators */}
         <div className="flex justify-center gap-2 absolute bottom-3 left-0 right-0 z-20">
@@ -319,15 +317,17 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
                 {POT_TABS.NEW}
               </h2>
               <div className="flex flex-col gap-2 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                {newTokensList?.map((pot2pump, index) => (
-                  <motion.div key={index} variants={itemPopUpVariants}>
-                    <LaunchCardV3
-                      type="simple"
-                      pair={pot2pump}
-                      action={<></>}
-                    />
-                  </motion.div>
-                ))}
+                {newTokensList
+                  .sort((a, b) => Number(b.startTime) - Number(a.startTime))
+                  ?.map((pot2pump, index) => (
+                    <motion.div key={index} variants={itemPopUpVariants}>
+                      <LaunchCardV3
+                        type="simple"
+                        pair={pot2pump}
+                        action={<></>}
+                      />
+                    </motion.div>
+                  ))}
               </div>
             </section>
 
@@ -336,15 +336,21 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
                 {POT_TABS.ALMOST}
               </h2>
               <div className="flex flex-col gap-8 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                {nearSuccessTokensList?.map((pot2pump, index) => (
-                  <motion.div key={index} variants={itemPopUpVariants}>
-                    <LaunchCardV3
-                      type="simple"
-                      pair={pot2pump}
-                      action={<></>}
-                    />
-                  </motion.div>
-                ))}
+                {nearSuccessTokensList
+                  ?.sort(
+                    (a, b) =>
+                      Number(b.pottingPercentageNumber) -
+                      Number(a.pottingPercentageNumber)
+                  )
+                  ?.map((pot2pump, index) => (
+                    <motion.div key={index} variants={itemPopUpVariants}>
+                      <LaunchCardV3
+                        type="simple"
+                        pair={pot2pump}
+                        action={<></>}
+                      />
+                    </motion.div>
+                  ))}
               </div>
             </section>
 
@@ -370,15 +376,21 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
                 {POT_TABS.TRENDING}
               </h2>
               <div className="flex flex-col gap-8 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                {trendingTokensList?.map((pot2pump, index) => (
-                  <motion.div key={index} variants={itemPopUpVariants}>
-                    <LaunchCardV3
-                      type="simple"
-                      pair={pot2pump}
-                      action={<></>}
-                    />
-                  </motion.div>
-                ))}
+                {trendingTokensList
+                  ?.sort(
+                    (a, b) =>
+                      Number(b.launchedToken?.priceChange24hPercentage) -
+                      Number(a.launchedToken?.priceChange24hPercentage)
+                  )
+                  ?.map((pot2pump, index) => (
+                    <motion.div key={index} variants={itemPopUpVariants}>
+                      <LaunchCardV3
+                        type="simple"
+                        pair={pot2pump}
+                        action={<></>}
+                      />
+                    </motion.div>
+                  ))}
               </div>
             </section>
           </div>
@@ -388,57 +400,77 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
             <div className="h-full flex flex-col px-2 overflow-hidden">
               {activeTab === POT_TABS.NEW && (
                 <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                  {newTokensList?.map((pot2pump, index) => (
-                    <motion.div key={index} variants={itemPopUpVariants}>
-                      <LaunchCardV3
-                        type="simple"
-                        pair={pot2pump}
-                        action={<></>}
-                      />
-                    </motion.div>
-                  ))}
+                  {newTokensList
+                    ?.sort((a, b) => Number(b.startTime) - Number(a.startTime))
+                    ?.map((pot2pump, index) => (
+                      <motion.div key={index} variants={itemPopUpVariants}>
+                        <LaunchCardV3
+                          type="simple"
+                          pair={pot2pump}
+                          action={<></>}
+                        />
+                      </motion.div>
+                    ))}
                 </div>
               )}
 
               {activeTab === POT_TABS.ALMOST && (
                 <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                  {nearSuccessTokensList?.map((pot2pump, index) => (
-                    <motion.div key={index} variants={itemPopUpVariants}>
-                      <LaunchCardV3
-                        type="simple"
-                        pair={pot2pump}
-                        action={<></>}
-                      />
-                    </motion.div>
-                  ))}
+                  {nearSuccessTokensList
+                    ?.sort(
+                      (a, b) =>
+                        Number(b.pottingPercentageNumber) -
+                        Number(a.pottingPercentageNumber)
+                    )
+                    ?.map((pot2pump, index) => (
+                      <motion.div key={index} variants={itemPopUpVariants}>
+                        <LaunchCardV3
+                          type="simple"
+                          pair={pot2pump}
+                          action={<></>}
+                        />
+                      </motion.div>
+                    ))}
                 </div>
               )}
 
               {activeTab === POT_TABS.MOON && (
                 <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                  {highPriceTokensList?.map((pot2pump, index) => (
-                    <motion.div key={index} variants={itemPopUpVariants}>
-                      <LaunchCardV3
-                        type="simple"
-                        pair={pot2pump}
-                        action={<></>}
-                      />
-                    </motion.div>
-                  ))}
+                  {highPriceTokensList
+                    ?.sort(
+                      (a, b) =>
+                        Number(b.launchedToken?.derivedUSD) -
+                        Number(a.launchedToken?.derivedUSD)
+                    )
+                    ?.map((pot2pump, index) => (
+                      <motion.div key={index} variants={itemPopUpVariants}>
+                        <LaunchCardV3
+                          type="simple"
+                          pair={pot2pump}
+                          action={<></>}
+                        />
+                      </motion.div>
+                    ))}
                 </div>
               )}
 
               {activeTab === POT_TABS.TRENDING && (
                 <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                  {trendingTokensList?.map((pot2pump, index) => (
-                    <motion.div key={index} variants={itemPopUpVariants}>
-                      <LaunchCardV3
-                        type="simple"
-                        pair={pot2pump}
-                        action={<></>}
-                      />
-                    </motion.div>
-                  ))}
+                  {trendingTokensList
+                    ?.sort(
+                      (a, b) =>
+                        Number(b.launchedToken?.priceChange24hPercentage) -
+                        Number(a.launchedToken?.priceChange24hPercentage)
+                    )
+                    ?.map((pot2pump, index) => (
+                      <motion.div key={index} variants={itemPopUpVariants}>
+                        <LaunchCardV3
+                          type="simple"
+                          pair={pot2pump}
+                          action={<></>}
+                        />
+                      </motion.div>
+                    ))}
                 </div>
               )}
             </div>
