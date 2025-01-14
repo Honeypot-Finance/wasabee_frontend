@@ -1,4 +1,4 @@
-import MyPoolsList from "@/components/algebra/pools/PoolsList/MyPoolsList";
+import PoolsList from "@/components/algebra/pools/PoolsList";
 import MyAquaberaVaults from "@/components/Aquabera/VaultLists/MyVaults";
 import { HoneyContainer } from "@/components/CardContianer";
 import OldPagination from "@/components/Pagination/OldPagination";
@@ -19,7 +19,7 @@ export const MyPools = observer(() => {
   return (
     <Tabs>
       <Tab value="algebra" title="Pool">
-        <MyPoolsList />
+        <PoolsList defaultFilter="myPools" showOptions={false} />
       </Tab>
       <Tab value="vault" title="Vault">
         <MyAquaberaVaults />

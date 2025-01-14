@@ -49,7 +49,7 @@ export const userPools = async (userAddress: string) => {
 };
 
 export const useUserPools = (userAddress: string) => {
-  const { data, loading } = useUserActivePositionsQuery({
+  const { data, loading, refetch } = useUserActivePositionsQuery({
     variables: { account: userAddress.toLowerCase() },
   });
   const [pools, setPools] = useState<(Pool & { fees: bigint })[]>([]);
@@ -139,5 +139,6 @@ export const useUserPools = (userAddress: string) => {
   return {
     data: { pools: pools ?? [] },
     loading,
+    refetch: refetch,
   };
 };

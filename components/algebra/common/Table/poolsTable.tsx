@@ -41,6 +41,8 @@ interface PoolsTableProps<TData, TValue> {
   loading?: boolean;
   sorting: any;
   setSorting: any;
+  defaultFilter?: string;
+  showOptions?: boolean;
 }
 
 const PoolsTable = <TData, TValue>({
@@ -54,8 +56,10 @@ const PoolsTable = <TData, TValue>({
   loading,
   sorting,
   setSorting,
+  defaultFilter = "trending",
+  showOptions = true,
 }: PoolsTableProps<TData, TValue>) => {
-  const [selectedFilter, setSelectedFilter] = useState<string>("trending");
+  const [selectedFilter, setSelectedFilter] = useState<string>(defaultFilter);
 
   const filters = [
     { key: "trending", label: "All Pools" },
@@ -84,6 +88,10 @@ const PoolsTable = <TData, TValue>({
     debugHeaders: true,
     debugColumns: false,
   });
+
+  useEffect(() => {
+    setSelectedFilter(defaultFilter);
+  }, [defaultFilter]);
 
   const searchID = "pair";
 
@@ -141,7 +149,7 @@ const PoolsTable = <TData, TValue>({
 
   return (
     <div>
-      {searchID && (
+      {searchID && showOptions && (
         <div className="flex flex-col xl:flex-row gap-4 w-full xl:justify-between xl:items-center py-4">
           <div className="flex items-center xl:gap-x-6 w-full xl:w-fit justify-between">
             <div className="flex items-center">

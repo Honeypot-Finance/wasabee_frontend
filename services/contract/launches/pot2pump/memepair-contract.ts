@@ -9,7 +9,6 @@ import { pot2PumpPairABI } from "@/lib/abis/Pot2Pump/pot2PumpPair";
 import { formatAmountWithAlphabetSymbol } from "@/lib/algebra/utils/common/formatAmount";
 import {
   getParticipantDetail,
-  getPot2PumpDetail,
   subgraphPot2PumpToMemePair,
 } from "@/lib/algebra/graphql/clients/pot2pump";
 import { wallet } from "@/services/wallet";
@@ -53,6 +52,7 @@ export class MemePairContract implements BaseLaunchContract {
   participantsCount = new BigNumber(0);
   beravoteSpaceId = "";
   vaultBalance = BigInt(0);
+  indexerDataLoaded = false;
 
   constructor(args: Partial<MemePairContract>) {
     Object.assign(this, args);
@@ -425,10 +425,14 @@ export class MemePairContract implements BaseLaunchContract {
     }
   }
 
-  async getIndexerData() {
+  async getIndexerData(force?: boolean) {
+    if (!force && this.indexerDataLoaded) {
+      return;
+    }
     const res = await subgraphPot2PumpToMemePair(this.address, wallet.account);
     if (res) {
       Object.assign(this, res);
+      this.indexerDataLoaded = true;
     } else {
       console.error("getIndexerData", `getIndexerData-error-${this.address}`);
     }

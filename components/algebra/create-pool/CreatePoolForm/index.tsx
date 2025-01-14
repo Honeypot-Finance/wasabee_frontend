@@ -221,6 +221,12 @@ const CreatePoolForm = () => {
             !areCurrenciesSelected ||
             isSameToken
           }
+          isDisabled={
+            isLoading ||
+            (!startPriceTypedValue && !isPoolExists) ||
+            !areCurrenciesSelected ||
+            isSameToken
+          }
           onPress={handleButtonClick}
         >
           {isLoading ? (

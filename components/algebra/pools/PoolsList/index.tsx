@@ -2,7 +2,7 @@ import {
   poolsColumns,
   poolsColumnsMy,
 } from "@/components/algebra/common/Table/poolsColumns";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Address } from "viem";
 import PoolsTable from "@/components/algebra/common/Table/poolsTable";
 import { usePositions } from "@/lib/algebra/hooks/positions/usePositions";
@@ -33,17 +33,49 @@ const mappingSortKeys: Record<any, Pool_OrderBy> = {
   liquidity: Pool_OrderBy.Liquidity,
   "marktet cap": Pool_OrderBy.Token0MarketCap,
 };
-
-const PoolsList = () => {
+interface PoolsListProps {
+  defaultFilter?: string;
+  showOptions?: boolean;
+}
+const PoolsList = ({
+  defaultFilter = "trending",
+  showOptions = true,
+}: PoolsListProps) => {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: true },
   ]);
 
   const orderBy = mappingSortKeys[sorting[0].id];
-  const { data: pools, loading: isPoolsListLoading } = usePoolsListQuery();
-  const { data: userPools, loading: isUserPoolsLoading } = useUserPools(
-    wallet.account
-  );
+  const {
+    data: pools,
+    loading: isPoolsListLoading,
+    refetch,
+  } = usePoolsListQuery();
+  const {
+    data: userPools,
+    loading: isUserPoolsLoading,
+    refetch: refetchUserPools,
+  } = useUserPools(wallet.account);
+
+  useEffect(() => {
+    if (userPools || isUserPoolsLoading) return;
+
+    const interval = setInterval(() => {
+      refetchUserPools();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [userPools, refetchUserPools, isUserPoolsLoading]);
+
+  useEffect(() => {
+    if (pools || isPoolsListLoading) return;
+
+    const interval = setInterval(() => {
+      refetch();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [pools, refetch, isPoolsListLoading]);
 
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
@@ -286,7 +318,9 @@ const PoolsList = () => {
           setSorting={handleSort}
           link={"pooldetail"}
           showPagination={true}
-          loading={isLoading}
+          loading={isLoading || isUserPoolsLoading}
+          defaultFilter={defaultFilter}
+          showOptions={showOptions}
         />
       </div>
       <div className="block xl:hidden">

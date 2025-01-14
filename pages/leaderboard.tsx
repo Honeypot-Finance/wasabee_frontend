@@ -205,7 +205,7 @@ const LeaderboardPage = () => {
                           </div>
                         </th>
                         <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">
-                          Total P2P Deposit
+                          Volume
                         </th>
                         <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
                           Swaps
