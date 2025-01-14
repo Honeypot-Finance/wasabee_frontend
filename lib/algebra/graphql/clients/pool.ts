@@ -21,6 +21,7 @@ import { wallet } from "@/services/wallet";
 import { CurrencyAmount, Token } from "@cryptoalgebra/sdk";
 import { unwrappedToken } from "@cryptoalgebra/sdk";
 import BigNumber from "bignumber.js";
+import { object } from "zod";
 
 export const poolsByTokenPair = async (token0: string, token1: string) => {
   const { data } = await infoClient.query<
@@ -49,12 +50,27 @@ export const userPools = async (userAddress: string) => {
 };
 
 export const useUserPools = (userAddress: string) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchedPositions, setFetchedPositions] = useState<string[]>([]);
   const { data, loading, refetch } = useUserActivePositionsQuery({
     variables: { account: userAddress.toLowerCase() },
+    fetchPolicy: "cache-and-network",
+    nextFetchPolicy: "cache-and-network",
+    initialFetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
+    pollInterval: 10000, // Refetch every 10 seconds
   });
-  const [pools, setPools] = useState<(Pool & { fees: bigint })[]>([]);
+  const [pools, setPools] = useState<
+    Record<string, Pool & { fees: BigNumber }>
+  >({});
 
-  const { data: bundles } = useNativePriceQuery();
+  const { data: bundles } = useNativePriceQuery({
+    fetchPolicy: "cache-and-network",
+    nextFetchPolicy: "cache-and-network",
+    initialFetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
+    pollInterval: 10000, // Refetch every 10 seconds
+  });
 
   const algebraPositionManager = getContract({
     address: algebraPositionManagerAddress,
@@ -65,80 +81,97 @@ export const useUserPools = (userAddress: string) => {
   useEffect(() => {
     if (!data || !wallet.isInit || !algebraPositionManager.simulate || !bundles)
       return;
-    const poolsWithFees: (Pool & { fees: BigNumber })[] = [];
+
+    const newPools: Record<string, Pool & { fees: BigNumber }> = {};
 
     Promise.all(
       data.positions.map(async (position) => {
-        const pool = position.pool;
-        const {
-          result: [fees0, fees1],
-        } = await algebraPositionManager.simulate.collect([
-          {
-            tokenId: BigInt(position.id),
-            recipient: wallet.account as `0x${string}`,
-            amount0Max: MAX_UINT128,
-            amount1Max: MAX_UINT128,
-          },
-        ]);
+        if (fetchedPositions.includes(position.id)) return;
+        try {
+          const pool = position.pool;
+          const {
+            result: [fees0, fees1],
+          } = await algebraPositionManager.simulate.collect([
+            {
+              tokenId: BigInt(position.id),
+              recipient: wallet.account as `0x${string}`,
+              amount0Max: MAX_UINT128,
+              amount1Max: MAX_UINT128,
+            },
+          ]);
 
-        const fees0USD = CurrencyAmount.fromRawAmount(
-          unwrappedToken(
-            new Token(
-              wallet.currentChainId,
-              pool.token0.id,
-              Number(pool.token0.decimals),
-              pool.token0.symbol,
-              pool.token0.name
-            )
-          ),
-          fees0.toString()
-        );
+          const fees0USD = CurrencyAmount.fromRawAmount(
+            unwrappedToken(
+              new Token(
+                wallet.currentChainId,
+                pool.token0.id,
+                Number(pool.token0.decimals),
+                pool.token0.symbol,
+                pool.token0.name
+              )
+            ),
+            fees0.toString()
+          );
 
-        const fees1USD = CurrencyAmount.fromRawAmount(
-          unwrappedToken(
-            new Token(
-              wallet.currentChainId,
-              pool.token1.id,
-              Number(pool.token1.decimals),
-              pool.token1.symbol,
-              pool.token1.name
-            )
-          ),
-          fees1.toString()
-        );
+          const fees1USD = CurrencyAmount.fromRawAmount(
+            unwrappedToken(
+              new Token(
+                wallet.currentChainId,
+                pool.token1.id,
+                Number(pool.token1.decimals),
+                pool.token1.symbol,
+                pool.token1.name
+              )
+            ),
+            fees1.toString()
+          );
 
-        const nativePrice = bundles?.bundles[0].maticPriceUSD;
-        const fees0USDformatted = fees0USD
-          ? Number(fees0USD.toSignificant()) *
-            (Number(pool.token0.derivedMatic) * Number(nativePrice))
-          : 0;
-        const fees1USDformatted = fees1USD
-          ? Number(fees1USD.toSignificant()) *
-            (Number(pool.token1.derivedMatic) * Number(nativePrice))
-          : 0;
+          const nativePrice = bundles?.bundles[0].maticPriceUSD;
+          const fees0USDformatted = fees0USD
+            ? Number(fees0USD.toSignificant()) *
+              (Number(pool.token0.derivedMatic) * Number(nativePrice))
+            : 0;
+          const fees1USDformatted = fees1USD
+            ? Number(fees1USD.toSignificant()) *
+              (Number(pool.token1.derivedMatic) * Number(nativePrice))
+            : 0;
 
-        if (poolsWithFees.find((p) => p.id === pool.id)) {
-          const existingPool = poolsWithFees.find((p) => p.id === pool.id);
-          if (existingPool) {
-            existingPool.fees = existingPool.fees.plus(
-              BigNumber(fees0USDformatted + fees1USDformatted)
-            );
+          if (newPools[pool.id]) {
+            const existingPool = newPools[pool.id];
+            if (existingPool) {
+              existingPool.fees = existingPool.fees.plus(
+                BigNumber(fees0USDformatted + fees1USDformatted)
+              );
+            }
+          } else {
+            newPools[pool.id] = {
+              ...(pool as Pool),
+              fees: BigNumber(fees0USDformatted + fees1USDformatted),
+            };
           }
-        } else {
-          poolsWithFees.push({
-            ...(pool as Pool),
-            fees: BigNumber(fees0USDformatted + fees1USDformatted),
-          });
+
+          fetchedPositions.push(pool.id);
+        } catch (error) {
+          console.error(error);
         }
       })
-    ).then((pools) => {
-      setPools(poolsWithFees as unknown as (Pool & { fees: bigint })[]);
+    ).then(() => {
+      console.log({ newPools });
+      Object.entries(newPools).forEach(([id, pool]) => {
+        if (pools[id]) {
+          pools[id].fees = BigNumber(pools[id].fees.plus(pool.fees));
+        } else {
+          pools[id] = pool;
+        }
+      });
+
+      setIsLoading(false);
     });
-  }, [algebraPositionManager.simulate, data, wallet.isInit, bundles]);
+  }, [algebraPositionManager.simulate, data, bundles, pools, fetchedPositions]);
 
   return {
-    data: { pools: pools ?? [] },
-    loading,
+    data: { pools: Object.values(pools) ?? [] },
+    loading: isLoading,
     refetch: refetch,
   };
 };

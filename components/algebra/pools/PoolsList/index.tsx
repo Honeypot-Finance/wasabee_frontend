@@ -19,7 +19,7 @@ import { id } from "ethers/lib/utils";
 import { useUserPools } from "@/lib/algebra/graphql/clients/pool";
 import { wallet } from "@/services/wallet";
 import BigNumber from "bignumber.js";
-
+import { observer } from "mobx-react-lite";
 const mappingSortKeys: Record<any, Pool_OrderBy> = {
   tvlUSD: Pool_OrderBy.TotalValueLockedUsd,
   price: Pool_OrderBy.Token0Price,
@@ -37,297 +37,279 @@ interface PoolsListProps {
   defaultFilter?: string;
   showOptions?: boolean;
 }
-const PoolsList = ({
-  defaultFilter = "trending",
-  showOptions = true,
-}: PoolsListProps) => {
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: "id", desc: true },
-  ]);
+const PoolsList = observer(
+  ({ defaultFilter = "trending", showOptions = true }: PoolsListProps) => {
+    const [sorting, setSorting] = useState<SortingState>([
+      { id: "id", desc: true },
+    ]);
+    const [isAllpoolsLoading, setIsAllpoolsLoading] = useState(true);
 
-  const orderBy = mappingSortKeys[sorting[0].id];
-  const {
-    data: pools,
-    loading: isPoolsListLoading,
-    refetch,
-  } = usePoolsListQuery();
-  const {
-    data: userPools,
-    loading: isUserPoolsLoading,
-    refetch: refetchUserPools,
-  } = useUserPools(wallet.account);
+    const orderBy = mappingSortKeys[sorting[0].id];
 
-  useEffect(() => {
-    if (userPools || isUserPoolsLoading) return;
-
-    const interval = setInterval(() => {
-      refetchUserPools();
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [userPools, refetchUserPools, isUserPoolsLoading]);
-
-  useEffect(() => {
-    if (pools || isPoolsListLoading) return;
-
-    const interval = setInterval(() => {
-      refetch();
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [pools, refetch, isPoolsListLoading]);
-
-  const { data: activeFarmings, loading: isFarmingsLoading } =
-    useActiveFarmingsQuery({
-      client: farmingClient,
+    const {
+      data: pools,
+      loading: isPoolsListLoading,
+      refetch,
+    } = usePoolsListQuery({
+      fetchPolicy: "cache-and-network",
+      nextFetchPolicy: "cache-and-network",
+      initialFetchPolicy: "cache-and-network",
+      notifyOnNetworkStatusChange: true,
+      pollInterval: 10000, // Refetch every 10 seconds
     });
-  const { positions, loading: isPositionsLoading } = usePositions();
 
-  const isLoading =
-    isPoolsListLoading ||
-    // isPoolsMaxAprLoading ||
-    // isPoolsAvgAprLoading ||
-    isPositionsLoading ||
-    isFarmingsLoading;
-  // ||isFarmingsAPRLoading;
+    const {
+      data: userPools,
+      loading: isUserPoolsLoading,
+      refetch: refetchUserPools,
+    } = useUserPools(wallet.account);
 
-  const formattedPools = useMemo(() => {
-    if (isLoading || !pools) return [];
+    const { data: activeFarmings, loading: isFarmingsLoading } =
+      useActiveFarmingsQuery({
+        client: farmingClient,
+      });
+    console.log("isLoading", {
+      isAllpoolsLoading,
+      isUserPoolsLoading,
+      isFarmingsLoading,
+    });
+    const isLoading =
+      isAllpoolsLoading || isUserPoolsLoading || isFarmingsLoading;
 
-    return pools.pools.map(
-      ({
-        id,
-        token0,
-        token1,
-        fee,
-        totalValueLockedUSD,
-        poolHourData,
-        poolDayData,
-        poolWeekData,
-        poolMonthData,
-        txCount,
-        volumeUSD,
-        token0Price,
-        createdAtTimestamp,
-        liquidity,
-        aprPercentage,
-      }) => {
-        const currentPool = poolDayData[0];
-        const lastDate = currentPool ? currentPool.date * 1000 : 0;
-        const currentDate = new Date().getTime();
+    const formattedPools = useMemo(() => {
+      if (!pools) {
+        return [];
+      }
 
-        const handlePoolChange = (poolTimeData0: any, poolTimeData1: any) => {
-          if (!poolTimeData0) return "0"; // No data available
-          if (
-            !poolTimeData1 ||
-            poolTimeData1.volumeUSD == 0 ||
-            !isFinite(poolTimeData1.volumeUSD)
-          )
-            return 100; // Only one day of data, return 100
+      setIsAllpoolsLoading(false);
 
-          const volumeChange =
-            poolTimeData0.volumeUSD - poolTimeData1.volumeUSD;
-          const changePercentage = volumeChange / poolTimeData1.volumeUSD;
-          if (isNaN(changePercentage)) return 100;
-          return Math.round(changePercentage * 100) / 100;
-        };
-
-        const changeHour = handlePoolChange(poolHourData[0], poolHourData[1]);
-
-        const change24h = handlePoolChange(poolDayData[0], poolDayData[1]);
-
-        const changeWeek = handlePoolChange(poolWeekData[0], poolWeekData[1]);
-
-        const changeMonth = handlePoolChange(
-          poolMonthData[0],
-          poolMonthData[1]
-        );
-
-        /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
-        const timeDifference = currentDate - lastDate;
-        const msIn24Hours = 24 * 60 * 60 * 1000;
-
-        const openPositions = positions?.filter(
-          (position) => position.pool.toLowerCase() === id.toLowerCase()
-        );
-        const activeFarming = activeFarmings?.eternalFarmings.find(
-          (farming) => farming.pool === id
-        );
-
-        const poolMaxApr = aprPercentage;
-        const poolAvgApr = aprPercentage;
-        const farmApr = 0;
-        const avgApr = aprPercentage;
-
-        return {
-          id: id as Address,
-          pair: {
-            token0,
-            token1,
-          },
-          fee: Number(fee) / 10_000,
-          tvlUSD: Number(totalValueLockedUSD),
-          volume24USD:
-            timeDifference <= msIn24Hours ? currentPool.volumeUSD : 0,
-          fees24USD: timeDifference <= msIn24Hours ? currentPool.feesUSD : 0,
-          poolMaxApr,
-          poolAvgApr,
-          farmApr,
-          avgApr,
-          isMyPool: Boolean(openPositions?.length),
-          hasActiveFarming: Boolean(activeFarming),
-          createdAtTimestamp,
-          liquidity,
-          token0Price,
-          changeHour,
-          change24h,
-          changeWeek,
-          changeMonth,
+      return pools.pools.map(
+        ({
+          id,
+          token0,
+          token1,
+          fee,
+          totalValueLockedUSD,
+          poolHourData,
+          poolDayData,
+          poolWeekData,
+          poolMonthData,
           txCount,
           volumeUSD,
-          marktetcap: token0.marketCap,
-          apr24h: avgApr,
-        };
-      }
-    );
-  }, [isLoading, pools, positions, activeFarmings]);
-
-  const formattedUserPools = useMemo(() => {
-    if (isLoading || !userPools) return [];
-
-    return userPools.pools.map(
-      ({
-        id,
-        token0,
-        token1,
-        fee,
-        totalValueLockedUSD,
-        poolHourData,
-        poolDayData,
-        poolWeekData,
-        poolMonthData,
-        txCount,
-        volumeUSD,
-        token0Price,
-        createdAtTimestamp,
-        liquidity,
-        aprPercentage,
-        fees,
-      }) => {
-        const currentPool = poolDayData[0];
-        const lastDate = currentPool ? currentPool.date * 1000 : 0;
-        const currentDate = new Date().getTime();
-
-        const handlePoolChange = (poolTimeData0: any, poolTimeData1: any) => {
-          if (!poolTimeData0) return "0"; // No data available
-          if (
-            !poolTimeData1 ||
-            poolTimeData1.volumeUSD == 0 ||
-            !isFinite(poolTimeData1.volumeUSD)
-          )
-            return 100; // Only one day of data, return 100
-
-          const volumeChange =
-            poolTimeData0.volumeUSD - poolTimeData1.volumeUSD;
-          const changePercentage = volumeChange / poolTimeData1.volumeUSD;
-          if (isNaN(changePercentage)) return 100;
-          return Math.round(changePercentage * 100) / 100;
-        };
-
-        const changeHour = handlePoolChange(poolHourData[0], poolHourData[1]);
-
-        const change24h = handlePoolChange(poolDayData[0], poolDayData[1]);
-
-        const changeWeek = handlePoolChange(poolWeekData[0], poolWeekData[1]);
-
-        const changeMonth = handlePoolChange(
-          poolMonthData[0],
-          poolMonthData[1]
-        );
-
-        /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
-        const timeDifference = currentDate - lastDate;
-        const msIn24Hours = 24 * 60 * 60 * 1000;
-
-        const openPositions = positions?.filter(
-          (position) => position.pool.toLowerCase() === id.toLowerCase()
-        );
-        const activeFarming = activeFarmings?.eternalFarmings.find(
-          (farming) => farming.pool === id
-        );
-
-        const poolMaxApr = aprPercentage;
-        const poolAvgApr = aprPercentage;
-        const farmApr = 0;
-        const avgApr = aprPercentage;
-
-        const unclaimedFees = BigNumber(fees.toString());
-
-        return {
-          id: id as Address,
-          pair: {
-            token0,
-            token1,
-          },
-          fee: Number(fee) / 10_000,
-          tvlUSD: Number(totalValueLockedUSD),
-          volume24USD:
-            timeDifference <= msIn24Hours ? currentPool.volumeUSD : 0,
-          fees24USD: timeDifference <= msIn24Hours ? currentPool.feesUSD : 0,
-          poolMaxApr,
-          poolAvgApr,
-          farmApr,
-          avgApr,
-          isMyPool: Boolean(openPositions?.length),
-          hasActiveFarming: Boolean(activeFarming),
+          token0Price,
           createdAtTimestamp,
           liquidity,
-          token0Price,
-          changeHour,
-          change24h,
-          changeWeek,
-          changeMonth,
+          aprPercentage,
+        }) => {
+          const currentPool = poolDayData[0];
+          const lastDate = currentPool ? currentPool.date * 1000 : 0;
+          const currentDate = new Date().getTime();
+
+          const handlePoolChange = (poolTimeData0: any, poolTimeData1: any) => {
+            if (!poolTimeData0) return "0"; // No data available
+            if (
+              !poolTimeData1 ||
+              poolTimeData1.volumeUSD == 0 ||
+              !isFinite(poolTimeData1.volumeUSD)
+            )
+              return 100; // Only one day of data, return 100
+
+            const volumeChange =
+              poolTimeData0.volumeUSD - poolTimeData1.volumeUSD;
+            const changePercentage = volumeChange / poolTimeData1.volumeUSD;
+            if (isNaN(changePercentage)) return 100;
+            return Math.round(changePercentage * 100) / 100;
+          };
+
+          const changeHour = handlePoolChange(poolHourData[0], poolHourData[1]);
+
+          const change24h = handlePoolChange(poolDayData[0], poolDayData[1]);
+
+          const changeWeek = handlePoolChange(poolWeekData[0], poolWeekData[1]);
+
+          const changeMonth = handlePoolChange(
+            poolMonthData[0],
+            poolMonthData[1]
+          );
+
+          /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
+          const timeDifference = currentDate - lastDate;
+          const msIn24Hours = 24 * 60 * 60 * 1000;
+
+          const activeFarming = activeFarmings?.eternalFarmings.find(
+            (farming) => farming.pool === id
+          );
+
+          const poolMaxApr = aprPercentage;
+          const poolAvgApr = aprPercentage;
+          const farmApr = 0;
+          const avgApr = aprPercentage;
+
+          return {
+            id: id as Address,
+            pair: {
+              token0,
+              token1,
+            },
+            fee: Number(fee) / 10_000,
+            tvlUSD: Number(totalValueLockedUSD),
+            volume24USD:
+              timeDifference <= msIn24Hours ? currentPool.volumeUSD : 0,
+            fees24USD: timeDifference <= msIn24Hours ? currentPool.feesUSD : 0,
+            poolMaxApr,
+            poolAvgApr,
+            farmApr,
+            avgApr,
+            hasActiveFarming: Boolean(activeFarming),
+            createdAtTimestamp,
+            liquidity,
+            token0Price,
+            changeHour,
+            change24h,
+            changeWeek,
+            changeMonth,
+            txCount,
+            volumeUSD,
+            marktetcap: token0.marketCap,
+            apr24h: avgApr,
+          };
+        }
+      );
+    }, [isLoading, pools, activeFarmings]);
+
+    const formattedUserPools = useMemo(() => {
+      if (isLoading || !userPools) return [];
+
+      return userPools.pools.map(
+        ({
+          id,
+          token0,
+          token1,
+          fee,
+          totalValueLockedUSD,
+          poolHourData,
+          poolDayData,
+          poolWeekData,
+          poolMonthData,
           txCount,
           volumeUSD,
-          marktetcap: token0.marketCap,
-          apr24h: avgApr,
-          unclaimedFees,
-        };
+          token0Price,
+          createdAtTimestamp,
+          liquidity,
+          aprPercentage,
+          fees,
+        }) => {
+          const currentPool = poolDayData[0];
+          const lastDate = currentPool ? currentPool.date * 1000 : 0;
+          const currentDate = new Date().getTime();
+
+          const handlePoolChange = (poolTimeData0: any, poolTimeData1: any) => {
+            if (!poolTimeData0) return "0"; // No data available
+            if (
+              !poolTimeData1 ||
+              poolTimeData1.volumeUSD == 0 ||
+              !isFinite(poolTimeData1.volumeUSD)
+            )
+              return 100; // Only one day of data, return 100
+
+            const volumeChange =
+              poolTimeData0.volumeUSD - poolTimeData1.volumeUSD;
+            const changePercentage = volumeChange / poolTimeData1.volumeUSD;
+            if (isNaN(changePercentage)) return 100;
+            return Math.round(changePercentage * 100) / 100;
+          };
+
+          const changeHour = handlePoolChange(poolHourData[0], poolHourData[1]);
+
+          const change24h = handlePoolChange(poolDayData[0], poolDayData[1]);
+
+          const changeWeek = handlePoolChange(poolWeekData[0], poolWeekData[1]);
+
+          const changeMonth = handlePoolChange(
+            poolMonthData[0],
+            poolMonthData[1]
+          );
+
+          /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
+          const timeDifference = currentDate - lastDate;
+          const msIn24Hours = 24 * 60 * 60 * 1000;
+
+          const activeFarming = activeFarmings?.eternalFarmings.find(
+            (farming) => farming.pool === id
+          );
+
+          const poolMaxApr = aprPercentage;
+          const poolAvgApr = aprPercentage;
+          const farmApr = 0;
+          const avgApr = aprPercentage;
+
+          const unclaimedFees = BigNumber(fees.toString());
+
+          return {
+            id: id as Address,
+            pair: {
+              token0,
+              token1,
+            },
+            fee: Number(fee) / 10_000,
+            tvlUSD: Number(totalValueLockedUSD),
+            volume24USD:
+              timeDifference <= msIn24Hours ? currentPool.volumeUSD : 0,
+            fees24USD: timeDifference <= msIn24Hours ? currentPool.feesUSD : 0,
+            poolMaxApr,
+            poolAvgApr,
+            farmApr,
+            avgApr,
+            hasActiveFarming: Boolean(activeFarming),
+            createdAtTimestamp,
+            liquidity,
+            token0Price,
+            changeHour,
+            change24h,
+            changeWeek,
+            changeMonth,
+            txCount,
+            volumeUSD,
+            marktetcap: token0.marketCap,
+            apr24h: avgApr,
+            unclaimedFees,
+          };
+        }
+      );
+    }, [isLoading, userPools, activeFarmings]);
+
+    const handleSort = (callback: any) => {
+      const sort = callback();
+      if (sort.length > 0) {
+        setSorting(sort);
+      } else {
+        setSorting([]);
       }
+    };
+
+    return (
+      <div>
+        <div className="hidden xl:block">
+          <PoolsTable
+            columnsMy={poolsColumnsMy}
+            columns={poolsColumns}
+            data={formattedPools}
+            userPools={formattedUserPools}
+            sorting={sorting}
+            setSorting={handleSort}
+            link={"pooldetail"}
+            showPagination={true}
+            loading={isLoading}
+            defaultFilter={defaultFilter}
+            showOptions={showOptions}
+          />
+        </div>
+        <div className="block xl:hidden">
+          <PoolCardList data={formattedPools} />
+        </div>
+      </div>
     );
-  }, [isLoading, userPools, positions, activeFarmings]);
-
-  const handleSort = (callback: any) => {
-    const sort = callback();
-    if (sort.length > 0) {
-      setSorting(sort);
-    } else {
-      setSorting([]);
-    }
-  };
-
-  return (
-    <div>
-      <div className="hidden xl:block">
-        <PoolsTable
-          columnsMy={poolsColumnsMy}
-          columns={poolsColumns}
-          data={formattedPools}
-          userPools={formattedUserPools}
-          sorting={sorting}
-          setSorting={handleSort}
-          link={"pooldetail"}
-          showPagination={true}
-          loading={isLoading || isUserPoolsLoading}
-          defaultFilter={defaultFilter}
-          showOptions={showOptions}
-        />
-      </div>
-      <div className="block xl:hidden">
-        <PoolCardList data={formattedPools} />
-      </div>
-    </div>
-  );
-};
+  }
+);
 
 export default PoolsList;

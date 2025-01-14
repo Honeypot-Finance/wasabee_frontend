@@ -33,7 +33,6 @@ type Pool = {
   poolAvgApr: number;
   farmApr: number;
   avgApr: number;
-  isMyPool: boolean;
   hasActiveFarming: boolean;
 };
 
