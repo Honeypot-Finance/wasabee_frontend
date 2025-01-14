@@ -68,11 +68,6 @@ const PoolsList = observer(
       useActiveFarmingsQuery({
         client: farmingClient,
       });
-    console.log("isLoading", {
-      isAllpoolsLoading,
-      isUserPoolsLoading,
-      isFarmingsLoading,
-    });
     const isLoading =
       isAllpoolsLoading || isUserPoolsLoading || isFarmingsLoading;
 

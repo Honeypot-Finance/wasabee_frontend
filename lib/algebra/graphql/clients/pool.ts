@@ -86,7 +86,10 @@ export const useUserPools = (userAddress: string) => {
 
     Promise.all(
       data.positions.map(async (position) => {
-        if (fetchedPositions.includes(position.id)) return;
+        if (
+          fetchedPositions.includes(position.pool.id.concat("-", position.id))
+        )
+          return;
         try {
           const pool = position.pool;
           const {
@@ -136,6 +139,11 @@ export const useUserPools = (userAddress: string) => {
               (Number(pool.token1.derivedMatic) * Number(nativePrice))
             : 0;
 
+          if (
+            fetchedPositions.includes(position.pool.id.concat("-", position.id))
+          )
+            return;
+
           if (newPools[pool.id]) {
             const existingPool = newPools[pool.id];
             if (existingPool) {
@@ -150,13 +158,12 @@ export const useUserPools = (userAddress: string) => {
             };
           }
 
-          fetchedPositions.push(pool.id);
+          fetchedPositions.push(pool.id.concat("-", position.id));
         } catch (error) {
           console.error(error);
         }
       })
     ).then(() => {
-      console.log({ newPools });
       Object.entries(newPools).forEach(([id, pool]) => {
         if (pools[id]) {
           pools[id].fees = BigNumber(pools[id].fees.plus(pool.fees));
