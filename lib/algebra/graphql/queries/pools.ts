@@ -106,10 +106,10 @@ export const POOLS_LIST = gql`
       poolDayData(first: 100, orderBy: date, orderDirection: desc) {
         ...PoolDayDataFields
       }
-      poolWeekData(first: 2, orderBy: week, orderDirection: desc) {
+      poolWeekData(first: 20, orderBy: week, orderDirection: desc) {
         ...PoolWeekDataFields
       }
-      poolMonthData(first: 2, orderBy: month, orderDirection: desc) {
+      poolMonthData(first: 20, orderBy: month, orderDirection: desc) {
         ...PoolMonthDataFields
       }
     }

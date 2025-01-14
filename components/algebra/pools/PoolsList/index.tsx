@@ -121,31 +121,46 @@ const PoolsList = ({
         const lastDate = currentPool ? currentPool.date * 1000 : 0;
         const currentDate = new Date().getTime();
 
-        const handlePoolChange = (poolTimeData0: any, poolTimeData1: any) => {
-          if (!poolTimeData0) return "0"; // No data available
-          if (
-            !poolTimeData1 ||
-            poolTimeData1.volumeUSD == 0 ||
-            !isFinite(poolTimeData1.volumeUSD)
-          )
-            return 100; // Only one day of data, return 100
+        function calculatePercentageChange(current: number, previous: number) {
+          if (previous === 0) {
+            return current === 0 ? 0 : 100; // Assume 100% change for a significant increase
+          }
 
-          const volumeChange =
-            poolTimeData0.volumeUSD - poolTimeData1.volumeUSD;
-          const changePercentage = volumeChange / poolTimeData1.volumeUSD;
-          if (isNaN(changePercentage)) return 100;
-          return Math.round(changePercentage * 100) / 100;
-        };
+          // Calculate percentage change
+          const change = ((current - previous) / previous) * 100;
 
-        const changeHour = handlePoolChange(poolHourData[0], poolHourData[1]);
+          // Ensure the result is a valid number
+          return isNaN(change) || !isFinite(change) ? 0 : change;
+        }
 
-        const change24h = handlePoolChange(poolDayData[0], poolDayData[1]);
+        console.log("poolDayData", poolDayData);
 
-        const changeWeek = handlePoolChange(poolWeekData[0], poolWeekData[1]);
+        const changeHour = calculatePercentageChange(
+          poolHourData[0]?.volumeUSD ?? 0,
+          poolHourData[1]?.volumeUSD ?? 0
+        );
 
-        const changeMonth = handlePoolChange(
-          poolMonthData[0],
-          poolMonthData[1]
+        const change24h = calculatePercentageChange(
+          poolDayData[1]?.volumeUSD ?? 0,
+          poolDayData[2]?.volumeUSD ?? 0
+        );
+
+        const changeWeek = calculatePercentageChange(
+          poolDayData
+            .slice(0, 7)
+            .reduce((sum, day) => sum + (day?.volumeUSD ?? 0), 0),
+          poolDayData
+            .slice(7, 14)
+            .reduce((sum, day) => sum + (day?.volumeUSD ?? 0), 0)
+        );
+
+        const changeMonth = calculatePercentageChange(
+          poolWeekData
+            .slice(0, 4)
+            .reduce((sum, week) => sum + (week?.volumeUSD ?? 0), 0),
+          poolWeekData
+            .slice(4, 8)
+            .reduce((sum, week) => sum + (week?.volumeUSD ?? 0), 0)
         );
 
         /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
@@ -310,8 +325,6 @@ const PoolsList = ({
       setSorting([]);
     }
   };
-
-  console.log("formattedPools", formattedPools);
 
   return (
     <div>
