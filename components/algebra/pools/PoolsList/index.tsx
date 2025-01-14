@@ -45,12 +45,17 @@ const PoolsList = ({
     { id: "id", desc: true },
   ]);
 
-  const orderBy = mappingSortKeys[sorting[0].id];
+  const [search, setSearch] = useState("");
+
   const {
     data: pools,
     loading: isPoolsListLoading,
     refetch,
-  } = usePoolsListQuery();
+  } = usePoolsListQuery({
+    variables: {
+      search: search,
+    },
+  });
   const {
     data: userPools,
     loading: isUserPoolsLoading,
@@ -190,7 +195,7 @@ const PoolsList = ({
         };
       }
     );
-  }, [isLoading, pools, positions, activeFarmings]);
+  }, [isLoading, pools, positions, activeFarmings?.eternalFarmings]);
 
   const formattedUserPools = useMemo(() => {
     if (isLoading || !userPools) return [];
@@ -306,6 +311,8 @@ const PoolsList = ({
     }
   };
 
+  console.log("formattedPools", formattedPools);
+
   return (
     <div>
       <div className="hidden xl:block">
@@ -321,6 +328,7 @@ const PoolsList = ({
           loading={isLoading || isUserPoolsLoading}
           defaultFilter={defaultFilter}
           showOptions={showOptions}
+          handleSearch={(data: string) => setSearch(data)}
         />
       </div>
       <div className="block xl:hidden">
