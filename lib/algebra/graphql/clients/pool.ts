@@ -58,19 +58,16 @@ export const useUserPools = (userAddress: string) => {
     nextFetchPolicy: "cache-and-network",
     initialFetchPolicy: "cache-and-network",
     notifyOnNetworkStatusChange: true,
-    pollInterval: 5000, // Refetch every 5 seconds
+    pollInterval: 10000, // Refetch every 5 seconds
+    onError: (error) => {
+      setTimeout(() => {
+        refetch();
+      }, 1000);
+    },
   });
   const [pools, setPools] = useState<
     Record<string, Pool & { fees: BigNumber }>
   >({});
-
-  const { data: bundles } = useNativePriceQuery({
-    fetchPolicy: "cache-and-network",
-    nextFetchPolicy: "cache-and-network",
-    initialFetchPolicy: "cache-and-network",
-    notifyOnNetworkStatusChange: true,
-    pollInterval: 60000, // Refetch every minute
-  });
 
   const algebraPositionManager = getContract({
     address: algebraPositionManagerAddress,
@@ -79,8 +76,7 @@ export const useUserPools = (userAddress: string) => {
   });
 
   useEffect(() => {
-    if (!data || !wallet.isInit || !algebraPositionManager.simulate || !bundles)
-      return;
+    if (!data || !wallet.isInit || !algebraPositionManager.simulate) return;
 
     const newPools: Record<string, Pool & { fees: BigNumber }> = {};
     Promise.all(
@@ -128,14 +124,11 @@ export const useUserPools = (userAddress: string) => {
             fees1.toString()
           );
 
-          const nativePrice = bundles?.bundles[0].maticPriceUSD;
           const fees0USDformatted = fees0USD
-            ? Number(fees0USD.toSignificant()) *
-              (Number(pool.token0.derivedMatic) * Number(nativePrice))
+            ? Number(fees0USD.toSignificant()) * Number(pool.token0.derivedUSD)
             : 0;
           const fees1USDformatted = fees1USD
-            ? Number(fees1USD.toSignificant()) *
-              (Number(pool.token1.derivedMatic) * Number(nativePrice))
+            ? Number(fees1USD.toSignificant()) * Number(pool.token1.derivedUSD)
             : 0;
 
           if (
@@ -173,7 +166,7 @@ export const useUserPools = (userAddress: string) => {
 
       setIsLoading(false);
     });
-  }, [algebraPositionManager.simulate, bundles, data]);
+  }, [algebraPositionManager.simulate, data]);
 
   return {
     data: { pools: Object.values(pools) ?? [] },
