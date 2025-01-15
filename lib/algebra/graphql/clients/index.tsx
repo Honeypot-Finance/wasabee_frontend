@@ -7,13 +7,6 @@ const FARMING_GRAPH = process.env.NEXT_PUBLIC_FARMING_GRAPH;
 export const infoClient = new ApolloClient({
   uri: INFO_GRAPH,
   cache: new InMemoryCache(),
-  defaultOptions: {
-    watchQuery: {
-      fetchPolicy: "cache-and-network",
-      nextFetchPolicy: "cache-and-network",
-      notifyOnNetworkStatusChange: true,
-    },
-  },
 });
 
 export const blocksClient = new ApolloClient({

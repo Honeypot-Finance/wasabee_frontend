@@ -55,21 +55,6 @@ export const Profile = observer(() => {
     }
   }, []);
 
-  useEffect(() => {
-    if (!wallet.isInit) {
-      return;
-    }
-    if (!liquidity.isInit) {
-      liquidity.initPool();
-      return;
-    }
-    launchpad.setCurrentLaunchpadType("meme");
-    launchpad.showNotValidatedPairs = true;
-    launchpad.myLaunches.reloadPage();
-    launchpad.participatedPairs.reloadPage();
-    liquidity.myPairPage.reloadPage();
-  }, [wallet.isInit, liquidity.isInit]);
-
   return (
     <div className="w-full max-w-[1200px] mx-auto px-4 xl:px-0">
       <div className="flex flex-col gap-6">
@@ -173,6 +158,12 @@ export const Profile = observer(() => {
                 tab: "text-[#FAFAFC]/60 data-[selected=true]:text-[#FAFAFC] data-[selected=true]:bg-[#2D2D2D] rounded-lg px-4 py-2",
                 cursor: "bg-[#2D2D2D]",
                 panel: "pt-6",
+              }}
+              defaultSelectedKey={"portfolio"}
+              onSelectionChange={(key) => {
+                if (key === "portfolio") {
+                  portfolio.initPortfolio();
+                }
               }}
             >
               <Tab key="portfolio" title="Portfolio">

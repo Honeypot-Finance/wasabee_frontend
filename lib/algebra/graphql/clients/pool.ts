@@ -51,20 +51,20 @@ export const userPools = async (userAddress: string) => {
 
 export const useUserPools = (userAddress: string) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [fetchedPositions, setFetchedPositions] = useState<string[]>([]);
   const { data, loading, refetch } = useUserActivePositionsQuery({
     variables: { account: userAddress.toLowerCase() },
-    fetchPolicy: "cache-and-network",
-    nextFetchPolicy: "cache-and-network",
-    initialFetchPolicy: "cache-and-network",
-    notifyOnNetworkStatusChange: true,
-    pollInterval: 10000, // Refetch every 5 seconds
+    //fetchPolicy: "cache-and-network",
+    //notifyOnNetworkStatusChange: true,
+    pollInterval: 10000,
     onError: (error) => {
       setTimeout(() => {
         refetch();
       }, 1000);
     },
   });
+
   const [pools, setPools] = useState<
     Record<string, Pool & { fees: BigNumber }>
   >({});
@@ -76,7 +76,10 @@ export const useUserPools = (userAddress: string) => {
   });
 
   useEffect(() => {
-    if (!data || !wallet.isInit || !algebraPositionManager.simulate) return;
+    if (!data || !wallet.isInit || !algebraPositionManager.simulate || isLoaded)
+      return;
+
+    setIsLoaded(true);
 
     const newPools: Record<string, Pool & { fees: BigNumber }> = {};
     Promise.all(

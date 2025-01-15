@@ -14,19 +14,10 @@ class Portfolio {
 
   constructor() {
     makeAutoObservable(this);
-
-    // React to wallet changes
-    reaction(
-      () => wallet.isInit,
-      (isInit) => {
-        if (isInit) {
-          this.initPortfolio();
-        }
-      }
-    );
   }
 
   async initPortfolio() {
+    console.log("initPortfolio", { isInit: this.isInit });
     if (this.isInit || !wallet.isInit) return;
 
     this.isLoading = true;
@@ -63,6 +54,10 @@ class Portfolio {
           derivedUSD: token.derivedUSD,
         });
       });
+      console.log(
+        "tokens",
+        tokens?.map((token) => token.address)
+      );
       // Filter tokens with balance
 
       await Promise.all(
