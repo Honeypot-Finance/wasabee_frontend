@@ -410,7 +410,7 @@ export class MemePairContract implements BaseLaunchContract {
       this.getUserParticipated(),
       this.getVaultBalance(),
       this.getIndexerData(),
-      this.getParticipantDetail(),
+      //this.getParticipantDetail(),
     ]).catch((error) => {
       console.error(error, `init-memepair-error-${this.address}`);
       trpcClient.projects.revalidateProjectType.mutate({
