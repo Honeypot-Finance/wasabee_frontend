@@ -3,6 +3,7 @@ import { QueryClient } from "@tanstack/react-query";
 
 const config: CodegenConfig = {
   overwrite: true,
+  watch: true,
   schema: [
     "https://api.goldsky.com/api/public/project_cm0keevd9v59l01w4fokhdcg9/subgraphs/hpot-algebra-core/1.0.23/gn",
     "https://api.studio.thegraph.com/query/50593/goerli-blocks/version/latest",
