@@ -14,7 +14,6 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [hoveredMenu, setHoveredMenu] = React.useState<string | null>(null);
 
-  // 根据当前路由找到对应的一级菜单
   const findMenuByPath = React.useCallback(
     (path: string) => {
       for (const menu of menuList) {
@@ -35,15 +34,12 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
     findMenuByPath(router.pathname)
   );
 
-  // 监听路由变化
   React.useEffect(() => {
     setSelectedMenu(findMenuByPath(router.pathname));
   }, [router.pathname, findMenuByPath]);
 
-  // 找到当前选中的一级菜单
   const currentMenu = menuList.find((m) => m.title === selectedMenu);
 
-  // 获取二级菜单列表
   const subMenus =
     currentMenu && currentMenu.path instanceof Array ? currentMenu.path : [];
 
@@ -57,14 +53,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
         className="mb-[-20px]"
       />
       <div
-        className="bg-[#FFCD4D] rounded-xl pt-1 pb-8 min-w-[200px] h-[140px] flex flex-col"
-        style={{
-          backgroundImage: "url('/images/card-container/dark/bottom-border.svg')",
-          backgroundPosition: "left calc(100% + 4px)",
-          backgroundSize: "100% 32px",
-          backgroundRepeat: "no-repeat",
-          backgroundClip: "padding-box",
-        }}
+        className="bg-[#FFCD4D] rounded-xl pt-1 pb-8 min-w-[200px] h-[140px] flex flex-col bg-[url('/images/card-container/dark/bottom-border.svg')] bg-left-bottom bg-repeat-x"
       >
         <div className="border-t-1 rounded-[30px] border-[#202020] px-3 h-full flex flex-col">
           <div className="relative">
