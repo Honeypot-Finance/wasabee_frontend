@@ -12,7 +12,6 @@ export const infoClient = new ApolloClient({
       fetchPolicy: "cache-and-network",
       nextFetchPolicy: "cache-and-network",
       notifyOnNetworkStatusChange: true,
-      pollInterval: 10000,
     },
   },
 });
