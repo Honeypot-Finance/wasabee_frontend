@@ -58,7 +58,7 @@ export const useUserPools = (userAddress: string) => {
     nextFetchPolicy: "cache-and-network",
     initialFetchPolicy: "cache-and-network",
     notifyOnNetworkStatusChange: true,
-    pollInterval: 10000, // Refetch every 10 seconds
+    pollInterval: 5000, // Refetch every 5 seconds
   });
   const [pools, setPools] = useState<
     Record<string, Pool & { fees: BigNumber }>
@@ -69,7 +69,7 @@ export const useUserPools = (userAddress: string) => {
     nextFetchPolicy: "cache-and-network",
     initialFetchPolicy: "cache-and-network",
     notifyOnNetworkStatusChange: true,
-    pollInterval: 10000, // Refetch every 10 seconds
+    pollInterval: 60000, // Refetch every minute
   });
 
   const algebraPositionManager = getContract({
@@ -83,7 +83,6 @@ export const useUserPools = (userAddress: string) => {
       return;
 
     const newPools: Record<string, Pool & { fees: BigNumber }> = {};
-
     Promise.all(
       data.positions.map(async (position) => {
         if (
@@ -174,7 +173,7 @@ export const useUserPools = (userAddress: string) => {
 
       setIsLoading(false);
     });
-  }, [algebraPositionManager.simulate, data, bundles, pools, fetchedPositions]);
+  }, [algebraPositionManager.simulate, bundles, data]);
 
   return {
     data: { pools: Object.values(pools) ?? [] },

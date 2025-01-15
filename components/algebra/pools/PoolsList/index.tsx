@@ -170,10 +170,10 @@ const PoolsList = observer(
           };
         }
       );
-    }, [isLoading, pools, activeFarmings]);
+    }, [pools, activeFarmings]);
 
     const formattedUserPools = useMemo(() => {
-      if (isLoading || !userPools) return [];
+      if (!userPools) return [];
 
       return userPools.pools.map(
         ({
@@ -271,7 +271,7 @@ const PoolsList = observer(
           };
         }
       );
-    }, [isLoading, userPools, activeFarmings]);
+    }, [userPools, activeFarmings]);
 
     const handleSort = (callback: any) => {
       const sort = callback();
