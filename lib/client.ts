@@ -7,11 +7,11 @@ export const createPublicClientByChain = (chain: Chain) =>
     batch: {
       multicall: true,
     },
-    cacheTime: 1_000,
     transport: fallback(
       chain.rpcUrls.default.http.map((url) => http(url)),
       {
         retryCount: 3,
+        retryDelay: 1000,
       }
     ),
   });

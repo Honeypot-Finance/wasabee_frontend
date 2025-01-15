@@ -30,7 +30,6 @@ import {
   DynamicWidget,
 } from "@dynamic-labs/sdk-react-core";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
-
 // enableStaticRendering(true)
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -109,7 +108,7 @@ export default function App({
                 <ToastContainer></ToastContainer>
               </NextUIProvider>
             </RainbowKitProvider>
-          </ApolloProvider>{" "}
+          </ApolloProvider>
         </QueryClientProvider>
       </WagmiProvider>
     </trpc.Provider>
