@@ -198,14 +198,14 @@ const PoolsTable = <TData, TValue>({
             </Button>
 
             <div className="flex gap-2 max-md:gap-4 items-center w-fit ml-auto max-sm:hidden">
-              <label
+              {/* <label
                 className="flex gap-2 items-center"
                 htmlFor="farmingAvailable"
               >
                 <span className="max-md:hidden">Farming Available</span>
-              </label>
+              </label> */}
               {/* TODO: switch color */}
-              <Switch
+              {/* <Switch
                 className="bg-[#865215]"
                 id="farmingAvailable"
                 checked={table.getColumn("plugins")?.getFilterValue() === true}
@@ -215,8 +215,8 @@ const PoolsTable = <TData, TValue>({
                     column?.setFilterValue(true);
                   else column?.setFilterValue(undefined);
                 }}
-              />
-              <LayoutGrid className="text-[#F7941D80]/50 cursor-pointer text-xl" />
+              /> */}
+              {/* <LayoutGrid className="text-[#F7941D80]/50 cursor-pointer text-xl" /> */}
             </div>
           </div>
         </div>
