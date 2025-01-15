@@ -3,7 +3,6 @@ import { ButtonHTMLAttributes } from "react";
 import Image from "next/image";
 import { useConnect, useConnectors } from "wagmi";
 import { BiWallet } from "react-icons/bi";
-import { TbPictureInPictureTopFilled } from "react-icons/tb";
 import { BsPerson } from "react-icons/bs";
 import Link from "next/link";
 

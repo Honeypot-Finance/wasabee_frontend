@@ -230,7 +230,7 @@ const Tabs = observer(
           <div className="bg-[url('/images/pumping/outline-border.png')] bg-top h-12 absolute top-0 left-0 w-full bg-contain bg-repeat-x"></div>
           {tab === "info" && (
             <div className="flex flex-col items-center justify-center">
-              <h1 className="text-[var(--Heading,#0D0D0D)] text-center text-shadow-[2px_4px_0px_#AF7F3D] webkit-text-stroke-[2px] text-stroke-white font-gliker text-[32px] md:text-[64px] font-normal leading-[110%] tracking-[1.28px] mb-6 md:mb-12 px-4">
+              <h1 className="text-[var(--Heading,#0D0D0D)] text-center text-shadow-[2px_4px_0px_#AF7F3D] text-stroke-2 text-stroke-white font-gliker text-[32px] md:text-[64px] font-normal leading-[110%] tracking-[1.28px] mb-6 md:mb-12 px-4">
                 About Project
               </h1>
 
@@ -277,7 +277,7 @@ const Tabs = observer(
                 <div className="w-full md:w-[40%]">
                   <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
                     <div className="space-y-4 text-center md:text-left col-span-2 md:col-span-1">
-                      <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[24px] md:text-[34px] font-normal leading-[110%] tracking-[0.68px]">
+                      <div className="text-white text-shadow-[2px_4px_0px_#AF7F3D] text-stroke-2 text-stroke-black font-gliker text-[24px] md:text-[34px] font-normal leading-[110%] tracking-[0.68px]">
                         {pair?.launchedToken?.name}
                       </div>
                       <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
@@ -285,7 +285,7 @@ const Tabs = observer(
                       </div>
                     </div>
                     <div className="space-y-4 text-center md:text-left col-span-2 md:col-span-1">
-                      <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[24px] md:text-[34px] font-normal leading-[110%] tracking-[0.68px]">
+                      <div className="text-white text-shadow-[2px_4px_0px_#AF7F3D] text-stroke-2 text-stroke-black font-gliker text-[24px] md:text-[34px] font-normal leading-[110%] tracking-[0.68px]">
                         {pair?.launchedToken?.symbol}
                       </div>
                       <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
@@ -293,7 +293,7 @@ const Tabs = observer(
                       </div>
                     </div>
                     <div className="space-y-4 text-center md:text-left col-span-2">
-                      <div className="text-white text-shadow-custom text-stroke-black font-gliker text-[24px] md:text-[34px] font-normal leading-[110%] tracking-[0.68px]">
+                      <div className="text-white text-shadow-[2px_4px_0px_#AF7F3D] text-stroke-2 text-stroke-black font-gliker text-[24px] md:text-[34px] font-normal leading-[110%] tracking-[0.68px]">
                         MEME
                       </div>
                       <div className="text-[var(--Heading,#0D0D0D)] font-gliker text-[20px] font-normal leading-[110%] tracking-[0.4px]">
@@ -326,7 +326,7 @@ const Tabs = observer(
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                     <div className="w-full bg-white rounded-[32px] px-4 md:px-8 text-center border-[3px] border-white shadow-[4px_4px_0px_0px_#202020,-2px_4px_0px_0px_#202020] space-y-4 py-8">
                       <div
-                        className={`text-stroke-black text-shadow-custom font-gliker ${
+                        className={`text-stroke-black text-stroke-2 text-shadow-[2px_4px_0px_#AF7F3D] font-gliker ${
                           String(
                             (
                               pair as MemePairContract
@@ -352,7 +352,7 @@ const Tabs = observer(
                     </div>
                     <div className="w-full bg-white rounded-[32px] px-4 md:px-8 text-center border-[3px] border-white shadow-[4px_4px_0px_0px_#202020,-2px_4px_0px_0px_#202020] space-y-4 py-8">
                       <div
-                        className={`text-stroke-black text-shadow-custom font-gliker ${
+                        className={`text-stroke-black text-stroke-2 text-shadow-[2px_4px_0px_#AF7F3D] font-gliker ${
                           String(
                             amountFormatted(pair?.depositedRaisedToken, {
                               decimals: 0,

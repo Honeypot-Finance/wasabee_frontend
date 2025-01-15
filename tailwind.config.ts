@@ -1,5 +1,8 @@
 import type { Config } from "tailwindcss";
+import type { PluginAPI } from 'tailwindcss/types/config';
 import { nextui } from "@nextui-org/react";
+import { textStrokePlugin } from './styles/text-stroke';
+import { textShadowPlugin } from './styles/text-shadow';
 
 const config: Config = {
   content: [
@@ -84,7 +87,6 @@ const config: Config = {
   darkMode: ["class", "class"],
   plugins: [
     require("tailwindcss-animate"),
-    require("tailwindcss-textshadow"),
     require("@tailwindcss/container-queries"),
     require('tailwind-scrollbar')({ nocompatible: true }),
     nextui({
@@ -101,6 +103,8 @@ const config: Config = {
         },
       },
     }),
+    textStrokePlugin,
+    textShadowPlugin,
   ],
 };
 
