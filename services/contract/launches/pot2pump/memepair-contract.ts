@@ -60,6 +60,16 @@ export class MemePairContract implements BaseLaunchContract {
     makeAutoObservable(this);
   }
 
+  setData(args: Partial<MemePairContract>, setLogoURI: boolean = false) {
+    Object.assign(this, {
+      ...args,
+      logoUrl: setLogoURI ? args.logoUrl : this.logoUrl,
+    });
+    if (setLogoURI) {
+      this.launchedToken?.loadLogoURI();
+    }
+  }
+
   get priceChangeDisplay() {
     return this.launchedToken?.derivedUSD &&
       Number(this.launchedToken?.derivedUSD) &&
