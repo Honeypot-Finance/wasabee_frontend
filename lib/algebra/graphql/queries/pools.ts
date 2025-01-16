@@ -98,7 +98,12 @@ export const POOL_MONTH_DATA_FRAGMENT = gql`
 
 export const POOLS_LIST = gql`
   query PoolsList($search: String) {
-    pools(where: { searchString_contains: $search }, orderBy: totalValueLockedUSD, orderDirection: desc, first: 1000) {
+    pools(
+      where: { searchString_contains: $search }
+      orderBy: totalValueLockedUSD
+      orderDirection: desc
+      first: 1000
+    ) {
       ...PoolFields
       poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
         ...PoolHourDataFields
@@ -106,10 +111,10 @@ export const POOLS_LIST = gql`
       poolDayData(first: 100, orderBy: date, orderDirection: desc) {
         ...PoolDayDataFields
       }
-      poolWeekData(first: 20, orderBy: week, orderDirection: desc) {
+      poolWeekData(first: 2, orderBy: week, orderDirection: desc) {
         ...PoolWeekDataFields
       }
-      poolMonthData(first: 20, orderBy: month, orderDirection: desc) {
+      poolMonthData(first: 2, orderBy: month, orderDirection: desc) {
         ...PoolMonthDataFields
       }
     }

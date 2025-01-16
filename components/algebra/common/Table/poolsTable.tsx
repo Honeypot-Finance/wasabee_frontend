@@ -124,9 +124,7 @@ const PoolsTable = <TData, TValue>({
 
   const handleChangePools = (filter: string) => {
     if (filter === "myPools") {
-      setTableData((prev = []) => {
-        return prev.filter((data) => data.isMyPool);
-      });
+      setTableData(userPools as Pool[]);
     } else {
       setTableData(data as Pool[]);
     }
