@@ -136,7 +136,18 @@ export const PottingModal = observer(
                   });
                   state.setDepositAmount("");
                   pair.raiseToken?.getBalance();
-                  pair.getDepositedRaisedToken();
+                  pair.getDepositedRaisedToken().then((res) => {
+                    if (
+                      pair.depositedLaunchedTokenWithoutDecimals &&
+                      (pair as MemePairContract).raisedTokenMinCap &&
+                      pair.depositedLaunchedTokenWithoutDecimals >
+                        ((pair as MemePairContract).raisedTokenMinCap ?? 0)
+                    ) {
+                      //refresh page
+                      window.location.reload();
+                    }
+                  });
+
                   onSuccess?.();
                 } catch (error) {
                   console.error("Deposit failed:", error);
