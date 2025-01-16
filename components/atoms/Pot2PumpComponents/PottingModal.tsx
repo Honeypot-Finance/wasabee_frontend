@@ -135,8 +135,9 @@ export const PottingModal = observer(
                     amount: state.depositAmount,
                   });
                   state.setDepositAmount("");
-                  onSuccess?.();
                   pair.raiseToken?.getBalance();
+                  pair.getDepositedRaisedToken();
+                  onSuccess?.();
                 } catch (error) {
                   console.error("Deposit failed:", error);
                 }

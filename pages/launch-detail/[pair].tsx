@@ -549,7 +549,6 @@ const MemeView = observer(() => {
   const router = useRouter();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const triggerRefresh = useCallback(() => {
-    console.log("triggerRefresh");
     setRefreshTrigger((prev) => prev + 1);
   }, []);
 
@@ -566,7 +565,6 @@ const MemeView = observer(() => {
       pair.launchedToken?.init(true, {
         loadIndexerTokenData: true,
       });
-      console.log(pair);
       return pair;
     }),
   }));
