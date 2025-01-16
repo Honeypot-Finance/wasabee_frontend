@@ -4,7 +4,7 @@ import { InputField, SelectField } from "./Components";
 import { Controller, useFormContext } from "react-hook-form";
 import { useAccount, useReadContract } from "wagmi";
 import { ERC20ABI } from "@/lib/abis/erc20";
-import FormContainer from "./Components/form-container";
+import { FormContainer } from "./Components";
 
 const ECOSYSTEM_OPTIONS = [
   { key: "evm", value: 1, label: "EVM", icon: '/images/launch-project/eth-icon.png' },
