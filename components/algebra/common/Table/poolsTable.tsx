@@ -44,6 +44,7 @@ interface PoolsTableProps<TData, TValue> {
   setSorting: any;
   defaultFilter?: string;
   showOptions?: boolean;
+  handleSearch: (data: string) => void;
 }
 
 const PoolsTable = <TData, TValue>({
@@ -59,6 +60,7 @@ const PoolsTable = <TData, TValue>({
   setSorting,
   defaultFilter = "trending",
   showOptions = true,
+  handleSearch,
 }: PoolsTableProps<TData, TValue>) => {
   const [selectedFilter, setSelectedFilter] = useState<string>(defaultFilter);
 
@@ -69,9 +71,23 @@ const PoolsTable = <TData, TValue>({
     { key: "myPools", label: "My Pools" },
   ];
 
-  const [tableData, setTableData] = useState<Pool[]>(data as Pool[]);
+  const [tableData, setTableData] = useState<Pool[]>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    setTableData(data as Pool[]);
+  }, [data]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleSearch(search.toLowerCase());
+    }, 500);
+
+    if (timer) {
+      return () => clearTimeout(timer);
+    }
+  }, [search]);
 
   const table = useReactTable({
     data: tableData as TData[],
@@ -96,7 +112,7 @@ const PoolsTable = <TData, TValue>({
 
   const searchID = "pair";
 
-  const totalRows = table.getFilteredRowModel().rows.length;
+  const totalRows = table?.getFilteredRowModel()?.rows?.length || 0;
   const startsFromRow =
     table.getState().pagination.pageIndex *
       table.getState().pagination.pageSize +
@@ -106,38 +122,12 @@ const PoolsTable = <TData, TValue>({
     totalRows
   );
 
-  useEffect(() => {
-    const timerID = setTimeout(() => {
-      if (search) {
-        setTableData((prev) =>
-          prev.filter((data) => {
-            return (
-              data?.id?.includes(search) ||
-              data?.pair?.token0?.symbol?.toLowerCase()?.includes(search) ||
-              data?.pair?.token1?.symbol?.toLowerCase()?.includes(search) ||
-              data?.pair?.token1?.name?.toLowerCase()?.includes(search) ||
-              data?.pair?.token1?.name?.toLowerCase()?.includes(search) ||
-              data?.pair?.token0?.id?.toLowerCase()?.includes(search) ||
-              data?.pair?.token1?.id?.toLowerCase()?.includes(search)
-            );
-          })
-        );
-      } else {
-        if (selectedFilter === "myPools") {
-          setTableData(userPools as Pool[]);
-        } else {
-          setTableData(data as Pool[]);
-        }
-      }
-    }, 500);
-
-    if (timerID) {
-      return () => clearTimeout(timerID);
-    }
-  }, [data, search, userPools, selectedFilter]);
-
   const handleChangePools = (filter: string) => {
-    setTableData(data as Pool[]);
+    if (filter === "myPools") {
+      setTableData(userPools as Pool[]);
+    } else {
+      setTableData(data as Pool[]);
+    }
   };
 
   return (

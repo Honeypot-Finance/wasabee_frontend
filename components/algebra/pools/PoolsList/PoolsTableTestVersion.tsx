@@ -297,6 +297,7 @@ const PoolsList = observer(
             loading={isLoading}
             defaultFilter={defaultFilter}
             showOptions={showOptions}
+            handleSearch={() => {}}
           />
         </div>
         <div className="block xl:hidden">
