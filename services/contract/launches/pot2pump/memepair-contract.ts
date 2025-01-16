@@ -420,7 +420,7 @@ export class MemePairContract implements BaseLaunchContract {
       return;
     });
 
-    this.getProjectInfo(), this.getCanRefund();
+    await Promise.all([this.getProjectInfo(), this.getCanRefund()]);
 
     this.isInit = true;
   }

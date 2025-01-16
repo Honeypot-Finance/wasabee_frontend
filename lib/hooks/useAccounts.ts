@@ -34,7 +34,7 @@ export function useAccounts(
   const accounts =
     data?.accounts.map((account) => ({
       walletAddress: account.id,
-      totalPot2PumpDeposit: parseFloat(account.totalSpendUSD),
+      totalSpend: parseFloat(account.totalSpendUSD),
       swapCount: parseInt(account.swapCount),
       poolHoldingCount: parseInt(account.holdingPoolCount),
       memeTokenCount: parseInt(account.memeTokenHoldingCount),

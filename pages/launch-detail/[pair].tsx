@@ -971,6 +971,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
         chain_id: wallet.currentChainId,
       })
       .then((data) => {
+        console.log("data", data);
         setProjectInfo(data);
       });
   }, [pairAddress, wallet.isInit]);

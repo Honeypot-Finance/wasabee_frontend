@@ -252,7 +252,7 @@ const LeaderboardPage = () => {
                               </div>
                             </td>
                             <td className="py-4 px-6 text-base">
-                              {formatVolume(item.totalPot2PumpDeposit)}
+                              {formatVolume(item.totalSpend)}
                             </td>
                             <td className="py-4 px-6 text-center text-base">
                               {item.swapCount}

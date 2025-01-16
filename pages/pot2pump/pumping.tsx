@@ -40,7 +40,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     //   status: "success",
     // });
 
-    memewarStore.reloadParticipants();
+    // memewarStore.reloadParticipants();
 
     const newPumpingProjects = new Pot2PumpPumpingService();
     setPumpingProjects(newPumpingProjects);
