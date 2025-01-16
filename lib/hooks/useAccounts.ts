@@ -12,6 +12,7 @@ import {
   TopSwapAccountsQueryData,
 } from "../algebra/graphql/clients/leaderboard";
 import dayjs from "dayjs";
+import { ALGEBRA_ROUTER } from "@/config/algebra/addresses";
 
 export function useAccounts(
   page: number = 1,
@@ -27,6 +28,7 @@ export function useAccounts(
         skip: (page - 1) * pageSize,
         first: pageSize,
         address: searchAddress ? { id: searchAddress.toLowerCase() } : null,
+        exclude: [ALGEBRA_ROUTER.toLowerCase()],
       },
     }
   );
@@ -67,7 +69,12 @@ export function useAccounts(
 
 export function useTopSwapAccounts() {
   const { data, loading, error } = useQuery<TopSwapAccountsQueryData>(
-    TOP_SWAP_ACCOUNTS_QUERY
+    TOP_SWAP_ACCOUNTS_QUERY,
+    {
+      variables: {
+        exclude: [ALGEBRA_ROUTER.toLowerCase()],
+      },
+    }
   );
   return {
     accounts:

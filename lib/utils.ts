@@ -28,7 +28,7 @@ export const shortenAddressString = (address: string, chars = 4): string => {
 };
 
 export const formatVolume = (volume: number): string => {
-  const value = volume / 10 ** 18;
+  const value = volume;
 
   if (value >= 1000000000) {
     return `$${(value / 1000000000).toFixed(2)}B`;
