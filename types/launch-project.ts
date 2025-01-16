@@ -3,6 +3,7 @@ import { Url } from "next/dist/shared/lib/router/router";
 // 1.Create and Branding
 export type CreateAndBrandingForm = {
   ecosystem: string;
+  connectedWalletNetwork: string;
   targetNetwork: string;
   projectToken: string;
   projectTokenLogo: string;

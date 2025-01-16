@@ -18,6 +18,7 @@ export const DEFAULT_LAUNCH_PROJECT_FORM = {
   // 1.Create and Branding
   ecosystem: "evm",
   targetNetwork: "berachain",
+  connectedWalletNetwork: "eth",
   projectName: "",
   projectToken: "",
   projectTokenLogo: "",
@@ -63,6 +64,9 @@ export const createAndBrandingSchema: ZodType<CreateAndBrandingForm> = z.object(
   {
     ecosystem: z.string().min(1, "Ecosystem is required."),
     targetNetwork: z.string().min(1, "Target network is required."),
+    connectedWalletNetwork: z
+      .string()
+      .min(1, "Connected wallet network is required."),
     projectName: z.string().min(1, "Project token is required."),
     projectToken: z
       .string()

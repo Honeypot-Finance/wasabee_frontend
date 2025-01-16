@@ -6,14 +6,15 @@ import { Input, InputProps } from "@nextui-org/react";
 const InputField = ({ className, classNames, ...props }: InputProps) => {
   return (
     <Input
-      size="md"
+      size="lg"
       labelPlacement="outside"
       classNames={{
-        label: "text-white text-base",
+        label: "!font-normal !text-base top-[20px] !leading-[19.2px] !text-[#202020] !opacity-80 !left-0",
         inputWrapper:
-          "bg-bistre/80 rounded-xl border border-[#F7931AA8] group-data-[focus=true]:bg-[#3E2A0F] data-[hover=true]:bg-[#3E2A0F]",
+          "bg-white border h-[64px] border-black text-black px-4 data-[hover=true]:bg-white group-data-[focus=true]:bg-white",
+        input: "text-xl text-[#202020] group-data-[has-value=true]:text-[#202020]/80",
         mainWrapper: "relative",
-        helperWrapper: "absolute -top-1 -translate-y-full right-0",
+        helperWrapper: "absolute right-0 bottom-full text-sm text-[#D53F3F] leading-[16.8px] ",
         ...classNames,
       }}
       className={cn("w-full", className)}
