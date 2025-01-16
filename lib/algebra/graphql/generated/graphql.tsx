@@ -12915,7 +12915,9 @@ export type PoolWeekDataFieldsFragment = { __typename?: 'PoolWeekData', feesUSD:
 
 export type PoolMonthDataFieldsFragment = { __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number };
 
-export type PoolsListQueryVariables = Exact<{ [key: string]: never; }>;
+export type PoolsListQueryVariables = Exact<{
+  search?: InputMaybe<Scalars['String']['input']>;
+}>;
 
 
 export type PoolsListQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }>, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null } }> };
@@ -14013,8 +14015,13 @@ export type AllRacersLazyQueryHookResult = ReturnType<typeof useAllRacersLazyQue
 export type AllRacersSuspenseQueryHookResult = ReturnType<typeof useAllRacersSuspenseQuery>;
 export type AllRacersQueryResult = Apollo.QueryResult<AllRacersQuery, AllRacersQueryVariables>;
 export const PoolsListDocument = gql`
-    query PoolsList {
-  pools(orderBy: totalValueLockedUSD, orderDirection: desc, first: 1000) {
+    query PoolsList($search: String) {
+  pools(
+    where: {searchString_contains: $search}
+    orderBy: totalValueLockedUSD
+    orderDirection: desc
+    first: 1000
+  ) {
     ...PoolFields
     poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
       ...PoolHourDataFields
@@ -14048,6 +14055,7 @@ ${PoolMonthDataFieldsFragmentDoc}`;
  * @example
  * const { data, loading, error } = usePoolsListQuery({
  *   variables: {
+ *      search: // value for 'search'
  *   },
  * });
  */
