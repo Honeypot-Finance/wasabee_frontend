@@ -12,7 +12,6 @@ import { FormContainer } from "./Components";
 
 const PRICE_TYPE_OPTIONS = [
   { key: "lbp", value: PRICE_TYPE.LBP, label: "LBP" },
-  { key: "lbp2", value: PRICE_TYPE.LBP, label: "LBP" },
   // { key: "fixed", value: PRICE_TYPE.FIXED, label: "Fixed Price" },
 ];
 
