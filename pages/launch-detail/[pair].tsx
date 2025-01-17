@@ -562,7 +562,7 @@ const MemeView = observer(() => {
         address: pairAddress as string,
       });
 
-      await pair.init();
+      await pair.init({ force: true });
       pair.raiseToken?.init(true, {
         loadIndexerTokenData: true,
       });

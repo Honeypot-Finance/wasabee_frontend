@@ -328,23 +328,27 @@ export class MemePairContract implements BaseLaunchContract {
     }
   }
 
-  async getProjectInfo() {
-    const cachedProjectInfo = localStorage.getItem(
-      `projectInfo-${wallet.currentChainId}-${this.address}`
-    );
+  async getProjectInfo(force?: boolean) {
+    if (!force) {
+      const cachedProjectInfo = localStorage.getItem(
+        `projectInfo-${wallet.currentChainId}-${this.address}`
+      );
 
-    if (cachedProjectInfo) {
-      this.setData(JSON.parse(cachedProjectInfo));
-      return;
+      if (cachedProjectInfo) {
+        this.setData(JSON.parse(cachedProjectInfo));
+        return;
+      }
     }
 
     const res = await trpcClient.projects.getProjectInfo.query({
       chain_id: wallet.currentChainId,
       pair: this.address,
     });
+
     if (!res) {
       return;
     }
+
     this.socials = [];
     if (res.id) {
       this.databaseId = res.id;
@@ -419,6 +423,7 @@ export class MemePairContract implements BaseLaunchContract {
     startTime,
     endTime,
     ftoState,
+    force = false,
   }: {
     raisedToken?: Token;
     launchedToken?: Token;
@@ -427,8 +432,9 @@ export class MemePairContract implements BaseLaunchContract {
     startTime?: string;
     endTime?: string;
     ftoState?: number;
+    force?: boolean;
   } = {}) {
-    if (this.isInit) {
+    if (this.isInit && !force) {
       return;
     }
 
@@ -455,7 +461,7 @@ export class MemePairContract implements BaseLaunchContract {
       return;
     });
 
-    await Promise.all([this.getProjectInfo(), this.getCanRefund()]);
+    await Promise.all([this.getProjectInfo(force), this.getCanRefund()]);
 
     this.isInit = true;
   }
