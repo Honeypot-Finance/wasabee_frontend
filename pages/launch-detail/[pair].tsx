@@ -558,7 +558,10 @@ const MemeView = observer(() => {
 
   const state = useLocalObservable(() => ({
     pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
-      const pair = new MemePairContract({ address: pairAddress as string });
+      const pair = MemePairContract.loadContract(pairAddress, {
+        address: pairAddress as string,
+      });
+
       await pair.init();
       pair.raiseToken?.init(true, {
         loadIndexerTokenData: true,

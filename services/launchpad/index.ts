@@ -287,7 +287,7 @@ class LaunchPad {
       await trpcClient.indexerFeedRouter.getTrendingMEMEPairs.query();
     if (mostSuccessfulFtos.status === "success") {
       return mostSuccessfulFtos.data?.pairs.items.map((pairAddress) => {
-        const pair = new MemePairContract({
+        const pair = MemePairContract.loadContract(pairAddress.id, {
           address: pairAddress.id,
         });
 
@@ -336,7 +336,7 @@ class LaunchPad {
     if (this.currentLaunchpadType.value === "meme") {
       projects = await Promise.all(
         wallet.currentChain.validatedMemeAddresses.map(async (pairAddress) => {
-          const pair = new MemePairContract({
+          const pair = MemePairContract.loadContract(pairAddress, {
             address: pairAddress,
           });
           await pair.init();
@@ -387,7 +387,7 @@ class LaunchPad {
                     pairAddress.participantsCount
                   ),
                 })
-              : new MemePairContract({
+              : MemePairContract.loadContract(pairAddress.id, {
                   address: pairAddress.id,
                   participantsCount: new BigNumber(
                     pairAddress.participantsCount
@@ -467,7 +467,7 @@ class LaunchPad {
                     pairAddress.pair.participantsCount
                   ),
                 })
-              : new MemePairContract({
+              : MemePairContract.loadContract(pairAddress.pairId, {
                   address: pairAddress.pairId,
                   participantsCount: new BigNumber(
                     pairAddress.pair.participantsCount
@@ -543,7 +543,7 @@ class LaunchPad {
                     pairAddress.participantsCount
                   ),
                 })
-              : new MemePairContract({
+              : MemePairContract.loadContract(pairAddress.id, {
                   address: pairAddress.id,
                   participantsCount: new BigNumber(
                     pairAddress.participantsCount

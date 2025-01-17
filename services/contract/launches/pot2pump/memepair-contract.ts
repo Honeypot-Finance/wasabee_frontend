@@ -18,7 +18,10 @@ import { Pot2Pump } from "@/lib/algebra/graphql/generated/graphql";
 
 export class MemePairContract implements BaseLaunchContract {
   static contractMap: Record<string, MemePairContract> = {};
-  static getContract(address: string, contractArgs: Partial<MemePairContract>) {
+  static loadContract(
+    address: string,
+    contractArgs: Partial<MemePairContract>
+  ) {
     const contract =
       MemePairContract.contractMap[address] ??
       new MemePairContract({ address });

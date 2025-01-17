@@ -133,7 +133,7 @@ export const pot2PumpListToMemePairList = (
 export const pot2PumpToMemePair = (
   pot2Pump: Partial<Pot2Pump>
 ): MemePairContract => {
-  const contract = MemePairContract.getContract(pot2Pump.id!, {
+  const contract = MemePairContract.loadContract(pot2Pump.id!, {
     address: pot2Pump.id,
     depositedLaunchedTokenWithoutDecimals: new BigNumber(
       pot2Pump.DepositLaunchToken

@@ -37,7 +37,6 @@ type TabType = (typeof POT_TABS)[keyof typeof POT_TABS];
 
 const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   const [newTokensList, setNewTokensList] = useState<MemePairContract[]>([]);
-  console.log(newTokensList);
   const [nearSuccessTokensList, setNearSuccessTokensList] = useState<
     MemePairContract[]
   >([]);
@@ -104,11 +103,17 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
 
   useEffect(() => {
     if (!pottingNewTokens) return;
-    console.log(pottingNewTokens);
+
     const list = pot2PumpListToMemePairList(
       (pottingNewTokens?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
     );
+
     if (!list.length || list.length == 0) return;
+    if (!newTokensList.length) {
+      setNewTokensList(list);
+      return;
+    }
+
     setNewTokensList((prev) => {
       prev.map((item) => {
         const i = list.find((item2) => item.address === item2.address);
@@ -138,10 +143,18 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
 
   useEffect(() => {
     if (!pottingNearSuccessTokens) return;
+
     const list = pot2PumpListToMemePairList(
       (pottingNearSuccessTokens?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
     );
+
     if (!list.length || list.length == 0) return;
+
+    if (!nearSuccessTokensList.length) {
+      setNearSuccessTokensList(list);
+      return;
+    }
+
     setNearSuccessTokensList((prev) => {
       prev.map((item2) => {
         const i = list.find((item) => item.address == item2.address);
@@ -152,7 +165,6 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
 
       list.map((item) => {
         if (!prev.find((item2) => item.address === item2.address)) {
-          console.log("add", item.address);
           prev.unshift(item);
         } else {
           const existItem = prev.find(
@@ -174,9 +186,16 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
 
   useEffect(() => {
     if (!pottingHighPriceTokens) return;
+
     const list = pot2PumpListToMemePairList(
       (pottingHighPriceTokens?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
     );
+
+    if (!highPriceTokensList.length) {
+      setHighPriceTokensList(list);
+      return;
+    }
+
     setHighPriceTokensList((prev) => {
       list.map((item) => {
         if (!prev.find((item2) => item.address === item2.address)) {
@@ -200,6 +219,11 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
     const list = pot2PumpListToMemePairList(
       (pottingTrendingTokens?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
     );
+
+    if (!trendingTokensList.length) {
+      setTrendingTokensList(list);
+      return;
+    }
 
     setTrendingTokensList((prev) => {
       list.map((item) => {
