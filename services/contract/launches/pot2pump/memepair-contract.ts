@@ -73,14 +73,10 @@ export class MemePairContract implements BaseLaunchContract {
     makeAutoObservable(this);
   }
 
-  setData(args: Partial<MemePairContract>, setLogoURI: boolean = false) {
+  setData(args: Partial<MemePairContract>) {
     Object.assign(this, {
       ...args,
-      logoUrl: setLogoURI ? args.logoUrl : this.logoUrl,
     });
-    if (setLogoURI) {
-      this.launchedToken?.loadLogoURI();
-    }
   }
 
   get priceChangeDisplay() {
@@ -333,6 +329,15 @@ export class MemePairContract implements BaseLaunchContract {
   }
 
   async getProjectInfo() {
+    const cachedProjectInfo = localStorage.getItem(
+      `projectInfo-${wallet.currentChainId}-${this.address}`
+    );
+
+    if (cachedProjectInfo) {
+      this.setData(JSON.parse(cachedProjectInfo));
+      return;
+    }
+
     const res = await trpcClient.projects.getProjectInfo.query({
       chain_id: wallet.currentChainId,
       pair: this.address,
@@ -387,6 +392,23 @@ export class MemePairContract implements BaseLaunchContract {
     if (res.beravote_space_id) {
       this.beravoteSpaceId = res.beravote_space_id;
     }
+
+    localStorage.setItem(
+      `projectInfo-${wallet.currentChainId}-${this.address}`,
+      JSON.stringify({
+        databaseId: res.id,
+        socials: this.socials,
+        logoUrl: this.logoUrl,
+        bannerUrl: this.bannerUrl,
+        beravoteSpaceId: this.beravoteSpaceId,
+        projectName: this.projectName,
+        description: this.description,
+        telegram: this.telegram,
+        twitter: this.twitter,
+        website: this.website,
+        provider: this.provider,
+      })
+    );
   }
 
   async init({
