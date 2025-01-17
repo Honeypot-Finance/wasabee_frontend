@@ -47,15 +47,15 @@ const STEP_DATA = [
   {
     title: "Tokenomics & Preview",
   },
-  {
-    title: "Token Vesting",
-  },
+  // {
+  //   title: "Token Vesting",
+  // },
   {
     title: "Project Info",
   },
-  {
-    title: "Socials & Community",
-  },
+  // {
+  //   title: "Socials & Community",
+  // },
   {
     title: "Review",
   },
@@ -165,7 +165,7 @@ const LaunchProject = () => {
   };
 
   return (
-    <div className="w-full md:p-6 md:max-w-full xl:max-w-[1322px] mx-auto mb-[30vh] font-gliker mt-[220px] relative">
+    <div className="w-full text-[#202020]/80 md:p-6 md:max-w-full xl:max-w-[1322px] mx-auto mb-[30vh] font-gliker mt-[220px] relative">
       {/* Sticky icon */}
       <div className="absolute bottom-[calc(100%-25px)] left-0" >
         <img src="/images/launch-project/launch-project-sticky1.png" alt="sticky1" />

@@ -5,7 +5,7 @@ const SelectField = <T extends object>(props: SelectProps<T>) => {
   return (
     <div className="flex flex-col gap-3 w-full">
       {
-        props.label && <label className="font-normal text-base leading-[19.2px] text-[#202020] opacity-80">{props.label}</label>
+        props.label && <label className="font-normal text-base leading-[19.2px] text-[#202020]/80">{props.label}</label>
       }
       <Select
         aria-label="Select"
