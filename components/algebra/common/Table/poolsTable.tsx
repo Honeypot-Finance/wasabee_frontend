@@ -76,8 +76,12 @@ const PoolsTable = <TData, TValue>({
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    setTableData(data as Pool[]);
-  }, [data]);
+    if (selectedFilter === "myPools") {
+      setTableData(userPools as Pool[]);
+    } else {
+      setTableData(data as Pool[]);
+    }
+  }, [data, selectedFilter, userPools]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -122,14 +126,6 @@ const PoolsTable = <TData, TValue>({
     totalRows
   );
 
-  const handleChangePools = (filter: string) => {
-    if (filter === "myPools") {
-      setTableData(userPools as Pool[]);
-    } else {
-      setTableData(data as Pool[]);
-    }
-  };
-
   return (
     <div>
       {searchID && showOptions && (
@@ -140,7 +136,6 @@ const PoolsTable = <TData, TValue>({
                 <button
                   key={filter.key}
                   onClick={() => {
-                    handleChangePools(filter.key);
                     setSelectedFilter(filter.key);
                   }}
                   className={`p-2.5 cursor-pointer ${
