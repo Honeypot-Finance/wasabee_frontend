@@ -12,6 +12,7 @@ import { FormContainer } from "./Components";
 
 const PRICE_TYPE_OPTIONS = [
   { key: "lbp", value: PRICE_TYPE.LBP, label: "LBP" },
+  { key: "lbp2", value: PRICE_TYPE.LBP, label: "LBP" },
   // { key: "fixed", value: PRICE_TYPE.FIXED, label: "Fixed Price" },
 ];
 
@@ -62,7 +63,11 @@ const SalesStructure = () => {
                   <SelectItem
                     key={price.key}
                     value={price.value}
-                    classNames={{}}
+                    classNames={{
+                      base: "select-item bg-white py-3 item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-0 rounded-none",
+                      title: 'text-base leading-[16px]',
+                      selectedIcon: 'block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden'
+                    }}
                   >
                     {price.label}
                   </SelectItem>
@@ -90,7 +95,13 @@ const SalesStructure = () => {
                 disallowEmptySelection
               >
                 {LBP_TYPE_OPTIONS.map((price) => (
-                  <SelectItem key={price.key} value={price.value}>
+                  <SelectItem key={price.key} value={price.value}
+                    classNames={{
+                      base: "select-item bg-white py-3 item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-0 rounded-none",
+                      title: 'text-base leading-[16px]',
+                      selectedIcon: 'block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden'
+                    }}
+                  >
                     {price.label}
                   </SelectItem>
                 ))}
@@ -146,14 +157,14 @@ const SalesStructure = () => {
 
       <div className="mt-6">
         <h5 className="text-2xl text-center">Token Claim Delay</h5>
-        <p className="text-base text-center">
+        <p className="text-base text-center max-w-[968.6px] mx-auto mb-4">
           {isPriceLbp
             ? "How much maximum you want to raise. The Sale will conclude once this number is reached."
             : "You can select to delay users claiming tokens at the conclusion of the sale to avoid front running of setting up liquidity pools. Select a time on the calendar that users can begin claiming tokens after the sale has concluded. "}
         </p>
 
         {isPriceLbp && (
-          <div className="flex flex-col gap-4 mt-2">
+          <div className="flex gap-6 items-center">
             <Controller
               name="tokenClaimDelayHours"
               control={control}

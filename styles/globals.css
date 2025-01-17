@@ -412,3 +412,8 @@ input[type="number"] {
 [data-rk] ._1e83yfu3 {
   z-index: 3646 !important;
 }
+
+/* Select */
+.select-item[data-selected="true"] span[aria-hidden="true"] {
+  display: block;
+}
