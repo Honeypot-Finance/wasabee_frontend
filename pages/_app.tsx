@@ -15,7 +15,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { config } from "@/config/wagmi";
 import { trpc, trpcQueryClient } from "../lib/trpc";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { wallet } from "@/services/wallet";
 import { DM_Sans, Inter } from "next/font/google";
 import { Inspector, InspectParams } from "react-dev-inspector";
@@ -30,11 +30,14 @@ import {
   DynamicWidget,
 } from "@dynamic-labs/sdk-react-core";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
+
 // enableStaticRendering(true)
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-       retry: 12
+      retryDelay: 1000,
+      retry: 12,
+      gcTime: 1000 * 60,
     },
   },
 });
@@ -76,6 +79,7 @@ export default function App({
   Component: NextLayoutPage;
 }) {
   const ComponentLayout = Component.Layout || Layout;
+
   return (
     <trpc.Provider client={trpcQueryClient} queryClient={queryClient}>
       <Analytics />
@@ -95,6 +99,7 @@ export default function App({
                       if (!codeInfo) {
                         return;
                       }
+
                       window.open(
                         `cursor://file/${codeInfo.absolutePath}:${codeInfo.lineNumber}:${codeInfo.columnNumber}`,
                         "_blank"

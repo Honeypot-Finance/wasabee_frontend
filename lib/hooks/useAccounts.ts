@@ -27,7 +27,7 @@ export function useAccounts(
       variables: {
         skip: (page - 1) * pageSize,
         first: pageSize,
-        address: searchAddress ? { id: searchAddress.toLowerCase() } : null,
+        address: !!searchAddress ? searchAddress : undefined,
         exclude: [ALGEBRA_ROUTER.toLowerCase()],
       },
     }

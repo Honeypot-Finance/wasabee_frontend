@@ -37,6 +37,7 @@ type TabType = (typeof POT_TABS)[keyof typeof POT_TABS];
 
 const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   const [newTokensList, setNewTokensList] = useState<MemePairContract[]>([]);
+  console.log(newTokensList);
   const [nearSuccessTokensList, setNearSuccessTokensList] = useState<
     MemePairContract[]
   >([]);
@@ -55,7 +56,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(Math.floor(new Date().getTime() / 1000));
-    }, 10000);
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
 
@@ -64,9 +65,9 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
       variables: {
         endTime: currentTime,
       },
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: "network-only",
       notifyOnNetworkStatusChange: true,
-      pollInterval: 5000, // Refetch every 10 seconds
+      skip: !wallet.isInit,
     });
 
   const {
@@ -76,30 +77,34 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
     variables: {
       endTime: currentTime,
     },
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "network-only",
     notifyOnNetworkStatusChange: true,
-    pollInterval: 5000, // Refetch every 10 seconds
+    skip: !wallet.isInit,
   });
 
   const {
     data: pottingHighPriceTokens,
     loading: isPottingHighPriceTokensLoading,
   } = usePot2PumpPottingHighPriceQuery({
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "network-only",
     notifyOnNetworkStatusChange: true,
     pollInterval: 5000, // Refetch every 10 seconds
+    skip: !wallet.isInit,
   });
 
   const {
     data: pottingTrendingTokens,
     loading: isPottingTrendingTokensLoading,
   } = usePot2PumpPottingTrendingQuery({
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "network-only",
     notifyOnNetworkStatusChange: true,
     pollInterval: 5000, // Refetch every 10 seconds
+    skip: !wallet.isInit,
   });
 
   useEffect(() => {
+    if (!pottingNewTokens) return;
+    console.log(pottingNewTokens);
     const list = pot2PumpListToMemePairList(
       (pottingNewTokens?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
     );
@@ -132,10 +137,10 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   }, [pottingNewTokens]);
 
   useEffect(() => {
+    if (!pottingNearSuccessTokens) return;
     const list = pot2PumpListToMemePairList(
       (pottingNearSuccessTokens?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
     );
-    console.log(list);
     if (!list.length || list.length == 0) return;
     setNearSuccessTokensList((prev) => {
       prev.map((item2) => {
@@ -168,6 +173,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   }, [pottingNearSuccessTokens]);
 
   useEffect(() => {
+    if (!pottingHighPriceTokens) return;
     const list = pot2PumpListToMemePairList(
       (pottingHighPriceTokens?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
     );

@@ -14,8 +14,18 @@ import {
 import { wallet } from "@/services/wallet";
 import { ICHIVaultContract } from "../../aquabera/ICHIVault-contract";
 import { BaseLaunchContract } from "../base-launch-contract";
+import { Pot2Pump } from "@/lib/algebra/graphql/generated/graphql";
 
 export class MemePairContract implements BaseLaunchContract {
+  static contractMap: Record<string, MemePairContract> = {};
+  static getContract(address: string, contractArgs: Partial<MemePairContract>) {
+    const contract =
+      MemePairContract.contractMap[address] ??
+      new MemePairContract({ address });
+    MemePairContract.contractMap[address] = contract;
+    contract.setData(contractArgs);
+    return contract;
+  }
   databaseId: number | undefined = undefined;
   address = "";
   name: string = "";

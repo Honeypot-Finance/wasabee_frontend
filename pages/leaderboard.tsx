@@ -9,6 +9,7 @@ import {
 } from "@/lib/hooks/useAccounts";
 import { shortenAddressString, formatVolume } from "@/lib/utils";
 import { Link, Tooltip } from "@nextui-org/react";
+import { debounce } from "lodash";
 
 interface LeaderboardItem {
   rank: number;
@@ -28,7 +29,7 @@ interface StatsCard {
 
 const LeaderboardPage = () => {
   const [searchAddress, setSearchAddress] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const searchDebounceHandler = debounce(setSearchAddress, 500);
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const { stats, loading: statsLoading } = useLeaderboard();
@@ -38,7 +39,7 @@ const LeaderboardPage = () => {
     loading: accountsLoading,
     hasMore,
     loadMore,
-  } = useAccounts(page, pageSize, debouncedSearch);
+  } = useAccounts(page, pageSize, searchAddress);
   const { accounts: topSwapAccounts, loading: topSwapAccountsLoading } =
     useTopSwapAccounts();
   const {
@@ -49,15 +50,6 @@ const LeaderboardPage = () => {
     accounts: topParticipateAccounts,
     loading: topParticipateAccountsLoading,
   } = useTopParticipateAccounts();
-
-  // 使用防抖处理搜索
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchAddress);
-      setPage(1); // 重置页码
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchAddress]);
 
   // 顶部统计数据
   const statsCards: StatsCard[] = [
@@ -161,14 +153,14 @@ const LeaderboardPage = () => {
                 <input
                   type="text"
                   value={searchAddress}
-                  onChange={(e) => setSearchAddress(e.target.value)}
+                  onChange={(e) => searchDebounceHandler(e.target.value)}
                   placeholder="Search by address"
                   className="w-full bg-[#1a1b1f] border border-gray-700 rounded-lg px-4 py-2 text-white"
                 />
                 {searchAddress && (
                   <button
                     onClick={() => {
-                      setSearchAddress("");
+                      searchDebounceHandler("");
                       setPage(1);
                     }}
                     className="px-4 py-2 bg-[#2a2a2a] rounded-lg text-white hover:bg-[#3a3a3a] transition-colors"
@@ -177,7 +169,7 @@ const LeaderboardPage = () => {
                   </button>
                 )}
               </div>
-              {debouncedSearch && (
+              {searchAddress && (
                 <div className="text-gray-400 text-sm ml-4">
                   {accountsLoading
                     ? "Searching..."
