@@ -1,4 +1,4 @@
-import { Copy } from "@/components/copy";
+import { Copy } from "@/components/Copy";
 import { wallet } from "@/services/wallet";
 import Link from "next/link";
 import React from "react";

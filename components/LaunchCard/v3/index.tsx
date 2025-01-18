@@ -88,17 +88,26 @@ const ProjectActions = ({
 const DetailLaunchCard = observer(
   ({
     pair,
-    action,
-    projectType,
     type,
+    action,
+    theme = "light",
+    // projectType,
   }: {
     pair: LaunchContract;
     action: React.ReactNode;
-    projectType: LaunchContractType;
+    // projectType: LaunchContractType;
     type: launchCardVariants;
+    theme?: "light" | "dark";
   }) => {
     return (
-      <div className="flex flex-col h-full justify-between gap-y-4 bg-white px-4 py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative overflow-hidden">
+      <div
+        className={cn(
+          "flex flex-col h-full justify-between gap-y-4 bg-white px-4 py-6 rounded-3xl relative overflow-hidden bg-[url('/images/card-container/honey/top-border.svg')] bg-[length:auto_24px] bg-left-top bg-repeat-x pt-6",
+          theme === "dark"
+            ? "shadow-[1px_3px_0px_0px_#202020] border-[#202020] border-[1.5px]"
+            : "shadow-[2px_2px_0px_0px_#FFCD4D] border-none"
+        )}
+      >
         {/* <OptionsDropdown
           className="ml-auto text-black absolute -top-1.5 right-3.5"
           options={[
@@ -124,7 +133,6 @@ const DetailLaunchCard = observer(
             }),
           ]}
         /> */}
-        <div className="bg-[url('/images/pumping/inline-border.svg')] h-6 absolute top-0 left-0 w-full bg-contain bg-left-top bg-repeat-x"></div>
         <div className="text-[#202020] space-y-4 h-full flex flex-col justify-between">
           <div className="flex justify-between items-start">
             <div>
@@ -779,13 +787,15 @@ const FeaturedLaunchCard = observer(
 export const LaunchCardV3 = observer(
   ({
     pair,
-    action,
     type,
+    action,
     className,
+    theme = "light",
   }: {
     type?: launchCardVariants;
     pair?: LaunchContract | null;
     action: React.ReactNode;
+    theme?: "light" | "dark";
   } & Partial<HTMLAttributes<any>>) => {
     if (!pair) return <></>;
     const projectType: LaunchContractType = getLaunchContractType(pair);
@@ -808,7 +818,8 @@ export const LaunchCardV3 = observer(
                 pair={pair}
                 action={action}
                 type="detail"
-                projectType={projectType}
+                theme={theme}
+                // projectType={projectType}
               />
             )}
 

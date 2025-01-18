@@ -7,7 +7,7 @@ import {
   TransactionType,
 } from "@/lib/algebra/graphql/generated/graphql";
 import { truncate } from "@/lib/format";
-import { Copy } from "@/components/copy";
+import { Copy } from "@/components/Copy";
 import { VscCopy } from "react-icons/vsc";
 import { ExternalLink } from "lucide-react";
 import dayjs from "dayjs";

@@ -2,22 +2,14 @@ import { observer } from "mobx-react-lite";
 import { useState, useEffect } from "react";
 import { Pot2PumpService } from "@/services/launchpad/pot2pump";
 import { wallet } from "@/services/wallet";
-import {
-  Card,
-  CardBody,
-  Button as NextButton,
-  Tab,
-  Tabs,
-} from "@nextui-org/react";
+import { Tab, Tabs } from "@nextui-org/react";
 import Pagination from "@/components/Pagination/Pagination";
 import { LaunchCardV3 } from "@/components/LaunchCard/v3";
-import launchpad from "@/services/launchpad";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import {
   canClaimPot2Pump,
   canRefundPot2Pump,
 } from "@/lib/algebra/graphql/clients/pot2pump";
-import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
-import { HoneyContainer } from "@/components/CardContianer";
 
 export const ParticipatedLaunches = observer(() => {
   const [myProjects, setMyProjects] = useState<Pot2PumpService>();
@@ -35,33 +27,25 @@ export const ParticipatedLaunches = observer(() => {
     const newPumpingProjects = new Pot2PumpService();
     setMyProjects(newPumpingProjects);
     newPumpingProjects.participatedPairs.reloadPage();
-    const canClaim = canClaimPot2Pump(wallet.account).then((res) => {
+    canClaimPot2Pump(wallet.account).then((res) => {
       setCanClaimPot2PumpList(res);
     });
-    const canRefund = canRefundPot2Pump(wallet.account).then((res) => {
+    canRefundPot2Pump(wallet.account).then((res) => {
       setCanRefundPot2PumpList(res);
     });
   }, [wallet.isInit]);
 
   return (
-    <HoneyContainer>
-      {/* <div className="flex">
-          <NextButton
-            isDisabled={launchpad.currentLaunchpadType.value === "meme"}
-            className={
-              launchpad.currentLaunchpadType.value === "meme"
-                ? "opacity-100"
-                : "opacity-50"
-            }
-            onClick={() => {
-              launchpad.currentLaunchpadType.setValue("meme");
-              launchpad.participatedPairs.reloadPage();
-            }}
-          >
-            MEME
-          </NextButton>
-        </div>{" "} */}
-      <Tabs>
+    <div className="w-full relative custom-dashed-3xl bg-white p-6">
+      <div className="text-4xl absolute top-8 left-6">Participated Launch</div>
+      <Tabs
+        classNames={{
+          base: "relative w-full",
+          tabList:
+            "flex rounded-2xl border border-[#202020] bg-white p-4 shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] py-2 px-3.5 mb-6 ml-auto z-10",
+          panel: "w-full",
+        }}
+      >
         <Tab key="participated" title="Participated">
           {myProjects && (
             <Pagination
@@ -71,6 +55,7 @@ export const ParticipatedLaunches = observer(() => {
                   key={project.address}
                   pair={project}
                   action={<></>}
+                  theme="dark"
                 />
               )}
               classNames={{
@@ -97,7 +82,7 @@ export const ParticipatedLaunches = observer(() => {
           </div>
         </Tab>
       </Tabs>
-    </HoneyContainer>
+    </div>
   );
 });
 

@@ -131,6 +131,11 @@ input[type="number"] {
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='99.6%25' height='98%25' x='0.15%25' y='0.15%25' rx='15' ry='15' fill='none' stroke='black' stroke-width='1' stroke-dasharray='8 4' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
 }
 
+.custom-dashed-3xl {
+  @apply border-none rounded-3xl;
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='99.6%25' height='99.6%25' x='0.15%25' y='0.15%25' rx='23' ry='23' fill='none' stroke='black' stroke-width='1' stroke-dasharray='8 4' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+}
+
 *::-webkit-scrollbar {
   height: 18px;
   width: 6px;

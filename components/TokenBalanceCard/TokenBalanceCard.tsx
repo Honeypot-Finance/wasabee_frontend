@@ -45,7 +45,7 @@ export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
     : `$${Number(token.derivedUSD).toFixed(2)}`;
 
   return (
-    <tr className="hover:bg-[#2D2D2D]/50 transition-colors bg-white text-black">
+    <tr className="transition-colors bg-white text-black">
       {/* Asset Column */}
       <td className="py-4 px-6">
         <div className="flex items-center gap-3">
@@ -85,13 +85,13 @@ export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
       {/* Proportion Column */}
       <td className="py-4 px-6 text-right">
         <div className="flex items-center justify-end gap-2">
-          <div className="w-[200px] h-1 bg-[#2D2D2D] rounded-full overflow-hidden">
+          <div className="w-[230px] h-4 bg-[#DBE7E0] rounded-full overflow-hidden">
             <div
-              className="h-full transition-all duration-300 bg-[#4ADE80]"
+              className="h-full transition-all duration-300 bg-[#48DE84]"
               style={{ width: `${proportion}%` }}
             />
           </div>
-          <span className="text-black">{proportion}%</span>
+          <span className="text-black w-[60px] text-right">{proportion}%</span>
         </div>
       </td>
 

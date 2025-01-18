@@ -1,6 +1,6 @@
 import { Token } from "@/services/contract/token";
 import TokenLogo from "../TokenLogo/TokenLogo";
-import { Copy } from "../copy";
+import { Copy } from "../Copy";
 import { observer } from "mobx-react-lite";
 import CardContianer from "../CardContianer/CardContianer";
 import { PairContract } from "@/services/contract/dex/liquidity/pair-contract";

@@ -123,9 +123,9 @@ const SwapPair = () => {
   const formattedAmounts = {
     [independentField]: typedValue,
     [dependentField]: showWrap
-      ? (parsedAmounts[independentField]?.toExact() ?? "")
-      : (parsedAmounts[dependentField]?.toFixed(
-          (parsedAmounts[dependentField]?.currency.decimals || 6) / 2
+      ? (parsedAmounts[independentField as keyof typeof parsedAmounts]?.toExact() ?? "")
+      : (parsedAmounts[dependentField as keyof typeof parsedAmounts]?.toFixed(
+          (parsedAmounts[dependentField as keyof typeof parsedAmounts]?.currency.decimals || 6) / 2
         ) ?? ""),
   };
 

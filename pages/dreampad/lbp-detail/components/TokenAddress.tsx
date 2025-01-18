@@ -1,6 +1,6 @@
 import React from "react";
 import { truncate } from "@/lib/format";
-import { Copy } from "@/components/copy";
+import { Copy } from "@/components/Copy";
 import { VscCopy } from "react-icons/vsc";
 import { Skeleton } from "@nextui-org/react";
 

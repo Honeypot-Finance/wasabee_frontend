@@ -19,7 +19,7 @@ import { useAccount } from "wagmi";
 import { Input } from "../input/index";
 import { SpinnerContainer } from "../Spinner";
 import { NoData } from "../table";
-import { Copy } from "../copy/index";
+import { Copy } from "../Copy/index";
 import { BiLinkExternal } from "react-icons/bi";
 import { wallet } from "@/services/wallet";
 import TokenLogo from "../TokenLogo/TokenLogo";

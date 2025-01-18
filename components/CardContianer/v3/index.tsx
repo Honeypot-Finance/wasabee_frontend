@@ -1,0 +1,58 @@
+import { cn } from "@/lib/tailwindcss";
+import { ReactNode } from "react";
+
+interface HoneyContainerProps {
+  children: ReactNode;
+  bordered?: boolean;
+  variant?: "default" | "wide";
+  className?: string;
+  showTopBorder?: boolean;
+  showBottomBorder?: boolean;
+}
+
+function CardContainer({
+  children,
+  className,
+  bordered = true,
+  variant = "default",
+  showTopBorder = true,
+  showBottomBorder = true,
+}: HoneyContainerProps) {
+  return (
+    <div className={cn("w-full h-full", className)}>
+      <div
+        style={
+          {
+            backgroundImage: `${[
+              showTopBorder ? "url('/images/card-container/honey/honey-border.png')" : "",
+              showBottomBorder
+                ? `url('${
+                    variant === "wide"
+                      ? "/images/card-container/honey/bottom-border.svg"
+                      : "/images/card-container/dark/bottom-border.svg"
+                  }')`
+                : "",
+            ]
+              .filter(Boolean)
+              .join(", ")}`,
+          } as React.CSSProperties
+        }
+        className={cn(
+          "flex flex-col h-full w-full gap-y-4 justify-center items-center bg-[#FFCD4D] rounded-2xl text-[#202020]",
+          bordered && [
+            "px-4",
+            showTopBorder && "pt-[70px]",
+            showBottomBorder && "pb-[70px]",
+            "bg-[position:-65px_top,_left_bottom]",
+            "bg-[size:auto_70px,_auto_70px]",
+            "bg-repeat-x"
+          ].filter(Boolean).join(" ")
+        )}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export default CardContainer;
