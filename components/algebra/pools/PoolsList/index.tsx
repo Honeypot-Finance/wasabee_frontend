@@ -62,26 +62,6 @@ const PoolsList = ({
     refetch: refetchUserPools,
   } = useUserPools(wallet.account);
 
-  useEffect(() => {
-    if (userPools || isUserPoolsLoading) return;
-
-    const interval = setInterval(() => {
-      refetchUserPools();
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [userPools, refetchUserPools, isUserPoolsLoading]);
-
-  useEffect(() => {
-    if (pools || isPoolsListLoading) return;
-
-    const interval = setInterval(() => {
-      refetch();
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [pools, refetch, isPoolsListLoading]);
-
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
       client: farmingClient,

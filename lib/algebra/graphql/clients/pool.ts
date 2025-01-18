@@ -57,7 +57,7 @@ export const useUserPools = (userAddress: string) => {
     variables: { account: userAddress.toLowerCase() },
     //fetchPolicy: "cache-and-network",
     //notifyOnNetworkStatusChange: true,
-    pollInterval: 10000,
+    // pollInterval: 10000,
     onError: (error) => {
       setTimeout(() => {
         refetch();
@@ -169,7 +169,7 @@ export const useUserPools = (userAddress: string) => {
 
       setIsLoading(false);
     });
-  }, [algebraPositionManager.simulate, data]);
+  }, [algebraPositionManager.simulate, data, wallet.isInit]);
 
   return {
     data: { pools: Object.values(pools) ?? [] },
