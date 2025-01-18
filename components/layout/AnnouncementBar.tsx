@@ -4,6 +4,7 @@ import style from "./AnnouncementBar.module.css";
 import announceIcon from "@/public/images/icons/announcement-icon.png";
 import Image from "next/image";
 import { cn } from "@/lib/tailwindcss";
+import _ from "lodash";
 
 interface AnnouncementBarProps {
   slogans: React.ReactNode[];

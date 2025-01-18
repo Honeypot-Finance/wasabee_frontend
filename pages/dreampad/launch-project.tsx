@@ -35,6 +35,7 @@ import {
   // tokenVestingSchema,
 } from "@/constants/launch-project";
 import { LBPButton } from "@/components/LBPFormItems/Components";
+import _ from "lodash";
 
 const STEP_DATA = [
   {
