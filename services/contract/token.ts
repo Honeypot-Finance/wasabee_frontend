@@ -151,9 +151,14 @@ export class Token implements BaseContract {
         `token-logo-uri-${wallet.currentChainId}-${this.address.toLowerCase()}`
       );
 
-      if (cachedLocalLogoURI) {
+      if (
+        cachedLocalLogoURI &&
+        cachedLocalLogoURI !== "null" &&
+        cachedLocalLogoURI !== "undefined"
+      ) {
+        console.log("cachedLocalLogoURI", cachedLocalLogoURI);
         this.setLogoURI(cachedLocalLogoURI);
-        return;
+        return this.logoURI;
       }
     }
 
@@ -175,10 +180,12 @@ export class Token implements BaseContract {
 
     launch[0]?.logo_url && this.setLogoURI(launch[0].logo_url);
 
-    localStorage.setItem(
-      `token-logo-uri-${wallet.currentChainId}-${this.address.toLowerCase()}`,
-      launch[0]?.logo_url
-    );
+    if (launch[0]?.logo_url) {
+      localStorage.setItem(
+        `token-logo-uri-${wallet.currentChainId}-${this.address.toLowerCase()}`,
+        launch[0]?.logo_url
+      );
+    }
 
     return this.logoURI;
   }
