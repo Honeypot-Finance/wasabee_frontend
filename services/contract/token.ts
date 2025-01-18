@@ -152,11 +152,10 @@ export class Token implements BaseContract {
       );
 
       if (
-        cachedLocalLogoURI &&
+        !!cachedLocalLogoURI &&
         cachedLocalLogoURI !== "null" &&
         cachedLocalLogoURI !== "undefined"
       ) {
-        console.log("cachedLocalLogoURI", cachedLocalLogoURI);
         this.setLogoURI(cachedLocalLogoURI);
         return this.logoURI;
       }
