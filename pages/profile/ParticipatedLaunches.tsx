@@ -43,7 +43,9 @@ export const ParticipatedLaunches = observer(() => {
           base: "relative w-full",
           tabList:
             "flex rounded-2xl border border-[#202020] bg-white p-4 shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] py-2 px-3.5 mb-6 ml-auto z-10",
+          cursor: "bg-[#FFCD4D] border border-black shadow-[2px_2px_0px_0px_#000000] text-sm",
           panel: "w-full",
+          tabContent: "!text-[#202020]",
         }}
       >
         <Tab key="participated" title="Participated">
