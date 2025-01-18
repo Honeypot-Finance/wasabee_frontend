@@ -139,11 +139,22 @@ export class Token implements BaseContract {
     });
   }
 
-  async loadLogoURI() {
+  async loadLogoURI(force?: boolean) {
     // console.log("this.logoURI", this.logoURI);
-
     if (!!this.logoURI || !wallet.isInit) {
       return;
+    }
+
+    if (!force) {
+      //cache the logoURI
+      const cachedLocalLogoURI = localStorage.getItem(
+        `token-logo-uri-${wallet.currentChainId}-${this.address.toLowerCase()}`
+      );
+
+      if (cachedLocalLogoURI) {
+        this.setLogoURI(cachedLocalLogoURI);
+        return;
+      }
     }
 
     if (
@@ -163,6 +174,11 @@ export class Token implements BaseContract {
     });
 
     launch[0]?.logo_url && this.setLogoURI(launch[0].logo_url);
+
+    localStorage.setItem(
+      `token-logo-uri-${wallet.currentChainId}-${this.address.toLowerCase()}`,
+      launch[0]?.logo_url
+    );
 
     return this.logoURI;
   }
