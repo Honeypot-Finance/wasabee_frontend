@@ -558,8 +558,11 @@ const MemeView = observer(() => {
 
   const state = useLocalObservable(() => ({
     pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
-      const pair = new MemePairContract({ address: pairAddress as string });
-      await pair.init();
+      const pair = MemePairContract.loadContract(pairAddress, {
+        address: pairAddress as string,
+      });
+
+      await pair.init({ force: true });
       pair.raiseToken?.init(true, {
         loadIndexerTokenData: true,
       });
@@ -653,6 +656,7 @@ const MemeView = observer(() => {
       pairAddress: pairAddress as string,
     });
   }, [wallet.isInit, pairAddress]);
+
   useEffect(() => {
     if (!state.pair.value?.launchedToken) {
       return;

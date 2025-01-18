@@ -442,7 +442,7 @@ const Confirm = (props: Props) => {
             redemptionDelay:
               tokenClaimDelayHours * 60 * 60 + tokenClaimDelayMinutes * 60,
           });
-          router.push(`/lbp-detail/${poolAddress}`);
+          router.push(`/dreampad/lbp-detail/${poolAddress}`);
         }
       } catch (error) {
         console.log(error);

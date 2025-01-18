@@ -32,7 +32,6 @@ export function usePool(
     getCode(wallet.publicClient, {
       address: address as Address,
     }).then((code) => {
-      console.log("code", code);
       setCode(code);
     });
   }, [address]);
@@ -99,19 +98,6 @@ export function usePool(
   const isTokensLoading = !code
     ? false
     : Boolean(address) && (!token0 || !token1);
-
-  console.log("Pool state:", {
-    address,
-    code,
-    isPoolLoading,
-    isTokensLoading,
-    isPoolError,
-    tickSpacing,
-    globalState,
-    liquidity,
-    token0,
-    token1,
-  });
 
   return useMemo(() => {
     if (isPoolError) return [PoolState.INVALID, null];

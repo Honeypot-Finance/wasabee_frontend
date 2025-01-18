@@ -16,12 +16,13 @@ export const LEADERBOARD_QUERY = gql`
 `;
 
 export const ACCOUNTS_WITH_ADDRESS_QUERY = gql`
-  query accounts($skip: Int!, $first: Int!, $address: String!) {
+  query accounts($skip: Int!, $first: Int!, $address: ID!) {
     accounts(
       skip: $skip
       first: $first
       orderBy: totalSpendUSD
       orderDirection: desc
+      where: { id: $address }
     ) {
       id
       swapCount

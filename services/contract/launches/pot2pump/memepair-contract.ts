@@ -14,8 +14,21 @@ import {
 import { wallet } from "@/services/wallet";
 import { ICHIVaultContract } from "../../aquabera/ICHIVault-contract";
 import { BaseLaunchContract } from "../base-launch-contract";
+import { Pot2Pump } from "@/lib/algebra/graphql/generated/graphql";
 
 export class MemePairContract implements BaseLaunchContract {
+  static contractMap: Record<string, MemePairContract> = {};
+  static loadContract(
+    address: string,
+    contractArgs: Partial<MemePairContract>
+  ) {
+    const contract =
+      MemePairContract.contractMap[address] ??
+      new MemePairContract({ address });
+    MemePairContract.contractMap[address] = contract;
+    contract.setData(contractArgs);
+    return contract;
+  }
   databaseId: number | undefined = undefined;
   address = "";
   name: string = "";
@@ -60,14 +73,10 @@ export class MemePairContract implements BaseLaunchContract {
     makeAutoObservable(this);
   }
 
-  setData(args: Partial<MemePairContract>, setLogoURI: boolean = false) {
+  setData(args: Partial<MemePairContract>) {
     Object.assign(this, {
       ...args,
-      logoUrl: setLogoURI ? args.logoUrl : this.logoUrl,
     });
-    if (setLogoURI) {
-      this.launchedToken?.loadLogoURI();
-    }
   }
 
   get priceChangeDisplay() {
@@ -319,14 +328,27 @@ export class MemePairContract implements BaseLaunchContract {
     }
   }
 
-  async getProjectInfo() {
+  async getProjectInfo(force?: boolean) {
+    if (!force) {
+      const cachedProjectInfo = localStorage.getItem(
+        `projectInfo-${wallet.currentChainId}-${this.address}`
+      );
+
+      if (cachedProjectInfo) {
+        this.setData(JSON.parse(cachedProjectInfo));
+        return;
+      }
+    }
+
     const res = await trpcClient.projects.getProjectInfo.query({
       chain_id: wallet.currentChainId,
       pair: this.address,
     });
+
     if (!res) {
       return;
     }
+
     this.socials = [];
     if (res.id) {
       this.databaseId = res.id;
@@ -374,6 +396,23 @@ export class MemePairContract implements BaseLaunchContract {
     if (res.beravote_space_id) {
       this.beravoteSpaceId = res.beravote_space_id;
     }
+
+    localStorage.setItem(
+      `projectInfo-${wallet.currentChainId}-${this.address}`,
+      JSON.stringify({
+        databaseId: res.id,
+        socials: this.socials,
+        logoUrl: this.logoUrl,
+        bannerUrl: this.bannerUrl,
+        beravoteSpaceId: this.beravoteSpaceId,
+        projectName: this.projectName,
+        description: this.description,
+        telegram: this.telegram,
+        twitter: this.twitter,
+        website: this.website,
+        provider: this.provider,
+      })
+    );
   }
 
   async init({
@@ -384,6 +423,7 @@ export class MemePairContract implements BaseLaunchContract {
     startTime,
     endTime,
     ftoState,
+    force = false,
   }: {
     raisedToken?: Token;
     launchedToken?: Token;
@@ -392,8 +432,9 @@ export class MemePairContract implements BaseLaunchContract {
     startTime?: string;
     endTime?: string;
     ftoState?: number;
+    force?: boolean;
   } = {}) {
-    if (this.isInit) {
+    if (this.isInit && !force) {
       return;
     }
 
@@ -420,7 +461,7 @@ export class MemePairContract implements BaseLaunchContract {
       return;
     });
 
-    await Promise.all([this.getProjectInfo(), this.getCanRefund()]);
+    await Promise.all([this.getProjectInfo(force), this.getCanRefund()]);
 
     this.isInit = true;
   }
