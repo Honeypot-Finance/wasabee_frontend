@@ -288,6 +288,7 @@ const PoolsTable = <TData, TValue>({
                   </td>
                   <td className="py-4 px-6 text-center">
                     <Button
+                      className="bg-transparent"
                       variant="outline"
                       size="sm"
                       onClick={(e) => {

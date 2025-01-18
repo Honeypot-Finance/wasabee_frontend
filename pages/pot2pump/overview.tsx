@@ -24,6 +24,7 @@ import {
   usePot2PumpPottingTrendingQuery,
 } from "@/lib/algebra/graphql/generated/graphql";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
+import CardContainer from "@/components/CardContianer/v3";
 
 // 在组件外部定义常量
 const POT_TABS = {
@@ -259,62 +260,58 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   }, [highPriceTokensList]);
 
   return (
-    <div className="w-full flex flex-col justify-center items-center px-4">
-      <div className="w-full max-w-[1200px] mb-6 flex flex-col justify-center bg-[#FFCD4D] rounded-2xl px-4 pb-[50px] md:pb-8 relative pt-4 md:pt-12 text-black">
-        <div
-          className={
-            "bg-[url('/images/pumping/outline-border.png')] bg-left-top bg-contain bg-repeat-x h-4 md:h-12 absolute top-0 left-0 w-full rounded-t-2xl"
-          }
-        ></div>
-
-        {/* Featured Slideshow */}
-        <div className="relative">
-          <div className="user-select-none opacity-0 min-h-[2 00px]">
-            <LaunchCardV3
-              type="featured"
-              pair={highPriceTokensList?.[currentSlide]}
-              action={<></>}
-            />
-          </div>
-          {trendingTokensList.length > 0 ? (
-            trendingTokensList
-              ?.sort(
-                (a, b) =>
-                  Number(b.launchedToken?.priceChange24hPercentage) -
-                  Number(a.launchedToken?.priceChange24hPercentage)
-              )
-              ?.slice(0, 5)
-              ?.map((token, index) => (
-                <div
-                  key={index}
-                  className={`transition-opacity duration-500 absolute inset-0 ${
-                    currentSlide === index
-                      ? "opacity-100 z-10"
-                      : "opacity-0 z-0"
-                  }`}
-                >
-                  <LaunchCardV3 type="featured" pair={token} action={<></>} />
-                </div>
-              ))
-          ) : (
-            <LoadingDisplay />
-          )}
-        </div>
-        {/* Slide Indicators */}
-        <div className="flex justify-center gap-2 absolute bottom-3 left-0 right-0 z-20">
-          {trendingTokensList
-            ?.slice(0, 5)
-            .map((_, index) => (
-              <button
-                key={index}
-                className={`w-2 h-2 rounded-full ${
-                  currentSlide === index ? "bg-black" : "bg-gray-400"
-                }`}
-                onClick={() => setCurrentSlide(index)}
+    <div className="w-full flex flex-col justify-center items-center px-4 font-gliker">
+      <CardContainer className="max-w-[1200px]">
+        <div className="flex flex-col justify-center w-full rounded-2xl relative">
+          {/* Featured Slideshow */}
+          <div className="relative">
+            <div className="user-select-none opacity-0 min-h-[2 00px]">
+              <LaunchCardV3
+                type="featured"
+                pair={highPriceTokensList?.[currentSlide]}
+                action={<></>}
               />
-            ))}
+            </div>
+            {trendingTokensList.length > 0 ? (
+              trendingTokensList
+                ?.sort(
+                  (a, b) =>
+                    Number(b.launchedToken?.priceChange24hPercentage) -
+                    Number(a.launchedToken?.priceChange24hPercentage)
+                )
+                ?.slice(0, 5)
+                ?.map((token, index) => (
+                  <div
+                    key={index}
+                    className={`transition-opacity duration-500 absolute inset-0 ${
+                      currentSlide === index
+                        ? "opacity-100 z-10"
+                        : "opacity-0 z-0"
+                    }`}
+                  >
+                    <LaunchCardV3 type="featured" pair={token} action={<></>} />
+                  </div>
+                ))
+            ) : (
+              <LoadingDisplay />
+            )}
+          </div>
+          {/* Slide Indicators */}
+          <div className="flex justify-center gap-2 absolute bottom-1 left-0 right-0 z-20">
+            {trendingTokensList
+              ?.slice(0, 5)
+              .map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-2 h-2 rounded-full ${
+                    currentSlide === index ? "bg-black" : "bg-gray-400"
+                  }`}
+                  onClick={() => setCurrentSlide(index)}
+                />
+              ))}
+          </div>
         </div>
-      </div>
+      </CardContainer>
       <div className="w-full relative flex justify-center mb-12">
         <div className="w-full max-w-[600px]">
           <Link
@@ -327,9 +324,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
           </Link>
         </div>
       </div>
-      <div className="w-full max-w-[1200px] bg-[#FFCD4D] rounded-2xl px-2 md:px-4 relative pt-4 md:pt-12 mb-[90px] text-black">
-        <div className="bg-[url('/images/pumping/outline-border.png')] bg-left-top bg-contain bg-repeat-x h-4 md:h-12 absolute top-0 left-0 w-full rounded-t-2xl"></div>
-
+      <CardContainer className="w-full max-w-[1200px] bg-[#FFCD4D] rounded-2xl relative px-8 py-[75px]">
         {/* Mobile Trigger */}
         <div className="md:hidden absolute -top-8 left-1/2 -translate-x-1/2 w-[calc(100%-32px)] z-10">
           <Trigger
@@ -342,14 +337,14 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
         </div>
 
         {/* Content Area - 添加顶部内边距 */}
-        <div className="pt-6">
+        <div className="bg-white rounded-3xl p-8 border border-black shadow-[4px_4px_0px_0px_#D29A0D]">
           {/* Desktop Grid */}
           <div className="hidden md:grid grid-cols-3 min-h-[600px] h-[calc(100vh-300px)] gap-2">
             <section className="relative flex flex-col px-2 overflow-hidden">
-              <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 bg-[#FFCD4D] z-20 py-2 px-2">
+              <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 z-20 py-2 px-2 bg-white">
                 {POT_TABS.NEW}
               </h2>
-              <div className="flex flex-col gap-2 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
+              <div className="flex flex-col gap-6 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                 {newTokensList.length > 0 ? (
                   newTokensList
                     .sort((a, b) => Number(b.startTime) - Number(a.startTime))
@@ -359,6 +354,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
                           type="simple"
                           pair={pot2pump}
                           action={<></>}
+                          theme="dark"
                         />
                       </motion.div>
                     ))
@@ -369,10 +365,10 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
             </section>
 
             <section className="relative flex flex-col px-2 overflow-hidden">
-              <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 bg-[#FFCD4D] z-20 py-2 px-2">
+              <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 z-20 py-2 px-2 bg-white">
                 {POT_TABS.ALMOST}
               </h2>
-              <div className="flex flex-col gap-8 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
+              <div className="flex flex-col gap-6 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                 {nearSuccessTokensList.length > 0 ? (
                   nearSuccessTokensList
                     ?.sort(
@@ -386,6 +382,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
                           type="simple"
                           pair={pot2pump}
                           action={<></>}
+                          theme="dark"
                         />
                       </motion.div>
                     ))
@@ -413,10 +410,10 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
             </section> */}
 
             <section className="relative flex flex-col px-2 overflow-hidden">
-              <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 bg-[#FFCD4D] z-20 py-2 px-2">
+              <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 z-20 py-2 px-2 bg-white">
                 {POT_TABS.TRENDING}
               </h2>
-              <div className="flex flex-col gap-8 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
+              <div className="flex flex-col gap-6 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                 {trendingTokensList.length > 0 ? (
                   trendingTokensList
                     ?.sort(
@@ -430,6 +427,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
                           type="simple"
                           pair={pot2pump}
                           action={<></>}
+                          theme="dark"
                         />
                       </motion.div>
                     ))
@@ -539,7 +537,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
             </div>
           </div>
         </div>
-      </div>
+      </CardContainer>
     </div>
   );
 });

@@ -406,67 +406,73 @@ const TrendingLaunchCard = observer(
   }
 );
 
-const SimpleLaunchCard = observer(({ pair }: { pair: LaunchContract }) => {
-  if (getLaunchContractType(pair) === "lbp") return <></>;
-  else if (getLaunchContractType(pair) === "fto") return <></>;
-  else if (getLaunchContractType(pair) === "meme") {
-    return (
-      <div className="relative group">
-        <Link
-          href={`/launch-detail/${pair.address}`}
-          className="flex flex-col text-sm gap-y-1 bg-white px-4 py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative transition-all duration-100 overflow-visible hover:shadow-[2px_2px_0px_0px_#FFCD4D] hover:bg-[#ffe6a8] cursor-pointer"
-        >
-          <div className="bg-[url('/images/pumping/inline-border.svg')] h-6 absolute top-0 left-0 w-full bg-contain bg-left-top bg-repeat-x"></div>
-          <div className="flex gap-4 w-full justify-center items-center">
-            <div>
-              <Image
-                alt="logo"
-                width={100}
-                height={100}
-                objectFit="cover"
-                className="rounded-full"
-                src={!!pair.logoUrl ? pair.logoUrl : "/images/empty-logo.png"}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-2 flex-grow-[1]">
-              <div className="flex flex-col gap-y-2">
-                <h3 className="font-bold text-md">
-                  {pair?.launchedToken?.name}
-                </h3>
-                <p className="text-sm text-[#202020]/[0.67]">
-                  {pair?.launchedToken?.symbol}
-                </p>
+const SimpleLaunchCard = observer(
+  ({ pair, theme }: { pair: LaunchContract; theme: "light" | "dark" }) => {
+    if (getLaunchContractType(pair) === "lbp") return <></>;
+    else if (getLaunchContractType(pair) === "fto") return <></>;
+    else if (getLaunchContractType(pair) === "meme") {
+      return (
+        <div className="relative group">
+          <Link
+            href={`/launch-detail/${pair.address}`}
+            className={cn(
+              "flex flex-col text-sm gap-y-1 bg-white px-4 py-6  rounded-3xl relative transition-all duration-100 overflow-hidden cursor-pointer",
+              theme === "dark"
+                ? "shadow-[1px_3px_0px_0px_#202020] border-[#202020] border-[1.5px]"
+                : "shadow-[2px_2px_0px_0px_#FFCD4D] hover:bg-[#ffe6a8] border-none"
+            )}
+          >
+            <div className="bg-[url('/images/card-container/honey/top-border.svg')] bg-[length:auto_24px] bg-repeat-x pt-6 h-6 absolute top-0 left-0 w-full bg-left-top"></div>
+            <div className="flex gap-4 w-full justify-center items-center">
+              <div>
+                <Image
+                  alt="logo"
+                  width={100}
+                  height={100}
+                  objectFit="cover"
+                  className="rounded-full"
+                  src={!!pair.logoUrl ? pair.logoUrl : "/images/empty-logo.png"}
+                />
               </div>
-              <div className="flex-grow-[1]  gap-y-2 text-right text-sm flex flex-col justify-start items-end">
-                <div>
-                  {pair.state === 3 &&
-                    pair?.participantsCount &&
-                    pair.participantsCount.toFormat(0) + " Participants"}
-                  {pair.state === 0 &&
-                    pair?.launchedToken?.holderCount &&
-                    pair?.launchedToken?.holderCount + " Holders"}
+              <div className="grid grid-cols-2 gap-2 flex-grow-[1]">
+                <div className="flex flex-col gap-y-2">
+                  <h3 className="font-bold text-md">
+                    {pair?.launchedToken?.name}
+                  </h3>
+                  <p className="text-sm text-[#202020]/[0.67]">
+                    {pair?.launchedToken?.symbol}
+                  </p>
                 </div>
-                {pair.state === 0 && (
-                  <div className="font-bold text-lg">
-                    {DynamicFormatAmount({
-                      amount: pair.launchedToken?.derivedUSD ?? "0",
-                      decimals: 5,
-                      endWith: "$",
-                    })}
+                <div className="flex-grow-[1]  gap-y-2 text-right text-sm flex flex-col justify-start items-end">
+                  <div>
+                    {pair.state === 3 &&
+                      pair?.participantsCount &&
+                      pair.participantsCount.toFormat(0) + " Participants"}
+                    {pair.state === 0 &&
+                      pair?.launchedToken?.holderCount &&
+                      pair?.launchedToken?.holderCount + " Holders"}
                   </div>
-                )}
-              </div>
-              <div className="col-span-2">
-                {pair.state === 3 && <LaunchProgress pair={pair} />}
+                  {pair.state === 0 && (
+                    <div className="font-bold text-lg">
+                      {DynamicFormatAmount({
+                        amount: pair.launchedToken?.derivedUSD ?? "0",
+                        decimals: 5,
+                        endWith: "$",
+                      })}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-2">
+                  {pair.state === 3 && <LaunchProgress pair={pair} />}
+                </div>
               </div>
             </div>
-          </div>
 
-          {pair.state === 0 && (
-            <div className="grid grid-cols-3 gap-1 text-black">
-              <div className="text-md font-bold text-right col-span-3 flex flex-row justify-start items-center">
-                <p className="flex flex-row gap-2 items-start justify-between w-full text-left">
-                  {/* <span>
+            {pair.state === 0 && (
+              <div className="grid grid-cols-3 gap-1 text-black">
+                <div className="text-md font-bold text-right col-span-3 flex flex-row justify-start items-center">
+                  <p className="flex flex-row gap-2 items-start justify-between w-full text-left">
+                    {/* <span>
                     Price Change:{" "}
                     <span
                       className={cn(
@@ -481,152 +487,183 @@ const SimpleLaunchCard = observer(({ pair }: { pair: LaunchContract }) => {
                       {pair.priceChangeDisplay}
                     </span>
                   </span> */}
-                  <span>
-                    Price Change(24h):{" "}
-                    <span
-                      className={cn(
-                        Number(pair?.launchedToken?.priceChange24hPercentage) &&
+                    <span>
+                      Price Change(24h):{" "}
+                      <span
+                        className={cn(
                           Number(
                             pair?.launchedToken?.priceChange24hPercentage
-                          ) > 1
-                          ? "text-green-500"
-                          : "text-red-500"
-                      )}
-                    >
-                      {formatAmountWithAlphabetSymbol(
-                        pair?.launchedToken?.priceChange24hPercentage ?? "0",
-                        2
-                      )}
-                      %
+                          ) &&
+                            Number(
+                              pair?.launchedToken?.priceChange24hPercentage
+                            ) > 1
+                            ? "text-green-500"
+                            : "text-red-500"
+                        )}
+                      >
+                        {formatAmountWithAlphabetSymbol(
+                          pair?.launchedToken?.priceChange24hPercentage ?? "0",
+                          2
+                        )}
+                        %
+                      </span>
                     </span>
-                  </span>
-                  <div className="text-right flex flex-row gap-2 items-center *:flex-grow-[1]">
-                    <span>TX:</span>
-                    <span className="text-green-400">
-                      {pair?.launchedTokenBuyCount?.toFixed(0) ?? 0}
-                    </span>
-                    <span>/</span>
-                    <span className="text-red-400">
-                      {pair?.launchedTokenSellCount?.toFixed(0) ?? 0}
-                    </span>
-                  </div>
-                </p>
-              </div>
-              <div className="text-xs ">
-                <p className="text-xs opacity-60">Volume</p>
-                <p className="font-semibold">
-                  <span>
-                    {pair?.launchedToken?.volumeUSD
-                      ? "$ " +
-                        formatAmountWithAlphabetSymbol(
-                          pair.launchedToken?.volumeUSD ?? "0",
-                          5
-                        )
-                      : "--"}
-                  </span>
-                </p>
-              </div>
-              <div className="text-xs ">
-                <p className="text-xs opacity-60">TVL</p>
-                <p className="font-semibold">
-                  <span>
-                    {pair?.launchedToken?.totalValueLockedUSD
-                      ? "$ " +
-                        formatAmountWithAlphabetSymbol(
-                          pair.launchedToken?.totalValueLockedUSD ?? "0",
-                          5
-                        )
-                      : "--"}
-                  </span>
-                </p>
-              </div>{" "}
-              <div className="text-xs ">
-                <p className="text-xs opacity-60">Market Cap</p>
-                <p className="font-semibold">
-                  <span>
-                    {pair?.launchedToken?.marketCap
-                      ? "$ " +
-                        formatAmountWithAlphabetSymbol(
-                          pair.launchedToken?.marketCap?.toString() ?? "0",
-                          5
-                        )
-                      : "--"}
-                  </span>
-                </p>
-              </div>
-            </div>
-          )}
-        </Link>
-
-        {pair.state === 3 && (
-          <PottingModalButton
-            pair={pair as MemePairContract}
-            className="pop-button absolute bottom-0 right-0 translate-y-1/2 -translate-x-1/4 z-10 opacity-0 group-hover:opacity-100"
-          />
-        )}
-        {pair.state === 0 && (
-          <PumpingModalButton
-            pair={pair as MemePairContract}
-            className="absolute bottom-0 right-0 translate-y-1/2 -translate-x-1/4 z-10 opacity-0 group-hover:opacity-100"
-          />
-        )}
-      </div>
-    );
-  } else return <></>;
-});
-
-const FeaturedLaunchCard = observer(
-  ({
-    pair,
-    projectType,
-  }: {
-    pair: LaunchContract;
-    projectType: LaunchContractType;
-  }) => {
-    if (getLaunchContractType(pair) === "lbp") return <></>;
-    else if (getLaunchContractType(pair) === "fto") return <></>;
-    else if (getLaunchContractType(pair) === "meme") {
-      return (
-        <div className="flex min-h-[160px] bg-white px-3 py-4 sm:px-6 sm:py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative transition-all duration-100">
-          <div className="bg-[url('/images/pumping/inline-border.svg')] h-6 absolute top-0 left-0 w-full bg-contain bg-left-top bg-repeat-x"></div>
-          <div className="flex gap-3 sm:gap-6 w-full flex-col sm:flex-row">
-            <div className="flex flex-col gap-3 sm:flex-col sm:w-[180px]">
-              <div className="flex gap-3">
-                <div className="w-16 h-16 sm:w-[180px] sm:h-[180px] rounded-full overflow-hidden bg-gold-primary aspect-square flex items-center justify-center">
-                  <Image
-                    alt="logo"
-                    width={200}
-                    height={200}
-                    objectFit="cover"
-                    className="h-full w-full object-cover"
-                    src={
-                      !!pair.logoUrl ? pair.logoUrl : "/images/empty-logo.png"
-                    }
-                  />
+                    <div className="text-right flex flex-row gap-2 items-center *:flex-grow-[1]">
+                      <span>TX:</span>
+                      <span className="text-green-400">
+                        {pair?.launchedTokenBuyCount?.toFixed(0) ?? 0}
+                      </span>
+                      <span>/</span>
+                      <span className="text-red-400">
+                        {pair?.launchedTokenSellCount?.toFixed(0) ?? 0}
+                      </span>
+                    </div>
+                  </p>
                 </div>
-                <div className="sm:hidden">
-                  <h2 className="font-bold text-xl">
-                    {pair?.launchedToken?.symbol}
-                  </h2>
-                  <p className="text-sm text-[#202020]/[0.67]">
-                    {pair?.launchedToken?.name}
+                <div className="text-xs ">
+                  <p className="text-xs opacity-60">Volume</p>
+                  <p className="font-semibold">
+                    <span>
+                      {pair?.launchedToken?.volumeUSD
+                        ? "$ " +
+                          formatAmountWithAlphabetSymbol(
+                            pair.launchedToken?.volumeUSD ?? "0",
+                            5
+                          )
+                        : "--"}
+                    </span>
+                  </p>
+                </div>
+                <div className="text-xs ">
+                  <p className="text-xs opacity-60">TVL</p>
+                  <p className="font-semibold">
+                    <span>
+                      {pair?.launchedToken?.totalValueLockedUSD
+                        ? "$ " +
+                          formatAmountWithAlphabetSymbol(
+                            pair.launchedToken?.totalValueLockedUSD ?? "0",
+                            5
+                          )
+                        : "--"}
+                    </span>
+                  </p>
+                </div>{" "}
+                <div className="text-xs ">
+                  <p className="text-xs opacity-60">Market Cap</p>
+                  <p className="font-semibold">
+                    <span>
+                      {pair?.launchedToken?.marketCap
+                        ? "$ " +
+                          formatAmountWithAlphabetSymbol(
+                            pair.launchedToken?.marketCap?.toString() ?? "0",
+                            5
+                          )
+                        : "--"}
+                    </span>
                   </p>
                 </div>
               </div>
+            )}
+          </Link>
 
-              <div className="sm:hidden space-y-1">
+          {pair.state === 3 && (
+            <PottingModalButton
+              pair={pair as MemePairContract}
+              className="pop-button absolute bottom-0 right-0 translate-y-1/2 -translate-x-1/4 z-10 opacity-0 group-hover:opacity-100"
+            />
+          )}
+          {pair.state === 0 && (
+            <PumpingModalButton
+              pair={pair as MemePairContract}
+              className="absolute bottom-0 right-0 translate-y-1/2 -translate-x-1/4 z-10 opacity-0 group-hover:opacity-100"
+            />
+          )}
+        </div>
+      );
+    } else return <></>;
+  }
+);
+
+const FeaturedLaunchCard = observer(({ pair }: { pair: LaunchContract }) => {
+  if (getLaunchContractType(pair) === "lbp") return <></>;
+  else if (getLaunchContractType(pair) === "fto") return <></>;
+  else if (getLaunchContractType(pair) === "meme") {
+    return (
+      <div className="flex min-h-[160px] bg-white px-3 py-4 sm:px-6 sm:py-6 border-none rounded-3xl shadow-[2px_2px_0px_0px_#FFCD4D] relative transition-all duration-100">
+        <div className="flex gap-3 sm:gap-6 w-full flex-col sm:flex-row">
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex gap-3">
+              <div className="w-16 h-16 sm:w-[180px] sm:h-[180px] rounded-full overflow-hidden bg-gold-primary aspect-square flex items-center justify-center">
+                <Image
+                  alt="logo"
+                  width={200}
+                  height={200}
+                  objectFit="cover"
+                  className="h-full w-full object-cover"
+                  src={!!pair.logoUrl ? pair.logoUrl : "/images/empty-logo.png"}
+                />
+              </div>
+              <div className="sm:hidden">
+                <h2 className="font-bold text-xl">
+                  {pair?.launchedToken?.symbol}
+                </h2>
+                <p className="text-sm text-[#202020]/[0.67]">
+                  {pair?.launchedToken?.name}
+                </p>
+              </div>
+            </div>
+
+            <div className="sm:hidden space-y-1">
+              <div className="font-bold text-base">
+                <span>Token Price: </span>
+                <span>
+                  {DynamicFormatAmount({
+                    amount: pair.launchedToken?.derivedUSD ?? "0",
+                    decimals: 5,
+                    endWith: "$",
+                  })}
+                </span>
+              </div>
+              <div className="font-bold text-base">
+                <span>Price Change(24h): </span>
+                <span
+                  className={cn(
+                    Number(pair?.launchedToken?.priceChange24hPercentage) &&
+                      Number(pair?.launchedToken?.priceChange24hPercentage) > 1
+                      ? "text-green-500"
+                      : "text-red-500"
+                  )}
+                >
+                  {formatAmountWithAlphabetSymbol(
+                    pair?.launchedToken?.priceChange24hPercentage ?? "0",
+                    2
+                  )}
+                  %
+                </span>
+              </div>
+            </div>
+
+            <div className="hidden sm:flex flex-col space-y-10">
+              <div>
+                <h2 className="font-bold text-4xl">
+                  {pair?.launchedToken?.symbol}
+                </h2>
+                <p className="text-xl text-[#202020]/[0.67] mt-1 text-sm">
+                  {pair?.launchedToken?.name}
+                </p>
+              </div>
+
+              <div className="space-y-2">
                 <div className="font-bold text-base">
-                  <span>Token Price: </span>
-                  <span>
-                    {DynamicFormatAmount({
-                      amount: pair.launchedToken?.derivedUSD ?? "0",
-                      decimals: 5,
-                      endWith: "$",
-                    })}
-                  </span>
+                  Token Price:{" "}
+                  {DynamicFormatAmount({
+                    amount: pair.launchedToken?.derivedUSD ?? "0",
+                    decimals: 5,
+                    endWith: "$",
+                  })}
                 </div>
                 <div className="font-bold text-base">
-                  <span>Price Change(24h): </span>
+                  Price Change(24h):{" "}
                   <span
                     className={cn(
                       Number(pair?.launchedToken?.priceChange24hPercentage) &&
@@ -645,144 +682,90 @@ const FeaturedLaunchCard = observer(
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="hidden sm:flex flex-1">
-              <div className="flex flex-col justify-between">
-                <div>
-                  <h2 className="font-bold text-4xl">
-                    {pair?.launchedToken?.symbol}
-                  </h2>
-                  <p className="text-xl text-[#202020]/[0.67] mt-1">
-                    {pair?.launchedToken?.name}
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="font-bold text-2xl">
-                    Token Price:{" "}
-                    {DynamicFormatAmount({
-                      amount: pair.launchedToken?.derivedUSD ?? "0",
-                      decimals: 5,
-                      endWith: "$",
-                    })}
-                  </div>
-                  <div className="font-bold text-2xl">
-                    Price Change(24h):{" "}
-                    <span
-                      className={cn(
-                        Number(pair?.launchedToken?.priceChange24hPercentage) &&
-                          Number(
-                            pair?.launchedToken?.priceChange24hPercentage
-                          ) > 1
-                          ? "text-green-500"
-                          : "text-red-500"
-                      )}
-                    >
-                      {formatAmountWithAlphabetSymbol(
-                        pair?.launchedToken?.priceChange24hPercentage ?? "0",
-                        2
-                      )}
-                      %
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex-1 bg-yellow-300/30 rounded-2xl border-2 border-black text-sm p-3 ml-6">
-                <div className="flex flex-col justify-between gap-2">
-                  <div className="flex items-center justify-between">
-                    <span>Market Cap:</span>
-                    <span>
-                      {formatAmountWithAlphabetSymbol(
-                        pair.launchedToken?.marketCap?.toString() ?? "0",
-                        5
-                      )}
-                      $
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>TX:</span>
-                    <div>
-                      <span className="text-green-400">
-                        {pair?.launchedTokenBuyCount?.toFixed(0) ?? 0}
-                      </span>
-                      <span>/</span>
-                      <span className="text-red-400">
-                        {pair?.launchedTokenSellCount?.toFixed(0) ?? 0}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Holders:</span>
-                    <span>{pair?.launchedToken?.holderCount ?? 0}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Volume:</span>
-                    <span>
-                      {pair?.launchedToken?.volumeUSD
-                        ? "$ " +
-                          formatAmountWithAlphabetSymbol(
-                            pair.launchedToken?.volumeUSD ?? "0",
-                            5
-                          )
-                        : "--"}
-                    </span>
-                  </div>
-                  {pair?.launchedToken?.totalValueLockedUSD &&
-                    Number(pair?.launchedToken?.totalValueLockedUSD) > 1000 && (
-                      <div className="flex items-center justify-between col-span-2">
-                        <span>TVL:</span>
-                        <span>
-                          {pair?.launchedToken?.totalValueLockedUSD
-                            ? "$ " +
-                              formatAmountWithAlphabetSymbol(
-                                pair.launchedToken?.totalValueLockedUSD ?? "0",
-                                5
-                              )
-                            : "--"}
-                        </span>
-                      </div>
+          <div className="hidden sm:flex flex-grow items-center justify-end">
+            <div className="w-[635px] bg-[#FEF6C7] rounded-2xl border border-black text-sm p-6">
+              <div className="grid grid-cols-2 gap-y-2">
+                <div className="flex items-center justify-between pr-12 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-12 after:h-[1px] after:bg-[#202020]/20">
+                  <span className="text-base font-bold">Market Cap:</span>
+                  <span className="font-bold">
+                    {formatAmountWithAlphabetSymbol(
+                      pair.launchedToken?.marketCap?.toString() ?? "0",
+                      5
                     )}
-                  <div className="flex items-center justify-between col-span-2">
-                    <span>Total Supply:</span>
-                    <span>
-                      {pair?.launchedToken?.totalSupplyWithoutDecimals
-                        ? "$ " +
-                          formatAmountWithAlphabetSymbol(
-                            pair.launchedToken?.totalSupplyWithoutDecimals
-                              .div(10 ** Number(pair.launchedToken?.decimals))
-                              .toString() ?? "0",
-                            5
-                          )
-                        : "--"}
+                    $
+                  </span>
+                </div>
+                <div className="flex items-center justify-between pl-12 relative after:content-[''] after:absolute after:bottom-0 after:left-12 after:right-0 after:h-[1px] after:bg-[#202020]/20">
+                  <span className="text-base font-bold">TX:</span>
+                  <div className="font-bold">
+                    <span className="text-green-500">
+                      {pair?.launchedTokenBuyCount?.toFixed(0) ?? 0}
+                    </span>
+                    <span className="mx-1">/</span>
+                    <span className="text-red-500">
+                      {pair?.launchedTokenSellCount?.toFixed(0) ?? 0}
                     </span>
                   </div>
                 </div>
+                <div className="flex items-center justify-between pr-12 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-12 after:h-[1px] after:bg-[#202020]/20">
+                  <span className="text-base font-bold">Holders:</span>
+                  <span className="font-bold">
+                    {pair?.launchedToken?.holderCount ?? 0}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between pl-12 relative after:content-[''] after:absolute after:bottom-0 after:left-12 after:right-0 after:h-[1px] after:bg-[#202020]/20">
+                  <span className="text-base font-bold">Volume:</span>
+                  <span className="font-bold">
+                    {pair?.launchedToken?.volumeUSD
+                      ? "$ " +
+                        formatAmountWithAlphabetSymbol(
+                          pair.launchedToken?.volumeUSD ?? "0",
+                          5
+                        )
+                      : "--"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between pr-12">
+                  <span className="text-base font-bold">TVL:</span>
+                  <span className="font-bold">
+                    {pair?.launchedToken?.totalValueLockedUSD
+                      ? "$ " +
+                        formatAmountWithAlphabetSymbol(
+                          pair.launchedToken?.totalValueLockedUSD ?? "0",
+                          5
+                        )
+                      : "--"}
+                  </span>
+                </div>
+                <div></div>
+                <div className="pr-12">
+                  <div className="flex p-1 mt-6 bg-white border border-black rounded-lg">
+                    <Link
+                      className="flex-1"
+                      href={`/launch-detail/${pair.address}`}
+                    >
+                      <Button className="w-full bg-[#FFCD4D] text-[#202020] rounded-lg border-none">
+                        Token Details
+                      </Button>
+                    </Link>
+                    {pair.state === 0 && (
+                      <PumpingModalButton
+                        pair={pair as MemePairContract}
+                        className="flex-1 bg-transparent text-[#202020] rounded-lg hover:bg-[#FFCD4D] border-none"
+                      />
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-2 mt-3 sm:mt-0 sm:absolute sm:bottom-0 sm:right-0 sm:translate-y-1/2 sm:-translate-x-1/4">
-              <Link
-                className="w-full sm:w-[160px]"
-                href={`/launch-detail/${pair.address}`}
-              >
-                <Button className="w-full border-yellow-500 text-sm sm:text-base py-1.5 sm:py-2">
-                  Token Details
-                </Button>
-              </Link>
-              {pair.state === 0 && (
-                <PumpingModalButton
-                  pair={pair as MemePairContract}
-                  className="w-full sm:w-auto text-sm sm:text-base py-1.5 sm:py-2"
-                />
-              )}
             </div>
           </div>
         </div>
-      );
-    } else return <></>;
-  }
-);
+      </div>
+    );
+  } else return <></>;
+});
 
 export const LaunchCardV3 = observer(
   ({
@@ -828,10 +811,10 @@ export const LaunchCardV3 = observer(
             {type === "trending" && pair && (
               <TrendingLaunchCard pair={pair} projectType={projectType} />
             )}
-            {type === "simple" && pair && <SimpleLaunchCard pair={pair} />}
-            {type === "featured" && pair && (
-              <FeaturedLaunchCard pair={pair} projectType={projectType} />
+            {type === "simple" && pair && (
+              <SimpleLaunchCard pair={pair} theme={theme} />
             )}
+            {type === "featured" && pair && <FeaturedLaunchCard pair={pair} />}
           </motion.div>
         ) : (
           <></>
