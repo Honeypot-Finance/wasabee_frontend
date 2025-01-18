@@ -656,6 +656,7 @@ const MemeView = observer(() => {
       pairAddress: pairAddress as string,
     });
   }, [wallet.isInit, pairAddress]);
+
   useEffect(() => {
     if (!state.pair.value?.launchedToken) {
       return;

@@ -27,7 +27,7 @@ export function useAccounts(
       variables: {
         skip: (page - 1) * pageSize,
         first: pageSize,
-        address: !!searchAddress ? searchAddress : undefined,
+        address: !!searchAddress ? searchAddress.toLowerCase() : undefined,
         exclude: [ALGEBRA_ROUTER.toLowerCase()],
       },
     }
@@ -54,6 +54,7 @@ export function useAccounts(
       variables: {
         skip: data?.accounts.length ?? 0,
         first: pageSize,
+        exclude: [ALGEBRA_ROUTER.toLowerCase()],
       },
     });
   };

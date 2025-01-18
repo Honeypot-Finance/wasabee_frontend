@@ -80,21 +80,17 @@ const LeaderboardPage = () => {
   const topStats = [
     {
       title: "Top Trader",
-      address: shortenAddressString(topSwapAccounts[0]?.walletAddress ?? "-"),
+      address: topSwapAccounts[0]?.walletAddress ?? "-",
       value: `${topSwapAccounts[0]?.swapCount ?? "-"} Swaps`,
     },
     {
       title: "Top Deployer",
-      address: shortenAddressString(
-        topPot2PumpDeployerAccounts[0]?.walletAddress ?? "-"
-      ),
+      address: topPot2PumpDeployerAccounts[0]?.walletAddress ?? "-",
       value: `${topPot2PumpDeployerAccounts[0]?.pot2PumpDeployCount ?? "-"} Deploys`,
     },
     {
       title: "Top Participant",
-      address: shortenAddressString(
-        topParticipateAccounts[0]?.walletAddress ?? "-"
-      ),
+      address: topParticipateAccounts[0]?.walletAddress ?? "-",
       value: `${topParticipateAccounts[0]?.participateCount ?? "-"} Participations`,
     },
   ];
@@ -140,7 +136,9 @@ const LeaderboardPage = () => {
                     </span>
                   </div>
                   <div className="mt-6 text-xl text-white font-medium mb-2">
-                    {stat.address}
+                    <Tooltip content={stat.address} placement="top">
+                      {shortenAddressString(stat.address)}
+                    </Tooltip>
                   </div>
                   <div className="text-[#FFCD4D] text-base">{stat.value}</div>
                 </div>
