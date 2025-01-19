@@ -23,10 +23,13 @@ export class MemePairContract implements BaseLaunchContract {
     contractArgs: Partial<MemePairContract>
   ) {
     const lowerAddress = address.toLowerCase();
+
     const contract =
       MemePairContract.contractMap[lowerAddress] ??
       new MemePairContract({ address: lowerAddress });
+
     MemePairContract.contractMap[lowerAddress] = contract;
+
     contract.setData(contractArgs);
     return contract;
   }
@@ -76,6 +79,7 @@ export class MemePairContract implements BaseLaunchContract {
 
   setData(args: Partial<MemePairContract>) {
     Object.assign(this, {
+      ...this,
       ...args,
     });
   }
@@ -330,12 +334,17 @@ export class MemePairContract implements BaseLaunchContract {
   }
 
   async getProjectInfo(force?: boolean) {
+    console.log("force", force);
     if (!force) {
       const cachedProjectInfo = localStorage.getItem(
-        `projectInfo-${wallet.currentChainId}-${this.address}`
+        `projectInfo-${wallet.currentChainId}-${this.address.toLowerCase()}`
       );
 
-      if (cachedProjectInfo) {
+      if (
+        cachedProjectInfo &&
+        cachedProjectInfo !== "undefined" &&
+        cachedProjectInfo !== "null"
+      ) {
         this.setData(JSON.parse(cachedProjectInfo));
         return;
       }
@@ -345,6 +354,8 @@ export class MemePairContract implements BaseLaunchContract {
       chain_id: wallet.currentChainId,
       pair: this.address,
     });
+
+    console.log("res", res);
 
     if (!res) {
       return;
@@ -399,7 +410,7 @@ export class MemePairContract implements BaseLaunchContract {
     }
 
     localStorage.setItem(
-      `projectInfo-${wallet.currentChainId}-${this.address}`,
+      `projectInfo-${wallet.currentChainId}-${this.address.toLowerCase()}`,
       JSON.stringify({
         databaseId: res.id,
         socials: this.socials,
@@ -451,7 +462,7 @@ export class MemePairContract implements BaseLaunchContract {
       this.getRaisedTokenMinCap(),
       this.getUserParticipated(),
       this.getVaultBalance(),
-      this.getIndexerData(),
+      this.getIndexerData(force),
       //this.getParticipantDetail(),
     ]).catch((error) => {
       console.error(error, `init-memepair-error-${this.address}`);

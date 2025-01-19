@@ -679,7 +679,7 @@ class LaunchPad {
       const url = logoUrl || `/images/default-project-icons/${randomIcon}.png`;
 
       await trpcClient.projects.createProject.mutate({
-        pair: pairAddress,
+        pair: pairAddress.toLowerCase(),
         chain_id: wallet.currentChainId,
         provider: provider,
         project_type: launchType,

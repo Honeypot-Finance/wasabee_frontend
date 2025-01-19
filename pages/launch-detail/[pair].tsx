@@ -546,7 +546,7 @@ export const UpdateProjectModal = observer(
 //   );
 // });
 
-const MemeView = observer(() => {
+const MemeView = observer(({ pairAddress }: { pairAddress: string }) => {
   const router = useRouter();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const triggerRefresh = useCallback(() => {
@@ -554,7 +554,6 @@ const MemeView = observer(() => {
   }, []);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { pair: pairAddress } = router.query;
 
   const state = useLocalObservable(() => ({
     pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
@@ -563,12 +562,15 @@ const MemeView = observer(() => {
       });
 
       await pair.init({ force: true });
+
       pair.raiseToken?.init(true, {
         loadIndexerTokenData: true,
       });
+
       pair.launchedToken?.init(true, {
         loadIndexerTokenData: true,
       });
+
       return pair;
     }),
   }));
@@ -961,7 +963,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
     }
     trpcClient.projects.getProjectInfo
       .query({
-        pair: pairAddress as string,
+        pair: (pairAddress as string).toLowerCase(),
         chain_id: wallet.currentChainId,
       })
       .then((data) => {
@@ -973,7 +975,7 @@ const LaunchPage: NextLayoutPage = observer(() => {
   return (
     <>
       {projectInfo && projectInfo?.project_type === "meme" && (
-        <MemeView></MemeView>
+        <MemeView pairAddress={pairAddress as string} />
       )}
       {/* {projectInfo && projectInfo?.project_type === "fto" && (
         <FtoView></FtoView>

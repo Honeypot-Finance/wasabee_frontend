@@ -462,8 +462,8 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
         raisingCycle: dayjs().unix(),
       });
 
-      state.setPairAddress(pairAddress);
-      router.push(`/launch-detail/${pairAddress}`);
+      state.setPairAddress(pairAddress.toLowerCase());
+      router.push(`/launch-detail/${pairAddress.toLowerCase()}`);
     } catch (error) {
       console.error(error);
     }
