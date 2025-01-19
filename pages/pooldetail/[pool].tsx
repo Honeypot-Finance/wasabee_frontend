@@ -30,6 +30,7 @@ import { Address } from "viem";
 import { useParams } from "next/navigation";
 import { cn } from "@/lib/tailwindcss";
 import { HoneyContainer } from "@/components/CardContianer";
+import { Token } from "@/services/contract/token";
 
 const PoolPage = () => {
   const { address: account } = useAccount();
@@ -50,6 +51,16 @@ const PoolPage = () => {
     variables: {
       poolId,
     },
+  });
+
+  const token0 = Token.getToken({
+    address: poolInfo?.pool?.token0.id ?? "",
+    force: true,
+  });
+
+  const token1 = Token.getToken({
+    address: poolInfo?.pool?.token1.id ?? "",
+    force: true,
   });
 
   const { data: bundles } = useNativePriceQuery();

@@ -24,7 +24,7 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { useRouter } from "next/router";
-import { Copy } from "@/components/copy";
+import { Copy } from "@/components/Copy";
 import { BiSolidDownArrow } from "react-icons/bi";
 import { WarppedNextSelect } from "@/components/wrappedNextUI/Select/Select";
 import { WrappedNextDatePicker } from "@/components/wrappedNextUI/DatePicker/DatePicker";
