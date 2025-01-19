@@ -2,7 +2,7 @@ import React from "react";
 import { FaXTwitter } from "react-icons/fa6";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FaTelegram, FaGlobe } from "react-icons/fa";
-import { Copy } from "@/components/copy";
+import { Copy } from "@/components/Copy";
 import { VscCopy } from "react-icons/vsc";
 import PairStatus from "@/components/atoms/TokenStatusDisplay/PairStatus";
 

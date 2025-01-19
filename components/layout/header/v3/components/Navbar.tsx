@@ -13,6 +13,20 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
   const [hoveredMenu, setHoveredMenu] = React.useState<string | null>(null);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const findMenuByPath = React.useCallback(
     (path: string) => {
@@ -56,7 +70,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
         className="bg-[#FFCD4D] rounded-xl pt-1 pb-8 min-w-[200px] h-[140px] flex flex-col bg-[url('/images/card-container/dark/bottom-border.svg')] bg-left-bottom bg-repeat-x"
       >
         <div className="border-t-1 rounded-[30px] border-[#202020] px-3 h-full flex flex-col">
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <Button
               size="sm"
               className="w-full min-h-unit-8 h-8 py-0 bg-transparent hover:bg-transparent"

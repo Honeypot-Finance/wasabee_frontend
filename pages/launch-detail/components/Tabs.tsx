@@ -12,7 +12,7 @@ import { Button } from "@/components/button";
 import BeraVoteForm from "@/components/beravote/components/NewSpace/Steps/BeraVoteForm";
 import { observer } from "mobx-react-lite";
 import { VscCopy } from "react-icons/vsc";
-import { Copy } from "@/components/copy";
+import { Copy } from "@/components/Copy";
 import { Trigger } from "@/components/Trigger";
 import {
   OptionsDropdown,

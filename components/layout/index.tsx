@@ -18,6 +18,7 @@ import ChatWidget from "../ServiceChat";
 import Script from "next/script";
 import { Footer } from "./footer";
 import { chatService, presetQuestions, questionTitles } from "@/services/chat";
+import _ from "lodash";
 
 export const Layout = ({
   children,

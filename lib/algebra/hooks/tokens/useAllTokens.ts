@@ -12,6 +12,13 @@ import {
 } from "../../graphql/generated/graphql";
 import { useTokensState } from "../../state/tokensStore";
 
+interface ImportedToken {
+  id: string;
+  decimals: string | number;
+  symbol: string;
+  name: string;
+}
+
 export function useAllTokens(showNativeToken: boolean = true) {
   const chainId = useChainId();
 
@@ -25,7 +32,7 @@ export function useAllTokens(showNativeToken: boolean = true) {
     const tokens = new Map<Address, Partial<TokenFieldsFragment>>();
 
     if (!allTokens) {
-      const _importedTokens = Object.values(importedTokens[chainId] || []);
+      const _importedTokens = Object.values(importedTokens[chainId] || []) as ImportedToken[];
       for (const token of _importedTokens) {
         tokens.set(token.id.toLowerCase() as Address, {
           ...token,
@@ -51,7 +58,7 @@ export function useAllTokens(showNativeToken: boolean = true) {
       tokens.set(token.id.toLowerCase() as Address, { ...token });
     }
 
-    const _importedTokens = Object.values(importedTokens[chainId] || []);
+    const _importedTokens = Object.values(importedTokens[chainId] || []) as ImportedToken[];
 
     for (const token of _importedTokens) {
       tokens.set(token.id.toLowerCase() as Address, {

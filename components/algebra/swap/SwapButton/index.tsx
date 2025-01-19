@@ -61,8 +61,8 @@ const SwapButton = () => {
 
   const userHasSpecifiedInputOutput = Boolean(
     currencies[SwapField.INPUT] &&
-      currencies[SwapField.OUTPUT] &&
-      parsedAmounts[independentField]?.greaterThan("0")
+    currencies[SwapField.OUTPUT] &&
+    parsedAmounts[independentField as keyof typeof parsedAmounts]?.greaterThan("0")
   );
 
   const routeNotFound = !trade?.route;

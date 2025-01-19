@@ -23,7 +23,7 @@ import { truncateEthAddress } from "@usecapsule/rainbowkit-wallet";
 import { poolsByTokenPair } from "@/lib/algebra/graphql/clients/pool";
 import { useRouter } from "next/router";
 import { ExternalLink } from "lucide-react";
-import { Copy } from "@/components/copy";
+import { Copy } from "@/components/Copy";
 import { VscCopy } from "react-icons/vsc";
 
 const START_TIMESTAMP = 1734436800;

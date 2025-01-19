@@ -30,7 +30,7 @@ export function HoneyContainer({
 
             backgroundImage: noNoneyDrop
               ? ""
-              : `url('/images/card-container/honey/outline-border.png'), url('${
+              : `url('/images/card-container/honey/honey-border.png'), url('${
                   variant === "wide"
                     ? "/images/card-container/honey/bottom-border.svg"
                     : "/images/card-container/dark/bottom-border.svg"

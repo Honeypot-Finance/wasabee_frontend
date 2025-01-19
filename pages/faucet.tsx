@@ -1,5 +1,5 @@
 import { Button } from "@/components/button";
-import { Copy } from "@/components/copy";
+import { Copy } from "@/components/Copy";
 import { NoData } from "@/components/table";
 import { wallet } from "@/services/wallet";
 import { NextLayoutPage } from "@/types/nextjs";

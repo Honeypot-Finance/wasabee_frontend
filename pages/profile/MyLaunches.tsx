@@ -2,11 +2,10 @@ import { LaunchCardV3 } from "@/components/LaunchCard/v3";
 import launchpad from "@/services/launchpad";
 import { Pot2PumpService } from "@/services/launchpad/pot2pump";
 import { wallet } from "@/services/wallet";
-import { Card, CardBody, Button as NextButton } from "@nextui-org/react";
+import { Button as NextButton } from "@nextui-org/react";
 import { observer } from "mobx-react-lite";
 import { useState, useEffect } from "react";
 import Pagination from "@/components/Pagination/Pagination";
-import HoneyContainer from "@/components/CardContianer/HoneyContainer";
 
 export const MyLaunches = observer(() => {
   const [myProjects, setMyProjects] = useState<Pot2PumpService>();
@@ -21,37 +20,8 @@ export const MyLaunches = observer(() => {
   }, [wallet.isInit]);
 
   return (
-    <HoneyContainer>
-      <div className="flex">
-        {/* <NextButton
-              isDisabled={launchpad.currentLaunchpadType.value === "fto"}
-              className={
-                launchpad.currentLaunchpadType.value === "fto"
-                  ? "opacity-100"
-                  : "opacity-50"
-              }
-              onClick={() => {
-                launchpad.setCurrentLaunchpadType("fto");
-                launchpad.myLaunches.reloadPage();
-              }}
-            >
-              FTO
-            </NextButton> */}
-        <NextButton
-          isDisabled={launchpad.currentLaunchpadType.value === "meme"}
-          className={
-            launchpad.currentLaunchpadType.value === "meme"
-              ? "opacity-100"
-              : "opacity-50"
-          }
-          onClick={() => {
-            launchpad.setCurrentLaunchpadType("meme");
-            launchpad.myLaunches.reloadPage();
-          }}
-        >
-          MEME
-        </NextButton>
-      </div>
+    <div className="custom-dashed-3xl w-full p-6 bg-white space-y-8">
+      <h4 className="flex justify-center text-4xl">MEME</h4>
       {myProjects && (
         <Pagination
           paginationState={myProjects.myLaunches}
@@ -60,6 +30,7 @@ export const MyLaunches = observer(() => {
               key={project.address}
               pair={project}
               action={<></>}
+              theme="dark"
               className="w-full h-full"
             />
           )}
@@ -71,7 +42,7 @@ export const MyLaunches = observer(() => {
           }}
         />
       )}
-    </HoneyContainer>
+    </div>
   );
 });
 

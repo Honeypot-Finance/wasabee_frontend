@@ -113,7 +113,7 @@ class FjordHoneySdk {
     })) as any as { data: Pool[] };
   };
 
-  static findPool = async (address: string): Pool | null => {
+  static findPool = async (address: string): Promise<Pool | null> => {
     const pool = (await sdk.request.rest.findManyPools({
       where: {
         address: address,

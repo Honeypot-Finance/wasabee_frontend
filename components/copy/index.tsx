@@ -1,6 +1,5 @@
 import { Tooltip } from "@nextui-org/react";
 import clsx from "clsx";
-import { set } from "lodash";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import React, { HTMLAttributes } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";

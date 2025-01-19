@@ -1,30 +1,17 @@
 import { useRouter } from "next/router";
-import { Button } from "@/components/button";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { getAccountVaultsList } from "@/lib/algebra/graphql/clients/vaults";
-import {
-  AccountVaultSharesQuery,
-  AccountVaultSharesQueryResult,
-  VaultShare,
-} from "@/lib/algebra/graphql/generated/graphql";
+import { AccountVaultSharesQuery } from "@/lib/algebra/graphql/generated/graphql";
 import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
 import { Token } from "@/services/contract/token";
 import { wallet } from "@/services/wallet";
-import { Tabs, Tab, Link } from "@nextui-org/react";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
-} from "@nextui-org/table";
 import { useEffect, useState } from "react";
-import { Address } from "viem";
-import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
 import { Currency } from "@cryptoalgebra/sdk";
 import { DepositToVaultModal } from "../modals/DepositToVaultModal";
-import { HoneyContainer } from "@/components/CardContianer";
+import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+
+type SortField = "pair" | "tvl" | "volume" | "fees" | "shares";
+type SortDirection = "asc" | "desc";
 
 export function MyAquaberaVaults() {
   const router = useRouter();
@@ -35,44 +22,134 @@ export function MyAquaberaVaults() {
   );
   const [selectedTokenA, setSelectedTokenA] = useState<Currency | null>(null);
   const [selectedTokenB, setSelectedTokenB] = useState<Currency | null>(null);
+  const [sortField, setSortField] = useState<SortField>("tvl");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   useEffect(() => {
-    if (!wallet.isInit) {
-      return;
-    }
-
+    if (!wallet.isInit) return;
     loadMyVaults(wallet.account);
   }, [wallet.isInit]);
 
   const loadMyVaults = async (accountAddress: string) => {
     const myVaultsQuery = await getAccountVaultsList(accountAddress);
-
     setMyVaults(myVaultsQuery);
   };
 
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("desc");
+    }
+  };
+
+  const getSortedVaults = () => {
+    if (!myVaults?.vaultShares) return [];
+
+    return [...myVaults.vaultShares].sort((a, b) => {
+      const multiplier = sortDirection === "asc" ? 1 : -1;
+
+      switch (sortField) {
+        case "pair":
+          return (
+            multiplier *
+            (a.vault.tokenA + a.vault.tokenB).localeCompare(
+              b.vault.tokenA + b.vault.tokenB
+            )
+          );
+        case "tvl":
+          return (
+            multiplier *
+            (Number(a.vault.pool?.totalValueLockedUSD || 0) -
+              Number(b.vault.pool?.totalValueLockedUSD || 0))
+          );
+        case "volume":
+          return (
+            multiplier *
+            (Number(a.vault.pool?.poolDayData?.[0]?.volumeUSD || 0) -
+              Number(b.vault.pool?.poolDayData?.[0]?.volumeUSD || 0))
+          );
+        case "fees":
+          return (
+            multiplier *
+            (Number(a.vault.pool?.poolDayData?.[0]?.feesUSD || 0) -
+              Number(b.vault.pool?.poolDayData?.[0]?.feesUSD || 0))
+          );
+        case "shares":
+          return (
+            multiplier *
+            (Number(a.vaultShareBalance) - Number(b.vaultShareBalance))
+          );
+        default:
+          return 0;
+      }
+    });
+  };
+
+  const SortHeader = ({
+    field,
+    label,
+    align = "right",
+  }: {
+    field: SortField;
+    label: string;
+    align?: "left" | "right" | "center";
+  }) => (
+    <th
+      className={`py-4 px-6 cursor-pointer transition-colors text-[#4D4D4D]`}
+      onClick={() => handleSort(field)}
+    >
+      <div
+        className={`flex items-center gap-2 ${align === "right" ? "justify-end" : align === "center" ? "justify-center" : ""}`}
+      >
+        <span className={label.length > 4 ? "text-[13px]" : "text-base"}>
+          {label}
+        </span>
+        <div className="flex flex-col">
+          <ChevronUpIcon
+            className={`h-3 w-3 ${
+              sortField === field && sortDirection === "asc"
+                ? "text-black"
+                : "text-[#4D4D4D]"
+            }`}
+          />
+          <ChevronDownIcon
+            className={`h-3 w-3 ${
+              sortField === field && sortDirection === "desc"
+                ? "text-black"
+                : "text-[#4D4D4D]"
+            }`}
+          />
+        </div>
+      </div>
+    </th>
+  );
+
   return (
-    <HoneyContainer className="w-full">
-      <div className="w-full">
-        <Table
-          aria-label="my-vaults"
-          classNames={{
-            base: "w-full text-white",
-            table: "w-full text-white",
-            thead: "w-full text-white",
-          }}
-          selectionMode="single"
-          onRowAction={(key) => router.push(`/vault/${key}`)}
-        >
-          <TableHeader>
-            <TableColumn>Token Pair</TableColumn>
-            <TableColumn>Vault Address</TableColumn>
-            <TableColumn>TVL</TableColumn>
-            <TableColumn>24h Volume</TableColumn>
-            <TableColumn>24h Fees</TableColumn>
-            <TableColumn>My Vault Shares</TableColumn>
-          </TableHeader>
-          <TableBody>
-            {myVaults?.vaultShares.map((vaultShare, index) => {
+    <div className="w-full">
+      <table className="w-full">
+        <thead>
+          <tr>
+            <SortHeader field="pair" label="Token Pair" align="left" />
+            <th className="py-2 px-4 text-[#4D4D4D] max-w-[300px] truncate">
+              Vault Address
+            </th>
+            <SortHeader field="tvl" label="TVL" />
+            <SortHeader field="volume" label="24h Volume" />
+            <SortHeader field="fees" label="24h Fees" />
+            <SortHeader field="shares" label="My Vault Shares" />
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-[#4D4D4D]">
+          {!getSortedVaults().length ? (
+            <tr className="hover:bg-white border-white h-full">
+              <td colSpan={6} className="h-24 text-center text-black">
+                No results.
+              </td>
+            </tr>
+          ) : (
+            getSortedVaults().map((vaultShare) => {
               const tokenA = Token.getToken({
                 address: vaultShare.vault.tokenA,
               });
@@ -89,6 +166,8 @@ export function MyAquaberaVaults() {
               ).toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
               });
 
               const volume = Number(
@@ -96,6 +175,8 @@ export function MyAquaberaVaults() {
               ).toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
               });
 
               const fees = Number(
@@ -103,48 +184,64 @@ export function MyAquaberaVaults() {
               ).toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
               });
 
               return (
-                <TableRow
+                <tr
                   key={vaultShare.vault.id}
-                  className="cursor-pointer hover:bg-[#F7931A10]"
+                  className="transition-colors bg-white text-black hover:bg-gray-50 cursor-pointer"
+                  onClick={() => router.push(`/vault/${vaultShare.vault.id}`)}
                 >
-                  <TableCell>
+                  <td className="py-2 px-4">
                     <div className="flex items-center gap-2">
-                      {vaultShare.vault.tokenA && <TokenLogo token={tokenA} />}
-                      {vaultShare.vault.tokenB && <TokenLogo token={tokenB} />}
-                      <span>
+                      <div className="flex items-center">
+                        {vaultShare.vault.tokenA && (
+                          <TokenLogo token={tokenA} />
+                        )}
+                        <div className="-ml-2">
+                          {vaultShare.vault.tokenB && (
+                            <TokenLogo token={tokenB} />
+                          )}
+                        </div>
+                      </div>
+                      <span className="text-black font-medium">
                         {tokenA.symbol}/{tokenB.symbol}
                       </span>
                     </div>
-                  </TableCell>
-                  <TableCell>{vaultShare.vault.id}</TableCell>
-                  <TableCell>{tvl}</TableCell>
-                  <TableCell>{volume}</TableCell>
-                  <TableCell>{fees}</TableCell>
-                  <TableCell>{vaultShare.vaultShareBalance}</TableCell>
-                </TableRow>
+                  </td>
+                  <td className="py-2 px-4 text-black max-w-[300px] truncate">
+                    {vaultShare.vault.id}
+                  </td>
+                  <td className="py-2 px-4 text-right text-black">{tvl}</td>
+                  <td className="py-2 px-4 text-right text-black">{volume}</td>
+                  <td className="py-2 px-4 text-right text-black">{fees}</td>
+                  <td className="py-2 px-4 text-right text-black">
+                    {vaultShare.vaultShareBalance}
+                  </td>
+                </tr>
               );
-            }) || []}
-          </TableBody>
-        </Table>
-        {selectedVault && selectedTokenA && selectedTokenB && (
-          <DepositToVaultModal
-            isOpen={isDepositModalOpen}
-            onClose={() => {
-              setIsDepositModalOpen(false);
-              setSelectedVault(null);
-              setSelectedTokenA(null);
-              setSelectedTokenB(null);
-            }}
-            vault={selectedVault}
-            tokenA={selectedTokenA}
-            tokenB={selectedTokenB}
-          />
-        )}
-      </div>
-    </HoneyContainer>
+            })
+          )}
+        </tbody>
+      </table>
+
+      {selectedVault && selectedTokenA && selectedTokenB && (
+        <DepositToVaultModal
+          isOpen={isDepositModalOpen}
+          onClose={() => {
+            setIsDepositModalOpen(false);
+            setSelectedVault(null);
+            setSelectedTokenA(null);
+            setSelectedTokenB(null);
+          }}
+          vault={selectedVault}
+          tokenA={selectedTokenA}
+          tokenB={selectedTokenB}
+        />
+      )}
+    </div>
   );
 }
 
