@@ -22,10 +22,11 @@ export class MemePairContract implements BaseLaunchContract {
     address: string,
     contractArgs: Partial<MemePairContract>
   ) {
+    const lowerAddress = address.toLowerCase();
     const contract =
-      MemePairContract.contractMap[address] ??
-      new MemePairContract({ address });
-    MemePairContract.contractMap[address] = contract;
+      MemePairContract.contractMap[lowerAddress] ??
+      new MemePairContract({ address: lowerAddress });
+    MemePairContract.contractMap[lowerAddress] = contract;
     contract.setData(contractArgs);
     return contract;
   }

@@ -9,6 +9,8 @@ import { Pool } from "./poolsColumns";
 import { ColumnDef } from "@tanstack/react-table";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import { Token } from "@/services/contract/token";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
 
 interface PoolsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -215,7 +217,7 @@ const PoolsTable = <TData, TValue>({
                 </td>
               </tr>
             ) : (
-              getSortedPools().map((pool: any) => (
+              getSortedPools().map((pool) => (
                 <tr
                   key={pool.id}
                   className="transition-colors bg-white text-black hover:bg-gray-50 cursor-pointer"
@@ -230,19 +232,19 @@ const PoolsTable = <TData, TValue>({
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1">
-                        <Image
-                          src={pool.pair.token0.logoURI}
-                          alt={pool.pair.token0.symbol}
-                          width={24}
-                          height={24}
-                          className="rounded-full"
+                        <TokenLogo
+                          token={Token.getToken({
+                            address: pool.pair.token0.id,
+                          })}
+                          addtionalClasses="translate-x-[25%]"
+                          size={24}
                         />
-                        <Image
-                          src={pool.pair.token1.logoURI}
-                          alt={pool.pair.token1.symbol}
-                          width={24}
-                          height={24}
-                          className="rounded-full -ml-2"
+                        <TokenLogo
+                          token={Token.getToken({
+                            address: pool.pair.token1.id,
+                          })}
+                          addtionalClasses="translate-x-[-25%]"
+                          size={24}
                         />
                       </div>
                       <div className="flex flex-col">
