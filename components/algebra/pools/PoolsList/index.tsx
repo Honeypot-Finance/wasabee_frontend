@@ -294,8 +294,8 @@ const PoolsList = ({
   console.log("formattedPools", formattedPools);
 
   return (
-    <div>
-      <div className="hidden xl:block">
+    <div className="w-full">
+      <div className="hidden xl:block w-full">
         <PoolsTable
           columnsMy={poolsColumnsMy}
           columns={poolsColumns}
@@ -311,7 +311,7 @@ const PoolsList = ({
           handleSearch={(data: string) => setSearch(data)}
         />
       </div>
-      <div className="block xl:hidden">
+      <div className="block xl:hidden ">
         <PoolCardList data={formattedPools} />
       </div>
     </div>

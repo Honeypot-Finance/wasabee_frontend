@@ -50,6 +50,7 @@ const PoolsTable = <TData, TValue>({
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<SortField>("tvl");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [page, setPage] = useState(1);
 
   const filters = [
     { key: "trending", label: "All Pools" },
@@ -75,6 +76,7 @@ const PoolsTable = <TData, TValue>({
   }, [search]);
 
   const handleSort = (field: SortField) => {
+    setPage(1);
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
@@ -84,7 +86,7 @@ const PoolsTable = <TData, TValue>({
   };
 
   const getSortedPools = () => {
-    return [...tableData].sort((a, b) => {
+    const sortedPools = [...tableData].sort((a, b) => {
       const multiplier = sortDirection === "asc" ? 1 : -1;
 
       switch (sortField) {
@@ -105,6 +107,8 @@ const PoolsTable = <TData, TValue>({
           return 0;
       }
     });
+
+    return sortedPools.slice((page - 1) * 10, page * 10);
   };
 
   const SortHeader = ({
@@ -145,7 +149,7 @@ const PoolsTable = <TData, TValue>({
   );
 
   return (
-    <div>
+    <div className="flex flex-col gap-4 w-full">
       {showOptions && (
         <div className="flex flex-col xl:flex-row gap-4 w-full xl:justify-between xl:items-center py-4">
           <div className="flex items-center xl:gap-x-6 w-full xl:w-fit justify-between">
@@ -319,10 +323,9 @@ const PoolsTable = <TData, TValue>({
           <Button
             variant="outline"
             size="sm"
+            disabled={page === 1}
             onClick={() => {
-              const newData = [...tableData];
-              newData.splice(10);
-              setTableData(newData);
+              setPage(page - 1);
             }}
           >
             Previous
@@ -330,10 +333,9 @@ const PoolsTable = <TData, TValue>({
           <Button
             variant="outline"
             size="sm"
+            disabled={page === Math.ceil(tableData.length / 10)}
             onClick={() => {
-              const newData = [...tableData];
-              newData.splice(0, 10);
-              setTableData(newData);
+              setPage(page + 1);
             }}
           >
             Next
