@@ -1,4 +1,4 @@
-import { Checkbox, CheckboxGroup } from "@nextui-org/react";
+import { Checkbox, CheckboxGroup, Listbox, ListboxItem } from "@nextui-org/react";
 import clsx from "clsx";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
@@ -6,12 +6,19 @@ import { REVIEW_RIGHT } from "@/types/launch-project";
 import { useReadContract } from "wagmi";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import dayjs from "dayjs";
+import { FormContainer, InputField } from "./Components";
 
-const EditBtn = ({ onClick }: { onClick: () => void }) => {
+
+interface EditBtnProps {
+  onClick: () => void,
+  className?: string
+}
+
+const EditBtn = ({ onClick, className }: EditBtnProps) => {
   return (
-    <div className="text-end text-white/50 text-xs leading-4 flex items-center justify-end">
+    <div className={`flex items-center justify-end ${className}`}>
       <div
-        className="flex items-center gap-1.5 hover:cursor-pointer px-2 py-1 rounded-full hover:bg-white/20"
+        className="relative bg-white flex h-8 items-center hover:cursor-pointer hover:bg-white/20 gap-2 border border-[#202020] w-fit rounded-lg shadow-button px-3 py-2"
         onClick={onClick}
       >
         <svg
@@ -19,15 +26,15 @@ const EditBtn = ({ onClick }: { onClick: () => void }) => {
           width="12"
           height="12"
           viewBox="0 0 12 12"
-          fill="none"
+          fill="#131313"
         >
           <path
             opacity="0.5"
             d="M11.6597 2.16094L9.84048 0.340328C9.62051 0.12036 9.32861 0 9.01871 0C8.70744 0 8.41553 0.12036 8.19695 0.340328L0.576934 7.95896C0.504994 8.0309 0.457957 8.12497 0.444123 8.22596L0.00418737 11.4701C-0.0151809 11.6154 0.0332397 11.7607 0.136998 11.863C0.225538 11.9516 0.344515 12 0.467641 12C0.488393 12 0.509145 11.9986 0.529896 11.9958L3.77407 11.5559C3.87507 11.5421 3.96914 11.495 4.04108 11.4231L11.6583 3.80586C11.8783 3.58589 11.9987 3.29398 11.9987 2.98409C12 2.67282 11.8797 2.38091 11.6597 2.16094ZM3.49185 10.6498L1.01272 10.9859L1.3489 8.5068L6.7471 3.1086L8.89005 5.25156L3.49185 10.6498ZM10.9984 3.14457L9.55134 4.59165L7.40977 2.4487L8.85547 1.00161C8.91357 0.94351 8.98136 0.935209 9.01733 0.935209C9.0533 0.935209 9.12109 0.94351 9.17919 1.00161L10.9984 2.82084C11.0565 2.87895 11.0648 2.94674 11.0648 2.98271C11.0648 3.01868 11.0565 3.08647 10.9984 3.14457Z"
-            fill="white"
+            fill="#131313"
           />
         </svg>
-        <span>Edit</span>
+        <span className='text-sm'>Edit</span>
       </div>
     </div>
   );
@@ -45,19 +52,20 @@ const Content = ({
   isLoading?: boolean;
 }) => {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="text-base leading-5 font-medium">{title}</div>
+    <div className="flex flex-col gap-3 text-[#202020] flex-1">
+      {
+        title && <h5 className="text-base leading-5 text-[#202020]/80">{title}</h5>
+      }
       <div
         className={clsx(
-          "font-medium text-[12px] leading-4 text-white/50",
+          "text-xl leading-4 p-4 h-[64px] border border-black rounded-2xl flex items-center shadow-field w-full",
           valueClassName
         )}
       >
-        {value}
+        {isLoading ? (
+          <div className="animate-pulse bg-neutral-400 h-2.5 w-10 rounded-full"></div>
+        ) : value}
       </div>
-      {isLoading && (
-        <div className="animate-pulse bg-neutral-400 h-2.5 w-10 rounded-full"></div>
-      )}
     </div>
   );
 };
@@ -71,9 +79,7 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
     getValues,
   } = useFormContext();
 
-  console.log(getValues())
-
-  const {projectTokenQuantity,assetTokenName, endWeight,startWeight, endTime,startTime} = getValues()
+  const { projectTokenQuantity, assetTokenName, endWeight, startWeight, endTime, startTime, lbpDescription } = getValues()
 
   const projectToken = watch("projectToken");
 
@@ -85,27 +91,39 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
     functionName: "name",
   });
 
-  const { data: projectTokenSym, isLoading: isLoadingSymbol} = useReadContract({
+  const { data: projectTokenSym, isLoading: isLoadingSymbol } = useReadContract({
     abi: ERC20ABI,
     address: projectToken,
     functionName: "symbol",
   });
 
   return (
-    <div className="flex flex-col gap-[38px] max-w-[752px]">
-      <div className="font-medium">
-        <div className="text-xl leading-[26px]">Token Sale Summary</div>
-        <div className="text-[12px] leading-4 text-white/50">
-          Please review all aspects before finishing
-        </div>
-      </div>
+    <FormContainer className="">
       <div className="flex flex-col gap-2">
-        <EditBtn onClick={() => changeStep(0)} />
-        <Content
-          title={"Project Token Contract Address"}
-          value={projectToken}
+        <h2 className="text-xl leading-[26px]">Token Sale Summary</h2>
+        <p className="text-sm">
+          Please review all aspects before finishing
+        </p>
+      </div>
+      <div className="flex flex-col gap-3 mt-8 pb-5 border-b border-black">
+        <div className="flex items-center justify-between">
+          <h5 className='text-xl'>Project Token Contract Addree</h5>
+          <EditBtn onClick={() => changeStep(0)} />
+        </div>
+        <Controller
+          name="projectToken"
+          control={control}
+          render={({ field }) => (
+            <InputField
+              {...field}
+              placeholder="Enter token"
+              isInvalid={!!errors?.projectToken}
+              errorMessage={errors?.projectToken?.message?.toString()}
+              disabled
+            />
+          )}
         />
-        <div className="flex">
+        <div className="flex gap-6">
           <div className="flex-1">
             <Content
               title={"Token Name"}
@@ -114,83 +132,139 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
             />
           </div>
           <div className="flex-1">
-            <Content title={"Token Ticker"} value={projectTokenSym} isLoading={isLoadingSymbol}/>
+            <Content title={"Token Ticker"} value={projectTokenSym} isLoading={isLoadingSymbol} />
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <EditBtn onClick={() => changeStep(2)} />
+
+
+      <div className="flex flex-col gap-3 mt-5 pb-5 border-b border-black">
+        <EditBtn onClick={() => changeStep(2)} className="!justify-start" />
+        <Content title={"Token Claim Time"} value={"2024/10/31 00:00:00"} />
+
         <div className="flex gap-8">
           <Content title={"Project Token Quantity"} value={`${projectTokenQuantity} ${projectTokenSym}`} />
-          {/* <Content title={"Collateral Token Quantity"} value={"10M DAI "} /> */}
+          <Content title={"Collateral Token Quantity"} value={"10M DAI "} />
         </div>
         <div className="flex gap-8">
           <Content
             title={"Price Range"}
-            value={""}
+            value={"$989,670,141.9 - $6,126,990.125806"}
           />
-          <Content title={"Liquidity"} value={"1"} />
+          <Content title={"Liquidity"} value={"$1"} />
         </div>
         <div className="flex gap-8">
           <Content title={"Starting Weigh"} value={`${startWeight}% ${projectTokenSym} ${100 - startWeight}% ${assetTokenName}`} />
           <Content title={"End Weight"} value={`${endWeight}% ${projectTokenSym} ${100 - endWeight}% ${assetTokenName}`} />
         </div>
-        <div className="flex gap-8">
-          <Content title={"Token Claim Time"} value={"2024/10/31 00:00:00"} />
-        </div>
+
         <div className="flex gap-8">
           <Content title={"Start Time"} value={"10/24/2024,12:00 AM"} />
-          <Content title={"End Time"} value={"10/31/2024,12:00 AM"} />
-          <Content title={"Duration"} value={`in${duration}days`} />
+          <Content title={"End Time Weight"} value={"10/31/2024,12:00 AM"} />
+          <Content title={"Duration"} value={`in${duration.toFixed(2)}days`} />
         </div>
         <div className="flex gap-8">
           <Content title={"Platform Fee"} value={"0.3%"} />
         </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <EditBtn onClick={() => changeStep(4)} />
+
+      <div className="flex flex-col gap-3 mt-5">
+        <div className="flex items-center justify-between">
+          <h5 className='text-xl'>Description</h5>
+          <EditBtn onClick={() => changeStep(3)} />
+        </div>
+
         <Content
-          title={"Description"}
-          value={"123qweddddasd"}
-          valueClassName="!text-white"
+          title={""}
+          value={lbpDescription}
         />
         <div className="mt-[10px]">
-          <div className="text-base leading-5 font-medium ">Rights</div>
+          <h4 className="text-base leading-5 text-[#202020]/80 mb-3">Rights</h4>
           <Controller
             name="rights"
             control={control}
             render={({ field }) => (
-              <CheckboxGroup
-                label="Select rights"
-                value={field.value}
-                onValueChange={(values) => field.onChange(values)}
+              <Listbox
+                variant="flat"
+                selectionMode="multiple"
+                selectedKeys={field.value}
+                onSelectionChange={(keys) =>
+                  field.onChange(keys)
+                }
+                className="bg-transparent rounded-md px-0"
+                classNames={
+                  {
+                    list: 'gap-3 flex-row gap-6'
+                  }
+                }
               >
-                <Checkbox
-                  value={REVIEW_RIGHT.PAUSE_LBP}
-                  radius="sm"
+                <ListboxItem
+                  key={REVIEW_RIGHT.PAUSE_LBP}
+                  className="hover:bg-white/60"
                   classNames={{
-                    wrapper: "group-data-[selected=true]:after:bg-[#865215]",
-                    icon: "text-black",
+                    base: "select-item shadow-field bg-white py-3 h-[64px] item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-3 rounded-2xl border border-black shadow-[1px_2px_0px_0px_#9B7D2F]",
+                    title: 'text-xl',
+                    selectedIcon: 'block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden'
                   }}
+                  textValue={REVIEW_RIGHT.PAUSE_LBP}
                 >
-                  Pause LBP
-                </Checkbox>
-                <Checkbox
-                  value={REVIEW_RIGHT.UNPAUSE_LBP}
-                  radius="sm"
+                  <div className="flex items-center gap-2">
+                    <p className="text-xl mt-1">Pause LBP</p>
+                  </div>
+                </ListboxItem>
+
+                <ListboxItem
+                  key={REVIEW_RIGHT.UNPAUSE_LBP}
+                  className="hover:bg-white/60"
                   classNames={{
-                    wrapper: "group-data-[selected=true]:after:bg-[#865215]",
-                    icon: "text-black",
+                    base: "select-item shadow-field bg-white py-3 h-[64px] item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-3 rounded-2xl border border-black shadow-[1px_2px_0px_0px_#9B7D2F]",
+                    title: 'text-xl',
+                    selectedIcon: 'block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden'
                   }}
+                  textValue={REVIEW_RIGHT.PAUSE_LBP}
                 >
-                  Unpause LBP
-                </Checkbox>
-              </CheckboxGroup>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xl mt-1">Unpause LBP</p>
+                  </div>
+                </ListboxItem>
+              </Listbox>
+              // <CheckboxGroup
+              //   value={field.value}
+              //   onValueChange={(values) => field.onChange(values)}
+              //   orientation="horizontal"
+              // >
+              //   <div className="flex-1 flex justify-between">
+              //     <Checkbox
+              //       value={REVIEW_RIGHT.PAUSE_LBP}
+              //       classNames={{
+              //         wrapper: "group-data-[selected=true]:after:bg-[#865215]",
+              //         icon: "text-black",
+              //         base: 'flex-row-reverse flex-1 max-w-full justify-between border border-black rounded-2xl px-4 py-5 ',
+              //         label: 'text-[#202020] aaaaaaaaaaa'
+              //       }}
+              //     >
+              //       Pause LBP
+              //     </Checkbox>
+
+              //     <Checkbox
+              //       value={REVIEW_RIGHT.UNPAUSE_LBP}
+              //       classNames={{
+              //         wrapper: "group-data-[selected=true]:after:bg-[#865215]",
+              //         icon: "text-black",
+              //         base: 'flex-row-reverse flex-1 max-w-full justify-between border border-black rounded-2xl px-4 py-5 ',
+              //         label: 'text-[#202020] aaaaaaaaaaa'
+              //       }}
+              //     >
+              //       Unpause LBP
+              //     </Checkbox>
+              //   </div>
+
+              // </CheckboxGroup>
             )}
           />
         </div>
       </div>
-    </div>
+    </FormContainer>
   );
 };
 

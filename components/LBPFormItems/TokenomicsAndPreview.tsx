@@ -106,6 +106,14 @@ const AssetTokenModal = ({
           <div className='absolute top-0 left-0 right-0 -translate-y-3/4 flex justify-center'>
             <img src="/images/launch-project/Group.png" alt="handing-rope" />
           </div>
+
+          <div className="absolute left-0 -translate-x-[60%] -translate-y-[10%]" >
+            <img src="/images/launch-project/launch-project-sticky3.png" alt="sticky3" />
+          </div>
+
+          <div className="absolute right-0 translate-x-[70%] -translate-y-[10%]" >
+            <img src="/images/launch-project/launch-project-sticky4.png" alt="sticky4" />
+          </div>
           <ModalBody
             className="relative z-50 w-ful rounded-3xl px-0 pb-16 text-[#202020] block" style={{
               background: "url('/images/launch-project/subtract-sticky.png'), url('/images/launch-project/subtract-bg.png')",
@@ -153,7 +161,7 @@ const AssetTokenModal = ({
                     selectionMode="single"
                     selectedKeys={new Set([field.value])}
                     onSelectionChange={handleSelect}
-                    className="bg-transparent p-2 rounded-md"
+                    className="bg-transparent rounded-md px-0"
                     classNames={
                       {
                         list: 'gap-3'
@@ -165,7 +173,7 @@ const AssetTokenModal = ({
                         key={token.symbol}
                         className="hover:bg-white/60"
                         classNames={{
-                          base: "select-item bg-white py-3 item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-3 rounded-lg",
+                          base: "select-item bg-white py-3 item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-3 rounded-lg border border-black shadow-[1px_2px_0px_0px_#9B7D2F]",
                           title: 'text-base leading-[16px]',
                           selectedIcon: 'block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden'
                         }}

@@ -4,7 +4,7 @@ interface FormContainerProps extends PropsWithChildren<HTMLProps<HTMLDivElement>
 
 function FormContainer({ children, ...props }: FormContainerProps) {
    return (
-      <div  {...props} className={`mt-[24px] p-10 bg-white rounded-3xl border border-dashed border-black ${props.className}`}>{children}</div>
+      <div  {...props} className={`mt-[24px] text-[#202020] p-10 bg-white rounded-3xl border border-dashed border-black ${props.className}`}>{children}</div>
    )
 }
 
