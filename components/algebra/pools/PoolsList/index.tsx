@@ -10,15 +10,14 @@ import { farmingClient } from "@/lib/algebra/graphql/clients";
 import {
   usePoolsListQuery,
   useActiveFarmingsQuery,
-  OrderDirection,
   Pool_OrderBy,
 } from "@/lib/algebra/graphql/generated/graphql";
 import PoolCardList from "./PoolCardList";
 import { SortingState } from "@tanstack/react-table";
-import { id } from "ethers/lib/utils";
 import { useUserPools } from "@/lib/algebra/graphql/clients/pool";
 import { wallet } from "@/services/wallet";
 import BigNumber from "bignumber.js";
+import { id } from "ethers/lib/utils";
 
 const mappingSortKeys: Record<any, Pool_OrderBy> = {
   tvlUSD: Pool_OrderBy.TotalValueLockedUsd,
@@ -62,25 +61,25 @@ const PoolsList = ({
     refetch: refetchUserPools,
   } = useUserPools(wallet.account);
 
-  useEffect(() => {
-    if (userPools || isUserPoolsLoading) return;
+  // useEffect(() => {
+  //   if (userPools || isUserPoolsLoading) return;
 
-    const interval = setInterval(() => {
-      refetchUserPools();
-    }, 1000);
+  //   const interval = setInterval(() => {
+  //     refetchUserPools();
+  //   }, 1000);
 
-    return () => clearInterval(interval);
-  }, [userPools, refetchUserPools, isUserPoolsLoading]);
+  //   return () => clearInterval(interval);
+  // }, [userPools, refetchUserPools, isUserPoolsLoading]);
 
-  useEffect(() => {
-    if (pools || isPoolsListLoading) return;
+  // useEffect(() => {
+  //   if (pools || isPoolsListLoading) return;
 
-    const interval = setInterval(() => {
-      refetch();
-    }, 1000);
+  //   const interval = setInterval(() => {
+  //     refetch();
+  //   }, 1000);
 
-    return () => clearInterval(interval);
-  }, [pools, refetch, isPoolsListLoading]);
+  //   return () => clearInterval(interval);
+  // }, [pools, refetch, isPoolsListLoading]);
 
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
@@ -99,7 +98,7 @@ const PoolsList = ({
   const formattedPools = useMemo(() => {
     if (isLoading || !pools) return [];
 
-    return pools.pools.map(
+    return pools?.pools.map(
       ({
         id,
         token0,
@@ -121,6 +120,39 @@ const PoolsList = ({
         const lastDate = currentPool ? currentPool.date * 1000 : 0;
         const currentDate = new Date().getTime();
 
+        function handleGap(
+          data: any[],
+          gap: number,
+          field: string,
+          endTime: number
+        ) {
+          data?.sort((a, b) => a[field] - b[field]);
+
+          let startTime = data[0]?.[field];
+
+          let currentTimestamp = startTime;
+          const filledData = [];
+
+          while (currentTimestamp <= endTime) {
+            const existingData = data.find(
+              (d) =>
+                d[field] >= currentTimestamp &&
+                d[field] < currentTimestamp + gap
+            );
+
+            filledData.push(
+              existingData || {
+                [field]: currentTimestamp,
+                volumeUSD: 0,
+              }
+            );
+
+            currentTimestamp += gap;
+          }
+
+          return filledData?.sort((a, b) => b[field] - a[field]);
+        }
+
         function calculatePercentageChange(current: number, previous: number) {
           if (previous === 0) {
             return current === 0 ? 0 : 100; // Assume 100% change for a significant increase
@@ -133,34 +165,64 @@ const PoolsList = ({
           return isNaN(change) || !isFinite(change) ? 0 : change;
         }
 
-        console.log("poolDayData", poolDayData);
+        //periodStartUnix
 
+        const handleGapHour = (data: any[], end: number) => {
+          return handleGap(data, 3600, "periodStartUnix", end);
+        };
+
+        const handleDayGap = (data: any[], end: number) => {
+          return handleGap(data, 3600 * 24, "date", end);
+        };
+
+        const handleGapWeek = (data: any[], end: number) => {
+          return handleGap(data, 3600 * 24 * 7, "week", end);
+        };
+
+        const filledGapHours = handleGapHour(
+          poolHourData?.slice(0, 24) || [],
+          Math.floor(Date.now() / 1000)
+        );
+
+        const filledGapDays = handleDayGap(
+          poolDayData?.slice(0, 14) || [],
+          Math.floor(Date.now() / 1000)
+        );
+
+        const filledGapWeeks = handleGapWeek(
+          poolWeekData?.slice(0, 8),
+          Math.floor(Date.now() / 1000)
+        );
         const changeHour = calculatePercentageChange(
-          poolHourData[0]?.volumeUSD ?? 0,
-          poolHourData[1]?.volumeUSD ?? 0
+          Number(filledGapHours[0]?.volumeUSD || 0),
+          Number(filledGapHours[1]?.volumeUSD || 0)
         );
 
         const change24h = calculatePercentageChange(
-          poolDayData[1]?.volumeUSD ?? 0,
-          poolDayData[2]?.volumeUSD ?? 0
+          filledGapHours
+            .slice(0, 24)
+            .reduce((sum, hour) => sum + Number(hour?.volumeUSD || 0), 0),
+          filledGapHours
+            .slice(24, 48)
+            .reduce((sum, hour) => sum + Number(hour?.volumeUSD || 0), 0)
         );
 
         const changeWeek = calculatePercentageChange(
-          poolDayData
+          filledGapDays
             .slice(0, 7)
-            .reduce((sum, day) => sum + (day?.volumeUSD ?? 0), 0),
-          poolDayData
+            .reduce((sum, day) => sum + Number(day?.volumeUSD || 0), 0),
+          filledGapDays
             .slice(7, 14)
-            .reduce((sum, day) => sum + (day?.volumeUSD ?? 0), 0)
+            .reduce((sum, day) => sum + Number(day?.volumeUSD || 0), 0)
         );
 
         const changeMonth = calculatePercentageChange(
-          poolWeekData
+          filledGapWeeks
             .slice(0, 4)
-            .reduce((sum, week) => sum + (week?.volumeUSD ?? 0), 0),
-          poolWeekData
+            .reduce((sum, week) => sum + Number(week?.volumeUSD || 0), 0),
+          filledGapWeeks
             .slice(4, 8)
-            .reduce((sum, week) => sum + (week?.volumeUSD ?? 0), 0)
+            .reduce((sum, week) => sum + Number(week?.volumeUSD || 0), 0)
         );
 
         /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
@@ -316,6 +378,8 @@ const PoolsList = ({
       }
     );
   }, [isLoading, userPools, positions, activeFarmings]);
+
+  console.log(pools?.pools[0]);
 
   const handleSort = (callback: any) => {
     const sort = callback();
