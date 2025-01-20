@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Button } from "../button";
 import { useFormContext } from "react-hook-form";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { ERC20ABI } from "@/lib/abis/erc20";
@@ -23,6 +22,8 @@ import { formatErc20Data } from "@/services/lib/helper";
 import { useMutation } from "@tanstack/react-query";
 import FjordHoneySdk, { TCreatePool } from "@/services/fjord_honeypot_sdk";
 import { berachainBartioTestnet } from "@/lib/chain";
+import { FormContainer } from "./Components";
+import { Button } from "@nextui-org/react";
 type FomatedTokenType = {
   allowance: bigint;
   balanceOf: bigint;
@@ -36,8 +37,8 @@ type Props = {};
 const SummaryItem = ({ title, value }: { title: string; value: string }) => {
   return (
     <div className="flex flex-col items-start gap-1">
-      <div className="text-[12px] leading-4 font-medium">{title}</div>
-      <div className="text-[12px] leading-4 font-medium">{value}</div>
+      <div className="text-base font-semibold">{title}</div>
+      <div className="text-[12px] leading-4">{value}</div>
     </div>
   );
 };
@@ -62,29 +63,48 @@ const ApprovalsCard = ({
   isApproved: boolean;
 }) => {
   return (
-    <div className="py-5 px-7 flex flex-col gap-4 items-center bg-[#211708] border border-[#F7931A1A] rounded-[20px]">
-      <div className="text-[12px] leading-4">Step {step}</div>
-      <div>{title}</div>
-      <div className="w-36 h-[2px] bg-[#37240A]" />
-      {isApproved && title == "Approve" ? (
-        <Button
-          styleMode="plain"
-          className="rounded-full outline-0 border-0"
-          isDisabled={true}
-          onClick={onClick}
-        >
-          Approved
-        </Button>
-      ) : (
-        <Button
-          styleMode="plain"
-          className="rounded-full outline-0 border-0"
-          isDisabled={isLoading || disabled}
-          onClick={onClick}
-        >
-          {!isLoading ? buttonTitle : "Loading..."}
-        </Button>
-      )}
+    <div
+      className="py-4 px-4 flex flex-col w-[196px] h-[192px] gap-4 items-center !bg-[#FBCA4E] border border-black rounded-2xl relative"
+      style={{
+        background:
+          "url('/images/launch-project/subtract-sticky.png'), url('/images/launch-project/subtract-bg.png')",
+        backgroundSize: "300% 42px, cover",
+        backgroundRepeat: "no-repeat, no-repeat",
+      }}
+    >
+      <div className="absolute top-0 left-4">
+        <img src="/images/launch-project/step-tag.png" alt="step-tag" />
+        <p className="absolute top-1 left-1/2 -translate-x-1/2 text-sm font-semibold">
+          0{step}
+        </p>
+      </div>
+
+      <div className='absolute top-0 left-0 right-0 flex justify-center'>
+        <img src="/images/launch-project/token-bg.svg" alt="token-bg" className="" />
+        <div className='w-[40px] h-[40px] border border-black rounded-full bg-[#C4C4C4] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'></div>
+        {/* {title} */}
+      </div>
+      <div className='w-full h-full flex flex-col justify-end relative z-50'>
+        <p className='text-sm text-[#33250F] mb-2 text-center'>{title}</p>
+        <div className="w-full h-[6px] bg-[#211708] rounded-[32px] mb-4" />
+        {isApproved && title == "Approve" ? (
+          <Button
+            className="bg-white w-full min-h-8 h-8 border border-black text-[10px] text-[#211708]"
+            isDisabled={true}
+            onClick={onClick}
+          >
+            Approved
+          </Button>
+        ) : (
+          <Button
+            className="bg-white w-full min-h-8 h-8 border border-black text-[10px] text-[#211708]"
+            isDisabled={isLoading || disabled}
+            onClick={onClick}
+          >
+            {!isLoading ? buttonTitle : "Loading..."}
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
@@ -215,8 +235,6 @@ const Confirm = (props: Props) => {
     tokens?.results?.projectToken?.callsReturnContext ?? []
   ) as FomatedTokenType;
 
-  console.log({ formatedProjectToken, formatedAssetToken });
-
   const [, platformFee, swapFee] = data ?? [];
 
   const SummaryItemData = [
@@ -258,7 +276,7 @@ const Confirm = (props: Props) => {
       formatedAssetToken?.allowance || BigInt(0),
       formatedAssetToken?.decimals || 18
     ) -
-      assetTokenQuantity >=
+    assetTokenQuantity >=
     0;
 
   const isProjectTokenApproved =
@@ -266,7 +284,7 @@ const Confirm = (props: Props) => {
       formatedProjectToken?.allowance || BigInt(0),
       formatedProjectToken?.decimals || 18
     ) -
-      projectTokenQuantity >=
+    projectTokenQuantity >=
     0;
 
   const handleApprovalTokens = async () => {
@@ -393,7 +411,7 @@ const Confirm = (props: Props) => {
             if (decode.eventName == "PoolCreated") {
               poolAddress = decode.args.pool;
             }
-          } catch (error) {}
+          } catch (error) { }
         });
         if (poolAddress) {
           await createPoolAsync({
@@ -460,30 +478,29 @@ const Confirm = (props: Props) => {
       formatedAssetToken?.balanceOf || BigInt(0),
       formatedAssetToken?.decimals || 18
     ) -
-      assetTokenQuantity >=
-      0 &&
+    assetTokenQuantity >=
+    0 &&
     +formatUnits(
       formatedProjectToken?.balanceOf || BigInt(0),
       formatedProjectToken?.decimals || 18
     ) -
-      projectTokenQuantity >=
-      0;
+    projectTokenQuantity >=
+    0;
 
-  console.log(isBothTokenApproved);
   return (
-    <div>
-      <div className="text-xl font-medium">Quick Summary</div>
+    <FormContainer>
+      <h3 className="text-2xl leading-[26px] font-semibold">Quick Summary</h3>
       <div className="flex flex-col gap-9">
-        <div className="mt-3 flex flex-wrap gap-8 p-[10px]">
+        <div className="mt-6 flex flex-wrap justify-between p-6 border border-black rounded-2xl shadow-field">
           {SummaryItemData.map((d) => (
             <SummaryItem title={d.title} value={d.value} key={d.value} />
           ))}
         </div>
         <div>
-          <div className="text-base leading-5 font-medium pl-[10px]">
+          <h3 className="text-2xl leading-[26px] font-semibold mb-6">
             Final Approvals
-          </div>
-          <div className="flex gap-3.5 mt-3.5">
+          </h3>
+          <div className="flex gap-3.5">
             <ApprovalsCard
               step={1}
               title={"Approve"}
@@ -511,7 +528,7 @@ const Confirm = (props: Props) => {
           </div>
         </div>
       </div>
-    </div>
+    </FormContainer>
   );
 };
 

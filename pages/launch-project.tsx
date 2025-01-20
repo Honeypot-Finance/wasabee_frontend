@@ -191,7 +191,7 @@ const LaunchProject = () => {
         </div>
         <div className="relative w-ful rounded-3xl mt-[39px] px-9 pb-20" style={{
           background: "url('/images/launch-project/subtract-sticky.png'), url('/images/launch-project/subtract-bg.png')",
-          backgroundSize: "contain, cover",
+          backgroundSize: "contain, 100% 100%",
           backgroundRepeat: 'no-repeat, no-repeat',
         }}>
           <FormProvider {...methods}  >
