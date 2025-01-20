@@ -53,7 +53,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
 
   return (
     <>
-      <div className={clsx("relative z-[1001] mb-5", props.className)}>
+      <div className={clsx("relative mb-5", props.className)}>
         <Navbar
           classNames={{
             wrapper: "max-w-[1200px] px-4 sm:px-6 !h-auto items-start",
@@ -74,7 +74,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
           <NavbarContent className="flex gap-4 items-start" justify="center">
             <Link
               href="/"
-              className="pointer-events-none md:pointer-events-auto cursor-pointer z-[1000]"
+              className="pointer-events-none md:pointer-events-auto cursor-pointer"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               <Image
