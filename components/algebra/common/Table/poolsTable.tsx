@@ -256,7 +256,7 @@ const PoolsTable = <TData, TValue>({
                           {pool.pair.token0.symbol}/{pool.pair.token1.symbol}
                         </p>
                         <p className="text-black/60 text-sm">
-                          {pool.fee / 10000}%
+                          base fee {pool.fee}%
                         </p>
                       </div>
                     </div>

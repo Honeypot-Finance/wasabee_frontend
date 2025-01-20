@@ -267,6 +267,7 @@ export class Token implements BaseContract {
     }
 
     const name = await this.contract.read.name();
+
     this.name = name;
 
     localStorage.setItem(
