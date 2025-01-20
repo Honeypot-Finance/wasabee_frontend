@@ -124,15 +124,15 @@ const pop2PumpQuery = `
 
 `;
 
-export const pot2PumpListToMemePairList = async (
+export const pot2PumpListToMemePairList = (
   pot2Pump: Partial<Pot2Pump>[]
-): Promise<MemePairContract[]> => {
-  return Promise.all(pot2Pump.map(pot2PumpToMemePair));
+): MemePairContract[] => {
+  return pot2Pump.map(pot2PumpToMemePair);
 };
 
-export const pot2PumpToMemePair = async (
+export const pot2PumpToMemePair = (
   pot2Pump: Partial<Pot2Pump>
-): Promise<MemePairContract> => {
+): MemePairContract => {
   const contract = new MemePairContract({
     address: pot2Pump.id,
     depositedLaunchedTokenWithoutDecimals: new BigNumber(

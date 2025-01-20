@@ -37,7 +37,6 @@ export interface Pool {
   poolAvgApr: number;
   avgApr: number;
   farmApr: number;
-  isMyPool: boolean;
   hasActiveFarming: boolean;
   createdAtTimestamp: number;
   liquidity: any;

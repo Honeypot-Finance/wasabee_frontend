@@ -121,15 +121,13 @@ const PoolsTable = <TData, TValue>({
     totalRows
   );
 
-  const handleChangePools = (filter: string) => {
-    if (filter === "myPools") {
-      setTableData((prev = []) => {
-        return prev.filter((data) => data.isMyPool);
-      });
+  useEffect(() => {
+    if (selectedFilter === "myPools") {
+      setTableData(userPools as Pool[]);
     } else {
       setTableData(data as Pool[]);
     }
-  };
+  }, [data, selectedFilter, userPools]);
 
   if (loading) return <LoadingState />;
 
@@ -143,7 +141,6 @@ const PoolsTable = <TData, TValue>({
                 <button
                   key={filter.key}
                   onClick={() => {
-                    handleChangePools(filter.key);
                     setSelectedFilter(filter.key);
                   }}
                   className={`p-2.5 cursor-pointer ${

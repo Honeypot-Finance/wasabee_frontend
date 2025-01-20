@@ -10,14 +10,15 @@ import { farmingClient } from "@/lib/algebra/graphql/clients";
 import {
   usePoolsListQuery,
   useActiveFarmingsQuery,
+  OrderDirection,
   Pool_OrderBy,
 } from "@/lib/algebra/graphql/generated/graphql";
 import PoolCardList from "./PoolCardList";
 import { SortingState } from "@tanstack/react-table";
+import { id } from "ethers/lib/utils";
 import { useUserPools } from "@/lib/algebra/graphql/clients/pool";
 import { wallet } from "@/services/wallet";
 import BigNumber from "bignumber.js";
-import { id } from "ethers/lib/utils";
 
 const mappingSortKeys: Record<any, Pool_OrderBy> = {
   tvlUSD: Pool_OrderBy.TotalValueLockedUsd,
@@ -46,40 +47,25 @@ const PoolsList = ({
 
   const [search, setSearch] = useState("");
 
+  const orderBy = mappingSortKeys[sorting[0].id];
+
   const {
     data: pools,
     loading: isPoolsListLoading,
     refetch,
   } = usePoolsListQuery({
-    variables: {
-      search: search,
-    },
+    fetchPolicy: "cache-and-network",
+    nextFetchPolicy: "cache-and-network",
+    initialFetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
+    pollInterval: 10000, // Refetch every 10 seconds
   });
+
   const {
     data: userPools,
     loading: isUserPoolsLoading,
     refetch: refetchUserPools,
   } = useUserPools(wallet.account);
-
-  // useEffect(() => {
-  //   if (userPools || isUserPoolsLoading) return;
-
-  //   const interval = setInterval(() => {
-  //     refetchUserPools();
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, [userPools, refetchUserPools, isUserPoolsLoading]);
-
-  // useEffect(() => {
-  //   if (pools || isPoolsListLoading) return;
-
-  //   const interval = setInterval(() => {
-  //     refetch();
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, [pools, refetch, isPoolsListLoading]);
 
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
@@ -256,7 +242,6 @@ const PoolsList = ({
           poolAvgApr,
           farmApr,
           avgApr,
-          isMyPool: Boolean(openPositions?.length),
           hasActiveFarming: Boolean(activeFarming),
           createdAtTimestamp,
           liquidity,
@@ -272,7 +257,7 @@ const PoolsList = ({
         };
       }
     );
-  }, [isLoading, pools, positions, activeFarmings?.eternalFarmings]);
+  }, [isLoading, pools, activeFarmings?.eternalFarmings]);
 
   const formattedUserPools = useMemo(() => {
     if (isLoading || !userPools) return [];
@@ -360,7 +345,6 @@ const PoolsList = ({
           poolAvgApr,
           farmApr,
           avgApr,
-          isMyPool: Boolean(openPositions?.length),
           hasActiveFarming: Boolean(activeFarming),
           createdAtTimestamp,
           liquidity,
@@ -377,7 +361,7 @@ const PoolsList = ({
         };
       }
     );
-  }, [isLoading, userPools, positions, activeFarmings]);
+  }, [isLoading, userPools, activeFarmings]);
 
   console.log(pools?.pools[0]);
 
@@ -390,9 +374,11 @@ const PoolsList = ({
     }
   };
 
+  console.log("formattedPools", formattedPools);
+
   return (
-    <div>
-      <div className="hidden xl:block">
+    <div className="w-full">
+      <div className="hidden xl:block w-full">
         <PoolsTable
           columnsMy={poolsColumnsMy}
           columns={poolsColumns}
@@ -408,7 +394,7 @@ const PoolsList = ({
           handleSearch={(data: string) => setSearch(data)}
         />
       </div>
-      <div className="block xl:hidden">
+      <div className="block xl:hidden ">
         <PoolCardList data={formattedPools} />
       </div>
     </div>

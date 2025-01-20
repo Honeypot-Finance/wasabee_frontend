@@ -1,0 +1,29 @@
+import type { PluginAPI } from 'tailwindcss/types/config';
+
+const createStrokeWidthStyles = (width: string) => ({
+  '-webkit-text-stroke-width': width,
+  'text-stroke-width': width,
+  'stroke-width': width,
+});
+
+const createStrokeColorStyles = (color: string) => ({
+  '-webkit-text-stroke-color': color,
+  'text-stroke-color': color,
+  'stroke': color,
+});
+
+export const textStrokePlugin = ({ matchUtilities }: Pick<PluginAPI, 'matchUtilities'>) => {
+  matchUtilities(
+    {
+      'text-stroke': (value: string) => createStrokeWidthStyles(value),
+    },
+    { values: { 1: '1px', 2: '2px', 3: '3px' } }
+  );
+
+  matchUtilities(
+    {
+      'text-stroke': (value: string) => createStrokeColorStyles(value),
+    },
+    { values: { white: '#fff', black: '#000' } }
+  );
+}; 
