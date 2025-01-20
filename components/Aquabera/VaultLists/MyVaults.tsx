@@ -135,9 +135,9 @@ export function MyAquaberaVaults() {
             <th className="py-2 px-4 text-[#4D4D4D] max-w-[300px] truncate">
               Vault Address
             </th>
-            <SortHeader field="tvl" label="TVL" />
+            {/* <SortHeader field="tvl" label="TVL" />
             <SortHeader field="volume" label="24h Volume" />
-            <SortHeader field="fees" label="24h Fees" />
+            <SortHeader field="fees" label="24h Fees" /> */}
             <SortHeader field="shares" label="My Vault Shares" />
           </tr>
         </thead>
@@ -214,9 +214,9 @@ export function MyAquaberaVaults() {
                   <td className="py-2 px-4 text-black max-w-[300px] truncate">
                     {vaultShare.vault.id}
                   </td>
-                  <td className="py-2 px-4 text-right text-black">{tvl}</td>
+                  {/* <td className="py-2 px-4 text-right text-black">{tvl}</td>
                   <td className="py-2 px-4 text-right text-black">{volume}</td>
-                  <td className="py-2 px-4 text-right text-black">{fees}</td>
+                  <td className="py-2 px-4 text-right text-black">{fees}</td> */}
                   <td className="py-2 px-4 text-right text-black">
                     {vaultShare.vaultShareBalance}
                   </td>
