@@ -157,7 +157,9 @@ const PoolsTable = <TData, TValue>({
               {filters.map((filter) => (
                 <button
                   key={filter.key}
-                  onClick={() => setSelectedFilter(filter.key)}
+                  onClick={() => {
+                    setSelectedFilter(filter.key);
+                  }}
                   className={`p-2.5 cursor-pointer ${
                     selectedFilter === filter.key
                       ? "border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
