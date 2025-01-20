@@ -1,8 +1,6 @@
 import React from "react";
 import { useControlledState } from "@/hooks";
 import { cn } from "@/lib/tailwindcss";
-import Image from "next/image";
-
 
 export type VerticalStepProps = {
   className?: string;
@@ -10,8 +8,6 @@ export type VerticalStepProps = {
   title?: React.ReactNode;
   isValid?: boolean;
 };
-
-const STEP_SPACE = 56;
 
 export interface VerticalStepsProps
   extends React.HTMLAttributes<HTMLButtonElement> {
@@ -79,10 +75,7 @@ const HorizontalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
 
     return (
       <nav aria-label="Progress" className="w-full">
-        <ol
-          className={cn("flex justify-between", className)}
-
-        >
+        <ol className={cn("flex justify-between", className)}>
           {steps?.map((step, stepIdx) => {
             const status =
               currentStep === stepIdx
@@ -118,7 +111,7 @@ const HorizontalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
                     }
                     {...props}
                   >
-                    <div className="relative flex items-center w-[40px] h-[40px] rounded-full bg-[#F4E5BF] justify-center border border-[#FCCB4C]" >
+                    <div className="relative flex items-center w-[40px] h-[40px] rounded-full bg-[#F4E5BF] justify-center border border-[#FCCB4C]">
                       <div className="bg-[#FCCB4C] w-[17.52px] h-[17.52px] rounded-full flex items-center justify-center">
                         <span className="text-black text-[10px] leading-[10px] text-center">
                           {stepIdx + 1}
@@ -128,7 +121,7 @@ const HorizontalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
                         <div
                           aria-hidden="true"
                           className={cn(
-                            "pointer-events-none flex items-center w-[128px] bg-[#E1E1E1] h-4 absolute  left-full",
+                            "pointer-events-none flex items-center w-[165px] bg-[#E1E1E1] h-4 absolute  left-full",
                             {
                               "bg-[#FCCB4C]": status === "complete",
                             }
@@ -142,7 +135,7 @@ const HorizontalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
             );
           })}
         </ol>
-      </nav >
+      </nav>
     );
   }
 );
