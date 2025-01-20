@@ -30,6 +30,8 @@ export const LaunchDataProgress = observer(
       flag_count: 0,
     });
 
+    console.log("pair", pair);
+
     function refreshVotes() {
       trpcClient.projects.getProjectVotes
         .query({ pair: pair?.address })

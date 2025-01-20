@@ -36,7 +36,7 @@ export class Token implements BaseContract {
       Token.tokensMap[key].setData(args);
     }
 
-    if (!!force) {
+    if (force) {
       Token.tokensMap[key].init(force);
     }
     return Token.tokensMap[key];
@@ -496,12 +496,17 @@ export class Token implements BaseContract {
 
     console.log(indexerTokenData.token);
 
-    Object.assign(this, {
-      ...indexerTokenData.token,
-      address: indexerTokenData.token?.id,
-      decimals: indexerTokenData.token?.decimals.toString(),
-      derivedETH: indexerTokenData.token?.derivedMatic,
-    });
+    if (indexerTokenData.token) {
+      //exclude marketCap,
+      const { marketCap, ...rest } = indexerTokenData.token;
+
+      Object.assign(this, {
+        ...rest,
+        address: indexerTokenData.token?.id,
+        decimals: indexerTokenData.token?.decimals.toString(),
+        derivedETH: indexerTokenData.token?.derivedMatic,
+      });
+    }
 
     this.indexerDataLoaded = true;
   }

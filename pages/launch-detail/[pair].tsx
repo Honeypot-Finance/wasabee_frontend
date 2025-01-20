@@ -563,11 +563,11 @@ const MemeView = observer(({ pairAddress }: { pairAddress: string }) => {
 
       await pair.init({ force: true });
 
-      pair.raiseToken?.init(true, {
+      pair.raiseToken?.init(false, {
         loadIndexerTokenData: true,
       });
 
-      pair.launchedToken?.init(true, {
+      pair.launchedToken?.init(false, {
         loadIndexerTokenData: true,
       });
 
@@ -651,8 +651,6 @@ const MemeView = observer(({ pairAddress }: { pairAddress: string }) => {
     if (!wallet.isInit || !pairAddress) {
       return;
     }
-
-    console.log("pairAddress", pairAddress);
 
     state.pair.call({
       pairAddress: pairAddress as string,

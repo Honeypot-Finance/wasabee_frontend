@@ -451,18 +451,21 @@ export class MemePairContract implements BaseLaunchContract {
     }
 
     await Promise.all([
-      this.getRaisedToken(raisedToken),
-      this.getLaunchedToken(launchedToken),
-      this.getDepositedRaisedToken(),
+      this.getIndexerData(force),
+      this.getRaisedToken(raisedToken, force),
+      this.getLaunchedToken(launchedToken, force),
+      this.getDepositedRaisedToken({ amount: depositedRaisedToken, force }),
       //depositedRaisedToken
-      this.getDepositedLaunchedToken(depositedLaunchedToken),
+      this.getDepositedLaunchedToken({
+        amount: depositedLaunchedToken,
+        force,
+      }),
       this.getEndTime(endTime),
       this.getLaunchedTokenProvider(),
       this.getCanClaimLP(),
-      this.getRaisedTokenMinCap(),
+      this.getRaisedTokenMinCap(force),
       this.getUserParticipated(),
       this.getVaultBalance(),
-      this.getIndexerData(force),
       //this.getParticipantDetail(),
     ]).catch((error) => {
       console.error(error, `init-memepair-error-${this.address}`);
@@ -500,6 +503,7 @@ export class MemePairContract implements BaseLaunchContract {
     }
     const res = await subgraphPot2PumpToMemePair(this.address, wallet.account);
     if (res) {
+      console.log("res indexer", res);
       Object.assign(this, res);
       this.indexerDataLoaded = true;
     } else {
@@ -507,10 +511,13 @@ export class MemePairContract implements BaseLaunchContract {
     }
   }
 
-  async getRaisedTokenMinCap() {
-    const res = await this.contract.read.raisedTokenMinCap();
-
-    this.raisedTokenMinCap = new BigNumber(res.toString());
+  async getRaisedTokenMinCap(force?: boolean) {
+    if (!force && this.raisedTokenMinCap) {
+      return;
+    } else {
+      const res = await this.contract.read.raisedTokenMinCap();
+      this.raisedTokenMinCap = new BigNumber(res.toString());
+    }
   }
 
   getIsValidated() {
@@ -543,30 +550,37 @@ export class MemePairContract implements BaseLaunchContract {
     }
   }
 
-  async getRaisedToken(token?: Token) {
-    if (token && token.address !== zeroAddress) {
+  async getRaisedToken(token?: Token, force?: boolean) {
+    if (!!token && token.address !== zeroAddress && !force) {
       this.raiseToken = token;
       //this.raiseToken.init();
     } else {
       const res = (await this.contract.read.raisedToken()) as `0x${string}`;
-      this.raiseToken = Token.getToken({ address: res });
-      this.raiseToken.init();
+      this.raiseToken = Token.getToken({ address: res, force });
     }
   }
 
-  async getLaunchedToken(launchedToken?: Token) {
-    if (!!launchedToken && launchedToken.address !== zeroAddress) {
+  async getLaunchedToken(launchedToken?: Token, force?: boolean) {
+    console.log("launchedToken", launchedToken);
+    if (!!launchedToken && launchedToken.address !== zeroAddress && !force) {
       this.launchedToken = launchedToken;
       //this.launchedToken.init();
     } else {
       const res = (await this.contract.read.launchedToken()) as `0x${string}`;
-      this.launchedToken = Token.getToken({ address: res });
-      this.launchedToken.init();
+      console.log("res", res);
+      this.launchedToken = Token.getToken({ address: res, force });
+      console.log("this.launchedToken", this.launchedToken);
     }
   }
 
-  async getDepositedRaisedToken(amount?: string) {
-    if (amount) {
+  async getDepositedRaisedToken({
+    amount,
+    force,
+  }: {
+    amount?: string;
+    force?: boolean;
+  } = {}) {
+    if (amount && Number(amount) !== 0 && !force) {
       this.depositedRaisedTokenWithoutDecimals = new BigNumber(amount);
     } else {
       const res = (await this.contract.read.depositedRaisedToken()) as bigint;
@@ -574,8 +588,14 @@ export class MemePairContract implements BaseLaunchContract {
     }
   }
 
-  async getDepositedLaunchedToken(amount?: string) {
-    if (amount && Number(amount) !== 0) {
+  async getDepositedLaunchedToken({
+    amount,
+    force,
+  }: {
+    amount?: string;
+    force?: boolean;
+  }) {
+    if (amount && Number(amount) !== 0 && !force) {
       this.depositedLaunchedTokenWithoutDecimals = new BigNumber(amount);
     } else {
       const res = (await this.contract.read.depositedLaunchedToken()) as bigint;

@@ -160,8 +160,11 @@ export const pot2PumpToMemePair = (
       pot2Pump.participants.length > 0 &&
       !pot2Pump.participants[0].refunded &&
       pot2Pump.endTime < dayjs().unix(),
-    launchedToken: Token.getToken({
-      address: pot2Pump.launchToken?.id!,
+  });
+
+  if (pot2Pump.launchToken?.id) {
+    contract.launchedToken = Token.getToken({
+      address: pot2Pump.launchToken?.id,
       name: pot2Pump.launchToken?.name,
       symbol: pot2Pump.launchToken?.symbol,
       decimals: Number(pot2Pump.launchToken?.decimals),
@@ -174,9 +177,11 @@ export const pot2PumpToMemePair = (
       totalValueLockedUSD: pot2Pump.launchToken?.totalValueLockedUSD,
       poolCount: Number(pot2Pump.launchToken?.poolCount),
       priceChange24hPercentage: pot2Pump.launchToken?.priceChange24hPercentage,
-    }),
-    raiseToken: Token.getToken({
-      address: pot2Pump.raisedToken?.id!,
+    });
+  }
+  if (pot2Pump.raisedToken?.id) {
+    contract.raiseToken = Token.getToken({
+      address: pot2Pump.raisedToken?.id,
       name: pot2Pump.raisedToken?.name,
       symbol: pot2Pump.raisedToken?.symbol,
       decimals: Number(pot2Pump.raisedToken?.decimals),
@@ -189,8 +194,8 @@ export const pot2PumpToMemePair = (
       totalValueLockedUSD: pot2Pump.raisedToken?.totalValueLockedUSD,
       poolCount: Number(pot2Pump.raisedToken?.poolCount),
       priceChange24hPercentage: pot2Pump.raisedToken?.priceChange24hPercentage,
-    }),
-  });
+    });
+  }
 
   //console.log("pot2Pump:", pot2Pump);
 
