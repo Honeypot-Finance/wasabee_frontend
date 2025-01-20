@@ -27,6 +27,7 @@ import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair
 import { vault } from "@/services/vault";
 import { chart } from "@/services/chart";
 import { V3SwapCard } from "../algebra/swap/V3SwapCard";
+import { HoneyContainer } from "../CardContianer";
 
 export const LaunchDetailSwapCard = observer(
   ({
@@ -181,45 +182,49 @@ export const LaunchDetailSwapCard = observer(
 
           {currentTab === "LP" && (
             <LoadingContainer isLoading={!isInit}>
-              {memePairContract.canClaimLP && (
+              <HoneyContainer>
+                {memePairContract.canClaimLP && (
+                  <Button
+                    className="w-full relative overflow-visible"
+                    isLoading={memePairContract.claimLP.loading}
+                    onClick={() => {
+                      memePairContract.claimLP.call();
+                    }}
+                    isDisabled={!memePairContract.canClaimLP}
+                  >
+                    Claim LP
+                    {memePairContract.canClaimLP && (
+                      <div className="absolute -top-0 -right-0 translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-red-500 rounded-full z-10" />
+                    )}
+                  </Button>
+                )}
                 <Button
-                  className="w-full relative overflow-visible"
-                  isLoading={memePairContract.claimLP.loading}
-                  onClick={() => {
-                    memePairContract.claimLP.call();
+                  className="w-full"
+                  onClick={async () => {
+                    const lpTokenAddress =
+                      await memePairContract.contract.read.lpToken();
+                    window.location.href = `/vault/${lpTokenAddress}`;
                   }}
-                  isDisabled={!memePairContract.canClaimLP}
                 >
-                  Claim LP
-                  {memePairContract.canClaimLP && (
-                    <div className="absolute -top-0 -right-0 translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-red-500 rounded-full z-10" />
-                  )}
+                  Visit Vault
                 </Button>
-              )}
-              <Button
-                className="w-full"
-                onClick={async () => {
-                  const lpTokenAddress =
-                    await memePairContract.contract.read.lpToken();
-                  window.location.href = `/vault/${lpTokenAddress}`;
-                }}
-              >
-                Visit Vault
-              </Button>
-              <div className="w-full rounded-[32px] bg-white space-y-2 px-4 py-6 custom-dashed">
-                {vaultContract && <VaultAmount vaultContract={vaultContract} />}
-              </div>
+                <div className="w-full rounded-[32px] bg-white space-y-2 px-4 py-6 custom-dashed">
+                  {vaultContract && (
+                    <VaultAmount vaultContract={vaultContract} />
+                  )}
+                </div>
 
-              <Button
-                className="w-full"
-                isDisabled={vault.isDisabled}
-                isLoading={vault.deposit.loading}
-                onClick={async () => {
-                  await vault.deposit.call();
-                }}
-              >
-                {vault.buttonContent}
-              </Button>
+                <Button
+                  className="w-full"
+                  isDisabled={vault.isDisabled}
+                  isLoading={vault.deposit.loading}
+                  onClick={async () => {
+                    await vault.deposit.call();
+                  }}
+                >
+                  {vault.buttonContent}
+                </Button>
+              </HoneyContainer>
             </LoadingContainer>
           )}
         </div>
