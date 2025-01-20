@@ -475,10 +475,10 @@ export async function fetchPot2PumpList ({
   }
 
   if (filter.tvlRange?.min !== undefined) {
-    whereCondition.push(` LaunchTokenTVL_gte: "${filter.tvlRange.min}" `);
+    whereCondition.push(` LaunchTokenTVLUSD_gte: "${filter.tvlRange.min}" `);
   }
   if (filter.tvlRange?.max !== undefined) {
-    whereCondition.push(` LaunchTokenTVL_lte: "${filter.tvlRange.max}" `);
+    whereCondition.push(` LaunchTokenTVLUSD_lte: "${filter.tvlRange.max}" `);
   }
 
   if (filter.participantsRange?.min !== undefined) {
