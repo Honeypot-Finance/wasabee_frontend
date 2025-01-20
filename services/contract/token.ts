@@ -256,6 +256,11 @@ export class Token implements BaseContract {
     return this;
   }
   async loadName(force?: boolean) {
+    if (this.address === zeroAddress || this.isNative) {
+      this.name = wallet.currentChain.nativeToken.name;
+      return;
+    }
+
     if (!force) {
       const cachedName = localStorage.getItem(
         `token-name-${this.address.toLowerCase()}`
@@ -279,6 +284,11 @@ export class Token implements BaseContract {
   }
 
   async loadSymbol(force?: boolean) {
+    if (this.isNative || this.address === zeroAddress) {
+      this.symbol = wallet.currentChain.nativeToken.symbol;
+      return;
+    }
+
     if (!force) {
       const cachedSymbol = localStorage.getItem(
         `token-symbol-${wallet.currentChainId}-${this.address.toLowerCase()}`

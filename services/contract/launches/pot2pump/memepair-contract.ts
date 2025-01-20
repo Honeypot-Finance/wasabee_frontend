@@ -544,7 +544,7 @@ export class MemePairContract implements BaseLaunchContract {
   }
 
   async getRaisedToken(token?: Token) {
-    if (token) {
+    if (token && token.address !== zeroAddress) {
       this.raiseToken = token;
       //this.raiseToken.init();
     } else {
@@ -555,7 +555,7 @@ export class MemePairContract implements BaseLaunchContract {
   }
 
   async getLaunchedToken(launchedToken?: Token) {
-    if (launchedToken) {
+    if (!!launchedToken && launchedToken.address !== zeroAddress) {
       this.launchedToken = launchedToken;
       //this.launchedToken.init();
     } else {
