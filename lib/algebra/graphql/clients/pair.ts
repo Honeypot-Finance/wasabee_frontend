@@ -201,7 +201,7 @@ export const pot2PumpToMemePair = async (
   return contract;
 };
 
-export async function fetchNearSuccessPot2Pump() {
+export async function fetchNearSuccessPot2Pump () {
   const { data } = await infoClient.query<Pot2PumpPottingNearSuccessQuery>({
     query: Pot2PumpPottingNearSuccessDocument,
     variables: {
@@ -217,7 +217,7 @@ export async function fetchNearSuccessPot2Pump() {
   return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
 }
 
-export async function fetchPottingNewTokens() {
+export async function fetchPottingNewTokens () {
   const { data } = await infoClient.query<Pot2PumpPottingNewTokensQuery>({
     query: Pot2PumpPottingNewTokensDocument,
     variables: {
@@ -228,7 +228,7 @@ export async function fetchPottingNewTokens() {
   return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
 }
 
-export async function fetchPumpingHighPricePot2Pump() {
+export async function fetchPumpingHighPricePot2Pump () {
   const { data } = await infoClient.query<Pot2PumpPottingHighPriceQuery>({
     query: Pot2PumpPottingHighPriceDocument,
   });
@@ -236,7 +236,7 @@ export async function fetchPumpingHighPricePot2Pump() {
   return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
 }
 
-export async function fetchPottingTrendingPot2Pump() {
+export async function fetchPottingTrendingPot2Pump () {
   const { data } = await infoClient.query<Pot2PumpPottingTrendingQuery>({
     query: Pot2PumpPottingTrendingDocument,
   });
@@ -244,7 +244,7 @@ export async function fetchPottingTrendingPot2Pump() {
   return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
 }
 
-export async function fetchPairsList({
+export async function fetchPairsList ({
   filter,
   pageRequest,
 }: {
@@ -324,7 +324,7 @@ export async function fetchPairsList({
     query: gql(query),
   });
 
-  function transformPairsListData(data: Pot2PumpListData): PairsListResponse {
+  function transformPairsListData (data: Pot2PumpListData): PairsListResponse {
     const pairs = data.pot2Pumps.map((pot2Pump) => ({
       id: pot2Pump.id,
       token0Id: pot2Pump.launchToken.id,
@@ -375,7 +375,7 @@ export async function fetchPairsList({
   return transformPairsListData(data);
 }
 
-export async function fetchMemetrackerList({
+export async function fetchMemetrackerList ({
   chainId,
 }: {
   chainId: string;
@@ -397,7 +397,7 @@ export async function fetchMemetrackerList({
     query: gql(query),
   });
 
-  function transformPairsListData(
+  function transformPairsListData (
     data: Pot2PumpListData
   ): MemetrackerListResponse {
     const pairs = data.pot2Pumps.map((pot2Pump) => ({
@@ -442,7 +442,7 @@ export async function fetchMemetrackerList({
   return transformPairsListData(data);
 }
 
-export async function fetchPot2PumpList({
+export async function fetchPot2PumpList ({
   filter,
 }: {
   chainId: string;
@@ -511,8 +511,8 @@ export async function fetchPot2PumpList({
     filter.orderDirection ? `orderDirection: ${filter.orderDirection}` : "",
     whereCondition.length > 0
       ? `where:{ ${whereCondition
-          .map((condition) => `${condition}`)
-          .join(",\n")}}`
+        .map((condition) => `${condition}`)
+        .join(",\n")}}`
       : "",
   ].filter(Boolean);
 
@@ -525,6 +525,8 @@ export async function fetchPot2PumpList({
       }
     }
   `;
+
+  console.log("Pumping query", query)
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),
@@ -545,7 +547,7 @@ export async function fetchPot2PumpList({
   };
 }
 
-export async function fetchPot2Pumps({
+export async function fetchPot2Pumps ({
   filter,
 }: {
   chainId: string;
@@ -578,10 +580,10 @@ export async function fetchPot2Pumps({
   }
 
   if (filter.tvlRange?.min !== undefined) {
-    whereCondition.push(` LaunchTokenTVL_gte: "${filter.tvlRange.min}" `);
+    whereCondition.push(` LaunchTokenTVLUSD_gte: "${filter.tvlRange.min}" `);
   }
   if (filter.tvlRange?.max !== undefined) {
-    whereCondition.push(` LaunchTokenTVL_lte: "${filter.tvlRange.max}" `);
+    whereCondition.push(` LaunchTokenTVLUSD_lte: "${filter.tvlRange.max}" `);
   }
 
   if (filter.participantsRange?.min !== undefined) {
@@ -614,8 +616,8 @@ export async function fetchPot2Pumps({
     filter.orderDirection ? `orderDirection: ${filter.orderDirection}` : "",
     whereCondition.length > 0
       ? `where:{ ${whereCondition
-          .map((condition) => `${condition}`)
-          .join(",\n")}}`
+        .map((condition) => `${condition}`)
+        .join(",\n")}}`
       : "",
   ].filter(Boolean);
 

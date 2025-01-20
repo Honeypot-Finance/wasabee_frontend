@@ -17,10 +17,9 @@ import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/
 import { FilterState } from "@/constants/pot2pump.type";
 import { defaultFilterState } from "@/constants/pot2pump";
 import HoneyContainer from "@/components/CardContianer/HoneyContainer";
-import { filter } from "lodash";
-import search from "../api/udf-data-feed/search";
 import { hasValue } from "@/lib/utils";
 import { PAGE_LIMIT } from "@/services/launchpad";
+import search from "../api/udf-data-feed/search";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pumpingProjects, setPumpingProjects] =
@@ -65,16 +64,23 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
   useEffect(() => {
     if (pumpingProjects) {
       if (hasValue(filters)) {
-        console.log("hasValue(filters)", hasValue(filters));
         pumpingProjects.projectsPage.updateFilter({
           currentPage: 0,
           limit: 0,
           hasNextPage: true,
+          tvlRange: {
+            min: filters.tvl.min ? Number(filters.tvl.min) : undefined,
+            max: filters.tvl.max ? Number(filters.tvl.max) : undefined,
+          },
+          participantsRange: {
+            min: filters.participants.min
+              ? Number(filters.participants.min)
+              : undefined,
+            max: filters.participants.max
+              ? Number(filters.participants.max)
+              : undefined,
+          },
         });
-
-        const timer = setTimeout(() => {
-          pumpingProjects.projectsPage.SetPageItems([]);
-        }, 700);
       } else {
         pumpingProjects.projectsPage.updateFilter({
           currentPage: 0,

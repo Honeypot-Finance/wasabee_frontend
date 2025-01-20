@@ -14,6 +14,7 @@ import { FaSlidersH } from "react-icons/fa";
 import { FilterState } from "@/constants/pot2pump.type";
 import FilterItem from "./components/FilterItem";
 import { defaultFilterState } from "@/constants/pot2pump";
+import { useState } from "react";
 
 interface FilterProps {
   filters: FilterState;
@@ -86,19 +87,19 @@ const filtersList: {
 export const Filter = observer(
   ({ filters, setFilters, pumpingProjects }: FilterProps) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [filterState, setFilterState] = useState(filters);
 
     const onChange =
       (category: category) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const regex = /^\d*\.?\d*$/;
-        console.log(e.target.value, regex.test(e.target.value));
         if (regex.test(e.target.value)) {
-          setFilters({
-            ...filters,
+          setFilterState((prev) => ({
+            ...prev,
             [category]: {
-              ...filters[category],
+              ...prev[category],
               [e.target.name]: e.target.value,
             },
-          });
+          }));
         }
       };
 
@@ -133,7 +134,7 @@ export const Filter = observer(
                   <div
                     className="!font-normal text-black cursor-pointer p-1"
                     onClick={() => {
-                      setFilters(defaultFilterState);
+                      setFilterState(defaultFilterState);
                       onOpenChange();
                     }}
                   >
@@ -148,8 +149,8 @@ export const Filter = observer(
                         key={filter.key}
                         label={filter.label}
                         onChange={onChange(filter.category)}
-                        min={filters[filter.category].min}
-                        max={filters[filter.category].max}
+                        min={filterState[filter.category].min}
+                        max={filterState[filter.category].max}
                       />
                     ))}
                   </div>
@@ -159,26 +160,7 @@ export const Filter = observer(
                   <Button
                     className="w-full"
                     onPress={() => {
-                      // if (pumpingProjects) {
-                      //   pumpingProjects.projectsPage.updateFilter({
-                      //     tvlRange: {
-                      //       min: filters.tvl.min
-                      //         ? Number(filters.tvl.min)
-                      //         : undefined,
-                      //       max: filters.tvl.max
-                      //         ? Number(filters.tvl.max)
-                      //         : undefined,
-                      //     },
-                      //     participantsRange: {
-                      //       min: filters.participants.min
-                      //         ? Number(filters.participants.min)
-                      //         : undefined,
-                      //       max: filters.participants.max
-                      //         ? Number(filters.participants.max)
-                      //         : undefined,
-                      //     },
-                      //   });
-                      // }
+                      setFilters(filterState);
                       onClose();
                     }}
                   >
