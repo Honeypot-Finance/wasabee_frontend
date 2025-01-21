@@ -165,16 +165,16 @@ const LaunchProject = () => {
   };
 
   return (
-    <div className="w-full text-[#202020]/80 md:p-6 md:max-w-full xl:max-w-[1322px] mx-auto mb-[30vh] font-gliker mt-[220px] relative">
+    <div className="w-full text-[#202020]/80 px-4 md:p-6 md:max-w-full xl:max-w-[1322px] mx-auto mb-[160px] font-gliker mt-[50px] md:mt-[220px] relative">
       {/* Sticky icon */}
-      <div className="absolute bottom-[calc(100%-25px)] left-0" >
-        <img src="/images/launch-project/launch-project-sticky1.png" alt="sticky1" />
+      <div className="absolute bottom-full left-2 md:bottom-[calc(100%-25px)] md:left-0" >
+        <img src="/images/launch-project/launch-project-sticky1.png" alt="sticky1" className="w-[83.91px] md:w-full" />
       </div>
-      <div className="absolute bottom-[calc(100%-25px)] right-0" >
-        <img src="/images/launch-project/launch-project-sticky2.png" alt="sticky2" />
+      <div className="absolute bottom-full right-2 md:bottom-[calc(100%-25px)] md:right-0" >
+        <img src="/images/launch-project/launch-project-sticky2.png" alt="sticky2" className='w-[56.13px] md:w-full' />
       </div>
       {/* Progress */}
-      <div className="px-8 py-6 rounded-3xl bg-white border-2 border-[#FBCA4D] border-dashed ">
+      <div className="px-4 py-5 md:px-8 md:py-6 rounded-3xl bg-white border-2 border-[#FBCA4D] border-dashed ">
         <Stepper
           steps={stepData}
           currentStep={currentStep}
@@ -183,19 +183,19 @@ const LaunchProject = () => {
       </div>
       {/* Form */}
       <div className="relative w-full">
-        <div className="absolute top-0 left-0 -translate-x-[70%] -translate-y-[30%] " >
+        <div className="absolute top-0 left-0 -translate-x-[70%] -translate-y-[30%] hidden xl:block" >
           <img src="/images/launch-project/launch-project-sticky3.png" alt="sticky3" />
         </div>
-        <div className="absolute bottom-6 right-0 translate-x-[70%]" >
+        <div className="absolute bottom-6 right-0 translate-x-[70%] hidden xl:block" >
           <img src="/images/launch-project/launch-project-sticky4.png" alt="sticky4" />
         </div>
-        <div className="relative w-ful rounded-3xl mt-[39px] px-9 pb-20" style={{
+        <div className="relative w-ful rounded-3xl mt-[39px] px-4 md:px-9 pb-[120px]" style={{
           background: "url('/images/launch-project/subtract-sticky.png'), url('/images/launch-project/subtract-bg.png')",
-          backgroundSize: "contain, 100% 100%",
+          backgroundSize: "contain, cover",
           backgroundRepeat: 'no-repeat, no-repeat',
         }}>
           <FormProvider {...methods}  >
-            <form onSubmit={(e) => e.preventDefault()} className="pt-20 ">
+            <form onSubmit={(e) => e.preventDefault()} className="pt-10 md:pt-20">
               {currentStep !== 0 &&
                 <BackButton type="button" onClick={handleBack}>
                   Back
@@ -206,7 +206,7 @@ const LaunchProject = () => {
                 {currentStep !== STEP_DATA.length - 1 && (
                   <div className='px-3 py-4 bg-[#202020] w-full rounded-2xl'>
                     <LBPButton type="button" onClick={handleNextStep} className='w-full !bg-[#FFCD4D] text-black text-lg h-14'>
-                      {`Continue to ${STEP_DATA[currentStep + 1]?.title}`}
+                      {`${STEP_DATA[currentStep + 1]?.title}`}
                     </LBPButton>
                   </div>
                 )}

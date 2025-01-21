@@ -31,17 +31,17 @@ const SalesStructure = () => {
 
   return (
     <FormContainer className="text-[#202020]/80">
-      <h3 className="text-2xl leading-[26px] font-medium text-center mb-4">
+      <h3 className="text-[22px] md:text-2xl leading-[26px] text-center mb-4">
         Sales Structure
       </h3>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 pb-4 border-b border-black md:pb-0 mb:border-0">
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <p className="text-base leading-5 font-normal text-[#202020]/80">
+            <p className="text-xs md:text-base md:leading-5 font-normal text-[#202020]/80 flex-1">
               Sale price type
             </p>
-            <p className="mt-2 font-medium text-[13px] leading-4 text-[#202020]/80">
+            <p className="mt-2 font-medium text-[10px] md:text-[13px] md:leading-4 text-[#202020]/80 flex-1">
               Choose between an LBP or a Fixed Price Sale
             </p>
           </div>
@@ -75,7 +75,6 @@ const SalesStructure = () => {
             )}
           />
         </div>
-
         {isPriceLbp && (
           <Controller
             name="lbpType"
@@ -110,10 +109,9 @@ const SalesStructure = () => {
         )}
       </div>
 
-      <div className="flex flex-col mt-6 gap-4">
-        <h5 className="text-2xl text-center">Configure Duration</h5>
-
-        <div className="flex gap-6 item-center">
+      <div className="flex flex-col mt-4 md:mt-6 gap-4 pb-4 border-b border-black md:pb-0 md:border-0">
+        <h5 className="text-[22px] md:text-2xl text-center">Configure Duration</h5>
+        <div className="flex gap-4 md:gap-6 flex-col lg:flex-row item-center">
           <Controller
             name="startTime"
             control={control}
@@ -154,16 +152,16 @@ const SalesStructure = () => {
         </div>
       </div>
 
-      <div className="mt-6">
-        <h5 className="text-2xl text-center">Token Claim Delay</h5>
-        <p className="text-base text-center max-w-[968.6px] mx-auto mb-4">
+      <div className="mt-4 md:mt-6">
+        <h5 className="text-[22px] md:text-2xl text-center">Token Claim Delay</h5>
+        <p className="text-sm md:text-base text-center max-w-[273.75px] md:max-w-[968.6px] mx-auto mb-4">
           {isPriceLbp
             ? "How much maximum you want to raise. The Sale will conclude once this number is reached."
             : "You can select to delay users claiming tokens at the conclusion of the sale to avoid front running of setting up liquidity pools. Select a time on the calendar that users can begin claiming tokens after the sale has concluded. "}
         </p>
 
         {isPriceLbp && (
-          <div className="flex gap-6 items-center">
+          <div className="flex gap-4 md:gap-6 flex-col md:flex-row items-center">
             <Controller
               name="tokenClaimDelayHours"
               control={control}

@@ -75,7 +75,7 @@ const HorizontalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
 
     return (
       <nav aria-label="Progress" className="w-full">
-        <ol className={cn("flex justify-between", className)}>
+        <ol className={cn("flex gap-[74px] overflow-x-auto no-scrollbar", className)}>
           {steps?.map((step, stepIdx) => {
             const status =
               currentStep === stepIdx
@@ -87,7 +87,7 @@ const HorizontalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
             return (
               <li key={stepIdx} className="relative">
                 <div className="flex w-full flex-col max-w-full items-center gap-3">
-                  <div className="max-w-[90px] h-[34px] text-center">
+                  <div className="w-[90px] h-[34px] text-center flex justify-center">
                     <span
                       className={cn(
                         "flex text-sm font-normal text-black transition-[color,opacity] duration-300 w-fit leading-[16.8px]"
@@ -121,7 +121,7 @@ const HorizontalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
                         <div
                           aria-hidden="true"
                           className={cn(
-                            "pointer-events-none flex items-center w-[165px] bg-[#E1E1E1] h-4 absolute  left-full",
+                            "pointer-events-none flex items-center w-[128px] bg-[#E1E1E1] h-4 absolute  left-full",
                             {
                               "bg-[#FCCB4C]": status === "complete",
                             }

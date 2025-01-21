@@ -21,25 +21,25 @@ const SliderField = (props: SliderFieldProps) => {
   } = props;
   return (
     <div>
-      <label className="font-normal text-base leading-[19.2px] text-[#202020]/80">{label}</label>
-      <div className="w-full flex items-center justify-between mt-2">
+      <label className="font-normal text-xs md:text-base md:leading-[19.2px] text-[#202020]/80">{label}</label>
+      <div className="w-full flex items-center justify-between md:mt-2">
         {firstTokenName && (
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center gap-[10px] md:gap-4">
+            <div className="flex items-center gap-2 md:gap-3">
               <div className="rounded-full overflow-hidden">
                 <img
                   src={firstTokenIcon}
                   alt={firstTokenName}
-                  className="size-[32px] aspect-square rounded-full"
+                  className="size-6 md:size-[32px] aspect-square rounded-full"
                 />
               </div>
-              <span className="text-xl text-[#202020]">{firstTokenName}</span>
+              <span className="text-base md:text-xl text-[#202020]">{firstTokenName}</span>
             </div>
             <NumberField
               className='w-fit h-[25px]'
               classNames={{
-                inputWrapper: "h-[25px] rounded !min-h-[25px] !max-h-[25px] w-[52px] px-2 shadow-[1.5px_1.5px_0px_0px_#000]",
-                input: 'text-sm leading-[16.8px]'
+                inputWrapper: "h-[25px] rounded !min-h-[25px] !max-h-[25px] w-[49px] px-1 md:px-2 shadow-[1.5px_1.5px_0px_0px_#000]",
+                input: 'text-sm leading-[16.8px] text-center'
               }}
               suffix="%"
               isAllowed={(values) => {
@@ -56,12 +56,12 @@ const SliderField = (props: SliderFieldProps) => {
         )}
 
         {secondTokenName && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-[10px] md:gap-4">
             <NumberField
               className='w-fit h-[25px]'
               classNames={{
-                inputWrapper: "h-[25px] rounded !min-h-[25px] !max-h-[25px] w-[52px] px-2 shadow-[1.5px_1.5px_0px_0px_#000]",
-                input: 'text-sm leading-[16.8px]'
+                inputWrapper: "h-[25px] rounded !min-h-[25px] !max-h-[25px] w-[49px] px-1 md:px-2 shadow-[1.5px_1.5px_0px_0px_#000]",
+                input: 'text-sm leading-[16.8px] text-center'
               }}
               suffix="%"
               isAllowed={(values) => {
@@ -74,13 +74,13 @@ const SliderField = (props: SliderFieldProps) => {
                 rest.onChange?.(100 - (values.floatValue || 0));
               }}
             />
-            <div className="flex items-center gap-3">
-              <span className="text-xl text-[#202020]">{secondTokenName}</span>
+            <div className="flex items-center gap-2 md:gap-3">
+              <span className="text-base md:text-xltext-[#202020]">{secondTokenName}</span>
               <div className="rounded-full overflow-hidden">
                 <img
                   src={secondTokenIcon}
                   alt={secondTokenName}
-                  className="size-[32px] aspect-square rounded-full"
+                  className="size-[24px] md:size-[32px] aspect-square rounded-full"
                 />
               </div>
             </div>

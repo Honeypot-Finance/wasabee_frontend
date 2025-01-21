@@ -135,7 +135,6 @@ const Confirm = (props: Props) => {
     assetTokenQuantity,
   } = getValues();
 
-  console.log(getValues());
 
   const { mutateAsync: createPoolAsync } = useMutation({
     mutationFn: async (data: TCreatePool) => FjordHoneySdk.createPool(data),

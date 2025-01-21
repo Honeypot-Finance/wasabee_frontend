@@ -78,25 +78,25 @@ const AssetTokenModal = ({
 
   return (
     <>
-      <div className="flex items-center gap-3 cursor-pointer" onClick={onOpen}>
+      <div className="flex items-center gap-2 md:gap-3 cursor-pointer" onClick={onOpen}>
         {selectedToken ? (
           <>
             <img
-              className="size-[32px] aspect-square rounded-full"
+              className="size-[24px] md:size-[32px] aspect-square rounded-full"
               src={selectedToken?.logoURI}
               alt="Asset token"
             />
-            <span className="text-xl">{selectedToken?.name}</span>
+            <span className="text-lg md:text-xl">{selectedToken?.name}</span>
 
             <ArrowDownSvg />
           </>
         ) : (
-          <span className="text-xl">Select Token</span>
+          <span className="text-lg md:text-xl">Select Token</span>
         )}
       </div>
       <Modal
         classNames={{
-          base: "bg-[#35230E] border-[#F7931A4D] border !overflow-y-visible",
+          base: "!overflow-y-visible absolute top-0 px-4 shadow-none !mt-[170px]",
         }}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -104,18 +104,17 @@ const AssetTokenModal = ({
         size="lg"
       >
         <ModalContent className="!bg-transparent !border-none">
-          <div className="absolute top-0 left-0 right-0 -translate-y-3/4 flex justify-center">
+          <div className="flex absolute top-0 left-0 right-0 -translate-y-3/4 justify-center">
             <img src="/images/launch-project/Group.png" alt="handing-rope" />
           </div>
-
-          <div className="absolute left-0 -translate-x-[60%] -translate-y-[10%]">
+          <div className="hidden lg:flex absolute left-0 -translate-x-[60%] -translate-y-[10%]">
             <img
               src="/images/launch-project/launch-project-sticky3.png"
               alt="sticky3"
             />
           </div>
 
-          <div className="absolute right-0 translate-x-[70%] -translate-y-[10%]">
+          <div className="hidden lg:flex absolute right-0 translate-x-[70%] -translate-y-[10%]">
             <img
               src="/images/launch-project/launch-project-sticky4.png"
               alt="sticky4"
@@ -232,15 +231,15 @@ const TokenomicsAndPreview = () => {
 
   return (
     <div className="text-[#202020]/80">
-      <h1 className="text-[32px] leading-[36.64px] font-medium text-center mb-4">
+      <h1 className="text-2xl md:text-[32px] md:leading-[36.64px] font-medium text-center mb-4">
         LBP Configuration
       </h1>
       <FormContainer className="mt-6">
-        <h3 className="text-2xl text-center leading-[28.79px] mb-6">
+        <h3 className="text-[22px] md:text-2xl text-center md:leading-[28.79px] mb-6">
           Configure Quantities
         </h3>
 
-        <div className="flex gap-6">
+        <div className="flex gap-4 md:gap-6 flex-col md:flex-row">
           <Controller
             name="projectTokenQuantity"
             control={control}
@@ -255,9 +254,9 @@ const TokenomicsAndPreview = () => {
                 isInvalid={!!errors.projectTokenQuantity}
                 errorMessage={errors.projectTokenQuantity?.message?.toString()}
                 startContent={
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 md:gap-3">
                     <img
-                      className="size-[32px] aspect-square rounded-full "
+                      className="size-[24px] md:size-[32px] aspect-square rounded-full"
                       src={
                         isFetchImageError
                           ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
@@ -268,7 +267,7 @@ const TokenomicsAndPreview = () => {
                         setIsFetchImageError(true);
                       }}
                     />
-                    <span className="text-xl">{projectTokenName}</span>
+                    <span className="text-lg md:text-xl">{projectTokenName}</span>
                     {isLoading && (
                       <span className="h-2.5 w-8 bg-neutral-400 rounded-full animate-pulse"></span>
                     )}
@@ -313,10 +312,10 @@ const TokenomicsAndPreview = () => {
           />
         </div>
 
-        <div className="flex flex-col gap-2 mt-6">
+        <div className="flex flex-col gap-2 mt-6 pb-4 border-b border-black md:pb-0 mb:border-0">
           <div className="flex items-center gap-4">
             <label
-              className="font-normal text-base leading-[19.2px] text-[#202020]/80"
+              className="font-normal text-xs md:text-base md:leading-[19.2px] text-[#202020]/80"
               htmlFor="customTotalSupplyType"
             >
               Custom Total Supply
@@ -329,7 +328,7 @@ const TokenomicsAndPreview = () => {
                   id="customTotalSupplyType"
                   size="sm"
                   classNames={{
-                    wrapper: "group-data-[selected=true]:bg-[#865215]",
+                    wrapper: "group-data-[selected=true]:bg-white border border-[#202020] bg-white",
                     thumb: "bg-[#ECC94E]",
                   }}
                   isSelected={field.value}
@@ -358,8 +357,8 @@ const TokenomicsAndPreview = () => {
           )}
         </div>
 
-        <div className="mt-6 flex flex-col gap-4">
-          <h3 className="text-2xl text-center leading-[28.79px] mb-6">
+        <div className="mt-4 md:mt-6 flex flex-col gap-4">
+          <h3 className="text-[22px] md:text-2xl text-center md:leading-[28.79px] mb-0 md:mb-6">
             Configure Weights
           </h3>
 

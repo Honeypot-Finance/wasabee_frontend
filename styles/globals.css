@@ -335,6 +335,18 @@ input[type="number"] {
   opacity: 0.8;
 }
 
+@media screen and (max-width: 868px) {
+  .date-picker-wrapper div[data-slot="input-wrapper"] {
+    height: 48px;
+    padding: 0 12px;
+  }
+
+  .date-picker-wrapper div[data-slot="segment"] {
+    font-size: 16px;
+    font-weight: 400;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

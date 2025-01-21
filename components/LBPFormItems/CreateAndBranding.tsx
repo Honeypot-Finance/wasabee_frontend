@@ -33,6 +33,17 @@ const WALLET_NETWORK_OPTIONS = [
   },
 ];
 
+const RenderValueSelectField = ({ icon, label }: { icon?: string, label?: string }) => {
+  return <div className="flex items-center gap-3">
+    {
+      icon && label ? <>
+        <img src={icon} alt="icon" className="w-6 aspect-square md:w-8" />
+        <span className="pt-0.5 text-lg md:text-xl">{label}</span>
+      </> : <span className="pt-0.5 text-lg md:text-xl">{label}</span>
+    }
+  </div>
+}
+
 const CreateAndBranding = () => {
   const {
     control,
@@ -70,11 +81,11 @@ const CreateAndBranding = () => {
 
   return (
     <>
-      <div className="font-normal text-center text-black md:max-w-[706.31px] mx-auto">
-        <h3 className="text-[32px] leading-[36.64px]">
+      <div className="font-normal text-center text-black max-w-[319.16px] md:max-w-[706.31px] mx-auto">
+        <h3 className="text-2xl md:text-[32px] md:leading-[36.64px]">
           Select Network & Add Token Information
         </h3>
-        <p className="text-base leading-[18.32px] mt-3 md:max-w-[630px] mx-auto ">
+        <p className="text-xs md:text-base md:leading-[18.32px] mt-3 md:max-w-[630px] mx-auto ">
           Select the blockchain you would like to create a Token Sale on and
           enter your project token details.
         </p>
@@ -90,10 +101,7 @@ const CreateAndBranding = () => {
               items={ECOSYSTEM_OPTIONS}
               renderValue={(items) => {
                 return items?.map((item) => (
-                  <div key={item.key} className="flex items-center gap-3">
-                    <img src={item?.data?.icon} alt="icon" />
-                    <span className="pt-0.5">{item.data?.label}</span>
-                  </div>
+                  <RenderValueSelectField key={item.key} icon={item?.data?.icon} label={item.data?.label} />
                 ));
               }}
               selectedKeys={[field.value]}
@@ -117,7 +125,7 @@ const CreateAndBranding = () => {
             </SelectField>
           )}
         />
-        <div className="flex item-center gap-6">
+        <div className="flex item-center gap-6 flex-col md:flex-row">
           <Controller
             name="targetNetwork"
             control={control}
@@ -128,10 +136,7 @@ const CreateAndBranding = () => {
                 items={TARGET_NETWORK_OPTIONS}
                 renderValue={(items) => {
                   return items?.map((item) => (
-                    <div key={item.key} className="flex items-center gap-3">
-                      <img src={item?.data?.icon} alt="icon" />
-                      <span className="pt-0.5">{item.data?.label}</span>
-                    </div>
+                    <RenderValueSelectField key={item.key} icon={item?.data?.icon} label={item.data?.label} />
                   ));
                 }}
                 selectedKeys={[field.value]}
@@ -169,12 +174,8 @@ const CreateAndBranding = () => {
                 label="Connected Wallet Network"
                 items={WALLET_NETWORK_OPTIONS}
                 renderValue={(items) => {
-                  console.log("items: ", items);
                   return items?.map((item) => (
-                    <div key={item.key} className="flex items-center gap-3">
-                      <img src={item?.data?.icon} alt="icon" />
-                      <span className="pt-0.5">{item.data?.label}</span>
-                    </div>
+                    <RenderValueSelectField key={item.key} icon={item?.data?.icon} label={item.data?.label} />
                   ));
                 }}
                 selectedKeys={[field.value]}

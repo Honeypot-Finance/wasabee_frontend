@@ -4,7 +4,7 @@ const DatePickerField = ({ label, ...props }: DatePickerProps) => {
   return (
     <div className="date-picker-wrapper w-full flex flex-col gap-3">
       {
-        label && <label className="font-normal text-base leading-[19.2px] text-[#202020] opacity-80">{label}</label>
+        label && <label className="font-normal text-xs md:text-base md:leading-[19.2px] text-[#202020] opacity-80">{label}</label>
       }
       <DatePicker
         classNames={{
