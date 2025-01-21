@@ -65,7 +65,7 @@ const GeoBlockedCountriesModal = (props: GeoBlockedCountriesModalProps) => {
 
       <Modal
         classNames={{
-          base: "bg-[#35230E] border-[#F7931A4D] border !overflow-y-visible",
+          base: "!overflow-y-visible absolute top-0 px-4 shadow-none !mt-[170px]",
         }}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -78,11 +78,11 @@ const GeoBlockedCountriesModal = (props: GeoBlockedCountriesModalProps) => {
             <img src="/images/launch-project/Group.png" alt="handing-rope" />
           </div>
 
-          <div className="absolute left-0 -translate-x-[60%] -translate-y-[10%]" >
+          <div className="hidden lg:flex absolute left-0 -translate-x-[60%] -translate-y-[10%]" >
             <img src="/images/launch-project/launch-project-sticky3.png" alt="sticky3" />
           </div>
 
-          <div className="absolute bottom-6 right-0 translate-x-[70%]" >
+          <div className="hidden lg:flex absolute bottom-6 right-0 translate-x-[70%]" >
             <img src="/images/launch-project/launch-project-sticky4.png" alt="sticky4" />
           </div>
           <ModalBody
@@ -95,7 +95,7 @@ const GeoBlockedCountriesModal = (props: GeoBlockedCountriesModalProps) => {
               <h3 className="text-lg ">
                 Select a Country
               </h3>
-              <Button isIconOnly className='!size-8 min-w-8 rounded-md bottom-1' variant="bordered" onClick={onOpenChange}>
+              <Button isIconOnly className='!size-8 min-w-8 rounded-md bottom-1' variant="bordered" onClick={handleClose}>
                 <CloseIcon className="text-black" />
               </Button>
             </div>
@@ -176,7 +176,6 @@ const ProjectInfo = () => {
     formState: { errors },
     setValue,
     getValues,
-    watch,
   } = useFormContext();
 
   const {
@@ -202,12 +201,12 @@ const ProjectInfo = () => {
   return (
     <FormContainer className="text-[#202020]">
       <div>
-        <h3 className="text-2xl leading-[28.79px]">Project Infomation</h3>
-        <p className="text-sm leading-4 mt-3">Please Fill out Sale details.</p>
+        <h3 className="text-[22px] max-md:text-center md:text-2xl md:leading-[28.79px]">Project Infomation</h3>
+        <p className="text-sm max-md:text-center leading-4 mt-3">Please Fill out Sale details.</p>
       </div>
-      <div className="flex flex-col gap-5 mt-8">
+      <div className="flex flex-col gap-5 mt-4 md:mt-8">
         <div className="pb-5 border-b border-black">
-          <h3 className="text-xl mb-2">Category</h3>
+          <h3 className="text-lg md:text-xl mb-2">Category</h3>
           <Controller
             name="category"
             control={control}
@@ -238,14 +237,14 @@ const ProjectInfo = () => {
           />
         </div>
         <div>
-          <h4 className="text-xl">LBP Description</h4>
+          <h4 className="text-lg md:text-xl">LBP Description</h4>
           <div className="text-sm leading-4 mt-[6px]">Markdown support.</div>
           <div className="flex flex-col gap-2 mt-2 border-b border-black pb-5">
             <div className="flex bg-[#202020] w-full rounded-2xl p-2 gap-4">
               <div
                 onClick={() => handleTabChange("edit")}
                 className={clsx(
-                  "h-14 cursor-pointer text-lg leading-5 w-full rounded-xl flex items-center justify-center",
+                  "h-10 md:h-14 cursor-pointer text-lg leading-5 w-full rounded-xl flex items-center justify-center",
                   {
                     "bg-[#FFCD4D]": activeTab == "edit",
                     "bg-[#787876] text-[#E5E4E4]": activeTab == "preview",
@@ -257,7 +256,7 @@ const ProjectInfo = () => {
               <div
                 onClick={() => handleTabChange("preview")}
                 className={clsx(
-                  "h-14 cursor-pointer w-full text-lg leading-5 rounded-xl flex items-center justify-center",
+                  "h-10 md:h-14 cursor-pointer w-full text-lg leading-5 rounded-xl flex items-center justify-center",
                   {
                     "bg-[#FFCD4D]": activeTab == "preview",
                     "bg-[#787876] text-[#E5E4E4]": activeTab == "edit",
@@ -293,10 +292,10 @@ const ProjectInfo = () => {
           </div>
         </div>
         <div>
-          <h3 className="text-xl mb-3">Links</h3>
+          <h3 className="text-lg md:text-xl mb-3">Links</h3>
           <div className="flex flex-col gap-2">
             <div>
-              <label htmlFor="xlink" className="text-base mb-2">
+              <label htmlFor="xlink" className="text-sm md:text-base mb-2">
                 X Link
               </label>
               <Controller
@@ -319,7 +318,7 @@ const ProjectInfo = () => {
               />
             </div>
             <div>
-              <label htmlFor="website" className="text-base mb-2">
+              <label htmlFor="website" className="text-sm md:text-base mb-2">
                 Website Link
               </label>
               <Controller
@@ -337,7 +336,7 @@ const ProjectInfo = () => {
               />
             </div>
             <div>
-              <label htmlFor="telegram" className="text-base mb-2">
+              <label htmlFor="telegram" className="text-sm md:text-base mb-2">
                 Telegram Link
               </label>
               <Controller
@@ -389,11 +388,11 @@ const ProjectInfo = () => {
           </div>
         </div>
         <div>
-          <div className="flex items-center gap-[18px]">
-            <h4 className="text-base">Previous Investment Round Details</h4>
+          <div className="flex items-center max-md:justify-between md:gap-[18px]">
+            <h4 className="text-sm md:text-base">Previous Investment Round</h4>
             <button
               type="button"
-              className="text-sm relative bg-white border-[0.6px] border-black rounded-lg px-[10px] py-2 shadow-button"
+              className="text-[10px] md:text-sm relative bg-white border-[0.6px] border-black rounded-lg px-[10px] py-2 shadow-button"
               onClick={() => investmentRoundAppend({})}
             >
               + Add Round
@@ -430,8 +429,10 @@ const ProjectInfo = () => {
                           (errors as any)?.investmentRound?.[idx]?.raiseAmount
                             ?.message
                         }
+                        className="max-md:col-span-2"
                       />
                     )}
+
                   />
 
                   <Controller
@@ -453,6 +454,7 @@ const ProjectInfo = () => {
                           (errors as any)?.investmentRound?.[idx]
                             ?.valuationOfRound?.message
                         }
+                        className="max-md:col-span-2"
                       />
                     )}
                   />
@@ -476,6 +478,7 @@ const ProjectInfo = () => {
                           (errors as any)?.investmentRound?.[idx]?.tgePercentage
                             ?.message
                         }
+                        className="max-md:col-span-2"
                       />
                     )}
                   />
@@ -499,6 +502,7 @@ const ProjectInfo = () => {
                           (errors as any)?.investmentRound?.[idx]
                             ?.supplySoldRound?.message
                         }
+                        className="max-md:col-span-2"
                       />
                     )}
                   />
