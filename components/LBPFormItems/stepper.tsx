@@ -85,7 +85,7 @@ const HorizontalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
                   : "complete";
 
             return (
-              <li key={stepIdx} className="relative">
+              <li key={stepIdx} className="relative" id={`step-${stepIdx}`}>
                 <div className="flex w-full flex-col max-w-full items-center gap-3">
                   <div className="w-[90px] h-[34px] text-center flex justify-center">
                     <span

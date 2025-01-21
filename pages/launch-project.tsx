@@ -36,6 +36,7 @@ import {
 } from "@/constants/launch-project";
 import { LBPButton } from "@/components/LBPFormItems/Components";
 import BackButton from "@/components/LBPFormItems/Components/back-button";
+import { useRouter } from "next/navigation";
 
 const STEP_DATA = [
   {
@@ -77,6 +78,8 @@ type LaunchProjectForm = CreateAndBrandingForm &
   TermsAndConditionsForm;
 
 const LaunchProject = () => {
+  const router = useRouter()
+
   const [stepData, setStepData] = useState(
     STEP_DATA.map((item) => ({ ...item, isValid: false }))
   );
@@ -155,6 +158,7 @@ const LaunchProject = () => {
       const step = [...stepData];
       step[currentStep].isValid = true;
       setStepData(step);
+      router.push(`#step-${currentStep + 1}`)
     }
   };
 
