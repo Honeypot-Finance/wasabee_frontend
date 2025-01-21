@@ -1,6 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
-import { FormContainer, InputField, NumberField, SliderField } from "./Components";
+import {
+  FormContainer,
+  InputField,
+  NumberField,
+  SliderField,
+} from "./Components";
 import { Controller, useFormContext } from "react-hook-form";
 import {
   Modal,
@@ -73,17 +78,13 @@ const AssetTokenModal = ({
 
   return (
     <>
-      <div
-        className="flex items-center gap-3 cursor-pointer"
-        onClick={onOpen}
-      >
+      <div className="flex items-center gap-3 cursor-pointer" onClick={onOpen}>
         {selectedToken ? (
           <>
             <img
               className="size-[32px] aspect-square rounded-full"
               src={selectedToken?.logoURI}
               alt="Asset token"
-
             />
             <span className="text-xl">{selectedToken?.name}</span>
 
@@ -100,54 +101,61 @@ const AssetTokenModal = ({
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         hideCloseButton
-        size='lg'
+        size="lg"
       >
-        <ModalContent className='!bg-transparent !border-none'>
-          <div className='absolute top-0 left-0 right-0 -translate-y-3/4 flex justify-center'>
+        <ModalContent className="!bg-transparent !border-none">
+          <div className="absolute top-0 left-0 right-0 -translate-y-3/4 flex justify-center">
             <img src="/images/launch-project/Group.png" alt="handing-rope" />
           </div>
 
-          <div className="absolute left-0 -translate-x-[60%] -translate-y-[10%]" >
-            <img src="/images/launch-project/launch-project-sticky3.png" alt="sticky3" />
+          <div className="absolute left-0 -translate-x-[60%] -translate-y-[10%]">
+            <img
+              src="/images/launch-project/launch-project-sticky3.png"
+              alt="sticky3"
+            />
           </div>
 
-          <div className="absolute right-0 translate-x-[70%] -translate-y-[10%]" >
-            <img src="/images/launch-project/launch-project-sticky4.png" alt="sticky4" />
+          <div className="absolute right-0 translate-x-[70%] -translate-y-[10%]">
+            <img
+              src="/images/launch-project/launch-project-sticky4.png"
+              alt="sticky4"
+            />
           </div>
           <ModalBody
-            className="relative z-50 w-ful rounded-3xl px-0 pb-16 text-[#202020] block" style={{
-              background: "url('/images/launch-project/subtract-sticky.png'), url('/images/launch-project/subtract-bg.png')",
+            className="relative z-50 w-ful rounded-3xl px-0 pb-16 text-[#202020] block"
+            style={{
+              background:
+                "url('/images/launch-project/subtract-sticky.png'), url('/images/launch-project/subtract-bg.png')",
               backgroundSize: "contain, cover",
-              backgroundRepeat: 'no-repeat, no-repeat',
-            }}>
+              backgroundRepeat: "no-repeat, no-repeat",
+            }}
+          >
+            <div className="flex items-center justify-between pt-6 pb-4 border-b px-6 border-[#202020]">
+              <h3 className="text-lg">Token Selector</h3>
 
-            <div className='flex items-center justify-between pt-6 pb-4 border-b px-6 border-[#202020]'>
-              <h3 className="text-lg">
-                Token Selector
-              </h3>
-
-              <Button isIconOnly className='!size-8 min-w-8 rounded-md' variant="bordered" onClick={onOpenChange}>
+              <Button
+                isIconOnly
+                className="!size-8 min-w-8 rounded-md"
+                variant="bordered"
+                onClick={onOpenChange}
+              >
                 <CloseIcon className="text-black" />
               </Button>
             </div>
 
             <div className="px-6 pt-4 pb-6 border-b border-[#202020]">
-              <p className="text-sm mb-2">
-                Select a token
-              </p>
+              <p className="text-sm mb-2">Select a token</p>
               <InputField
                 placeholder="Search"
                 startContent={<SearchIcon className="size-5 !text-[#202020]" />}
                 classNames={{
                   input: "text-sm mt-1 leading-[16px]",
-                  inputWrapper: 'h-[40px]',
-
+                  inputWrapper: "h-[40px]",
                 }}
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
               />
             </div>
-
 
             <div className="overflow-y-auto h-[300px] mx-6 mt-6 no-scrollbar">
               <Controller
@@ -162,11 +170,9 @@ const AssetTokenModal = ({
                     selectedKeys={new Set([field.value])}
                     onSelectionChange={handleSelect}
                     className="bg-transparent rounded-md px-0"
-                    classNames={
-                      {
-                        list: 'gap-3'
-                      }
-                    }
+                    classNames={{
+                      list: "gap-3",
+                    }}
                   >
                     {filteredList.map((token) => (
                       <ListboxItem
@@ -174,8 +180,9 @@ const AssetTokenModal = ({
                         className="hover:bg-white/60"
                         classNames={{
                           base: "select-item bg-white py-3 item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-3 rounded-lg border border-black shadow-[1px_2px_0px_0px_#9B7D2F]",
-                          title: 'text-base leading-[16px]',
-                          selectedIcon: 'block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden'
+                          title: "text-base leading-[16px]",
+                          selectedIcon:
+                            "block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden",
                         }}
                         textValue={token.symbol}
                       >
@@ -197,7 +204,6 @@ const AssetTokenModal = ({
             </div>
           </ModalBody>
         </ModalContent>
-
       </Modal>
     </>
   );
@@ -224,11 +230,8 @@ const TokenomicsAndPreview = () => {
     functionName: "name",
   });
 
-  console.log('projectTokenName: ', projectTokenName);
-
-
   return (
-    <div className='text-[#202020]/80'>
+    <div className="text-[#202020]/80">
       <h1 className="text-[32px] leading-[36.64px] font-medium text-center mb-4">
         LBP Configuration
       </h1>
@@ -236,7 +239,6 @@ const TokenomicsAndPreview = () => {
         <h3 className="text-2xl text-center leading-[28.79px] mb-6">
           Configure Quantities
         </h3>
-
 
         <div className="flex gap-6">
           <Controller
@@ -253,7 +255,7 @@ const TokenomicsAndPreview = () => {
                 isInvalid={!!errors.projectTokenQuantity}
                 errorMessage={errors.projectTokenQuantity?.message?.toString()}
                 startContent={
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-3">
                     <img
                       className="size-[32px] aspect-square rounded-full "
                       src={
@@ -266,10 +268,11 @@ const TokenomicsAndPreview = () => {
                         setIsFetchImageError(true);
                       }}
                     />
-                    <span className="text-sm">{projectTokenName}</span>
+                    <span className="text-xl">{projectTokenName}</span>
                     {isLoading && (
                       <span className="h-2.5 w-8 bg-neutral-400 rounded-full animate-pulse"></span>
                     )}
+                    <ArrowDownSvg />
                   </div>
                 }
                 classNames={{
@@ -312,13 +315,18 @@ const TokenomicsAndPreview = () => {
 
         <div className="flex flex-col gap-2 mt-6">
           <div className="flex items-center gap-4">
-            <label className="font-normal text-base leading-[19.2px] text-[#202020]/80" htmlFor="customTotalSupplyType">Custom Total Supply</label>
+            <label
+              className="font-normal text-base leading-[19.2px] text-[#202020]/80"
+              htmlFor="customTotalSupplyType"
+            >
+              Custom Total Supply
+            </label>
             <Controller
               name="customTotalSupplyType"
               control={control}
               render={({ field }) => (
                 <Switch
-                  id='customTotalSupplyType'
+                  id="customTotalSupplyType"
                   size="sm"
                   classNames={{
                     wrapper: "group-data-[selected=true]:bg-[#865215]",
@@ -344,7 +352,6 @@ const TokenomicsAndPreview = () => {
                   placeholder="0"
                   isInvalid={!!errors.customTotalSupply}
                   errorMessage={errors.customTotalSupply?.message?.toString()}
-
                 />
               )}
             />
@@ -397,8 +404,6 @@ const TokenomicsAndPreview = () => {
           />
         </div>
       </FormContainer>
-
-
     </div>
   );
 };

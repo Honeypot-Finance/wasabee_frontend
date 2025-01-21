@@ -57,16 +57,6 @@ const SliderField = (props: SliderFieldProps) => {
 
         {secondTokenName && (
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="rounded-full overflow-hidden">
-                <img
-                  src={secondTokenIcon}
-                  alt={secondTokenName}
-                  className="size-[32px] aspect-square rounded-full"
-                />
-              </div>
-              <span className="text-xl text-[#202020]">{secondTokenName}</span>
-            </div>
             <NumberField
               className='w-fit h-[25px]'
               classNames={{
@@ -84,7 +74,16 @@ const SliderField = (props: SliderFieldProps) => {
                 rest.onChange?.(100 - (values.floatValue || 0));
               }}
             />
-
+            <div className="flex items-center gap-3">
+              <span className="text-xl text-[#202020]">{secondTokenName}</span>
+              <div className="rounded-full overflow-hidden">
+                <img
+                  src={secondTokenIcon}
+                  alt={secondTokenName}
+                  className="size-[32px] aspect-square rounded-full"
+                />
+              </div>
+            </div>
           </div>
         )}
       </div>

@@ -1,12 +1,13 @@
 import { Checkbox, CheckboxGroup, Listbox, ListboxItem } from "@nextui-org/react";
 import clsx from "clsx";
-import React from "react";
+import React, { ReactNode } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { REVIEW_RIGHT } from "@/types/launch-project";
 import { useReadContract } from "wagmi";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import dayjs from "dayjs";
 import { FormContainer, InputField } from "./Components";
+import ArrowDownSvg from "../svg/ArrowDown";
 
 
 interface EditBtnProps {
@@ -47,7 +48,7 @@ const Content = ({
   isLoading,
 }: {
   title: string;
-  value?: string;
+  value?: ReactNode;
   valueClassName?: string;
   isLoading?: boolean;
 }) => {
@@ -70,6 +71,22 @@ const Content = ({
   );
 };
 
+const Token = ({ name, logo }: { name: string, logo: string }) => {
+  return (
+    <div className="flex items-center gap-3">
+      <img
+        className="size-[32px] aspect-square rounded-full "
+        src={
+          logo
+        }
+        alt={name}
+      />
+      <span className="text-xl">{name}</span>
+      <ArrowDownSvg />
+    </div>
+  )
+}
+
 const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
   const {
     control,
@@ -79,7 +96,7 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
     getValues,
   } = useFormContext();
 
-  const { projectTokenQuantity, assetTokenName, endWeight, startWeight, endTime, startTime, lbpDescription } = getValues()
+  const { projectTokenQuantity, assetTokenName, assetTokenLogo, endWeight, startWeight, endTime, startTime, lbpDescription, projectTokenLogo, assetTokenQuantity } = getValues()
 
   const projectToken = watch("projectToken");
 
@@ -143,8 +160,18 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
         <Content title={"Token Claim Time"} value={"2024/10/31 00:00:00"} />
 
         <div className="flex gap-8">
-          <Content title={"Project Token Quantity"} value={`${projectTokenQuantity} ${projectTokenSym}`} />
-          <Content title={"Collateral Token Quantity"} value={"10M DAI "} />
+          <Content title={"Project Token Quantity"} value={
+            <div className="w-full flex justify-between items-center">
+              <Token name={projectTokenSym!} logo={projectTokenLogo} />
+              <span className="text-xl">{projectTokenQuantity}</span>
+            </div>
+          } />
+          <Content title={"Collateral Token Quantity"} value={
+            <div className="w-full flex justify-between items-center">
+              <Token name={assetTokenName!} logo={assetTokenLogo} />
+              <span className="text-xl">{assetTokenQuantity}</span>
+            </div>
+          } />
         </div>
         <div className="flex gap-8">
           <Content
@@ -159,8 +186,8 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
         </div>
 
         <div className="flex gap-8">
-          <Content title={"Start Time"} value={"10/24/2024,12:00 AM"} />
-          <Content title={"End Time Weight"} value={"10/31/2024,12:00 AM"} />
+          <Content title={"Start Time"} value={dayjs(startTime).format("MM/DD/YYYY HH:mm")} />
+          <Content title={"End Time Weight"} value={dayjs(endTime).format("MM/DD/YYYY HH:mm")} />
           <Content title={"Duration"} value={`in${duration.toFixed(2)}days`} />
         </div>
         <div className="flex gap-8">
