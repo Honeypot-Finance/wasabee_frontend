@@ -490,7 +490,7 @@ const Confirm = (props: Props) => {
     <FormContainer>
       <h3 className="text-[23px] md:text-2xl md:leading-[26px] font-semibold">Quick Summary</h3>
       <div className="flex flex-col gap-9">
-        <div className="mt-3 md:mt-6 flex flex-wrap justify-between px-3 py-5 md:p-6 border border-black rounded-2xl shadow-field max-md:gap-y-4">
+        <div className="mt-3 md:mt-6 flex flex-wrap justify-between px-3 py-5 md:p-6 border border-black rounded-2xl shadow-field gap-y-4">
           {SummaryItemData.map((d) => (
             <SummaryItem title={d.title} value={d.value} key={d.value} />
           ))}
