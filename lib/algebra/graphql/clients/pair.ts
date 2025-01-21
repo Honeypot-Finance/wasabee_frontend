@@ -474,22 +474,85 @@ export async function fetchPot2PumpList ({
     );
   }
 
-  if (filter.tvlRange?.min !== undefined) {
-    whereCondition.push(` LaunchTokenTVLUSD_gte: "${filter.tvlRange.min}" `);
+  if (filter.tvl?.min !== undefined) {
+    filter.tvl.min.length > 0 && whereCondition.push(` LaunchTokenTVLUSD_gte: "${filter.tvl.min}" `);
   }
-  if (filter.tvlRange?.max !== undefined) {
-    whereCondition.push(` LaunchTokenTVLUSD_lte: "${filter.tvlRange.max}" `);
+  if (filter.tvl?.max !== undefined) {
+    filter.tvl.max.length > 0 && whereCondition.push(` LaunchTokenTVLUSD_lte: "${filter.tvl.max}" `);
   }
 
-  if (filter.participantsRange?.min !== undefined) {
+  if (filter.participants?.min !== undefined) {
     whereCondition.push(
-      ` participantsCount_gte: "${filter.participantsRange.min}" `
+      ` participantsCount_gte: "${filter.participants.min}" `
     );
   }
-  if (filter.participantsRange?.max !== undefined) {
+  if (filter.participants?.max !== undefined) {
     whereCondition.push(
-      ` participantsCount_lte: "${filter.participantsRange.max}" `
+      ` participantsCount_lte: "${filter.participants.max}" `
     );
+  }
+
+  if (filter?.marketcap?.min !== undefined) {
+    whereCondition.push(
+      ` LaunchTokenMCAPUSD_gte: "${filter?.marketcap?.min}" `
+    );
+  }
+  if (filter?.marketcap?.max !== undefined) {
+    ` LaunchTokenMCAPUSD_lte: "${filter?.marketcap?.min}" `
+
+  }
+
+  if (filter?.daybuys?.min !== undefined) {
+    whereCondition.push(
+      ` buyCount_gte: "${filter?.daybuys?.min}" `
+    );
+  }
+  if (filter?.daybuys?.max !== undefined) {
+    whereCondition.push(
+      ` buyCount_lte: "${filter?.daybuys?.max}" `
+    );
+  }
+
+  if (filter?.daysells?.min !== undefined) {
+    whereCondition.push(
+      ` sellCount_lte: "${filter?.daysells?.min}" `
+    );
+  }
+  if (filter?.daysells?.max !== undefined) {
+    whereCondition.push(
+      ` sellCount_gte: "${filter?.daysells?.max}" `
+    );
+  }
+
+  const launchTokenFilter: any = {};
+
+  if (filter?.dayvolume?.min !== undefined) {
+    launchTokenFilter.volumeUSD_gte = filter?.dayvolume?.min
+  }
+  if (filter?.dayvolume?.max !== undefined) {
+    launchTokenFilter.volumeUSD_lte = filter?.dayvolume?.max
+  }
+
+  if (filter?.daytxns?.min !== undefined) {
+    launchTokenFilter.txCount_gte = filter?.daytxns?.min
+  }
+  if (filter?.daytxns?.max !== undefined) {
+    launchTokenFilter.txCount_lte = filter?.daytxns?.max
+  }
+
+  if (filter?.daychange?.min !== undefined) {
+    launchTokenFilter.priceChange24hPercentage_gte = filter?.daychange?.min
+
+  }
+  if (filter?.daychange?.max !== undefined) {
+    launchTokenFilter.priceChange24hPercentage_lte = filter?.daychange?.max
+  }
+
+  if (Object.keys(launchTokenFilter).length > 0) {
+    const filterString = Object.entries(launchTokenFilter)
+      .map(([key, value]) => `${key}: "${value}"`)
+      .join(", ");
+    whereCondition.push(`launchToken_: { ${filterString} }`);
   }
 
   if (filter.creator) {
@@ -579,21 +642,23 @@ export async function fetchPot2Pumps ({
     );
   }
 
-  if (filter.tvlRange?.min !== undefined) {
-    whereCondition.push(` LaunchTokenTVLUSD_gte: "${filter.tvlRange.min}" `);
+  console.log("filter", filter);
+
+  if (filter.tvl?.min !== undefined) {
+    whereCondition.push(` LaunchTokenTVLUSD_gte: "${filter.tvl.min}" `);
   }
-  if (filter.tvlRange?.max !== undefined) {
-    whereCondition.push(` LaunchTokenTVLUSD_lte: "${filter.tvlRange.max}" `);
+  if (filter.tvl?.max !== undefined) {
+    whereCondition.push(` LaunchTokenTVLUSD_lte: "${filter.tvl.max}" `);
   }
 
-  if (filter.participantsRange?.min !== undefined) {
+  if (filter.participants?.min !== undefined) {
     whereCondition.push(
-      ` participantsCount_gte: "${filter.participantsRange.min}" `
+      ` participantsCount_gte: "${filter.participants.min}" `
     );
   }
-  if (filter.participantsRange?.max !== undefined) {
+  if (filter.participants?.max !== undefined) {
     whereCondition.push(
-      ` participantsCount_lte: "${filter.participantsRange.max}" `
+      ` participantsCount_lte: "${filter.participants.max}" `
     );
   }
 
