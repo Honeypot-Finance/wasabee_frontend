@@ -32,6 +32,7 @@ import { ChevronUp, ChevronDown, Search } from "lucide-react";
 import { HoneyContainer } from "@/components/CardContianer";
 import useDebounce from "@/lib/algebra/hooks/common/useDebounce";
 import { debounce } from "lodash";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
 
 type SortField = "pair" | "address" | "tvl" | "volume" | "fees";
 type SortDirection = "asc" | "desc";
@@ -278,32 +279,10 @@ export function AllAquaberaVaults() {
               return (
                 <TableRow key={vault.id} className=" hover:bg-[#F7931A10]">
                   <TableCell>
-                    <Link
-                      href={`/vault/${vault.id}`}
-                      className="flex items-center gap-2 cursor-pointer"
-                    >
-                      {vault.tokenA && (
-                        <Image
-                          src={tokenA.logoURI}
-                          alt={tokenA.symbol}
-                          width={24}
-                          height={24}
-                          className="rounded-full"
-                        />
-                      )}
-                      {vault.tokenB && (
-                        <Image
-                          src={tokenB.logoURI}
-                          alt={tokenB.symbol}
-                          width={24}
-                          height={24}
-                          className="rounded-full"
-                        />
-                      )}
-                      <span>
-                        {tokenA.symbol}/{tokenB.symbol}
-                      </span>
-                    </Link>
+                    <div className="flex items-center gap-1">
+                      <TokenLogo token={tokenA} size={24} />
+                      <TokenLogo token={tokenB} size={24} />
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Link
