@@ -189,7 +189,7 @@ const LaunchProject = () => {
         <div className="absolute bottom-6 right-0 translate-x-[70%] hidden xl:block" >
           <img src="/images/launch-project/launch-project-sticky4.png" alt="sticky4" />
         </div>
-        <div className="relative w-ful rounded-3xl mt-[39px] px-4 md:px-9 pb-[120px]" style={{
+        <div className="relative w-ful rounded-3xl mt-[39px] px-4 md:px-9 pb-[90px] md:pb-[120px]" style={{
           background: "url('/images/launch-project/subtract-sticky.png'), url('/images/launch-project/subtract-bg.png')",
           backgroundSize: "contain, cover",
           backgroundRepeat: 'no-repeat, no-repeat',

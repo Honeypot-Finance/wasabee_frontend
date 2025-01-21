@@ -36,8 +36,8 @@ type Props = {};
 
 const SummaryItem = ({ title, value }: { title: string; value: string }) => {
   return (
-    <div className="flex flex-col items-start gap-1">
-      <div className="text-base font-semibold">{title}</div>
+    <div className="flex flex-col items-center md:items-start gap-1 max-md:w-[130px] max-md:text-center">
+      <div className="text-sm md:text-base font-semibold">{title}</div>
       <div className="text-[12px] leading-4">{value}</div>
     </div>
   );
@@ -64,7 +64,7 @@ const ApprovalsCard = ({
 }) => {
   return (
     <div
-      className="py-4 px-4 flex flex-col w-[196px] h-[192px] gap-4 items-center !bg-[#FBCA4E] border border-black rounded-2xl relative"
+      className="py-4 px-4 flex flex-col w-full md:w-[196px] h-[192px] gap-4 items-center !bg-[#FBCA4E] border border-black rounded-2xl relative"
       style={{
         background:
           "url('/images/launch-project/subtract-sticky.png'), url('/images/launch-project/subtract-bg.png')",
@@ -488,9 +488,9 @@ const Confirm = (props: Props) => {
 
   return (
     <FormContainer>
-      <h3 className="text-2xl leading-[26px] font-semibold">Quick Summary</h3>
+      <h3 className="text-[23px] md:text-2xl md:leading-[26px] font-semibold">Quick Summary</h3>
       <div className="flex flex-col gap-9">
-        <div className="mt-6 flex flex-wrap justify-between p-6 border border-black rounded-2xl shadow-field">
+        <div className="mt-3 md:mt-6 flex flex-wrap justify-between px-3 py-5 md:p-6 border border-black rounded-2xl shadow-field max-md:gap-y-4">
           {SummaryItemData.map((d) => (
             <SummaryItem title={d.title} value={d.value} key={d.value} />
           ))}
@@ -499,7 +499,7 @@ const Confirm = (props: Props) => {
           <h3 className="text-2xl leading-[26px] font-semibold mb-6">
             Final Approvals
           </h3>
-          <div className="flex gap-3.5">
+          <div className="flex flex-col md:flex-row gap-3.5">
             <ApprovalsCard
               step={1}
               title={"Approve"}

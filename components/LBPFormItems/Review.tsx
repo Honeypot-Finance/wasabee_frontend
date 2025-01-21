@@ -53,13 +53,13 @@ const Content = ({
   isLoading?: boolean;
 }) => {
   return (
-    <div className="flex flex-col gap-3 text-[#202020] flex-1">
+    <div className="flex flex-col gap-1 md:gap-3 text-[#202020] flex-1">
       {
-        title && <h5 className="text-base leading-5 text-[#202020]/80">{title}</h5>
+        title && <h5 className="text-sm md:text-base md:leading-5 text-[#202020]/80">{title}</h5>
       }
       <div
         className={clsx(
-          "text-xl leading-4 p-4 h-[64px] border border-black rounded-2xl flex items-center shadow-field w-full",
+          "text-base md:text-xl leading-4 p-3 h-12 md:p-4 md:h-16 border border-black rounded-2xl flex items-center shadow-field w-full",
           valueClassName
         )}
       >
@@ -75,13 +75,13 @@ const Token = ({ name, logo }: { name: string, logo: string }) => {
   return (
     <div className="flex items-center gap-3">
       <img
-        className="size-[32px] aspect-square rounded-full "
+        className="size-6 md:size-[32px] aspect-square rounded-full "
         src={
           logo
         }
         alt={name}
       />
-      <span className="text-xl">{name}</span>
+      <span className="text-base md:text-xl">{name}</span>
       <ArrowDownSvg />
     </div>
   )
@@ -91,7 +91,6 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
   const {
     control,
     formState: { errors },
-    setValue,
     watch,
     getValues,
   } = useFormContext();
@@ -117,14 +116,14 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
   return (
     <FormContainer className="">
       <div className="flex flex-col gap-2">
-        <h2 className="text-xl leading-[26px]">Token Sale Summary</h2>
-        <p className="text-sm">
+        <h2 className="text-[22px] max-md:text-center text-xl leading-[26px]">Token Sale Summary</h2>
+        <p className="text-sm max-md:text-center">
           Please review all aspects before finishing
         </p>
       </div>
-      <div className="flex flex-col gap-3 mt-8 pb-5 border-b border-black">
+      <div className="flex flex-col gap-3 mt-5 md:mt-8 pb-5 border-b border-black">
         <div className="flex items-center justify-between">
-          <h5 className='text-xl'>Project Token Contract Addree</h5>
+          <h5 className='text-sm md:text-xl'>Project Token Contract Addree</h5>
           <EditBtn onClick={() => changeStep(0)} />
         </div>
         <Controller
@@ -140,7 +139,7 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
             />
           )}
         />
-        <div className="flex gap-6">
+        <div className="flex gap-3 flex-col md:gap-6 md:flex-row">
           <div className="flex-1">
             <Content
               title={"Token Name"}
@@ -159,7 +158,7 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
         <EditBtn onClick={() => changeStep(2)} className="!justify-start" />
         <Content title={"Token Claim Time"} value={"2024/10/31 00:00:00"} />
 
-        <div className="flex gap-8">
+        <div className="flex gap-3 flex-col md:gap-8 md:flex-row">
           <Content title={"Project Token Quantity"} value={
             <div className="w-full flex justify-between items-center">
               <Token name={projectTokenSym!} logo={projectTokenLogo} />
@@ -173,24 +172,24 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
             </div>
           } />
         </div>
-        <div className="flex gap-8">
+        <div className="flex gap-3 flex-col md:gap-8 md:flex-row">
           <Content
             title={"Price Range"}
             value={"$989,670,141.9 - $6,126,990.125806"}
           />
           <Content title={"Liquidity"} value={"$1"} />
         </div>
-        <div className="flex gap-8">
+        <div className="flex gap-3 flex-col md:gap-8 md:flex-row">
           <Content title={"Starting Weigh"} value={`${startWeight}% ${projectTokenSym} ${100 - startWeight}% ${assetTokenName}`} />
           <Content title={"End Weight"} value={`${endWeight}% ${projectTokenSym} ${100 - endWeight}% ${assetTokenName}`} />
         </div>
 
-        <div className="flex gap-8">
+        <div className="flex gap-3 flex-col md:gap-8 md:flex-row">
           <Content title={"Start Time"} value={dayjs(startTime).format("MM/DD/YYYY HH:mm")} />
           <Content title={"End Time Weight"} value={dayjs(endTime).format("MM/DD/YYYY HH:mm")} />
           <Content title={"Duration"} value={`in${duration.toFixed(2)}days`} />
         </div>
-        <div className="flex gap-8">
+        <div className="flex gap-3 flex-col md:gap-8 md:flex-row">
           <Content title={"Platform Fee"} value={"0.3%"} />
         </div>
       </div>
@@ -210,84 +209,88 @@ const Review = ({ changeStep }: { changeStep: (step: number) => void }) => {
           <Controller
             name="rights"
             control={control}
-            render={({ field }) => (
-              <Listbox
-                variant="flat"
-                selectionMode="multiple"
-                selectedKeys={field.value}
-                onSelectionChange={(keys) =>
-                  field.onChange(keys)
-                }
-                className="bg-transparent rounded-md px-0"
-                classNames={
-                  {
-                    list: 'gap-3 flex-row gap-6'
+            render={({ field }) => {
+              console.log('field: ', field);
+              return (
+                <Listbox
+                  variant="flat"
+                  selectionMode="multiple"
+                  selectedKeys={field.value}
+                  onSelectionChange={(keys) => {
+                    field.onChange([(keys as any).anchorKey])
                   }
-                }
-              >
-                <ListboxItem
-                  key={REVIEW_RIGHT.PAUSE_LBP}
-                  className="hover:bg-white/60"
-                  classNames={{
-                    base: "select-item shadow-field bg-white py-3 h-[64px] item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-3 rounded-2xl border border-black shadow-[1px_2px_0px_0px_#9B7D2F]",
-                    title: 'text-xl',
-                    selectedIcon: 'block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden'
-                  }}
-                  textValue={REVIEW_RIGHT.PAUSE_LBP}
+                  }
+                  className="bg-transparent rounded-md px-0"
+                  classNames={
+                    {
+                      list: 'gap-3 md:flex-row md:gap-6'
+                    }
+                  }
                 >
-                  <div className="flex items-center gap-2">
-                    <p className="text-xl mt-1">Pause LBP</p>
-                  </div>
-                </ListboxItem>
+                  <ListboxItem
+                    key={REVIEW_RIGHT.PAUSE_LBP}
+                    className="hover:bg-white/60"
+                    classNames={{
+                      base: "select-item shadow-field bg-white py-3 h-[48px] md:h-[64px] item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-3 rounded-2xl border border-black shadow-[1px_2px_0px_0px_#9B7D2F]",
+                      title: 'text-xl',
+                      selectedIcon: 'block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden'
+                    }}
+                    textValue={REVIEW_RIGHT.PAUSE_LBP}
+                  >
+                    <div className="flex items-center gap-2">
+                      <p className="text-xl mt-1">Pause LBP</p>
+                    </div>
+                  </ListboxItem>
 
-                <ListboxItem
-                  key={REVIEW_RIGHT.UNPAUSE_LBP}
-                  className="hover:bg-white/60"
-                  classNames={{
-                    base: "select-item shadow-field bg-white py-3 h-[64px] item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-3 rounded-2xl border border-black shadow-[1px_2px_0px_0px_#9B7D2F]",
-                    title: 'text-xl',
-                    selectedIcon: 'block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden'
-                  }}
-                  textValue={REVIEW_RIGHT.PAUSE_LBP}
-                >
-                  <div className="flex items-center gap-2">
-                    <p className="text-xl mt-1">Unpause LBP</p>
-                  </div>
-                </ListboxItem>
-              </Listbox>
-              // <CheckboxGroup
-              //   value={field.value}
-              //   onValueChange={(values) => field.onChange(values)}
-              //   orientation="horizontal"
-              // >
-              //   <div className="flex-1 flex justify-between">
-              //     <Checkbox
-              //       value={REVIEW_RIGHT.PAUSE_LBP}
-              //       classNames={{
-              //         wrapper: "group-data-[selected=true]:after:bg-[#865215]",
-              //         icon: "text-black",
-              //         base: 'flex-row-reverse flex-1 max-w-full justify-between border border-black rounded-2xl px-4 py-5 ',
-              //         label: 'text-[#202020] aaaaaaaaaaa'
-              //       }}
-              //     >
-              //       Pause LBP
-              //     </Checkbox>
+                  <ListboxItem
+                    key={REVIEW_RIGHT.UNPAUSE_LBP}
+                    className="hover:bg-white/60"
+                    classNames={{
+                      base: "select-item shadow-field bg-white py-3 h-[48px] md:h-[64px] item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-3 rounded-2xl border border-black shadow-[1px_2px_0px_0px_#9B7D2F]",
+                      title: 'text-xl',
+                      selectedIcon: 'block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden'
+                    }}
+                    textValue={REVIEW_RIGHT.PAUSE_LBP}
+                  >
+                    <div className="flex items-center gap-2">
+                      <p className="text-xl mt-1">Unpause LBP</p>
+                    </div>
+                  </ListboxItem>
+                </Listbox>
+                // <CheckboxGroup
+                //   value={field.value}
+                //   onValueChange={(values) => field.onChange(values)}
+                //   orientation="horizontal"
+                // >
+                //   <div className="flex-1 flex justify-between">
+                //     <Checkbox
+                //       value={REVIEW_RIGHT.PAUSE_LBP}
+                //       classNames={{
+                //         wrapper: "group-data-[selected=true]:after:bg-[#865215]",
+                //         icon: "text-black",
+                //         base: 'flex-row-reverse flex-1 max-w-full justify-between border border-black rounded-2xl px-4 py-5 ',
+                //         label: 'text-[#202020] aaaaaaaaaaa'
+                //       }}
+                //     >
+                //       Pause LBP
+                //     </Checkbox>
 
-              //     <Checkbox
-              //       value={REVIEW_RIGHT.UNPAUSE_LBP}
-              //       classNames={{
-              //         wrapper: "group-data-[selected=true]:after:bg-[#865215]",
-              //         icon: "text-black",
-              //         base: 'flex-row-reverse flex-1 max-w-full justify-between border border-black rounded-2xl px-4 py-5 ',
-              //         label: 'text-[#202020] aaaaaaaaaaa'
-              //       }}
-              //     >
-              //       Unpause LBP
-              //     </Checkbox>
-              //   </div>
+                //     <Checkbox
+                //       value={REVIEW_RIGHT.UNPAUSE_LBP}
+                //       classNames={{
+                //         wrapper: "group-data-[selected=true]:after:bg-[#865215]",
+                //         icon: "text-black",
+                //         base: 'flex-row-reverse flex-1 max-w-full justify-between border border-black rounded-2xl px-4 py-5 ',
+                //         label: 'text-[#202020] aaaaaaaaaaa'
+                //       }}
+                //     >
+                //       Unpause LBP
+                //     </Checkbox>
+                //   </div>
 
-              // </CheckboxGroup>
-            )}
+                // </CheckboxGroup>
+              )
+            }}
           />
         </div>
       </div>
