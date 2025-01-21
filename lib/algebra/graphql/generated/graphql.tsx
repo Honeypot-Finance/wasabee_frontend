@@ -12920,7 +12920,7 @@ export type PoolsListQueryVariables = Exact<{
 }>;
 
 
-export type PoolsListQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }>, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null } }> };
+export type PoolsListQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }> }> };
 
 export type AllTicksQueryVariables = Exact<{
   poolAddress: Scalars['String']['input'];
@@ -13172,7 +13172,9 @@ export type MintQueryVariables = Exact<{
 
 export type MintQuery = { __typename?: 'Query', mints: Array<{ __typename?: 'Mint', id: string }> };
 
-export type VaultsSortedByHoldersQueryVariables = Exact<{ [key: string]: never; }>;
+export type VaultsSortedByHoldersQueryVariables = Exact<{
+  search?: InputMaybe<Scalars['String']['input']>;
+}>;
 
 
 export type VaultsSortedByHoldersQuery = { __typename?: 'Query', ichiVaults: Array<{ __typename?: 'IchiVault', id: string, sender: any, tokenA: any, allowTokenA: boolean, tokenB: any, allowTokenB: boolean, count: any, createdAtTimestamp: any, holdersCount: number, pool: { __typename?: 'Pool', totalValueLockedUSD: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any }, poolDayData: Array<{ __typename?: 'PoolDayData', date: number, volumeUSD: any, feesUSD: any, tvlUSD: any }> } }> };
@@ -13289,16 +13291,16 @@ export const PoolFieldsFragmentDoc = gql`
   token1 {
     ...TokenFields
   }
-  poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
+  poolHourData(first: 48, orderBy: periodStartUnix, orderDirection: desc) {
     ...PoolHourDataFields
   }
-  poolDayData(first: 100, orderBy: date, orderDirection: desc) {
+  poolDayData(first: 30, orderBy: date, orderDirection: desc) {
     ...PoolDayDataFields
   }
-  poolWeekData(first: 2, orderBy: week, orderDirection: desc) {
+  poolWeekData(first: 10, orderBy: week, orderDirection: desc) {
     ...PoolWeekDataFields
   }
-  poolMonthData(first: 2, orderBy: month, orderDirection: desc) {
+  poolMonthData(first: 24, orderBy: month, orderDirection: desc) {
     ...PoolMonthDataFields
   }
   sqrtPrice
@@ -14023,25 +14025,9 @@ export const PoolsListDocument = gql`
     first: 1000
   ) {
     ...PoolFields
-    poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
-      ...PoolHourDataFields
-    }
-    poolDayData(first: 100, orderBy: date, orderDirection: desc) {
-      ...PoolDayDataFields
-    }
-    poolWeekData(first: 2, orderBy: week, orderDirection: desc) {
-      ...PoolWeekDataFields
-    }
-    poolMonthData(first: 2, orderBy: month, orderDirection: desc) {
-      ...PoolMonthDataFields
-    }
   }
 }
-    ${PoolFieldsFragmentDoc}
-${PoolHourDataFieldsFragmentDoc}
-${PoolDayDataFieldsFragmentDoc}
-${PoolWeekDataFieldsFragmentDoc}
-${PoolMonthDataFieldsFragmentDoc}`;
+    ${PoolFieldsFragmentDoc}`;
 
 /**
  * __usePoolsListQuery__
@@ -15315,8 +15301,13 @@ export type MintLazyQueryHookResult = ReturnType<typeof useMintLazyQuery>;
 export type MintSuspenseQueryHookResult = ReturnType<typeof useMintSuspenseQuery>;
 export type MintQueryResult = Apollo.QueryResult<MintQuery, MintQueryVariables>;
 export const VaultsSortedByHoldersDocument = gql`
-    query VaultsSortedByHolders {
-  ichiVaults(first: 100, orderBy: holdersCount, orderDirection: desc) {
+    query VaultsSortedByHolders($search: String) {
+  ichiVaults(
+    first: 100
+    orderBy: holdersCount
+    orderDirection: desc
+    where: {searchString_contains_nocase: $search}
+  ) {
     ...VaultField
   }
 }
@@ -15334,6 +15325,7 @@ export const VaultsSortedByHoldersDocument = gql`
  * @example
  * const { data, loading, error } = useVaultsSortedByHoldersQuery({
  *   variables: {
+ *      search: // value for 'search'
  *   },
  * });
  */

@@ -176,7 +176,7 @@ const PoolsTable = <TData, TValue>({
                 value={search}
                 type="text"
                 onChange={(event) => setSearch(event.target.value)}
-                className="border border-[#E18A20]/10 bg-[#271A0C] pl-12 pr-4 h-12 w-[353px] focus:border-opacity-100 rounded-2xl placeholder:align-middle"
+                className="border text-white border-[#E18A20]/10 bg-[#271A0C] pl-12 pr-4 h-12 w-[353px] focus:border-opacity-100 rounded-2xl placeholder:align-middle"
               />
               <Search
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-border"

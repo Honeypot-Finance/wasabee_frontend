@@ -28,8 +28,10 @@ import { useEffect, useState, useMemo } from "react";
 import { Address } from "viem";
 import { DepositToVaultModal } from "../modals/DepositToVaultModal";
 import { Currency } from "@cryptoalgebra/sdk";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronUp, ChevronDown, Search } from "lucide-react";
 import { HoneyContainer } from "@/components/CardContianer";
+import useDebounce from "@/lib/algebra/hooks/common/useDebounce";
+import { debounce } from "lodash";
 
 type SortField = "pair" | "address" | "tvl" | "volume" | "fees";
 type SortDirection = "asc" | "desc";
@@ -43,6 +45,8 @@ export function AllAquaberaVaults() {
   const [selectedVault, setSelectedVault] = useState<ICHIVaultContract | null>(
     null
   );
+  const [searchString, setSearchString] = useState("");
+  const searchDebounce = debounce(() => loadMyVaults(searchString), 500);
   const [selectedTokenA, setSelectedTokenA] = useState<Currency | null>(null);
   const [selectedTokenB, setSelectedTokenB] = useState<Currency | null>(null);
   const [page, setPage] = useState(1);
@@ -53,13 +57,13 @@ export function AllAquaberaVaults() {
       return;
     }
 
-    loadMyVaults();
-  }, [wallet.isInit]);
+    searchDebounce();
+  }, [wallet.isInit, searchString]);
 
-  const loadMyVaults = async () => {
-    const vaultsQuery = await getVaultPageData();
-
-    setVaults(vaultsQuery);
+  const loadMyVaults = async (search?: string) => {
+    const vaultsQuery = getVaultPageData(search).then((res) => {
+      setVaults(res);
+    });
   };
 
   const handleSort = (field: SortField) => {
@@ -118,8 +122,32 @@ export function AllAquaberaVaults() {
   };
 
   return (
-    <HoneyContainer className="w-full">
+    <div className="w-full">
       <div className="w-full">
+        {/* 搜索栏 */}
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex gap-2 flex-1 max-w-md">
+            <input
+              type="text"
+              value={searchString}
+              onChange={(e) => setSearchString(e.target.value)}
+              placeholder="Search by address"
+              className="w-full bg-[#1a1b1f] border border-gray-700 rounded-lg px-4 py-2 text-white"
+            />
+            {searchString && (
+              <button
+                onClick={() => {
+                  setSearchString("");
+                  setPage(1);
+                }}
+                className="px-4 py-2 bg-[#2a2a2a] rounded-lg text-white hover:bg-[#3a3a3a] transition-colors"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
         <Table
           aria-label="my-vaults"
           classNames={{
@@ -342,7 +370,7 @@ export function AllAquaberaVaults() {
           />
         )}
       </div>
-    </HoneyContainer>
+    </div>
   );
 }
 

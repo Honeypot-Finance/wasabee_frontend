@@ -32,10 +32,15 @@ export async function getAccountVaultsList(
   return vaults.data;
 }
 
-export async function getVaultPageData(): Promise<VaultsSortedByHoldersQuery> {
+export async function getVaultPageData(
+  search?: string
+): Promise<VaultsSortedByHoldersQuery> {
   console.log(VAULTS_SORTED_BY_HOLDERS);
   const vaults = await infoClient.query<VaultsSortedByHoldersQuery>({
     query: VaultsSortedByHoldersDocument,
+    variables: {
+      search: search ?? "",
+    },
   });
 
   return vaults.data;
@@ -53,16 +58,16 @@ export async function getSingleVaultDetails(
     });
 
     if (!result.data) {
-      throw new Error('No data returned from query');
+      throw new Error("No data returned from query");
     }
 
     // Add data validation and transformation here if needed
     return result.data;
   } catch (error) {
-    console.error('Error fetching vault details:', error);
+    console.error("Error fetching vault details:", error);
     // Return an empty or default response structure
     return {
-      vault: null
+      vault: null,
     } as SingleVaultDetailsQuery;
   }
 }

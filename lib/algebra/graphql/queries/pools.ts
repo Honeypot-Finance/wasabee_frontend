@@ -105,18 +105,6 @@ export const POOLS_LIST = gql`
       first: 1000
     ) {
       ...PoolFields
-      poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
-        ...PoolHourDataFields
-      }
-      poolDayData(first: 100, orderBy: date, orderDirection: desc) {
-        ...PoolDayDataFields
-      }
-      poolWeekData(first: 2, orderBy: week, orderDirection: desc) {
-        ...PoolWeekDataFields
-      }
-      poolMonthData(first: 2, orderBy: month, orderDirection: desc) {
-        ...PoolMonthDataFields
-      }
     }
   }
 `;

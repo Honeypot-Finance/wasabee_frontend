@@ -1,8 +1,13 @@
 import { gql } from "@apollo/client";
 
 export const VAULTS_SORTED_BY_HOLDERS = gql`
-  query VaultsSortedByHolders {
-    ichiVaults(first: 100, orderBy: holdersCount, orderDirection: desc) {
+  query VaultsSortedByHolders($search: String) {
+    ichiVaults(
+      first: 100
+      orderBy: holdersCount
+      orderDirection: desc
+      where: { searchString_contains_nocase: $search }
+    ) {
       ...VaultField
     }
   }
