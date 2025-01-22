@@ -14022,7 +14022,7 @@ export const PoolsListDocument = gql`
     where: {searchString_contains: $search}
     orderBy: totalValueLockedUSD
     orderDirection: desc
-    first: 1000
+    first: 100
   ) {
     ...PoolFields
   }
