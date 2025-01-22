@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useCallback } from "react";
 import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
 import { Token } from "@/services/contract/token";
-import { Address, isAddress } from "viem";
+import { Address, isAddress, zeroAddress } from "viem";
 import { Button } from "@/components/button";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { DepositToVaultModal } from "@/components/Aquabera/modals/DepositToVaultModal";
@@ -13,18 +13,16 @@ import { useReadErc20BalanceOf } from "@/wagmi-generated";
 import { WithdrawFromVaultModal } from "@/components/Aquabera/modals/WithdrawFromVaultModal";
 import { getSingleVaultDetails } from "@/lib/algebra/graphql/clients/vaults";
 import { SingleVaultDetailsQuery } from "@/lib/algebra/graphql/generated/graphql";
+import BigNumber from "bignumber.js";
+import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import { observer } from "mobx-react-lite";
 
-export default function VaultDetail() {
+export const VaultDetail = observer(() => {
   const router = useRouter();
   const { address } = router.query;
   const [vault, setVault] = useState<ICHIVaultContract | null>(null);
-  const [tokenA, setTokenA] = useState<Token | null>(null);
-  const [tokenB, setTokenB] = useState<Token | null>(null);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const [totalSupply, setTotalSupply] = useState<bigint>(BigInt(0));
-  const [userShares, setUserShares] = useState<bigint>(BigInt(0));
-  const [fees, setFees] = useState<number>(0);
   const [tvl, setTvl] = useState<string>("$0");
   const [volume24h, setVolume24h] = useState<string>("$0");
   const [fees24h, setFees24h] = useState<string>("$0");
@@ -37,7 +35,8 @@ export default function VaultDetail() {
       !wallet.isInit ||
       !wallet.account ||
       !address ||
-      !isAddress(address as string)
+      !isAddress(address as string) ||
+      address === zeroAddress
     )
       return;
 
@@ -46,43 +45,47 @@ export default function VaultDetail() {
       const vaultContract = new ICHIVaultContract({
         address: address as Address,
       });
+      console.log("vaultContract", vaultContract);
 
       setVault(vaultContract);
+    };
 
-      const token0Address = await vaultContract.contract.read.token0();
-      const token1Address = await vaultContract.contract.read.token1();
+    loadVaultData();
+  }, [address, wallet.isInit]);
 
-      const token0 = Token.getToken({ address: token0Address });
-      const token1 = Token.getToken({ address: token1Address });
+  useEffect(() => {
+    if (!vault) return;
 
-      await token0.init();
-      await token1.init();
+    vault?.getTotalAmounts();
 
-      setTokenA(token0);
-      setTokenB(token1);
+    vault?.getTotalSupply();
 
-      // Get total supply
-      const supply = await vaultContract.contract.read.totalSupply();
-      setTotalSupply(supply);
+    vault?.getBalanceOf(wallet.account);
 
-      const shares = await vaultContract.getBalanceOf(wallet.account);
-      setUserShares(shares);
+    vault?.getToken0().then((token) => {
+      token.init();
+    });
 
-      // Get vault data from subgraph
-      const vaultDetails = await getSingleVaultDetails(address as string);
-      setVaultData(vaultDetails);
+    vault?.getToken1().then((token) => {
+      token.init();
+    });
 
-      if (vaultDetails.ichiVault) {
+    // Get vault data from subgraph
+    getSingleVaultDetails(vault?.address as string).then((data) => {
+      setVaultData(data);
+
+      if (data.ichiVault) {
         setTvl(
-          Number(
-            vaultDetails.ichiVault.pool?.totalValueLockedUSD || 0
-          ).toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-          })
+          Number(data.ichiVault.pool?.totalValueLockedUSD || 0).toLocaleString(
+            "en-US",
+            {
+              style: "currency",
+              currency: "USD",
+            }
+          )
         );
 
-        const latestDayData = vaultDetails.ichiVault.pool?.poolDayData[0];
+        const latestDayData = data.ichiVault.pool?.poolDayData[0];
         if (latestDayData) {
           setVolume24h(
             Number(latestDayData.volumeUSD || 0).toLocaleString("en-US", {
@@ -99,40 +102,29 @@ export default function VaultDetail() {
           );
         }
       }
-    };
+    });
 
-    loadVaultData();
-  }, [address, wallet.isInit]);
+    console.log(vault);
+  }, [vault]);
 
-  const userBalance = useReadErc20BalanceOf({
-    address: address as `0x${string}`,
-    args: [wallet.account as `0x${string}`],
-  });
-
-  const hasShares = userShares > BigInt(0);
+  const hasShares = vault?.userShares ?? BigInt(0) > BigInt(0);
 
   // Add a function to refresh vault data
   const refreshVaultData = useCallback(async () => {
     if (!vault || !wallet.account) return;
 
     // Get total supply
-    const supply = await vault.contract.read.totalSupply();
-    setTotalSupply(supply);
+    vault.getTotalSupply();
 
     // Get user shares
-    const shares = await vault.getBalanceOf(wallet.account);
-    setUserShares(shares);
+    vault.getBalanceOf(wallet.account);
 
-    // Get fees
-    const fee = await vault.getFee();
-    setFees(fee);
+    vault.getTotalAmounts();
 
     // Refresh subgraph data
-    if (address && typeof address === "string") {
-      const vaultDetails = await getSingleVaultDetails(address);
-      setVaultData(vaultDetails);
-    }
-  }, [vault, wallet.account, address]);
+    const vaultDetails = await getSingleVaultDetails(vault.address);
+    setVaultData(vaultDetails);
+  }, [vault, wallet.isInit]);
 
   // Format number with 18 decimals
   const formatShares = (value: bigint) => {
@@ -201,12 +193,12 @@ export default function VaultDetail() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            {tokenA && tokenB && (
+            {vault?.token0 && vault?.token1 && (
               <>
-                <TokenLogo token={tokenA} />
-                <TokenLogo token={tokenB} />
+                <TokenLogo token={vault?.token0} />
+                <TokenLogo token={vault?.token1} />
                 <span className="text-xl font-bold">
-                  {tokenA.symbol}/{tokenB.symbol}
+                  {vault?.token0?.symbol}/{vault?.token1?.symbol}
                 </span>
               </>
             )}
@@ -226,9 +218,6 @@ export default function VaultDetail() {
                 >
                   Withdraw
                 </Button>
-                <Button onClick={() => vault?.collectFees()}>
-                  Collect Fees
-                </Button>
               </>
             )}
           </div>
@@ -238,17 +227,39 @@ export default function VaultDetail() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-[#1A1108] p-4 rounded-xl">
             <h3 className="text-sm text-gray-400">Total Supply</h3>
-            <p className="text-xl font-bold">{formatShares(totalSupply)}</p>
+            <p className="text-xl font-bold">
+              {formatShares(vault?.totalsupplyShares ?? BigInt(0))}
+            </p>
           </div>
           <div className="bg-[#1A1108] p-4 rounded-xl">
-            <h3 className="text-sm text-gray-400">Your Shares</h3>
-            <p className="text-xl font-bold">{formatShares(userShares)}</p>
+            <h3 className="text-sm text-gray-400">Your Asset</h3>
+            <p className="text-xl font-bold">
+              {DynamicFormatAmount({
+                amount: BigNumber(
+                  vault?.userTokenAmounts.total0.toString() ?? 0
+                ).toString(),
+                decimals: 3,
+                endWith: vault?.token0?.symbol,
+              })}
+              <br />
+              {DynamicFormatAmount({
+                amount: BigNumber(
+                  vault?.userTokenAmounts.total1.toString() ?? 0
+                ).toString(),
+                decimals: 3,
+                endWith: vault?.token1?.symbol,
+              })}
+            </p>
           </div>
           <div className="bg-[#1A1108] p-4 rounded-xl">
             <h3 className="text-sm text-gray-400">Share Percentage</h3>
             <p className="text-xl font-bold">
-              {totalSupply > BigInt(0)
-                ? ((Number(userShares) / Number(totalSupply)) * 100).toFixed(2)
+              {vault?.totalsupplyShares && vault?.totalsupplyShares > BigInt(0)
+                ? (
+                    (Number(vault?.userShares) /
+                      Number(vault?.totalsupplyShares)) *
+                    100
+                  ).toFixed(2)
                 : "0"}
               %
             </p>
@@ -277,8 +288,8 @@ export default function VaultDetail() {
             </div>
             <div>
               <p className="text-sm text-gray-400">Token Addresses</p>
-              <p className="font-mono">{tokenA?.address}</p>
-              <p className="font-mono">{tokenB?.address}</p>
+              <p className="font-mono">{vault?.token0?.address}</p>
+              <p className="font-mono">{vault?.token1?.address}</p>
             </div>
           </div>
         </div>
@@ -315,7 +326,7 @@ export default function VaultDetail() {
       )}
 
       {/* Modals */}
-      {vault && tokenA && tokenB && (
+      {vault && vault?.token0 && vault?.token1 && (
         <>
           <DepositToVaultModal
             isOpen={isDepositModalOpen}
@@ -327,19 +338,19 @@ export default function VaultDetail() {
             tokenA={
               new AlgebraToken(
                 wallet.currentChainId,
-                tokenA.address as `0x${string}`,
-                Number(tokenA.decimals),
-                tokenA.symbol,
-                tokenA.name
+                vault?.token0?.address as `0x${string}`,
+                Number(vault?.token0?.decimals),
+                vault?.token0?.symbol,
+                vault?.token0?.name
               )
             }
             tokenB={
               new AlgebraToken(
                 wallet.currentChainId,
-                tokenB.address as `0x${string}`,
-                Number(tokenB.decimals),
-                tokenB.symbol,
-                tokenB.name
+                vault?.token1?.address as `0x${string}`,
+                Number(vault?.token1?.decimals),
+                vault?.token1?.symbol,
+                vault?.token1?.name
               )
             }
           />
@@ -350,10 +361,12 @@ export default function VaultDetail() {
               refreshVaultData(); // Refresh after closing withdraw modal
             }}
             vault={vault}
-            maxShares={userShares}
+            maxShares={vault?.userShares ?? BigInt(0)}
           />
         </>
       )}
     </div>
   );
-}
+});
+
+export default VaultDetail;

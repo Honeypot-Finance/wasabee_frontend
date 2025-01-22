@@ -9,11 +9,12 @@ import { useEffect, useState } from "react";
 import { Currency } from "@cryptoalgebra/sdk";
 import { DepositToVaultModal } from "../modals/DepositToVaultModal";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { observer } from "mobx-react-lite";
 
 type SortField = "pair" | "tvl" | "volume" | "fees" | "shares";
 type SortDirection = "asc" | "desc";
 
-export function MyAquaberaVaults() {
+export const MyAquaberaVaults = observer(() => {
   const router = useRouter();
   const [myVaults, setMyVaults] = useState<AccountVaultSharesQuery>();
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
@@ -243,6 +244,6 @@ export function MyAquaberaVaults() {
       )}
     </div>
   );
-}
+});
 
 export default MyAquaberaVaults;
