@@ -28,13 +28,13 @@ export function usePool(
   const [code, setCode] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (!address) return;
+    if (!address || !wallet.isInit) return;
     getCode(wallet.publicClient, {
       address: address as Address,
     }).then((code) => {
       setCode(code);
     });
-  }, [address]);
+  }, [address, wallet.isInit]);
 
   const {
     data: tickSpacing,
