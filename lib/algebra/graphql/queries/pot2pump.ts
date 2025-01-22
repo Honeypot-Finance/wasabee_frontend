@@ -105,6 +105,23 @@ export const POT_2_PUMP_POTTING_NEW_TOKENS_BY_ENDTIME = gql`
   }
 `;
 
+export const GET_LATEST_PUMPING_TOKEN = gql`
+  query GetLatestPumpingToken {
+    pot2Pumps(
+      first: 1
+      orderBy: endTime
+      orderDirection: desc
+      where: { raisedTokenReachingMinCap: true }
+    ) {
+      id
+      launchToken {
+        symbol
+        name
+      }
+    }
+  }
+`;
+
 export const POT2_PUMP_FRAGMENT = gql`
   fragment Pot2PumpField on Pot2Pump {
     id

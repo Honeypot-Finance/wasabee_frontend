@@ -13036,6 +13036,11 @@ export type Pot2PumpPottingNewTokensByEndtimeQueryVariables = Exact<{
 
 export type Pot2PumpPottingNewTokensByEndtimeQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, LaunchTokenTVLUSD: any, LaunchTokenMCAPUSD: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
 
+export type GetLatestPumpingTokenQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLatestPumpingTokenQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchToken: { __typename?: 'Token', symbol: string, name: string } }> };
+
 export type Pot2PumpFieldFragment = { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, LaunchTokenTVLUSD: any, LaunchTokenMCAPUSD: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> };
 
 export type ParticipantTransactionHistoryFieldsFragment = { __typename?: 'ParticipantTransactionHistory', id: string };
@@ -14761,6 +14766,54 @@ export type Pot2PumpPottingNewTokensByEndtimeQueryHookResult = ReturnType<typeof
 export type Pot2PumpPottingNewTokensByEndtimeLazyQueryHookResult = ReturnType<typeof usePot2PumpPottingNewTokensByEndtimeLazyQuery>;
 export type Pot2PumpPottingNewTokensByEndtimeSuspenseQueryHookResult = ReturnType<typeof usePot2PumpPottingNewTokensByEndtimeSuspenseQuery>;
 export type Pot2PumpPottingNewTokensByEndtimeQueryResult = Apollo.QueryResult<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>;
+export const GetLatestPumpingTokenDocument = gql`
+    query GetLatestPumpingToken {
+  pot2Pumps(
+    first: 1
+    orderBy: endTime
+    orderDirection: desc
+    where: {raisedTokenReachingMinCap: true}
+  ) {
+    id
+    launchToken {
+      symbol
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetLatestPumpingTokenQuery__
+ *
+ * To run a query within a React component, call `useGetLatestPumpingTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLatestPumpingTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLatestPumpingTokenQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetLatestPumpingTokenQuery(baseOptions?: Apollo.QueryHookOptions<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>(GetLatestPumpingTokenDocument, options);
+      }
+export function useGetLatestPumpingTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>(GetLatestPumpingTokenDocument, options);
+        }
+export function useGetLatestPumpingTokenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>(GetLatestPumpingTokenDocument, options);
+        }
+export type GetLatestPumpingTokenQueryHookResult = ReturnType<typeof useGetLatestPumpingTokenQuery>;
+export type GetLatestPumpingTokenLazyQueryHookResult = ReturnType<typeof useGetLatestPumpingTokenLazyQuery>;
+export type GetLatestPumpingTokenSuspenseQueryHookResult = ReturnType<typeof useGetLatestPumpingTokenSuspenseQuery>;
+export type GetLatestPumpingTokenQueryResult = Apollo.QueryResult<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>;
 export const CanClaimPot2PumpParticipantDocument = gql`
     query CanClaimPot2PumpParticipant($accountId: ID!) {
   participants(
