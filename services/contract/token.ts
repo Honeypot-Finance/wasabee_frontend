@@ -255,6 +255,7 @@ export class Token implements BaseContract {
 
     return this;
   }
+
   async loadName(force?: boolean) {
     if (this.address === zeroAddress || this.isNative) {
       this.name = wallet.currentChain.nativeToken.name;

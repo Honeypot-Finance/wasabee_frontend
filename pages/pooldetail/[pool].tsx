@@ -34,6 +34,8 @@ import { Token } from "@/services/contract/token";
 
 const PoolPage = () => {
   const { address: account } = useAccount();
+  const [token0, setToken0] = useState<Token | null>(null);
+  const [token1, setToken1] = useState<Token | null>(null);
 
   const { pool: poolId } = useParams() as { pool: Address };
 
@@ -53,21 +55,24 @@ const PoolPage = () => {
     },
   });
 
-  const token0 = Token.getToken({
-    address: poolInfo?.pool?.token0.id ?? "",
-    force: true,
-  });
-
-  const token1 = Token.getToken({
-    address: poolInfo?.pool?.token1.id ?? "",
-    force: true,
-  });
-
   const { data: bundles } = useNativePriceQuery();
   const nativePrice = bundles?.bundles[0].maticPriceUSD;
 
-  console.log("poolId:", poolId);
-  console.log("poolInfo:", poolInfo);
+  useEffect(() => {
+    if (poolInfo?.pool?.token0.id) {
+      setToken0(
+        Token.getToken({ address: poolInfo.pool.token0.id, force: true })
+      );
+    }
+  }, [poolInfo?.pool?.token0.id]);
+
+  useEffect(() => {
+    if (poolInfo?.pool?.token1.id) {
+      setToken1(
+        Token.getToken({ address: poolInfo.pool.token1.id, force: true })
+      );
+    }
+  }, [poolInfo?.pool?.token1.id]);
 
   const { farmingInfo, deposits, isFarmingLoading, areDepositsLoading } =
     useActiveFarming({
