@@ -453,10 +453,10 @@ const SimpleLaunchCard = observer(
                       pair?.launchedToken?.holderCount + " Holders"}
                   </div>
                   {pair.state === 0 && (
-                    <div className="font-bold text-lg">
+                    <div className="font-bold text-lg whitespace-nowrap">
                       {DynamicFormatAmount({
                         amount: pair.launchedToken?.derivedUSD ?? "0",
-                        decimals: 5,
+                        decimals: 3,
                         endWith: "$",
                       })}
                     </div>
