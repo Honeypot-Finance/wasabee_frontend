@@ -20,6 +20,11 @@ interface FilterProps {
   filters: FilterState;
   setFilters: (filters: FilterState) => void;
   pumpingProjects?: Pot2PumpPumpingService | Pot2PumpService;
+  filtersList: {
+    key: number;
+    label: string;
+    category: category;
+  }[];
 }
 
 type category =
@@ -31,61 +36,11 @@ type category =
   | "daybuys"
   | "daysells"
   | "dayvolume"
-  | "daychange";
+  | "daychange"
+  | "depositraisedtoken";
 
-const filtersList: {
-  key: number;
-  label: string;
-  category: category;
-}[] = [
-  {
-    key: 0,
-    label: "TVL (USD)",
-    category: "tvl",
-  },
-  {
-    key: 1,
-    label: "Liquidity",
-    category: "liquidity",
-  },
-  {
-    key: 2,
-    label: "Participants Count",
-    category: "participants",
-  },
-  {
-    key: 3,
-    label: "Market cap",
-    category: "marketcap",
-  },
-  {
-    key: 4,
-    label: "24H txns",
-    category: "daytxns",
-  },
-  {
-    key: 5,
-    label: "24H buys",
-    category: "daybuys",
-  },
-  {
-    key: 6,
-    label: "24H sells",
-    category: "daysells",
-  },
-  {
-    key: 7,
-    label: "24H volume",
-    category: "dayvolume",
-  },
-  {
-    key: 8,
-    label: "24H change (%)",
-    category: "daychange",
-  },
-];
 export const Filter = observer(
-  ({ filters, setFilters, pumpingProjects }: FilterProps) => {
+  ({ filters, setFilters, pumpingProjects, filtersList }: FilterProps) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [filterState, setFilterState] = useState(filters);
 

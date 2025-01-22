@@ -18,6 +18,7 @@ import {
   Pot2PumpPottingTrendingDocument,
   Pot2PumpPottingTrendingQueryVariables,
 } from "../generated/graphql";
+import { filter } from "lodash";
 
 type SubgraphToken = {
   id: string;
@@ -450,17 +451,7 @@ export async function fetchPot2PumpList ({
 }): Promise<Pot2PumpListResponse> {
   let whereCondition: string[] = [];
 
-  if (filter.search) {
-    whereCondition.push(`
-      launchToken_: {
-        or: [
-          {name_contains_nocase: "${filter.search}"}, 
-          {symbol_contains_nocase: "${filter.search}"}, 
-          {id: "${filter.search.toLowerCase()}"}
-        ]
-      }
-    `);
-  }
+
 
   if (filter.status === "success") {
     whereCondition.push(` raisedTokenReachingMinCap: true `);
@@ -515,43 +506,123 @@ export async function fetchPot2PumpList ({
 
   if (filter?.daysells?.min !== undefined) {
     whereCondition.push(
-      ` sellCount_lte: "${filter?.daysells?.min}" `
+      ` sellCount_gte: "${filter?.daysells?.min}" `
     );
   }
+
   if (filter?.daysells?.max !== undefined) {
     whereCondition.push(
-      ` sellCount_gte: "${filter?.daysells?.max}" `
+      ` sellCount_lte: "${filter?.daysells?.max}" `
     );
   }
+
+  if (filter?.depositraisedtoken?.min !== undefined) {
+    whereCondition.push(
+      ` DepositRaisedToken_gte: "${filter?.depositraisedtoken?.min}" `
+    );
+  }
+
+  if (filter?.depositraisedtoken?.max !== undefined) {
+    whereCondition.push(
+      ` DepositRaisedToken_lte: "${filter?.depositraisedtoken?.max}" `
+    );
+  }
+
+
 
   const launchTokenFilter: any = {};
 
-  if (filter?.dayvolume?.min !== undefined) {
-    launchTokenFilter.volumeUSD_gte = filter?.dayvolume?.min
+  console.log("filter.search", filter.search)
+
+  if (filter.search) {
+    launchTokenFilter.and = [
+      {
+        or: [
+          { name_contains_nocase: filter.search },
+          { symbol_contains_nocase: filter.search },
+          { id: filter.search.toLowerCase() }
+        ]
+      }
+    ]
   }
+
+  if (filter?.dayvolume?.min !== undefined) {
+    if (filter.search) {
+      launchTokenFilter.and.push({ volumeUSD_gte: filter?.dayvolume?.min })
+    } else {
+      launchTokenFilter.volumeUSD_gte = filter?.dayvolume?.min
+    }
+  }
+
   if (filter?.dayvolume?.max !== undefined) {
-    launchTokenFilter.volumeUSD_lte = filter?.dayvolume?.max
+    if (filter.search) {
+      launchTokenFilter.and.push({ volumeUSD_lte: filter?.dayvolume?.max })
+    } else {
+      launchTokenFilter.volumeUSD_lte = filter?.dayvolume?.max
+    }
   }
 
   if (filter?.daytxns?.min !== undefined) {
-    launchTokenFilter.txCount_gte = filter?.daytxns?.min
+    if (filter.search) {
+      launchTokenFilter.and.push({ txCount_gte: filter?.daytxns?.min })
+    } else {
+      launchTokenFilter.txCount_gte = filter?.daytxns?.min
+    }
   }
+
   if (filter?.daytxns?.max !== undefined) {
-    launchTokenFilter.txCount_lte = filter?.daytxns?.max
+    if (filter.search) {
+      launchTokenFilter.and.push({ txCount_lte: filter?.daytxns?.max })
+    } else {
+      launchTokenFilter.txCount_lte = filter?.daytxns?.max
+    }
   }
 
   if (filter?.daychange?.min !== undefined) {
-    launchTokenFilter.priceChange24hPercentage_gte = filter?.daychange?.min
-
+    if (filter.search) {
+      launchTokenFilter.and.push({ priceChange24hPercentage_gte: filter?.daychange?.min })
+    } else {
+      launchTokenFilter.priceChange24hPercentage_gte = filter?.daychange?.min
+    }
   }
+
   if (filter?.daychange?.max !== undefined) {
-    launchTokenFilter.priceChange24hPercentage_lte = filter?.daychange?.max
+    if (filter.search) {
+      launchTokenFilter.and.push({ priceChange24hPercentage_lte: filter?.daychange?.max })
+    } else {
+      launchTokenFilter.priceChange24hPercentage_lte = filter?.daychange?.max
+    }
   }
 
   if (Object.keys(launchTokenFilter).length > 0) {
     const filterString = Object.entries(launchTokenFilter)
-      .map(([key, value]) => `${key}: "${value}"`)
+      .map(([key, value]) => {
+        if (key === "and" && Array.isArray(value)) {
+          // Handle the 'and' case specifically
+          const andConditions = value
+            .map((condition) => {
+              if (condition.or && Array.isArray(condition.or)) {
+                // Handle the 'or' case inside 'and'
+                const orConditions = condition.or
+                  .map((orCondition: any) => `{ ${Object.entries(orCondition).map(([k, v]) => `${k}: "${v}"`).join(", ")} }`)
+                  .join(", ");
+                return `{or: [${orConditions}]}`;
+              } else {
+                // Handle normal 'and' conditions
+                return `{ ${Object.entries(condition).map(([k, v]) => `${k}: "${v}"`).join(", ")} }`;
+              }
+            })
+            .join(", ");
+          return `and: [${andConditions}]`;
+        } else {
+          // For other cases (e.g., txCount_gte)
+          return `${key}: "${value}"`;
+        }
+      })
       .join(", ");
+
+    console.log("filterString", filterString)
+
     whereCondition.push(`launchToken_: { ${filterString} }`);
   }
 

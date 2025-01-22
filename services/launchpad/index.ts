@@ -86,7 +86,10 @@ export type SubgraphProjectFilter = {
     min?: string;
     max?: string;
   };
-
+  depositraisedtoken?: {
+    min?: string;
+    max?: string;
+  }
 };
 
 export const defaultPairFilters: {

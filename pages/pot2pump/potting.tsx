@@ -56,20 +56,10 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
   useEffect(() => {
     if (pottingProjects) {
-      pottingProjects.projectsPage.updateFilter({
-        search: search.length > 0 ? search : undefined,
-        currentPage: 0,
-        hasNextPage: true,
-      });
-    }
-  }, [search, pottingProjects]);
-
-  useEffect(() => {
-    if (pottingProjects) {
       console.log("hasValue(filters)", hasValue(filters), filters);
       if (hasValue(filters)) {
         pottingProjects.projectsPage.updateFilter({
-          search: "",
+          search: search.length > 0 ? search : undefined,
           currentPage: 0,
           limit: PAGE_LIMIT,
           hasNextPage: true,
@@ -77,7 +67,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         });
       } else {
         pottingProjects.projectsPage.updateFilter({
-          search: "",
+          search: search.length > 0 ? search : undefined,
           currentPage: 0,
           limit: PAGE_LIMIT,
           hasNextPage: true,
@@ -85,7 +75,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         });
       }
     }
-  }, [filters, pottingProjects]);
+  }, [filters, pottingProjects, search]);
 
   const onChangeFilter = (data: any) => {
     setSearch("");
@@ -188,6 +178,58 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           <div className="py-2 sm:py-0 sm:absolute right-0 top-0">
             <div className="flex gap-2">
               <Filter
+                filtersList={[
+                  {
+                    key: 0,
+                    label: "TVL (USD)",
+                    category: "tvl",
+                  },
+                  {
+                    key: 1,
+                    label: "Liquidity",
+                    category: "liquidity",
+                  },
+                  {
+                    key: 2,
+                    label: "Participants Count",
+                    category: "participants",
+                  },
+                  {
+                    key: 3,
+                    label: "Deposit Raised Token",
+                    category: "depositraisedtoken",
+                  },
+                  {
+                    key: 4,
+                    label: "Market cap",
+                    category: "marketcap",
+                  },
+                  {
+                    key: 5,
+                    label: "24H txns",
+                    category: "daytxns",
+                  },
+                  {
+                    key: 6,
+                    label: "24H buys",
+                    category: "daybuys",
+                  },
+                  {
+                    key: 7,
+                    label: "24H sells",
+                    category: "daysells",
+                  },
+                  {
+                    key: 8,
+                    label: "24H volume",
+                    category: "dayvolume",
+                  },
+                  {
+                    key: 9,
+                    label: "24H change (%)",
+                    category: "daychange",
+                  },
+                ]}
                 filters={filters}
                 setFilters={onChangeFilter}
                 pumpingProjects={pottingProjects}
