@@ -22,6 +22,8 @@ import {
   usePot2PumpPottingNearSuccessQuery,
   usePot2PumpPottingNewTokensQuery,
   usePot2PumpPottingTrendingQuery,
+  usePot2PumpPottingMarketCapQuery,
+  usePot2PumpPottingNewTokensByEndtimeQuery,
 } from "@/lib/algebra/graphql/generated/graphql";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import CardContainer from "@/components/CardContianer/v3";
@@ -32,9 +34,13 @@ const POT_TABS = {
   ALMOST: "Almost",
   MOON: "Moon 🚀",
   TRENDING: "Trending",
+  MARKET_CAP: "Market Cap",
+  NEW_PUMPS: "New Pumps",
 } as const;
 
 type TabType = (typeof POT_TABS)[keyof typeof POT_TABS];
+
+const STORAGE_KEY = 'pot2pump_selected_tabs';
 
 const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   const [newTokensList, setNewTokensList] = useState<MemePairContract[]>([]);
@@ -47,11 +53,23 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
   const [trendingTokensList, setTrendingTokensList] = useState<
     MemePairContract[]
   >([]);
+  const [marketCapTokensList, setMarketCapTokensList] = useState<
+    MemePairContract[]
+  >([]);
+  const [endTimeTokensList, setEndTimeTokensList] = useState<MemePairContract[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [activeTab, setActiveTab] = useState<TabType>(POT_TABS.NEW);
   const [currentTime, setCurrentTime] = useState(
     Math.floor(new Date().getTime() / 1000)
   );
+  const [selectedTabs, setSelectedTabs] = useState<TabType[]>(() => {
+    // 从 localStorage 读取保存的标签，如果没有则使用默认值
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [POT_TABS.NEW, POT_TABS.ALMOST, POT_TABS.NEW_PUMPS];
+    }
+    return [POT_TABS.NEW, POT_TABS.ALMOST, POT_TABS.NEW_PUMPS];
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -99,6 +117,28 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
     fetchPolicy: "network-only",
     notifyOnNetworkStatusChange: true,
     pollInterval: 5000, // Refetch every 10 seconds
+    skip: !wallet.isInit,
+  });
+
+  const {
+    data: pottingMarketCapTokens,
+    loading: isPottingMarketCapTokensLoading,
+  } = usePot2PumpPottingMarketCapQuery({
+    fetchPolicy: "network-only",
+    notifyOnNetworkStatusChange: true,
+    pollInterval: 5000, // Refetch every 5 seconds
+    skip: !wallet.isInit,
+  });
+
+  const {
+    data: pottingNewTokensByEndtime,
+    loading: isPottingNewTokensByEndtimeLoading,
+  } = usePot2PumpPottingNewTokensByEndtimeQuery({
+    variables: {
+      endTime: currentTime,
+    },
+    fetchPolicy: "network-only",
+    notifyOnNetworkStatusChange: true,
     skip: !wallet.isInit,
   });
 
@@ -246,6 +286,77 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
     });
   }, [pottingTrendingTokens]);
 
+  useEffect(() => {
+    if (!pottingMarketCapTokens) return;
+
+    const list = pot2PumpListToMemePairList(
+      (pottingMarketCapTokens?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
+    );
+
+    if (!marketCapTokensList.length) {
+      setMarketCapTokensList(list);
+      return;
+    }
+
+    setMarketCapTokensList((prev) => {
+      list.map((item) => {
+        if (!prev.find((item2) => item.address === item2.address)) {
+          prev.push(item);
+        } else {
+          const existItem = prev.find(
+            (item2) => item.address === item2.address
+          );
+          if (existItem) {
+            Object.assign(existItem, {
+              launchedToken: item.launchedToken,
+            });
+          }
+        }
+      });
+      return prev;
+    });
+  }, [pottingMarketCapTokens]);
+
+  useEffect(() => {
+    if (!pottingNewTokensByEndtime) return;
+
+    const list = pot2PumpListToMemePairList(
+      (pottingNewTokensByEndtime?.pot2Pumps as Partial<Pot2Pump>[]) ?? []
+    );
+
+    if (!list.length || list.length == 0) return;
+    if (!endTimeTokensList.length) {
+      setEndTimeTokensList(list);
+      return;
+    }
+
+    setEndTimeTokensList((prev) => {
+      prev.map((item) => {
+        const i = list.find((item2) => item.address === item2.address);
+        if (!i) {
+          prev.splice(prev.indexOf(item), 1);
+        }
+      });
+
+      list.map((item) => {
+        if (!prev.find((item2) => item.address === item2.address)) {
+          prev.push(item);
+        } else {
+          const existItem = prev.find(
+            (item2) => item.address === item2.address
+          );
+          if (existItem) {
+            Object.assign(existItem, {
+              depositedRaisedTokenWithoutDecimals:
+                item.depositedRaisedTokenWithoutDecimals,
+            });
+          }
+        }
+      });
+      return prev;
+    });
+  }, [pottingNewTokensByEndtime]);
+
   // Auto scroll effect
   useEffect(() => {
     if (!highPriceTokensList?.length) return;
@@ -258,6 +369,18 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
 
     return () => clearInterval(timer);
   }, [highPriceTokensList]);
+
+  const handleTabClick = (tab: TabType) => {
+    setSelectedTabs(prev => {
+      if (prev.includes(tab)) {
+        return prev;
+      }
+      const newTabs = [...prev.slice(1), tab];
+      // 保存到 localStorage
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newTabs));
+      return newTabs;
+    });
+  };
 
   return (
     <div className="w-full flex flex-col justify-center items-center px-4 font-gliker">
@@ -325,215 +448,291 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
         </div>
       </div>
       <CardContainer className="w-full max-w-[1200px] bg-[#FFCD4D] rounded-2xl relative px-8 py-[75px]">
-        {/* Mobile Trigger */}
-        <div className="md:hidden absolute -top-8 left-1/2 -translate-x-1/2 w-[calc(100%-32px)] z-10">
-          <Trigger
-            tab={activeTab}
-            setTab={setActiveTab as (tab: string) => void}
-            options={Object.values(POT_TABS)}
-            className="w-full px-4 py-2 rounded-2xl bg-white shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020]"
-            capitalize={false}
-          />
+        {/* Tab Selector */}
+        <div className="flex gap-4 mb-6">
+          {Object.values(POT_TABS).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => handleTabClick(tab)}
+              className={`px-4 py-2 rounded-lg border ${
+                selectedTabs.includes(tab) 
+                  ? 'bg-amber-500 text-white border-amber-600' 
+                  : 'bg-white text-gray-700 border-gray-300'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
 
-        {/* Content Area - 添加顶部内边距 */}
+        {/* Content Area */}
         <div className="bg-white rounded-3xl p-8 border border-black shadow-[4px_4px_0px_0px_#D29A0D]">
           {/* Desktop Grid */}
           <div className="hidden md:grid grid-cols-3 min-h-[600px] h-[calc(100vh-300px)] gap-2">
-            <section className="relative flex flex-col px-2 overflow-hidden">
-              <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 z-20 py-2 px-2 bg-white">
-                {POT_TABS.NEW}
-              </h2>
-              <div className="flex flex-col gap-6 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                {newTokensList.length > 0 ? (
-                  newTokensList
-                    .sort((a, b) => Number(b.startTime) - Number(a.startTime))
-                    ?.map((pot2pump, index) => (
-                      <motion.div key={index} variants={itemPopUpVariants}>
-                        <LaunchCardV3
-                          type="simple"
-                          pair={pot2pump}
-                          action={<></>}
-                          theme="dark"
-                        />
-                      </motion.div>
-                    ))
-                ) : (
-                  <LoadingDisplay />
-                )}
-              </div>
-            </section>
-
-            <section className="relative flex flex-col px-2 overflow-hidden">
-              <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 z-20 py-2 px-2 bg-white">
-                {POT_TABS.ALMOST}
-              </h2>
-              <div className="flex flex-col gap-6 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                {nearSuccessTokensList.length > 0 ? (
-                  nearSuccessTokensList
-                    ?.sort(
-                      (a, b) =>
-                        Number(b.pottingPercentageNumber) -
-                        Number(a.pottingPercentageNumber)
-                    )
-                    ?.map((pot2pump, index) => (
-                      <motion.div key={index} variants={itemPopUpVariants}>
-                        <LaunchCardV3
-                          type="simple"
-                          pair={pot2pump}
-                          action={<></>}
-                          theme="dark"
-                        />
-                      </motion.div>
-                    ))
-                ) : (
-                  <LoadingDisplay />
-                )}
-              </div>
-            </section>
-
-            {/* <section className="relative flex flex-col px-2 overflow-hidden">
-              <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 bg-[#FFCD4D] z-20 py-2 px-2">
-                {POT_TABS.MOON}
-              </h2>
-              <div className="flex flex-col gap-8 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                {highPriceTokens?.map((pot2pump, index) => (
-                  <motion.div key={index} variants={itemPopUpVariants}>
-                    <LaunchCardV3
-                      type="simple"
-                      pair={pot2pump}
-                      action={<></>}
-                    />
-                  </motion.div>
-                ))}
-              </div>
-            </section> */}
-
-            <section className="relative flex flex-col px-2 overflow-hidden">
-              <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 z-20 py-2 px-2 bg-white">
-                {POT_TABS.TRENDING}
-              </h2>
-              <div className="flex flex-col gap-6 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                {trendingTokensList.length > 0 ? (
-                  trendingTokensList
-                    ?.sort(
-                      (a, b) =>
-                        Number(b.launchedToken?.priceChange24hPercentage) -
-                        Number(a.launchedToken?.priceChange24hPercentage)
-                    )
-                    ?.map((pot2pump, index) => (
-                      <motion.div key={index} variants={itemPopUpVariants}>
-                        <LaunchCardV3
-                          type="simple"
-                          pair={pot2pump}
-                          action={<></>}
-                          theme="dark"
-                        />
-                      </motion.div>
-                    ))
-                ) : (
-                  <LoadingDisplay />
-                )}
-              </div>
-            </section>
+            {selectedTabs.map((tab) => (
+              <section key={tab} className="relative flex flex-col px-2 overflow-hidden">
+                <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 z-20 py-2 px-2 bg-white">
+                  {tab}
+                </h2>
+                <div className="flex flex-col gap-6 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
+                  {(() => {
+                    switch (tab) {
+                      case POT_TABS.NEW:
+                        return newTokensList.length > 0 ? (
+                          newTokensList
+                            .sort((a, b) => Number(b.startTime) - Number(a.startTime))
+                            ?.map((pot2pump, index) => (
+                              <motion.div key={index} variants={itemPopUpVariants}>
+                                <LaunchCardV3
+                                  type="simple"
+                                  pair={pot2pump}
+                                  action={<></>}
+                                  theme="dark"
+                                />
+                              </motion.div>
+                            ))
+                        ) : (
+                          <LoadingDisplay />
+                        );
+                      case POT_TABS.ALMOST:
+                        return nearSuccessTokensList.length > 0 ? (
+                          nearSuccessTokensList
+                            ?.sort(
+                              (a, b) =>
+                                Number(b.pottingPercentageNumber) -
+                                Number(a.pottingPercentageNumber)
+                            )
+                            ?.map((pot2pump, index) => (
+                              <motion.div key={index} variants={itemPopUpVariants}>
+                                <LaunchCardV3
+                                  type="simple"
+                                  pair={pot2pump}
+                                  action={<></>}
+                                  theme="dark"
+                                />
+                              </motion.div>
+                            ))
+                        ) : (
+                          <LoadingDisplay />
+                        );
+                      case POT_TABS.MOON:
+                        return highPriceTokensList.length > 0 ? (
+                          highPriceTokensList
+                            ?.sort(
+                              (a, b) =>
+                                Number(b.launchedToken?.derivedUSD) -
+                                Number(a.launchedToken?.derivedUSD)
+                            )
+                            ?.map((pot2pump, index) => (
+                              <motion.div key={index} variants={itemPopUpVariants}>
+                                <LaunchCardV3
+                                  type="simple"
+                                  pair={pot2pump}
+                                  action={<></>}
+                                  theme="dark"
+                                />
+                              </motion.div>
+                            ))
+                        ) : (
+                          <LoadingDisplay />
+                        );
+                      case POT_TABS.TRENDING:
+                        return trendingTokensList.length > 0 ? (
+                          trendingTokensList
+                            ?.sort(
+                              (a, b) =>
+                                Number(b.launchedToken?.priceChange24hPercentage) -
+                                Number(a.launchedToken?.priceChange24hPercentage)
+                            )
+                            ?.map((pot2pump, index) => (
+                              <motion.div key={index} variants={itemPopUpVariants}>
+                                <LaunchCardV3
+                                  type="simple"
+                                  pair={pot2pump}
+                                  action={<></>}
+                                  theme="dark"
+                                />
+                              </motion.div>
+                            ))
+                        ) : (
+                          <LoadingDisplay />
+                        );
+                      case POT_TABS.MARKET_CAP:
+                        return marketCapTokensList.length > 0 ? (
+                          marketCapTokensList
+                            ?.sort(
+                              (a, b) =>
+                                Number(b.launchedToken?.marketCap) -
+                                Number(a.launchedToken?.marketCap)
+                            )
+                            ?.map((pot2pump, index) => (
+                              <motion.div key={index} variants={itemPopUpVariants}>
+                                <LaunchCardV3
+                                  type="simple"
+                                  pair={pot2pump}
+                                  action={<></>}
+                                  theme="dark"
+                                />
+                              </motion.div>
+                            ))
+                        ) : (
+                          <LoadingDisplay />
+                        );
+                      case POT_TABS.NEW_PUMPS:
+                        return endTimeTokensList.length > 0 ? (
+                          endTimeTokensList
+                            ?.sort(
+                              (a, b) => Number(a.endTime) - Number(b.endTime)
+                            )
+                            ?.map((pot2pump, index) => (
+                              <motion.div key={index} variants={itemPopUpVariants}>
+                                <LaunchCardV3
+                                  type="simple"
+                                  pair={pot2pump}
+                                  action={<></>}
+                                  theme="dark"
+                                />
+                              </motion.div>
+                            ))
+                        ) : (
+                          <LoadingDisplay />
+                        );
+                      default:
+                        return null;
+                    }
+                  })()}
+                </div>
+              </section>
+            ))}
           </div>
 
           {/* Mobile Content */}
           <div className="md:hidden min-h-[600px] h-[calc(100vh-300px)]">
             <div className="h-full flex flex-col px-2 overflow-hidden">
-              {activeTab === POT_TABS.NEW && (
-                <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                  {newTokensList.length > 0 ? (
-                    newTokensList
-                      ?.sort(
-                        (a, b) => Number(b.startTime) - Number(a.startTime)
-                      )
-                      ?.map((pot2pump, index) => (
-                        <motion.div key={index} variants={itemPopUpVariants}>
-                          <LaunchCardV3
-                            type="simple"
-                            pair={pot2pump}
-                            action={<></>}
-                          />
-                        </motion.div>
-                      ))
-                  ) : (
-                    <LoadingDisplay />
-                  )}
+              {selectedTabs.map((tab) => (
+                <div key={tab} className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
+                  {(() => {
+                    switch (tab) {
+                      case POT_TABS.NEW:
+                        return newTokensList.length > 0 ? (
+                          newTokensList
+                            .sort((a, b) => Number(b.startTime) - Number(a.startTime))
+                            ?.map((pot2pump, index) => (
+                              <motion.div key={index} variants={itemPopUpVariants}>
+                                <LaunchCardV3
+                                  type="simple"
+                                  pair={pot2pump}
+                                  action={<></>}
+                                />
+                              </motion.div>
+                            ))
+                        ) : (
+                          <LoadingDisplay />
+                        );
+                      case POT_TABS.ALMOST:
+                        return nearSuccessTokensList.length > 0 ? (
+                          nearSuccessTokensList
+                            ?.sort(
+                              (a, b) =>
+                                Number(b.pottingPercentageNumber) -
+                                Number(a.pottingPercentageNumber)
+                            )
+                            ?.map((pot2pump, index) => (
+                              <motion.div key={index} variants={itemPopUpVariants}>
+                                <LaunchCardV3
+                                  type="simple"
+                                  pair={pot2pump}
+                                  action={<></>}
+                                />
+                              </motion.div>
+                            ))
+                        ) : (
+                          <LoadingDisplay />
+                        );
+                      case POT_TABS.MOON:
+                        return highPriceTokensList.length > 0 ? (
+                          highPriceTokensList
+                            ?.sort(
+                              (a, b) =>
+                                Number(b.launchedToken?.derivedUSD) -
+                                Number(a.launchedToken?.derivedUSD)
+                            )
+                            ?.map((pot2pump, index) => (
+                              <motion.div key={index} variants={itemPopUpVariants}>
+                                <LaunchCardV3
+                                  type="simple"
+                                  pair={pot2pump}
+                                  action={<></>}
+                                />
+                              </motion.div>
+                            ))
+                        ) : (
+                          <LoadingDisplay />
+                        );
+                      case POT_TABS.TRENDING:
+                        return trendingTokensList.length > 0 ? (
+                          trendingTokensList
+                            ?.sort(
+                              (a, b) =>
+                                Number(b.launchedToken?.priceChange24hPercentage) -
+                                Number(a.launchedToken?.priceChange24hPercentage)
+                            )
+                            ?.map((pot2pump, index) => (
+                              <motion.div key={index} variants={itemPopUpVariants}>
+                                <LaunchCardV3
+                                  type="simple"
+                                  pair={pot2pump}
+                                  action={<></>}
+                                />
+                              </motion.div>
+                            ))
+                        ) : (
+                          <LoadingDisplay />
+                        );
+                      case POT_TABS.MARKET_CAP:
+                        return marketCapTokensList.length > 0 ? (
+                          marketCapTokensList
+                            ?.sort(
+                              (a, b) =>
+                                Number(b.launchedToken?.marketCap) -
+                                Number(a.launchedToken?.marketCap)
+                            )
+                            ?.map((pot2pump, index) => (
+                              <motion.div key={index} variants={itemPopUpVariants}>
+                                <LaunchCardV3
+                                  type="simple"
+                                  pair={pot2pump}
+                                  action={<></>}
+                                />
+                              </motion.div>
+                            ))
+                        ) : (
+                          <LoadingDisplay />
+                        );
+                      case POT_TABS.NEW_PUMPS:
+                        return endTimeTokensList.length > 0 ? (
+                          endTimeTokensList
+                            ?.sort(
+                              (a, b) => Number(a.endTime) - Number(b.endTime)
+                            )
+                            ?.map((pot2pump, index) => (
+                              <motion.div key={index} variants={itemPopUpVariants}>
+                                <LaunchCardV3
+                                  type="simple"
+                                  pair={pot2pump}
+                                  action={<></>}
+                                />
+                              </motion.div>
+                            ))
+                        ) : (
+                          <LoadingDisplay />
+                        );
+                      default:
+                        return null;
+                    }
+                  })()}
                 </div>
-              )}
-
-              {activeTab === POT_TABS.ALMOST && (
-                <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                  {nearSuccessTokensList.length > 0 ? (
-                    nearSuccessTokensList
-                      ?.sort(
-                        (a, b) =>
-                          Number(b.pottingPercentageNumber) -
-                          Number(a.pottingPercentageNumber)
-                      )
-                      ?.map((pot2pump, index) => (
-                        <motion.div key={index} variants={itemPopUpVariants}>
-                          <LaunchCardV3
-                            type="simple"
-                            pair={pot2pump}
-                            action={<></>}
-                          />
-                        </motion.div>
-                      ))
-                  ) : (
-                    <LoadingDisplay />
-                  )}
-                </div>
-              )}
-
-              {activeTab === POT_TABS.MOON && (
-                <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                  {highPriceTokensList.length > 0 ? (
-                    highPriceTokensList
-                      ?.sort(
-                        (a, b) =>
-                          Number(b.launchedToken?.derivedUSD) -
-                          Number(a.launchedToken?.derivedUSD)
-                      )
-                      ?.map((pot2pump, index) => (
-                        <motion.div key={index} variants={itemPopUpVariants}>
-                          <LaunchCardV3
-                            type="simple"
-                            pair={pot2pump}
-                            action={<></>}
-                          />
-                        </motion.div>
-                      ))
-                  ) : (
-                    <LoadingDisplay />
-                  )}
-                </div>
-              )}
-
-              {activeTab === POT_TABS.TRENDING && (
-                <div className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
-                  {trendingTokensList.length > 0 ? (
-                    trendingTokensList
-                      ?.sort(
-                        (a, b) =>
-                          Number(b.launchedToken?.priceChange24hPercentage) -
-                          Number(a.launchedToken?.priceChange24hPercentage)
-                      )
-                      ?.map((pot2pump, index) => (
-                        <motion.div key={index} variants={itemPopUpVariants}>
-                          <LaunchCardV3
-                            type="simple"
-                            pair={pot2pump}
-                            action={<></>}
-                          />
-                        </motion.div>
-                      ))
-                  ) : (
-                    <LoadingDisplay />
-                  )}
-                </div>
-              )}
+              ))}
             </div>
           </div>
         </div>

@@ -13024,6 +13024,18 @@ export type Pot2PumpPottingTrendingQueryVariables = Exact<{ [key: string]: never
 
 export type Pot2PumpPottingTrendingQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, LaunchTokenTVLUSD: any, LaunchTokenMCAPUSD: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
 
+export type Pot2PumpPottingMarketCapQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type Pot2PumpPottingMarketCapQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, LaunchTokenTVLUSD: any, LaunchTokenMCAPUSD: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
+
+export type Pot2PumpPottingNewTokensByEndtimeQueryVariables = Exact<{
+  endTime?: InputMaybe<Scalars['BigInt']['input']>;
+}>;
+
+
+export type Pot2PumpPottingNewTokensByEndtimeQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, LaunchTokenTVLUSD: any, LaunchTokenMCAPUSD: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
+
 export type Pot2PumpFieldFragment = { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, LaunchTokenTVLUSD: any, LaunchTokenMCAPUSD: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> };
 
 export type ParticipantTransactionHistoryFieldsFragment = { __typename?: 'ParticipantTransactionHistory', id: string };
@@ -14660,6 +14672,95 @@ export type Pot2PumpPottingTrendingQueryHookResult = ReturnType<typeof usePot2Pu
 export type Pot2PumpPottingTrendingLazyQueryHookResult = ReturnType<typeof usePot2PumpPottingTrendingLazyQuery>;
 export type Pot2PumpPottingTrendingSuspenseQueryHookResult = ReturnType<typeof usePot2PumpPottingTrendingSuspenseQuery>;
 export type Pot2PumpPottingTrendingQueryResult = Apollo.QueryResult<Pot2PumpPottingTrendingQuery, Pot2PumpPottingTrendingQueryVariables>;
+export const Pot2PumpPottingMarketCapDocument = gql`
+    query Pot2PumpPottingMarketCap {
+  pot2Pumps(
+    first: 25
+    orderBy: LaunchTokenMCAPUSD
+    orderDirection: desc
+    where: {raisedTokenReachingMinCap: true}
+  ) {
+    ...Pot2PumpField
+  }
+}
+    ${Pot2PumpFieldFragmentDoc}`;
+
+/**
+ * __usePot2PumpPottingMarketCapQuery__
+ *
+ * To run a query within a React component, call `usePot2PumpPottingMarketCapQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePot2PumpPottingMarketCapQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePot2PumpPottingMarketCapQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePot2PumpPottingMarketCapQuery(baseOptions?: Apollo.QueryHookOptions<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>(Pot2PumpPottingMarketCapDocument, options);
+      }
+export function usePot2PumpPottingMarketCapLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>(Pot2PumpPottingMarketCapDocument, options);
+        }
+export function usePot2PumpPottingMarketCapSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>(Pot2PumpPottingMarketCapDocument, options);
+        }
+export type Pot2PumpPottingMarketCapQueryHookResult = ReturnType<typeof usePot2PumpPottingMarketCapQuery>;
+export type Pot2PumpPottingMarketCapLazyQueryHookResult = ReturnType<typeof usePot2PumpPottingMarketCapLazyQuery>;
+export type Pot2PumpPottingMarketCapSuspenseQueryHookResult = ReturnType<typeof usePot2PumpPottingMarketCapSuspenseQuery>;
+export type Pot2PumpPottingMarketCapQueryResult = Apollo.QueryResult<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>;
+export const Pot2PumpPottingNewTokensByEndtimeDocument = gql`
+    query Pot2PumpPottingNewTokensByEndtime($endTime: BigInt) {
+  pot2Pumps(
+    first: 25
+    orderBy: endTime
+    orderDirection: asc
+    where: {raisedTokenReachingMinCap: true, endTime_gt: $endTime}
+  ) {
+    ...Pot2PumpField
+  }
+}
+    ${Pot2PumpFieldFragmentDoc}`;
+
+/**
+ * __usePot2PumpPottingNewTokensByEndtimeQuery__
+ *
+ * To run a query within a React component, call `usePot2PumpPottingNewTokensByEndtimeQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePot2PumpPottingNewTokensByEndtimeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePot2PumpPottingNewTokensByEndtimeQuery({
+ *   variables: {
+ *      endTime: // value for 'endTime'
+ *   },
+ * });
+ */
+export function usePot2PumpPottingNewTokensByEndtimeQuery(baseOptions?: Apollo.QueryHookOptions<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>(Pot2PumpPottingNewTokensByEndtimeDocument, options);
+      }
+export function usePot2PumpPottingNewTokensByEndtimeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>(Pot2PumpPottingNewTokensByEndtimeDocument, options);
+        }
+export function usePot2PumpPottingNewTokensByEndtimeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>(Pot2PumpPottingNewTokensByEndtimeDocument, options);
+        }
+export type Pot2PumpPottingNewTokensByEndtimeQueryHookResult = ReturnType<typeof usePot2PumpPottingNewTokensByEndtimeQuery>;
+export type Pot2PumpPottingNewTokensByEndtimeLazyQueryHookResult = ReturnType<typeof usePot2PumpPottingNewTokensByEndtimeLazyQuery>;
+export type Pot2PumpPottingNewTokensByEndtimeSuspenseQueryHookResult = ReturnType<typeof usePot2PumpPottingNewTokensByEndtimeSuspenseQuery>;
+export type Pot2PumpPottingNewTokensByEndtimeQueryResult = Apollo.QueryResult<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>;
 export const CanClaimPot2PumpParticipantDocument = gql`
     query CanClaimPot2PumpParticipant($accountId: ID!) {
   participants(

@@ -101,7 +101,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                     }}
                   >
                     <div className="flex items-center w-full">
-                      <div className="w-6 h-6 bg-[#202020] rounded-md" />
+                      {/* <div className="w-6 h-6 bg-[#202020] rounded-md" /> */}
                       <span className="ml-2">{menu.title}</span>
                     </div>
                   </Button>

@@ -79,6 +79,32 @@ export const POT_2_PUMP_POTTING_TRENDING = gql`
   }
 `;
 
+export const POT_2_PUMP_POTTING_MARKET_CAP = gql`
+  query Pot2PumpPottingMarketCap {
+    pot2Pumps(
+      first: 25
+      orderBy: LaunchTokenMCAPUSD
+      orderDirection: desc
+      where: { raisedTokenReachingMinCap: true }
+    ) {
+      ...Pot2PumpField
+    }
+  }
+`;
+
+export const POT_2_PUMP_POTTING_NEW_TOKENS_BY_ENDTIME = gql`
+  query Pot2PumpPottingNewTokensByEndtime($endTime: BigInt) {
+    pot2Pumps(
+      first: 25
+      orderBy: endTime
+      orderDirection: asc
+      where: { raisedTokenReachingMinCap: true, endTime_gt: $endTime }
+    ) {
+      ...Pot2PumpField
+    }
+  }
+`;
+
 export const POT2_PUMP_FRAGMENT = gql`
   fragment Pot2PumpField on Pot2Pump {
     id
