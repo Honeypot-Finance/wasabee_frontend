@@ -50,8 +50,6 @@ const isNotNull = (value: any): boolean => {
 };
 
 export function hasValue(obj: any): boolean {
-  console.log("hasValue(filters)", obj);
-
   if (typeof obj !== "object" || obj === null) return false;
   for (let key in obj) {
     const value = obj[key];
@@ -68,4 +66,26 @@ export function hasValue(obj: any): boolean {
   }
 
   return false;
+}
+type FilterObject = {
+  [key: string]: any;
+};
+
+export function removeEmptyFields(obj: FilterObject): FilterObject {
+  const cleanedObject: FilterObject = {};
+
+  for (const key in obj) {
+    if (obj[key] !== null && obj[key] !== undefined) {
+      if (typeof obj[key] === "object" && !Array.isArray(obj[key])) {
+        const nestedObject = removeEmptyFields(obj[key]);
+        if (Object.keys(nestedObject).length > 0) {
+          cleanedObject[key] = nestedObject;
+        }
+      } else if (obj[key] !== "") {
+        cleanedObject[key] = obj[key];
+      }
+    }
+  }
+
+  return cleanedObject;
 }

@@ -10,7 +10,10 @@ import { Button } from "@/components/button/button-next";
 import { LaunchCardV3 } from "@/components/LaunchCard/v3";
 import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import Pagination from "@/components/Pagination/Pagination";
-import launchpad, { defaultPairFilters } from "@/services/launchpad";
+import launchpad, {
+  defaultPairFilters,
+  PAGE_LIMIT,
+} from "@/services/launchpad";
 import { Filter } from "@/components/pot2pump/FilterModal";
 import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
@@ -18,6 +21,7 @@ import { Pot2PumpPottingService } from "@/services/launchpad/pot2pump/potting";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 import { FilterState } from "@/constants/pot2pump.type";
 import { defaultFilterState } from "@/constants/pot2pump";
+import { hasValue, removeEmptyFields } from "@/lib/utils";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pottingProjects, setPottingProjects] =
@@ -59,6 +63,29 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
       });
     }
   }, [search, pottingProjects]);
+
+  useEffect(() => {
+    if (pottingProjects) {
+      console.log("hasValue(filters)", hasValue(filters), filters);
+      if (hasValue(filters)) {
+        pottingProjects.projectsPage.updateFilter({
+          search: "",
+          currentPage: 0,
+          limit: PAGE_LIMIT,
+          hasNextPage: true,
+          ...removeEmptyFields(filters),
+        });
+      } else {
+        pottingProjects.projectsPage.updateFilter({
+          search: "",
+          currentPage: 0,
+          limit: PAGE_LIMIT,
+          hasNextPage: true,
+          ...defaultFilterState,
+        });
+      }
+    }
+  }, [filters, pottingProjects]);
 
   const onChangeFilter = (data: any) => {
     setSearch("");

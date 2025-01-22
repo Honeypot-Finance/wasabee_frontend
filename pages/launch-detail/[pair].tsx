@@ -885,11 +885,8 @@ const MemeView = observer(({ pairAddress }: { pairAddress: string }) => {
                     Visit Vault
                   </Button>
                 )}
-                <div className="hidden md:block">
+                <div className="md:block">
                   <KlineChart height={500} />
-                </div>
-                <div className="md:hidden">
-                  <KlineChart height={400} />
                 </div>
               </>
             )}
