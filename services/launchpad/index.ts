@@ -54,13 +54,37 @@ export type SubgraphProjectFilter = {
   participant?: string;
   orderBy?: string;
   orderDirection?: string;
-  tvlRange?: {
-    min?: number;
-    max?: number;
+  tvl?: {
+    min?: string;
+    max?: string;
   };
-  participantsRange?: {
-    min?: number;
-    max?: number;
+  participants?: {
+    min?: string;
+    max?: string;
+  };
+  marketcap?: {
+    min?: string;
+    max?: string;
+  };
+  daytxns?: {
+    min?: string;
+    max?: string;
+  };
+  daybuys?: {
+    min?: string;
+    max?: string;
+  };
+  daysells?: {
+    min?: string;
+    max?: string;
+  };
+  dayvolume?: {
+    min?: string;
+    max?: string;
+  };
+  daychange?: {
+    min?: string;
+    max?: string;
   };
 };
 

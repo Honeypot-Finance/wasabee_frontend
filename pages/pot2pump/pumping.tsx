@@ -17,9 +17,8 @@ import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/
 import { FilterState } from "@/constants/pot2pump.type";
 import { defaultFilterState } from "@/constants/pot2pump";
 import HoneyContainer from "@/components/CardContianer/HoneyContainer";
-import { hasValue } from "@/lib/utils";
+import { hasValue, removeEmptyFields } from "@/lib/utils";
 import { PAGE_LIMIT } from "@/services/launchpad";
-import search from "../api/udf-data-feed/search";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pumpingProjects, setPumpingProjects] =
@@ -46,15 +45,20 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     newPumpingProjects.projectsPage.reloadPage();
   }, [wallet.isInit]);
 
-  // useEffect(() => {
-  //   if (pumpingProjects) {
-  //     pumpingProjects.projectsPage.updateFilter({
-  //       search: search.length > 0 ? search : undefined,
-  //       currentPage: 0,
-  //       hasNextPage: true,
-  //     });
-  //   }
-  // }, [search, pumpingProjects]);
+  useEffect(() => {
+    if (pumpingProjects) {
+      pumpingProjects.projectsPage.updateFilter({
+        search: search.length > 0 ? search : undefined,
+        currentPage: 0,
+        status: "success",
+        limit: PAGE_LIMIT,
+        hasNextPage: true,
+        orderBy: "endTime",
+        orderDirection: "desc",
+        ...defaultFilterState,
+      });
+    }
+  }, [search, pumpingProjects]);
 
   const onChangeFilter = (data: any) => {
     setSearch("");
@@ -63,23 +67,16 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
   useEffect(() => {
     if (pumpingProjects) {
+      console.log("hasValue(filters)", hasValue(filters), filters);
       if (hasValue(filters)) {
         pumpingProjects.projectsPage.updateFilter({
           currentPage: 0,
-          limit: 0,
+          status: "success",
+          limit: PAGE_LIMIT,
           hasNextPage: true,
-          tvlRange: {
-            min: filters.tvl.min ? Number(filters.tvl.min) : undefined,
-            max: filters.tvl.max ? Number(filters.tvl.max) : undefined,
-          },
-          participantsRange: {
-            min: filters.participants.min
-              ? Number(filters.participants.min)
-              : undefined,
-            max: filters.participants.max
-              ? Number(filters.participants.max)
-              : undefined,
-          },
+          orderBy: "endTime",
+          orderDirection: "desc",
+          ...removeEmptyFields(filters),
         });
       } else {
         pumpingProjects.projectsPage.updateFilter({
@@ -89,6 +86,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           hasNextPage: true,
           orderBy: "endTime",
           orderDirection: "desc",
+          ...defaultFilterState,
         });
       }
     }
