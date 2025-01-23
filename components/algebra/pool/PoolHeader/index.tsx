@@ -47,7 +47,7 @@ const PoolHeader = ({ pool }: PoolHeaderProps) => {
 
       {/* TODO: bg color  */}
       {currencyA && currencyB ? (
-        <PageTitle title={`${currencyA.symbol} / ${currencyB.symbol}`}>
+        <PageTitle title={`${token0?.symbol} / ${token1?.symbol}`}>
           <span className="hidden sm:inline px-3 py-2 font-medium rounded-full text-[#479FFF] border border-[#E18A20]/40 bg-[#E18A20]/20">{`${poolFee}`}</span>{" "}
         </PageTitle>
       ) : (

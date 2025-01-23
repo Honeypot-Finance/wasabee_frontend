@@ -32,8 +32,10 @@ interface RemoveLiquidityModalProps {
   positionId: number;
 }
 
+type SliderValue = number[];
+
 const RemoveLiquidityModal = ({ positionId }: RemoveLiquidityModalProps) => {
-  const [sliderValue, setSliderValue] = useState([50]);
+  const [sliderValue, setSliderValue] = useState<SliderValue>([50]);
 
   const { txDeadline } = useUserState();
   const { address: account } = useAccount();
@@ -204,7 +206,7 @@ const RemoveLiquidityModal = ({ positionId }: RemoveLiquidityModalProps) => {
             max={100}
             defaultValue={sliderValue}
             step={1}
-            onValueChange={(v) => setSliderValue(v)}
+            onValueChange={(v: SliderValue) => setSliderValue(v)}
             className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4 bg-[#9D5E28]/20 rounded-lg"
             aria-label="Liquidity Percent"
             disabled={isRemoveLoading}

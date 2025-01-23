@@ -1,8 +1,8 @@
 import { Button } from "@/components/button/button-next";
 import { SelectState, ItemSelect } from "@/components/ItemSelect";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
-import { FtoPairContract } from "@/services/contract/ftopair-contract";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { FtoPairContract } from "@/services/contract/launches/fto/ftopair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import { cn, SelectItem } from "@nextui-org/react";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import { Input } from "@/components/input";
@@ -119,7 +119,9 @@ export const PottingModal = observer(
                     1000 {pair.raiseToken?.symbol}
                   </SelectItem>
                 )}
-                <SelectItem key="max" value="max">Max</SelectItem>
+                <SelectItem key="max" value="max">
+                  Max
+                </SelectItem>
               </ItemSelect>
             </div>
 
@@ -133,8 +135,20 @@ export const PottingModal = observer(
                     amount: state.depositAmount,
                   });
                   state.setDepositAmount("");
-                  onSuccess?.();
                   pair.raiseToken?.getBalance();
+                  pair.getDepositedRaisedToken().then((res) => {
+                    if (
+                      pair.depositedLaunchedTokenWithoutDecimals &&
+                      (pair as MemePairContract).raisedTokenMinCap &&
+                      pair.depositedLaunchedTokenWithoutDecimals >
+                        ((pair as MemePairContract).raisedTokenMinCap ?? 0)
+                    ) {
+                      //refresh page
+                      window.location.reload();
+                    }
+                  });
+
+                  onSuccess?.();
                 } catch (error) {
                   console.error("Deposit failed:", error);
                 }

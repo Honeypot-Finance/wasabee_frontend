@@ -1,36 +1,22 @@
 import { Button } from "@/components/algebra/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/algebra/ui/table";
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { Search, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { LoadingState } from "./loadingState";
-import { Search, Plus, LayoutGrid } from "lucide-react";
-import { Switch } from "@/components/algebra/ui/switch";
-import { Modal, ModalContent, ModalBody } from "@nextui-org/react";
+import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
+import { popmodal } from "@/services/popmodal";
 import CreatePoolForm from "../../create-pool/CreatePoolForm";
 import { cn } from "@/lib/tailwindcss";
-import { HoneyContainer } from "@/components/CardContianer/HoneyContainer";
-import { popmodal } from "@/services/popmodal";
 import { Pool } from "./poolsColumns";
+import { ColumnDef } from "@tanstack/react-table";
+import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import Image from "next/image";
+import { Token } from "@/services/contract/token";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
 
 interface PoolsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
+  columnsMy: ColumnDef<TData, TValue>[];
   data: TData[];
+  userPools: TData[];
   action?: (args?: any) => void;
   defaultSortingID?: string;
   link?: string;
@@ -39,92 +25,132 @@ interface PoolsTableProps<TData, TValue> {
   loading?: boolean;
   sorting: any;
   setSorting: any;
+  defaultFilter?: string;
+  showOptions?: boolean;
+  handleSearch: (data: string) => void;
 }
+
+type SortField = "pool" | "tvl" | "volume" | "apr";
+type SortDirection = "asc" | "desc";
 
 const PoolsTable = <TData, TValue>({
   columns,
+  columnsMy,
   data,
+  userPools,
   action,
   link,
   showPagination = true,
   loading,
-  sorting,
-  setSorting,
+  defaultFilter = "trending",
+  showOptions = true,
+  handleSearch,
 }: PoolsTableProps<TData, TValue>) => {
-  const [selectedFilter, setSelectedFilter] = useState<string>("trending");
+  const [selectedFilter, setSelectedFilter] = useState<string>(defaultFilter);
+  const [search, setSearch] = useState("");
+  const [sortField, setSortField] = useState<SortField>("tvl");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [page, setPage] = useState(1);
 
   const filters = [
     { key: "trending", label: "All Pools" },
-    // { key: "highApr", label: "High APR" },
-    // { key: "stablecoin", label: "Stablecoin" },
     { key: "myPools", label: "My Pools" },
   ];
 
-  const [tableData, setTableData] = useState<Pool[]>(data as Pool[]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [search, setSearch] = useState("");
-
-  const table = useReactTable({
-    data: tableData as TData[],
-    columns,
-    filterFns: {},
-    state: {
-      columnFilters,
-    },
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(), //client side filtering
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    debugTable: true,
-    debugHeaders: true,
-    debugColumns: false,
-  });
-
-  const searchID = "pair";
-
-  const totalRows = table.getFilteredRowModel().rows.length;
-  const startsFromRow =
-    table.getState().pagination.pageIndex *
-      table.getState().pagination.pageSize +
-    1;
-  const endsAtRow = Math.min(
-    startsFromRow + table.getState().pagination.pageSize - 1,
-    totalRows
-  );
+  const [tableData, setTableData] = useState<Pool[]>([]);
 
   useEffect(() => {
-    const timerID = setTimeout(() => {
-      if (search) {
-        setTableData((prev) =>
-          prev.filter((data) => {
-            return (
-              data?.id?.includes(search) ||
-              data?.pair?.token0?.symbol?.toLowerCase()?.includes(search) ||
-              data?.pair?.token1?.symbol?.toLowerCase()?.includes(search) ||
-              data?.pair?.token1?.name?.toLowerCase()?.includes(search) ||
-              data?.pair?.token1?.name?.toLowerCase()?.includes(search) ||
-              data?.pair?.token0?.id?.toLowerCase()?.includes(search) ||
-              data?.pair?.token1?.id?.toLowerCase()?.includes(search)
-            );
-          })
-        );
-      } else {
-        setTableData(data as Pool[]);
-      }
-    }, 500);
-    if (timerID) {
-      return () => clearTimeout(timerID);
+    if (selectedFilter === "myPools") {
+      setTableData(userPools as Pool[]);
+    } else {
+      setTableData(data as Pool[]);
     }
-  }, [data, search]);
+  }, [data, selectedFilter, userPools]);
 
-  console.log(tableData);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleSearch(search.toLowerCase());
+    }, 500);
 
-  if (loading) return <LoadingState />;
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const handleSort = (field: SortField) => {
+    setPage(1);
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("desc");
+    }
+  };
+
+  const getSortedPools = () => {
+    const sortedPools = [...tableData].sort((a, b) => {
+      const multiplier = sortDirection === "asc" ? 1 : -1;
+
+      switch (sortField) {
+        case "pool":
+          return (
+            multiplier *
+            (a.pair.token0.symbol + a.pair.token1.symbol).localeCompare(
+              b.pair.token0.symbol + b.pair.token1.symbol
+            )
+          );
+        case "tvl":
+          return multiplier * (Number(a.tvlUSD) - Number(b.tvlUSD));
+        case "volume":
+          return multiplier * (Number(a.volume24USD) - Number(b.volume24USD));
+        case "apr":
+          return multiplier * (Number(a.apr24h) - Number(b.apr24h));
+        default:
+          return 0;
+      }
+    });
+
+    return sortedPools.slice((page - 1) * 10, page * 10);
+  };
+
+  const SortHeader = ({
+    field,
+    label,
+    align = "right",
+  }: {
+    field: SortField;
+    label: string;
+    align?: "left" | "right" | "center";
+  }) => (
+    <th
+      className={`py-4 px-6 cursor-pointer transition-colors text-[#4D4D4D]`}
+      onClick={() => handleSort(field)}
+    >
+      <div
+        className={`flex items-center gap-2 ${align === "right" ? "justify-end" : align === "center" ? "justify-center" : ""}`}
+      >
+        <span>{label}</span>
+        <div className="flex flex-col">
+          <ChevronUpIcon
+            className={`h-3 w-3 ${
+              sortField === field && sortDirection === "asc"
+                ? "text-black"
+                : "text-[#4D4D4D]"
+            }`}
+          />
+          <ChevronDownIcon
+            className={`h-3 w-3 ${
+              sortField === field && sortDirection === "desc"
+                ? "text-black"
+                : "text-[#4D4D4D]"
+            }`}
+          />
+        </div>
+      </div>
+    </th>
+  );
 
   return (
-    <div>
-      {searchID && (
+    <div className="flex flex-col gap-4 w-full">
+      {showOptions && (
         <div className="flex flex-col xl:flex-row gap-4 w-full xl:justify-between xl:items-center py-4">
           <div className="flex items-center xl:gap-x-6 w-full xl:w-fit justify-between">
             <div className="flex items-center">
@@ -132,11 +158,6 @@ const PoolsTable = <TData, TValue>({
                 <button
                   key={filter.key}
                   onClick={() => {
-                    if (filter.key === "myPools") {
-                      table.setGlobalFilter(true);
-                    } else {
-                      table.setGlobalFilter(undefined);
-                    }
                     setSelectedFilter(filter.key);
                   }}
                   className={`p-2.5 cursor-pointer ${
@@ -149,16 +170,13 @@ const PoolsTable = <TData, TValue>({
                 </button>
               ))}
             </div>
-            {/* TODO：placeholder text vertical-align: middle */}
             <div className="relative">
               <input
                 placeholder="Search pool"
                 value={search}
                 type="text"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setSearch(event.target.value);
-                }}
-                className="border border-[#E18A20]/10 bg-[#271A0C] pl-12 pr-4 h-12 w-[353px] focus:border-opacity-100 rounded-2xl placeholder:align-middle"
+                onChange={(event) => setSearch(event.target.value)}
+                className="border text-white border-[#E18A20]/10 bg-[#271A0C] pl-12 pr-4 h-12 w-[353px] focus:border-opacity-100 rounded-2xl placeholder:align-middle"
               />
               <Search
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-border"
@@ -175,142 +193,159 @@ const PoolsTable = <TData, TValue>({
                 popmodal.openModal({
                   content: <CreatePoolForm />,
                   boarderLess: true,
+                  shouldCloseOnInteractOutside: false,
                 })
               }
             >
               <Plus />
               <span>Create Pool</span>
             </Button>
-
-            <div className="flex gap-2 max-md:gap-4 items-center w-fit ml-auto max-sm:hidden">
-              <label
-                className="flex gap-2 items-center"
-                htmlFor="farmingAvailable"
-              >
-                <span className="max-md:hidden">Farming Available</span>
-              </label>
-              {/* TODO: switch color */}
-              <Switch
-                className="bg-[#865215]"
-                id="farmingAvailable"
-                checked={table.getColumn("plugins")?.getFilterValue() === true}
-                onCheckedChange={() => {
-                  const column = table.getColumn("plugins");
-                  if (column?.getFilterValue() === undefined)
-                    column?.setFilterValue(true);
-                  else column?.setFilterValue(undefined);
-                }}
-              />
-              <LayoutGrid className="text-[#F7941D80]/50 cursor-pointer text-xl" />
-            </div>
           </div>
         </div>
       )}
-      <HoneyContainer>
-        <Table className="rounded-[30px]">
-          <TableHeader className="[&_tr]:border-b border-black [&_tr]:border-opacity-30 border-opacity-60 border-y-3">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                key={headerGroup.id}
-                className="hover:bg-transparent border-black"
-              >
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    onClick={header.column.getToggleSortingHandler()}
-                    key={header.id}
-                    className={`rounded-xl text-white font-semibold [&_svg]:mt-auto ${
-                      header.column.getCanSort()
-                        ? "cursor-pointer select-none"
-                        : ""
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                      {{
-                        asc: " 🔼",
-                        desc: " 🔽",
-                      }[header.column.getIsSorted() as string] ?? null}
-                    </div>
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody className="hover:bg-transparent text-[16px]">
-            {!table.getRowModel().rows.length ? (
-              <TableRow className="hover:bg-white border-white h-full">
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+
+      {!loading ? (
+        <table className="w-full">
+          <thead>
+            <tr>
+              <SortHeader field="pool" label="Pool" align="left" />
+              <SortHeader field="tvl" label="TVL" />
+              <SortHeader field="volume" label="Volume 24H" />
+              <SortHeader field="apr" label="APR" />
+              <th className="py-4 px-6 text-center text-[#4D4D4D]">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#4D4D4D]">
+            {!getSortedPools().length ? (
+              <tr className="hover:bg-white border-white h-full">
+                <td colSpan={5} className="h-24 text-center text-black">
                   No results.
-                </TableCell>
-              </TableRow>
+                </td>
+              </tr>
             ) : (
-              table.getRowModel().rows.map((row: any) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="border-card-border/40 bg-card-dark hover:bg-white cursor-pointer border-black"
+              getSortedPools().map((pool) => (
+                <tr
+                  key={pool.id}
+                  className="transition-colors bg-white text-black hover:bg-gray-50 cursor-pointer"
                   onClick={() => {
                     if (action) {
-                      action(row.original.id);
+                      action(pool.id);
                     } else if (link) {
-                      window.location.href = `/${link}/${row.original.id}`;
+                      window.location.href = `/${link}/${pool.id}`;
                     }
                   }}
                 >
-                  {row.getVisibleCells().map((cell: any) => (
-                    <TableCell
-                      key={cell.id}
-                      className="text-left min-w-[120px] first:min-w-[320px]"
+                  <td className="py-4 px-6">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1">
+                        <TokenLogo
+                          token={Token.getToken({
+                            address: pool.pair.token0.id,
+                          })}
+                          addtionalClasses="translate-x-[25%]"
+                          size={24}
+                        />
+                        <TokenLogo
+                          token={Token.getToken({
+                            address: pool.pair.token1.id,
+                          })}
+                          addtionalClasses="translate-x-[-25%]"
+                          size={24}
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <p className="text-black font-medium">
+                          {pool.pair.token0.symbol}/{pool.pair.token1.symbol}
+                        </p>
+                        <p className="text-black/60 text-sm">
+                          base fee {pool.fee}%
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-4 px-6 text-right">
+                    <div className="flex flex-col">
+                      <span className="text-black">
+                        ${Number(pool.tvlUSD).toLocaleString()}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="py-4 px-6 text-right">
+                    <div className="flex flex-col">
+                      <span className="text-black">
+                        ${Number(pool.volume24USD).toLocaleString()}
+                      </span>
+                      <span
+                        className={`text-xs ${
+                          Number(pool.change24h) >= 0
+                            ? "text-[#4ADE80]"
+                            : "text-[#FF5555]"
+                        }`}
+                      >
+                        {Number(pool.change24h) >= 0 ? "+" : ""}
+                        {pool.change24h}%
+                      </span>
+                    </div>
+                  </td>
+                  <td className="py-4 px-6 text-right">
+                    <div className="flex flex-col">
+                      <span className="text-black">
+                        {Number(pool.apr24h).toFixed(2)}%
+                      </span>
+                    </div>
+                  </td>
+                  <td className="py-4 px-6 text-center">
+                    <Button
+                      className="bg-transparent"
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (action) {
+                          action(pool.id);
+                        } else if (link) {
+                          window.location.href = `/${link}/${pool.id}`;
+                        }
+                      }}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                      View
+                    </Button>
+                  </td>
+                </tr>
               ))
             )}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
+      ) : (
+        <LoadingDisplay />
+      )}
 
-        {showPagination && (
-          <div className="flex items-center justify-end space-x-2 px-4 mt-2 text-white">
-            {totalRows > 0 && (
-              <p className="mr-2">
-                {startsFromRow === totalRows
-                  ? `${startsFromRow} of ${totalRows}`
-                  : `${startsFromRow} - ${endsAtRow} of ${totalRows}`}
-              </p>
-            )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
-          </div>
-        )}
-      </HoneyContainer>
+      {showPagination && tableData.length > 10 && (
+        <div className="flex items-center justify-end space-x-2 px-4 mt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page === 1}
+            onClick={() => {
+              setPage(page - 1);
+            }}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page === Math.ceil(tableData.length / 10)}
+            onClick={() => {
+              setPage(page + 1);
+            }}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
+
 export default PoolsTable;

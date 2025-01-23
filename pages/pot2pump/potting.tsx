@@ -10,14 +10,18 @@ import { Button } from "@/components/button/button-next";
 import { LaunchCardV3 } from "@/components/LaunchCard/v3";
 import { FaCrown, FaExternalLinkAlt } from "react-icons/fa";
 import Pagination from "@/components/Pagination/Pagination";
-import launchpad, { defaultPairFilters } from "@/services/launchpad";
+import launchpad, {
+  defaultPairFilters,
+  PAGE_LIMIT,
+} from "@/services/launchpad";
 import { Filter } from "@/components/pot2pump/FilterModal";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import { defaultContainerVariants, itemPopUpVariants } from "@/lib/animation";
 import { Pot2PumpPottingService } from "@/services/launchpad/pot2pump/potting";
 import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/WrappedInputSearchBar";
 import { FilterState } from "@/constants/pot2pump.type";
 import { defaultFilterState } from "@/constants/pot2pump";
+import { hasValue, removeEmptyFields } from "@/lib/utils";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pottingProjects, setPottingProjects] =
@@ -52,13 +56,26 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
   useEffect(() => {
     if (pottingProjects) {
-      pottingProjects.projectsPage.updateFilter({
-        search: search.length > 0 ? search : undefined,
-        currentPage: 0,
-        hasNextPage: true,
-      });
+      console.log("hasValue(filters)", hasValue(filters), filters);
+      if (hasValue(filters)) {
+        pottingProjects.projectsPage.updateFilter({
+          search: search.length > 0 ? search : undefined,
+          currentPage: 0,
+          limit: PAGE_LIMIT,
+          hasNextPage: true,
+          ...removeEmptyFields(filters),
+        });
+      } else {
+        pottingProjects.projectsPage.updateFilter({
+          search: search.length > 0 ? search : undefined,
+          currentPage: 0,
+          limit: PAGE_LIMIT,
+          hasNextPage: true,
+          ...defaultFilterState,
+        });
+      }
     }
-  }, [search, pottingProjects]);
+  }, [filters, pottingProjects, search]);
 
   const onChangeFilter = (data: any) => {
     setSearch("");
@@ -161,6 +178,18 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
           <div className="py-2 sm:py-0 sm:absolute right-0 top-0">
             <div className="flex gap-2">
               <Filter
+                filtersList={[
+                  {
+                    key: 2,
+                    label: "Participants Count",
+                    category: "participants",
+                  },
+                  {
+                    key: 3,
+                    label: "Deposit Raised Token",
+                    category: "depositraisedtoken",
+                  },
+                ]}
                 filters={filters}
                 setFilters={onChangeFilter}
                 pumpingProjects={pottingProjects}
@@ -200,7 +229,13 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               {pottingProjects && (
                 <Pagination
                   paginationState={pottingProjects.projectsPage}
-                  render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
+                  render={(pair) => (
+                    <LaunchCardV3
+                      pair={pair}
+                      action={<></>}
+                      key={pair.address}
+                    />
+                  )}
                   classNames={{
                     itemsContainer:
                       "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",

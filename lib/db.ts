@@ -7,4 +7,16 @@ export const pg = postgres(process.env.DB!, {
   connection: {
     application_name: "iotexscan",
   },
+  debug: process.env.DEBUG === "true" ?
+  function (connection, query, params, types) {
+    // console.log(chalk.blue(JSON.stringify(params)))
+    const newQuery = query.replace(/\$(\d+)/g, (match, p1) => {
+      const replace = params[p1 - 1]
+      if (typeof replace === "string") {
+        return `'${replace}'`
+      }
+      return replace
+    })
+    console.log(newQuery)
+  }: false
 });

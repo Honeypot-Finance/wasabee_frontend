@@ -23,11 +23,11 @@ import { ArrowLeftRight, Zap, ChevronDown } from "lucide-react";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { VaultAmount } from "../VaultAmount/VaultAmount";
 import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
-import { PairContract } from "@/services/contract/pair-contract";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import { vault } from "@/services/vault";
 import { chart } from "@/services/chart";
 import { V3SwapCard } from "../algebra/swap/V3SwapCard";
+import { HoneyContainer } from "../CardContianer";
 
 export const LaunchDetailSwapCard = observer(
   ({
@@ -155,11 +155,10 @@ export const LaunchDetailSwapCard = observer(
       >
         <div
           className={cn(
-            " w-full flex flex-1 flex-col justify-center items-start gap-[23px] bg-[#FFCD4D] px-5 pt-[70px] pb-[45px] rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all relative",
+            " w-full flex flex-1 flex-col justify-center items-start gap-[23px] bg-[#FFCD4D] rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all relative",
             noBoarder && "border-0"
           )}
         >
-          <div className="bg-[url('/images/swap/top-border.png')] bg-cover bg-no-repeat bg-left-bottom h-[70px] absolute top-0 left-0 w-full rounded-t-[20px]"></div>
           <Trigger
             tab={operate}
             capitalize={true}
@@ -183,48 +182,51 @@ export const LaunchDetailSwapCard = observer(
 
           {currentTab === "LP" && (
             <LoadingContainer isLoading={!isInit}>
-              {memePairContract.canClaimLP && (
+              <HoneyContainer>
+                {memePairContract.canClaimLP && (
+                  <Button
+                    className="w-full relative overflow-visible"
+                    isLoading={memePairContract.claimLP.loading}
+                    onClick={() => {
+                      memePairContract.claimLP.call();
+                    }}
+                    isDisabled={!memePairContract.canClaimLP}
+                  >
+                    Claim LP
+                    {memePairContract.canClaimLP && (
+                      <div className="absolute -top-0 -right-0 translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-red-500 rounded-full z-10" />
+                    )}
+                  </Button>
+                )}
                 <Button
-                  className="w-full relative overflow-visible"
-                  isLoading={memePairContract.claimLP.loading}
-                  onClick={() => {
-                    memePairContract.claimLP.call();
+                  className="w-full"
+                  onClick={async () => {
+                    const lpTokenAddress =
+                      await memePairContract.contract.read.lpToken();
+                    window.location.href = `/vault/${lpTokenAddress}`;
                   }}
-                  isDisabled={!memePairContract.canClaimLP}
                 >
-                  Claim LP
-                  {memePairContract.canClaimLP && (
-                    <div className="absolute -top-0 -right-0 translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-red-500 rounded-full z-10" />
-                  )}
+                  Visit Vault
                 </Button>
-              )}
-              <Button
-                className="w-full"
-                onClick={async () => {
-                  const lpTokenAddress =
-                    await memePairContract.contract.read.lpToken();
-                  window.location.href = `/vault/${lpTokenAddress}`;
-                }}
-              >
-                Visit Vault
-              </Button>
-              <div className="w-full rounded-[32px] bg-white space-y-2 px-4 py-6 custom-dashed">
-                {vaultContract && <VaultAmount vaultContract={vaultContract} />}
-              </div>
+                <div className="w-full rounded-[32px] bg-white space-y-2 px-4 py-6 custom-dashed">
+                  {vaultContract && (
+                    <VaultAmount vaultContract={vaultContract} />
+                  )}
+                </div>
 
-              <Button
-                className="w-full"
-                isDisabled={vault.isDisabled}
-                isLoading={vault.deposit.loading}
-                onClick={async () => {
-                  await vault.deposit.call();
-                }}
-              >
-                {vault.buttonContent}
-              </Button>
+                <Button
+                  className="w-full"
+                  isDisabled={vault.isDisabled}
+                  isLoading={vault.deposit.loading}
+                  onClick={async () => {
+                    await vault.deposit.call();
+                  }}
+                >
+                  {vault.buttonContent}
+                </Button>
+              </HoneyContainer>
             </LoadingContainer>
           )}
-          <div className="bg-[url('/images/swap/bottom-border.svg')] bg-cover bg-no-repeat bg-left-top h-[45px] absolute bottom-0 left-0 w-full rounded-b-[20px] origin-bottom"></div>
         </div>
         {extraTokenAction}
       </SpinnerContainer>

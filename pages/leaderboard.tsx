@@ -8,7 +8,8 @@ import {
   useTopSwapAccounts,
 } from "@/lib/hooks/useAccounts";
 import { shortenAddressString, formatVolume } from "@/lib/utils";
-import { Tooltip } from "@nextui-org/react";
+import { Link, Tooltip } from "@nextui-org/react";
+import { debounce } from "lodash";
 
 interface LeaderboardItem {
   rank: number;
@@ -28,7 +29,7 @@ interface StatsCard {
 
 const LeaderboardPage = () => {
   const [searchAddress, setSearchAddress] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const searchDebounceHandler = debounce(setSearchAddress, 500);
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const { stats, loading: statsLoading } = useLeaderboard();
@@ -38,7 +39,7 @@ const LeaderboardPage = () => {
     loading: accountsLoading,
     hasMore,
     loadMore,
-  } = useAccounts(page, pageSize, debouncedSearch);
+  } = useAccounts(page, pageSize, searchAddress);
   const { accounts: topSwapAccounts, loading: topSwapAccountsLoading } =
     useTopSwapAccounts();
   const {
@@ -49,15 +50,6 @@ const LeaderboardPage = () => {
     accounts: topParticipateAccounts,
     loading: topParticipateAccountsLoading,
   } = useTopParticipateAccounts();
-
-  // 使用防抖处理搜索
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchAddress);
-      setPage(1); // 重置页码
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchAddress]);
 
   // 顶部统计数据
   const statsCards: StatsCard[] = [
@@ -88,21 +80,17 @@ const LeaderboardPage = () => {
   const topStats = [
     {
       title: "Top Trader",
-      address: shortenAddressString(topSwapAccounts[0]?.walletAddress ?? "-"),
+      address: topSwapAccounts[0]?.walletAddress ?? "-",
       value: `${topSwapAccounts[0]?.swapCount ?? "-"} Swaps`,
     },
     {
       title: "Top Deployer",
-      address: shortenAddressString(
-        topPot2PumpDeployerAccounts[0]?.walletAddress ?? "-"
-      ),
+      address: topPot2PumpDeployerAccounts[0]?.walletAddress ?? "-",
       value: `${topPot2PumpDeployerAccounts[0]?.pot2PumpDeployCount ?? "-"} Deploys`,
     },
     {
       title: "Top Participant",
-      address: shortenAddressString(
-        topParticipateAccounts[0]?.walletAddress ?? "-"
-      ),
+      address: topParticipateAccounts[0]?.walletAddress ?? "-",
       value: `${topParticipateAccounts[0]?.participateCount ?? "-"} Participations`,
     },
   ];
@@ -148,7 +136,9 @@ const LeaderboardPage = () => {
                     </span>
                   </div>
                   <div className="mt-6 text-xl text-white font-medium mb-2">
-                    {stat.address}
+                    <Tooltip content={stat.address} placement="top">
+                      {shortenAddressString(stat.address)}
+                    </Tooltip>
                   </div>
                   <div className="text-[#FFCD4D] text-base">{stat.value}</div>
                 </div>
@@ -161,14 +151,14 @@ const LeaderboardPage = () => {
                 <input
                   type="text"
                   value={searchAddress}
-                  onChange={(e) => setSearchAddress(e.target.value)}
+                  onChange={(e) => searchDebounceHandler(e.target.value)}
                   placeholder="Search by address"
                   className="w-full bg-[#1a1b1f] border border-gray-700 rounded-lg px-4 py-2 text-white"
                 />
                 {searchAddress && (
                   <button
                     onClick={() => {
-                      setSearchAddress("");
+                      searchDebounceHandler("");
                       setPage(1);
                     }}
                     className="px-4 py-2 bg-[#2a2a2a] rounded-lg text-white hover:bg-[#3a3a3a] transition-colors"
@@ -177,7 +167,7 @@ const LeaderboardPage = () => {
                   </button>
                 )}
               </div>
-              {debouncedSearch && (
+              {searchAddress && (
                 <div className="text-gray-400 text-sm ml-4">
                   {accountsLoading
                     ? "Searching..."
@@ -205,7 +195,7 @@ const LeaderboardPage = () => {
                           </div>
                         </th>
                         <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">
-                          Total Volume
+                          Volume
                         </th>
                         <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
                           Swaps
@@ -217,7 +207,7 @@ const LeaderboardPage = () => {
                           Meme Tokens
                         </th>
                         <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
-                          Pot2Pump Participations
+                          P2P Participations
                         </th>
                       </tr>
                     </thead>
@@ -241,12 +231,18 @@ const LeaderboardPage = () => {
                                   content={item.walletAddress}
                                   placement="top"
                                 >
-                                  {shortenAddressString(item.walletAddress)}
+                                  <Link
+                                    href={`https://bartio.beratrail.io/address/${item.walletAddress}`}
+                                    target="_blank"
+                                    className="text-blue-400"
+                                  >
+                                    {shortenAddressString(item.walletAddress)}
+                                  </Link>
                                 </Tooltip>
                               </div>
                             </td>
                             <td className="py-4 px-6 text-base">
-                              {formatVolume(item.totalVolume)}
+                              {formatVolume(item.totalSpend)}
                             </td>
                             <td className="py-4 px-6 text-center text-base">
                               {item.swapCount}

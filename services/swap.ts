@@ -1,10 +1,8 @@
-// import scrollTokens from '~/static/tokens/scroll_tokens.json'
-// import scrollSepoliaTokens from '~/static/tokens/scroll_alpha_tokens.json'
 import { Token } from "./contract/token";
-import { PairContract } from "./contract/pair-contract";
+import { PairContract } from "@/services/contract/dex/liquidity/pair-contract";
 import BigNumber from "bignumber.js";
-import { wallet } from "./wallet";
-import { liquidity } from "./liquidity";
+import { wallet } from "@/services/wallet";
+import { liquidity } from "@/services/liquidity";
 import { exec } from "~/lib/contract";
 import { autorun, makeAutoObservable, reaction, when } from "mobx";
 import { AsyncState } from "./utils";

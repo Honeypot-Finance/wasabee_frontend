@@ -1,16 +1,16 @@
 import { Network, networks } from "./chain";
 import BigNumber from "bignumber.js";
 import { Address, PublicClient, WalletClient } from "viem";
-import { RouterV2Contract } from "./contract/routerv2-contract";
-import { FactoryContract } from "./contract/factory-contract";
-import { FtoFactoryContract } from "./contract/ftofactory-contract";
-import { FtoFacadeContract } from "./contract/ftofacade-contract";
+import { RouterV2Contract } from "./contract/dex/routerv2-contract";
+import { FactoryContract } from "./contract/dex/factory-contract";
+import { FtoFactoryContract } from "./contract/launches/fto/ftofactory-contract";
+import { FtoFacadeContract } from "./contract/launches/fto/ftofacade-contract";
 import { makeAutoObservable, reaction } from "mobx";
 import { createPublicClientByChain } from "@/lib/client";
 import { StorageState } from "./utils";
-import { MemeFactoryContract } from "./contract/memefactory-contract";
-import { MEMEFacadeContract } from "./contract/memefacade-contract";
-import { ICHIVaultFactoryContract } from "./contract/aquabera/ICHIVaultFactory-contract";
+import { MemeFactoryContract } from "@/services/contract/launches/pot2pump/memefactory-contract";
+import { MEMEFacadeContract } from "@/services/contract/launches/pot2pump/memefacade-contract";
+import { ICHIVaultFactoryContract } from "@/services/contract/aquabera/ICHIVaultFactory-contract";
 
 export class Wallet {
   account: string = "";

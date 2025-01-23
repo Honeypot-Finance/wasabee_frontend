@@ -70,7 +70,7 @@ const AmountsSection = ({
         <div className="flex justify-between items-center">
           <div>
             <div className="text-sm font-medium text-[#202020]">
-              ESTIMATED POSITION APR
+              POSITION APR
             </div>
             <div className="text-xl font-bold text-[#FFCD4D]">
               {apr ? `${apr.toFixed(2)}%` : "0%"}

@@ -1,6 +1,6 @@
 import { action, makeAutoObservable, reaction } from "mobx";
 import { Token } from "./contract/token";
-import { PairContract } from "./contract/pair-contract";
+import { PairContract } from "./contract/dex/liquidity/pair-contract";
 import { AsyncState } from "./utils";
 import { ChartDataResponse, resolutionType } from "./priceFeed/priceFeedTypes";
 import { wallet } from "./wallet";
@@ -77,25 +77,7 @@ class Chart {
       return undefined;
     }
 
-    console.log("chartUpdate", {
-      chartTarget: this.chartTarget,
-      tokenNumber: this.tokenNumber,
-      currencyCode: this.currencyCode,
-      range: this.range,
-      timestampsByRange: this.timestampsByRange,
-    });
-
     this.isLoading = true;
-
-    console.log("priceDataRequest", {
-      chainId: wallet.currentChainId.toString(),
-      tokenAddress: this.chartTarget.address,
-      from: this.timestampsByRange,
-      to: dayjs().unix(),
-      resolution: chartTimeRanges[this.range].resolution,
-      tokenNumber: this.tokenNumber,
-      currencyCode: this.currencyCode,
-    });
 
     const priceDataRequest = await trpcClient.priceFeed.getChartData.query({
       chainId: wallet.currentChainId.toString(),

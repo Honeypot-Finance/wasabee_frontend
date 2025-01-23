@@ -24,6 +24,8 @@ export const getPot2PumpDetail = async (id: string, accountId?: string) => {
   >({
     query: GetPot2PumpDetailDocument,
     variables: { id, accountId: accountId },
+    fetchPolicy: "cache-first",
+    notifyOnNetworkStatusChange: true,
   });
 
   return res.data?.pot2Pump;

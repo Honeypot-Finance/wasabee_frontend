@@ -17,6 +17,8 @@ import Pagination from "@/components/Pagination/Pagination";
 import PoolsList from "@/components/algebra/pools/PoolsList";
 import MyAquaberaVaults from "@/components/Aquabera/VaultLists/MyVaults";
 import AquaberaList from "@/components/Aquabera/VaultLists/VaultLists";
+import { cn } from "@/lib/utils";
+import CardContainer from "@/components/CardContianer/v3";
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const router = useRouter();
@@ -76,17 +78,30 @@ const PoolsPage: NextLayoutPage = observer(() => {
   };
 
   return (
-    <div className="w-full mx-auto">
+    <div className="max-w-[1200px] mx-auto px-4 xl:px-0 font-gliker w-full">
       <Tabs
         classNames={{
-          base: "w-full",
-          panel: "w-full",
+          base: "relative w-full",
+          tabList:
+            "flex rounded-2xl border border-[#202020] bg-white p-4 shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] py-2 px-3.5 mb-6 absolute left-1/2 -translate-x-1/2 z-10 z-10",
+          cursor:
+            "bg-[#FFCD4D] border border-black shadow-[2px_2px_0px_0px_#000000] text-sm",
+          panel: cn(
+            "flex flex-col h-full w-full gap-y-4 justify-center items-center bg-[#FFCD4D] rounded-2xl text-[#202020]",
+            "px-8 pt-[70px] pb-[70px]",
+            "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
+            "bg-[position:-65px_top,_-85px_bottom]",
+            "bg-[size:auto_65px,_auto_65px]",
+            "bg-repeat-x",
+            "!mt-0"
+          ),
+          tabContent: "!text-[#202020]",
         }}
       >
-        <Tab key="algebra" title="Concentrated Liquidity" className="w-full">
+        <Tab key="algebra" title="Concentrated Liquidity">
           <PoolsList />
         </Tab>
-        <Tab key="aquabera" title="POGE Vault" className="w-full">
+        <Tab key="aquabera" title="POGE Vault">
           <AquaberaList />
         </Tab>
       </Tabs>

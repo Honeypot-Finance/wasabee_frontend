@@ -1,4 +1,4 @@
-import { FtoPairContract } from "@/services/contract/ftopair-contract";
+import { FtoPairContract } from "@/services/contract/launches/fto/ftopair-contract";
 import { AsyncState, ValueState } from "@/services/utils";
 import { wallet } from "@/services/wallet";
 import { card, Input, Select, SelectItem } from "@nextui-org/react";
@@ -22,7 +22,7 @@ import { popmodal } from "@/services/popmodal";
 import { LaunchDetailSwapCard } from "../SwapCard/MemeSwap";
 import { toCompactLocaleString } from "@/lib/utils";
 import TokenLogo from "../TokenLogo/TokenLogo";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const ANIMATION_DURATION = 500; //ms

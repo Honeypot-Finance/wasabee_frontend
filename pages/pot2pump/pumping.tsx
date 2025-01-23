@@ -17,6 +17,9 @@ import { WrappedNextInputSearchBar } from "@/components/wrappedNextUI/SearchBar/
 import { FilterState } from "@/constants/pot2pump.type";
 import { defaultFilterState } from "@/constants/pot2pump";
 import HoneyContainer from "@/components/CardContianer/HoneyContainer";
+import { hasValue, removeEmptyFields } from "@/lib/utils";
+import { PAGE_LIMIT } from "@/services/launchpad";
+import search from "../api/udf-data-feed/search";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pumpingProjects, setPumpingProjects] =
@@ -36,27 +39,46 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     //   status: "success",
     // });
 
-    memewarStore.reloadParticipants();
+    // memewarStore.reloadParticipants();
 
     const newPumpingProjects = new Pot2PumpPumpingService();
     setPumpingProjects(newPumpingProjects);
     newPumpingProjects.projectsPage.reloadPage();
   }, [wallet.isInit]);
 
-  useEffect(() => {
-    if (pumpingProjects) {
-      pumpingProjects.projectsPage.updateFilter({
-        search: search.length > 0 ? search : undefined,
-        currentPage: 0,
-        hasNextPage: true,
-      });
-    }
-  }, [search, pumpingProjects]);
-
   const onChangeFilter = (data: any) => {
-    setSearch("");
     setFilters(data);
   };
+
+  useEffect(() => {
+    if (pumpingProjects) {
+      console.log("hasValue(filters)", hasValue(filters), filters);
+      if (hasValue(filters)) {
+        pumpingProjects.projectsPage.updateFilter({
+          search: search.length > 0 ? search : undefined,
+          currentPage: 0,
+          status: "success",
+          limit: PAGE_LIMIT,
+          hasNextPage: true,
+          orderBy: "endTime",
+          orderDirection: "desc",
+          ...filters,
+        });
+      } else {
+        pumpingProjects.projectsPage.updateFilter({
+          search: search.length > 0 ? search : undefined,
+          currentPage: 0,
+          status: "success",
+          limit: PAGE_LIMIT,
+          hasNextPage: true,
+          orderBy: "endTime",
+          orderDirection: "desc",
+          ...defaultFilterState,
+        });
+      }
+    }
+  }, [filters, pumpingProjects, search]);
+
   return (
     <div className="w-full grow flex flex-col font-gliker">
       <div className="px-4 md:px-6 w-full xl:max-w-[1200px] mx-auto flex flex-col sm:gap-y-4">
@@ -81,6 +103,48 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         <div className="w-full relative">
           <div className="py-2 sm:py-0 sm:absolute right-0 top-0 flex gap-2">
             <Filter
+              filtersList={[
+                {
+                  key: 0,
+                  label: "TVL (USD)",
+                  category: "tvl",
+                },
+                {
+                  key: 1,
+                  label: "Liquidity",
+                  category: "liquidity",
+                },
+                {
+                  key: 3,
+                  label: "Market cap",
+                  category: "marketcap",
+                },
+                {
+                  key: 4,
+                  label: "24H txns",
+                  category: "daytxns",
+                },
+                {
+                  key: 5,
+                  label: "24H buys",
+                  category: "daybuys",
+                },
+                {
+                  key: 6,
+                  label: "24H sells",
+                  category: "daysells",
+                },
+                {
+                  key: 7,
+                  label: "24H volume",
+                  category: "dayvolume",
+                },
+                {
+                  key: 8,
+                  label: "24H change (%)",
+                  category: "daychange",
+                },
+              ]}
               filters={filters}
               setFilters={onChangeFilter}
               pumpingProjects={pumpingProjects}
@@ -111,7 +175,13 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               {pumpingProjects && (
                 <Pagination
                   paginationState={pumpingProjects.projectsPage}
-                  render={(pair) => <LaunchCardV3 pair={pair} action={<></>} />}
+                  render={(pair) => (
+                    <LaunchCardV3
+                      pair={pair}
+                      action={<></>}
+                      key={pair.address}
+                    />
+                  )}
                   classNames={{
                     itemsContainer:
                       "grid gap-8 grid-cols-1 md:grid-cols-2 xl:gap-6 xl:grid-cols-3",

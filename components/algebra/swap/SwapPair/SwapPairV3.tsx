@@ -22,7 +22,7 @@ import TokenCardV3 from "../TokenCard/TokenCardV3";
 import { ExchangeSvg } from "@/components/svg/exchange";
 import { chart } from "@/services/chart";
 import { Token } from "@/services/contract/token";
-import { PairContract } from "@/services/contract/pair-contract";
+import { PairContract } from "@/services/contract/dex/liquidity/pair-contract";
 import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
 import { wallet } from "@/services/wallet";
 import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
@@ -142,9 +142,9 @@ const SwapPairV3 = ({
   const formattedAmounts = {
     [independentField]: typedValue,
     [dependentField]: showWrap
-      ? (parsedAmounts[independentField]?.toExact() ?? "")
-      : (parsedAmounts[dependentField]?.toFixed(
-          (parsedAmounts[dependentField]?.currency.decimals || 6) / 2
+      ? (parsedAmounts[independentField as keyof typeof parsedAmounts]?.toExact() ?? "")
+      : (parsedAmounts[dependentField as keyof typeof parsedAmounts]?.toFixed(
+          (parsedAmounts[dependentField as keyof typeof parsedAmounts]?.currency.decimals || 6) / 2
         ) ?? ""),
   };
 
@@ -161,7 +161,6 @@ const SwapPairV3 = ({
           return;
         }
 
-        console.log("token", token);
         handleInputSelect(
           new AlgebraToken(
             wallet.currentChainId,

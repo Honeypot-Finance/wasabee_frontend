@@ -40,6 +40,11 @@ const nextConfig = {
         hostname: "localhost",
       },
       {
+        protocol: "http",
+        port: "5000",
+        hostname: "localhost",
+      },
+      {
         protocol: "https",
         port: "",
         hostname: "honeypotfinance.xyz",

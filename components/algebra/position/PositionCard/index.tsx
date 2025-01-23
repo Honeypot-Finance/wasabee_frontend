@@ -19,6 +19,7 @@ import { useDerivedMintInfo } from "@/lib/algebra/state/mintStore";
 import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { Farming } from "@/types/algebra/types/farming-info";
 import { FormattedPosition } from "@/types/algebra/types/formatted-position";
+import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
 
 interface PositionCardProps {
   selectedPosition: FormattedPosition | undefined;
@@ -67,8 +68,16 @@ const PositionCard = ({
 
   const [positionLiquidityUSD, positionFeesUSD, positionAPR] = selectedPosition
     ? [
-        formatUSD.format(selectedPosition.liquidityUSD),
-        formatUSD.format(selectedPosition.feesUSD),
+        DynamicFormatAmount({
+          amount: selectedPosition.liquidityUSD.toString(),
+          decimals: 3,
+          endWith: "$",
+        }),
+        DynamicFormatAmount({
+          amount: selectedPosition.feesUSD.toString(),
+          decimals: 5,
+          endWith: "$",
+        }),
         `${selectedPosition.apr.toFixed(2)}%`,
       ]
     : [];
@@ -78,7 +87,7 @@ const PositionCard = ({
   return (
     <div className="flex flex-col gap-6 rounded-3xl p-4 animate-fade-in bg-white text-black">
       <div className="relative flex w-full justify-end text-right">
-        <div className="absolute left-0 top-0">
+        <div className="">
           <PositionNFT positionId={selectedPosition.id} />
         </div>
         <div className="flex flex-col gap-4 w-full">

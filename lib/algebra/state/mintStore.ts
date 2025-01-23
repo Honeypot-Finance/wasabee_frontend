@@ -167,28 +167,28 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
   const onFieldAInput = useCallback(
     (typedValue: string) =>
       typeInput(Field.CURRENCY_A, typedValue, noLiquidity === true),
-    [noLiquidity]
+    [noLiquidity, typeInput]
   );
 
   const onFieldBInput = useCallback(
     (typedValue: string) =>
       typeInput(Field.CURRENCY_B, typedValue, noLiquidity === true),
-    [noLiquidity]
+    [noLiquidity, typeInput]
   );
 
   const onLeftRangeInput = useCallback(
     (typedValue: string) => typeLeftRangeInput(typedValue),
-    []
+    [typeLeftRangeInput]
   );
 
   const onRightRangeInput = useCallback(
     (typedValue: string) => typeRightRangeInput(typedValue),
-    []
+    [typeRightRangeInput]
   );
 
   const onStartPriceInput = useCallback(
     (typedValue: string) => typeStartPriceInput(typedValue),
-    []
+    [typeStartPriceInput]
   );
 
   return {
@@ -206,7 +206,8 @@ export function useDerivedMintInfo(
   poolAddress?: Address,
   feeAmount?: number,
   baseCurrency?: Currency,
-  existingPosition?: Position
+  existingPosition?: Position,
+  poolInfo?: [PoolStateType, Pool | null]
 ): IDerivedMintInfo {
   const { address: account } = useAccount();
 
@@ -217,6 +218,8 @@ export function useDerivedMintInfo(
     rightRangeTypedValue,
     startPriceTypedValue,
   } = useMintState();
+
+  console.log("startPriceTypedValue", startPriceTypedValue);
 
   const dependentField =
     independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
@@ -281,11 +284,15 @@ export function useDerivedMintInfo(
 
   const [poolState, pool] = usePool(poolAddress as Address);
 
-  const noLiquidity = poolState === PoolState.NOT_EXISTS;
+  const finalPoolState = poolInfo?.[0] ?? poolState;
 
-  const dynamicFee = pool ? pool.fee : 100;
+  const finalPool = poolInfo?.[1] ?? pool;
 
-  const tickSpacing = pool ? pool.tickSpacing : 60;
+  const noLiquidity = finalPoolState === PoolState.NOT_EXISTS;
+
+  const dynamicFee = finalPool ? finalPool.fee : 100;
+
+  const tickSpacing = finalPool ? finalPool.tickSpacing : 60;
 
   // note to parse inputs in reverse
   const invertPrice = Boolean(baseToken && token0 && !baseToken.equals(token0));
@@ -294,10 +301,12 @@ export function useDerivedMintInfo(
   const price: Price<Token, Token> | undefined = useMemo(() => {
     // if no liquidity use typed value
     if (noLiquidity) {
+      console.log("noliq config", { startPriceTypedValue, token0, token1 });
       const parsedQuoteAmount = tryParseAmount(
         startPriceTypedValue,
         invertPrice ? token0 : token1
       );
+      console.log("parsedQuoteAmount", parsedQuoteAmount);
       if (parsedQuoteAmount && token0 && token1) {
         const baseAmount = tryParseAmount("1", invertPrice ? token1 : token0);
         const price =
@@ -316,7 +325,7 @@ export function useDerivedMintInfo(
       // get the amount of quote currency
       return pool && token0 ? pool.priceOf(token0) : undefined;
     }
-  }, [noLiquidity, startPriceTypedValue, invertPrice, token1, token0, pool]);
+  }, [noLiquidity, startPriceTypedValue, token0, token1, invertPrice, pool]);
 
   // check for invalid price input (converts to invalid ratio)
   const invalidPrice = useMemo(() => {

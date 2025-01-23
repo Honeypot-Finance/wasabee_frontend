@@ -9,17 +9,20 @@ export const LEADERBOARD_QUERY = gql`
       totalVolumeMatic
       totalValueLockedUSD
       totalValueLockedMatic
+      untrackedVolumeUSD
+      totalValueLockedUSDUntracked
     }
   }
 `;
 
 export const ACCOUNTS_WITH_ADDRESS_QUERY = gql`
-  query accounts($skip: Int!, $first: Int!, $address: String!) {
+  query accounts($skip: Int!, $first: Int!, $address: ID!) {
     accounts(
       skip: $skip
       first: $first
       orderBy: totalSpendUSD
       orderDirection: desc
+      where: { id: $address }
     ) {
       id
       swapCount
@@ -36,12 +39,13 @@ export const ACCOUNTS_WITH_ADDRESS_QUERY = gql`
 `;
 
 export const ACCOUNTS_WITHOUT_ADDRESS_QUERY = gql`
-  query accounts($skip: Int!, $first: Int!) {
+  query accounts($skip: Int!, $first: Int!, $exclude: [ID!]) {
     accounts(
       skip: $skip
       first: $first
       orderBy: totalSpendUSD
       orderDirection: desc
+      where: { id_not_in: $exclude }
     ) {
       id
       swapCount
@@ -59,8 +63,14 @@ export const ACCOUNTS_WITHOUT_ADDRESS_QUERY = gql`
 
 //just top 1 swap accounts
 export const TOP_SWAP_ACCOUNTS_QUERY = gql`
-  query topSwapAccounts {
-    accounts(skip: 0, first: 1, orderBy: swapCount, orderDirection: desc) {
+  query topSwapAccounts($exclude: [ID!]) {
+    accounts(
+      skip: 0
+      first: 1
+      orderBy: swapCount
+      orderDirection: desc
+      where: { id_not_in: $exclude }
+    ) {
       id
       swapCount
     }
@@ -103,6 +113,8 @@ type Factory = {
   totalVolumeMatic: string;
   totalValueLockedUSD: string;
   totalValueLockedMatic: string;
+  untrackedVolumeUSD: string;
+  totalValueLockedUSDUntracked: string;
 };
 
 export type FactoryData = {

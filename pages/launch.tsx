@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/button";
 import launchpad, { defaultPairFilters } from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
-import { FtoPairContract } from "@/services/contract/ftopair-contract";
+import { FtoPairContract } from "@/services/contract/launches/fto/ftopair-contract";
 import { LaunchCard } from "@/components/LaunchCard";
 import Image from "next/image";
 import {

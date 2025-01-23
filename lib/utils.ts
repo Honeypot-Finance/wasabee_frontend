@@ -28,7 +28,7 @@ export const shortenAddressString = (address: string, chars = 4): string => {
 };
 
 export const formatVolume = (volume: number): string => {
-  const value = volume / 10 ** 18;
+  const value = volume;
 
   if (value >= 1000000000) {
     return `$${(value / 1000000000).toFixed(2)}B`;
@@ -43,4 +43,49 @@ export const formatVolume = (volume: number): string => {
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+const isNotNull = (value: any): boolean => {
+  return value !== null && value !== undefined;
+};
+
+export function hasValue(obj: any): boolean {
+  if (typeof obj !== "object" || obj === null) return false;
+  for (let key in obj) {
+    const value = obj[key];
+    if (typeof value !== "object" && isNotNull(value) && Boolean(value))
+      return true;
+
+    if (Array.isArray(value)) {
+      if (value.some(hasValue)) return true;
+    }
+
+    if (typeof value === "object" && value !== null) {
+      if (hasValue(value)) return true;
+    }
+  }
+
+  return false;
+}
+type FilterObject = {
+  [key: string]: any;
+};
+
+export function removeEmptyFields(obj: FilterObject): FilterObject {
+  const cleanedObject: FilterObject = {};
+
+  for (const key in obj) {
+    if (obj[key] !== null && obj[key] !== undefined) {
+      if (typeof obj[key] === "object" && !Array.isArray(obj[key])) {
+        const nestedObject = removeEmptyFields(obj[key]);
+        if (Object.keys(nestedObject).length > 0) {
+          cleanedObject[key] = nestedObject;
+        }
+      } else if (obj[key] !== "") {
+        cleanedObject[key] = obj[key];
+      }
+    }
+  }
+
+  return cleanedObject;
 }

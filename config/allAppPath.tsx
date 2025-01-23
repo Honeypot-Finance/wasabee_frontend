@@ -89,10 +89,6 @@ export const appPathsList: Menu[] = [
       },
     ],
   },
-  // {
-  //   path: "launchpad-projects",
-  //   title: "Dreampad",
-  // },
   {
     path: "/leaderboard",
     title: "Leaderboard",
@@ -103,15 +99,17 @@ export const appPathsList: Menu[] = [
   },
   // {
   //   title: "DreamPad",
-  //   path: {
-  //     path: "/launchpad-projects",
-  //     title: "DreamPad",
-  //   },
+  //   path: [
+  //     {
+  //       path: "/dreampad/launchpad-projects",
+  //       title: "Projects",
+  //     },
+  //   ],
   // },
-  {
-    path: "/profile",
-    title: "Profile",
-  },
+  // {
+  //   path: "/profile",
+  //   title: "Profile",
+  // },
 ];
 
 const getFlatPaths = (paths: Menu[]): flatMenu[] => {

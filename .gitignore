@@ -40,3 +40,6 @@ certificates
 
 # npm 配置文件
 .npmrc
+
+# IDE - VSCode
+.vscode

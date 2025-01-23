@@ -89,11 +89,11 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
 
         <div className="w-full relative">
           <div className="py-2 sm:py-0 sm:absolute right-0 top-0 flex gap-2">
-            <Filter
+            {/* <Filter
               filters={filters}
               setFilters={setFilters}
               pumpingProjects={pumpingProjects}
-            />
+            /> */}
             <Button className="w-full">
               <Link
                 href="/launch-token?launchType=meme"

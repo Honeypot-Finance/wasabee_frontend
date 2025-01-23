@@ -1,4 +1,4 @@
-import { FtoPairContract } from "@/services/contract/ftopair-contract";
+import { FtoPairContract } from "@/services/contract/launches/fto/ftopair-contract";
 import { AsyncState, ValueState } from "@/services/utils";
 import { wallet } from "@/services/wallet";
 import { Input } from "@nextui-org/react";

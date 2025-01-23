@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRewardEarnedUSD } from "./useRewardEarnedUSD";
 import { formatUnits } from "viem";
-import { formatAmount } from "../../utils/common/formatAmount";
+import { formatAmountWithAlphabetSymbol } from "../../utils/common/formatAmount";
 import { Farming } from "@/types/algebra/types/farming-info";
 import { Deposit } from "../../graphql/generated/graphql";
 import { getFarmingRewards } from "../../utils/farming/getFarmingRewards";
@@ -73,9 +73,18 @@ export function useFarmingRewardsEarned({
   }, [fetchAllRewards]);
 
   return {
-    rewardEarned: formatAmount(formattedRewardEarned.toString(), 2),
-    bonusRewardEarned: formatAmount(formattedBonusRewardEarned.toString(), 2),
-    totalEarned: formatAmount(formattedTotalEarned.toString(), 2),
+    rewardEarned: formatAmountWithAlphabetSymbol(
+      formattedRewardEarned.toString(),
+      2
+    ),
+    bonusRewardEarned: formatAmountWithAlphabetSymbol(
+      formattedBonusRewardEarned.toString(),
+      2
+    ),
+    totalEarned: formatAmountWithAlphabetSymbol(
+      formattedTotalEarned.toString(),
+      2
+    ),
     totalEarnedUSD,
     refetch: fetchAllRewards,
   };

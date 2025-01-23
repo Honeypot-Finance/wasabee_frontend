@@ -3,7 +3,7 @@ import { infoClient } from ".";
 import { PairFilter, SubgraphProjectFilter } from "@/services/launchpad";
 import { PageRequest } from "@/services/indexer/indexerTypes";
 import dayjs from "dayjs";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import BigNumber from "bignumber.js";
 import { Token } from "@/services/contract/token";
 import { Pot2Pump } from "../generated/graphql";
@@ -14,7 +14,11 @@ import {
   Pot2PumpPottingNearSuccessQuery,
   Pot2PumpPottingHighPriceQuery,
   Pot2PumpPottingNewTokensQuery,
+  Pot2PumpPottingTrendingQuery,
+  Pot2PumpPottingTrendingDocument,
+  Pot2PumpPottingTrendingQueryVariables,
 } from "../generated/graphql";
+import { filter } from "lodash";
 
 type SubgraphToken = {
   id: string;
@@ -85,16 +89,20 @@ type Pot2PumpListResponse = {
 
 const subgraphTokenQuery = `
   id
-  name
   symbol
+  name
   decimals
-  holderCount
   derivedMatic
-  totalSupply
   derivedUSD
-  volumeUSD
   initialUSD
+  txCount
+  holderCount
+  totalSupply
+  volumeUSD
   totalValueLockedUSD
+  marketCap
+  poolCount
+  priceChange24hPercentage
 `;
 
 const pop2PumpQuery = `
@@ -114,18 +122,19 @@ const pop2PumpQuery = `
   raisedTokenReachingMinCap
   raisedTokenMinCap
   creator
+
 `;
 
-export const pot2PumpListToMemePairList = async (
+export const pot2PumpListToMemePairList = (
   pot2Pump: Partial<Pot2Pump>[]
-): Promise<MemePairContract[]> => {
-  return Promise.all(pot2Pump.map(pot2PumpToMemePair));
+): MemePairContract[] => {
+  return pot2Pump.map(pot2PumpToMemePair);
 };
 
-export const pot2PumpToMemePair = async (
+export const pot2PumpToMemePair = (
   pot2Pump: Partial<Pot2Pump>
-): Promise<MemePairContract> => {
-  const contract = new MemePairContract({
+): MemePairContract => {
+  const contract = MemePairContract.loadContract(pot2Pump.id!, {
     address: pot2Pump.id,
     depositedLaunchedTokenWithoutDecimals: new BigNumber(
       pot2Pump.DepositLaunchToken
@@ -152,8 +161,11 @@ export const pot2PumpToMemePair = async (
       pot2Pump.participants.length > 0 &&
       !pot2Pump.participants[0].refunded &&
       pot2Pump.endTime < dayjs().unix(),
-    launchedToken: Token.getToken({
-      address: pot2Pump.launchToken?.id!,
+  });
+
+  if (pot2Pump.launchToken?.id) {
+    contract.launchedToken = Token.getToken({
+      address: pot2Pump.launchToken?.id,
       name: pot2Pump.launchToken?.name,
       symbol: pot2Pump.launchToken?.symbol,
       decimals: Number(pot2Pump.launchToken?.decimals),
@@ -165,9 +177,12 @@ export const pot2PumpToMemePair = async (
       initialUSD: pot2Pump.launchToken?.initialUSD,
       totalValueLockedUSD: pot2Pump.launchToken?.totalValueLockedUSD,
       poolCount: Number(pot2Pump.launchToken?.poolCount),
-    }),
-    raiseToken: Token.getToken({
-      address: pot2Pump.raisedToken?.id!,
+      priceChange24hPercentage: pot2Pump.launchToken?.priceChange24hPercentage,
+    });
+  }
+  if (pot2Pump.raisedToken?.id) {
+    contract.raiseToken = Token.getToken({
+      address: pot2Pump.raisedToken?.id,
       name: pot2Pump.raisedToken?.name,
       symbol: pot2Pump.raisedToken?.symbol,
       decimals: Number(pot2Pump.raisedToken?.decimals),
@@ -179,12 +194,17 @@ export const pot2PumpToMemePair = async (
       initialUSD: pot2Pump.raisedToken?.initialUSD,
       totalValueLockedUSD: pot2Pump.raisedToken?.totalValueLockedUSD,
       poolCount: Number(pot2Pump.raisedToken?.poolCount),
-    }),
-  });
+      priceChange24hPercentage: pot2Pump.raisedToken?.priceChange24hPercentage,
+    });
+  }
 
-  contract.getProjectInfo();
-  contract.launchedToken?.loadLogoURI();
-  contract.raiseToken?.loadLogoURI();
+  //console.log("pot2Pump:", pot2Pump);
+
+  if (!contract.logoUrl) {
+    contract.getProjectInfo();
+  }
+  // contract.launchedToken?.loadLogoURI();
+  // contract.raiseToken?.loadLogoURI();
 
   return contract;
 };
@@ -201,7 +221,6 @@ export async function fetchNearSuccessPot2Pump () {
     "Pot2PumpPottingNearSuccessDocument",
     Pot2PumpPottingNearSuccessDocument
   );
-  console.log("fetchNearSuccessPot2Pump", data.pot2Pumps);
 
   return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
 }
@@ -220,6 +239,14 @@ export async function fetchPottingNewTokens () {
 export async function fetchPumpingHighPricePot2Pump () {
   const { data } = await infoClient.query<Pot2PumpPottingHighPriceQuery>({
     query: Pot2PumpPottingHighPriceDocument,
+  });
+
+  return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
+}
+
+export async function fetchPottingTrendingPot2Pump () {
+  const { data } = await infoClient.query<Pot2PumpPottingTrendingQuery>({
+    query: Pot2PumpPottingTrendingDocument,
   });
 
   return pot2PumpListToMemePairList(data.pot2Pumps as Partial<Pot2Pump>[]);
@@ -300,8 +327,6 @@ export async function fetchPairsList ({
       }
     }
   `;
-
-  console.log("query fetchPairsList", query);
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),
@@ -433,17 +458,7 @@ export async function fetchPot2PumpList ({
 }): Promise<Pot2PumpListResponse> {
   let whereCondition: string[] = [];
 
-  if (filter.search) {
-    whereCondition.push(`
-      launchToken_: {
-        or: [
-          {name_contains_nocase: "${filter.search}"}, 
-          {symbol_contains_nocase: "${filter.search}"}, 
-          {id: "${filter.search.toLowerCase()}"}
-        ]
-      }
-    `);
-  }
+
 
   if (filter.status === "success") {
     whereCondition.push(` raisedTokenReachingMinCap: true `);
@@ -457,22 +472,165 @@ export async function fetchPot2PumpList ({
     );
   }
 
-  if (filter.tvlRange?.min !== undefined) {
-    whereCondition.push(` LaunchTokenTVL_gte: "${filter.tvlRange.min}" `);
+  if (filter.tvl?.min !== undefined) {
+    filter.tvl.min.length > 0 && whereCondition.push(` LaunchTokenTVLUSD_gte: "${filter.tvl.min}" `);
   }
-  if (filter.tvlRange?.max !== undefined) {
-    whereCondition.push(` LaunchTokenTVL_lte: "${filter.tvlRange.max}" `);
+  if (filter.tvl?.max !== undefined) {
+    filter.tvl.max.length > 0 && whereCondition.push(` LaunchTokenTVLUSD_lte: "${filter.tvl.max}" `);
   }
 
-  if (filter.participantsRange?.min !== undefined) {
+  if (filter.participants?.min !== undefined) {
     whereCondition.push(
-      ` participantsCount_gte: "${filter.participantsRange.min}" `
+      ` participantsCount_gte: "${filter.participants.min}" `
     );
   }
-  if (filter.participantsRange?.max !== undefined) {
+  if (filter.participants?.max !== undefined) {
     whereCondition.push(
-      ` participantsCount_lte: "${filter.participantsRange.max}" `
+      ` participantsCount_lte: "${filter.participants.max}" `
     );
+  }
+
+  if (filter?.marketcap?.min !== undefined) {
+    whereCondition.push(
+      ` LaunchTokenMCAPUSD_gte: "${filter?.marketcap?.min}" `
+    );
+  }
+  if (filter?.marketcap?.max !== undefined) {
+    ` LaunchTokenMCAPUSD_lte: "${filter?.marketcap?.min}" `
+
+  }
+
+  if (filter?.daybuys?.min !== undefined) {
+    whereCondition.push(
+      ` buyCount_gte: "${filter?.daybuys?.min}" `
+    );
+  }
+  if (filter?.daybuys?.max !== undefined) {
+    whereCondition.push(
+      ` buyCount_lte: "${filter?.daybuys?.max}" `
+    );
+  }
+
+  if (filter?.daysells?.min !== undefined) {
+    whereCondition.push(
+      ` sellCount_gte: "${filter?.daysells?.min}" `
+    );
+  }
+
+  if (filter?.daysells?.max !== undefined) {
+    whereCondition.push(
+      ` sellCount_lte: "${filter?.daysells?.max}" `
+    );
+  }
+
+  if (filter?.depositraisedtoken?.min !== undefined) {
+    whereCondition.push(
+      ` DepositRaisedToken_gte: "${filter?.depositraisedtoken?.min}" `
+    );
+  }
+
+  if (filter?.depositraisedtoken?.max !== undefined) {
+    whereCondition.push(
+      ` DepositRaisedToken_lte: "${filter?.depositraisedtoken?.max}" `
+    );
+  }
+
+
+
+  const launchTokenFilter: any = {};
+
+  console.log("filter.search", filter.search)
+
+  if (filter.search) {
+    launchTokenFilter.and = [
+      {
+        or: [
+          { name_contains_nocase: filter.search },
+          { symbol_contains_nocase: filter.search },
+          { id: filter.search.toLowerCase() }
+        ]
+      }
+    ]
+  }
+
+  if (filter?.dayvolume?.min !== undefined) {
+    if (filter.search) {
+      launchTokenFilter.and.push({ volumeUSD_gte: filter?.dayvolume?.min })
+    } else {
+      launchTokenFilter.volumeUSD_gte = filter?.dayvolume?.min
+    }
+  }
+
+  if (filter?.dayvolume?.max !== undefined) {
+    if (filter.search) {
+      launchTokenFilter.and.push({ volumeUSD_lte: filter?.dayvolume?.max })
+    } else {
+      launchTokenFilter.volumeUSD_lte = filter?.dayvolume?.max
+    }
+  }
+
+  if (filter?.daytxns?.min !== undefined) {
+    if (filter.search) {
+      launchTokenFilter.and.push({ txCount_gte: filter?.daytxns?.min })
+    } else {
+      launchTokenFilter.txCount_gte = filter?.daytxns?.min
+    }
+  }
+
+  if (filter?.daytxns?.max !== undefined) {
+    if (filter.search) {
+      launchTokenFilter.and.push({ txCount_lte: filter?.daytxns?.max })
+    } else {
+      launchTokenFilter.txCount_lte = filter?.daytxns?.max
+    }
+  }
+
+  if (filter?.daychange?.min !== undefined) {
+    if (filter.search) {
+      launchTokenFilter.and.push({ priceChange24hPercentage_gte: filter?.daychange?.min })
+    } else {
+      launchTokenFilter.priceChange24hPercentage_gte = filter?.daychange?.min
+    }
+  }
+
+  if (filter?.daychange?.max !== undefined) {
+    if (filter.search) {
+      launchTokenFilter.and.push({ priceChange24hPercentage_lte: filter?.daychange?.max })
+    } else {
+      launchTokenFilter.priceChange24hPercentage_lte = filter?.daychange?.max
+    }
+  }
+
+  if (Object.keys(launchTokenFilter).length > 0) {
+    const filterString = Object.entries(launchTokenFilter)
+      .map(([key, value]) => {
+        if (key === "and" && Array.isArray(value)) {
+          // Handle the 'and' case specifically
+          const andConditions = value
+            .map((condition) => {
+              if (condition.or && Array.isArray(condition.or)) {
+                // Handle the 'or' case inside 'and'
+                const orConditions = condition.or
+                  .map((orCondition: any) => `{ ${Object.entries(orCondition).map(([k, v]) => `${k}: "${v}"`).join(", ")} }`)
+                  .join(", ");
+                return `{or: [${orConditions}]}`;
+              } else {
+                // Handle normal 'and' conditions
+                return `{ ${Object.entries(condition).map(([k, v]) => `${k}: "${v}"`).join(", ")} }`;
+              }
+            })
+            .join(", ");
+          return `and: [${andConditions}]`;
+        } else {
+          // For other cases (e.g., txCount_gte)
+          return `${key}: "${value}"`;
+        }
+      })
+      .join(", ");
+
+    console.log("filterString", filterString)
+
+    whereCondition.push(`launchToken_: { ${filterString} }`);
   }
 
   if (filter.creator) {
@@ -503,82 +661,31 @@ export async function fetchPot2PumpList ({
 
   const query = `
     query PairsList {
-      pot2Pumps ${queryString.length > 0 ? `(${queryString})` : ''}{
+      pot2Pumps ${queryString.length > 0 ? `(${queryString})` : ""}{
         ${pop2PumpQuery}
       }
     }
   `;
 
+  console.log("Pumping query", query)
 
   const { data } = await infoClient.query<Pot2PumpListData>({
     query: gql(query),
   });
 
-  function transformPairsListData (
-    data: Pot2PumpListData
-  ): Pot2PumpListResponse {
-    const pairs = data.pot2Pumps.map((pot2Pump) => {
-      const memePair = new MemePairContract({
-        address: pot2Pump.id,
-        launchedToken: new Token({
-          address: pot2Pump.launchToken.id,
-          name: pot2Pump.launchToken.name,
-          symbol: pot2Pump.launchToken.symbol,
-          decimals: Number(pot2Pump.launchToken.decimals),
-          holderCount: pot2Pump.launchToken.holderCount,
-          derivedETH: pot2Pump.launchToken.derivedMatic,
-          totalSupplyWithoutDecimals: BigNumber(
-            pot2Pump.launchToken.totalSupply
-          ),
-          derivedUSD: pot2Pump.launchToken.derivedUSD,
-          volumeUSD: pot2Pump.launchToken.volumeUSD,
-          initialUSD: pot2Pump.launchToken.initialUSD,
-          totalValueLockedUSD: pot2Pump.launchToken.totalValueLockedUSD,
-        }),
-        raiseToken: new Token({
-          address: pot2Pump.raisedToken.id,
-          name: pot2Pump.raisedToken.name,
-          symbol: pot2Pump.raisedToken.symbol,
-          decimals: Number(pot2Pump.raisedToken.decimals),
-          holderCount: pot2Pump.raisedToken.holderCount,
-          derivedETH: pot2Pump.raisedToken.derivedMatic,
-          totalSupplyWithoutDecimals: BigNumber(
-            pot2Pump.raisedToken.totalSupply
-          ),
-        }),
-        depositedRaisedTokenWithoutDecimals: BigNumber(
-          pot2Pump.DepositRaisedToken
-        ),
-        depositedLaunchedTokenWithoutDecimals: BigNumber(
-          pot2Pump.DepositLaunchToken
-        ),
-        startTime: pot2Pump.createdAt,
-        endTime: pot2Pump.endTime,
-        //state: pot2Pump.state,
-        participantsCount: new BigNumber(pot2Pump.participantsCount),
-        raisedTokenMinCap: BigNumber(pot2Pump.raisedTokenMinCap),
-        provider: pot2Pump.creator,
-      });
-
-      memePair.getProjectInfo();
-
-      return memePair;
-    });
-
-    return {
-      status: "success",
-      message: "Success",
-      data: {
-        pairs,
-        filterUpdates: {
-          currentPage: filter?.currentPage ? filter?.currentPage + 1 : 1,
-          hasNextPage: pairs.length === filter.limit,
-        },
+  return {
+    status: "success",
+    message: "Success",
+    data: {
+      pairs: await pot2PumpListToMemePairList(
+        data.pot2Pumps as Partial<Pot2Pump>[]
+      ),
+      filterUpdates: {
+        currentPage: filter?.currentPage ? filter?.currentPage + 1 : 1,
+        hasNextPage: data.pot2Pumps.length === filter.limit,
       },
-    };
-  }
-
-  return transformPairsListData(data);
+    },
+  };
 }
 
 export async function fetchPot2Pumps ({
@@ -613,21 +720,23 @@ export async function fetchPot2Pumps ({
     );
   }
 
-  if (filter.tvlRange?.min !== undefined) {
-    whereCondition.push(` LaunchTokenTVL_gte: "${filter.tvlRange.min}" `);
+  console.log("filter", filter);
+
+  if (filter.tvl?.min !== undefined) {
+    whereCondition.push(` LaunchTokenTVLUSD_gte: "${filter.tvl.min}" `);
   }
-  if (filter.tvlRange?.max !== undefined) {
-    whereCondition.push(` LaunchTokenTVL_lte: "${filter.tvlRange.max}" `);
+  if (filter.tvl?.max !== undefined) {
+    whereCondition.push(` LaunchTokenTVLUSD_lte: "${filter.tvl.max}" `);
   }
 
-  if (filter.participantsRange?.min !== undefined) {
+  if (filter.participants?.min !== undefined) {
     whereCondition.push(
-      ` participantsCount_gte: "${filter.participantsRange.min}" `
+      ` participantsCount_gte: "${filter.participants.min}" `
     );
   }
-  if (filter.participantsRange?.max !== undefined) {
+  if (filter.participants?.max !== undefined) {
     whereCondition.push(
-      ` participantsCount_lte: "${filter.participantsRange.max}" `
+      ` participantsCount_lte: "${filter.participants.max}" `
     );
   }
 
@@ -660,7 +769,7 @@ export async function fetchPot2Pumps ({
       pot2Pumps(
         ${queryParts.join(",\n")}
       ) {
-        ${pop2PumpQuery}
+        ...pot2Pump
       }
     }
   `;

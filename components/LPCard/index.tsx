@@ -20,7 +20,6 @@ import {
 import { Table } from "../table";
 import { ItemSelect, SelectState } from "../ItemSelect";
 import { SelectItem } from "../ItemSelect/index";
-import _ from "lodash";
 import LoadingDisplay from "../LoadingDisplay/LoadingDisplay";
 
 const AddLiquidity = observer(() => {

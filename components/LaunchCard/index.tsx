@@ -1,4 +1,4 @@
-import { FtoPairContract } from "@/services/contract/ftopair-contract";
+import { FtoPairContract } from "@/services/contract/launches/fto/ftopair-contract";
 import { observer } from "mobx-react-lite";
 import { Button } from "@/components/button";
 import Link from "next/link";
@@ -12,7 +12,7 @@ import {
 } from "../OptionsDropdown/OptionsDropdown";
 import { motion } from "framer-motion";
 import { itemPopUpVariants } from "@/lib/animation";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import ProgressBar from "../atoms/ProgressBar/ProgressBar";
 import { AmountFormat } from "../AmountFormat";
 import { LaunchType as projectType } from "@/pages/launch-token";

@@ -99,10 +99,12 @@ const CreatePoolForm = () => {
         : [[calldata] as Address[]],
       value: BigInt(value || 0),
       query: {
-        enabled: Boolean(calldata),
+        enabled: Boolean({ calldata }),
       },
     }
   );
+
+  console.log("config", { createPoolConfig, calldata, value, mintInfo });
 
   const { data: createPoolData, writeContract: createPool } = useContractWrite(
     {}
@@ -194,9 +196,10 @@ const CreatePoolForm = () => {
                 type="number"
                 placeholder="0.0"
                 value={startPriceTypedValue}
-                onChange={(e: { target: { value: string } }) =>
-                  typeStartPriceInput(e.target.value)
-                }
+                onChange={(e: { target: { value: string } }) => {
+                  console.log("e", e.target.value);
+                  typeStartPriceInput(e.target.value);
+                }}
                 className="bg-white  rounded-md"
                 classNames={{
                   input: "!text-black",
@@ -216,6 +219,12 @@ const CreatePoolForm = () => {
         <Button
           className="mt-2"
           disabled={
+            isLoading ||
+            (!startPriceTypedValue && !isPoolExists) ||
+            !areCurrenciesSelected ||
+            isSameToken
+          }
+          isDisabled={
             isLoading ||
             (!startPriceTypedValue && !isPoolExists) ||
             !areCurrenciesSelected ||

@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { BaseContract } from ".";
 import { wallet } from "../wallet";
-import { makeAutoObservable } from "mobx";
+import { get, makeAutoObservable } from "mobx";
 import { Address, getContract, zeroAddress } from "viem";
 import { ContractWrite } from "../utils";
 import { amountFormatted } from "@/lib/format";
@@ -35,6 +35,10 @@ export class Token implements BaseContract {
     } else {
       Token.tokensMap[key].setData(args);
     }
+
+    if (force) {
+      Token.tokensMap[key].init(force);
+    }
     return Token.tokensMap[key];
   }
   address: string = "";
@@ -62,6 +66,7 @@ export class Token implements BaseContract {
   totalValueLockedUSD = "";
   poolCount = 0;
   pot2pumpAddress: Address | undefined | null = undefined;
+  priceChange24hPercentage = "";
 
   // determines the order of the token in the list
   get priority() {
@@ -84,6 +89,13 @@ export class Token implements BaseContract {
 
   get displayName() {
     return this.symbol || this.name;
+  }
+
+  get marketCap() {
+    return (
+      Number(this.derivedUSD) *
+      this.totalSupplyWithoutDecimals.div(10 ** this.decimals).toNumber()
+    );
   }
 
   get faucetContract() {
@@ -131,11 +143,26 @@ export class Token implements BaseContract {
     });
   }
 
-  async loadLogoURI() {
+  async loadLogoURI(force?: boolean) {
     // console.log("this.logoURI", this.logoURI);
-
     if (!!this.logoURI || !wallet.isInit) {
       return;
+    }
+
+    if (!force) {
+      //cache the logoURI
+      const cachedLocalLogoURI = localStorage.getItem(
+        `token-logo-uri-${wallet.currentChainId}-${this.address.toLowerCase()}`
+      );
+
+      if (
+        !!cachedLocalLogoURI &&
+        cachedLocalLogoURI !== "null" &&
+        cachedLocalLogoURI !== "undefined"
+      ) {
+        this.setLogoURI(cachedLocalLogoURI);
+        return this.logoURI;
+      }
     }
 
     if (
@@ -155,6 +182,13 @@ export class Token implements BaseContract {
     });
 
     launch[0]?.logo_url && this.setLogoURI(launch[0].logo_url);
+
+    if (!!launch[0]?.logo_url) {
+      localStorage.setItem(
+        `token-logo-uri-${wallet.currentChainId}-${this.address.toLowerCase()}`,
+        launch[0]?.logo_url
+      );
+    }
 
     return this.logoURI;
   }
@@ -196,33 +230,22 @@ export class Token implements BaseContract {
     const loadIndexerTokenData = options?.loadIndexerTokenData ?? false;
 
     await Promise.all([
-      loadName && !this.name
-        ? this.contract.read.name().then((name) => {
-            console.log("this.isNative-name", name);
-            this.name = name;
-          })
-        : Promise.resolve(),
-      loadSymbol && !this.symbol
-        ? this.contract.read?.symbol().then((symbol) => {
-            console.log("symbol", symbol);
-            this.symbol = symbol;
-          })
-        : Promise.resolve(),
+      loadName && !this.name ? this.loadName(force) : Promise.resolve(),
+      loadSymbol && !this.symbol ? this.loadSymbol(force) : Promise.resolve(),
       loadDecimals && !this.decimals
-        ? this.contract.read?.decimals().then((decimals) => {
-            console.log("decimals", decimals);
-            this.decimals = decimals;
-          })
+        ? this.loadDecimals(force)
         : Promise.resolve(),
       loadBalance ? this.getBalance() : Promise.resolve(),
-      loadTotalSupply ? this.getTotalSupply() : Promise.resolve(),
+      loadTotalSupply ? this.getTotalSupply(force) : Promise.resolve(),
       loadClaimed
         ? this.getClaimed().then((claimed) => {
             this.claimed = claimed;
           })
         : Promise.resolve(),
-      loadIndexerTokenData ? this.getIndexerTokenData() : Promise.resolve(),
-      loadLogoURI ? this.loadLogoURI() : Promise.resolve(),
+      loadIndexerTokenData
+        ? this.getIndexerTokenData({ force })
+        : Promise.resolve(),
+      loadLogoURI ? this.loadLogoURI(force) : Promise.resolve(),
     ]).catch((e) => {
       console.log(e);
       return;
@@ -231,6 +254,91 @@ export class Token implements BaseContract {
     this.isInit = true;
 
     return this;
+  }
+
+  async loadName(force?: boolean) {
+    if (this.address === zeroAddress || this.isNative) {
+      this.name = wallet.currentChain.nativeToken.name;
+      return;
+    }
+
+    if (!force) {
+      const cachedName = localStorage.getItem(
+        `token-name-${this.address.toLowerCase()}`
+      );
+      if (!!cachedName && cachedName !== "null" && cachedName !== "undefined") {
+        this.name = cachedName;
+        return;
+      }
+    }
+
+    const name = await this.contract.read.name();
+
+    this.name = name;
+
+    localStorage.setItem(
+      `token-name-${wallet.currentChainId}-${this.address.toLowerCase()}`,
+      name
+    );
+
+    return name;
+  }
+
+  async loadSymbol(force?: boolean) {
+    if (this.isNative || this.address === zeroAddress) {
+      this.symbol = wallet.currentChain.nativeToken.symbol;
+      return;
+    }
+
+    if (!force) {
+      const cachedSymbol = localStorage.getItem(
+        `token-symbol-${wallet.currentChainId}-${this.address.toLowerCase()}`
+      );
+      if (
+        !!cachedSymbol &&
+        cachedSymbol !== "null" &&
+        cachedSymbol !== "undefined"
+      ) {
+        this.symbol = cachedSymbol;
+        return;
+      }
+    }
+
+    const symbol = await this.contract.read.symbol();
+    this.symbol = symbol;
+
+    localStorage.setItem(
+      `token-symbol-${wallet.currentChainId}-${this.address.toLowerCase()}`,
+      symbol
+    );
+
+    return symbol;
+  }
+
+  async loadDecimals(force?: boolean) {
+    if (!force) {
+      const cachedDecimals = localStorage.getItem(
+        `token-decimals-${wallet.currentChainId}-${this.address.toLowerCase()}`
+      );
+      if (
+        !!cachedDecimals &&
+        cachedDecimals !== "null" &&
+        cachedDecimals !== "undefined"
+      ) {
+        this.decimals = parseInt(cachedDecimals);
+        return;
+      }
+    }
+
+    const decimals = await this.contract.read.decimals();
+    this.decimals = decimals;
+
+    localStorage.setItem(
+      `token-decimals-${wallet.currentChainId}-${this.address.toLowerCase()}`,
+      decimals.toString()
+    );
+
+    return decimals;
   }
 
   async approveIfNoAllowance({
@@ -281,6 +389,9 @@ export class Token implements BaseContract {
   }
 
   async getBalance() {
+    if (this.isNative) {
+      return wallet.balance;
+    }
     try {
       const balance = this.isNative
         ? await wallet.publicClient.getBalance({
@@ -295,9 +406,26 @@ export class Token implements BaseContract {
     }
   }
 
-  async getTotalSupply() {
+  async getTotalSupply(force?: boolean) {
+    if (!force) {
+      const cachedTotalSupply = localStorage.getItem(
+        `token-totalSupply-${wallet.currentChainId}-${this.address.toLowerCase()}`
+      );
+      if (cachedTotalSupply) {
+        this.totalSupplyWithoutDecimals = new BigNumber(cachedTotalSupply);
+        return this.totalSupplyWithoutDecimals;
+      }
+    }
+
     const totalSupply = await this.contract.read.totalSupply();
+
     this.totalSupplyWithoutDecimals = new BigNumber(totalSupply.toString());
+
+    localStorage.setItem(
+      `token-totalSupply-${wallet.currentChainId}-${this.address.toLowerCase()}`,
+      totalSupply.toString()
+    );
+
     return this.totalSupplyWithoutDecimals;
   }
 
@@ -340,7 +468,7 @@ export class Token implements BaseContract {
     return this.supportingFeeOnTransferTokens;
   }
 
-  async getIndexerTokenData(option?: { force: boolean }) {
+  async getIndexerTokenData(option?: { force?: boolean }) {
     if (this.isNative) {
       return;
     }
@@ -369,12 +497,17 @@ export class Token implements BaseContract {
 
     console.log(indexerTokenData.token);
 
-    Object.assign(this, {
-      ...indexerTokenData.token,
-      address: indexerTokenData.token?.id,
-      decimals: indexerTokenData.token?.decimals.toString(),
-      derivedETH: indexerTokenData.token?.derivedMatic,
-    });
+    if (indexerTokenData.token) {
+      //exclude marketCap,
+      const { marketCap, ...rest } = indexerTokenData.token;
+
+      Object.assign(this, {
+        ...rest,
+        address: indexerTokenData.token?.id,
+        decimals: indexerTokenData.token?.decimals.toString(),
+        derivedETH: indexerTokenData.token?.derivedMatic,
+      });
+    }
 
     this.indexerDataLoaded = true;
   }

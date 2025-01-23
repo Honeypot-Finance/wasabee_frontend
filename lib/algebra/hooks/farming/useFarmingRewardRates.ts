@@ -1,4 +1,4 @@
-import { formatAmount } from "../../utils/common/formatAmount";
+import { formatAmountWithAlphabetSymbol } from "../../utils/common/formatAmount";
 import { Farming } from "@/types/algebra/types/farming-info";
 import { useReadAlgebraVirtualPoolRewardRates } from "@/wagmi-generated";
 import { formatUnits } from "viem";
@@ -27,8 +27,17 @@ export function useFarmingRewardRates(farming: Farming) {
   const sumOfRewardRates = rewardRatePerDay + bonusRewardRatePerDay;
 
   return {
-    sumOfRewardRates: formatAmount(sumOfRewardRates.toString(), 4),
-    rewardRatePerDay: formatAmount(rewardRatePerDay.toString(), 4),
-    bonusRewardRatePerDay: formatAmount(bonusRewardRatePerDay.toString(), 4),
+    sumOfRewardRates: formatAmountWithAlphabetSymbol(
+      sumOfRewardRates.toString(),
+      4
+    ),
+    rewardRatePerDay: formatAmountWithAlphabetSymbol(
+      rewardRatePerDay.toString(),
+      4
+    ),
+    bonusRewardRatePerDay: formatAmountWithAlphabetSymbol(
+      bonusRewardRatePerDay.toString(),
+      4
+    ),
   };
 }

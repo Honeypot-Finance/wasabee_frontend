@@ -1,4 +1,3 @@
-import { HoneyContainer } from "@/components/CardContianer";
 import { PriceChart } from "@/components/PriceChart/PriceChart";
 import { UserPoolProfit } from "@/lib/algebra/graphql/clients/userProfit";
 import { UTCTimestamp } from "lightweight-charts";
@@ -7,11 +6,13 @@ import { useMemo } from "react";
 
 export const ProtfolioBalanceChart = observer(
   ({
-    userPoolsProfits,
     timeRange,
+    userPoolsProfits,
+    onTimeRangeChange,
   }: {
-    userPoolsProfits: UserPoolProfit[];
     timeRange: "1D" | "1W" | "1M";
+    userPoolsProfits: UserPoolProfit[];
+    onTimeRangeChange: (range: "1D" | "1W" | "1M") => void;
   }) => {
     const chartData = useMemo(() => {
       const now = new Date();
@@ -59,15 +60,13 @@ export const ProtfolioBalanceChart = observer(
     }, [userPoolsProfits, timeRange]);
 
     return (
-      <HoneyContainer>
-        <h3 className="text-white text-2xl font-bold">Fees Gained</h3>
-        <PriceChart
-          data={chartData}
-          width={300}
-          height={120}
-          timeRange={timeRange}
-        />
-      </HoneyContainer>
+      <PriceChart
+        width={511}
+        height={280}
+        data={chartData}
+        timeRange={timeRange}
+        onTimeRangeChange={onTimeRangeChange}
+      />
     );
   }
 );

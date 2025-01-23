@@ -8,6 +8,7 @@ export function AquaberaList() {
       <Tabs
         classNames={{
           base: "w-full",
+          panel: "w-full",
         }}
       >
         <Tab key={"all"} title="Vaults" className="w-full">

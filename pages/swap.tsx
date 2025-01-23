@@ -10,7 +10,7 @@ import { useSearchParams } from "next/navigation";
 import { itemPopUpVariants } from "@/lib/animation";
 import { DarkContainer } from "@/components/CardContianer";
 import V3SwapCard from "@/components/algebra/swap/V3SwapCard";
-import KlineChart from "./launch-detail/componets/KlineChart";
+import KlineChart from "./launch-detail/components/KlineChart";
 import LoadingDisplay from "@/components/LoadingDisplay/LoadingDisplay";
 import SwapTransactionHistory from "@/components/SwapTransactionHistory";
 

@@ -227,14 +227,6 @@ class Vault {
     await Promise.all([this.tokenA?.getBalance(), this.tokenB?.getBalance()]);
   });
 
-  collectFees = new AsyncState(async () => {
-    if (!this.vaultContract) {
-      return;
-    }
-
-    await this.vaultContract.collectFees();
-  });
-
   // Helper methods
   private onAmountChange = async () => {
     this.getNeedApprove("A");

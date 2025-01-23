@@ -14,11 +14,17 @@ import { FaSlidersH } from "react-icons/fa";
 import { FilterState } from "@/constants/pot2pump.type";
 import FilterItem from "./components/FilterItem";
 import { defaultFilterState } from "@/constants/pot2pump";
+import { useState } from "react";
 
 interface FilterProps {
   filters: FilterState;
   setFilters: (filters: FilterState) => void;
   pumpingProjects?: Pot2PumpPumpingService | Pot2PumpService;
+  filtersList: {
+    key: number;
+    label: string;
+    category: category;
+  }[];
 }
 
 type category =
@@ -30,75 +36,25 @@ type category =
   | "daybuys"
   | "daysells"
   | "dayvolume"
-  | "daychange";
+  | "daychange"
+  | "depositraisedtoken";
 
-const filtersList: {
-  key: number;
-  label: string;
-  category: category;
-}[] = [
-  {
-    key: 0,
-    label: "TVL (USD)",
-    category: "tvl",
-  },
-  {
-    key: 1,
-    label: "Liquidity",
-    category: "liquidity",
-  },
-  {
-    key: 2,
-    label: "Participants Count",
-    category: "participants",
-  },
-  {
-    key: 3,
-    label: "Market cap",
-    category: "marketcap",
-  },
-  {
-    key: 4,
-    label: "24H txns",
-    category: "daytxns",
-  },
-  {
-    key: 5,
-    label: "24H buys",
-    category: "daybuys",
-  },
-  {
-    key: 6,
-    label: "24H sells",
-    category: "daysells",
-  },
-  {
-    key: 7,
-    label: "24H volume",
-    category: "dayvolume",
-  },
-  {
-    key: 8,
-    label: "24H change (%)",
-    category: "daychange",
-  },
-];
 export const Filter = observer(
-  ({ filters, setFilters, pumpingProjects }: FilterProps) => {
+  ({ filters, setFilters, pumpingProjects, filtersList }: FilterProps) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [filterState, setFilterState] = useState(filters);
 
     const onChange =
       (category: category) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const regex = /^\d*\.?\d*$/;
-        console.log(e.target.value, regex.test(e.target.value));
         if (regex.test(e.target.value)) {
-          setFilters({
-            ...filters,
+          setFilterState((prev) => ({
+            ...prev,
             [category]: {
-              ...filters[category],
+              ...prev[category],
               [e.target.name]: e.target.value,
             },
-          });
+          }));
         }
       };
 
@@ -133,7 +89,7 @@ export const Filter = observer(
                   <div
                     className="!font-normal text-black cursor-pointer p-1"
                     onClick={() => {
-                      setFilters(defaultFilterState);
+                      setFilterState(defaultFilterState);
                       onOpenChange();
                     }}
                   >
@@ -148,8 +104,8 @@ export const Filter = observer(
                         key={filter.key}
                         label={filter.label}
                         onChange={onChange(filter.category)}
-                        min={filters[filter.category].min}
-                        max={filters[filter.category].max}
+                        min={filterState[filter.category].min}
+                        max={filterState[filter.category].max}
                       />
                     ))}
                   </div>
@@ -159,26 +115,7 @@ export const Filter = observer(
                   <Button
                     className="w-full"
                     onPress={() => {
-                      if (pumpingProjects) {
-                        pumpingProjects.projectsPage.updateFilter({
-                          tvlRange: {
-                            min: filters.tvl.min
-                              ? Number(filters.tvl.min)
-                              : undefined,
-                            max: filters.tvl.max
-                              ? Number(filters.tvl.max)
-                              : undefined,
-                          },
-                          participantsRange: {
-                            min: filters.participants.min
-                              ? Number(filters.participants.min)
-                              : undefined,
-                            max: filters.participants.max
-                              ? Number(filters.participants.max)
-                              : undefined,
-                          },
-                        });
-                      }
+                      setFilters(filterState);
                       onClose();
                     }}
                   >

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import launchpad from "@/services/launchpad";
 import { NextLayoutPage } from "@/types/nextjs";
 import { AsyncState } from "@/services/utils";
-import { FtoPairContract } from "@/services/contract/ftopair-contract";
+import { FtoPairContract } from "@/services/contract/launches/fto/ftopair-contract";
 import { wallet } from "@/services/wallet";
 import { Button } from "@/components/button/button-next";
 import Image from "next/image";
@@ -26,19 +26,20 @@ import PairStatus from "@/components/atoms/TokenStatusDisplay/PairStatus";
 import { UploadImage } from "@/components/UploadImage/UploadImage";
 import { useAccount } from "wagmi";
 import { chart } from "@/services/chart";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import { WrappedToastify } from "@/lib/wrappedToastify";
-import Action from "./componets/Action";
-import Tabs from "./componets/Tabs";
-import CountdownTimer from "./componets/Countdown";
-import ProjectTitle from "./componets/ProjectTitle";
-import TokenRaised from "./componets/TokenRaised";
-import SaleProgress from "./componets/SaleProgress";
-import TokenAddress from "./componets/TokenAddress";
-import TokenDetails from "./componets/TokenDetails";
-import KlineChart from "./componets/KlineChart";
-import { LaunchDataProgress } from "./componets/LaunchDataProgress";
+import Action from "./components/Action";
+import Tabs from "./components/Tabs";
+import CountdownTimer from "./components/Countdown";
+import ProjectTitle from "./components/ProjectTitle";
+import TokenRaised from "./components/TokenRaised";
+import SaleProgress from "./components/SaleProgress";
+import TokenAddress from "./components/TokenAddress";
+import TokenDetails from "./components/TokenDetails";
+import KlineChart from "./components/KlineChart";
+import { LaunchDataProgress } from "./components/LaunchDataProgress";
 import { cn } from "@/lib/tailwindcss";
+import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
 
 export const UpdateProjectModal = observer(
   ({ pair }: { pair: FtoPairContract | MemePairContract }) => {
@@ -250,7 +251,302 @@ export const UpdateProjectModal = observer(
   }
 );
 
-const FtoView = observer(() => {
+// const FtoView = observer(() => {
+//   const router = useRouter();
+//   const [refreshTrigger, setRefreshTrigger] = useState(0);
+//   const triggerRefresh = useCallback(() => {
+//     setRefreshTrigger((prev) => prev + 1);
+//   }, []);
+
+//   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+//   const { pair: pairAddress } = router.query;
+//   const [votes, setVotes] = useState({
+//     rocket_count: 0,
+//     fire_count: 0,
+//     poo_count: 0,
+//     flag_count: 0,
+//   });
+//   const state = useLocalObservable(() => ({
+//     pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
+//       const pairInfo = await trpcClient.projects.getProjectInfo.query({
+//         pair: pairAddress,
+//         chain_id: wallet.currentChainId,
+//       });
+
+//       const pair =
+//         pairInfo?.project_type === "meme"
+//           ? new MemePairContract({ address: pairAddress as string })
+//           : new FtoPairContract({ address: pairAddress as string });
+//       console.log(pair);
+//       await pair.init();
+//       pair.raiseToken?.init(true, {
+//         loadIndexerTokenData: true,
+//       });
+//       pair.launchedToken?.init(true, {
+//         loadIndexerTokenData: true,
+//       });
+//       return pair;
+//     }),
+//   }));
+
+//   const account = useAccount();
+
+//   // remind provider to edit project details
+//   useEffect(() => {
+//     if (
+//       !state.pair.value ||
+//       !state.pair.value.isInit ||
+//       !state.pair.value.isProvider
+//     )
+//       return;
+
+//     if (
+//       !state.pair.value.logoUrl ||
+//       !state.pair.value.projectName ||
+//       !state.pair.value.description ||
+//       !state.pair.value.twitter ||
+//       !state.pair.value.website ||
+//       !state.pair.value.telegram
+//     ) {
+//       WrappedToastify.warn({
+//         message: (
+//           <div>
+//             <ul className="list-disc list-inside">
+//               {!state.pair.value.logoUrl && (
+//                 <li className="text-orange-400">no icon</li>
+//               )}
+//               {!state.pair.value.projectName && (
+//                 <li className="text-orange-400">no project name</li>
+//               )}
+//               {!state.pair.value.description && (
+//                 <li className="text-orange-400">no description</li>
+//               )}
+//               {!state.pair.value.twitter && (
+//                 <li className="text-orange-400">no twitter link</li>
+//               )}
+//               {!state.pair.value.website && (
+//                 <li className="text-orange-400">no website link</li>
+//               )}
+//               {!state.pair.value.telegram && (
+//                 <li className="text-orange-400">no telegram link</li>
+//               )}
+//             </ul>
+//             <p>
+//               Click{" "}
+//               <span
+//                 onClick={() => {
+//                   onOpen();
+//                   toast.dismiss();
+//                 }}
+//                 className="text-blue-500 cursor-pointer"
+//               >
+//                 here
+//               </span>{" "}
+//               to update the project
+//             </p>
+//           </div>
+//         ),
+//         options: {
+//           autoClose: false,
+//         },
+//       });
+//       return () => toast.dismiss();
+//     }
+//   }, [
+//     pairAddress,
+//     account.address,
+//     state.pair.value?.isProvider,
+//     state.pair.value,
+//     onOpen,
+//   ]);
+
+//   useEffect(() => {
+//     if (!wallet.isInit || !pairAddress) {
+//       return;
+//     }
+//     state.pair
+//       .call({
+//         pairAddress: pairAddress as string,
+//       })
+//       .then(() => {
+//         console.log("social: ", state.pair.value?.socials);
+//       });
+
+//     refreshVotes();
+//   }, [wallet.isInit, pairAddress]);
+
+//   useEffect(() => {
+//     if (!state.pair.value) {
+//       return;
+//     }
+//     chart.setCurrencyCode("USD");
+//     chart.setTokenNumber(0);
+//     chart.setChartTarget(state.pair.value?.launchedToken ?? undefined);
+//     chart.setChartLabel(state.pair.value?.launchedToken?.displayName + "/USD");
+//   }, [state.pair.value]);
+
+//   const pair = useMemo(() => state.pair.value, [state.pair.value]);
+
+//   // useEffect(() => {
+//   //   if (!state.pair.value) return;
+//   //   if (router.query.edit == "true" && state.pair.value?.isProvider) {
+//   //     onOpen();
+//   //   }
+//   // }, [onOpen, router.query, state.pair.value, state.pair.value?.isProvider]);
+
+//   function refreshVotes() {
+//     trpcClient.projects.getProjectVotes
+//       .query({ pair: pairAddress as string })
+//       .then((data) => {
+//         setVotes(data);
+//       });
+//   }
+
+//   return (
+//     <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
+//       {state.pair.value && (
+//         <Modal
+//           isOpen={isOpen}
+//           onOpenChange={onOpenChange}
+//           classNames={{
+//             base: "max-h-[70vh] overflow-y-scroll",
+//           }}
+//         >
+//           <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
+//         </Modal>
+//       )}
+//       <div className="grid grid-cols-2 gap-4 xl:w-[1170px]">
+//         <div className="bg-[#271A0C] col-span-2 px-5 py-2.5 rounded-[30px] flex md:items-center md:justify-between md:flex-row flex-col gap-2 md:gap-0">
+//           <div className="flex items-center gap-x-4 md:gap-x-[7.5px]">
+//             <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
+//               <Image
+//                 alt={state.pair.value?.launchedToken?.name || "honey"}
+//                 width={state.pair.value?.logoUrl ? 77 : 44}
+//                 height={state.pair.value?.logoUrl ? 77 : 44}
+//                 className="rounded-full hidden md:inline-block"
+//                 src={
+//                   !!state.pair.value?.logoUrl
+//                     ? state.pair.value.logoUrl
+//                     : "/images/project_honey.png"
+//                 }
+//               />
+//               <Image
+//                 alt={state.pair.value?.launchedToken?.name || "honey"}
+//                 width={20}
+//                 height={20}
+//                 className="rounded-full md:hidden"
+//                 src={
+//                   !!state.pair.value?.logoUrl
+//                     ? state.pair.value.logoUrl
+//                     : "/images/project_honey.png"
+//                 }
+//               />
+//             </div>
+//             <ProjectTitle
+//               name={pair?.launchedToken?.name}
+//               displayName={pair?.launchedToken?.displayName}
+//               telegram={pair?.telegram}
+//               twitter={pair?.twitter}
+//               website={pair?.website}
+//               address={pair?.launchedToken?.address}
+//               statusColor={pair?.ftoStatusDisplay?.color}
+//               status={pair?.ftoStatusDisplay?.status}
+//               isValidated={pair?.isValidated}
+//             />
+//           </div>
+//           <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
+//             <CountdownTimer
+//               endTime={pair?.endTime}
+//               ftoState={state.pair.value?.state}
+//               endTimeDisplay={state.pair.value?.endTimeDisplay}
+//             />
+//             <PairStatus
+//               statusColor={pair?.ftoStatusDisplay?.color}
+//               status={pair?.ftoStatusDisplay?.status}
+//               isValidated={pair?.isValidated}
+//             />
+//           </div>
+//         </div>
+//         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+//           <TokenRaised
+//             depositedRaisedToken={pair?.depositedRaisedToken}
+//             raiseTokenDerivedUSD={pair?.raiseToken?.derivedUSD}
+//             raisedTokenMinCap={pair?.raiseToken?.balance}
+//             raiseTokenDecimals={pair?.raiseToken?.decimals}
+//           />
+
+//           <SaleProgress
+//             ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+//             raiseTokenBalance={pair?.raiseToken?.balance}
+//             raiseTokenDecimals={pair?.raiseToken?.decimals}
+//             depositedRaisedToken={pair?.depositedRaisedToken}
+//             raiseTokenSymbol={pair?.raiseToken?.symbol || ""}
+//           />
+
+//           <TokenAddress address={pair?.launchedToken?.address} />
+
+//           <TokenDetails
+//             price={pair?.price}
+//             depositedRaisedToken={pair?.depositedRaisedToken}
+//             startTimeDisplay={pair?.startTimeDisplay}
+//             endTimeDisplay={pair?.endTimeDisplay}
+//           />
+
+//           <hr />
+//           <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
+//           <div className="flex gap-5">
+//             {Object.entries(votes).map(([key, value]) => {
+//               return (
+//                 <div
+//                   key={key}
+//                   onClick={() => {
+//                     if (!wallet.account || !state.pair.value?.address) return;
+
+//                     trpcClient.projects.createOrUpdateProjectVotes
+//                       .mutate({
+//                         project_pair: state.pair.value?.address,
+//                         wallet_address: wallet.account,
+//                         vote: key.split("_")[0],
+//                       })
+//                       .then(() => {
+//                         refreshVotes();
+//                       });
+//                   }}
+//                   className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
+//                 >
+//                   <p>
+//                     {(key.split("_")[0] === "rocket" && "🚀") ||
+//                       (key.split("_")[0] === "fire" && "🔥") ||
+//                       (key.split("_")[0] === "poo" && "💩") ||
+//                       (key.split("_")[0] === "flag" && "🚩")}
+//                   </p>
+//                   <p>{value}</p>
+//                 </div>
+//               );
+//             })}
+//           </div>
+//         </div>
+//         <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+//           {pair && <Action pair={pair} refreshTxsCallback={triggerRefresh} />}
+//         </div>
+//       </div>
+
+//       <div className="w-full flex items-center justify-between my-4 md:my-12">
+//         <div className="text-lg md:text-xl">Project Details</div>
+//         <div className="flex items-center gap-x-1">
+//           <Logo />
+//           <span className='text-[#FFCD4D] [font-family:"Bebas_Neue"] text-lg md:text-3xl'>
+//             Honeypot Finance
+//           </span>
+//         </div>
+//       </div>
+
+//       <Tabs pair={pair} refreshTrigger={refreshTrigger} />
+//     </div>
+//   );
+// });
+
+const MemeView = observer(({ pairAddress }: { pairAddress: string }) => {
   const router = useRouter();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const triggerRefresh = useCallback(() => {
@@ -258,312 +554,23 @@ const FtoView = observer(() => {
   }, []);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { pair: pairAddress } = router.query;
-  const [votes, setVotes] = useState({
-    rocket_count: 0,
-    fire_count: 0,
-    poo_count: 0,
-    flag_count: 0,
-  });
-  const state = useLocalObservable(() => ({
-    pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
-      const pairInfo = await trpcClient.projects.getProjectInfo.query({
-        pair: pairAddress,
-        chain_id: wallet.currentChainId,
-      });
-
-      const pair =
-        pairInfo?.project_type === "meme"
-          ? new MemePairContract({ address: pairAddress as string })
-          : new FtoPairContract({ address: pairAddress as string });
-      console.log(pair);
-      await pair.init();
-      pair.raiseToken?.init(true, {
-        loadIndexerTokenData: true,
-      });
-      pair.launchedToken?.init(true, {
-        loadIndexerTokenData: true,
-      });
-      return pair;
-    }),
-  }));
-
-  const account = useAccount();
-
-  // remind provider to edit project details
-  useEffect(() => {
-    if (
-      !state.pair.value ||
-      !state.pair.value.isInit ||
-      !state.pair.value.isProvider
-    )
-      return;
-
-    if (
-      !state.pair.value.logoUrl ||
-      !state.pair.value.projectName ||
-      !state.pair.value.description ||
-      !state.pair.value.twitter ||
-      !state.pair.value.website ||
-      !state.pair.value.telegram
-    ) {
-      WrappedToastify.warn({
-        message: (
-          <div>
-            <ul className="list-disc list-inside">
-              {!state.pair.value.logoUrl && (
-                <li className="text-orange-400">no icon</li>
-              )}
-              {!state.pair.value.projectName && (
-                <li className="text-orange-400">no project name</li>
-              )}
-              {!state.pair.value.description && (
-                <li className="text-orange-400">no description</li>
-              )}
-              {!state.pair.value.twitter && (
-                <li className="text-orange-400">no twitter link</li>
-              )}
-              {!state.pair.value.website && (
-                <li className="text-orange-400">no website link</li>
-              )}
-              {!state.pair.value.telegram && (
-                <li className="text-orange-400">no telegram link</li>
-              )}
-            </ul>
-            <p>
-              Click{" "}
-              <span
-                onClick={() => {
-                  onOpen();
-                  toast.dismiss();
-                }}
-                className="text-blue-500 cursor-pointer"
-              >
-                here
-              </span>{" "}
-              to update the project
-            </p>
-          </div>
-        ),
-        options: {
-          autoClose: false,
-        },
-      });
-      return () => toast.dismiss();
-    }
-  }, [
-    pairAddress,
-    account.address,
-    state.pair.value?.isProvider,
-    state.pair.value,
-    onOpen,
-  ]);
-
-  useEffect(() => {
-    if (!wallet.isInit || !pairAddress) {
-      return;
-    }
-    state.pair
-      .call({
-        pairAddress: pairAddress as string,
-      })
-      .then(() => {
-        console.log("social: ", state.pair.value?.socials);
-      });
-
-    refreshVotes();
-  }, [wallet.isInit, pairAddress]);
-
-  useEffect(() => {
-    if (!state.pair.value) {
-      return;
-    }
-    chart.setCurrencyCode("USD");
-    chart.setTokenNumber(0);
-    chart.setChartTarget(state.pair.value?.launchedToken ?? undefined);
-    chart.setChartLabel(state.pair.value?.launchedToken?.displayName + "/USD");
-  }, [state.pair.value]);
-
-  const pair = useMemo(() => state.pair.value, [state.pair.value]);
-
-  // useEffect(() => {
-  //   if (!state.pair.value) return;
-  //   if (router.query.edit == "true" && state.pair.value?.isProvider) {
-  //     onOpen();
-  //   }
-  // }, [onOpen, router.query, state.pair.value, state.pair.value?.isProvider]);
-
-  function refreshVotes() {
-    trpcClient.projects.getProjectVotes
-      .query({ pair: pairAddress as string })
-      .then((data) => {
-        setVotes(data);
-      });
-  }
-
-  return (
-    <div className="px-2 md:px-6 xl:max-w-[1200px] mx-auto pb-[20vh]">
-      {state.pair.value && (
-        <Modal
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
-          classNames={{
-            base: "max-h-[70vh] overflow-y-scroll",
-          }}
-        >
-          <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
-        </Modal>
-      )}
-      <div className="grid grid-cols-2 gap-4 xl:w-[1170px]">
-        <div className="bg-[#271A0C] col-span-2 px-5 py-2.5 rounded-[30px] flex md:items-center md:justify-between md:flex-row flex-col gap-2 md:gap-0">
-          <div className="flex items-center gap-x-4 md:gap-x-[7.5px]">
-            <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
-              <Image
-                alt={state.pair.value?.launchedToken?.name || "honey"}
-                width={state.pair.value?.logoUrl ? 77 : 44}
-                height={state.pair.value?.logoUrl ? 77 : 44}
-                className="rounded-full hidden md:inline-block"
-                src={
-                  !!state.pair.value?.logoUrl
-                    ? state.pair.value.logoUrl
-                    : "/images/project_honey.png"
-                }
-              />
-              <Image
-                alt={state.pair.value?.launchedToken?.name || "honey"}
-                width={20}
-                height={20}
-                className="rounded-full md:hidden"
-                src={
-                  !!state.pair.value?.logoUrl
-                    ? state.pair.value.logoUrl
-                    : "/images/project_honey.png"
-                }
-              />
-            </div>
-            <ProjectTitle
-              name={pair?.launchedToken?.name}
-              displayName={pair?.launchedToken?.displayName}
-              telegram={pair?.telegram}
-              twitter={pair?.twitter}
-              website={pair?.website}
-              address={pair?.launchedToken?.address}
-            />
-          </div>
-          <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
-            <CountdownTimer
-              endTime={pair?.endTime}
-              ftoState={state.pair.value?.state}
-              endTimeDisplay={state.pair.value?.endTimeDisplay}
-            />
-            <PairStatus
-              ftoStatusDisplayColor={pair?.ftoStatusDisplay?.color}
-              ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
-              isValidated={pair?.isValidated}
-            />
-          </div>
-        </div>
-        <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-          <TokenRaised
-            depositedRaisedToken={pair?.depositedRaisedToken}
-            raiseTokenDerivedUSD={pair?.raiseToken?.derivedUSD}
-            raisedTokenMinCap={pair?.raiseToken?.balance}
-            raiseTokenDecimals={pair?.raiseToken?.decimals}
-          />
-
-          <SaleProgress
-            ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
-            raiseTokenBalance={pair?.raiseToken?.balance}
-            raiseTokenDecimals={pair?.raiseToken?.decimals}
-            depositedRaisedToken={pair?.depositedRaisedToken}
-            raiseTokenSymbol={pair?.raiseToken?.symbol || ""}
-          />
-
-          <TokenAddress address={pair?.launchedToken?.address} />
-
-          <TokenDetails
-            price={pair?.price}
-            depositedRaisedToken={pair?.depositedRaisedToken}
-            startTimeDisplay={pair?.startTimeDisplay}
-            endTimeDisplay={pair?.endTimeDisplay}
-          />
-
-          <hr />
-          <p className="text-white/65 text-sm mt-2.5">Rank Project</p>
-          <div className="flex gap-5">
-            {Object.entries(votes).map(([key, value]) => {
-              return (
-                <div
-                  key={key}
-                  onClick={() => {
-                    if (!wallet.account || !state.pair.value?.address) return;
-
-                    trpcClient.projects.createOrUpdateProjectVotes
-                      .mutate({
-                        project_pair: state.pair.value?.address,
-                        wallet_address: wallet.account,
-                        vote: key.split("_")[0],
-                      })
-                      .then(() => {
-                        refreshVotes();
-                      });
-                  }}
-                  className="mt-[8px] flex-1 flex flex-col  justify-center items-center [background:#3B2912] px-3 py-3 rounded-[10px] hover:[background:#FFCD4D] active:[background:#F0A000] cursor-pointer select-none"
-                >
-                  <p>
-                    {(key.split("_")[0] === "rocket" && "🚀") ||
-                      (key.split("_")[0] === "fire" && "🔥") ||
-                      (key.split("_")[0] === "poo" && "💩") ||
-                      (key.split("_")[0] === "flag" && "🚩")}
-                  </p>
-                  <p>{value}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        <div className="bg-[#271A0C] p-5 rounded-2xl space-y-3 col-span-2 lg:col-span-1">
-          {pair && <Action pair={pair} refreshTxsCallback={triggerRefresh} />}
-        </div>
-      </div>
-
-      <div className="w-full flex items-center justify-between my-4 md:my-12">
-        <div className="text-lg md:text-xl">Project Details</div>
-        <div className="flex items-center gap-x-1">
-          <Logo />
-          <span className='text-[#FFCD4D] [font-family:"Bebas_Neue"] text-lg md:text-3xl'>
-            Honeypot Finance
-          </span>
-        </div>
-      </div>
-
-      <Tabs pair={pair} refreshTrigger={refreshTrigger} />
-    </div>
-  );
-});
-
-const MemeView = observer(() => {
-  const router = useRouter();
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const triggerRefresh = useCallback(() => {
-    console.log("triggerRefresh");
-    setRefreshTrigger((prev) => prev + 1);
-  }, []);
-
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { pair: pairAddress } = router.query;
 
   const state = useLocalObservable(() => ({
     pair: new AsyncState(async ({ pairAddress }: { pairAddress: string }) => {
-      const pair = new MemePairContract({ address: pairAddress as string });
-      await pair.init();
-      pair.raiseToken?.init(true, {
+      const pair = MemePairContract.loadContract(pairAddress, {
+        address: pairAddress as string,
+      });
+
+      await pair.init({ force: true });
+
+      pair.raiseToken?.init(false, {
         loadIndexerTokenData: true,
       });
-      pair.launchedToken?.init(true, {
+
+      pair.launchedToken?.init(false, {
         loadIndexerTokenData: true,
       });
-      console.log(pair);
+
       return pair;
     }),
   }));
@@ -645,12 +652,11 @@ const MemeView = observer(() => {
       return;
     }
 
-    console.log("pairAddress", pairAddress);
-
     state.pair.call({
       pairAddress: pairAddress as string,
     });
   }, [wallet.isInit, pairAddress]);
+
   useEffect(() => {
     if (!state.pair.value?.launchedToken) {
       return;
@@ -679,9 +685,13 @@ const MemeView = observer(() => {
             <UpdateProjectModal pair={state.pair.value}></UpdateProjectModal>
           </Modal>
         )}
-        <div className="grid grid-cols-[1fr_500px] gap-x-4 gap-y-14 w-full">
-          <div className="bg-white col-span-2 px-8 py-5 rounded-3xl flex md:items-center md:justify-between md:flex-row flex-col gap-2 md:gap-0 text-black">
-            <div className="flex items-center justify-between gap-x-4 md:gap-x-[7.5px]">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_500px] gap-4 md:gap-x-4 md:gap-y-14 w-full @container">
+          <div
+            className={cn(
+              "bg-white col-span-1 lg:col-span-2 px-4 md:px-8 py-3 md:py-5 rounded-3xl flex md:items-center flex-col @[450px]:flex-row justify-between gap-2 md:gap-0 text-black"
+            )}
+          >
+            <div className="flex items-center gap-x-4 md:gap-x-[7.5px] justify-center sm:justify-start">
               <div className="size-10 md:size-[77px] bg-[#ECC94E] flex items-center justify-center rounded-full">
                 <Image
                   alt={state.pair.value?.launchedToken?.name || "honey"}
@@ -702,25 +712,161 @@ const MemeView = observer(() => {
                 twitter={pair?.twitter}
                 website={pair?.website}
                 address={pair?.launchedToken?.address}
-              />
-            </div>
-            <CountdownTimer
-              endTime={pair?.endTime}
-              ftoState={state.pair.value?.state}
-              endTimeDisplay={state.pair.value?.endTimeDisplay}
-            />
-            <div className="flex items-center md:gap-x-8 gap-x-0 justify-between md:justify-start">
-              <PairStatus
-                ftoStatusDisplayColor={pair?.ftoStatusDisplay?.color}
-                ftoStatusDisplayStatus={pair?.ftoStatusDisplay?.status}
+                statusColor={pair?.ftoStatusDisplay?.color}
+                status={pair?.ftoStatusDisplay?.status}
                 isValidated={pair?.isValidated}
               />
+            </div>
+            <div className="md:block hidden">
+              {state.pair.value?.state !== 0 && (
+                <CountdownTimer
+                  endTime={pair?.endTime}
+                  ftoState={state.pair.value?.state}
+                  endTimeDisplay={state.pair.value?.endTimeDisplay}
+                />
+              )}
+            </div>
+            <div className="flex flex-col md:flex-row items-center gap-3 md:gap-8">
+              <div className="md:hidden block">
+                {state.pair.value?.state !== 0 && (
+                  <CountdownTimer
+                    endTime={pair?.endTime}
+                    ftoState={state.pair.value?.state}
+                    endTimeDisplay={state.pair.value?.endTimeDisplay}
+                  />
+                )}
+              </div>
+              {state.pair.value?.state !== 0 ? (
+                <div className="flex flex-wrap items-center justify-center gap-x-4 md:gap-x-6 gap-y-2 md:gap-y-3 text-xs">
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Current Raise
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      $
+                      {Number(pair?.depositedRaisedToken || 0).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Participants
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      {Number(pair?.participantsCount || 0).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-wrap items-center justify-center gap-x-3 md:gap-x-6 gap-y-2 md:gap-y-3 text-xs w-full md:w-[400px]">
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      24H
+                    </span>
+                    <span
+                      className={cn(
+                        "text-sm md:text-[15px] font-bold",
+                        pair?.priceChangeDisplay?.startsWith("-")
+                          ? "text-red-500"
+                          : "text-green-500"
+                      )}
+                    >
+                      {pair?.priceChangeDisplay}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      MCap
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      $
+                      {Number(pair?.marketValue || 0).toLocaleString(
+                        undefined,
+                        {
+                          maximumFractionDigits: 2,
+                        }
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Price
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      $
+                      {DynamicFormatAmount({
+                        amount: pair?.launchedToken?.derivedUSD ?? "0",
+                        decimals: 5,
+                      })}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Volume
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      $
+                      {Number(
+                        pair?.launchedToken?.volumeUSD || 0
+                      ).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      TVL
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      $
+                      {Number(
+                        pair?.launchedToken?.totalValueLockedUSD || 0
+                      ).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Position Count
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      {pair?.launchedToken?.poolCount || 0}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Buys
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      {Number(
+                        pair?.launchedTokenBuyCount || 0
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Sells
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      {Number(
+                        pair?.launchedTokenSellCount || 0
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 md:gap-1.5">
+                    <span className="text-[10px] md:text-[11px] text-[#5C5C5C]/60 uppercase">
+                      Holders
+                    </span>
+                    <span className="text-sm md:text-[15px] font-bold">
+                      {Number(
+                        pair?.launchedToken?.holderCount || 0
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           <div
             className={cn(
-              "bg-[#FFCD4D] min-h-[665px] px-4 py-6 rounded-2xl space-y-3 relative overflow-hidden col-span-2 lg:col-span-1"
+              "bg-[#FFCD4D] min-h-[500px] md:min-h-[665px] px-4 py-6 rounded-2xl space-y-3 relative overflow-hidden col-span-1"
             )}
           >
             <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
@@ -730,27 +876,25 @@ const MemeView = observer(() => {
                   <Button
                     className="w-full"
                     onPress={async () => {
-                      //navigate to vault/[vaultaddress]
                       const lpTokenAddress =
                         await state.pair.value?.contract.read.lpToken();
                       window.location.href = `/vault/${lpTokenAddress}`;
-
-                      // pair.claimVaultTokens();
                     }}
                     isLoading={state.pair.value?.claimLP.loading}
-                    // isDisabled={!pair.canClaimLP}
                   >
                     Visit Vault
                   </Button>
                 )}
-                <KlineChart height={500} />
+                <div className="md:block">
+                  <KlineChart height={500} />
+                </div>
               </>
             )}
 
             {state.pair.value?.state === 1 && (
-              <div className="flex flex-col gap-y-5">
+              <div className="flex flex-col gap-y-3 md:gap-y-5">
                 <div className="flex flex-col gap-y-2">
-                  <h2 className="text-2xl font-bold text-black text-center w-full">
+                  <h2 className="text-xl md:text-2xl font-bold text-black text-center w-full">
                     This Project has Failed!
                   </h2>
                   <Image
@@ -770,7 +914,7 @@ const MemeView = observer(() => {
             <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-left-top h-6 absolute -bottom-1 left-0 w-full bg-repeat-x bg-auto"></div>
           </div>
 
-          <div className="bg-transparent rounded-2xl space-y-3 col-span-2 lg:col-span-1">
+          <div className="bg-transparent rounded-2xl space-y-3 col-span-1">
             {pair && <Action pair={pair} refreshTxsCallback={triggerRefresh} />}
           </div>
         </div>
@@ -814,10 +958,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
     }
     trpcClient.projects.getProjectInfo
       .query({
-        pair: pairAddress as string,
+        pair: (pairAddress as string).toLowerCase(),
         chain_id: wallet.currentChainId,
       })
       .then((data) => {
+        console.log("data", data);
         setProjectInfo(data);
       });
   }, [pairAddress, wallet.isInit]);
@@ -825,11 +970,11 @@ const LaunchPage: NextLayoutPage = observer(() => {
   return (
     <>
       {projectInfo && projectInfo?.project_type === "meme" && (
-        <MemeView></MemeView>
+        <MemeView pairAddress={pairAddress as string} />
       )}
-      {projectInfo && projectInfo?.project_type === "fto" && (
+      {/* {projectInfo && projectInfo?.project_type === "fto" && (
         <FtoView></FtoView>
-      )}
+      )} */}
     </>
   );
 });

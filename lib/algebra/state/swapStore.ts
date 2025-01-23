@@ -277,8 +277,6 @@ export function useDerivedSwapInfo(): {
       )
     );
 
-  console.log("toggledTrade", toggledTrade);
-
   const allowedSlippage = useSwapSlippageTolerance(toggledTrade);
 
   const [balanceIn, amountIn] = [

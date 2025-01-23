@@ -12,6 +12,7 @@ import {
   TopSwapAccountsQueryData,
 } from "../algebra/graphql/clients/leaderboard";
 import dayjs from "dayjs";
+import { ALGEBRA_ROUTER } from "@/config/algebra/addresses";
 
 export function useAccounts(
   page: number = 1,
@@ -26,7 +27,8 @@ export function useAccounts(
       variables: {
         skip: (page - 1) * pageSize,
         first: pageSize,
-        address: searchAddress ? { id: searchAddress.toLowerCase() } : null,
+        address: !!searchAddress ? searchAddress.toLowerCase() : undefined,
+        exclude: [ALGEBRA_ROUTER.toLowerCase()],
       },
     }
   );
@@ -34,7 +36,7 @@ export function useAccounts(
   const accounts =
     data?.accounts.map((account) => ({
       walletAddress: account.id,
-      totalVolume: parseFloat(account.totalSpendUSD),
+      totalSpend: parseFloat(account.totalSpendUSD),
       swapCount: parseInt(account.swapCount),
       poolHoldingCount: parseInt(account.holdingPoolCount),
       memeTokenCount: parseInt(account.memeTokenHoldingCount),
@@ -52,6 +54,7 @@ export function useAccounts(
       variables: {
         skip: data?.accounts.length ?? 0,
         first: pageSize,
+        exclude: [ALGEBRA_ROUTER.toLowerCase()],
       },
     });
   };
@@ -67,7 +70,12 @@ export function useAccounts(
 
 export function useTopSwapAccounts() {
   const { data, loading, error } = useQuery<TopSwapAccountsQueryData>(
-    TOP_SWAP_ACCOUNTS_QUERY
+    TOP_SWAP_ACCOUNTS_QUERY,
+    {
+      variables: {
+        exclude: [ALGEBRA_ROUTER.toLowerCase()],
+      },
+    }
   );
   return {
     accounts:

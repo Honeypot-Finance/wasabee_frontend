@@ -4,29 +4,61 @@ import style from "./AnnouncementBar.module.css";
 import announceIcon from "@/public/images/icons/announcement-icon.png";
 import Image from "next/image";
 import { cn } from "@/lib/tailwindcss";
+import { useGetLatestPumpingTokenQuery } from "@/lib/algebra/graphql/generated/graphql";
 
 interface AnnouncementBarProps {
   slogans: React.ReactNode[];
   interval: number;
 }
 
+const STORAGE_KEY = 'latest_pumping_token_id';
+
 const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
-  slogans,
+  slogans: initialSlogans,
   interval,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timer, setTimer] = useState<NodeJS.Timeout>();
+  const [localSlogans, setLocalSlogans] = useState(initialSlogans);
+  const [lastTokenId, setLastTokenId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(STORAGE_KEY) || '';
+    }
+    return '';
+  });
+
+  const { data: latestPumpingToken, refetch } = useGetLatestPumpingTokenQuery({
+    pollInterval: 10000, // 10 seconds
+  });
+
+  // Handle new pumping token
+  useEffect(() => {
+    if (latestPumpingToken?.pot2Pumps?.[0]) {
+      const newToken = latestPumpingToken.pot2Pumps[0];
+      if (newToken.id !== lastTokenId) {
+        const newAnnouncement = (
+          <span className="text-lg">
+            {newToken.launchToken?.symbol} ({newToken.launchToken?.name}) has reached pumping stage!
+          </span>
+        );
+        setLocalSlogans([newAnnouncement, ...localSlogans]);
+        setLastTokenId(newToken.id);
+        localStorage.setItem(STORAGE_KEY, newToken.id);
+        setCurrentIndex(0);
+      }
+    }
+  }, [latestPumpingToken, lastTokenId, localSlogans]);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % slogans.length);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % localSlogans.length);
     }, interval);
 
     setTimer(timer);
 
     return () => clearInterval(timer);
-  }, [slogans, interval]);
+  }, [localSlogans, interval]);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -48,7 +80,7 @@ const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
-              className="flex relative items-center justify-center gap-x-4 "
+              className="flex relative items-center justify-center gap-x-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -58,17 +90,17 @@ const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
               <div
                 className={cn(
                   style["arrow_box"],
-                  "hover:scale-105 transition-all"
+                  "hover:scale-105 transition-all relative"
                 )}
               >
-                {slogans[currentIndex]}
+                {localSlogans[currentIndex]}
+                <button
+                  onClick={handleClose}
+                  className="absolute -top-1.5 -right-1.5 size-4 rounded-full border border-[#523914]/30 bg-[#523914] flex items-center justify-center hover:bg-gray-100"
+                >
+                  <span className="text-white text-base leading-none">&times;</span>
+                </button>
               </div>
-              <button
-                onClick={handleClose}
-                className="absolute text-[#523914] hover:text-[#F7931A]/[37] text-2xl pt-1.5 right-2"
-              >
-                &times;
-              </button>
             </motion.div>
           </AnimatePresence>
         </motion.div>

@@ -93,17 +93,16 @@ export const rateLimitMiddleware =
       "X-RateLimit-Remaining",
       isRateLimited ? 0 : limit - currentUsage
     );
-    console.log("currentUsage", currentUsage, "limit", limit);
+
+    // console.log("currentUsage", currentUsage, "limit", limit);
+
     if (currentUsage > limit) {
-      console.log("cache", cache);
-      console.log("Date.now()", Date.now());
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Rate limit exceeded",
       });
     } else {
       const expires = cache?.expires ? cache.expires : Date.now() + duration;
-      console.log("Date.now()", Date.now(), "expires", expires);
       await ipCache.set(
         ip,
         {

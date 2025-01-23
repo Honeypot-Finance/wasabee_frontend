@@ -24,7 +24,7 @@ export function useLeaderboard() {
         },
         totalVolume: {
           title: "Total Volume",
-          value: formatValue(data.factories[0].totalVolumeUSD).usd,
+          value: formatValue(data.factories[0].untrackedVolumeUSD).usd,
         },
         tvl: {
           title: "TVL",

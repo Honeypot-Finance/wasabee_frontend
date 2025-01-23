@@ -10,16 +10,16 @@ export const POOL_FRAGMENT = gql`
     token1 {
       ...TokenFields
     }
-    poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
+    poolHourData(first: 48, orderBy: periodStartUnix, orderDirection: desc) {
       ...PoolHourDataFields
     }
-    poolDayData(first: 100, orderBy: date, orderDirection: desc) {
+    poolDayData(first: 30, orderBy: date, orderDirection: desc) {
       ...PoolDayDataFields
     }
-    poolWeekData(first: 2, orderBy: week, orderDirection: desc) {
+    poolWeekData(first: 10, orderBy: week, orderDirection: desc) {
       ...PoolWeekDataFields
     }
-    poolMonthData(first: 2, orderBy: month, orderDirection: desc) {
+    poolMonthData(first: 24, orderBy: month, orderDirection: desc) {
       ...PoolMonthDataFields
     }
     sqrtPrice
@@ -97,21 +97,14 @@ export const POOL_MONTH_DATA_FRAGMENT = gql`
 `;
 
 export const POOLS_LIST = gql`
-  query PoolsList {
-    pools {
+  query PoolsList($search: String) {
+    pools(
+      where: { searchString_contains: $search }
+      orderBy: totalValueLockedUSD
+      orderDirection: desc
+      first: 100
+    ) {
       ...PoolFields
-      poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
-        ...PoolHourDataFields
-      }
-      poolDayData(first: 100, orderBy: date, orderDirection: desc) {
-        ...PoolDayDataFields
-      }
-      poolWeekData(first: 2, orderBy: week, orderDirection: desc) {
-        ...PoolWeekDataFields
-      }
-      poolMonthData(first: 2, orderBy: month, orderDirection: desc) {
-        ...PoolMonthDataFields
-      }
     }
   }
 `;
@@ -180,5 +173,42 @@ export const LIQUIDATOR_DATA_FIELDS = gql`
     pool {
       ...PoolFields
     }
+  }
+`;
+
+export const USER_POSITIONS = gql`
+  query UserPositions($account: Bytes!) {
+    positions(where: { owner: $account }) {
+      ...PositionFields
+    }
+  }
+`;
+
+export const USER_ACTIVE_POSITIONS = gql`
+  query UserActivePositions($account: Bytes!) {
+    positions(where: { owner: $account, liquidity_gt: 0 }) {
+      ...PositionFields
+    }
+  }
+`;
+
+export const POSITION_FRAGMENT = gql`
+  fragment PositionFields on Position {
+    id
+    owner
+    pool {
+      ...PoolFields
+    }
+    token0 {
+      ...TokenFields
+    }
+    token1 {
+      ...TokenFields
+    }
+    liquidity
+    depositedToken0
+    depositedToken1
+    withdrawnToken0
+    withdrawnToken1
   }
 `;

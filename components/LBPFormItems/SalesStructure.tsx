@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 
 const PRICE_TYPE_OPTIONS = [
   { key: "lbp", value: PRICE_TYPE.LBP, label: "LBP" },
-  { key: "fixed", value: PRICE_TYPE.FIXED, label: "Fixed Price" },
+  // { key: "fixed", value: PRICE_TYPE.FIXED, label: "Fixed Price" },
 ];
 
 const LBP_TYPE_OPTIONS = [
@@ -48,6 +48,7 @@ const SalesStructure = () => {
                   items={PRICE_TYPE_OPTIONS}
                   className="w-44"
                   selectedKeys={[field.value]}
+                  disallowEmptySelection
                   onChange={(e) => field.onChange(e.target.value)}
                   isInvalid={!!errors.priceType}
                   errorMessage={errors.priceType?.message?.toString()}
@@ -64,6 +65,7 @@ const SalesStructure = () => {
               <Controller
                 name="lbpType"
                 control={control}
+                defaultValue={LBP_TYPE.BUY_SELL}
                 render={({ field }) => (
                   <SelectField
                     items={LBP_TYPE_OPTIONS}
@@ -72,6 +74,7 @@ const SalesStructure = () => {
                     onChange={(e) => field.onChange(e.target.value)}
                     isInvalid={!!errors.lbpType}
                     errorMessage={errors.lbpType?.message?.toString()}
+                    disallowEmptySelection
                   >
                     {LBP_TYPE_OPTIONS.map((price) => (
                       <SelectItem key={price.key} value={price.value}>

@@ -7,7 +7,7 @@ export const amountFormatted = (
     decimals,
     fixed,
     prefix,
-    symbol
+    symbol,
   }: {
     decimals?: number;
     fixed?: number;
@@ -29,7 +29,11 @@ export const amountFormatted = (
   if (r.isLessThan(minValue)) {
     return prefix + `<${minValue.toFixed()}${symbol ?? ""}`;
   }
-  return prefix + new BigNumber(new BigNumber(r.toFixed(fixed, 1)).toFixed()).toFormat() + (symbol ?? "");
+  return (
+    prefix +
+    new BigNumber(new BigNumber(r.toFixed(fixed, 1)).toFixed()).toFormat() +
+    (symbol ?? "")
+  );
 };
 
 // truncate middle of string
@@ -41,7 +45,7 @@ export const truncate = (str: string, length: number) => {
   return str.slice(0, mid) + "..." + str.slice(str.length - mid);
 };
 
-export const formatAmount = (amount?: number | string) => {
+export const formatAmount = (amount?: number | string, p0?: number) => {
   if (!amount && amount !== 0) {
     return {
       start: "",
@@ -60,13 +64,13 @@ export const formatAmount = (amount?: number | string) => {
     // 构造新的格式
     return zeroCount > 4
       ? {
-        start: `0.0`,
-        zeroCount,
-        end: match[1].substring(0, 4),
-      }
+          start: `0.0`,
+          zeroCount,
+          end: match[1].substring(0, 4),
+        }
       : {
-        start: new BigNumber(new BigNumber(amount).toFixed(6)).toFixed(),
-      };
+          start: new BigNumber(new BigNumber(amount).toFixed(6)).toFixed(),
+        };
   }
 
   return {
@@ -74,7 +78,7 @@ export const formatAmount = (amount?: number | string) => {
   };
 };
 
-export function formatLargeNumber (
+export function formatLargeNumber(
   number: number | string | BigNumber,
   decimals = 0
 ) {
@@ -90,7 +94,7 @@ export function formatLargeNumber (
   return `${num.toFixed(0)}${units[unitIndex]}`;
 }
 
-export function shortenAddress (address: Address) {
+export function shortenAddress(address: Address) {
   if (!address || address.length !== 42 || !address.startsWith("0x")) {
     throw new Error("Invalid EVM address");
   }

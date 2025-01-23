@@ -15,8 +15,12 @@ import { TokenFieldsFragment } from "@/lib/algebra/graphql/generated/graphql";
 import { ReactNode } from "react";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
-import { formatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import {
+  DynamicFormatAmount,
+  formatAmountWithAlphabetSymbol,
+} from "@/lib/algebra/utils/common/formatAmount";
 import { observer } from "mobx-react-lite";
+import BigNumber from "bignumber.js";
 
 interface Pair {
   token0: TokenFieldsFragment;
@@ -33,7 +37,6 @@ export interface Pool {
   poolAvgApr: number;
   avgApr: number;
   farmApr: number;
-  isMyPool: boolean;
   hasActiveFarming: boolean;
   createdAtTimestamp: number;
   liquidity: any;
@@ -45,6 +48,7 @@ export interface Pool {
   txCount: any;
   volumeUSD: any;
   apr24h: string;
+  unclaimedFees?: BigNumber;
 }
 
 function timeSince(timestamp: number): string {
@@ -258,12 +262,12 @@ export const poolsColumns: ColumnDef<Pool>[] = [
         .toLowerCase()
         .includes(value),
   },
-  // {
-  //   accessorKey: "plugins",
-  //   header: () => <HeaderItem>Plugins</HeaderItem>,
-  //   cell: ({ row }) => <Plugins poolId={row.original.id} />,
-  //   filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
-  // },
+  {
+    accessorKey: "plugins",
+    header: () => <HeaderItem>Plugins</HeaderItem>,
+    cell: ({ row }) => <Plugins poolId={row.original.id} />,
+    filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
+  },
   {
     accessorKey: "fee",
     header: () => <HeaderItem className="uppercase">Fee</HeaderItem>,
@@ -272,7 +276,12 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   {
     accessorKey: "apr24h",
     header: () => <HeaderItem className="uppercase">APR 24H</HeaderItem>,
-    cell: ({ row }) => `${formatAmount(row.original.apr24h, 2)}%`,
+    cell: ({ row }) =>
+      `${DynamicFormatAmount({
+        amount: row.original.apr24h,
+        decimals: 2,
+        endWith: "%",
+      })}`,
   },
   {
     accessorKey: "tvlUSD",
@@ -340,51 +349,221 @@ export const poolsColumns: ColumnDef<Pool>[] = [
   //     );
   //   },
   // },
+  // {
+  //   accessorKey: "change24h",
+  //   header: () => <HeaderItem className="uppercase">Vol Change 24h</HeaderItem>,
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{ color: row.original.change24h > 0 ? "#48bb78" : "#F56565" }}
+  //       >
+  //         {formatAmount(row.original.change24h, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "changeWeek",
+  //   header: () => (
+  //     <HeaderItem className="uppercase">Vol Change Week</HeaderItem>
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{ color: row.original.changeWeek > 0 ? "#48bb78" : "#F56565" }}
+  //       >
+  //         {formatAmount(row.original.changeWeek, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "changeMonth",
+  //   header: () => (
+  //     <HeaderItem className="uppercase">Vol Change Month</HeaderItem>
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{
+  //           color: row.original.changeMonth > 0 ? "#48bb78" : "#F56565",
+  //         }}
+  //       >
+  //         {formatAmount(row.original.changeMonth, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "liquidity",
+  //   header: () => <HeaderItem className="uppercase">liquidity</HeaderItem>,
+  //   cell: ({ row }) => formatAmount(row.original.liquidity),
+  // },
+  // {
+  //   accessorKey: "pair.token0.marketCap",
+  //   header: () => <HeaderItem className="uppercase">marktet cap</HeaderItem>,
+  //   cell: ({ row }) => row.original.pair.token0.marketCap,
+  // },
+];
+
+export const poolsColumnsMy: ColumnDef<Pool>[] = [
   {
-    accessorKey: "change24h",
-    header: () => <HeaderItem className="uppercase">Vol Change 24h</HeaderItem>,
-    cell: ({ row }) => {
-      return (
-        <span
-          style={{ color: row.original.change24h > 0 ? "#48bb78" : "#F56565" }}
-        >
-          {formatAmount(row.original.change24h, 2)}%
-        </span>
-      );
-    },
+    accessorKey: "pair",
+    header: () => <HeaderItem className="ml-2">Pool</HeaderItem>,
+    cell: ({ row }) => <PoolPair {...row.original} />,
+    filterFn: (v, _, value) =>
+      [
+        v.original.pair.token0.symbol,
+        v.original.pair.token1.symbol,
+        v.original.pair.token0.name,
+        v.original.pair.token1.name,
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(value),
   },
   {
-    accessorKey: "changeWeek",
-    header: () => (
-      <HeaderItem className="uppercase">Vol Change Week</HeaderItem>
-    ),
-    cell: ({ row }) => {
-      return (
-        <span
-          style={{ color: row.original.changeWeek > 0 ? "#48bb78" : "#F56565" }}
-        >
-          {formatAmount(row.original.changeWeek, 2)}%
-        </span>
-      );
-    },
+    accessorKey: "plugins",
+    header: () => <HeaderItem>Plugins</HeaderItem>,
+    cell: ({ row }) => <Plugins poolId={row.original.id} />,
+    filterFn: (v, _, value: boolean) => v.original.hasActiveFarming === value,
   },
   {
-    accessorKey: "changeMonth",
-    header: () => (
-      <HeaderItem className="uppercase">Vol Change Month</HeaderItem>
-    ),
+    accessorKey: "fee",
+    header: () => <HeaderItem className="uppercase">Fee</HeaderItem>,
+    cell: ({ row }) => `${row.original.fee}%`,
+  },
+  {
+    accessorKey: "apr24h",
+    header: () => <HeaderItem className="uppercase">APR 24H</HeaderItem>,
+    cell: ({ row }) =>
+      `${DynamicFormatAmount({
+        amount: row.original.apr24h,
+        decimals: 2,
+        endWith: "%",
+      })}`,
+  },
+  {
+    accessorKey: "tvlUSD",
+    id: "tvlUSD",
+    header: () => <HeaderItem className="uppercase">TVL</HeaderItem>,
     cell: ({ row }) => {
-      return (
-        <span
-          style={{
-            color: row.original.changeMonth > 0 ? "#48bb78" : "#F56565",
-          }}
-        >
-          {formatAmount(row.original.changeMonth, 2)}%
-        </span>
-      );
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(row.original.tvlUSD);
     },
   },
+  // {
+  //   accessorKey: "createdAtTimestamp",
+  //   header: () => <HeaderItem className="uppercase">Age</HeaderItem>,
+  //   cell: ({ row }) => timeSince(row?.original?.createdAtTimestamp ?? 0),
+  // },
+  // {
+  //   accessorKey: "txCount",
+  //   header: () => <HeaderItem className="uppercase">txns</HeaderItem>,
+  //   cell: ({ row }) => row.original.txCount,
+  // },
+  // {
+  //   accessorKey: "volumeUSD",
+  //   header: () => <HeaderItem className="uppercase">Total Volume</HeaderItem>,
+  //   cell: ({ row }) => (
+  //     <span>
+  //       {new Intl.NumberFormat("en-US", {
+  //         style: "currency",
+  //         currency: "USD",
+  //         minimumFractionDigits: 2,
+  //         maximumFractionDigits: 2,
+  //       }).format(row?.original?.volumeUSD)}
+  //     </span>
+  //   ),
+  // },
+  // {
+  //   accessorKey: "volume24USD",
+  //   header: () => <HeaderItem className="uppercase">24h Volume</HeaderItem>,
+  //   cell: ({ row }) => (
+  //     <span>
+  //       {new Intl.NumberFormat("en-US", {
+  //         style: "currency",
+  //         currency: "USD",
+  //         minimumFractionDigits: 2,
+  //         maximumFractionDigits: 2,
+  //       }).format(row?.original?.volume24USD)}
+  //     </span>
+  //   ),
+  // },
+  {
+    accessorKey: "unclaimedFees",
+    header: () => <HeaderItem className="uppercase">Unclaimed Fees</HeaderItem>,
+    cell: ({ row }) =>
+      DynamicFormatAmount({
+        amount: row.original.unclaimedFees?.toString() ?? 0,
+        decimals: 5,
+        endWith: "USD",
+      }),
+  },
+  // {
+  //   accessorKey: "changeHour",
+  //   header: () => (
+  //     <HeaderItem className="uppercase">Vol Hour Change</HeaderItem>
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{ color: row.original.changeHour > 0 ? "#48bb78" : "#F56565" }}
+  //       >
+  //         {formatAmount(row.original.changeHour, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "change24h",
+  //   header: () => <HeaderItem className="uppercase">Vol Change 24h</HeaderItem>,
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{ color: row.original.change24h > 0 ? "#48bb78" : "#F56565" }}
+  //       >
+  //         {formatAmount(row.original.change24h, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "changeWeek",
+  //   header: () => (
+  //     <HeaderItem className="uppercase">Vol Change Week</HeaderItem>
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{ color: row.original.changeWeek > 0 ? "#48bb78" : "#F56565" }}
+  //       >
+  //         {formatAmount(row.original.changeWeek, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: "changeMonth",
+  //   header: () => (
+  //     <HeaderItem className="uppercase">Vol Change Month</HeaderItem>
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span
+  //         style={{
+  //           color: row.original.changeMonth > 0 ? "#48bb78" : "#F56565",
+  //         }}
+  //       >
+  //         {formatAmount(row.original.changeMonth, 2)}%
+  //       </span>
+  //     );
+  //   },
+  // },
   // {
   //   accessorKey: "liquidity",
   //   header: () => <HeaderItem className="uppercase">liquidity</HeaderItem>,

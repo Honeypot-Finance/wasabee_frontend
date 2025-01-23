@@ -10,13 +10,18 @@ import { ModalFooter } from "@nextui-org/react";
 import { Button } from "../button";
 
 export const PopOverModal = observer(() => {
+  console.log(popmodal.shouldCloseOnInteractOutside);
   return (
     <WrappedNextModal
+      data-dismissable={popmodal.shouldCloseOnInteractOutside}
       isOpen={popmodal.open}
       onClose={() => {
         popmodal.closeModal();
       }}
       boarderLess={popmodal.boarderLess}
+      isDismissable={popmodal.shouldCloseOnInteractOutside}
+      isKeyboardDismissDisabled={popmodal.shouldCloseOnInteractOutside}
+      shouldCloseOnInteractOutside={() => popmodal.shouldCloseOnInteractOutside}
     >
       <WrappedNextModalContent
         className="md:max-w-[min(1024px,80vw)] max-h-[80vh] overflow-y-auto"

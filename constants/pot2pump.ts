@@ -2,39 +2,43 @@ import { FilterState } from "./pot2pump.type";
 
 export const defaultFilterState: FilterState = {
     tvl: {
-        min: "",
-        max: ""
+        min: undefined,
+        max: undefined
     },
     participants: {
-        min: "",
-        max: ""
+        min: undefined,
+        max: undefined
     },
     liquidity: {
-        min: "",
-        max: ""
+        min: undefined,
+        max: undefined
     },
     marketcap: {
-        min: "",
-        max: ""
+        min: undefined,
+        max: undefined
     },
     daytxns: {
-        min: "",
-        max: ""
+        min: undefined,
+        max: undefined
     },
     daybuys: {
-        min: "",
-        max: ""
+        min: undefined,
+        max: undefined
     },
     daysells: {
-        min: "",
-        max: ""
+        min: undefined,
+        max: undefined
     },
     dayvolume: {
-        min: "",
-        max: ""
+        min: undefined,
+        max: undefined
     },
     daychange: {
-        min: "",
-        max: ""
+        min: undefined,
+        max: undefined
     },
+    depositraisedtoken: {
+        min: undefined,
+        max: undefined
+    }
 }

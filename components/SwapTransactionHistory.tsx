@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { fetchSwapTransactions } from "@/lib/algebra/graphql/clients/swapTransactions";
 import { truncate } from "@/lib/format";
-import { Copy } from "@/components/copy";
+import { Copy } from "@/components/Copy";
 import { VscCopy } from "react-icons/vsc";
 import { ExternalLink } from "lucide-react";
 import dayjs from "dayjs";
 import BigNumber from "bignumber.js";
 import { SwapField } from "@/types/algebra/types/swap-field";
-import { button } from "@nextui-org/theme";
 import { useDerivedSwapInfo } from "@/lib/algebra/state/swapStore";
 import { zeroAddress } from "viem";
 import { HoneyContainer } from "@/components/CardContianer";

@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 
 const INFO_GRAPH = process.env.NEXT_PUBLIC_INFO_GRAPH;
 const BLOCKS_GRAPH = process.env.NEXT_PUBLIC_BLOCKS_GRAPH;
@@ -6,6 +6,14 @@ const FARMING_GRAPH = process.env.NEXT_PUBLIC_FARMING_GRAPH;
 
 export const infoClient = new ApolloClient({
   uri: INFO_GRAPH,
+  ssrMode: true,
+  link: createHttpLink({
+    uri: INFO_GRAPH,
+    credentials: "same-origin",
+    headers: {
+      "apollographql-client-name": "info-graph",
+    },
+  }),
   cache: new InMemoryCache(),
 });
 

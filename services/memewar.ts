@@ -1,10 +1,10 @@
 import { makeAutoObservable } from "mobx";
-import { MemePairContract } from "./contract/memepair-contract";
+import { MemePairContract } from "./contract/launches/pot2pump/memepair-contract";
 import BigNumber from "bignumber.js";
 import { liquidity } from "./liquidity";
 import { get } from "lodash";
 import { Token } from "./contract/token";
-import { FtoPairContract } from "./contract/ftopair-contract";
+import { FtoPairContract } from "./contract/launches/fto/ftopair-contract";
 
 export type EventState = "preview" | "active" | "ended";
 export type MemeWarParticipant = {

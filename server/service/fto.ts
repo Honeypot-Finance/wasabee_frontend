@@ -4,9 +4,7 @@ import { chains, chainsMap } from "@/lib/chain";
 import { createPublicClientByChain } from "@/lib/client";
 import { exec } from "@/lib/contract";
 import { pg } from "@/lib/db";
-import { FtoPairContract } from "@/services/contract/ftopair-contract";
-import { MemePairContract } from "@/services/contract/memepair-contract";
-import { wallet } from "@/services/wallet";
+import DataLoader from "dataloader";
 import { Contract, ethers, providers } from "ethers";
 import { key } from "localforage";
 import { getContract } from "viem";
@@ -19,6 +17,27 @@ const fto_api_key_list = [
   "b3a3a02a-a665-4fb5-bb17-153d05863efe", //bera boyz
 ];
 
+const fotProjectDataloader = new DataLoader(
+  async (pairs: readonly { pair: string; chain_id: string }[]) => {
+    //重构下使sql能根据pair和chain_id批量查询,pair和chain_id是联合主键,这种不行
+    const res = await pg<
+      projectColumn[]
+    >`select * from fto_project where (pair, chain_id) in (select pair, chain_id from (values ${pg(pairs.map(({ pair, chain_id }) => [pair, chain_id]))}) as t(pair, chain_id))`;
+    const projectMap = res.reduce(
+      (acc, project) => {
+        acc[`${project.pair}-${project.chain_id}`] = project;
+        return acc;
+      },
+      {} as Record<string, projectColumn>
+    );
+    return pairs.map(({ pair, chain_id }) => projectMap[`${pair}-${chain_id}`]);
+  },
+  {
+    maxBatchSize: 100,
+    cache: false,
+  }
+);
+
 interface projectColumn {
   id: number;
   twitter: string;
@@ -28,11 +47,13 @@ interface projectColumn {
   logo_url: string;
   name: string;
   provider: string;
-  project_type: string;
+  project_type: "meme" | "fto" | null;
   banner_url: string;
   beravote_space_id: string;
   launch_token: string;
   raising_token: string;
+  pair: string;
+  chain_id: number;
 }
 
 export const ftoService = {
@@ -78,112 +99,60 @@ export const ftoService = {
     chain_id: number;
     creator_api_key: string;
   }) => {
-    if (
-      !fto_api_key_list.includes(data.creator_api_key) &&
-      data.creator_api_key !== super_api_key
-    ) {
-      return null;
+    const project = (await fotProjectDataloader.load({
+      pair: data.pair,
+      chain_id: data.chain_id.toString(),
+    })) || {
+      pair: data.pair,
+      provider: "",
+      project_type: "",
+    };
+    let updateFlag = false;
+    const publicClient = createPublicClientByChain(chainsMap[data.chain_id]);
+    const readQueue = [];
+    if (!project.provider) {
+      updateFlag = true;
+      readQueue.push(
+        publicClient
+          .readContract({
+            address: data.pair as `0x${string}`,
+            abi: MUBAI_FTO_PAIR_ABI,
+            functionName: "launchedTokenProvider",
+          })
+          .catch(() => {
+            return "";
+          })
+          .then((provider) => {
+            if (provider) {
+              project.provider = provider;
+              project.project_type = "fto";
+            }
+          }),
+        publicClient
+          .readContract({
+            address: data.pair as `0x${string}`,
+            abi: MemePairABI.abi,
+            functionName: "tokenDeployer",
+          })
+          .catch(() => {
+            return "";
+          })
+          .then((provider) => {
+            if (provider) {
+              project.provider = provider;
+              project.project_type = "meme";
+            }
+          })
+      );
+    }
+    await Promise.all(readQueue);
+
+    if (updateFlag) {
+      console.log("updateFtoProject: ", project);
+      await updateFtoProject(project);
     }
 
-    let output;
-
-    output = await selectFtoProject(data);
-
-    if (!output || !output[0]) {
-      console.log("no output");
-      let provider = "";
-      let project_type = "fto";
-
-      const memePairContract = new Contract(
-        data.pair as `0x${string}`,
-        MemePairABI.abi,
-        new providers.JsonRpcProvider(
-          chainsMap[data.chain_id].rpcUrls.default.http.toString()
-        )
-      );
-
-      const ftoPairContract = new Contract(
-        data.pair as `0x${string}`,
-        MUBAI_FTO_PAIR_ABI,
-        new providers.JsonRpcProvider(
-          chainsMap[data.chain_id].rpcUrls.default.http.toString()
-        )
-      );
-
-      provider = await ftoPairContract.launchedTokenProvider().catch(() => {
-        project_type = "meme";
-      });
-
-      if (!provider) {
-        provider = await memePairContract.tokenDeployer().catch(() => {
-          project_type = "";
-        });
-      }
-
-      if (!provider) {
-        return null;
-      }
-
-      await createFtoProject({
-        pair: data.pair,
-        chain_id: data.chain_id,
-        provider: provider ?? "",
-        creator_api_key: data.creator_api_key,
-        project_type: project_type,
-      });
-      output = await selectFtoProject(data);
-    } else {
-      let needUpdate = false;
-      let project_type = output[0].project_type;
-      let provider = output[0].provider;
-
-      if (!project_type || project_type == "" || !provider || provider == "") {
-        needUpdate = true;
-        project_type = "fto";
-        const memePairContract = new Contract(
-          data.pair as `0x${string}`,
-          MemePairABI.abi,
-          new providers.JsonRpcProvider(
-            chainsMap[data.chain_id].rpcUrls.default.http.toString()
-          )
-        );
-
-        const ftoPairContract = new Contract(
-          data.pair as `0x${string}`,
-          MUBAI_FTO_PAIR_ABI,
-          new providers.JsonRpcProvider(
-            chainsMap[data.chain_id].rpcUrls.default.http.toString()
-          )
-        );
-
-        provider = await ftoPairContract.launchedTokenProvider().catch(() => {
-          project_type = "meme";
-        });
-
-        if (!provider) {
-          provider = await memePairContract.tokenDeployer().catch(() => {
-            project_type = "";
-          });
-        }
-      }
-
-      if (needUpdate) {
-        const updateData = {
-          pair: data.pair,
-          chain_id: data.chain_id,
-          creator_api_key: data.creator_api_key,
-          name: output[0].name,
-          provider: provider,
-          project_type: project_type,
-        };
-
-        await updateFtoProject(updateData);
-
-        output = await selectFtoProject(data);
-      }
-    }
-
-    return output?.[0] ?? null;
+    return project;
   },
   getFtoProjectsByAccount: async ({
     provider,
@@ -192,7 +161,7 @@ export const ftoService = {
     provider: string;
     chain_id: number;
   }) => {
-    return pg`SELECT * FROM fto_project WHERE provider = ${provider.toLowerCase()} and chain_id = ${chain_id} order by id desc`;
+    return pg`SELECT * FROM fto_project WHERE provider = ${provider.toLowerCase()} and chain_id = ${chain_id.toString()} order by id desc`;
   },
   createOrUpdateProjectInfo: async (data: {
     twitter?: string;
@@ -212,7 +181,12 @@ export const ftoService = {
     ) {
       return false;
     }
-    return await updateFtoProject({ ...data });
+    try {
+      return await updateFtoProject({ ...data });
+    } catch (e) {
+      console.log("createOrUpdateProjectInfo error: ", e);
+      return false;
+    }
   },
   createOrUpdateProjectVotes: async (data: {
     project_pair: string;
@@ -223,9 +197,7 @@ export const ftoService = {
       project_pair: data.project_pair.toLowerCase(),
       wallet_address: data.wallet_address.toLowerCase(),
       vote: data.vote,
-    })} ON CONFLICT (wallet_address, project_pair) DO UPDATE SET vote = ${
-      data.vote
-    }`;
+    })} ON CONFLICT (wallet_address, project_pair) DO UPDATE SET vote = ${data.vote}`;
   },
   updateProjectBanner: async (data: {
     banner_url: string;
@@ -303,10 +275,7 @@ export const ftoService = {
     chain_id: number;
   }): Promise<projectColumn[]> => {
     const launch =
-      await pg`SELECT * FROM fto_project WHERE launch_token = ${data.launch_token.toLowerCase()} and chain_id = ${
-        data.chain_id
-      }`;
-    console.log(data.launch_token, launch);
+      await pg`SELECT * FROM fto_project WHERE launch_token = ${data.launch_token.toLowerCase()} and chain_id = ${data.chain_id.toString()}`;
     return launch.map((item) => {
       return item as projectColumn;
     });
@@ -329,25 +298,15 @@ const createFtoProject = async (data: {
   })}`;
 };
 
-const updateFtoProject = async (data: {
-  twitter?: string;
-  telegram?: string;
-  website?: string;
-  description?: string;
-  name?: string;
-  pair: string;
-  chain_id: number;
-  creator_api_key: string;
-  project_type?: string;
-  provider?: string;
-  launch_token?: string;
-  raising_token?: string;
-  beravote_space_id?: string;
-}) => {
+export const updateFtoProject = async (
+  data: Partial<projectColumn> & {
+    creator_api_key?: string;
+  }
+) => {
   try {
     const fieldsToUpdate = Object.entries(data)
       .filter(([key, value]) => {
-        if (key === "creator_api_key" || key === "pair" || key === "chain_id") {
+        if (key === "creator_api_key") {
           return false;
         }
         return !!value;
@@ -357,11 +316,8 @@ const updateFtoProject = async (data: {
     //console.log("fieldsToUpdate: ", fieldsToUpdate);
 
     await pg`
-    UPDATE fto_project 
-    SET ${pg(data, fieldsToUpdate as any)} 
-    WHERE pair = ${data.pair.toLowerCase()} 
-      AND chain_id = ${data.chain_id} 
-      AND creator_api_key = ${data.creator_api_key ?? super_api_key};
+    INSERT INTO fto_project ${pg(data, ...(fieldsToUpdate as any))} 
+    ON CONFLICT (pair, chain_id) DO UPDATE SET ${pg(data, ...(fieldsToUpdate as any))} 
   `;
 
     return true;
@@ -376,14 +332,14 @@ const revalidateProject = async (data: {
   chain_id: number;
   creator_api_key?: string;
 }) => {
-  const res =
-    await pg`SELECT * FROM fto_project WHERE pair = ${data.pair.toLowerCase()} and chain_id = ${
-      data.chain_id
-    }`;
+  const res = await fotProjectDataloader.load({
+    pair: data.pair,
+    chain_id: data.chain_id.toString(),
+  });
 
   const publicClient = createPublicClientByChain(chainsMap[data.chain_id]);
 
-  if (!res || !res[0]) {
+  if (!res) {
     //create
     let provider = "";
     let project_type = "fto";
@@ -437,14 +393,17 @@ const revalidateProject = async (data: {
       project_type: project_type,
     });
 
-    return await selectFtoProject(data);
+    return fotProjectDataloader.load({
+      pair: data.pair,
+      chain_id: data.chain_id.toString(),
+    });
   } else {
     //revalidate
     let needUpdate = false;
-    let project_type = res[0].project_type;
-    let provider = res[0].provider;
+    let project_type = res.project_type;
+    let provider = res.provider;
 
-    if (!project_type || project_type == "" || !provider || provider == "") {
+    if (!project_type || !project_type || !provider || provider == "") {
       needUpdate = true;
       project_type = "fto";
 
@@ -477,7 +436,7 @@ const revalidateProject = async (data: {
             provider = data.toLowerCase();
           })
           .catch(() => {
-            project_type = "";
+            project_type = "fto";
           });
       }
 
@@ -491,14 +450,17 @@ const revalidateProject = async (data: {
         pair: data.pair,
         chain_id: data.chain_id,
         creator_api_key: data.creator_api_key ?? super_api_key,
-        name: res[0].name,
+        name: res.name,
         provider: provider,
         project_type: project_type,
       };
 
       await updateFtoProject(updateData);
 
-      return await selectFtoProject(data);
+      return fotProjectDataloader.load({
+        pair: data.pair,
+        chain_id: data.chain_id.toString(),
+      });
     }
   }
 };

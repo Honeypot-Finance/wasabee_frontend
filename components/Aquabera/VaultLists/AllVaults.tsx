@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { Button } from "@/components/button";
-import TokenLogo from "@/components/TokenLogo/TokenLogo";
+import Image from "next/image";
 import {
   getAccountVaultsList,
   getVaultPageData,
@@ -15,7 +15,7 @@ import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contra
 import { Token } from "@/services/contract/token";
 import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
 import { wallet } from "@/services/wallet";
-import { Tabs, Tab, Link } from "@nextui-org/react";
+import { Tabs, Tab, Link, Pagination } from "@nextui-org/react";
 import {
   Table,
   TableHeader,
@@ -24,12 +24,15 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Address } from "viem";
 import { DepositToVaultModal } from "../modals/DepositToVaultModal";
 import { Currency } from "@cryptoalgebra/sdk";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronUp, ChevronDown, Search } from "lucide-react";
 import { HoneyContainer } from "@/components/CardContianer";
+import useDebounce from "@/lib/algebra/hooks/common/useDebounce";
+import { debounce } from "lodash";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
 
 type SortField = "pair" | "address" | "tvl" | "volume" | "fees";
 type SortDirection = "asc" | "desc";
@@ -43,21 +46,25 @@ export function AllAquaberaVaults() {
   const [selectedVault, setSelectedVault] = useState<ICHIVaultContract | null>(
     null
   );
+  const [searchString, setSearchString] = useState("");
+  const searchDebounce = debounce(() => loadMyVaults(searchString), 500);
   const [selectedTokenA, setSelectedTokenA] = useState<Currency | null>(null);
   const [selectedTokenB, setSelectedTokenB] = useState<Currency | null>(null);
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 10;
 
   useEffect(() => {
     if (!wallet.isInit) {
       return;
     }
 
-    loadMyVaults();
-  }, [wallet.isInit]);
+    searchDebounce();
+  }, [wallet.isInit, searchString]);
 
-  const loadMyVaults = async () => {
-    const vaultsQuery = await getVaultPageData();
-
-    setVaults(vaultsQuery);
+  const loadMyVaults = async (search?: string) => {
+    const vaultsQuery = getVaultPageData(search).then((res) => {
+      setVaults(res);
+    });
   };
 
   const handleSort = (field: SortField) => {
@@ -69,10 +76,15 @@ export function AllAquaberaVaults() {
     }
   };
 
+  const pages = useMemo(() => {
+    if (!vaults?.ichiVaults) return 0;
+    return Math.ceil(vaults.ichiVaults.length / rowsPerPage);
+  }, [vaults?.ichiVaults]);
+
   const getSortedVaults = () => {
     if (!vaults?.ichiVaults) return [];
 
-    return [...vaults.ichiVaults].sort((a, b) => {
+    const sortedVaults = [...vaults.ichiVaults].sort((a, b) => {
       const multiplier = sortDirection === "asc" ? 1 : -1;
 
       switch (sortField) {
@@ -104,11 +116,39 @@ export function AllAquaberaVaults() {
           return 0;
       }
     });
+
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    return sortedVaults.slice(start, end);
   };
 
   return (
-    <HoneyContainer className="w-full">
+    <div className="w-full">
       <div className="w-full">
+        {/* 搜索栏 */}
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex gap-2 flex-1 max-w-md">
+            <input
+              type="text"
+              value={searchString}
+              onChange={(e) => setSearchString(e.target.value)}
+              placeholder="Search"
+              className="w-full bg-[#1a1b1f] border border-gray-700 rounded-lg px-4 py-2 text-white"
+            />
+            {searchString && (
+              <button
+                onClick={() => {
+                  setSearchString("");
+                  setPage(1);
+                }}
+                className="px-4 py-2 bg-[#2a2a2a] rounded-lg text-white hover:bg-[#3a3a3a] transition-colors"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
         <Table
           aria-label="my-vaults"
           classNames={{
@@ -239,16 +279,10 @@ export function AllAquaberaVaults() {
               return (
                 <TableRow key={vault.id} className=" hover:bg-[#F7931A10]">
                   <TableCell>
-                    <Link
-                      href={`/vault/${vault.id}`}
-                      className="flex items-center gap-2 cursor-pointer"
-                    >
-                      {vault.tokenA && <TokenLogo token={tokenA} />}
-                      {vault.tokenB && <TokenLogo token={tokenB} />}
-                      <span>
-                        {tokenA.symbol}/{tokenB.symbol}
-                      </span>
-                    </Link>
+                    <div className="flex items-center gap-1">
+                      <TokenLogo token={tokenA} size={24} />
+                      <TokenLogo token={tokenB} size={24} />
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Link
@@ -288,6 +322,18 @@ export function AllAquaberaVaults() {
           </TableBody>
         </Table>
 
+        <div className="flex w-full justify-center py-4">
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            color="warning"
+            page={page}
+            total={pages}
+            onChange={(page) => setPage(page)}
+          />
+        </div>
+
         {selectedVault && selectedTokenA && selectedTokenB && (
           <DepositToVaultModal
             isOpen={isDepositModalOpen}
@@ -303,7 +349,7 @@ export function AllAquaberaVaults() {
           />
         )}
       </div>
-    </HoneyContainer>
+    </div>
   );
 }
 

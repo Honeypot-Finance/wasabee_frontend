@@ -2,7 +2,7 @@ import { wallet } from "@/services/wallet";
 import { PAGE_LIMIT, SubgraphProjectFilter } from "..";
 import { IndexerPaginationState } from "@/services/utils";
 import { fetchPot2PumpList } from "@/lib/algebra/graphql/clients/pair";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 
 export class Pot2PumpPumpingService {
   DEFAULT_FILTER: SubgraphProjectFilter = {

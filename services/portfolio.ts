@@ -14,19 +14,10 @@ class Portfolio {
 
   constructor() {
     makeAutoObservable(this);
-
-    // React to wallet changes
-    reaction(
-      () => wallet.isInit,
-      (isInit) => {
-        if (isInit) {
-          this.initPortfolio();
-        }
-      }
-    );
   }
 
   async initPortfolio() {
+    console.log("initPortfolio", { isInit: this.isInit });
     if (this.isInit || !wallet.isInit) return;
 
     this.isLoading = true;
@@ -52,22 +43,35 @@ class Portfolio {
       console.log("allTokenIds", allTokenIds);
       const tokensData = await getMultipleTokensData(allTokenIds);
       console.log("tokensData", tokensData);
-      const tokens = tokensData?.tokens.map((token) =>
-        Token.getToken({
-          ...token,
+      const tokens = tokensData?.tokens.map((token) => {
+        //remove marketCap from token
+        const { marketCap, ...rest } = token;
+
+        return Token.getToken({
+          ...rest,
           address: token.id.toLowerCase(),
           derivedETH: token.derivedMatic,
           derivedUSD: token.derivedUSD,
-        })
+        });
+      });
+      console.log(
+        "tokens",
+        tokens?.map((token) => token.address)
       );
       // Filter tokens with balance
 
-      await Promise.all(tokens?.map((token) => token.getBalance()) ?? []);
+      await Promise.all(
+        tokens?.map((token) => {
+          try {
+            token.getBalance();
+          } catch (error) {
+            console.error("Error getting balance for token", token.address);
+          }
+        }) ?? []
+      );
 
       this.tokens =
         tokens?.filter((token) => token.balance.toNumber() > 0) ?? [];
-
-      console.log("this.tokens", this.tokens);
 
       // Calculate total balance in USD`
       this.calculateTotalBalance();

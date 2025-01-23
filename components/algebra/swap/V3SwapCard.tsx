@@ -1,7 +1,8 @@
 import SwapPairV3 from "./SwapPair/SwapPairV3";
 import SwapButtonV3 from "./SwapButton/SwapButotnV3";
 import SwapParamsV3 from "./SwapParams/SwapParamsV3";
-import { HoneyContainer } from "../../CardContianer";
+import CardContainer from "../../CardContianer/v3";
+import PoweredByAlgebra from "../common/PoweredByAlgebra";
 
 interface V3SwapCardProps {
   fromTokenAddress?: string;
@@ -19,7 +20,7 @@ export function V3SwapCard({
   bordered = true,
 }: V3SwapCardProps) {
   return (
-    <HoneyContainer bordered={bordered} noNoneyDrop>
+    <CardContainer>
       <SwapPairV3
         fromTokenAddress={fromTokenAddress}
         toTokenAddress={toTokenAddress}
@@ -27,7 +28,8 @@ export function V3SwapCard({
       />
       <SwapParamsV3 />
       <SwapButtonV3 />
-    </HoneyContainer>
+      <PoweredByAlgebra />
+    </CardContainer>
   );
 }
 

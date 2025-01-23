@@ -1,5 +1,6 @@
+/* eslint-disable @next/next/no-before-interactive-script-outside-document */
 import { useEffect } from "react";
-import { Header } from "./header";
+import { Header } from "./header/v3";
 import { useRouter } from "next/router";
 import { useAccount } from "wagmi";
 import { networksMap } from "@/services/chain";
@@ -17,6 +18,7 @@ import ChatWidget from "../ServiceChat";
 import Script from "next/script";
 import { Footer } from "./footer";
 import { chatService, presetQuestions, questionTitles } from "@/services/chat";
+import _ from "lodash";
 
 export const Layout = ({
   children,
@@ -107,18 +109,14 @@ export const Layout = ({
         src="/datafeeds/udf/dist/bundle.js"
         strategy="beforeInteractive"
       />
+
       <AnnouncementBar slogans={slogans} interval={5000} />
       {/* <GuideModal /> */}
       <ChatWidget />
 
       <ConfettiComponent />
       <PopOverModal />
-      {router.pathname.startsWith("/launch") ||
-      router.pathname.startsWith("/pools") ? (
-        <LaunchHeader />
-      ) : (
-        <Header />
-      )}
+      <Header />
       {currentChain ? (
         currentChain?.isActive ? (
           <div className="flex-1 flex">{children}</div>

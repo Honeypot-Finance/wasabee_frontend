@@ -1,5 +1,5 @@
-import { FtoPairContract } from "@/services/contract/ftopair-contract";
-import { MemePairContract } from "@/services/contract/memepair-contract";
+import { FtoPairContract } from "@/services/contract/launches/fto/ftopair-contract";
+import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import BigNumber from "bignumber.js";
 import { observer } from "mobx-react-lite";
 import Countdown from "react-countdown";
