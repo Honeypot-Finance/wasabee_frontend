@@ -35,5 +35,9 @@ export interface FilterState {
         min?: string;
         max?: string;
     };
+    depositraisedtoken: {
+        min?: string;
+        max?: string;
+    }
 
 }

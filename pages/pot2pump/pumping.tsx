@@ -19,6 +19,7 @@ import { defaultFilterState } from "@/constants/pot2pump";
 import HoneyContainer from "@/components/CardContianer/HoneyContainer";
 import { hasValue, removeEmptyFields } from "@/lib/utils";
 import { PAGE_LIMIT } from "@/services/launchpad";
+import search from "../api/udf-data-feed/search";
 
 const MemeLaunchPage: NextLayoutPage = observer(() => {
   const [pumpingProjects, setPumpingProjects] =
@@ -45,23 +46,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     newPumpingProjects.projectsPage.reloadPage();
   }, [wallet.isInit]);
 
-  useEffect(() => {
-    if (pumpingProjects) {
-      pumpingProjects.projectsPage.updateFilter({
-        search: search.length > 0 ? search : undefined,
-        currentPage: 0,
-        status: "success",
-        limit: PAGE_LIMIT,
-        hasNextPage: true,
-        orderBy: "endTime",
-        orderDirection: "desc",
-        ...defaultFilterState,
-      });
-    }
-  }, [search, pumpingProjects]);
-
   const onChangeFilter = (data: any) => {
-    setSearch("");
     setFilters(data);
   };
 
@@ -70,16 +55,18 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
       console.log("hasValue(filters)", hasValue(filters), filters);
       if (hasValue(filters)) {
         pumpingProjects.projectsPage.updateFilter({
+          search: search.length > 0 ? search : undefined,
           currentPage: 0,
           status: "success",
           limit: PAGE_LIMIT,
           hasNextPage: true,
           orderBy: "endTime",
           orderDirection: "desc",
-          ...removeEmptyFields(filters),
+          ...filters,
         });
       } else {
         pumpingProjects.projectsPage.updateFilter({
+          search: search.length > 0 ? search : undefined,
           currentPage: 0,
           status: "success",
           limit: PAGE_LIMIT,
@@ -90,7 +77,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         });
       }
     }
-  }, [filters, pumpingProjects]);
+  }, [filters, pumpingProjects, search]);
 
   return (
     <div className="w-full grow flex flex-col font-gliker">
@@ -116,6 +103,48 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
         <div className="w-full relative">
           <div className="py-2 sm:py-0 sm:absolute right-0 top-0 flex gap-2">
             <Filter
+              filtersList={[
+                {
+                  key: 0,
+                  label: "TVL (USD)",
+                  category: "tvl",
+                },
+                {
+                  key: 1,
+                  label: "Liquidity",
+                  category: "liquidity",
+                },
+                {
+                  key: 3,
+                  label: "Market cap",
+                  category: "marketcap",
+                },
+                {
+                  key: 4,
+                  label: "24H txns",
+                  category: "daytxns",
+                },
+                {
+                  key: 5,
+                  label: "24H buys",
+                  category: "daybuys",
+                },
+                {
+                  key: 6,
+                  label: "24H sells",
+                  category: "daysells",
+                },
+                {
+                  key: 7,
+                  label: "24H volume",
+                  category: "dayvolume",
+                },
+                {
+                  key: 8,
+                  label: "24H change (%)",
+                  category: "daychange",
+                },
+              ]}
               filters={filters}
               setFilters={onChangeFilter}
               pumpingProjects={pumpingProjects}

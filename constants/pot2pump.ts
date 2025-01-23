@@ -37,4 +37,8 @@ export const defaultFilterState: FilterState = {
         min: undefined,
         max: undefined
     },
+    depositraisedtoken: {
+        min: undefined,
+        max: undefined
+    }
 }
