@@ -83,9 +83,9 @@ export function UploadImage(props: UploadImageProps): JSX.Element {
                       : "/images/empty-logo.png"
                   }
                   alt="icon"
-                  className="rounded-[11.712px] hover:bg-[#ECC94E20] w-[3rem] h-[3rem] self-center cursor-pointer"
-                  width={36}
-                  height={36}
+                  className="rounded-[11.712px] hover:bg-[#ECC94E20] w-[3rem] h-[3rem] self-center cursor-pointer  hover:scale-150 transition-all duration-300"
+                  width={100}
+                  height={100}
                   onClick={() => fileIn.current?.click()}
                 ></Image>
               )}

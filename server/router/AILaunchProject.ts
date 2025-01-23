@@ -7,55 +7,54 @@ import {
 import z from "zod";
 import { discussionService } from "../service/discussion";
 
-const alphfa_network_api_key = process.env.ALPHFA_NETWORK_API_KEY ?? "";
+const alphakek_api_key = process.env.ALPHAKEK_AI_API_KEY ?? "";
+const base_url = "https://api.alphakek.ai/visuals/v2/create_image";
 
 export const aiLaunchProjectRouter = router({
   generateAiProject: publicProcedure
-    // .use(rateLimitMiddleware({
-    //   limit: 10,
-    // }))
+    .use(
+      rateLimitMiddleware({
+        limit: 1,
+        duration: 1000 * 60 * 2,
+      })
+    )
     .input(
       z.object({
         wallet_address: z.string(),
-        prompt_input: z.string(),
+        prompt_input: z.string().min(1),
       })
     )
     .query(async ({ input }) => {
-      if (!alphfa_network_api_key) {
-        throw new Error("Alphfa Network API key is not set");
+      if (!alphakek_api_key) {
+        throw new Error("AlphaKek API key is not set");
       }
 
-      console.log("alphfa_network_api_key:", alphfa_network_api_key);
       console.log("input.prompt_input:", input.prompt_input);
 
-      // 调用方式如下 curl --location --request POST 'https://api.alphaos.net/open-apis/ai/create-token' \
-      // --header 'x-api-key: Fa9wsVJYhJYLXL8GC16jnbGeGNKvzJBmgNLfPan68Bn3B6iUCfjr8qRaOzXhmm1T' \
-      // --header 'Accept: */*' \
-      // --header 'Host: api.alphaos.net' \
-      // --header 'Connection: keep-alive' \
-      // --header 'Content-Type: application/x-www-form-urlencoded' \
-      // --data-urlencode 'inputs=I love McDonald'\''s and I want to generate a token for McDonald'\''s first step into the blockchain'
+      const requestBody = {
+        prompt: input.prompt_input,
+      };
 
-      // 返回体中 { data: { name, symbol, image, description } } 是代币的信息，如果 data 中包的是 tip 字段，说明用户提供的内容质量太低，可以把 tip 直接展示给用户
+      const response = await fetch(base_url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${alphakek_api_key}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Host: "api.alphakek.ai",
+          Connection: "keep-alive",
+        },
+        body: JSON.stringify(requestBody),
+      });
 
-      const response = await fetch(
-        "https://api.alphaos.net/open-apis/ai/create-token",
-        {
-          method: "POST",
-          headers: {
-            "x-api-key": alphfa_network_api_key,
-            "Content-Type": "application/x-www-form-urlencoded",
-            connection: "keep-alive",
-            host: "api.alphaos.net",
-            Accept: "*/*",
-          },
-          keepalive: true,
-          body: `inputs=${input.prompt_input}`,
-        }
-      );
-      const data = await response.json();
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("API Error:", errorData);
+        throw new Error(`API request failed: ${response.statusText}`);
+      }
 
-      console.log(data);
-      return data;
+      const data: { status: string; cdn_url: string } = await response.json();
+      console.log("data:", data);
+      return data.cdn_url;
     }),
 });

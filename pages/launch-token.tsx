@@ -474,10 +474,18 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
   };
 
   const tokenGeneratedCallback = (tokenInfo: TokenGeneratedSuccessValues) => {
-    setValue("logoUrl", tokenInfo.image);
-    setValue("tokenName", tokenInfo.name);
-    setValue("description", tokenInfo.description);
-    setValue("tokenSymbol", tokenInfo.symbol);
+    if (tokenInfo.image) {
+      setValue("logoUrl", tokenInfo.image);
+    }
+    if (tokenInfo.name) {
+      setValue("tokenName", tokenInfo.name);
+    }
+    if (tokenInfo.description) {
+      setValue("description", tokenInfo.description);
+    }
+    if (tokenInfo.symbol) {
+      setValue("tokenSymbol", tokenInfo.symbol);
+    }
   };
 
   return (
