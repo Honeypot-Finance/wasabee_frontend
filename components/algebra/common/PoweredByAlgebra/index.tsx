@@ -1,9 +1,10 @@
 import AlgebraLogo from "@/public/images/partners/algebra.png";
 import WasabeeLogo from "@/public/images/partners/wasabee.png";
 import { cn } from "@/lib/tailwindcss";
-import Link from "next/link";
+import AlphaKekLogo from "@/public/images/partners/alphakek-logo.png";
 import Image from "next/image";
 import { Tooltip } from "@nextui-org/react";
+import Link from "next/link";
 const PoweredByAlgebra = ({ className }: { className?: string }) => {
   return (
     <div
@@ -43,6 +44,21 @@ const PoweredByAlgebra = ({ className }: { className?: string }) => {
         </Link>
       </div>
     </div>
+  );
+};
+
+export const PoweredByAlphaKek = ({ className }: { className?: string }) => {
+  return (
+    <a
+      href={"https://alphakek.ai"}
+      className={cn("flex items-center gap-2 p-2 text-black", className)}
+      target="_blank"
+    >
+      <span className="text-sm font-semibold">Powered by</span>
+      <Tooltip content="AlphaKek">
+        <Image src={AlphaKekLogo} alt="AlphaKek Logo" width={24} height={24} />
+      </Tooltip>
+    </a>
   );
 };
 

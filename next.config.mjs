@@ -59,6 +59,11 @@ const nextConfig = {
         port: "",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        port: "",
+        hostname: "cdn.alphakek.ai",
+      },
     ],
   },
   async redirects() {
