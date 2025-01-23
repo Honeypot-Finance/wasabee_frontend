@@ -1,4 +1,4 @@
-import AlgebraLogo from "@/public/images/partners/algebra_logo.svg";
+import AlgebraLogo from "@/public/images/partners/algebra.png";
 import WasabeeLogo from "@/public/images/partners/wasabee.png";
 import { cn } from "@/lib/tailwindcss";
 import Link from "next/link";
@@ -19,13 +19,13 @@ const PoweredByAlgebra = ({ className }: { className?: string }) => {
           <Tooltip content="Algebra Integral">
             <Image
               src={AlgebraLogo}
-              width={24}
-              height={24}
+              width={120}
+              height={20}
               alt="Algebra Logo"
             />
           </Tooltip>
         </Link>
-        <span>&</span>
+        <span>X</span>
         <Link
           href={"https://x.com/WasabeeFi"}
           target="_blank"
