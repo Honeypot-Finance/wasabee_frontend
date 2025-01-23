@@ -180,16 +180,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
               <Filter
                 filtersList={[
                   {
-                    key: 0,
-                    label: "TVL (USD)",
-                    category: "tvl",
-                  },
-                  {
-                    key: 1,
-                    label: "Liquidity",
-                    category: "liquidity",
-                  },
-                  {
                     key: 2,
                     label: "Participants Count",
                     category: "participants",
@@ -198,36 +188,6 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                     key: 3,
                     label: "Deposit Raised Token",
                     category: "depositraisedtoken",
-                  },
-                  {
-                    key: 4,
-                    label: "Market cap",
-                    category: "marketcap",
-                  },
-                  {
-                    key: 5,
-                    label: "24H txns",
-                    category: "daytxns",
-                  },
-                  {
-                    key: 6,
-                    label: "24H buys",
-                    category: "daybuys",
-                  },
-                  {
-                    key: 7,
-                    label: "24H sells",
-                    category: "daysells",
-                  },
-                  {
-                    key: 8,
-                    label: "24H volume",
-                    category: "dayvolume",
-                  },
-                  {
-                    key: 9,
-                    label: "24H change (%)",
-                    category: "daychange",
                   },
                 ]}
                 filters={filters}
