@@ -222,6 +222,15 @@ export const VaultDetail = observer(() => {
               >
                 Deposit
               </Button>
+              {hasShares && (
+                <Button
+                  onClick={() => setIsWithdrawModalOpen(true)}
+                  disabled={!wallet.account}
+                  className="ml-[-1px] rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Withdraw
+                </Button>
+              )}
             </div>
           </div>
 
