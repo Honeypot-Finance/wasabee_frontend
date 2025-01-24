@@ -216,7 +216,14 @@ const PoolsTable = <TData, TValue>({
                 <SortHeader field="tvl" label="TVL" />
                 <SortHeader field="volume" label="Volume 24H" />
                 <SortHeader field="apr" label="APR" />
-                <th className="py-4 px-6 text-center text-[#4D4D4D]">Actions</th>
+                {defaultFilter === "myPools" && (
+                  <th className="py-4 px-6 text-center text-[#4D4D4D]">
+                    Unclaimed Fees
+                  </th>
+                )}
+                <th className="py-4 px-6 text-center text-[#4D4D4D]">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#4D4D4D]">
@@ -298,6 +305,13 @@ const PoolsTable = <TData, TValue>({
                         </span>
                       </div>
                     </td>
+                    {defaultFilter === "myPools" && (
+                      <td className="py-4 px-6 text-center">
+                        <span className="text-black">
+                          ${Number(pool.unclaimedFees).toLocaleString()}
+                        </span>
+                      </td>
+                    )}
                     <td className="py-4 px-6 text-center">
                       <Button
                         className="bg-transparent"
@@ -327,7 +341,9 @@ const PoolsTable = <TData, TValue>({
         {showPagination && tableData.length > 10 && (
           <div className="p-4 border-t border-[#2D2D2D]">
             <div className="flex justify-between items-center">
-              <span className="text-black">Page {page} of {Math.ceil(tableData.length / 10)}</span>
+              <span className="text-black">
+                Page {page} of {Math.ceil(tableData.length / 10)}
+              </span>
               <div className="flex gap-x-2">
                 <Button
                   className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-4 py-2"
