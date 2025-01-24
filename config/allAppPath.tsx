@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import Image from "next/image";
 
 const DOMAIN_MAP = {
-  MAIN: "https://honeypotfinance.xyz",
+  MAIN: "https://beta4.honeypotfinance.xyz",
   POT2PUMP: "https://pot2pump.honeypotfinance.xyz",
   DREAMPAD: "https://dreampad.honeypotfinance.xyz",
 } as const;
