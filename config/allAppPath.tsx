@@ -2,10 +2,17 @@ import { StaticImageData } from "next/image";
 import { ReactNode } from "react";
 import Image from "next/image";
 
+const DOMAIN_MAP = {
+  MAIN: "https://honeypotfinance.xyz",
+  POT2PUMP: "https://pot2pump.honeypotfinance.xyz",
+  DREAMPAD: "https://dreampad.honeypotfinance.xyz",
+} as const;
+
 export type PathChatConfig = {
   autoPopUpQuestion: ReactNode;
   pageTrendingQuestions: ReactNode[];
 };
+
 export type Menu = {
   path:
     | string
@@ -50,15 +57,15 @@ export const appPathsList: Menu[] = [
   {
     path: [
       {
-        path: "/pot2pump/overview",
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/overview`,
         title: "Overview",
       },
       {
-        path: "/pot2pump/potting",
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/potting`,
         title: "Potting",
       },
       {
-        path: "/pot2pump/pumping",
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pumping`,
         title: "Pumping",
       },
       // {
@@ -76,7 +83,7 @@ export const appPathsList: Menu[] = [
     title: "DEX",
     path: [
       {
-        path: "/swap",
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/swap`,
         title: "Swap",
       },
       // {
@@ -84,18 +91,18 @@ export const appPathsList: Menu[] = [
       //   title: "Add Liquidity",
       // },
       {
-        path: "/pools",
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/pools`,
         title: "LP Pool List",
       },
     ],
   },
   {
-    path: "/leaderboard",
+    path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/leaderboard`,
     title: "Leaderboard",
   },
   {
     title: "Faucet",
-    path: "/faucet",
+    path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/faucet`,
   },
   // {
   //   title: "DreamPad",
