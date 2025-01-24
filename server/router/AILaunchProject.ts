@@ -33,6 +33,9 @@ export const aiLaunchProjectRouter = router({
 
       const requestBody = {
         prompt: input.prompt_input,
+        width: 512,
+        height: 512,
+        allow_nsfw: true,
       };
 
       const response = await fetch(base_url, {
