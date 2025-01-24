@@ -57,15 +57,15 @@ export const appPathsList: Menu[] = [
   {
     path: [
       {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/overview`,
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pot2pump/overview`,
         title: "Overview",
       },
       {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/potting`,
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pot2pump/potting`,
         title: "Potting",
       },
       {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pumping`,
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pot2pump/pumping`,
         title: "Pumping",
       },
       // {
