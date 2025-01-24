@@ -99,18 +99,14 @@ export const ftoService = {
     chain_id: number;
     creator_api_key: string;
   }) => {
-    const project = (await fotProjectDataloader.load({
+    const project = await fotProjectDataloader.load({
       pair: data.pair,
       chain_id: data.chain_id.toString(),
-    })) || {
-      pair: data.pair,
-      provider: "",
-      project_type: "",
-    };
+    });
     let updateFlag = false;
     const publicClient = createPublicClientByChain(chainsMap[data.chain_id]);
     const readQueue = [];
-    if (!project.provider) {
+    if (!project || !project.provider) {
       updateFlag = true;
       readQueue.push(
         publicClient
@@ -145,6 +141,7 @@ export const ftoService = {
           })
       );
     }
+
     await Promise.all(readQueue);
 
     if (updateFlag) {
@@ -274,6 +271,8 @@ export const ftoService = {
     launch_token: string;
     chain_id: number;
   }): Promise<projectColumn[]> => {
+    console.log("launch_token", data.launch_token);
+    console.log("chain_id", data.chain_id);
     const launch =
       await pg`SELECT * FROM fto_project WHERE launch_token = ${data.launch_token.toLowerCase()} and chain_id = ${data.chain_id.toString()}`;
     return launch.map((item) => {
