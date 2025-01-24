@@ -1,131 +1,86 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { cn } from "@/lib/tailwindcss";
-import { Button } from "@nextui-org/react";
+import {
+  Button,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/react";
 import { Menu } from "@/config/allAppPath";
 import Image from "next/image";
+import { Key } from "react";
 
 interface NavbarProps {
   menuList: Menu[];
 }
 
+interface SubMenu {
+  path: string;
+  title: string;
+  icon?: {
+    src: string;
+  };
+}
+
 export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
   const router = useRouter();
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [hoveredMenu, setHoveredMenu] = React.useState<string | null>(null);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const findMenuByPath = React.useCallback(
-    (path: string) => {
-      for (const menu of menuList) {
-        if (menu.path instanceof Array) {
-          if (menu.path.some((subMenu) => subMenu.path === path)) {
-            return menu.title;
-          }
-        } else if (menu.path === path) {
-          return menu.title;
-        }
-      }
-      return menuList[0].title;
-    },
-    [menuList]
-  );
-
-  const [selectedMenu, setSelectedMenu] = React.useState<string>(
-    findMenuByPath(router.pathname)
-  );
-
-  React.useEffect(() => {
-    setSelectedMenu(findMenuByPath(router.pathname));
-  }, [router.pathname, findMenuByPath]);
-
-  const currentMenu = menuList.find((m) => m.title === selectedMenu);
-
-  const subMenus =
-    currentMenu && currentMenu.path instanceof Array ? currentMenu.path : [];
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center font-gliker">
       <Image
-        src="/images/header/hanging-rope.svg"
-        alt="hanging rope"
         width={139}
         height={66}
+        alt="hanging rope"
         className="mb-[-20px]"
+        src="/images/header/hanging-rope.svg"
       />
-      <div className="bg-[#FFCD4D] rounded-xl pt-1 min-w-[200px] min-h-[100px] flex flex-col bg-[url('/images/card-container/dark/bottom-border.svg')] bg-left-bottom bg-repeat-x">
-        <div className="border-t-1 rounded-[30px] border-[#202020] px-3 h-full flex flex-col">
-          <div className="relative" ref={dropdownRef}>
-            <div className=" top-full left-0 right-0 mt-1  rounded-lg py-1 z-50 flex gap-2">
-              {menuList.map((menu) => (
-                <div
-                  key={menu.title}
-                  className="relative"
-                  onMouseEnter={() => setHoveredMenu(menu.title)}
-                  onMouseLeave={() => setHoveredMenu(null)}
-                >
+      <div className="bg-[#FFCD4D] rounded-xl flex flex-col py-4 px-3 border-[1.5px] border-[#010101] shadow-[2px_4px_0px_0px_#FFF]">
+        <div className="flex gap-2 py-1">
+          {menuList.map((menu) =>
+            Array.isArray(menu.path) ? (
+              <Dropdown 
+                key={menu.title} 
+                placement="bottom-start"
+                classNames={{
+                  content: "bg-transparent p-0"
+                }}>
+                <DropdownTrigger>
                   <Button
                     className={cn(
-                      "w-full justify-start min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/50 hover:text-white",
-                      router.pathname ===
-                        (menu.path instanceof Array
-                          ? menu.path[0].path
-                          : menu.path)
+                      "min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020] hover:text-white",
+                      (menu.path as SubMenu[]).some(item => item.path === router.pathname)
                         ? "bg-[#202020] text-white"
                         : ""
                     )}
-                    onClick={() => {
-                      if (menu.path instanceof Array) {
-                        router.push(menu.path[0].path);
-                      } else {
-                        router.push(menu.path);
-                      }
-                      setSelectedMenu(menu.title);
-                      setIsOpen(false);
-                    }}
                   >
-                    <div className="flex items-center w-full">
-                      {/* <div className="w-6 h-6 bg-[#202020] rounded-md" /> */}
-                      <span className="ml-2">{menu.title}</span>
-                    </div>
+                    {menu.title}
                   </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex-1  pr-2 -mr-2">
-            <div className="flex gap-1.5">
-              {subMenus.length !== 0 &&
-                subMenus.map((subMenu) => (
-                  <Button
-                    key={subMenu.path}
-                    size="sm"
-                    className={cn(
-                      "w-full justify-start  py-0 font-bold hover:bg-[#202020]  hover:text-white",
-                      router.pathname === subMenu.path
-                        ? "bg-[#202020] text-white"
-                        : "bg-transparent text-[#202020] "
-                    )}
-                    startContent={
-                      <div className="w-5 h-5 mr-2 flex items-center justify-center">
-                        {subMenu.icon && (
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label={menu.title}
+                  className="bg-[#FFCD4D] rounded-lg p-1"
+                  onAction={(key: Key) => {
+                    const subMenu = (menu.path as SubMenu[]).find(
+                      (item: SubMenu) => item.path === key
+                    );
+                    if (subMenu) {
+                      router.push(subMenu.path);
+                    }
+                  }}
+                >
+                  {(menu.path as SubMenu[]).map((subMenu: SubMenu) => (
+                    <DropdownItem
+                      key={subMenu.path}
+                      className={cn(
+                        "font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white",
+                        router.pathname === subMenu.path
+                          ? "bg-[#202020] text-white"
+                          : "text-[#202020]"
+                      )}
+                      startContent={
+                        subMenu.icon && (
                           <Image
                             src={subMenu.icon.src}
                             alt={subMenu.title}
@@ -133,16 +88,31 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                             height={16}
                             className="w-4 h-4"
                           />
-                        )}
-                      </div>
-                    }
-                    onClick={() => router.push(subMenu.path)}
-                  >
-                    {subMenu.title}
-                  </Button>
-                ))}
-            </div>
-          </div>
+                        )
+                      }
+                    >
+                      {subMenu.title}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+            ) : (
+              <Button
+                key={menu.title}
+                className={cn(
+                  "min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white",
+                  router.pathname === menu.path ? "bg-[#202020] text-white" : ""
+                )}
+                onClick={() => {
+                  if (typeof menu.path === "string") {
+                    router.push(menu.path);
+                  }
+                }}
+              >
+                {menu.title}
+              </Button>
+            )
+          )}
         </div>
       </div>
     </div>

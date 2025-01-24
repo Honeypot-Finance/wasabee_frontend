@@ -435,7 +435,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
           </div>
         </div>
       </CardContainer>
-      <div className="w-full relative flex justify-center mb-12">
+      <div className="w-full relative flex justify-center my-12">
         <div className="w-full max-w-[600px]">
           <Link
             href="/launch-token?launchType=meme"
@@ -474,7 +474,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
                 <h2 className="text-xl font-bold mb-4 absolute top-0 left-0 right-0 z-20 py-2 px-2 bg-white">
                   {tab}
                 </h2>
-                <div className="flex flex-col gap-6 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
+                <div className="flex flex-col gap-6 pb-2 overflow-y-auto h-full pt-[60px] [&::-webkit-scrollbar]:w-1 &::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                   {(() => {
                     switch (tab) {
                       case POT_TABS.NEW:
@@ -610,7 +610,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
           <div className="md:hidden min-h-[600px] h-[calc(100vh-300px)]">
             <div className="h-full flex flex-col px-2 overflow-hidden">
               {selectedTabs.map((tab) => (
-                <div key={tab} className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-amber-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
+                <div key={tab} className="flex flex-col gap-4 pb-2 overflow-y-auto h-full [&::-webkit-scrollbar]:w-1 &::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white [-webkit-scrollbar]:mr-0 [&::-webkit-scrollbar]:mr-2 pr-2">
                   {(() => {
                     switch (tab) {
                       case POT_TABS.NEW:
