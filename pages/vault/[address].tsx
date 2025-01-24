@@ -16,6 +16,7 @@ import { SingleVaultDetailsQuery } from "@/lib/algebra/graphql/generated/graphql
 import BigNumber from "bignumber.js";
 import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 
 export const VaultDetail = observer(() => {
   const router = useRouter();
@@ -204,6 +205,11 @@ export const VaultDetail = observer(() => {
             )}
           </div>
           <div className="flex gap-2">
+            <Link
+              href={`/swap?inputCurrency=${vault?.token0?.address}&outputCurrency=${vault?.token1?.address}`}
+            >
+              <Button>Swap</Button>
+            </Link>
             <Button
               onClick={() => setIsDepositModalOpen(true)}
               disabled={!wallet.account}
