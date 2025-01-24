@@ -152,7 +152,7 @@ const handleYes = async (
       name: values.name,
       description: values.description,
       symbol: values.ticker,
-      decimals: 8, // usually 18, WBTC is 8 decimals
+      decimals: pair.launchedToken?.decimals, // usually 18, WBTC is 8 decimals
       logo: values.logo,
       website: values.website,
       forum: values.forum,
