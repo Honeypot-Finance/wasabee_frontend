@@ -7,6 +7,8 @@ import { wallet } from "@/services/wallet";
 import { ContractWrite } from "@/services/utils";
 import { Slider } from "@nextui-org/slider";
 import BigNumber from "bignumber.js";
+import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import TokenLogo from "@/components/TokenLogo/TokenLogo";
 
 interface WithdrawFromVaultModalProps {
   isOpen: boolean;
@@ -60,9 +62,9 @@ export function WithdrawFromVaultModal({
       const newAmount =
         //use bigNumber
         new BigNumber(maxShares.toString())
-          .dividedBy(10 ** 18)
           .multipliedBy(percent / 100)
           .toString();
+
       setAmount(newAmount);
 
       //   (BigInt(maxShares) * BigInt(percent * 100)) / BigInt(10000);
@@ -81,9 +83,9 @@ export function WithdrawFromVaultModal({
   const handleWithdraw = async () => {
     if (!wallet.account || !amount) return;
 
-    const withdrawAmount = BigInt(
-      new BigNumber(amount).multipliedBy(10 ** 18).toFixed(0)
-    );
+    console.log(amount);
+    const withdrawAmount = BigInt(new BigNumber(amount).toFixed(0));
+    console.log(withdrawAmount);
 
     if (withdrawAmount > maxShares) {
       console.error("Cannot withdraw more than available shares");
@@ -150,24 +152,78 @@ export function WithdrawFromVaultModal({
                       <label className="text-black text-base font-medium">
                         Amount to Withdraw
                       </label>
-                      <span className="text-black text-base">
-                        Available: {formatShares(maxShares)}
+                      <span className="flex text-black text-base gap-2">
+                        Available:{" "}
+                        <span className="flex flex-col text-right">
+                          <div className="grid grid-cols-[1fr_auto] gap-2">
+                            {DynamicFormatAmount({
+                              amount: BigNumber(
+                                vault?.userTokenAmounts.total0.toString() ?? 0
+                              ).toString(),
+                              decimals: 3,
+                              endWith: vault?.token0?.symbol,
+                            })}
+                            {vault?.token0 && (
+                              <TokenLogo token={vault?.token0} />
+                            )}
+                          </div>
+                          <div className="grid grid-cols-[1fr_auto] gap-2">
+                            {DynamicFormatAmount({
+                              amount: BigNumber(
+                                vault?.userTokenAmounts.total1.toString() ?? 0
+                              ).toString(),
+                              decimals: 3,
+                              endWith: vault?.token1?.symbol,
+                            })}
+                            {vault?.token1 && (
+                              <TokenLogo token={vault?.token1} />
+                            )}
+                          </div>
+                        </span>
                       </span>
                     </div>
                     <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={amount}
-                        onChange={handleTypeAmount}
-                        className="w-full bg-transparent border border-black rounded-[16px] px-4 py-[18px] text-black outline-none shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)]"
-                        placeholder="0.0"
-                      />
-                      <Button
-                        onClick={handleMaxAmount}
-                        className="px-4 py-2 bg-[#FFCD4D] hover:bg-[#ffd666] text-black rounded-[16px]"
-                      >
-                        MAX
-                      </Button>
+                      <div className="w-full bg-transparent border border-black rounded-[16px] px-4 py-[18px] text-black outline-none shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)]">
+                        <span className="flex flex-col text-right">
+                          <div className="flex gap-2">
+                            {vault?.token0 && (
+                              <TokenLogo token={vault?.token0} />
+                            )}
+                            {DynamicFormatAmount({
+                              amount: BigNumber(
+                                vault?.userTokenAmounts.total0.toString() ?? 0
+                              )
+                                .times(
+                                  BigNumber(amount).div(
+                                    vault.userShares.toString()
+                                  )
+                                )
+                                .toString(),
+                              decimals: 3,
+                              endWith: vault?.token0?.symbol,
+                            })}
+                          </div>
+
+                          <div className="flex gap-2">
+                            {vault?.token1 && (
+                              <TokenLogo token={vault?.token1} />
+                            )}
+                            {DynamicFormatAmount({
+                              amount: BigNumber(
+                                vault?.userTokenAmounts.total1.toString() ?? 0
+                              )
+                                .times(
+                                  BigNumber(amount).div(
+                                    vault.userShares.toString()
+                                  )
+                                )
+                                .toString(),
+                              decimals: 3,
+                              endWith: vault?.token1?.symbol,
+                            })}
+                          </div>
+                        </span>
+                      </div>
                     </div>
 
                     {/* Slider */}

@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import launchpad from "@/services/launchpad";
-import { Button } from "@/components/button/button-next";
+import { Button } from "@nextui-org/react";
 import { Button as FTOButton } from "@/components/button";
 import { NextLayoutPage } from "@/types/nextjs";
 import { RocketSvg } from "@/components/svg/Rocket";
@@ -32,11 +32,17 @@ import { FaQuestionCircle } from "react-icons/fa";
 import { popmodal } from "@/services/popmodal";
 import store from "store2";
 import { cn } from "@/lib/tailwindcss";
-import { UploadImage } from "@/components/UploadImage/UploadImage";
+import { uploadFile, UploadImage } from "@/components/UploadImage/UploadImage";
 import BigNumber from "bignumber.js";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { Token } from "@/services/contract/token";
 import { amountFormatted, formatAmount } from "@/lib/format";
+import { trpcClient } from "@/lib/trpc";
+import { Blob, File } from "buffer";
+import { base64ToFile } from "@/lib/blob/uploadProjectIcon";
+import AITokenGenerator, {
+  TokenGeneratedSuccessValues,
+} from "@/components/AI/AITokenGenerator/AITokenGenerator";
 import { HoneyContainer } from "@/components/CardContianer";
 const positiveIntegerPattern = /^[1-9]\d*$/;
 
@@ -110,6 +116,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
       console.error(error);
     }
   };
+
   return (
     <div className="flex w-full items-center justify-center">
       {launchpad.ftofactoryContract?.createFTO.loading ? (
@@ -434,6 +441,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     handleSubmit,
     control,
     formState: { errors },
+    setValue,
   } = useForm<FormValues>();
   const router = useRouter();
   const state = useLocalObservable(() => ({
@@ -490,6 +498,21 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     });
   };
 
+  const tokenGeneratedCallback = (tokenInfo: TokenGeneratedSuccessValues) => {
+    if (tokenInfo.image) {
+      setValue("logoUrl", tokenInfo.image);
+    }
+    if (tokenInfo.name) {
+      setValue("tokenName", tokenInfo.name);
+    }
+    if (tokenInfo.description) {
+      setValue("description", tokenInfo.description);
+    }
+    if (tokenInfo.symbol) {
+      setValue("tokenSymbol", tokenInfo.symbol);
+    }
+  };
+
   return (
     <div className="flex w-full items-center justify-center">
       <HoneyContainer>
@@ -507,6 +530,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
           onSubmit={handleSubmit(onSubmit)}
           className="w-full rounded-[24px] md:rounded-[32px] bg-white space-y-5 px-4 md:px-8 py-4 md:py-6 custom-dashed mx-3 md:mx-6 mt-4 md:mt-6"
         >
+          <AITokenGenerator tokenGeneratedCallback={tokenGeneratedCallback} />
           <div className="flex flex-col gap-4">
             <Controller
               control={control}

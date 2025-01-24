@@ -13,6 +13,28 @@ export interface UploadImageProps {
   variant?: "icon" | "banner";
 }
 
+export const uploadFile = async (
+  file: File,
+  blobName: string,
+  onUpload?: (url: string) => void
+): Promise<string> => {
+  const response = await fetch(
+    `/api/upload/upload-project-icon?filename=${blobName}`,
+    {
+      method: "POST",
+      body: file,
+    }
+  );
+
+  const newBlob = (await response.json()) as PutBlobResult;
+
+  if (onUpload) {
+    onUpload(newBlob.url);
+  }
+
+  return newBlob.url;
+};
+
 export function UploadImage(props: UploadImageProps): JSX.Element {
   const fileIn = useRef<HTMLInputElement>(null);
 
@@ -33,24 +55,12 @@ export function UploadImage(props: UploadImageProps): JSX.Element {
     }
   };
 
-  const uploadFile = async (file: File) => {
-    const response = await fetch(
-      `/api/upload/upload-project-icon?filename=${props.blobName}`,
-      {
-        method: "POST",
-        body: file,
-      }
-    );
-
-    const newBlob = (await response.json()) as PutBlobResult;
-
-    props.onUpload(newBlob.url);
-  };
-
   return (
     <Dropzone
       onDrop={(file: File[]) => {
-        uploadFile(file[0]);
+        uploadFile(file[0], props.blobName, props.onUpload).then((url) => {
+          props.onUpload(url);
+        });
       }}
     >
       {({ getRootProps, getInputProps }) => (
@@ -73,9 +83,9 @@ export function UploadImage(props: UploadImageProps): JSX.Element {
                       : "/images/empty-logo.png"
                   }
                   alt="icon"
-                  className="rounded-[11.712px] hover:bg-[#ECC94E20] w-[3rem] h-[3rem] self-center cursor-pointer"
-                  width={36}
-                  height={36}
+                  className="rounded-[11.712px] hover:bg-[#ECC94E20] w-[3rem] h-[3rem] self-center cursor-pointer  hover:scale-150 transition-all duration-300"
+                  width={100}
+                  height={100}
                   onClick={() => fileIn.current?.click()}
                 ></Image>
               )}

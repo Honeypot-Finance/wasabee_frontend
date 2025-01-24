@@ -70,10 +70,22 @@ export const rateLimitMiddleware =
     const ip = JSON.stringify(requestIp.getClientIp(req));
     limit = limit || 60;
     duration = duration || 1000 * 60;
-    const cache = await ipCache.get<{
+    let cache = await ipCache.get<{
       usage: number;
       expires: number;
     }>(ip);
+
+    if (cache?.expires && cache.expires < Date.now()) {
+      console.log("cache expired");
+      console.log("cache", cache);
+      const emptyCache = {
+        usage: 0,
+        expires: Date.now() + duration,
+      };
+      await ipCache.set(ip, emptyCache);
+      cache = emptyCache;
+    }
+
     const currentUsage = (cache?.usage || 0) + 1;
     const isRateLimited = currentUsage > limit;
     res.setHeader("X-RateLimit-Limit", limit);
@@ -81,7 +93,9 @@ export const rateLimitMiddleware =
       "X-RateLimit-Remaining",
       isRateLimited ? 0 : limit - currentUsage
     );
-    console.log("currentUsage", currentUsage, limit);
+
+    // console.log("currentUsage", currentUsage, "limit", limit);
+
     if (currentUsage > limit) {
       throw new TRPCError({
         code: "BAD_REQUEST",

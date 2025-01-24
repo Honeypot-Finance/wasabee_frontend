@@ -65,8 +65,8 @@ export class Token implements BaseContract {
   initialUSD = "";
   totalValueLockedUSD = "";
   poolCount = 0;
-  pot2pumpAddress: Address | undefined | null = undefined;
   priceChange24hPercentage = "";
+  pot2pumpAddress: Address | undefined | null = undefined;
 
   // determines the order of the token in the list
   get priority() {
@@ -176,24 +176,35 @@ export class Token implements BaseContract {
       return;
     }
 
-    const launch = await trpcClient.projects.getProjectsByLaunchToken.query({
+    await this.getPot2PumpAddress();
+
+    console.log("this.pot2pumpAddress", this.pot2pumpAddress);
+    if (!this.pot2pumpAddress) {
+      return;
+    }
+
+    console.log("this. wallet.currentChainId,", wallet.currentChainId);
+    console.log("this. pot2pumpAddress", this.pot2pumpAddress);
+    const launch = await trpcClient.projects.getProjectInfo.query({
       chain_id: wallet.currentChainId,
-      launch_token: this.address.toLowerCase(),
+      pair: this.pot2pumpAddress,
     });
 
-    launch[0]?.logo_url && this.setLogoURI(launch[0].logo_url);
+    console.log("launch", launch);
 
-    if (!!launch[0]?.logo_url) {
-      localStorage.setItem(
-        `token-logo-uri-${wallet.currentChainId}-${this.address.toLowerCase()}`,
-        launch[0]?.logo_url
-      );
-    }
+    launch?.logo_url && this.setLogoURI(launch.logo_url);
+
+    console.log("this.logoURI", this.logoURI);
 
     return this.logoURI;
   }
 
   setLogoURI(logoURI: string) {
+    localStorage.setItem(
+      `token-logo-uri-${wallet.currentChainId}-${this.address.toLowerCase()}`,
+      logoURI
+    );
+
     this.logoURI = logoURI;
   }
 
@@ -366,6 +377,16 @@ export class Token implements BaseContract {
     if (this.pot2pumpAddress !== undefined) {
       return this.pot2pumpAddress;
     }
+
+    const cachedPot2PumpAddress = localStorage.getItem(
+      `token-pot2pump-${wallet.currentChainId}-${this.address.toLowerCase()}`
+    );
+
+    if (cachedPot2PumpAddress) {
+      this.pot2pumpAddress = cachedPot2PumpAddress as Address;
+      return cachedPot2PumpAddress;
+    }
+
     const pot2pumpAddress =
       await wallet.contracts.memeFactory.contract.read.getPair([
         this.address as Address,
@@ -376,6 +397,10 @@ export class Token implements BaseContract {
       return null;
     }
     this.pot2pumpAddress = pot2pumpAddress;
+    localStorage.setItem(
+      `token-pot2pump-${wallet.currentChainId}-${this.address.toLowerCase()}`,
+      pot2pumpAddress as `0x${string}`
+    );
     return pot2pumpAddress;
   }
 
