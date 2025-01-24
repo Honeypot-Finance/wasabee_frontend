@@ -2,7 +2,7 @@ import {
   poolsColumns,
   poolsColumnsMy,
 } from "@/components/algebra/common/Table/poolsColumns";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Address } from "viem";
 import PoolsTable from "@/components/algebra/common/Table/poolsTable";
 import { usePositions } from "@/lib/algebra/hooks/positions/usePositions";
@@ -10,12 +10,10 @@ import { farmingClient } from "@/lib/algebra/graphql/clients";
 import {
   usePoolsListQuery,
   useActiveFarmingsQuery,
-  OrderDirection,
   Pool_OrderBy,
 } from "@/lib/algebra/graphql/generated/graphql";
 import PoolCardList from "./PoolCardList";
 import { SortingState } from "@tanstack/react-table";
-import { id } from "ethers/lib/utils";
 import { useUserPools } from "@/lib/algebra/graphql/clients/pool";
 import { wallet } from "@/services/wallet";
 import BigNumber from "bignumber.js";

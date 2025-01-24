@@ -1,27 +1,14 @@
-import { liquidity } from "@/services/liquidity";
-import { NextLayoutPage } from "@/types/nextjs";
-import { observer } from "mobx-react-lite";
-import { useCallback, useEffect, useState } from "react";
-import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
-import { Button } from "@/components/button";
-import { Input } from "../components/input/index";
-import { IoSearchOutline } from "react-icons/io5";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { wallet } from "@/services/wallet";
-import { motion } from "framer-motion";
-import PoolLiquidityCard from "@/components/PoolLiquidityCard/PoolLiquidityCard";
-import { defaultContainerVariants } from "@/lib/animation";
-import Image from "next/image";
-import Pagination from "@/components/Pagination/Pagination";
-import PoolsList from "@/components/algebra/pools/PoolsList";
-import MyAquaberaVaults from "@/components/Aquabera/VaultLists/MyVaults";
-import AquaberaList from "@/components/Aquabera/VaultLists/VaultLists";
 import { cn } from "@/lib/utils";
-import CardContainer from "@/components/CardContianer/v3";
+import { observer } from "mobx-react-lite";
+import { wallet } from "@/services/wallet";
+import { Tab, Tabs } from "@nextui-org/react";
+import { NextLayoutPage } from "@/types/nextjs";
+import { liquidity } from "@/services/liquidity";
+import { useCallback, useEffect, useState } from "react";
+import PoolsList from "@/components/algebra/pools/PoolsList";
+import AquaberaList from "@/components/Aquabera/VaultLists/VaultLists";
 
 const PoolsPage: NextLayoutPage = observer(() => {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState<"all" | "my">("all");
 
@@ -79,23 +66,26 @@ const PoolsPage: NextLayoutPage = observer(() => {
 
   return (
     <div className="max-w-[1200px] mx-auto px-4 xl:px-0 font-gliker w-full">
+      {/* TODO: Add pool bg img */}
       <Tabs
         classNames={{
+          tab: "h-12",
           base: "relative w-full",
+          cursor: "bg-[#202020] !text-white/80 px-2 py-3",
           tabList:
-            "flex rounded-2xl border border-[#202020] bg-white p-4 shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] py-2 px-3.5 mb-6 absolute left-1/2 -translate-x-1/2 z-10 z-10",
-          cursor:
-            "bg-[#FFCD4D] border border-black shadow-[2px_2px_0px_0px_#000000] text-sm",
+            "flex rounded-[16px] border border-[#202020] bg-white shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] p-3 absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10",
+          // TODO: Update top border img
           panel: cn(
-            "flex flex-col h-full w-full gap-y-4 justify-center items-center bg-[#FFCD4D] rounded-2xl text-[#202020]",
+            "flex flex-col h-full w-full gap-y-4 items-center bg-[#FFCD4D] rounded-2xl text-[#202020]",
             "px-8 pt-[70px] pb-[70px]",
             "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
             "bg-[position:-65px_top,_-85px_bottom]",
             "bg-[size:auto_65px,_auto_65px]",
             "bg-repeat-x",
-            "!mt-0"
+            "!mt-0",
+            "h-auto",
           ),
-          tabContent: "!text-[#202020]",
+          tabContent: "text-[#202020]",
         }}
       >
         <Tab key="algebra" title="Concentrated Liquidity">
