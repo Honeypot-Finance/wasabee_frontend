@@ -1,43 +1,28 @@
 import { useRouter } from "next/router";
-import { Button } from "@/components/button";
-import Image from "next/image";
-import {
-  getAccountVaultsList,
-  getVaultPageData,
-} from "@/lib/algebra/graphql/clients/vaults";
-import {
-  AccountVaultSharesQuery,
-  AccountVaultSharesQueryResult,
-  VaultShare,
-  VaultsSortedByHoldersQuery,
-} from "@/lib/algebra/graphql/generated/graphql";
-import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
-import { Token } from "@/services/contract/token";
-import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
+import { Link } from "@nextui-org/react";
 import { wallet } from "@/services/wallet";
-import { Tabs, Tab, Link, Pagination } from "@nextui-org/react";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
-} from "@nextui-org/table";
-import { useEffect, useState, useMemo } from "react";
-import { Address } from "viem";
-import { DepositToVaultModal } from "../modals/DepositToVaultModal";
 import { Currency } from "@cryptoalgebra/sdk";
-import { ChevronUp, ChevronDown, Search } from "lucide-react";
-import { HoneyContainer } from "@/components/CardContianer";
-import useDebounce from "@/lib/algebra/hooks/common/useDebounce";
-import { debounce } from "lodash";
+import { Token } from "@/services/contract/token";
+import { useEffect, useState, useMemo } from "react";
+import { ChevronUp, ChevronDown } from "lucide-react";
+import { Button } from "@/components/algebra/ui/button";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
+import { DepositToVaultModal } from "../modals/DepositToVaultModal";
+import { getVaultPageData } from "@/lib/algebra/graphql/clients/vaults";
+import { VaultsSortedByHoldersQuery } from "@/lib/algebra/graphql/generated/graphql";
+import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
+
 
 type SortField = "pair" | "address" | "tvl" | "volume" | "fees";
 type SortDirection = "asc" | "desc";
 
-export function AllAquaberaVaults() {
+interface AllAquaberaVaultsProps {
+  searchString?: string;
+}
+
+export function AllAquaberaVaults({
+  searchString = "",
+}: AllAquaberaVaultsProps) {
   const router = useRouter();
   const [vaults, setVaults] = useState<VaultsSortedByHoldersQuery>();
   const [sortField, setSortField] = useState<SortField>("tvl");
@@ -46,8 +31,6 @@ export function AllAquaberaVaults() {
   const [selectedVault, setSelectedVault] = useState<ICHIVaultContract | null>(
     null
   );
-  const [searchString, setSearchString] = useState("");
-  const searchDebounce = debounce(() => loadMyVaults(searchString), 500);
   const [selectedTokenA, setSelectedTokenA] = useState<Currency | null>(null);
   const [selectedTokenB, setSelectedTokenB] = useState<Currency | null>(null);
   const [page, setPage] = useState(1);
@@ -58,7 +41,7 @@ export function AllAquaberaVaults() {
       return;
     }
 
-    searchDebounce();
+    loadMyVaults(searchString);
   }, [wallet.isInit, searchString]);
 
   const loadMyVaults = async (search?: string) => {
@@ -124,131 +107,100 @@ export function AllAquaberaVaults() {
 
   return (
     <div className="w-full">
-      <div className="w-full">
-        {/* 搜索栏 */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex gap-2 flex-1 max-w-md">
-            <input
-              type="text"
-              value={searchString}
-              onChange={(e) => setSearchString(e.target.value)}
-              placeholder="Search"
-              className="w-full bg-[#1a1b1f] border border-gray-700 rounded-lg px-4 py-2 text-white"
-            />
-            {searchString && (
-              <button
-                onClick={() => {
-                  setSearchString("");
-                  setPage(1);
-                }}
-                className="px-4 py-2 bg-[#2a2a2a] rounded-lg text-white hover:bg-[#3a3a3a] transition-colors"
-              >
-                Clear
-              </button>
-            )}
-          </div>
-        </div>
-
-        <Table
-          aria-label="my-vaults"
-          classNames={{
-            base: "w-full",
-            table: "w-full",
-            thead: "w-full ",
-            tbody: "w-full ",
-          }}
-        >
-          <TableHeader>
-            <TableColumn key="pair">
+      <table className="w-full">
+        <thead>
+          <tr>
+            <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
               <div
-                className="cursor-pointer"
+                className="flex items-center gap-2"
                 onClick={() => handleSort("pair")}
               >
-                <div className="flex items-center gap-2">
-                  <span>Token Pair</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${sortField === "pair" && sortDirection === "asc" ? "text-[#F7931A]" : "text-black"}`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${sortField === "pair" && sortDirection === "desc" ? "text-[#F7931A]" : "text-black"}`}
-                    />
-                  </div>
+                <span>Token Pair</span>
+                <div className="flex flex-col">
+                  <ChevronUp
+                    className={`h-3 w-3 ${sortField === "pair" && sortDirection === "asc" ? "text-black" : "text-[#4D4D4D]"}`}
+                  />
+                  <ChevronDown
+                    className={`h-3 w-3 ${sortField === "pair" && sortDirection === "desc" ? "text-black" : "text-[#4D4D4D]"}`}
+                  />
                 </div>
               </div>
-            </TableColumn>
-            <TableColumn key="address">
+            </th>
+            <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
               <div
-                className="cursor-pointer"
+                className="flex items-center gap-2"
                 onClick={() => handleSort("address")}
               >
-                <div className="flex items-center gap-2">
-                  <span>Vault Address</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${sortField === "address" && sortDirection === "asc" ? "text-[#F7931A]" : "text-black"}`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${sortField === "address" && sortDirection === "desc" ? "text-[#F7931A]" : "text-black"}`}
-                    />
-                  </div>
+                <span>Vault Address</span>
+                <div className="flex flex-col">
+                  <ChevronUp
+                    className={`h-3 w-3 ${sortField === "address" && sortDirection === "asc" ? "text-black" : "text-[#4D4D4D]"}`}
+                  />
+                  <ChevronDown
+                    className={`h-3 w-3 ${sortField === "address" && sortDirection === "desc" ? "text-black" : "text-[#4D4D4D]"}`}
+                  />
                 </div>
               </div>
-            </TableColumn>
-            <TableColumn key="tvl">
-              <div className="cursor-pointer" onClick={() => handleSort("tvl")}>
-                <div className="flex items-center gap-2">
-                  <span>TVL</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${sortField === "tvl" && sortDirection === "asc" ? "text-[#F7931A]" : "text-black"}`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${sortField === "tvl" && sortDirection === "desc" ? "text-[#F7931A]" : "text-black"}`}
-                    />
-                  </div>
-                </div>
-              </div>
-            </TableColumn>
-            <TableColumn key="volume">
+            </th>
+            <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
               <div
-                className="cursor-pointer"
+                className="flex items-center gap-2 justify-end"
+                onClick={() => handleSort("tvl")}
+              >
+                <span>TVL</span>
+                <div className="flex flex-col">
+                  <ChevronUp
+                    className={`h-3 w-3 ${sortField === "tvl" && sortDirection === "asc" ? "text-black" : "text-[#4D4D4D]"}`}
+                  />
+                  <ChevronDown
+                    className={`h-3 w-3 ${sortField === "tvl" && sortDirection === "desc" ? "text-black" : "text-[#4D4D4D]"}`}
+                  />
+                </div>
+              </div>
+            </th>
+            <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+              <div
+                className="flex items-center gap-2 justify-end"
                 onClick={() => handleSort("volume")}
               >
-                <div className="flex items-center gap-2">
-                  <span>24h Volume</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${sortField === "volume" && sortDirection === "asc" ? "text-[#F7931A]" : "text-black"}`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${sortField === "volume" && sortDirection === "desc" ? "text-[#F7931A]" : "text-black"}`}
-                    />
-                  </div>
+                <span>24h Volume</span>
+                <div className="flex flex-col">
+                  <ChevronUp
+                    className={`h-3 w-3 ${sortField === "volume" && sortDirection === "asc" ? "text-black" : "text-[#4D4D4D]"}`}
+                  />
+                  <ChevronDown
+                    className={`h-3 w-3 ${sortField === "volume" && sortDirection === "desc" ? "text-black" : "text-[#4D4D4D]"}`}
+                  />
                 </div>
               </div>
-            </TableColumn>
-            <TableColumn key="fees">
+            </th>
+            <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
               <div
-                className="cursor-pointer"
+                className="flex items-center gap-2 justify-end"
                 onClick={() => handleSort("fees")}
               >
-                <div className="flex items-center gap-2">
-                  <span>24h Fees</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${sortField === "fees" && sortDirection === "asc" ? "text-[#F7931A]" : "text-gray-400"}`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${sortField === "fees" && sortDirection === "desc" ? "text-[#F7931A]" : "text-gray-400"}`}
-                    />
-                  </div>
+                <span>24h Fees</span>
+                <div className="flex flex-col">
+                  <ChevronUp
+                    className={`h-3 w-3 ${sortField === "fees" && sortDirection === "asc" ? "text-black" : "text-[#4D4D4D]"}`}
+                  />
+                  <ChevronDown
+                    className={`h-3 w-3 ${sortField === "fees" && sortDirection === "desc" ? "text-black" : "text-[#4D4D4D]"}`}
+                  />
                 </div>
               </div>
-            </TableColumn>
-          </TableHeader>
-          <TableBody className="bg-white">
-            {getSortedVaults().map((vault) => {
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-[#4D4D4D]">
+          {!getSortedVaults().length ? (
+            <tr className="hover:bg-white border-white h-full">
+              <td colSpan={5} className="h-24 text-center text-black">
+                No results.
+              </td>
+            </tr>
+          ) : (
+            getSortedVaults().map((vault) => {
               const tokenA = Token.getToken({ address: vault.tokenA });
               const tokenB = Token.getToken({ address: vault.tokenB });
 
@@ -277,78 +229,99 @@ export function AllAquaberaVaults() {
               });
 
               return (
-                <TableRow key={vault.id} className=" hover:bg-[#F7931A10]">
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <TokenLogo token={tokenA} size={24} />
-                      <TokenLogo token={tokenB} size={24} />
+                <tr
+                  key={vault.id}
+                  className="transition-colors bg-white text-black hover:bg-gray-50 cursor-pointer"
+                >
+                  <td className="py-4 px-6">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1">
+                        <TokenLogo
+                          token={tokenA}
+                          addtionalClasses="translate-x-[25%]"
+                          size={24}
+                        />
+                        <TokenLogo
+                          token={tokenB}
+                          addtionalClasses="translate-x-[-25%]"
+                          size={24}
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <p className="text-black font-medium">
+                          {tokenA.symbol}/{tokenB.symbol}
+                        </p>
+                      </div>
                     </div>
-                  </TableCell>
-                  <TableCell>
+                  </td>
+                  <td className="py-4 px-6">
                     <Link
                       href={`/vault/${vault.id}`}
-                      className="cursor-pointer hover:text-[#F7931A]"
+                      className="text-black hover:text-[#F7931A]"
                     >
                       {vault.id}
                     </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Link
-                      href={`/vault/${vault.id}`}
-                      className="cursor-pointer"
-                    >
+                  </td>
+                  <td className="py-4 px-6 text-right">
+                    <Link href={`/vault/${vault.id}`} className="text-black">
                       {tvl}
                     </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Link
-                      href={`/vault/${vault.id}`}
-                      className="cursor-pointer"
-                    >
+                  </td>
+                  <td className="py-4 px-6 text-right">
+                    <Link href={`/vault/${vault.id}`} className="text-black">
                       {volume}
                     </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Link
-                      href={`/vault/${vault.id}`}
-                      className="cursor-pointer"
-                    >
+                  </td>
+                  <td className="py-4 px-6 text-right">
+                    <Link href={`/vault/${vault.id}`} className="text-black">
                       {fees}
                     </Link>
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               );
-            })}
-          </TableBody>
-        </Table>
+            })
+          )}
+        </tbody>
+      </table>
 
-        <div className="flex w-full justify-center py-4">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            color="warning"
-            page={page}
-            total={pages}
-            onChange={(page) => setPage(page)}
-          />
+      <div className="p-4 border-t border-[#2D2D2D]">
+        <div className="flex justify-between items-center">
+          <span className="text-black">
+            Page {page} of {pages}
+          </span>
+          <div className="flex gap-x-2">
+            <Button
+              className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-4 py-2"
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+            >
+              Previous
+            </Button>
+            <Button
+              className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-4 py-2"
+              disabled={page === pages}
+              onClick={() => setPage(page + 1)}
+            >
+              Next
+            </Button>
+          </div>
         </div>
-
-        {selectedVault && selectedTokenA && selectedTokenB && (
-          <DepositToVaultModal
-            isOpen={isDepositModalOpen}
-            onClose={() => {
-              setIsDepositModalOpen(false);
-              setSelectedVault(null);
-              setSelectedTokenA(null);
-              setSelectedTokenB(null);
-            }}
-            vault={selectedVault}
-            tokenA={selectedTokenA}
-            tokenB={selectedTokenB}
-          />
-        )}
       </div>
+
+      {selectedVault && selectedTokenA && selectedTokenB && (
+        <DepositToVaultModal
+          isOpen={isDepositModalOpen}
+          onClose={() => {
+            setIsDepositModalOpen(false);
+            setSelectedVault(null);
+            setSelectedTokenA(null);
+            setSelectedTokenB(null);
+          }}
+          vault={selectedVault}
+          tokenA={selectedTokenA}
+          tokenB={selectedTokenB}
+        />
+      )}
     </div>
   );
 }

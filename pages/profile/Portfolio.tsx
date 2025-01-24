@@ -1,10 +1,10 @@
 import { observer } from "mobx-react-lite";
-import { Skeleton } from "@nextui-org/react";
-import { TokenBalanceCard } from "@/components/TokenBalanceCard/TokenBalanceCard";
-import { portfolio } from "@/services/portfolio";
-import { useEffect, useState } from "react";
-import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { wallet } from "@/services/wallet";
+import { useEffect, useState } from "react";
+import { Skeleton } from "@nextui-org/react";
+import { portfolio } from "@/services/portfolio";
+import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { TokenBalanceCard } from "@/components/TokenBalanceCard/TokenBalanceCard";
 
 type SortField = "name" | "price" | "balance" | "value";
 type SortDirection = "asc" | "desc";

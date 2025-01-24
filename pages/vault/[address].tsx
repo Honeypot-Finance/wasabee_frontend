@@ -2,14 +2,12 @@
 import { useRouter } from "next/router";
 import { useState, useEffect, useCallback } from "react";
 import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
-import { Token } from "@/services/contract/token";
 import { Address, isAddress, zeroAddress } from "viem";
-import { Button } from "@/components/button";
+import { Button } from "@/components/algebra/ui/button";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { DepositToVaultModal } from "@/components/Aquabera/modals/DepositToVaultModal";
 import { wallet } from "@/services/wallet";
 import { Token as AlgebraToken } from "@cryptoalgebra/sdk";
-import { useReadErc20BalanceOf } from "@/wagmi-generated";
 import { WithdrawFromVaultModal } from "@/components/Aquabera/modals/WithdrawFromVaultModal";
 import { getSingleVaultDetails } from "@/lib/algebra/graphql/clients/vaults";
 import { SingleVaultDetailsQuery } from "@/lib/algebra/graphql/generated/graphql";
@@ -17,6 +15,8 @@ import BigNumber from "bignumber.js";
 import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import CardContainer from "@/components/CardContianer/v3";
+import Copy from "@/components/Copy/v3";
 
 export const VaultDetail = observer(() => {
   const router = useRouter();
@@ -166,7 +166,7 @@ export const VaultDetail = observer(() => {
   ].sort((a, b) => Number(b.createdAtTimestamp) - Number(a.createdAtTimestamp));
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 font-gliker">
       {/* Add Back Button */}
       <div className="mb-4">
         <Button
@@ -190,146 +190,181 @@ export const VaultDetail = observer(() => {
         </Button>
       </div>
 
-      <div className="bg-[#271A0C] rounded-3xl border-3 border-solid border-[#F7931A10] p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            {vault?.token0 && vault?.token1 && (
-              <>
-                <TokenLogo token={vault?.token0} />
-                <TokenLogo token={vault?.token1} />
-                <span className="text-xl font-bold">
-                  {vault?.token0?.symbol}/{vault?.token1?.symbol}
-                </span>
-              </>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Link
-              href={`/swap?inputCurrency=${vault?.token0?.address}&outputCurrency=${vault?.token1?.address}`}
-            >
-              <Button>Swap</Button>
-            </Link>
-            <Button
-              onClick={() => setIsDepositModalOpen(true)}
-              disabled={!wallet.account}
-            >
-              Deposit
-            </Button>
-            {hasShares && (
-              <>
-                <Button
-                  onClick={() => setIsWithdrawModalOpen(true)}
-                  disabled={!wallet.account}
-                >
-                  Withdraw
+      <CardContainer className="px-8 justify-start">
+        {/* Header Section */}
+        <div className="flex flex-col gap-6 w-full">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {vault?.token0 && vault?.token1 && (
+                <>
+                  <div className="flex -space-x-2">
+                    <TokenLogo token={vault?.token0} size={48} />
+                    <TokenLogo token={vault?.token1} size={48} />
+                  </div>
+                  <span className="text-2xl font-bold text-honey">
+                    {vault?.token0?.symbol}/{vault?.token1?.symbol}
+                  </span>
+                </>
+              )}
+            </div>
+            <div className="inline-flex rounded-[16px] border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] gap-x-3 p-2">
+              <Link
+                href={`/swap?inputCurrency=${vault?.token0?.address}&outputCurrency=${vault?.token1?.address}`}
+              >
+                <Button className="rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none">
+                  Swap
                 </Button>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-[#1A1108] p-4 rounded-xl">
-            <h3 className="text-sm text-gray-400">Total Supply</h3>
-            <p className="text-xl font-bold">
-              {formatShares(vault?.totalsupplyShares ?? BigInt(0))}
-            </p>
-          </div>
-          <div className="bg-[#1A1108] p-4 rounded-xl">
-            <h3 className="text-sm text-gray-400">Your Asset</h3>
-            <p className="text-xl font-bold">
-              {DynamicFormatAmount({
-                amount: BigNumber(
-                  vault?.userTokenAmounts.total0.toString() ?? 0
-                ).toString(),
-                decimals: 3,
-                endWith: vault?.token0?.symbol,
-              })}
-              <br />
-              {DynamicFormatAmount({
-                amount: BigNumber(
-                  vault?.userTokenAmounts.total1.toString() ?? 0
-                ).toString(),
-                decimals: 3,
-                endWith: vault?.token1?.symbol,
-              })}
-            </p>
-          </div>
-          <div className="bg-[#1A1108] p-4 rounded-xl">
-            <h3 className="text-sm text-gray-400">Share Percentage</h3>
-            <p className="text-xl font-bold">
-              {vault?.totalsupplyShares && vault?.totalsupplyShares > BigInt(0)
-                ? (
-                    (Number(vault?.userShares) /
-                      Number(vault?.totalsupplyShares)) *
-                    100
-                  ).toFixed(2)
-                : "0"}
-              %
-            </p>
-          </div>
-          <div className="bg-[#1A1108] p-4 rounded-xl">
-            <h3 className="text-sm text-gray-400">Total Value Locked</h3>
-            <p className="text-xl font-bold">{tvl}</p>
-          </div>
-          <div className="bg-[#1A1108] p-4 rounded-xl">
-            <h3 className="text-sm text-gray-400">24h Volume</h3>
-            <p className="text-xl font-bold">{volume24h}</p>
-          </div>
-          <div className="bg-[#1A1108] p-4 rounded-xl">
-            <h3 className="text-sm text-gray-400">24h Fees</h3>
-            <p className="text-xl font-bold">{fees24h}</p>
-          </div>
-        </div>
-
-        {/* Vault Info */}
-        <div className="bg-[#1A1108] p-4 rounded-xl mt-6">
-          <h3 className="text-lg font-bold mb-4">Vault Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-400">Vault Address</p>
-              <p className="font-mono">{address}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">Token Addresses</p>
-              <p className="font-mono">{vault?.token0?.address}</p>
-              <p className="font-mono">{vault?.token1?.address}</p>
+              </Link>
+              <Button
+                onClick={() => setIsDepositModalOpen(true)}
+                disabled={!wallet.account}
+                className="ml-[-1px] rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Deposit
+              </Button>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Recent Activity */}
-      {vaultData?.ichiVault && (
-        <div className="bg-[#1A1108] p-4 rounded-xl">
-          <h3 className="text-lg font-bold mb-4">Recent Activity</h3>
-          <div className="space-y-4">
-            {allTransactions.map((tx) => (
-              <div key={tx.id} className="flex justify-between items-center">
-                <div>
-                  {tx.type === "deposit" && (
-                    <span className="text-green-500">Deposit</span>
-                  )}
-                  {tx.type === "withdraw" && (
-                    <span className="text-red-500">Withdraw</span>
-                  )}
-                  {tx.type === "fee" && (
-                    <span className="text-yellow-500">Fee Collection</span>
-                  )}
-                  {tx.to && ` by ${tx.to.slice(0, 6)}...${tx.to.slice(-4)}`}
-                </div>
-                <div className="text-sm text-gray-400">
-                  {new Date(
-                    Number(tx.createdAtTimestamp) * 1000
-                  ).toLocaleString()}
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
+              <h3 className="text-base text-[#202020] mb-2">Total Supply</h3>
+              <p className="text-2xl font-bold text-[#202020]">
+                {formatShares(vault?.totalsupplyShares ?? BigInt(0))}
+              </p>
+            </div>
+            <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
+              <h3 className="text-base text-[#202020] mb-2">Your Asset</h3>
+              <div className="space-y-1">
+                <p className="text-2xl font-bold text-[#202020]">
+                  {DynamicFormatAmount({
+                    amount: BigNumber(
+                      vault?.userTokenAmounts.total0.toString() ?? 0
+                    ).toString(),
+                    decimals: 3,
+                    endWith: vault?.token0?.symbol,
+                  })}
+                </p>
+                <p className="text-2xl font-bold text-[#202020]">
+                  {DynamicFormatAmount({
+                    amount: BigNumber(
+                      vault?.userTokenAmounts.total1.toString() ?? 0
+                    ).toString(),
+                    decimals: 3,
+                    endWith: vault?.token1?.symbol,
+                  })}
+                </p>
+              </div>
+            </div>
+            <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
+              <h3 className="text-base text-[#202020] mb-2">
+                Share Percentage
+              </h3>
+              <p className="text-2xl font-bold text-[#202020]">
+                {vault?.totalsupplyShares &&
+                vault?.totalsupplyShares > BigInt(0)
+                  ? (
+                      (Number(vault?.userShares) /
+                        Number(vault?.totalsupplyShares)) *
+                      100
+                    ).toFixed(2)
+                  : "0"}
+                %
+              </p>
+            </div>
+            <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
+              <h3 className="text-base text-[#202020] mb-2">
+                Total Value Locked
+              </h3>
+              <p className="text-2xl font-bold text-[#202020]">{tvl}</p>
+            </div>
+            <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
+              <h3 className="text-base text-[#202020] mb-2">24h Volume</h3>
+              <p className="text-2xl font-bold text-[#202020]">{volume24h}</p>
+            </div>
+            <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
+              <h3 className="text-base text-[#202020] mb-2">24h Fees</h3>
+              <p className="text-2xl font-bold text-[#202020]">{fees24h}</p>
+            </div>
+          </div>
+
+          {/* Vault Info */}
+          <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
+            <h3 className="text-white text-[26px] leading-[110%] text-shadow-[1.57px_3.14px_0px_#AF7F3D] text-stroke-1.5 text-stroke-black tracking-[1.04px] font-gliker mb-4">
+              Vault Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <p className="text-sm text-[#202020] mb-2">Vault Address</p>
+                <div className="flex items-center justify-between rounded-[16px] border-2 border-[#5A4A4A] bg-white px-4 py-2 shadow-[2px_2px_0px_0px_#202020,2px_4px_0px_0px_#202020]">
+                  <p className="font-mono text-[#202020] break-all">
+                    {address}
+                  </p>
+                  <Copy value={address as string} />
                 </div>
               </div>
-            ))}
+              <div>
+                <p className="text-sm text-[#202020] mb-2">Token Addresses</p>
+                <div className="flex items-center justify-between rounded-[16px] border-2 border-[#5A4A4A] bg-white px-4 py-2 shadow-[2px_2px_0px_0px_#202020,2px_4px_0px_0px_#202020] mb-2">
+                  <p className="font-mono text-[#202020] break-all">
+                    {vault?.token0?.address}
+                  </p>
+                  <Copy value={vault?.token0?.address as string} />
+                </div>
+                <div className="flex items-center justify-between rounded-[16px] border-2 border-[#5A4A4A] bg-white px-4 py-2 shadow-[2px_2px_0px_0px_#202020,2px_4px_0px_0px_#202020]">
+                  <p className="font-mono text-[#202020] break-all">
+                    {vault?.token1?.address}
+                  </p>
+                  <Copy value={vault?.token1?.address as string} />
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Recent Activity */}
+          {vaultData?.ichiVault && (
+            <div className="rounded-[24px] border border-black bg-white p-6 shadow-[4px_4px_0px_0px_#D29A0D]">
+              <h3 className="text-base text-[#202020] mb-4">Recent Activity</h3>
+              <div className="space-y-4">
+                {allTransactions.map((tx) => (
+                  <div
+                    key={tx.id}
+                    className="flex justify-between items-center"
+                  >
+                    <div className="flex items-center gap-2">
+                      {tx.type === "deposit" && (
+                        <span className="text-[#202020] font-medium">
+                          Deposit
+                        </span>
+                      )}
+                      {tx.type === "withdraw" && (
+                        <span className="text-[#202020] font-medium">
+                          Withdraw
+                        </span>
+                      )}
+                      {tx.type === "fee" && (
+                        <span className="text-[#202020] font-medium">
+                          Fee Collection
+                        </span>
+                      )}
+                      {tx.to && (
+                        <span className="text-[#202020]">
+                          by {tx.to.slice(0, 6)}...{tx.to.slice(-4)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-sm text-[#202020]">
+                      {new Date(
+                        Number(tx.createdAtTimestamp) * 1000
+                      ).toLocaleString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </CardContainer>
 
       {/* Modals */}
       {vault && vault?.token0 && vault?.token1 && (

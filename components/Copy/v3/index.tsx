@@ -28,7 +28,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
         content={copyTip}
         value={value}
         displayContent={
-          <div className="size-6 cursor-pointer flex items-center justify-center bg-white text-[#202020] border border-[#202020] rounded-md drop-shadow-[1px_1px_0px_#000] [stroke-width:0.75px] stroke-[#202020]">
+          <div className="size-6 cursor-pointer flex items-center justify-center bg-white text-[#202020] border border-[#202020] rounded-md drop-shadow-[1px_1px_0px_#000] [stroke-width:0.75px] stroke-[#202020] hover:bg-[#FFCD4D]">
             <VscCopy className="size-4" />
           </div>
         }

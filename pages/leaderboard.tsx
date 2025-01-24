@@ -52,7 +52,6 @@ const LeaderboardPage = () => {
     loading: topParticipateAccountsLoading,
   } = useTopParticipateAccounts();
 
-  // 顶部统计数据
   const statsCards: StatsCard[] = [
     { title: "Users", value: usersLoading ? "Loading..." : totalUsers },
     stats
