@@ -20,8 +20,6 @@ import { berachainTestnetbArtio } from "viem/chains";
 import { chainsMap } from "@/lib/chain";
 import { ADDRESS_ZERO } from "@cryptoalgebra/sdk";
 
-if (!process.env.OOGABOOGA_ZAP_PRIVATE_KEY)
-  throw new Error("PRIVATE_KEY is required");
 if (!process.env.OOGABOOGA_ZAP_PUBLIC_API_URL)
   throw new Error("PUBLIC_API_URL is required");
 if (!process.env.OOGABOOGA_ZAP_API_KEY) throw new Error("API_KEY is required");
@@ -33,24 +31,45 @@ type SwapParams = {
   to: Address;
   slippage: number;
 };
-const OOGABOOGA_ZAP_PRIVATE_KEY = process.env
-  .OOGABOOGA_ZAP_PRIVATE_KEY as Address;
 const OOGABOOGA_ZAP_PUBLIC_API_URL = process.env.OOGABOOGA_ZAP_PUBLIC_API_URL;
 const OOGABOOGA_ZAP_API_KEY = process.env.OOGABOOGA_ZAP_API_KEY;
-
-const privateAccount = privateKeyToAccount(OOGABOOGA_ZAP_PRIVATE_KEY);
-const client = createWalletClient({
-  chain: berachainTestnetbArtio,
-  transport: http(),
-  account: privateAccount,
-}).extend(publicActions);
 
 const headers = {
   Authorization: `Bearer ${OOGABOOGA_ZAP_API_KEY}`,
 };
 
 export const zapRouter = router({
-  zapSwap: publicProcedure
+  zapRouterAllowance: publicProcedure
+    .input(
+      z.object({
+        token: z
+          .string()
+          .refine((value) => isAddress(value), { message: "Invalid address" }),
+        account: z
+          .string()
+          .refine((value) => isAddress(value), { message: "Invalid address" }),
+      })
+    )
+    .query(async ({ input }) => {
+      const { token, account } = input;
+      const allowance = await getAllowance(token, account);
+      return allowance;
+    }),
+  zapRouterGetApproveTx: publicProcedure
+    .input(
+      z.object({
+        token: z
+          .string()
+          .refine((value) => isAddress(value), { message: "Invalid address" }),
+        amount: z.string(), // in real amount instead of bigint
+      })
+    )
+    .query(async ({ input }) => {
+      const { token, amount } = input;
+      const { tx } = await approveAllowance(token, BigInt(amount));
+      return tx;
+    }),
+  zapSwapGetTx: publicProcedure
     .input(
       z.object({
         from: z
@@ -62,32 +81,22 @@ export const zapRouter = router({
         amount: z.string(), // in real amount instead of bigint
         slippage: z.number().optional(),
         chainId: z.number(),
+        account: z
+          .string()
+          .refine((value) => isAddress(value), { message: "Invalid address" }),
       })
     )
-    .mutation(async ({ input }) => {
-      const { from, to, amount, slippage, chainId } = input;
+    .query(async ({ input }) => {
+      const { from, to, amount, slippage, chainId, account } = input;
       const swapParams = {
         tokenIn: from, // Address of the token swapping from
         tokenOut: to, // Address of the token swapping to
-        amount: parseEther(amount), // Amount of tokenIn to swap
-        to: privateAccount.address, // Address to send tokenOut to (optional and defaults to `from`)
+        amount: BigInt(amount), // Amount of tokenIn to swap
+        to: account, // Address to send tokenOut to (optional and defaults to `from`)
         slippage: slippage ?? 0.01, // Range from 0 to 1 to allow for price slippage
       };
-
-      //check allowance
-      const allowance = await getAllowance(from, privateAccount.address);
-      console.log(allowance);
-
-      // Approve if necessary
-      if (allowance < swapParams.amount) {
-        await approveAllowance(
-          swapParams.tokenIn,
-          swapParams.amount - allowance // Only approve amount remaining
-        );
-      }
-
-      // Swap
-      await swap(swapParams);
+      const { tx } = await swap(swapParams);
+      return { tx };
     }),
 });
 
@@ -104,11 +113,21 @@ const getAllowance = async (token: Address, from: Address) => {
   const res = await fetch(publicApiUrl, {
     headers,
   });
+
   const json = await res.json();
   return json.allowance;
 };
 
-const approveAllowance = async (token: Address, amount: bigint) => {
+const approveAllowance = async (
+  token: Address,
+  amount: bigint
+): Promise<{
+  tx: {
+    from: Address;
+    to: Address;
+    data: `0x${string}`;
+  };
+}> => {
   const publicApiUrl = new URL(`${OOGABOOGA_ZAP_PUBLIC_API_URL}/v1/approve`);
   publicApiUrl.searchParams.set("token", token);
   publicApiUrl.searchParams.set("amount", amount.toString());
@@ -116,20 +135,30 @@ const approveAllowance = async (token: Address, amount: bigint) => {
   const res = await fetch(publicApiUrl, { headers });
   const { tx } = await res.json();
 
-  console.log("Submitting approve...");
-  const hash = await client.sendTransaction({
-    from: tx.from as Address,
-    to: tx.to as Address,
-    data: tx.data as `0x${string}`,
-  });
+  return { tx };
 
-  const rcpt = await client.waitForTransactionReceipt({
-    hash,
-  });
-  console.log("Approval complete", rcpt.transactionHash, rcpt.status);
+  // const hash = await client.sendTransaction({
+  //   from: tx.from as Address,
+  //   to: tx.to as Address,
+  //   data: tx.data as `0x${string}`,
+  // });
+
+  // const rcpt = await client.waitForTransactionReceipt({
+  //   hash,
+  // });
+
+  // console.log("Approval complete", rcpt.transactionHash, rcpt.status);
 };
 
-const swap = async (swapParams: SwapParams) => {
+const swap = async (
+  swapParams: SwapParams
+): Promise<{
+  tx: {
+    to: Address;
+    data: `0x${string}`;
+    value: bigint;
+  };
+}> => {
   const publicApiUrl = new URL(`${OOGABOOGA_ZAP_PUBLIC_API_URL}/v1/swap`);
   publicApiUrl.searchParams.set("tokenIn", swapParams.tokenIn);
   publicApiUrl.searchParams.set("amount", swapParams.amount.toString());
@@ -139,18 +168,21 @@ const swap = async (swapParams: SwapParams) => {
 
   const res = await fetch(publicApiUrl, { headers });
   const { tx } = await res.json();
+  console.log("tx", tx);
 
-  console.log("Submitting swap...");
-  const hash = await client.sendTransaction({
-    from: tx.from as Address,
-    to: tx.to as Address,
-    data: tx.data as `0x${string}`,
-    value: tx.value ? BigInt(tx.value) : BigInt(0),
-  });
-  console.log("hash", hash);
+  return { tx };
 
-  const rcpt = await client.waitForTransactionReceipt({
-    hash,
-  });
-  console.log("Swap complete", rcpt.status);
+  // console.log("Submitting swap...");
+  // const hash = await client.sendTransaction({
+  //   from: tx.from as Address,
+  //   to: tx.to as Address,
+  //   data: tx.data as `0x${string}`,
+  //   value: tx.value ? BigInt(tx.value) : BigInt(0),
+  // });
+  // console.log("hash", hash);
+
+  // const rcpt = await client.waitForTransactionReceipt({
+  //   hash,
+  // });
+  // console.log("Swap complete", rcpt.status);
 };

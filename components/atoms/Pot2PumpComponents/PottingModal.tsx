@@ -9,6 +9,10 @@ import { Input } from "@/components/input";
 import { TokenSelector } from "@/components/TokenSelector/v3";
 import { useState } from "react";
 import { Token } from "@/services/contract/token";
+import { wallet } from "@/services/wallet";
+import { trpcClient } from "@/lib/trpc";
+import { WrappedToastify } from "@/lib/wrappedToastify";
+import { zap } from "@/services/zap";
 
 export const PottingModal = observer(
   ({
@@ -60,15 +64,15 @@ export const PottingModal = observer(
                 <div className="flex items-center gap-x-2">
                   <div>
                     <span>Balance: </span>
-                    <span>{pair.raiseToken.balance.toFormat(5)}</span>
+                    <span>{selectedToken?.balance.toFormat(5)}</span>
                   </div>
                   <button
                     className="cursor-pointer text-[#63b4ff]"
                     onClick={() => {
                       state.setDepositAmount(
-                        pair.raiseToken?.balance.toFixed() ?? "0"
+                        selectedToken?.balance.toFixed() ?? "0"
                       );
-                      pair.raiseToken?.getBalance();
+                      selectedToken?.getBalance();
                     }}
                   >
                     Max
@@ -96,7 +100,7 @@ export const PottingModal = observer(
                   min={0}
                   type="number"
                   isClearable={false}
-                  max={pair.raiseToken.balance.toFixed()}
+                  max={selectedToken?.balance.toFixed()}
                   onChange={(e) => {
                     state.setDepositAmount(e.target.value);
                   }}
@@ -139,6 +143,27 @@ export const PottingModal = observer(
               isLoading={pair.deposit.loading}
               onPress={async () => {
                 try {
+                  if (selectedToken != pair.raiseToken) {
+                    if (!selectedToken || !pair.raiseToken) {
+                      WrappedToastify.error({
+                        title: "Something went wrong",
+                        message: "no selected token or raise token",
+                      });
+
+                      return;
+                    }
+                    console.log("zap");
+
+                    //zap selected token to raise token
+                    await zap.zapSwap(
+                      selectedToken.address,
+                      pair.raiseToken.address,
+                      state.depositAmount,
+                      wallet.currentChainId,
+                      wallet.account
+                    );
+                  }
+
                   await pair.deposit.call({
                     amount: state.depositAmount,
                   });
@@ -155,7 +180,6 @@ export const PottingModal = observer(
                       window.location.reload();
                     }
                   });
-
                   onSuccess?.();
                 } catch (error) {
                   console.error("Deposit failed:", error);
