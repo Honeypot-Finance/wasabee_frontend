@@ -59,10 +59,10 @@ interface projectColumn {
 export const ftoService = {
   createFtoProject: async (data: {
     pair: string;
-    provider: string;
+    provider: string; //project launcher
     chain_id: number;
-    creator_api_key: string;
-    project_type?: string;
+    creator_api_key?: string;
+    project_type?: string; //meme for pot2pump, fto for fto
     projectName: string;
     project_logo?: string;
     banner_url?: string;
@@ -71,18 +71,18 @@ export const ftoService = {
     website?: string;
     telegram?: string;
   }) => {
-    if (
-      !fto_api_key_list.includes(data.creator_api_key) &&
-      data.creator_api_key !== super_api_key
-    ) {
-      return;
-    }
+    // if (
+    //   !fto_api_key_list.includes(data.creator_api_key) &&
+    //   data.creator_api_key !== super_api_key
+    // ) {
+    //   return;
+    // }
 
     await pg`INSERT INTO fto_project ${pg({
       pair: data.pair.toLowerCase(),
       provider: data.provider.toLowerCase(),
       chain_id: data.chain_id,
-      creator_api_key: data.creator_api_key,
+      //creator_api_key: data.creator_api_key,
       project_type: data.project_type ?? "",
       name: data.projectName,
       logo_url: data.project_logo ?? "",
