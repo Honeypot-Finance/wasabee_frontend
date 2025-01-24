@@ -54,9 +54,11 @@ export function getFirstDecimalPlace(amount: string): number {
   if (Number(amount) === 0 || Number(amount) > 1) return 0;
 
   let decimalPlaces = 0;
-  const decimalString = amount.split(".")[1];
-  while (decimalString[decimalPlaces] === "0") {
-    decimalPlaces++;
+  if (amount.includes(".")) {
+    const decimalString = amount.split(".")[1];
+    while (decimalString[decimalPlaces] === "0") {
+      decimalPlaces++;
+    }
   }
   return decimalPlaces;
 }
