@@ -56,7 +56,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
       <div className={clsx("relative mb-5", props.className)}>
         <Navbar
           classNames={{
-            wrapper: "max-w-[1200px] !px-0 !h-auto items-start",
+            wrapper: "xl:max-w-[1200px] 2xl:max-w-[1500px] !px-0 !h-auto items-start ",
             base: "bg-transparent",
           }}
           className="bg-transparent"

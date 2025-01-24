@@ -60,7 +60,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 </DropdownTrigger>
                 <DropdownMenu
                   aria-label={menu.title}
-                  className="bg-[#FFCD4D] rounded-lg p-1"
+                  className="bg-[#FFCD4D] rounded-lg p-2"
                   onAction={(key: Key) => {
                     const subMenu = (menu.path as SubMenu[]).find(
                       (item: SubMenu) => item.path === key
@@ -74,7 +74,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                     <DropdownItem
                       key={subMenu.path}
                       className={cn(
-                        "font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white",
+                        "font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white p-2",
                         router.pathname === subMenu.path
                           ? "bg-[#202020] text-white"
                           : "text-[#202020]"
@@ -103,7 +103,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                   "min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white",
                   router.pathname === menu.path ? "bg-[#202020] text-white" : ""
                 )}
-                onClick={() => {
+                onPress={() => {
                   if (typeof menu.path === "string") {
                     router.push(menu.path);
                   }

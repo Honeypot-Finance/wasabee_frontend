@@ -32,7 +32,7 @@ const SwapPage = observer(() => {
 
   return isInit ? (
     <div className="w-full flex items-center justify-center pb-6 sm:pb-12 overflow-x-hidden">
-      <div className="w-full xl:mx-auto xl:max-w-[min(1500px,100%)] px-8 xl:px-0 grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
+      <div className="w-full xl:mx-auto xl:max-w-[1200px] 2xl:max-w-[1500px] px-8 xl:px-0 grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
         {chart.showChart && (
           <motion.div
             initial="hidden"

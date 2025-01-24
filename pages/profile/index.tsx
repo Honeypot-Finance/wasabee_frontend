@@ -65,7 +65,7 @@ export const Profile = observer(() => {
                       <div className="flex items-center justify-between w-full text-[#4D4D4D]">
                         <Link
                           target="_blank"
-                          className="text-[#4D4D4D] hover:text-[#0D0D0D] hover:underline transition-colors"
+                          className="text-[#4D4D4D] hover:text-[#0D0D0D] hover:underline decoration-2 transition-colors"
                           href={`https://bartio.beratrail.io/address/${wallet.account}`}
                         >
                           {truncate(wallet.account, 10)}

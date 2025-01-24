@@ -15,7 +15,6 @@ import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair
 import { wallet } from "@/services/wallet";
 import { Button } from "@/components/button";
 import Link from "next/link";
-import { Trigger } from "@/components/Trigger";
 import {
   Pot2Pump,
   usePot2PumpPottingHighPriceQuery,
