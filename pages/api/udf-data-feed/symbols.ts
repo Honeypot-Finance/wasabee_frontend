@@ -8,10 +8,14 @@ export default function handler(
   res: NextApiResponse<LibrarySymbolInfo>
 ) {
   const ticker = req.query.symbol as string;
+  if (!ticker) {
+    return res.status(400);
+  }
+
   const symbol = ticker.split(":")[0];
   const chain = ticker.split(":")[1];
   const address = ticker.split(":")[2];
-  const chainName = chainsMap[chain].name;
+  const chainName = chainsMap[chain]?.name ?? "";
 
   res.status(200).json({
     name: symbol + ":" + chainName,

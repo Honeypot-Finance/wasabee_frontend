@@ -3,8 +3,9 @@ import { createTRPCNext } from "@trpc/next";
 import type { AppRouter } from "@/server/_app";
 import superjson from "superjson";
 import { createTRPCReact } from "@trpc/react-query";
+import { toast } from "react-toastify";
 
-export function getBaseUrl() {
+export function getBaseUrl () {
   if (typeof window !== "undefined")
     // browser should use relative path
     return "";
@@ -47,20 +48,32 @@ export function getBaseUrl() {
 //    **/
 //   ssr: false,
 // });
-console.log("`${getBaseUrl()}/api/trpc`", `${getBaseUrl()}/api/trpc`);
+
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
       transformer: superjson,
-      url:`${getBaseUrl()}/api/trpc` ,
-      async headers() {
-        const headers = {} as Record<string, string>
-        if (localStorage.getItem('message') && localStorage.getItem('signature')) {
-          headers['message'] = localStorage.getItem('message') as string
-          headers['signature'] = localStorage.getItem('signature') as string
+      // fetch: async (input, init) => {
+      //   const res = await fetch(input,init)
+      //   if (res.ok === false && res.status === 400) {
+      //     const cloned = res.clone()
+      //     const data = await cloned.json()
+      //     toast.error(data[0]?.error.message)
+      //   }
+   
+      //   return res
+      // },
+      url: `${getBaseUrl()}/api/trpc`,
+      async headers () {
+        const headers = {} as Record<string, string>;
+        if (
+          localStorage.getItem("message") &&
+          localStorage.getItem("signature")
+        ) {
+          headers["message"] = localStorage.getItem("message") as string;
+          headers["signature"] = localStorage.getItem("signature") as string;
         }
-        console.log('headers', headers)
-        return headers
+        return headers;
       },
     }),
   ],
@@ -73,13 +86,16 @@ export const trpcQueryClient = trpc.createClient({
       url: `${getBaseUrl()}/api/trpc`,
       // You can pass any HTTP headers you wish here
       transformer: superjson,
-      async headers() {
-        const headers = {} as Record<string, string>
-        if (localStorage.getItem('message') && localStorage.getItem('signature')) {
-          headers['message'] = localStorage.getItem('message') as string
-          headers['signature'] = localStorage.getItem('signature') as string
+      async headers () {
+        const headers = {} as Record<string, string>;
+        if (
+          localStorage.getItem("message") &&
+          localStorage.getItem("signature")
+        ) {
+          headers["message"] = localStorage.getItem("message") as string;
+          headers["signature"] = localStorage.getItem("signature") as string;
         }
-        return headers
+        return headers;
       },
     }),
   ],

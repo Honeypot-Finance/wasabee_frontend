@@ -1,6 +1,6 @@
 "use client";
 import styles from "./TVChartContainer.module.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ChartingLibraryWidgetOptions,
   LanguageCode,
@@ -8,13 +8,16 @@ import {
   widget,
 } from "@/public/static/charting_library/charting_library";
 import { getBaseUrl } from "@/lib/trpc";
+import { observable } from "mobx";
+import { ParseTicker } from "@/lib/advancedChart.util";
+import { chart } from "@/services/chart";
+import { wallet } from "@/services/wallet";
 
 export const TVChartContainer = (
   props: Partial<ChartingLibraryWidgetOptions>
 ) => {
   const chartContainerRef =
     useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
-
   useEffect(() => {
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: props.symbol,
@@ -41,10 +44,15 @@ export const TVChartContainer = (
       autosize: props.autosize,
       theme: props.theme,
       symbol_search_complete: props.symbol_search_complete,
+      overrides: {
+        "paneProperties.background": "#271A0C",
+        "paneProperties.backgroundType": "solid",
+        "paneProperties.separatorColor": "#F7931A",
+      },
+      custom_css_url: "./TVChartContainer.module.css",
     };
 
     const tvWidget = new widget(widgetOptions);
-
     // tvWidget.onChartReady(() => {
     //   tvWidget.headerReady().then(() => {
     //     const button = tvWidget.createButton();
@@ -71,7 +79,7 @@ export const TVChartContainer = (
 
   return (
     <>
-      <div ref={chartContainerRef} className={styles.TVChartContainer} />
+      <div ref={chartContainerRef} className={`relative w-full h-full`} />
     </>
   );
 };

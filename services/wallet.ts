@@ -1,13 +1,16 @@
 import { Network, networks } from "./chain";
 import BigNumber from "bignumber.js";
-import { PublicClient, WalletClient } from "viem";
-import { RouterV2Contract } from "./contract/routerv2-contract";
-import { FactoryContract } from "./contract/factory-contract";
-import { FtoFactoryContract } from "./contract/ftofactory-contract";
-import { FtoFacadeContract } from "./contract/ftofacade-contract";
-import { makeAutoObservable } from "mobx";
-import { Token } from "./contract/token";
+import { Address, PublicClient, WalletClient } from "viem";
+import { RouterV2Contract } from "./contract/dex/routerv2-contract";
+import { FactoryContract } from "./contract/dex/factory-contract";
+import { FtoFactoryContract } from "./contract/launches/fto/ftofactory-contract";
+import { FtoFacadeContract } from "./contract/launches/fto/ftofacade-contract";
+import { makeAutoObservable, reaction } from "mobx";
 import { createPublicClientByChain } from "@/lib/client";
+import { StorageState } from "./utils";
+import { MemeFactoryContract } from "@/services/contract/launches/pot2pump/memefactory-contract";
+import { MEMEFacadeContract } from "@/services/contract/launches/pot2pump/memefacade-contract";
+import { ICHIVaultFactoryContract } from "@/services/contract/aquabera/ICHIVaultFactory-contract";
 
 export class Wallet {
   account: string = "";
@@ -21,14 +24,20 @@ export class Wallet {
     factory: FactoryContract;
     ftofactory: FtoFactoryContract;
     ftofacade: FtoFacadeContract;
+    memeFactory: MemeFactoryContract;
+    memeFacade: MEMEFacadeContract;
+    vaultFactory: ICHIVaultFactoryContract;
   } = {} as any;
   publicClient!: PublicClient;
   isInit = false;
   get networksMap() {
-    return this.networks.reduce((acc, network) => {
-      acc[network.chainId] = network;
-      return acc;
-    }, {} as Record<number, Network>);
+    return this.networks.reduce(
+      (acc, network) => {
+        acc[network.chainId] = network;
+        return acc;
+      },
+      {} as Record<number, Network>
+    );
   }
 
   get currentChain() {
@@ -36,23 +45,28 @@ export class Wallet {
   }
 
   constructor(args: Partial<Wallet>) {
-    this.networks = networks;
     makeAutoObservable(this);
+    reaction(
+      () => this.walletClient?.account,
+      () => {
+        this.initWallet(this.walletClient);
+      }
+    );
   }
 
-  initWallet(walletClient: WalletClient) {
+  async initWallet(walletClient: WalletClient) {
+    this.networks = networks;
     if (
       !walletClient.chain?.id ||
       !this.networksMap[walletClient.chain.id] ||
-      !walletClient.account?.address
+      !walletClient.account?.address ||
+      !this.networksMap[walletClient.chain.id].isActive
     ) {
       return;
     }
     this.currentChainId = walletClient.chain.id;
-    this.account = walletClient.account.address;
-    this.currentChain.faucetTokens = this.currentChain.faucetTokens.map(
-      (token) => new Token(token)
-    );
+    const mockAccount = localStorage.getItem("mockAccount");
+    this.account = mockAccount || walletClient.account.address;
     this.contracts = {
       routerV2: new RouterV2Contract({
         address: this.currentChain.contracts.routerV2,
@@ -66,9 +80,20 @@ export class Wallet {
       ftofacade: new FtoFacadeContract({
         address: this.currentChain.contracts.ftoFacade,
       }),
+      memeFactory: new MemeFactoryContract({
+        address: this.currentChain.contracts.memeFactory,
+      }),
+      memeFacade: new MEMEFacadeContract({
+        address: this.currentChain.contracts.memeFacade,
+      }),
+      vaultFactory: new ICHIVaultFactoryContract({
+        address: this.currentChain.contracts.vaultFactory as Address,
+      }),
     };
     this.publicClient = createPublicClientByChain(this.currentChain.chain);
     this.walletClient = walletClient;
+    this.currentChain.init();
+    await StorageState.sync();
     this.isInit = true;
   }
 }

@@ -1,187 +1,112 @@
 import { liquidity } from "@/services/liquidity";
 import { NextLayoutPage } from "@/types/nextjs";
-import { observer, useLocalObservable } from "mobx-react-lite";
-import { Table } from "@/components/table/index";
-import { trpc } from "@/lib/trpc";
-import { useEffect } from "react";
+import { observer } from "mobx-react-lite";
+import { useCallback, useEffect, useState } from "react";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
-import { useAccount } from "wagmi";
-import { PaginationState } from "@/services/utils";
 import { Button } from "@/components/button";
 import { Input } from "../components/input/index";
-import { LuPlus } from "react-icons/lu";
 import { IoSearchOutline } from "react-icons/io5";
 import { useRouter } from "next/router";
-import { set } from "lodash";
-import Link from 'next/link';
+import Link from "next/link";
+import { wallet } from "@/services/wallet";
+import { motion } from "framer-motion";
+import PoolLiquidityCard from "@/components/PoolLiquidityCard/PoolLiquidityCard";
+import { defaultContainerVariants } from "@/lib/animation";
+import Image from "next/image";
+import Pagination from "@/components/Pagination/Pagination";
+import PoolsList from "@/components/algebra/pools/PoolsList";
+import MyAquaberaVaults from "@/components/Aquabera/VaultLists/MyVaults";
+import AquaberaList from "@/components/Aquabera/VaultLists/VaultLists";
+import { cn } from "@/lib/utils";
+import CardContainer from "@/components/CardContianer/v3";
 
 const PoolsPage: NextLayoutPage = observer(() => {
-  const { chainId } = useAccount();
   const router = useRouter();
-  const { data: pairsMap, isLoading } = trpc.pair.getPairs.useQuery(
-    {
-      chainId: chainId as number,
-    },
-    {
-      enabled: !!chainId,
-      refetchOnWindowFocus: false,
-    }
-  );
-  const state = useLocalObservable(() => ({
-    columns: [
-      {
-        key: "name",
-        label: "Pool Name",
-      },
-      {
-        key: "liquidity",
-        label: "Liquidity",
-      },
-    ],
-    pagination: new PaginationState({}),
-    searchValue: "",
-    setSearchValue(value: string) {
-      this.searchValue = value;
-    },
+  const [loading, setLoading] = useState(true);
+  const [currentTab, setCurrentTab] = useState<"all" | "my">("all");
 
-    get columnsMap() {
-      return this.columns.reduce((acc, column) => {
-        acc[column.key] = column;
-        return acc;
-      }, {} as Record<string, (typeof this.columns)[number]>);
-    },
-    get filteredPairs() {
-      return liquidity.pairs.filter((pair) => {
-        return (
-          pair.poolName
-            .toLowerCase()
-            .includes(this.searchValue.toLowerCase()) ||
-          pair.address.toLowerCase().includes(this.searchValue.toLowerCase()) ||
-          pair.token0.address
-            .toLowerCase()
-            .includes(this.searchValue.toLowerCase()) ||
-          pair.token1.address
-            .toLowerCase()
-            .includes(this.searchValue.toLowerCase())
-        );
-      });
-    },
-    get pairsByPage() {
-      return this.filteredPairs.slice(
-        state.pagination.offset,
-        state.pagination.end
-      );
-    },
-  }));
   useEffect(() => {
-    if (pairsMap) {
-      liquidity.initPool(Object.values(pairsMap));
-      state.pagination.setTotal(liquidity.pairs.length);
+    if (!wallet.isInit) {
+      return;
     }
-  }, [pairsMap]);
+    liquidity.initPool();
+  }, [wallet.isInit]);
+
+  useEffect(() => {
+    if (wallet.isInit && liquidity.isInit) {
+      setLoading(false);
+      liquidity.pairPage.reloadPage();
+      liquidity.myPairPage.reloadPage();
+    }
+  }, [wallet.isInit, liquidity.isInit]);
+
+  const searchStringChangeHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (currentTab === "all") {
+        liquidity.pairPage.updateFilter({
+          searchString: e.target.value,
+        });
+      } else {
+        liquidity.myPairPage.updateFilter({
+          searchString: e.target.value,
+        });
+      }
+    },
+    [currentTab]
+  );
+
+  const clearSearchString = useCallback(() => {
+    if (currentTab === "all") {
+      liquidity.pairPage.updateFilter({
+        searchString: "",
+      });
+    } else {
+      liquidity.myPairPage.updateFilter({
+        searchString: "",
+      });
+    }
+  }, [currentTab]);
+
+  const tabChangeHandler = (key: string) => {
+    if (key === "all") {
+      setCurrentTab("all");
+      clearSearchString();
+    } else {
+      setCurrentTab("my");
+      clearSearchString();
+    }
+  };
 
   return (
-    <div className="flex flex-col  items-center">
-      <div className="w-[800px] max-w-full relative">
-        <div className="flex top-0 md:absolute right-0 md:flex-row flex-col md:gap-[16px] gap-[8px]">
-          <Input
-            value={state.searchValue}
-            onChange={(e) => {
-              state.setSearchValue(e.target.value);
-            }}
-            startContent={<IoSearchOutline></IoSearchOutline>}
-            placeholder="Search by name, symbol or address"
-            classNames={{
-              innerWrapper: "w-[369px] h-[32px]",
-            }}
-            className=" border [background:var(--card-color,#271A0C)] rounded-2xl border-solid border-[rgba(225,138,32,0.10)]"
-          ></Input>
-          <Button
-            onClick={() => {
-              router.push("/pool");
-            }}
-            styleMode="plain"
-            className=" w-[170px] h-[41px] gap-2.5"
-          >
-            <LuPlus />
-            Create Pool
-          </Button>
-        </div>
-        <Tabs
-          aria-label="Options"
-          classNames={{
-            tabList: "bg-transparent",
-            tab: "flex flex-col items-start gap-2.5 border-0  backdrop-blur-[100px] p-2.5 rounded-[10px]",
-          }}
-          className="next-tab"
-        >
-          <Tab key="all" title="All Pools">
-            <Card className="[background:#1D1407] rounded-[20px]">
-              <CardBody>
-                <Table
-                  rowKey="address"
-                  pagination={state.pagination}
-                  isLoading={isLoading}
-                  columns={[
-                    {
-                      title: "Pool Name",
-                      dataKey: "poolName",
-                    },
-                    {
-                      title: "Liquidity",
-                      dataKey: "liquidityDisplay",
-                    },     
-                    {
-                      title: "Action",
-                      dataKey: "_action",
-                      render (value, row) {
-                        return <div className="flex gap-[12px]">
-                          <Button><Link href={`/pool?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}>Add</Link></Button>
-                          <Button styleMode="plain"><Link href={`/swap?inputCurrency=${row.token0.address}&outputCurrency=${row.token1.address}`}>Swap</Link></Button>
-                        </div>
-                      }
-                    },
-                  ]}
-                  datasource={state.pairsByPage}
-                ></Table>
-              </CardBody>
-            </Card>
-          </Tab>
-          <Tab key="my" title="My Pools">
-            <Card className="[background:#1D1407] rounded-[20px]">
-              <CardBody>
-                <Table
-                  rowKey="address"
-                  columns={[
-                    {
-                      title: "Pool Name",
-                      dataKey: "poolName",
-                    },
-                    {
-                      title: "Liquidity",
-                      dataKey: "liquidityDisplay",
-                    },
-                  ]}
-                  datasource={liquidity.myPairs}
-                ></Table>
-              </CardBody>
-            </Card>
-          </Tab>
-        </Tabs>
-      </div>
+    <div className="max-w-[1200px] mx-auto px-4 xl:px-0 font-gliker w-full">
+      <Tabs
+        classNames={{
+          base: "relative w-full",
+          tabList:
+            "flex rounded-2xl border border-[#202020] bg-white p-4 shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] py-2 px-3.5 mb-6 absolute left-1/2 -translate-x-1/2 z-10 z-10",
+          cursor:
+            "bg-[#FFCD4D] border border-black shadow-[2px_2px_0px_0px_#000000] text-sm",
+          panel: cn(
+            "flex flex-col h-full w-full gap-y-4 justify-center items-center bg-[#FFCD4D] rounded-2xl text-[#202020]",
+            "px-8 pt-[70px] pb-[70px]",
+            "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
+            "bg-[position:-65px_top,_-85px_bottom]",
+            "bg-[size:auto_65px,_auto_65px]",
+            "bg-repeat-x",
+            "!mt-0"
+          ),
+          tabContent: "!text-[#202020]",
+        }}
+      >
+        <Tab key="algebra" title="Concentrated Liquidity">
+          <PoolsList />
+        </Tab>
+        <Tab key="aquabera" title="POGE Vault">
+          <AquaberaList />
+        </Tab>
+      </Tabs>
     </div>
   );
 });
-
-// export const getStaticProps = async (context: any) => {
-//   // prefetch `post.byId`
-//   const pairsMap = await trpcClient.pair.getPairs.query();
-//   return {
-//     props: {
-//       pairs: Object.values(pairsMap),
-//     },
-//     revalidate: 5,
-//   };
-// };
 
 export default PoolsPage;

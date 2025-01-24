@@ -17,11 +17,12 @@ export default async function handler(
   const resolution = req.query.resolution as resolutionType;
   const from = req.query.from as string;
   const to = req.query.to as string;
-  const countback = req.query.countback as string;
 
   const symbol = ticker.split(":")[0];
   const chain = ticker.split(":")[1];
   const address = ticker.split(":")[2];
+  const tokenNumber = ticker.split(":")[3];
+  const currencyCode = ticker.split(":")[4];
 
   const data = await caller.priceFeed.getChartData({
     chainId: chain,
@@ -29,6 +30,8 @@ export default async function handler(
     from: parseInt(from),
     to: parseInt(to),
     resolution: resolution,
+    tokenNumber: Number(tokenNumber),
+    currencyCode: currencyCode as "USD" | "TOKEN" | undefined,
   });
 
   if (data.status === "success") {

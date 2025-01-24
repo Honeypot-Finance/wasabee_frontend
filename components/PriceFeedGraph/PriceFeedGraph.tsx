@@ -1,108 +1,58 @@
-"use client";
-import { Button } from "@nextui-org/react";
-import EChartsReact from "echarts-for-react";
-import { useEffect, useMemo, useState } from "react";
-import { Token } from "@/services/contract/token";
-import { networksMap } from "@/services/chain";
-import { useAccount } from "wagmi";
-import { trpcClient } from "@/lib/trpc";
-import { dayjs } from "@/lib/dayjs";
-import { ChartDataResponse } from "@/services/priceFeed/priceFeedTypes";
-import dynamic from "next/dynamic";
-import Script from "next/script";
-import {
-  ChartingLibraryWidgetOptions,
-  ResolutionString,
-} from "@/public/static/charting_library/charting_library";
-import { tokenToTicker } from "@/lib/advancedChart.util";
-import { pairQueryOutput } from "@/types/pair";
+import { useState } from "react";
+import { SimplePriceFeedGraph } from "./SimplePriceFeedGraph";
+import AdvancedPriceFeedGraph from "./AdvancedPriceFeedGraph";
+import Image from "next/image";
+import CardContianer from "../CardContianer/CardContianer";
+import Link from "next/link";
 
-const TVChartContainer = dynamic(
-  () =>
-    import("@/components/AdvancedChart/TVChartContainer/TVChartContainer").then(
-      (mod) => mod.TVChartContainer
-    ),
-  { ssr: false }
-);
+const tradingViewIconUrl = "/images/icons/tradingview-icon.svg";
+
+type GraphType = "simple" | "advanced";
 
 export default function PriceFeedGraph() {
-  const [isScriptReady, setIsScriptReady] = useState(false);
-  const { chainId } = useAccount();
-  const [pairs, setPairs] = useState<pairQueryOutput>({});
-  const [currentToken, setCurrentToken] = useState<Token>(
-    networksMap[chainId as number].faucetTokens[0]
-  );
-  const [defaultWidgetProps, setDefaultWidgetProps] = useState<
-    Partial<ChartingLibraryWidgetOptions>
-  >({
-    symbol: tokenToTicker(currentToken, chainId as number),
-    interval: "1D" as ResolutionString,
-    library_path: "/static/charting_library/charting_library/",
-    locale: "en",
-    charts_storage_url: "https://saveload.tradingview.com",
-    charts_storage_api_version: "1.1",
-    client_id: "tradingview.com",
-    user_id: "public_user_id",
-    fullscreen: false,
-    autosize: true,
-    theme: "dark",
-  });
-
-  useEffect(() => {
-    if (!chainId || !currentToken) return;
-    setDefaultWidgetProps((prev) => {
-      return {
-        ...prev,
-        symbol: tokenToTicker(currentToken, chainId as number),
-      };
-    });
-  }, [chainId, currentToken]);
-
-  useEffect(() => {
-    if (!chainId) return;
-    trpcClient.pair.getPairs
-      .query({ chainId: chainId as number })
-      .then((data) => {
-        setPairs(data);
-      });
-  }, [chainId]);
-
-  function changeTokenHandler(token: Token) {
-    setCurrentToken(token);
-  }
-
+  const [graph, setGraph] = useState<GraphType>("simple");
   return (
-    <>
-      {/* {networksMap[chainId as number].faucetTokens.map((token) => (
-        <Button key={token.address} onClick={() => changeTokenHandler(token)}>
-          {token.name}
-        </Button>
-      ))}
+    <CardContianer autoSize>
+      <div className="grid grid-rows-[2rem,1fr,2rem] w-full h-full">
+        <div className="flex items-center gap-4 w-full">
+          <button
+            onClick={() => setGraph(graph === "simple" ? "advanced" : "simple")}
+            className={`${
+              graph === "simple"
+                ? "bg-[#2F200B] text-white"
+                : "bg-[#F8F8F8] text-[#2F200B]"
+            } my-2 p-1 rounded-lg`}
+          >
+            <Image
+              src={tradingViewIconUrl}
+              alt="advanced"
+              width={20}
+              height={20}
+            />
+          </button>
+        </div>
+        <div className="relative w-full h-full min-h-[425px]">
+          {graph === "simple" && <SimplePriceFeedGraph />}
+          {graph === "advanced" && <AdvancedPriceFeedGraph />}
+        </div>
 
-      {Object.values(pairs).map((token) => (
-        <Button
-          key={token.address}
-          onClick={() =>
-            changeTokenHandler(
-              new Token({
-                address: token.address,
-                name: `${token.token0.name}/${token.token1.name}`,
-              })
-            )
-          }
-        >
-          {token.token0.name}/{token.token1.name}
-        </Button>
-      ))} */}
-
-      <Script
-        src="/static/charting_library/datafeeds/udf/dist/bundle.js"
-        strategy="lazyOnload"
-        onReady={() => {
-          setIsScriptReady(true);
-        }}
-      />
-      {isScriptReady && <TVChartContainer {...defaultWidgetProps} />}
-    </>
+        <div className="flex justify-end">
+          <Link
+            href={"https://www.codex.io/"}
+            target="_blank"
+            className="flex p-2 gap-2 items-center"
+          >
+            <div>Price feed powered by </div>{" "}
+            <Image
+              className="h-4"
+              src="/images/partners/codex_white.png"
+              alt=""
+              width={100}
+              height={20}
+            />
+          </Link>
+        </div>
+      </div>
+    </CardContianer>
   );
 }

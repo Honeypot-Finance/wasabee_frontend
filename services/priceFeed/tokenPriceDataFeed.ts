@@ -61,4 +61,60 @@ export class TokenPriceDataFeed<T extends PriceFeedProvider> {
       };
     }
   };
+
+  getMultipleTokenCurrentPrice = async (
+    addresses: string[],
+    networkId: string
+  ): Promise<ApiResponseType<TokenCurrentPriceResponseType[]>> => {
+    const price = await this.dataProvider.getMultipleTokenCurrentPrice(
+      addresses,
+      networkId
+    );
+    if (this.debug) {
+      console.log(price);
+    }
+
+    if (price.status === "error") {
+      return {
+        status: "error",
+        message: price.message,
+      };
+    } else {
+      return {
+        status: "success",
+        data: price.data,
+        message: "Success",
+      };
+    }
+  };
+
+  getTokenHistoricalPrice = async (
+    address: string,
+    networkId: string,
+    from: number,
+    to: number
+  ): Promise<ApiResponseType<TokenCurrentPriceResponseType[]>> => {
+    const price = await this.dataProvider.getTokenHistoricalPrice(
+      address,
+      networkId,
+      from,
+      to
+    );
+    if (this.debug) {
+      console.log(price);
+    }
+
+    if (price.status === "error") {
+      return {
+        status: "error",
+        message: price.message,
+      };
+    } else {
+      return {
+        status: "success",
+        data: price.data,
+        message: "Success",
+      };
+    }
+  };
 }

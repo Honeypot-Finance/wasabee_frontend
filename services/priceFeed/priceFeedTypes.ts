@@ -1,4 +1,8 @@
 export interface PriceFeedProvider {
+  getMultipleTokenCurrentPrice(
+    addresses: string[],
+    networkId: string
+  ): Promise<ApiResponseType<TokenCurrentPriceResponseType[]>>;
   getTokenCurrentPrice(
     address: string,
     networkId: string
@@ -7,6 +11,13 @@ export interface PriceFeedProvider {
   getChartData(
     input: getChartDataInputsType
   ): Promise<ApiResponseType<ChartDataResponse>>;
+
+  getTokenHistoricalPrice(
+    address: string,
+    networkId: string,
+    from: number,
+    to: number
+  ): Promise<ApiResponseType<TokenCurrentPriceResponseType[]>>;
 }
 
 export type getChartDataInputsType = {
@@ -15,6 +26,8 @@ export type getChartDataInputsType = {
   from: number;
   to: number;
   resolution: resolutionType;
+  tokenNumber?: number;
+  currencyCode?: "USD" | "TOKEN";
 };
 
 export type resolutionType =
@@ -29,8 +42,10 @@ export type resolutionType =
   | "7D";
 
 export type TokenCurrentPriceResponseType = {
+  address: string;
   price: number;
-  lastUpdated: number;
+  lastUpdated?: number;
+  timestamp?: number;
 };
 
 export interface ChartDataResponse {
@@ -43,4 +58,5 @@ export interface ChartDataResponseGetBars {
   l: number[] | undefined[];
   c: number[] | undefined[];
   t: number[] | undefined[];
+  v: number[] | undefined[];
 }
