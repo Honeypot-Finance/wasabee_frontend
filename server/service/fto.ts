@@ -53,6 +53,7 @@ interface projectColumn {
   launch_token: string;
   raising_token: string;
   pair: string;
+  creator_api_key: string;
   chain_id: number;
 }
 
@@ -61,7 +62,7 @@ export const ftoService = {
     pair: string;
     provider: string;
     chain_id: number;
-    creator_api_key: string;
+    creator_api_key?: string;
     project_type?: string;
     projectName: string;
     project_logo?: string;
@@ -71,18 +72,11 @@ export const ftoService = {
     website?: string;
     telegram?: string;
   }) => {
-    if (
-      !fto_api_key_list.includes(data.creator_api_key) &&
-      data.creator_api_key !== super_api_key
-    ) {
-      return;
-    }
-
     await pg`INSERT INTO fto_project ${pg({
       pair: data.pair.toLowerCase(),
       provider: data.provider.toLowerCase(),
       chain_id: data.chain_id,
-      creator_api_key: data.creator_api_key,
+      // creator_api_key: data.creator_api_key,
       project_type: data.project_type ?? "",
       name: data.projectName,
       logo_url: data.project_logo ?? "",
@@ -97,7 +91,7 @@ export const ftoService = {
   getProjectInfo: async (data: {
     pair: string;
     chain_id: number;
-    creator_api_key: string;
+    creator_api_key?: string;
   }) => {
     const project = await fotProjectDataloader.load({
       pair: data.pair,
@@ -147,6 +141,9 @@ export const ftoService = {
     if (updateFlag) {
       console.log("updateFtoProject: ", project);
       await updateFtoProject(project);
+    }
+    if (project?.creator_api_key) {
+      project.creator_api_key = "********";
     }
 
     return project;

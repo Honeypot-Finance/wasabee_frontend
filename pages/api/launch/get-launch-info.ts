@@ -14,9 +14,9 @@ export default async function handler(
     });
   }
 
-  const { ftoaddress, chainid, api_key } = req.query;
-  console.log("handler: ", ftoaddress, chainid, api_key);
-  if (!ftoaddress || !chainid || !api_key) {
+  const { launchaddress, chainid } = req.query;
+
+  if (!launchaddress || !chainid) {
     return res.status(400).json({
       status: "error",
       message: "Invalid request params",
@@ -24,9 +24,8 @@ export default async function handler(
   }
 
   const data = await ftoService.getProjectInfo({
-    pair: ftoaddress as string,
+    pair: launchaddress as string,
     chain_id: parseInt(chainid as string),
-    creator_api_key: api_key as string,
   });
 
   if (!data) {
