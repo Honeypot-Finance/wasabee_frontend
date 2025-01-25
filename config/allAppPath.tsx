@@ -19,11 +19,13 @@ export type Menu = {
     | {
         path: string;
         title: string;
+        routePath: string;
         icon?: StaticImageData;
         footer?: ReactNode;
         chatConfig?: PathChatConfig;
       }[];
   title: string;
+  routePath?: string;
   icon?: StaticImageData;
   chatConfig?: PathChatConfig;
 };
@@ -59,14 +61,17 @@ export const appPathsList: Menu[] = [
       {
         path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pot2pump/overview`,
         title: "Overview",
+        routePath: "/pot2pump/overview"
       },
       {
         path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pot2pump/potting`,
         title: "Potting",
+        routePath: "/pot2pump/potting"
       },
       {
         path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pot2pump/pumping`,
         title: "Pumping",
+        routePath: "/pot2pump/pumping"
       },
       // {
       //   path: "/derbydashboard",
@@ -78,13 +83,16 @@ export const appPathsList: Menu[] = [
       // },
     ],
     title: "Pot2pump",
+    routePath: "/pot2pump"
   },
   {
     title: "DEX",
+    routePath: "/dex",
     path: [
       {
         path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/swap`,
         title: "Swap",
+        routePath: "/swap"
       },
       // {
       //   path: "/pool",
@@ -93,16 +101,19 @@ export const appPathsList: Menu[] = [
       {
         path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/pools`,
         title: "LP Pool List",
+        routePath: "/pools"
       },
     ],
   },
   {
     path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/leaderboard`,
     title: "Leaderboard",
+    routePath: "/leaderboard"
   },
   {
     title: "Faucet",
     path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/faucet`,
+    routePath: "/faucet"
   },
   // {
   //   title: "DreamPad",

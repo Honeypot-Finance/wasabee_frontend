@@ -19,6 +19,7 @@ interface NavbarProps {
 interface SubMenu {
   path: string;
   title: string;
+  routePath: string;
   icon?: {
     src: string;
   };
@@ -50,7 +51,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                   <Button
                     className={cn(
                       "min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020] hover:text-white",
-                      (menu.path as SubMenu[]).some(item => item.path === router.pathname)
+                      (menu.path as SubMenu[]).some(item => item.routePath === router.pathname)
                         ? "bg-[#202020] text-white"
                         : ""
                     )}
@@ -63,7 +64,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                   className="bg-[#FFCD4D] rounded-lg p-2"
                   onAction={(key: Key) => {
                     const subMenu = (menu.path as SubMenu[]).find(
-                      (item: SubMenu) => item.path === key
+                      (item: SubMenu) => item.routePath === key
                     );
                     if (subMenu) {
                       router.push(subMenu.path);
@@ -72,10 +73,10 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 >
                   {(menu.path as SubMenu[]).map((subMenu: SubMenu) => (
                     <DropdownItem
-                      key={subMenu.path}
+                      key={subMenu.routePath}
                       className={cn(
                         "font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white p-2",
-                        router.pathname === subMenu.path
+                        router.pathname === subMenu.routePath
                           ? "bg-[#202020] text-white"
                           : "text-[#202020]"
                       )}
@@ -101,7 +102,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 key={menu.title}
                 className={cn(
                   "min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white",
-                  router.pathname === menu.path ? "bg-[#202020] text-white" : ""
+                  menu.routePath === router.pathname ? "bg-[#202020] text-white" : ""
                 )}
                 onPress={() => {
                   if (typeof menu.path === "string") {
