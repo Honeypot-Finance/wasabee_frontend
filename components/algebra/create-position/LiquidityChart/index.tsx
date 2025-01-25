@@ -41,8 +41,6 @@ const LiquidityChart = ({
     fetchTicksSurroundingPrice: { ticksResult, fetchTicksSurroundingPrice },
   } = useInfoTickData();
 
-  console.log("ticksResult", ticksResult);
-
   useEffect(() => {
     if (!currencyA || !currencyB) return;
     fetchTicksSurroundingPrice(currencyA, currencyB);
@@ -70,21 +68,6 @@ const LiquidityChart = ({
               liquidityNet: t.liquidityNet.toString(),
             },
           ];
-
-          currencyA &&
-            currencyB &&
-            !(t.liquidityActive === BigInt(0)) &&
-            console.log(
-              currencyA?.wrapped,
-              currencyB?.wrapped,
-              100,
-              sqrtPriceX96,
-              ADDRESS_ZERO,
-              t.liquidityActive.toString(),
-              t.tickIdx,
-              ticksResult.tickSpacing,
-              mockTicks
-            );
 
           let pool;
 
