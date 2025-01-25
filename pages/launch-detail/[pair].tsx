@@ -940,16 +940,16 @@ const LaunchPage: NextLayoutPage = observer(() => {
   const router = useRouter();
   const { pair: pairAddress } = router.query;
   const [projectInfo, setProjectInfo] = useState<{
-    name: string | null;
-    description: string | null;
-    provider: string;
-    project_type: string | null;
-    id: number;
-    twitter: string | null;
-    telegram: string | null;
-    website: string | null;
-    logo_url: string | null;
-    banner_url: string | null;
+    name?: string | null;
+    description?: string | null;
+    provider?: string;
+    project_type?: string | null;
+    id?: number;
+    twitter?: string | null;
+    telegram?: string | null;
+    website?: string | null;
+    logo_url?: string | null;
+    banner_url?: string | null;
   } | null>(null);
 
   useEffect(() => {
