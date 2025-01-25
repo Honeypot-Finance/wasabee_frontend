@@ -292,10 +292,14 @@ const BeraVoteForm = observer(
     //convert pair.logoUrl to base64
     useEffect(() => {
       if (pair.logoUrl) {
-        toDataURL(pair.logoUrl as string, (dataUrl: string) => {
+        const imageUrl = `/api/proxy?imageUrl=${encodeURIComponent(
+          pair.logoUrl as string
+        )}`;
+        toDataURL(imageUrl, (dataUrl: string) => {
           console.log(dataUrl);
           setLogoBase64(dataUrl);
         });
+        console.log("logoBase64", logoBase64);
       }
     }, [pair.logoUrl]);
 

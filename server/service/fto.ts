@@ -40,20 +40,20 @@ const fotProjectDataloader = new DataLoader(
 
 interface projectColumn {
   id: number;
-  twitter: string;
-  telegram: string;
-  website: string;
-  description: string;
-  logo_url: string;
-  name: string;
-  provider: string;
+  twitter?: string;
+  telegram?: string;
+  website?: string;
+  description?: string;
+  logo_url?: string;
+  name?: string;
+  provider?: string;
   project_type: "meme" | "fto" | null;
-  banner_url: string;
-  beravote_space_id: string;
-  launch_token: string;
-  raising_token: string;
+  banner_url?: string;
+  beravote_space_id?: string;
+  launch_token?: string;
+  raising_token?: string;
   pair: string;
-  creator_api_key: string;
+  creator_api_key?: string;
   chain_id: number;
 }
 
@@ -93,7 +93,7 @@ export const ftoService = {
     chain_id: number;
     creator_api_key?: string;
   }) => {
-    const project = await fotProjectDataloader.load({
+    let project = await fotProjectDataloader.load({
       pair: data.pair,
       chain_id: data.chain_id.toString(),
     });
@@ -101,6 +101,18 @@ export const ftoService = {
     const publicClient = createPublicClientByChain(chainsMap[data.chain_id]);
     const readQueue = [];
     if (!project || !project.provider) {
+      project = {
+        id: -8888,
+        pair: data.pair,
+        chain_id: data.chain_id,
+        provider: "",
+        project_type: null,
+      };
+      console.log(
+        "project not found, need to create",
+        data.pair,
+        data.chain_id
+      );
       updateFlag = true;
       readQueue.push(
         publicClient

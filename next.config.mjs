@@ -65,6 +65,7 @@ const nextConfig = {
         hostname: "cdn.alphakek.ai",
       },
     ],
+    domains: ["cdn.alphakek.ai"],
   },
   async redirects() {
     return isDev

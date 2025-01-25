@@ -238,9 +238,30 @@ export const VaultDetail = observer(() => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
               <h3 className="text-base text-[#202020] mb-2">Total Supply</h3>
-              <p className="text-2xl font-bold text-[#202020]">
-                {formatShares(vault?.totalsupplyShares ?? BigInt(0))}
-              </p>
+              <div className="space-y-1">
+                <p className="text-2xl font-bold text-[#202020]">
+                  {DynamicFormatAmount({
+                    amount: BigNumber(
+                      vault?.totalAmountsWithoutDecimal.total0.toString() ?? 0
+                    )
+                      .div(10 ** (vault?.token0?.decimals ?? 18))
+                      .toString(),
+                    decimals: 3,
+                    endWith: vault?.token0?.symbol,
+                  })}
+                </p>
+                <p className="text-2xl font-bold text-[#202020]">
+                  {DynamicFormatAmount({
+                    amount: BigNumber(
+                      vault?.totalAmountsWithoutDecimal.total1.toString() ?? 0
+                    )
+                      .div(10 ** (vault?.token1?.decimals ?? 18))
+                      .toString(),
+                    decimals: 3,
+                    endWith: vault?.token1?.symbol,
+                  })}
+                </p>
+              </div>
             </div>
             <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
               <h3 className="text-base text-[#202020] mb-2">Your Asset</h3>
