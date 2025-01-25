@@ -1,8 +1,8 @@
 import type { Config } from "tailwindcss";
-import type { PluginAPI } from 'tailwindcss/types/config';
+import type { PluginAPI } from "tailwindcss/types/config";
 import { nextui } from "@nextui-org/react";
-import { textStrokePlugin } from './styles/text-stroke';
-import { textShadowPlugin } from './styles/text-shadow';
+import { textStrokePlugin } from "./styles/text-stroke";
+import { textShadowPlugin } from "./styles/text-shadow";
 
 const config: Config = {
   content: [
@@ -82,13 +82,18 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      boxShadow: {
+        button: "1.5px 1.5px 0px 0px #000",
+        field:
+          "0px 332px 93px 0px rgba(0, 0, 0, 0.00), 0px 212px 85px 0px rgba(0, 0, 0, 0.01), 0px 119px 72px 0px rgba(0, 0, 0, 0.05), 0px 53px 53px 0px rgba(0, 0, 0, 0.09), 0px 13px 29px 0px rgba(0, 0, 0, 0.10)",
+      },
     },
   },
   darkMode: ["class", "class"],
   plugins: [
     require("tailwindcss-animate"),
     require("@tailwindcss/container-queries"),
-    require('tailwind-scrollbar')({ nocompatible: true }),
+    require("tailwind-scrollbar")({ nocompatible: true }),
     nextui({
       // defaultTheme: "dark",
       themes: {

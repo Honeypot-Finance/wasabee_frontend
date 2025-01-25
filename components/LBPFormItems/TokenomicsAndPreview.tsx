@@ -1,6 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
-import { InputField, NumberField, SliderField } from "./Components";
+import {
+  FormContainer,
+  InputField,
+  NumberField,
+  SliderField,
+} from "./Components";
 import { Controller, useFormContext } from "react-hook-form";
 import {
   Modal,
@@ -11,6 +16,7 @@ import {
   ListboxItem,
   Switch,
   Selection,
+  Button,
 } from "@nextui-org/react";
 import SearchIcon from "../svg/SearchIcon";
 import { berachainBartioTestnetNetwork } from "@/services/chain";
@@ -18,6 +24,8 @@ import Image from "next/image";
 import { useReadContract } from "wagmi";
 import { ERC20ABI } from "@/lib/abis/erc20";
 import { symbol } from "zod";
+import ArrowDownSvg from "../svg/ArrowDown";
+import CloseIcon from "../svg/CloseIcon";
 
 type AssetTokenData = {
   tokenName: string;
@@ -70,52 +78,85 @@ const AssetTokenModal = ({
 
   return (
     <>
-      <div
-        className="flex items-center gap-2 cursor-pointer bg-[#865215] w-fit px-3 py-1 rounded-md"
-        onClick={onOpen}
-      >
+      <div className="flex items-center gap-2 md:gap-3 cursor-pointer" onClick={onOpen}>
         {selectedToken ? (
           <>
             <img
-              className="size-[18px] rounded-full"
+              className="size-[24px] md:size-[32px] aspect-square rounded-full"
               src={selectedToken?.logoURI}
               alt="Asset token"
-              width={18}
-              height={18}
             />
-            <span className="text-sm text-nowrap">{selectedToken?.name}</span>
+            <span className="text-lg md:text-xl">{selectedToken?.name}</span>
+
+            <ArrowDownSvg />
           </>
         ) : (
-          <span className="text-sm text-white">Select Token</span>
+          <span className="text-lg md:text-xl">Select Token</span>
         )}
       </div>
       <Modal
         classNames={{
-          base: "bg-[#35230E] border-[#F7931A4D] border",
+          base: "!overflow-y-visible absolute top-0 px-4 shadow-none !mt-[170px]",
         }}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         hideCloseButton
+        size="lg"
       >
-        <ModalContent>
-          <ModalBody className="py-5 px-2.5">
-            <h3 className="text-base font-medium text-center">
-              Token Selector
-            </h3>
-            <p className="mt-4 text-xs text-white/55 text-center">
-              Select a token
-            </p>
-            <InputField
-              placeholder="Search"
-              className="w-full mt-4 rounded-md"
-              startContent={<SearchIcon />}
-              classNames={{
-                input: "pl-6 pt-0.5 font-medium ",
-              }}
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
+        <ModalContent className="!bg-transparent !border-none">
+          <div className="flex absolute top-0 left-0 right-0 -translate-y-3/4 justify-center">
+            <img src="/images/launch-project/Group.png" alt="handing-rope" />
+          </div>
+          <div className="hidden lg:flex absolute left-0 -translate-x-[60%] -translate-y-[10%]">
+            <img
+              src="/images/launch-project/launch-project-sticky3.png"
+              alt="sticky3"
             />
-            <div className="overflow-y-auto h-48">
+          </div>
+
+          <div className="hidden lg:flex absolute right-0 translate-x-[70%] -translate-y-[10%]">
+            <img
+              src="/images/launch-project/launch-project-sticky4.png"
+              alt="sticky4"
+            />
+          </div>
+          <ModalBody
+            className="relative z-50 w-ful rounded-3xl px-0 pb-16 text-[#202020] block"
+            style={{
+              background:
+                "url('/images/launch-project/subtract-sticky.png'), url('/images/launch-project/subtract-bg.png')",
+              backgroundSize: "contain, cover",
+              backgroundRepeat: "no-repeat, no-repeat",
+            }}
+          >
+            <div className="flex items-center justify-between pt-6 pb-4 border-b px-6 border-[#202020]">
+              <h3 className="text-lg">Token Selector</h3>
+
+              <Button
+                isIconOnly
+                className="!size-8 min-w-8 rounded-md"
+                variant="bordered"
+                onClick={onOpenChange}
+              >
+                <CloseIcon className="text-black" />
+              </Button>
+            </div>
+
+            <div className="px-6 pt-4 pb-6 border-b border-[#202020]">
+              <p className="text-sm mb-2">Select a token</p>
+              <InputField
+                placeholder="Search"
+                startContent={<SearchIcon className="size-5 !text-[#202020]" />}
+                classNames={{
+                  input: "text-sm mt-1 leading-[16px]",
+                  inputWrapper: "h-[40px]",
+                }}
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+            </div>
+
+            <div className="overflow-y-auto h-[300px] mx-6 mt-6 no-scrollbar">
               <Controller
                 name="assetTokenType"
                 control={control}
@@ -127,15 +168,20 @@ const AssetTokenModal = ({
                     selectionMode="single"
                     selectedKeys={new Set([field.value])}
                     onSelectionChange={handleSelect}
-                    className="bg-[#37250E] p-2 rounded-md"
+                    className="bg-transparent rounded-md px-0"
+                    classNames={{
+                      list: "gap-3",
+                    }}
                   >
                     {filteredList.map((token) => (
                       <ListboxItem
                         key={token.symbol}
-                        className="hover:bg-primary/10"
+                        className="hover:bg-white/60"
                         classNames={{
-                          base: "data-[selected=true]:bg-primary/10",
-                          selectedIcon: "text-emerald-400 font-semibold",
+                          base: "select-item bg-white py-3 item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-3 rounded-lg border border-black shadow-[1px_2px_0px_0px_#9B7D2F]",
+                          title: "text-base leading-[16px]",
+                          selectedIcon:
+                            "block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden",
                         }}
                         textValue={token.symbol}
                       >
@@ -166,12 +212,9 @@ const TokenomicsAndPreview = () => {
   const {
     control,
     formState: { errors },
-    setValue,
     getValues,
     watch,
   } = useFormContext();
-
-  console.log(getValues());
 
   const projectTokenLogo = getValues("projectTokenLogo");
   const assetTokenName = getValues("assetTokenName");
@@ -187,55 +230,53 @@ const TokenomicsAndPreview = () => {
   });
 
   return (
-    <div>
-      <div className="text-xl leading-[26px] font-medium">
+    <div className="text-[#202020]/80">
+      <h1 className="text-2xl md:text-[32px] md:leading-[36.64px] font-medium text-center mb-4">
         LBP Configuration
-      </div>
-      <div className="flex flex-col gap-5 mt-9">
-        <h3 className="text-base font-medium text-white">
-          1. Configure Quantities
+      </h1>
+      <FormContainer className="mt-6">
+        <h3 className="text-[22px] md:text-2xl text-center md:leading-[28.79px] mb-6">
+          Configure Quantities
         </h3>
 
-        <Controller
-          name="projectTokenQuantity"
-          control={control}
-          render={({ field }) => (
-            <NumberField
-              value={field.value}
-              onValueChange={(values) =>
-                field.onChange(Number(values.floatValue))
-              }
-              label="Project Token"
-              placeholder="0"
-              isInvalid={!!errors.projectTokenQuantity}
-              errorMessage={errors.projectTokenQuantity?.message?.toString()}
-              className="max-w-[400px]"
-              startContent={
-                <div className="flex items-center gap-1">
-                  <img
-                    className="size-[18px] rounded-full "
-                    src={
-                      isFetchImageError
-                        ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
-                        : projectTokenLogo
-                    }
-                    alt={projectTokenName}
-                    width={18}
-                    height={18}
-                    onError={(e) => {
-                      console.log(e);
-                      setIsFetchImageError(true);
-                    }}
-                  />
-                  <span className="text-sm">{projectTokenName}</span>
-                  {isLoading && (
-                    <span className="h-2.5 w-8 bg-neutral-400 rounded-full animate-pulse"></span>
-                  )}
-                </div>
-              }
-              classNames={{
-                input: "text-right flex-1",
-              }}
+        <div className="flex gap-4 md:gap-6 flex-col md:flex-row">
+          <Controller
+            name="projectTokenQuantity"
+            control={control}
+            render={({ field }) => (
+              <NumberField
+                value={field.value}
+                onValueChange={(values) =>
+                  field.onChange(Number(values.floatValue))
+                }
+                label="Project Token"
+                placeholder="0"
+                isInvalid={!!errors.projectTokenQuantity}
+                errorMessage={errors.projectTokenQuantity?.message?.toString()}
+                startContent={
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <img
+                      className="size-[24px] md:size-[32px] aspect-square rounded-full"
+                      src={
+                        isFetchImageError
+                          ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
+                          : projectTokenLogo
+                      }
+                      alt={projectTokenName}
+                      onError={(e) => {
+                        setIsFetchImageError(true);
+                      }}
+                    />
+                    <span className="text-lg md:text-xl">{projectTokenName}</span>
+                    {isLoading && (
+                      <span className="h-2.5 w-8 bg-neutral-400 rounded-full animate-pulse"></span>
+                    )}
+                    <ArrowDownSvg />
+                  </div>
+                }
+                classNames={{
+                  input: "text-right flex-1",
+                }}
 
               // description={
               //   <div className="text-[10px] text-white/50 px-4 flex items-center justify-between">
@@ -243,45 +284,51 @@ const TokenomicsAndPreview = () => {
               //     <span>% supply: 0.000000003930187014%</span>
               //   </div>
               // }
-            />
-          )}
-        />
+              />
+            )}
+          />
 
-        <Controller
-          name="assetTokenQuantity"
-          control={control}
-          render={({ field }) => (
-            <NumberField
-              value={field.value}
-              onValueChange={(values) =>
-                field.onChange(Number(values.floatValue))
-              }
-              label="Asset Token"
-              placeholder="0"
-              isInvalid={!!errors.assetTokenQuantity}
-              errorMessage={errors.assetTokenQuantity?.message?.toString()}
-              className="max-w-[400px]"
-              startContent={
-                <AssetTokenModal projectTokenAddress={projectTokenAddress} />
-              }
-              classNames={{
-                input: "text-right flex-1",
-              }}
-            />
-          )}
-        />
+          <Controller
+            name="assetTokenQuantity"
+            control={control}
+            render={({ field }) => (
+              <NumberField
+                value={field.value}
+                onValueChange={(values) =>
+                  field.onChange(Number(values.floatValue))
+                }
+                label="Asset Token"
+                placeholder="0"
+                isInvalid={!!errors.assetTokenQuantity}
+                errorMessage={errors.assetTokenQuantity?.message?.toString()}
+                startContent={
+                  <AssetTokenModal projectTokenAddress={projectTokenAddress} />
+                }
+                classNames={{
+                  input: "text-right flex-1",
+                }}
+              />
+            )}
+          />
+        </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 mt-6 pb-4 border-b border-black md:pb-0 mb:border-0">
           <div className="flex items-center gap-4">
-            <label className="text-xs text-white/50">Custom Total Supply</label>
+            <label
+              className="font-normal text-xs md:text-base md:leading-[19.2px] text-[#202020]/80"
+              htmlFor="customTotalSupplyType"
+            >
+              Custom Total Supply
+            </label>
             <Controller
               name="customTotalSupplyType"
               control={control}
               render={({ field }) => (
                 <Switch
+                  id="customTotalSupplyType"
                   size="sm"
                   classNames={{
-                    wrapper: "group-data-[selected=true]:bg-[#865215]",
+                    wrapper: "group-data-[selected=true]:bg-white border border-[#202020] bg-white",
                     thumb: "bg-[#ECC94E]",
                   }}
                   isSelected={field.value}
@@ -304,59 +351,58 @@ const TokenomicsAndPreview = () => {
                   placeholder="0"
                   isInvalid={!!errors.customTotalSupply}
                   errorMessage={errors.customTotalSupply?.message?.toString()}
-                  className="max-w-[400px]"
                 />
               )}
             />
           )}
         </div>
-      </div>
 
-      <div className="flex flex-col gap-5 mt-12">
-        <h3 className="text-base font-medium text-white">
-          2. Configure Weights
-        </h3>
+        <div className="mt-4 md:mt-6 flex flex-col gap-4">
+          <h3 className="text-[22px] md:text-2xl text-center md:leading-[28.79px] mb-0 md:mb-6">
+            Configure Weights
+          </h3>
 
-        <Controller
-          name="startWeight"
-          control={control}
-          render={({ field }) => (
-            <SliderField
-              label="Start Weight"
-              firstTokenName={projectTokenName}
-              firstTokenIcon={
-                isFetchImageError
-                  ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
-                  : projectTokenLogo
-              }
-              secondTokenName={assetTokenName}
-              secondTokenIcon={assetTokenLogo}
-              value={field.value}
-              onChange={(value) => field.onChange(Number(value))}
-            />
-          )}
-        />
+          <Controller
+            name="startWeight"
+            control={control}
+            render={({ field }) => (
+              <SliderField
+                label="Start Weight"
+                firstTokenName={projectTokenName}
+                firstTokenIcon={
+                  isFetchImageError
+                    ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
+                    : projectTokenLogo
+                }
+                secondTokenName={assetTokenName}
+                secondTokenIcon={assetTokenLogo}
+                value={field.value}
+                onChange={(value) => field.onChange(Number(value))}
+              />
+            )}
+          />
 
-        <Controller
-          name="endWeight"
-          control={control}
-          render={({ field }) => (
-            <SliderField
-              label="End Weight"
-              firstTokenName={projectTokenName}
-              firstTokenIcon={
-                isFetchImageError
-                  ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
-                  : projectTokenLogo
-              }
-              secondTokenName={assetTokenName}
-              secondTokenIcon={assetTokenLogo}
-              value={field.value}
-              onChange={(value) => field.onChange(Number(value))}
-            />
-          )}
-        />
-      </div>
+          <Controller
+            name="endWeight"
+            control={control}
+            render={({ field }) => (
+              <SliderField
+                label="End Weight"
+                firstTokenName={projectTokenName}
+                firstTokenIcon={
+                  isFetchImageError
+                    ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
+                    : projectTokenLogo
+                }
+                secondTokenName={assetTokenName}
+                secondTokenIcon={assetTokenLogo}
+                value={field.value}
+                onChange={(value) => field.onChange(Number(value))}
+              />
+            )}
+          />
+        </div>
+      </FormContainer>
     </div>
   );
 };
