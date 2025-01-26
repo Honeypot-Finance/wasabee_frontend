@@ -14,7 +14,11 @@ import { observer } from "mobx-react-lite";
 type SortField = "pair" | "tvl" | "volume" | "fees" | "shares";
 type SortDirection = "asc" | "desc";
 
-export const MyAquaberaVaults = observer(() => {
+interface MyAquaberaVaultsProps {
+  searchString?: string;
+}
+
+export const MyAquaberaVaults = observer(({ searchString = "" }: MyAquaberaVaultsProps) => {
   const router = useRouter();
   const [myVaults, setMyVaults] = useState<AccountVaultSharesQuery>();
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
@@ -48,7 +52,21 @@ export const MyAquaberaVaults = observer(() => {
   const getSortedVaults = () => {
     if (!myVaults?.vaultShares) return [];
 
-    return [...myVaults.vaultShares].sort((a, b) => {
+    const filteredVaults = myVaults.vaultShares.filter((vaultShare) => {
+      if (!searchString) return true;
+      
+      const tokenA = Token.getToken({ address: vaultShare.vault.tokenA });
+      const tokenB = Token.getToken({ address: vaultShare.vault.tokenB });
+      
+      const searchLower = searchString.toLowerCase();
+      return (
+        vaultShare.vault.id.toLowerCase().includes(searchLower) ||
+        tokenA.symbol.toLowerCase().includes(searchLower) ||
+        tokenB.symbol.toLowerCase().includes(searchLower)
+      );
+    });
+
+    return [...filteredVaults].sort((a, b) => {
       const multiplier = sortDirection === "asc" ? 1 : -1;
 
       switch (sortField) {

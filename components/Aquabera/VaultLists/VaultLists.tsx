@@ -51,7 +51,7 @@ export function AquaberaList() {
         {selectedTab === "all" ? (
           <AllAquaberaVaults searchString={search} />
         ) : (
-          <MyAquaberaVaults />
+          <MyAquaberaVaults searchString={search} />
         )}
       </div>
     </div>
