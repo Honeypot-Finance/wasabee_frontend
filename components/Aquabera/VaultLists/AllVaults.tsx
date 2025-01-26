@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { Link } from "@nextui-org/react";
 import { wallet } from "@/services/wallet";
 import { Currency } from "@cryptoalgebra/sdk";
@@ -23,7 +22,6 @@ interface AllAquaberaVaultsProps {
 export function AllAquaberaVaults({
   searchString = "",
 }: AllAquaberaVaultsProps) {
-  const router = useRouter();
   const [vaults, setVaults] = useState<VaultsSortedByHoldersQuery>();
   const [sortField, setSortField] = useState<SortField>("tvl");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
@@ -232,6 +230,7 @@ export function AllAquaberaVaults({
                 <tr
                   key={vault.id}
                   className="transition-colors bg-white text-black hover:bg-gray-50 cursor-pointer"
+                  onClick={() => window.location.href = `/vault/${vault.id}`}
                 >
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-3">
@@ -254,28 +253,17 @@ export function AllAquaberaVaults({
                       </div>
                     </div>
                   </td>
-                  <td className="py-4 px-6">
-                    <Link
-                      href={`/vault/${vault.id}`}
-                      className="text-black hover:text-[#F7931A]"
-                    >
-                      {vault.id}
-                    </Link>
+                  <td className="py-4 px-6 text-black">
+                    {vault.id}
                   </td>
-                  <td className="py-4 px-6 text-right">
-                    <Link href={`/vault/${vault.id}`} className="text-black">
-                      {tvl}
-                    </Link>
+                  <td className="py-4 px-6 text-right text-black">
+                    {tvl}
                   </td>
-                  <td className="py-4 px-6 text-right">
-                    <Link href={`/vault/${vault.id}`} className="text-black">
-                      {volume}
-                    </Link>
+                  <td className="py-4 px-6 text-right text-black">
+                    {volume}
                   </td>
-                  <td className="py-4 px-6 text-right">
-                    <Link href={`/vault/${vault.id}`} className="text-black">
-                      {fees}
-                    </Link>
+                  <td className="py-4 px-6 text-right text-black">
+                    {fees}
                   </td>
                 </tr>
               );
