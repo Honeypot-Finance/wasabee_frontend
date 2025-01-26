@@ -118,7 +118,7 @@ const CreatePoolForm = () => {
       tokenB: currencyB?.wrapped.address as Address,
       type: TransactionType.POOL,
     },
-    `/pooldetail/${poolAddress}`
+    `/pool-detail/${poolAddress}`
   );
 
   useToastify({
@@ -143,7 +143,7 @@ const CreatePoolForm = () => {
 
   const handleButtonClick = () => {
     if (isPoolExists && poolAddress) {
-      router.push(`/pooldetail/${poolAddress}`);
+      router.push(`/pool-detail/${poolAddress}`);
       return;
     }
 

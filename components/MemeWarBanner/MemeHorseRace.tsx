@@ -734,7 +734,7 @@ export const MemeHorseRace = observer(
       if (pools && pools.length > 0) {
         const pool = pools[0];
         //redirect to add liquidity page
-        router.push(`/pooldetail/${pool.id}`);
+        router.push(`/pool-detail/${pool.id}`);
       }
     };
 

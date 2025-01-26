@@ -31,6 +31,7 @@ import { useParams } from "next/navigation";
 import { cn } from "@/lib/tailwindcss";
 import { HoneyContainer } from "@/components/CardContianer";
 import { Token } from "@/services/contract/token";
+import CardContainer from "@/components/CardContianer/v3";
 
 const PoolPage = () => {
   const { address: account } = useAccount();
@@ -222,7 +223,7 @@ const PoolPage = () => {
 
   return (
     <PageContainer>
-      <HoneyContainer className="w-full justify-start">
+      <CardContainer className="gap-y-6">
         <PoolHeader pool={poolEntity} />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8">
           <div className="col-span-2">
@@ -275,13 +276,13 @@ const PoolPage = () => {
             />
           </div>
         </div>
-      </HoneyContainer>
+      </CardContainer>
     </PageContainer>
   );
 };
 
 const NoPositions = ({ poolId }: { poolId: Address }) => (
-  <div className="flex flex-col items-start animate-fade-in mt-10 font-bold">
+  <div className="flex flex-col items-start animate-fade-in font-bold p-8 rounded-[24px] border border-black bg-white shadow-[4px_4px_0px_0px_#D29A0D]">
     <h2 className="text-2xl font-bold">
       {`You don't have positions for this pool`}
     </h2>
@@ -289,12 +290,12 @@ const NoPositions = ({ poolId }: { poolId: Address }) => (
     <Button className="gap-2" asChild>
       <Link
         className={cn(
-          "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
+          "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#2D2D2D] bg-[#FFCD4D] rounded-2xl shadow-[2px_2px_0px_0px_#000] hover:bg-[#FFD666]"
         )}
         href={`/new-position/${poolId}`}
       >
-        <Plus />
-        <span>Create Position</span>
+        <Plus className="text-black" />
+        <span className="text-black">Create Position</span>
       </Link>
     </Button>
   </div>

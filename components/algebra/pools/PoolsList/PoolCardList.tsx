@@ -50,7 +50,7 @@ const PoolCardList = observer(({ data }: { data: Pool[] }) => {
         return (
           <Link
             key={pool.id}
-            href={`/pooldetail/${pool.id}`}
+            href={`/pool-detail/${pool.id}`}
             className="honeypot-card px-2.5 py-[14px] break-all space-y-2.5 cursor-pointer"
           >
             <Ellipsis />

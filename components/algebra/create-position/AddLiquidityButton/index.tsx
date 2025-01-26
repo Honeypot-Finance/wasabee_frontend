@@ -123,7 +123,7 @@ export const AddLiquidityButton = ({
       tokenB: quoteCurrency?.wrapped.address as Address,
       type: TransactionType.POOL,
     },
-    `/pooldetail/${poolAddress}`
+    `/pool-detail/${poolAddress}`
   );
 
   console.log("data", data);
