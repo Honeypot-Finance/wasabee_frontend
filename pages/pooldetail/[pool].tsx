@@ -223,7 +223,7 @@ const PoolPage = () => {
   return (
     <PageContainer>
       <HoneyContainer className="w-full justify-start">
-        <PoolHeader pool={poolEntity} />
+        <PoolHeader pool={poolEntity} token0={token0} token1={token1} />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8">
           <div className="col-span-2">
             {!account ? (

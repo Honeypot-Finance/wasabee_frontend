@@ -40,20 +40,20 @@ export const DepositToVaultModal = observer(
     const [tokenB, setTokenB] = useState<Currency>(propTokenB);
 
     const tokenABalance = useReadErc20BalanceOf({
-      address: tokenA.wrapped.address as `0x${string}`,
+      address: vault.token0?.address as `0x${string}`,
       args: [wallet.account as `0x${string}`],
     });
 
     const tokenBBalance = useReadErc20BalanceOf({
-      address: tokenB.wrapped.address as `0x${string}`,
+      address: vault.token1?.address as `0x${string}`,
       args: [wallet.account as `0x${string}`],
     });
     const tokenAAllowance = useReadErc20Allowance({
-      address: tokenA.wrapped.address as `0x${string}`,
+      address: vault.token0?.address as `0x${string}`,
       args: [wallet.account as `0x${string}`, vault.address as `0x${string}`],
     });
     const tokenBAllowance = useReadErc20Allowance({
-      address: tokenB.wrapped.address as `0x${string}`,
+      address: vault.token1?.address as `0x${string}`,
       args: [wallet.account as `0x${string}`, vault.address as `0x${string}`],
     });
 
@@ -91,13 +91,21 @@ export const DepositToVaultModal = observer(
 
     const handleDeposit = async () => {
       if (!wallet.walletClient?.account?.address) return;
+      if (!vault.token0 || !vault.token1) {
+        console.error("Vault tokens not initialized");
+        return;
+      }
 
       // Check and handle token approvals
       const parsedAmountA = amountA
-        ? new BigNumber(amountA).multipliedBy(10 ** tokenA.decimals).toFixed(0)
+        ? new BigNumber(amountA)
+            .multipliedBy(10 ** vault.token0.decimals)
+            .toFixed(0)
         : undefined;
       const parsedAmountB = amountB
-        ? new BigNumber(amountB).multipliedBy(10 ** tokenB.decimals).toFixed(0)
+        ? new BigNumber(amountB)
+            .multipliedBy(10 ** vault.token0.decimals)
+            .toFixed(0)
         : undefined;
 
       if (!parsedAmountA && !parsedAmountB) return;
@@ -114,9 +122,7 @@ export const DepositToVaultModal = observer(
         tokenAAllowance.data !== undefined &&
         tokenAAllowance.data < BigInt(parsedAmountA)
       ) {
-        const token = Token.getToken({ address: tokenA.wrapped.address });
-
-        await new ContractWrite(token.contract.write.approve, {
+        await new ContractWrite(vault.token0.contract.write.approve, {
           action: "Approve",
         }).call([vault.address as `0x${string}`, BigInt(maxInt256)]);
       }
@@ -126,8 +132,7 @@ export const DepositToVaultModal = observer(
         tokenBAllowance.data !== undefined &&
         tokenBAllowance.data < BigInt(parsedAmountB)
       ) {
-        const token = Token.getToken({ address: tokenB.wrapped.address });
-        await new ContractWrite(token.contract.write.approve, {
+        await new ContractWrite(vault.token1.contract.write.approve, {
           action: "Approve",
         }).call([vault.address as `0x${string}`, BigInt(maxInt256)]);
       }
