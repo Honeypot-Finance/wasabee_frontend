@@ -40,6 +40,7 @@ export const getUser = async (req: NextApiRequest) => {
 
 export const createContext = async ({ req, res }: CreateNextContextOptions) => {
   const user = await getUser(req);
+  req.socket.setTimeout(100000); // 100 seconds
   return {
     user,
     req,
