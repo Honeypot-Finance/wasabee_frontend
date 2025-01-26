@@ -88,7 +88,7 @@ export const Profile = observer(() => {
                         USD
                       </div>
                     </span>
-                    <span className="flex flex-col items-start p-2">
+                    {/* <span className="flex flex-col items-start p-2">
                       <span className="text-[#0D0D0D] text-base mb-4">
                         Total LP Value
                       </span>
@@ -101,7 +101,7 @@ export const Profile = observer(() => {
                         )}{" "}
                         USD
                       </div>
-                    </span>
+                    </span> */}
                     <span className="flex flex-col items-start p-2">
                       <span className="text-[#0D0D0D] text-base mb-4">
                         Total LP Fees Gained
