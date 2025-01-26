@@ -15,7 +15,7 @@ import { getPositionFees } from "@/lib/algebra/utils/positions/getPositionFees";
 import { formatAmountWithAlphabetSymbol } from "@/lib/algebra/utils/common/formatAmount";
 import { Position, ZERO } from "@cryptoalgebra/sdk";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { MoveRightIcon, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
@@ -29,7 +29,6 @@ import { FormattedPosition } from "@/types/algebra/types/formatted-position";
 import { Address } from "viem";
 import { useParams } from "next/navigation";
 import { cn } from "@/lib/tailwindcss";
-import { HoneyContainer } from "@/components/CardContianer";
 import { Token } from "@/services/contract/token";
 import CardContainer from "@/components/CardContianer/v3";
 
@@ -224,7 +223,7 @@ const PoolPage = () => {
   return (
     <PageContainer>
       <CardContainer className="gap-y-6">
-        <PoolHeader pool={poolEntity} />
+        <PoolHeader pool={poolEntity} token0={token0} token1={token1} />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8">
           <div className="col-span-2">
             {!account ? (

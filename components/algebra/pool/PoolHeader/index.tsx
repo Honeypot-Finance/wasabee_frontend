@@ -4,41 +4,40 @@ import { Skeleton } from "@/components/algebra/ui/skeleton";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
 import { formatPercent } from "@/lib/algebra/utils/common/formatPercent";
-import { Pool } from "@cryptoalgebra/sdk";
+import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
 import { Address } from "viem";
 import { Token } from "@/services/contract/token";
+import { Pool } from "@cryptoalgebra/sdk";
+import { observer } from "mobx-react-lite";
 
 interface PoolHeaderProps {
   pool: Pool | null;
+  token0: Token | null;
+  token1: Token | null;
 }
 
-const PoolHeader = ({ pool }: PoolHeaderProps) => {
-  const [token0, token1] = pool ? [pool.token0, pool.token1] : [];
-
-  const currencyA = useCurrency(token0?.address as Address, true);
-  const currencyB = useCurrency(token1?.address as Address, true);
-
+const PoolHeader = observer(({ pool, token0, token1 }: PoolHeaderProps) => {
   const poolFee = pool && formatPercent.format(pool.fee / 10_00000);
 
   return (
     <div className="flex items-center w-full gap-3.5">
       <div className="flex">
         <div className="z-10">
-          {(currencyA as any)?.address && (
+          {token0?.address && (
             <TokenLogo
               size={40}
               token={Token.getToken({
-                address: (currencyA as any).address,
+                address: token0.address,
               })}
             />
           )}
         </div>
         <div className="-ml-4">
-          {(currencyB as any)?.address && (
+          {token1?.address && (
             <TokenLogo
               size={40}
               token={Token.getToken({
-                address: (currencyB as any).address,
+                address: token1.address,
               })}
             />
           )}
@@ -46,7 +45,7 @@ const PoolHeader = ({ pool }: PoolHeaderProps) => {
       </div>
 
       {/* TODO: bg color  */}
-      {currencyA && currencyB ? (
+      {token0?.symbol && token1?.symbol ? (
         <PageTitle title={`${token0?.symbol} / ${token1?.symbol}`}>
           <span className="hidden sm:inline px-3 py-2 font-medium rounded-full text-[#479FFF] border border-[#E18A20]/40 bg-[#E18A20]/20">{`${poolFee}`}</span>{" "}
         </PageTitle>
@@ -55,6 +54,6 @@ const PoolHeader = ({ pool }: PoolHeaderProps) => {
       )}
     </div>
   );
-};
+});
 
 export default PoolHeader;
