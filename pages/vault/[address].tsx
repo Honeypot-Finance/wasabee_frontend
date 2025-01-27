@@ -37,67 +37,54 @@ export const VaultDetail = observer(() => {
     )
       return;
 
+    console.log("address", address);
+
     // Fetch token addresses and pool data
     const loadVaultData = async () => {
-      const vaultContract = new ICHIVaultContract({
-        address: address as Address,
-      });
+      const vaultContract = await getSingleVaultDetails(address as string);
       console.log("vaultContract", vaultContract);
+
+      if (vaultContract) {
+        vault?.getTotalAmounts();
+
+        vault?.getTotalSupply();
+
+        vault?.getBalanceOf(wallet.account);
+
+        setTvl(
+          Number(vaultContract?.pool?.TVL_USD || 0).toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          })
+        );
+        if (vaultContract.pool) {
+          setVolume24h(
+            Number(vaultContract.pool.volume_24h_USD || 0).toLocaleString(
+              "en-US",
+              {
+                style: "currency",
+                currency: "USD",
+              }
+            )
+          );
+
+          setFees24h(
+            Number(vaultContract.pool.fees_24h_USD || 0).toLocaleString(
+              "en-US",
+              {
+                style: "currency",
+                currency: "USD",
+              }
+            )
+          );
+        }
+      }
 
       setVault(vaultContract);
     };
 
     loadVaultData();
   }, [address, wallet.isInit]);
-
-  useEffect(() => {
-    if (!vault) return;
-
-    vault?.getTotalAmounts();
-
-    vault?.getTotalSupply();
-
-    vault?.getBalanceOf(wallet.account);
-
-    vault?.getToken0().then((token) => {
-      token.init();
-    });
-
-    vault?.getToken1().then((token) => {
-      token.init();
-    });
-
-    // Get vault data from subgraph
-    getSingleVaultDetails(vault?.address as string).then((data) => {
-      setVault(data);
-
-      if (data) {
-        setTvl(
-          Number(data?.pool?.TVL_USD || 0).toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-          })
-        );
-        if (data.pool) {
-          setVolume24h(
-            Number(data.pool.volume_24h_USD || 0).toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            })
-          );
-
-          setFees24h(
-            Number(data.pool.fees_24h_USD || 0).toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            })
-          );
-        }
-      }
-    });
-
-    console.log(vault);
-  }, [vault]);
 
   const hasShares = vault?.userShares ?? BigInt(0) > BigInt(0);
 
@@ -384,7 +371,7 @@ export const VaultDetail = observer(() => {
               new AlgebraToken(
                 wallet.currentChainId,
                 vault?.token0?.address as `0x${string}`,
-                Number(vault?.token0?.decimals),
+                Number(vault?.token0?.decimals ?? 18),
                 vault?.token0?.symbol,
                 vault?.token0?.name
               )
@@ -393,7 +380,7 @@ export const VaultDetail = observer(() => {
               new AlgebraToken(
                 wallet.currentChainId,
                 vault?.token1?.address as `0x${string}`,
-                Number(vault?.token1?.decimals),
+                Number(vault?.token1?.decimals ?? 18),
                 vault?.token1?.symbol,
                 vault?.token1?.name
               )

@@ -19,6 +19,7 @@ import {
 import { Address } from "viem";
 import { Token } from "@/services/contract/token";
 import { poolQueryToContract } from "./pool";
+import BigNumber from "bignumber.js";
 
 export const vaultQueryResToVaultContract = (
   vault: IchiVault
@@ -33,16 +34,10 @@ export const vaultQueryResToVaultContract = (
 
   vaultContract.token0 = new Token({
     address: vault.tokenA as Address,
-    decimals: vault.tokenA.decimals,
-    name: vault.tokenA.name,
-    symbol: vault.tokenA.symbol,
   });
 
   vaultContract.token1 = new Token({
     address: vault.tokenB as Address,
-    decimals: vault.tokenB.decimals,
-    name: vault.tokenB.name,
-    symbol: vault.tokenB.symbol,
   });
 
   vaultContract.recentTransactions = [
@@ -53,7 +48,8 @@ export const vaultQueryResToVaultContract = (
 
   vaultContract.pool = poolQueryToContract(vault.pool);
 
-  console.log("vaultContract", vaultContract);
+  vaultContract.token0.init();
+  vaultContract.token1.init();
 
   return vaultContract;
 };
