@@ -11,6 +11,7 @@ interface V3SwapCardProps {
   bordered?: boolean;
   borderHeight?: string;
   onSwapSuccess?: () => void;
+  isUpdatingPriceChart?: boolean;
 }
 
 export function V3SwapCard({
@@ -18,6 +19,7 @@ export function V3SwapCard({
   toTokenAddress,
   disableSelection,
   bordered = true,
+  isUpdatingPriceChart = false,
 }: V3SwapCardProps) {
   return (
     <CardContainer>
@@ -25,6 +27,7 @@ export function V3SwapCard({
         fromTokenAddress={fromTokenAddress}
         toTokenAddress={toTokenAddress}
         disableSelection={disableSelection}
+        isUpdatingPriceChart={isUpdatingPriceChart}
       />
       <SwapParamsV3 />
       <SwapButtonV3 />

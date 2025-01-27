@@ -31,12 +31,14 @@ interface SwapPairV3Props {
   fromTokenAddress?: string;
   toTokenAddress?: string;
   disableSelection?: boolean;
+  isUpdatingPriceChart?: boolean;
 }
 
 const SwapPairV3 = ({
   fromTokenAddress,
   toTokenAddress,
   disableSelection,
+  isUpdatingPriceChart,
 }: SwapPairV3Props) => {
   const {
     toggledTrade: trade,
@@ -142,9 +144,12 @@ const SwapPairV3 = ({
   const formattedAmounts = {
     [independentField]: typedValue,
     [dependentField]: showWrap
-      ? (parsedAmounts[independentField as keyof typeof parsedAmounts]?.toExact() ?? "")
+      ? (parsedAmounts[
+          independentField as keyof typeof parsedAmounts
+        ]?.toExact() ?? "")
       : (parsedAmounts[dependentField as keyof typeof parsedAmounts]?.toFixed(
-          (parsedAmounts[dependentField as keyof typeof parsedAmounts]?.currency.decimals || 6) / 2
+          (parsedAmounts[dependentField as keyof typeof parsedAmounts]?.currency
+            .decimals || 6) / 2
         ) ?? ""),
   };
 
@@ -152,10 +157,10 @@ const SwapPairV3 = ({
     const initializeTokens = async () => {
       if (fromTokenAddress) {
         const token = Token.getToken({ address: fromTokenAddress });
-        await token.init(false, {
-          loadIndexerTokenData: true,
-          loadLogoURI: true,
-        });
+        // await token.init(false, {
+        //   loadIndexerTokenData: true,
+        //   loadLogoURI: true,
+        // });
 
         if (!token) {
           return;
@@ -174,10 +179,10 @@ const SwapPairV3 = ({
 
       if (toTokenAddress) {
         const token = Token.getToken({ address: toTokenAddress });
-        await token.init(false, {
-          loadIndexerTokenData: true,
-          loadLogoURI: true,
-        });
+        // await token.init(false, {
+        //   loadIndexerTokenData: true,
+        //   loadLogoURI: true,
+        // });
         if (!token) {
           return;
         }
@@ -198,6 +203,9 @@ const SwapPairV3 = ({
   }, [fromTokenAddress, toTokenAddress]);
 
   useEffect(() => {
+    if (!isUpdatingPriceChart) {
+      return;
+    }
     if (
       baseCurrency &&
       quoteCurrency &&
@@ -246,7 +254,7 @@ const SwapPairV3 = ({
           chart.setChartTarget(token);
         });
     }
-  }, [baseCurrency, quoteCurrency]);
+  }, [baseCurrency, quoteCurrency, isUpdatingPriceChart]);
 
   return (
     <div className="flex flex-col gap-1 relative bg-white custom-dashed px-[18px] py-6 w-full">

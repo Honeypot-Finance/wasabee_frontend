@@ -57,6 +57,7 @@ const SwapPage = observer(() => {
             toTokenAddress={
               outputCurrency ?? wallet.currentChain.platformTokenAddress.HPOT
             }
+            isUpdatingPriceChart={true}
           />
         </motion.div>
 
