@@ -12,16 +12,43 @@ import {
   UserActivePositionsQueryResult,
   useNativePriceQuery,
 } from "../generated/graphql";
-import { getContract } from "viem";
+import { Address, getContract } from "viem";
 import { algebraPositionManagerAddress } from "@/wagmi-generated";
 import { algebraPositionManagerAbi } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { MAX_UINT128 } from "@/config/algebra/max-uint128";
 import { wallet } from "@/services/wallet";
-import { CurrencyAmount, Token } from "@cryptoalgebra/sdk";
+import { CurrencyAmount, Token as AlgebranToken } from "@cryptoalgebra/sdk";
 import { unwrappedToken } from "@cryptoalgebra/sdk";
 import BigNumber from "bignumber.js";
 import { object } from "zod";
+import { PairContract } from "@/services/contract/dex/liquidity/pair-contract";
+import { Token } from "@/services/contract/token";
+
+export const poolQueryToContract = (pool: Pool): PairContract => {
+  const pairContract = new PairContract({
+    address: pool.id as Address,
+    TVL_USD: pool.totalValueLockedUSD,
+    volume_24h_USD: pool.poolDayData[0].volumeUSD,
+    fees_24h_USD: pool.poolDayData[0].feesUSD,
+  });
+
+  pairContract.token0 = Token.getToken({
+    address: pool.token0.id,
+    decimals: pool.token0.decimals,
+    name: pool.token0.name,
+    symbol: pool.token0.symbol,
+  });
+
+  pairContract.token1 = Token.getToken({
+    address: pool.token1.id,
+    decimals: pool.token1.decimals,
+    name: pool.token1.name,
+    symbol: pool.token1.symbol,
+  });
+
+  return pairContract;
+};
 
 export const poolsByTokenPair = async (token0: string, token1: string) => {
   const { data } = await infoClient.query<
@@ -103,7 +130,7 @@ export const useUserPools = (userAddress: string) => {
 
           const fees0USD = CurrencyAmount.fromRawAmount(
             unwrappedToken(
-              new Token(
+              new AlgebranToken(
                 wallet.currentChainId,
                 pool.token0.id,
                 Number(pool.token0.decimals),
@@ -116,7 +143,7 @@ export const useUserPools = (userAddress: string) => {
 
           const fees1USD = CurrencyAmount.fromRawAmount(
             unwrappedToken(
-              new Token(
+              new AlgebranToken(
                 wallet.currentChainId,
                 pool.token1.id,
                 Number(pool.token1.decimals),

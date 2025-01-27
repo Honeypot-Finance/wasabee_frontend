@@ -871,24 +871,9 @@ const MemeView = observer(({ pairAddress }: { pairAddress: string }) => {
           >
             <div className="bg-[url('/images/pool-detail/top-border.svg')] bg-left-top h-6 absolute top-0 left-0 w-full bg-contain"></div>
             {state.pair.value?.state === 0 && (
-              <>
-                {state.pair.value?.canClaimTokens && (
-                  <Button
-                    className="w-full"
-                    onPress={async () => {
-                      const lpTokenAddress =
-                        await state.pair.value?.contract.read.lpToken();
-                      window.location.href = `/vault/${lpTokenAddress}`;
-                    }}
-                    isLoading={state.pair.value?.claimLP.loading}
-                  >
-                    Visit Vault
-                  </Button>
-                )}
-                <div className="md:block">
-                  <KlineChart height={500} />
-                </div>
-              </>
+              <div className="md:block">
+                <KlineChart height={500} />
+              </div>
             )}
 
             {state.pair.value?.state === 1 && (

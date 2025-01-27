@@ -49,6 +49,7 @@ export const VAULT_FRAGMENT = gql`
     count
     createdAtTimestamp
     holdersCount
+    totalShares
     pool {
       ...PoolField
     }
@@ -57,6 +58,7 @@ export const VAULT_FRAGMENT = gql`
 
 export const POOL_FRAGMENT = gql`
   fragment PoolField on Pool {
+    id
     totalValueLockedUSD
     token0 {
       id
@@ -83,7 +85,6 @@ export const SINGLE_VAULT_DETAILS = gql`
   query SingleVaultDetails($vaultId: ID!) {
     ichiVault(id: $vaultId) {
       ...VaultField
-      totalShares
       vaultShares {
         id
         vaultShareBalance
@@ -122,9 +123,6 @@ export const SINGLE_VAULT_DETAILS = gql`
         feeAmount0
         feeAmount1
         sender
-      }
-      pool {
-        ...PoolField
       }
     }
   }

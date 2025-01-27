@@ -7,6 +7,10 @@ import { writeContract } from "viem/actions";
 import { ContractWrite } from "@/services/utils";
 import BigNumber from "bignumber.js";
 import { Token } from "../token";
+import { PairContract } from "../dex/liquidity/pair-contract";
+import { VaultDeposit } from "@/lib/algebra/graphql/generated/graphql";
+import { VaultWithdraw } from "@/lib/algebra/graphql/generated/graphql";
+import { VaultCollectFee } from "@/lib/algebra/graphql/generated/graphql";
 
 export class ICHIVaultContract implements BaseContract {
   address: Address = zeroAddress;
@@ -17,10 +21,20 @@ export class ICHIVaultContract implements BaseContract {
     total0: BigInt(0),
     total1: BigInt(0),
   };
-  token0: Token | null = null;
-  token1: Token | null = null;
+  token0: Token | undefined = undefined;
+  token1: Token | undefined = undefined;
+  allowToken0: boolean = false;
+  allowToken1: boolean = false;
   totalsupplyShares: bigint = BigInt(0);
   userShares: bigint = BigInt(0);
+  holderCount: bigint = BigInt(0);
+  isInitialized: boolean = false;
+  transactionPending: boolean = false;
+  approvedToken0: BigInt = BigInt(0);
+  approvedToken1: BigInt = BigInt(0);
+  pool: PairContract | undefined = undefined;
+
+  recentTransactions: (VaultDeposit | VaultWithdraw | VaultCollectFee)[] = [];
 
   get userTokenAmountsWithoutDecimal() {
     if (
@@ -106,21 +120,31 @@ export class ICHIVaultContract implements BaseContract {
   }
 
   async deposit(deposit0: bigint, deposit1: bigint, to: string) {
+    this.transactionPending = true;
     if (!wallet.walletClient?.account) {
       return;
     }
     return await new ContractWrite(this.contract.write.deposit, {
       action: "deposit",
-    }).call([deposit0, deposit1, to as `0x${string}`]);
+    })
+      .call([deposit0, deposit1, to as `0x${string}`])
+      .finally(() => {
+        this.transactionPending = false;
+      });
   }
 
   async withdraw(shares: bigint, to: string) {
+    this.transactionPending = true;
     if (!wallet.walletClient?.account) {
       return;
     }
     return await new ContractWrite(this.contract.write.withdraw, {
       action: "withdraw",
-    }).call([shares, to as `0x${string}`]);
+    })
+      .call([shares, to as `0x${string}`])
+      .finally(() => {
+        this.transactionPending = false;
+      });
   }
 
   // async getFee() {

@@ -19,15 +19,15 @@ import { Slippage } from "./Slippage";
 import BigNumber from "bignumber.js";
 import { useInterval } from "@/lib/hooks";
 import { Trigger } from "../Trigger";
-import { ArrowLeftRight, Zap, ChevronDown } from "lucide-react";
+import Link from "next/link";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { VaultAmount } from "../VaultAmount/VaultAmount";
 import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
 import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
-import { vault } from "@/services/vault";
 import { chart } from "@/services/chart";
 import { V3SwapCard } from "../algebra/swap/V3SwapCard";
 import { HoneyContainer } from "../CardContianer";
+import { getSingleVaultDetails } from "@/lib/algebra/graphql/clients/vaults";
 
 export const LaunchDetailSwapCard = observer(
   ({
@@ -45,6 +45,10 @@ export const LaunchDetailSwapCard = observer(
     memePairContract: MemePairContract;
     onSwapSuccess?: () => void;
   }) => {
+    const [values, setValues] = useState<{ amount0: string; amount1: string }>({
+      amount0: "0",
+      amount1: "0",
+    });
     const [currentTab, setCurrentTab] = useState<"Swap" | "LP">("Swap");
     const router = useRouter();
     const isInit = wallet.isInit && liquidity.isInit;
@@ -62,23 +66,28 @@ export const LaunchDetailSwapCard = observer(
     const [vaultContract, setVaultContract] =
       useState<ICHIVaultContract | null>(null);
 
+    const onAmountChange = (amount0: string, amount1: string) => {
+      setValues({ amount0, amount1 });
+    };
+
     useEffect(() => {
-      //get pair contract by inputAddress and outputAddress
+      if (!wallet.isInit) {
+        return;
+      }
 
       const loadVaultContract = async () => {
         try {
           const lpTokenAddress = await memePairContract.contract.read.lpToken();
-          const aquaberaVaultContract = new ICHIVaultContract({
-            address: lpTokenAddress,
-          });
-          await vault.setVaultContract(aquaberaVaultContract);
-          setVaultContract(aquaberaVaultContract);
+          console.log("lpTokenAddress", lpTokenAddress);
+          const vaultContract = await getSingleVaultDetails(lpTokenAddress);
+          console.log("vaultContract", vaultContract);
+          setVaultContract(vaultContract);
         } catch (error) {
           console.error("Failed to load vault contract:", error);
         }
       };
       loadVaultContract();
-    }, [inputAddress, outputAddress]);
+    }, [inputAddress, outputAddress, wallet.isInit]);
 
     const { inputCurrency, outputCurrency } = router.query as {
       inputCurrency: string;
@@ -198,31 +207,47 @@ export const LaunchDetailSwapCard = observer(
                     )}
                   </Button>
                 )}
-                <Button
-                  className="w-full"
-                  onClick={async () => {
-                    const lpTokenAddress =
-                      await memePairContract.contract.read.lpToken();
-                    window.location.href = `/vault/${lpTokenAddress}`;
-                  }}
-                >
-                  Visit Vault
-                </Button>
+                <div className=" w-full flex gap-x-2 justify-around *:flex-grow-[1]">
+                  <Button
+                    className="w-full"
+                    onClick={async () => {
+                      const lpTokenAddress =
+                        await memePairContract.contract.read.lpToken();
+                      window.location.href = `/vault/${lpTokenAddress}`;
+                    }}
+                  >
+                    Visit Vault
+                  </Button>
+                  <Link
+                    className="w-full"
+                    href={`/pool-detail/${vaultContract?.pool?.address}`}
+                  >
+                    <Button className="w-full">Customize Position</Button>
+                  </Link>
+                </div>
                 <div className="w-full rounded-[32px] bg-white space-y-2 px-4 py-6 custom-dashed">
                   {vaultContract && (
-                    <VaultAmount vaultContract={vaultContract} />
+                    <VaultAmount
+                      vaultContract={vaultContract}
+                      onAmountChange={onAmountChange}
+                      values={values}
+                    />
                   )}
                 </div>
 
                 <Button
                   className="w-full"
-                  isDisabled={vault.isDisabled}
-                  isLoading={vault.deposit.loading}
+                  isDisabled={!vaultContract?.isInitialized}
+                  isLoading={vaultContract?.transactionPending}
                   onClick={async () => {
-                    await vault.deposit.call();
+                    await vaultContract?.deposit(
+                      BigInt(values.amount0),
+                      BigInt(values.amount1),
+                      wallet.account
+                    );
                   }}
                 >
-                  {vault.buttonContent}
+                  {vaultContract?.transactionPending ? "Pending..." : "Deposit"}
                 </Button>
               </HoneyContainer>
             </LoadingContainer>

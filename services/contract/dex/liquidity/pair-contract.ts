@@ -10,6 +10,12 @@ import { toCompactLocaleString } from "@/lib/utils";
 import { amountFormatted, formatAmount } from "@/lib/format";
 import dayjs from "dayjs";
 import { liquidity } from "@/services/liquidity";
+import {
+  Transaction,
+  VaultCollectFee,
+  VaultDeposit,
+  VaultWithdraw,
+} from "@/lib/algebra/graphql/generated/graphql";
 
 // const totalSupply = await pairContract.methods.totalSupply().call()
 // const LPTokenBalance = await this.balanceOf(pairAddress)
@@ -33,6 +39,11 @@ export class PairContract implements BaseContract {
   isInit = false;
   isLoading = false;
   canClaimLP = false;
+
+  //indexer data
+  TVL_USD: number = 0;
+  volume_24h_USD: number = 0;
+  fees_24h_USD: number = 0;
 
   get trackedReserveUSD() {
     return this.trackedReserveETH.multipliedBy(liquidity.bundlePrice);

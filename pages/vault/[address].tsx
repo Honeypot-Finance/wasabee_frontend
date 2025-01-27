@@ -27,10 +27,6 @@ export const VaultDetail = observer(() => {
   const [tvl, setTvl] = useState<string>("$0");
   const [volume24h, setVolume24h] = useState<string>("$0");
   const [fees24h, setFees24h] = useState<string>("$0");
-  const [vaultData, setVaultData] = useState<SingleVaultDetailsQuery | null>(
-    null
-  );
-
   useEffect(() => {
     if (
       !wallet.isInit ||
@@ -73,30 +69,25 @@ export const VaultDetail = observer(() => {
 
     // Get vault data from subgraph
     getSingleVaultDetails(vault?.address as string).then((data) => {
-      setVaultData(data);
+      setVault(data);
 
-      if (data.ichiVault) {
+      if (data) {
         setTvl(
-          Number(data.ichiVault.pool?.totalValueLockedUSD || 0).toLocaleString(
-            "en-US",
-            {
-              style: "currency",
-              currency: "USD",
-            }
-          )
+          Number(data?.pool?.TVL_USD || 0).toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          })
         );
-
-        const latestDayData = data.ichiVault.pool?.poolDayData[0];
-        if (latestDayData) {
+        if (data.pool) {
           setVolume24h(
-            Number(latestDayData.volumeUSD || 0).toLocaleString("en-US", {
+            Number(data.pool.volume_24h_USD || 0).toLocaleString("en-US", {
               style: "currency",
               currency: "USD",
             })
           );
 
           setFees24h(
-            Number(latestDayData.feesUSD || 0).toLocaleString("en-US", {
+            Number(data.pool.fees_24h_USD || 0).toLocaleString("en-US", {
               style: "currency",
               currency: "USD",
             })
@@ -124,7 +115,7 @@ export const VaultDetail = observer(() => {
 
     // Refresh subgraph data
     const vaultDetails = await getSingleVaultDetails(vault.address);
-    setVaultData(vaultDetails);
+    setVault(vaultDetails);
   }, [vault, wallet.isInit]);
 
   // Format number with 18 decimals
@@ -147,23 +138,6 @@ export const VaultDetail = observer(() => {
       ? `${integerPart}.${trimmedFractional}`
       : integerPart.toString();
   };
-
-  // Merge all transactions into one array and sort by timestamp
-  const allTransactions = [
-    ...(vaultData?.ichiVault?.vaultDeposits?.map((tx) => ({
-      ...tx,
-      type: "deposit",
-    })) ?? []),
-    ...(vaultData?.ichiVault?.vaultWithdraws?.map((tx) => ({
-      ...tx,
-      type: "withdraw",
-    })) ?? []),
-    ...(vaultData?.ichiVault?.vaultCollectFees?.map((tx) => ({
-      ...tx,
-      to: tx.sender,
-      type: "fee",
-    })) ?? []),
-  ].sort((a, b) => Number(b.createdAtTimestamp) - Number(a.createdAtTimestamp));
 
   return (
     <div className="container mx-auto p-4 font-gliker">
@@ -352,34 +326,34 @@ export const VaultDetail = observer(() => {
           </div>
 
           {/* Recent Activity */}
-          {vaultData?.ichiVault && (
+          {vault && (
             <div className="rounded-[24px] border border-black bg-white p-6 shadow-[4px_4px_0px_0px_#D29A0D]">
               <h3 className="text-base text-[#202020] mb-4">Recent Activity</h3>
               <div className="space-y-4">
-                {allTransactions.map((tx) => (
+                {vault.recentTransactions.map((tx) => (
                   <div
                     key={tx.id}
                     className="flex justify-between items-center"
                   >
                     <div className="flex items-center gap-2">
-                      {tx.type === "deposit" && (
+                      {tx.__typename === "VaultDeposit" && (
                         <span className="text-[#202020] font-medium">
                           Deposit
                         </span>
                       )}
-                      {tx.type === "withdraw" && (
+                      {tx.__typename === "VaultWithdraw" && (
                         <span className="text-[#202020] font-medium">
                           Withdraw
                         </span>
                       )}
-                      {tx.type === "fee" && (
+                      {tx.__typename === "VaultCollectFee" && (
                         <span className="text-[#202020] font-medium">
                           Fee Collection
                         </span>
                       )}
-                      {tx.to && (
+                      {tx.sender && (
                         <span className="text-[#202020]">
-                          by {tx.to.slice(0, 6)}...{tx.to.slice(-4)}
+                          by {tx.sender.slice(0, 6)}...{tx.sender.slice(-4)}
                         </span>
                       )}
                     </div>
