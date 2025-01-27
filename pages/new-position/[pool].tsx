@@ -5,7 +5,7 @@ import RangeSelector from "@/components/algebra/create-position/RangeSelector";
 import PresetTabs from "@/components/algebra/create-position/PresetTabs";
 import { Bound } from "@cryptoalgebra/sdk";
 import { useEffect, useMemo } from "react";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { Address } from "viem";
 import AmountsSection from "@/components/algebra/create-position/AmountsSection";
 import { useCurrency } from "@/lib/algebra/hooks/common/useCurrency";
@@ -24,7 +24,8 @@ import {
 type NewPositionPageParams = Record<"pool", Address>;
 
 const NewPositionPage = () => {
-  const { pool: poolAddress } = useParams<NewPositionPageParams>();
+  const router = useRouter();
+  const { pool: poolAddress } = router.query as { pool: Address };
 
   const { data: token0 } = useReadAlgebraPoolToken0({
     address: poolAddress,
@@ -138,7 +139,9 @@ const NewPositionPage = () => {
                       disabled={!startPriceTypedValue && !mintInfo.price}
                     />
                     <div className="md:ml-auto md:text-right">
-                      <div className="font-medium text-sm mb-3 text-black/70">CURRENT PRICE</div>
+                      <div className="font-medium text-sm mb-3 text-black/70">
+                        CURRENT PRICE
+                      </div>
                       <div className="font-bold text-xl text-black">{`${currentPrice}`}</div>
                     </div>
                   </div>

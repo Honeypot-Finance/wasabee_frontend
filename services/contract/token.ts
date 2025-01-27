@@ -27,6 +27,7 @@ export class Token implements BaseContract {
     const lowerAddress = address.toLowerCase();
     const key = `${lowerAddress}-${args.isNative ? "native" : "erc20"}`;
     const token = Token.tokensMap[key];
+
     if (!token) {
       Token.tokensMap[key] = new Token({
         address: lowerAddress,
@@ -414,7 +415,7 @@ export class Token implements BaseContract {
   }
 
   async getBalance() {
-    if (this.isNative) {
+    if (this.isNative || this.address === zeroAddress) {
       return wallet.balance;
     }
     try {
@@ -427,6 +428,7 @@ export class Token implements BaseContract {
       return this.balanceWithoutDecimals;
     } catch (e) {
       console.log(e);
+      console.log("error loading balance", this.address);
       return new BigNumber(0);
     }
   }

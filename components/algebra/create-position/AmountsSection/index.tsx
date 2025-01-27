@@ -14,7 +14,7 @@ import EnterAmounts from "../EnterAmounts";
 import IncreaseLiquidityButton from "@/components/algebra/position/IncreaseLiquidityButton";
 import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
 import { ManageLiquidity } from "@/types/algebra/types/manage-liquidity";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 interface AmountsSectionProps {
   tokenId?: number;
@@ -35,7 +35,8 @@ const AmountsSection = ({
   manageLiquidity,
   handleCloseModal,
 }: AmountsSectionProps) => {
-  const { pool: poolAddress } = useParams<NewPositionPageParams>();
+  const router = useRouter();
+  const { pool: poolAddress } = router.query as { pool: Address };
 
   const [poolAPR, setPoolAPR] = useState<number>();
   const apr = usePositionAPR(poolAddress, mintInfo.position);

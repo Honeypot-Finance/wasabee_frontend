@@ -27,17 +27,18 @@ import {
 } from "@/lib/algebra/graphql/generated/graphql";
 import { FormattedPosition } from "@/types/algebra/types/formatted-position";
 import { Address } from "viem";
-import { useParams } from "next/navigation";
 import { cn } from "@/lib/tailwindcss";
 import { Token } from "@/services/contract/token";
 import CardContainer from "@/components/CardContianer/v3";
+import { useRouter } from "next/router";
 
 const PoolPage = () => {
   const { address: account } = useAccount();
   const [token0, setToken0] = useState<Token | null>(null);
   const [token1, setToken1] = useState<Token | null>(null);
 
-  const { pool: poolId } = useParams() as { pool: Address };
+  const router = useRouter();
+  const { pool: poolId } = router.query as { pool: Address };
 
   const [selectedPositionId, selectPosition] = useState<number | null>();
 
@@ -104,7 +105,7 @@ const PoolPage = () => {
           tickUpper: Number(position.tickUpper),
         }),
       }));
-  }, [positions, poolEntity]);
+  }, [positions, poolEntity, poolId]);
 
   useEffect(() => {
     async function getPositionsFees() {
