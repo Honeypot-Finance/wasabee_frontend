@@ -43,7 +43,6 @@ export const vaultQueryResToVaultContract = (
   vaultContract.recentTransactions = [
     ...vault.vaultDeposits,
     ...vault.vaultWithdraws,
-    ...vault.vaultCollectFees,
   ].sort((a, b) => Number(b.createdAtTimestamp) - Number(a.createdAtTimestamp));
 
   vaultContract.pool = poolQueryToContract(vault.pool);
