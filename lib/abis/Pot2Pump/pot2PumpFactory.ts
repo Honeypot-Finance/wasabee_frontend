@@ -1,41 +1,5 @@
 export const pot2PumpFactoryABI = [
   {
-    type: "constructor",
-    inputs: [
-      {
-        name: "params",
-        type: "tuple",
-        internalType: "struct Pot2PumpFactory.Pot2PumpFactoryParams",
-        components: [
-          {
-            name: "base",
-            type: "tuple",
-            internalType: "struct BaseFactory.BaseParams",
-            components: [
-              {
-                name: "vaultFactory",
-                type: "address",
-                internalType: "address",
-              },
-              {
-                name: "launchedTokenImpl",
-                type: "address",
-                internalType: "address",
-              },
-              { name: "pairImpl", type: "address", internalType: "address" },
-            ],
-          },
-          { name: "launchCycle", type: "uint256", internalType: "uint256" },
-          { name: "tokenTo", type: "address", internalType: "address" },
-          { name: "feeVaults", type: "address", internalType: "address" },
-          { name: "initialAdmin", type: "address", internalType: "address" },
-          { name: "initialDelay", type: "uint48", internalType: "uint48" },
-        ],
-      },
-    ],
-    stateMutability: "nonpayable",
-  },
-  {
     type: "function",
     name: "DEFAULT_ADMIN_ROLE",
     inputs: [],
@@ -55,6 +19,82 @@ export const pot2PumpFactoryABI = [
     inputs: [],
     outputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
     stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "UPGRADER_ROLE",
+    inputs: [],
+    outputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "UPGRADE_INTERFACE_VERSION",
+    inputs: [],
+    outputs: [{ name: "", type: "string", internalType: "string" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "__BaseFactory_init",
+    inputs: [
+      {
+        name: "baseParams",
+        type: "tuple",
+        internalType: "struct BaseFactory.BaseParams",
+        components: [
+          { name: "vaultFactory", type: "address", internalType: "address" },
+          {
+            name: "launchedTokenImpl",
+            type: "address",
+            internalType: "address",
+          },
+          { name: "pairImpl", type: "address", internalType: "address" },
+        ],
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "__MemeFactory_init",
+    inputs: [
+      {
+        name: "params",
+        type: "tuple",
+        internalType: "struct MemeFactory.MemeFactoryParams",
+        components: [
+          {
+            name: "base",
+            type: "tuple",
+            internalType: "struct BaseFactory.BaseParams",
+            components: [
+              {
+                name: "vaultFactory",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "launchedTokenImpl",
+                type: "address",
+                internalType: "address",
+              },
+              { name: "pairImpl", type: "address", internalType: "address" },
+            ],
+          },
+          {
+            name: "memeTokenSupply",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          { name: "launchCycle", type: "uint256", internalType: "uint256" },
+          { name: "tokenTo", type: "address", internalType: "address" },
+        ],
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
   },
   {
     type: "function",
@@ -95,10 +135,21 @@ export const pot2PumpFactoryABI = [
     name: "allocation",
     inputs: [],
     outputs: [
-      { name: "participantAllocation", type: "uint16", internalType: "uint16" },
-      { name: "burnAllocation", type: "uint16", internalType: "uint16" },
-      { name: "honeypotFee", type: "uint16", internalType: "uint16" },
-      { name: "tokenDeployer", type: "uint16", internalType: "uint16" },
+      {
+        name: "",
+        type: "tuple",
+        internalType: "struct IPot2PumpFactory.LPAllocation",
+        components: [
+          {
+            name: "participantAllocation",
+            type: "uint16",
+            internalType: "uint16",
+          },
+          { name: "burnAllocation", type: "uint16", internalType: "uint16" },
+          { name: "honeypotFee", type: "uint16", internalType: "uint16" },
+          { name: "tokenDeployer", type: "uint16", internalType: "uint16" },
+        ],
+      },
     ],
     stateMutability: "view",
   },
@@ -262,6 +313,44 @@ export const pot2PumpFactoryABI = [
   },
   {
     type: "function",
+    name: "initialize",
+    inputs: [
+      {
+        name: "params",
+        type: "tuple",
+        internalType: "struct Pot2PumpFactory.Pot2PumpFactoryParams",
+        components: [
+          {
+            name: "base",
+            type: "tuple",
+            internalType: "struct BaseFactory.BaseParams",
+            components: [
+              {
+                name: "vaultFactory",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "launchedTokenImpl",
+                type: "address",
+                internalType: "address",
+              },
+              { name: "pairImpl", type: "address", internalType: "address" },
+            ],
+          },
+          { name: "launchCycle", type: "uint256", internalType: "uint256" },
+          { name: "tokenTo", type: "address", internalType: "address" },
+          { name: "feeVaults", type: "address", internalType: "address" },
+          { name: "initialAdmin", type: "address", internalType: "address" },
+          { name: "initialDelay", type: "uint48", internalType: "uint48" },
+        ],
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
     name: "isAllowedRaisedToken",
     inputs: [{ name: "token", type: "address", internalType: "address" }],
     outputs: [{ name: "", type: "bool", internalType: "bool" }],
@@ -310,8 +399,15 @@ export const pot2PumpFactoryABI = [
   },
   {
     type: "function",
+    name: "proxiableUUID",
+    inputs: [],
+    outputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "raisedTokenMinCaps",
-    inputs: [{ name: "", type: "address", internalType: "address" }],
+    inputs: [{ name: "raisedToken", type: "address", internalType: "address" }],
     outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
@@ -397,6 +493,15 @@ export const pot2PumpFactoryABI = [
   },
   {
     type: "function",
+    name: "setVaultFactory",
+    inputs: [
+      { name: "_vaultFactory", type: "address", internalType: "address" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
     name: "supportsInterface",
     inputs: [{ name: "interfaceId", type: "bytes4", internalType: "bytes4" }],
     outputs: [{ name: "", type: "bool", internalType: "bool" }],
@@ -440,6 +545,16 @@ export const pot2PumpFactoryABI = [
     ],
     outputs: [],
     stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "upgradeToAndCall",
+    inputs: [
+      { name: "newImplementation", type: "address", internalType: "address" },
+      { name: "data", type: "bytes", internalType: "bytes" },
+    ],
+    outputs: [],
+    stateMutability: "payable",
   },
   {
     type: "function",
@@ -540,6 +655,19 @@ export const pot2PumpFactoryABI = [
   },
   {
     type: "event",
+    name: "Initialized",
+    inputs: [
+      {
+        name: "version",
+        type: "uint64",
+        indexed: false,
+        internalType: "uint64",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
     name: "PairCreated",
     inputs: [
       {
@@ -568,7 +696,12 @@ export const pot2PumpFactoryABI = [
     type: "event",
     name: "RoleAdminChanged",
     inputs: [
-      { name: "role", type: "bytes32", indexed: true, internalType: "bytes32" },
+      {
+        name: "role",
+        type: "bytes32",
+        indexed: true,
+        internalType: "bytes32",
+      },
       {
         name: "previousAdminRole",
         type: "bytes32",
@@ -588,7 +721,12 @@ export const pot2PumpFactoryABI = [
     type: "event",
     name: "RoleGranted",
     inputs: [
-      { name: "role", type: "bytes32", indexed: true, internalType: "bytes32" },
+      {
+        name: "role",
+        type: "bytes32",
+        indexed: true,
+        internalType: "bytes32",
+      },
       {
         name: "account",
         type: "address",
@@ -608,7 +746,12 @@ export const pot2PumpFactoryABI = [
     type: "event",
     name: "RoleRevoked",
     inputs: [
-      { name: "role", type: "bytes32", indexed: true, internalType: "bytes32" },
+      {
+        name: "role",
+        type: "bytes32",
+        indexed: true,
+        internalType: "bytes32",
+      },
       {
         name: "account",
         type: "address",
@@ -624,13 +767,30 @@ export const pot2PumpFactoryABI = [
     ],
     anonymous: false,
   },
+  {
+    type: "event",
+    name: "Upgraded",
+    inputs: [
+      {
+        name: "implementation",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
   { type: "error", name: "AccessControlBadConfirmation", inputs: [] },
   {
     type: "error",
     name: "AccessControlEnforcedDefaultAdminDelay",
     inputs: [{ name: "schedule", type: "uint48", internalType: "uint48" }],
   },
-  { type: "error", name: "AccessControlEnforcedDefaultAdminRules", inputs: [] },
+  {
+    type: "error",
+    name: "AccessControlEnforcedDefaultAdminRules",
+    inputs: [],
+  },
   {
     type: "error",
     name: "AccessControlInvalidDefaultAdmin",
@@ -658,6 +818,14 @@ export const pot2PumpFactoryABI = [
   },
   { type: "error", name: "CreatePairFailed", inputs: [] },
   { type: "error", name: "ERC1167FailedCreateClone", inputs: [] },
+  {
+    type: "error",
+    name: "ERC1967InvalidImplementation",
+    inputs: [
+      { name: "implementation", type: "address", internalType: "address" },
+    ],
+  },
+  { type: "error", name: "ERC1967NonPayable", inputs: [] },
   { type: "error", name: "FailedInnerCall", inputs: [] },
   {
     type: "error",
@@ -668,6 +836,7 @@ export const pot2PumpFactoryABI = [
   },
   { type: "error", name: "InvalidAddress", inputs: [] },
   { type: "error", name: "InvalidAllocationSum", inputs: [] },
+  { type: "error", name: "InvalidInitialization", inputs: [] },
   { type: "error", name: "InvalidLaunchCycle", inputs: [] },
   { type: "error", name: "InvalideTiers", inputs: [] },
   { type: "error", name: "MemeTokenSupplyCannotBeZero", inputs: [] },
@@ -681,6 +850,7 @@ export const pot2PumpFactoryABI = [
     name: "NotEligibleForWithdraw",
     inputs: [{ name: "memePair", type: "address", internalType: "address" }],
   },
+  { type: "error", name: "NotInitializing", inputs: [] },
   {
     type: "error",
     name: "PairExists",
@@ -702,5 +872,11 @@ export const pot2PumpFactoryABI = [
     type: "error",
     name: "SafeERC20FailedOperation",
     inputs: [{ name: "token", type: "address", internalType: "address" }],
+  },
+  { type: "error", name: "UUPSUnauthorizedCallContext", inputs: [] },
+  {
+    type: "error",
+    name: "UUPSUnsupportedProxiableUUID",
+    inputs: [{ name: "slot", type: "bytes32", internalType: "bytes32" }],
   },
 ] as const;

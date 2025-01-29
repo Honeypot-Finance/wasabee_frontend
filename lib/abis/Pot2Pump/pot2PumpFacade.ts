@@ -30,7 +30,11 @@ export const pot2PumpFacadeABI = [
     name: "deposit",
     inputs: [
       { name: "launchedToken", type: "address", internalType: "address" },
-      { name: "raisedTokenAmount", type: "uint256", internalType: "uint256" },
+      {
+        name: "raisedTokenAmount",
+        type: "uint256",
+        internalType: "uint256",
+      },
     ],
     outputs: [],
     stateMutability: "nonpayable",
