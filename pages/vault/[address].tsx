@@ -27,13 +27,15 @@ export const VaultDetail = observer(() => {
   const [tvl, setTvl] = useState<string>("$0");
   const [volume24h, setVolume24h] = useState<string>("$0");
   const [fees24h, setFees24h] = useState<string>("$0");
+
   useEffect(() => {
     if (
       !wallet.isInit ||
       !wallet.account ||
       !address ||
       !isAddress(address as string) ||
-      address === zeroAddress
+      address === zeroAddress ||
+      vault
     )
       return;
 
@@ -42,14 +44,13 @@ export const VaultDetail = observer(() => {
     // Fetch token addresses and pool data
     const loadVaultData = async () => {
       const vaultContract = await getSingleVaultDetails(address as string);
-      console.log("vaultContract", vaultContract);
 
       if (vaultContract) {
-        vault?.getTotalAmounts();
-
-        vault?.getTotalSupply();
-
-        vault?.getBalanceOf(wallet.account);
+        Promise.all([
+          vaultContract?.getTotalAmounts(),
+          vaultContract?.getTotalSupply(),
+          vaultContract?.getBalanceOf(wallet.account),
+        ]);
 
         setTvl(
           Number(vaultContract?.pool?.TVL_USD || 0).toLocaleString("en-US", {
