@@ -10,6 +10,8 @@ import {
   canClaimPot2Pump,
   canRefundPot2Pump,
 } from "@/lib/algebra/graphql/clients/pot2pump";
+import { Button } from "@/components/algebra/ui/button";
+import { Address } from "viem";
 
 export const ParticipatedLaunches = observer(() => {
   const [myProjects, setMyProjects] = useState<Pot2PumpService>();
@@ -24,6 +26,10 @@ export const ParticipatedLaunches = observer(() => {
     if (!wallet.isInit) {
       return;
     }
+    initPot2Pumps();
+  }, [wallet.isInit]);
+
+  const initPot2Pumps = () => {
     const newPumpingProjects = new Pot2PumpService();
     setMyProjects(newPumpingProjects);
     newPumpingProjects.participatedPairs.reloadPage();
@@ -33,17 +39,62 @@ export const ParticipatedLaunches = observer(() => {
     canRefundPot2Pump(wallet.account).then((res) => {
       setCanRefundPot2PumpList(res);
     });
-  }, [wallet.isInit]);
+  };
 
   return (
     <div className="w-full relative custom-dashed-3xl bg-white p-6">
-      <div className="text-4xl absolute top-8 left-6">Participated Launch</div>
+      <div className="text-4xl flex justify-between  gap-4 absolute top-8 left-6">
+        <div>Participated Launch</div>
+        <div className="flex gap-4 text-sm z-10">
+          {canClaimPot2PumpList.length > 0 && (
+            <Button
+              onClick={() => {
+                wallet.contracts.memeFacade.claimAllUserLP
+                  .call([
+                    wallet.account as Address,
+                    canClaimPot2PumpList.map(
+                      (pair) => pair.launchedToken?.address as Address
+                    ),
+                  ])
+                  .then(() => {
+                    initPot2Pumps();
+                  });
+              }}
+              disabled={!wallet.account}
+              className="ml-[-1px] rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Claim All
+            </Button>
+          )}
+          {canRefundPot2PumpList.length > 0 && (
+            <Button
+              onClick={() => {
+                wallet.contracts.memeFacade.refundAllUserToken
+                  .call([
+                    wallet.account as Address,
+                    canRefundPot2PumpList.map(
+                      (pair) => pair.launchedToken?.address as Address
+                    ),
+                  ])
+                  .then(() => {
+                    initPot2Pumps();
+                  });
+              }}
+              disabled={!wallet.account}
+              className="ml-[-1px] rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Refund All
+            </Button>
+          )}
+        </div>
+      </div>
       <Tabs
         classNames={{
           base: "relative w-full",
           tabList:
             "flex rounded-2xl border border-[#202020] bg-white p-4 shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] py-2 px-3.5 mb-6 ml-auto z-10",
-          cursor: "bg-[#FFCD4D] border border-black shadow-[2px_2px_0px_0px_#000000] text-sm",
+          cursor:
+            "bg-[#FFCD4D] border border-black shadow-[2px_2px_0px_0px_#000000] text-sm",
           panel: "w-full",
           tabContent: "!text-[#202020]",
         }}

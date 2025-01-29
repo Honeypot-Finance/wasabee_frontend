@@ -227,7 +227,7 @@ export class ContractWrite<T extends (...args: any) => any> {
       this.setLoading(false);
     }
   }
-  async callV2(...args: Parameters<T>) {
+  async callV2(p0: [string], ...args: Parameters<T>) {
     this.setLoading(true);
     try {
       const hash = await this._call(...args);
