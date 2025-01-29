@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { amountFormatted, truncate } from "@/lib/format";
 import { ChevronDown, LucideFileEdit } from "lucide-react";
@@ -23,11 +23,10 @@ import { toast } from "react-toastify";
 import { Modal, useDisclosure } from "@nextui-org/react";
 import { UpdateProjectModal } from "../[pair]";
 import TransactionHistory from "./TransactionHistory";
-import { getTokenTop10Holders } from "@/lib/algebra/graphql/clients/token";
-import BigNumber from "bignumber.js";
 import { ShareMediaDisplay } from "@/components/ShareSocialMedialPopUp/ShareSocialMedialPopUp";
 import { pot2PumpTGShareContent } from "@/config/socialSharingContents";
 import { popmodal } from "@/services/popmodal";
+import TopHoldersTable from "./TopHoldersTable";
 
 const universalMenuItems = [
   { key: "info", label: "Token Info" },
@@ -64,49 +63,12 @@ const Tabs = observer(
     refreshTrigger?: number;
   }) => {
     const [tab, setTab] = useState(universalMenuItems[0].key);
-    const [holders, setHolders] = useState<Holder[]>([]);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const options =
       pair?.state === 0
         ? [...universalMenuItems, ...successMenuItems]
         : universalMenuItems;
-
-    useEffect(() => {
-      const fetchHolders = async () => {
-        if (tab === "holders" && pair?.launchedToken?.address) {
-          try {
-            const holdersData = await getTokenTop10Holders(
-              pair.launchedToken.address
-            );
-
-            const formattedHolders =
-              holdersData.token?.holders.map((holder, index) => ({
-                rank: (index + 1).toString(),
-                address: holder.account.id,
-                quantity: BigNumber(holder.holdingValue)
-                  .dividedBy(10 ** (pair.launchedToken?.decimals || 0))
-                  .toFixed(2),
-                percentage: (
-                  (Number(holder.holdingValue) /
-                    Number(pair.depositedLaunchedTokenWithoutDecimals)) *
-                  100
-                ).toFixed(2),
-                value: BigNumber(holder.holdingValue)
-                  .dividedBy(10 ** (pair.launchedToken?.decimals || 0))
-                  .multipliedBy(Number(pair.launchedToken?.derivedUSD))
-                  .toFixed(2),
-              })) || [];
-            setHolders(formattedHolders);
-          } catch (error) {
-            console.error("Error fetching holders:", error);
-            setHolders([]);
-          }
-        }
-      };
-
-      fetchHolders();
-    }, [tab, pair?.launchedToken?.address]);
 
     return (
       <div className="relative">
@@ -480,45 +442,12 @@ const Tabs = observer(
               <h1 className="text-[var(--Heading,#0D0D0D)] text-center text-shadow-[2px_4px_0px_#AF7F3D] webkit-text-stroke-[2px] text-stroke-white font-gliker text-[40px] md:text-[64px] font-normal leading-[110%] tracking-[1.28px] mb-6 md:mb-12">
                 Top 10 Holders
               </h1>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="text-left border-b-2 border-[#202020]">
-                      <th className="py-4 font-gliker text-[#202020]">Rank</th>
-                      <th className="py-4 font-gliker text-[#202020]">
-                        Address
-                      </th>
-                      <th className="py-4 font-gliker text-[#202020]">
-                        Quantity
-                      </th>
-                      <th className="py-4 font-gliker text-[#202020]">
-                        Percentage
-                      </th>
-                      {/* <th className="py-4 font-gliker text-[#202020]">Value</th> */}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {holders.map((holder, index) => (
-                      <tr
-                        key={index}
-                        className=" border-b border-[#20202020] text-slate-950"
-                      >
-                        <td className="py-4">{holder.rank}</td>
-                        <td className="py-4">
-                          <Copy
-                            content="Copy address"
-                            value={holder.address}
-                            displayContent={truncate(holder.address, 8)}
-                          />
-                        </td>
-                        <td className="py-4">{holder.quantity}</td>
-                        <td className="py-4">{holder.percentage}%</td>
-                        {/* <td className="py-4">${holder.value}</td> */}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <TopHoldersTable
+                launchedToken={pair?.launchedToken}
+                depositedLaunchedTokenWithoutDecimals={
+                  pair?.depositedLaunchedTokenWithoutDecimals || 0
+                }
+              />
             </div>
           )}
         </CardContianer>
