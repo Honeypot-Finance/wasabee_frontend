@@ -67,18 +67,17 @@ const PoolsList = ({
     loading: isUserPoolsLoading,
     refetch: refetchUserPools,
   } = useUserPools(wallet.account);
+  console.log("userPools", userPools);
 
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
       client: farmingClient,
     });
-  const { positions, loading: isPositionsLoading } = usePositions();
 
   const isLoading =
     isPoolsListLoading ||
     // isPoolsMaxAprLoading ||
     // isPoolsAvgAprLoading ||
-    isPositionsLoading ||
     isFarmingsLoading;
   // ||isFarmingsAPRLoading;
 
@@ -216,9 +215,6 @@ const PoolsList = ({
         const timeDifference = currentDate - lastDate;
         const msIn24Hours = 24 * 60 * 60 * 1000;
 
-        const openPositions = positions?.filter(
-          (position) => position.pool.toLowerCase() === id.toLowerCase()
-        );
         const activeFarming = activeFarmings?.eternalFarmings.find(
           (farming) => farming.pool === id
         );
@@ -395,9 +391,6 @@ const PoolsList = ({
         const timeDifference = currentDate - lastDate;
         const msIn24Hours = 24 * 60 * 60 * 1000;
 
-        const openPositions = positions?.filter(
-          (position) => position.pool.toLowerCase() === id.toLowerCase()
-        );
         const activeFarming = activeFarmings?.eternalFarmings.find(
           (farming) => farming.pool === id
         );

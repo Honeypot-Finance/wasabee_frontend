@@ -27,13 +27,15 @@ export const VaultDetail = observer(() => {
   const [tvl, setTvl] = useState<string>("$0");
   const [volume24h, setVolume24h] = useState<string>("$0");
   const [fees24h, setFees24h] = useState<string>("$0");
+
   useEffect(() => {
     if (
       !wallet.isInit ||
       !wallet.account ||
       !address ||
       !isAddress(address as string) ||
-      address === zeroAddress
+      address === zeroAddress ||
+      vault
     )
       return;
 
@@ -42,14 +44,13 @@ export const VaultDetail = observer(() => {
     // Fetch token addresses and pool data
     const loadVaultData = async () => {
       const vaultContract = await getSingleVaultDetails(address as string);
-      console.log("vaultContract", vaultContract);
 
       if (vaultContract) {
-        vault?.getTotalAmounts();
-
-        vault?.getTotalSupply();
-
-        vault?.getBalanceOf(wallet.account);
+        Promise.all([
+          vaultContract?.getTotalAmounts(),
+          vaultContract?.getTotalSupply(),
+          vaultContract?.getBalanceOf(wallet.account),
+        ]);
 
         setTvl(
           Number(vaultContract?.pool?.TVL_USD || 0).toLocaleString("en-US", {
@@ -317,12 +318,12 @@ export const VaultDetail = observer(() => {
             <div className="rounded-[24px] border border-black bg-white p-6 shadow-[4px_4px_0px_0px_#D29A0D]">
               <h3 className="text-base text-[#202020] mb-4">Recent Activity</h3>
               <div className="space-y-4">
-                {vault.recentTransactions.map((tx) => (
+                {vault.recentTransactions.slice(0, 10).map((tx) => (
                   <div
                     key={tx.id}
                     className="flex justify-between items-center"
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 min-w-[100px]">
                       {tx.__typename === "VaultDeposit" && (
                         <span className="text-[#202020] font-medium">
                           Deposit
@@ -333,16 +334,73 @@ export const VaultDetail = observer(() => {
                           Withdraw
                         </span>
                       )}
-                      {tx.__typename === "VaultCollectFee" && (
-                        <span className="text-[#202020] font-medium">
-                          Fee Collection
-                        </span>
-                      )}
-                      {tx.sender && (
-                        <span className="text-[#202020]">
-                          by {tx.sender.slice(0, 6)}...{tx.sender.slice(-4)}
-                        </span>
-                      )}
+                    </div>
+
+                    <div className="text-[#202020] min-w-[200px]">
+                      <div className=" text-sm text-[#202020]">
+                        {tx.__typename === "VaultDeposit" && (
+                          <div className="flex flex-col  gap-2">
+                            <div>
+                              <span className="text-sm text-[#202020]">
+                                {DynamicFormatAmount({
+                                  amount: BigNumber(tx.amount0.toString())
+                                    .div(10 ** (vault?.token0?.decimals ?? 18))
+                                    .toString(),
+                                  decimals: 3,
+                                  endWith: vault?.token0?.symbol,
+                                })}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-sm text-[#202020]">
+                                {DynamicFormatAmount({
+                                  amount: BigNumber(tx.amount1.toString())
+                                    .div(10 ** (vault?.token1?.decimals ?? 18))
+                                    .toString(),
+                                  decimals: 3,
+                                  endWith: vault?.token1?.symbol,
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                        {tx.__typename === "VaultWithdraw" && (
+                          <div className="flex flex-col gap-2">
+                            <div>
+                              <span className="text-sm text-[#202020]">
+                                {DynamicFormatAmount({
+                                  amount: BigNumber(tx.amount0.toString())
+                                    .div(10 ** (vault?.token0?.decimals ?? 18))
+                                    .toString(),
+                                  decimals: 3,
+                                  endWith: vault?.token0?.symbol,
+                                })}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-sm text-[#202020]">
+                                {DynamicFormatAmount({
+                                  amount: BigNumber(tx.amount1.toString())
+                                    .div(10 ** (vault?.token1?.decimals ?? 18))
+                                    .toString(),
+                                  decimals: 3,
+                                  endWith: vault?.token1?.symbol,
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-[#202020] flex-grow">
+                      <Link
+                        target="_blank"
+                        href={`https://bartio.beratrail.io/tx/${tx.id.split("-")[0]}`}
+                        className="text-[#202020] underline hover:text-[#202020]/80"
+                      >
+                        {tx.id.split("-")[0]}
+                      </Link>
                     </div>
                     <div className="text-sm text-[#202020]">
                       {new Date(

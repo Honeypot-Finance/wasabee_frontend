@@ -36,4 +36,18 @@ export class MEMEFacadeContract implements BaseContract {
       isSuccessEffect: true,
     });
   }
+
+  get claimAllUserLP() {
+    return new ContractWrite(this.contract.write?.multiClaimLP, {
+      action: "Claim All User LP",
+      isSuccessEffect: true,
+    });
+  }
+
+  get refundAllUserToken() {
+    return new ContractWrite(this.contract.write?.multiRefundRaisedToken, {
+      action: "Refund All User Token",
+      isSuccessEffect: true,
+    });
+  }
 }
