@@ -30,7 +30,7 @@ interface PoolsTableProps<TData, TValue> {
   handleSearch: (data: string) => void;
 }
 
-type SortField = "pool" | "tvl" | "volume" | "apr";
+type SortField = "pool" | "tvl" | "volume" | "apr" | "unclaimedFees";
 type SortDirection = "asc" | "desc";
 
 const PoolsTable = <TData, TValue>({
@@ -103,6 +103,8 @@ const PoolsTable = <TData, TValue>({
           return multiplier * (Number(a.volume24USD) - Number(b.volume24USD));
         case "apr":
           return multiplier * (Number(a.apr24h) - Number(b.apr24h));
+        case "unclaimedFees":
+          return multiplier * (Number(a.unclaimedFees) - Number(b.unclaimedFees));
         default:
           return 0;
       }
@@ -217,9 +219,11 @@ const PoolsTable = <TData, TValue>({
                 <SortHeader field="volume" label="Volume 24H" />
                 <SortHeader field="apr" label="APR" />
                 {defaultFilter === "myPools" && (
-                  <th className="py-4 px-6 text-center text-[#4D4D4D]">
-                    Unclaimed Fees
-                  </th>
+                  <SortHeader
+                    field="unclaimedFees"
+                    label="Unclaimed Fees"
+                    align="center"
+                  />
                 )}
                 <th className="py-4 px-6 text-center text-[#4D4D4D]">
                   Actions

@@ -107,11 +107,6 @@ const LeaderboardPage = () => {
                 <div className="text-white text-xl font-medium">
                   {statsLoading ? "Loading..." : stat.value}
                 </div>
-                {stat.subValue && (
-                  <div className="text-gray-400 text-sm mt-1">
-                    {statsLoading ? "Loading..." : stat.subValue}
-                  </div>
-                )}
               </div>
             ))}
           </div>
