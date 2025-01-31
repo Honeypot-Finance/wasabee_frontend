@@ -4,8 +4,8 @@ import Image from "next/image";
 
 const DOMAIN_MAP = {
   MAIN: "https://beta4.honeypotfinance.xyz",
-  POT2PUMP: "https://pot2pump.honeypotfinance.xyz",
-  DREAMPAD: "https://dreampad.honeypotfinance.xyz",
+  POT2PUMP: "https://beta4.honeypotfinance.xyz",
+  DREAMPAD: "https://beta4.honeypotfinance.xyz",
 } as const;
 
 export type PathChatConfig = {
