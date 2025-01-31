@@ -380,10 +380,18 @@ export const LPCard = observer(() => {
     }
 
     if (inputCurrency && isEthAddress(inputCurrency)) {
-      liquidity.setFromToken(new Token({ address: inputCurrency }));
+      liquidity.setFromToken(
+        Token.getToken({
+          address: inputCurrency,
+        })
+      );
     }
     if (outputCurrency && isEthAddress(outputCurrency)) {
-      liquidity.setToToken(new Token({ address: outputCurrency }));
+      liquidity.setToToken(
+        Token.getToken({
+          address: outputCurrency,
+        })
+      );
     }
   }, [inputCurrency, outputCurrency, wallet.isInit, liquidity.isInit]);
 
