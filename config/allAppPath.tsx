@@ -60,19 +60,19 @@ export const appPathsList: Menu[] = [
   {
     path: [
       {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pot2pump/overview`,
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/overview`,
         title: "Overview",
-        routePath: "/pot2pump/overview"
+        routePath: "/overview"
       },
       {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pot2pump/potting`,
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/potting`,
         title: "Potting",
-        routePath: "/pot2pump/potting"
+        routePath: "/potting"
       },
       {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pot2pump/pumping`,
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pumping`,
         title: "Pumping",
-        routePath: "/pot2pump/pumping"
+        routePath: "/pumping"
       },
       // {
       //   path: "/derbydashboard",
