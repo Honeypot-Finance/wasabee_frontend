@@ -60,9 +60,9 @@ export const appPathsList: Menu[] = [
   {
     path: [
       {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/overview`,
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/`,
         title: "Overview",
-        routePath: "/overview"
+        routePath: "/"
       },
       {
         path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/potting`,
