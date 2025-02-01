@@ -163,6 +163,12 @@ export const Profile = observer(() => {
               <Tab key="portfolio" title="Portfolio">
                 <PortfolioTab />
               </Tab>
+              <Tab key="my-launch" title="My Launch">
+                <MyLaunches />
+              </Tab>
+              <Tab key="participated-launch" title="Participated Launch">
+                <ParticipatedLaunches />
+              </Tab>
               <Tab key="my-pools" title="My Pools">
                 <MyPools />
               </Tab>

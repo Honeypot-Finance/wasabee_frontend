@@ -58,26 +58,77 @@ export const appPathsList: Menu[] = [
   //   title: "Navigation",
   // },
   {
-    path: `/swap`,
-    title: "Swap",
-    routePath: "/swap",
+    path: [
+      {
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/`,
+        title: "Overview",
+        routePath: "/"
+      },
+      {
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/potting`,
+        title: "Potting",
+        routePath: "/potting"
+      },
+      {
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pumping`,
+        title: "Pumping",
+        routePath: "/pumping"
+      },
+      // {
+      //   path: "/derbydashboard",
+      //   title: "Derby Dashboard 🐎",
+      // },
+      // {
+      //   path: "/memewar",
+      //   title: "Meme War ⚔️",
+      // },
+    ],
+    title: "Pot2pump",
+    routePath: "/pot2pump"
   },
   {
-    path: `pools`,
-    title: "LP Pool List",
-    routePath: "/pools",
+    title: "DEX",
+    routePath: "/dex",
+    path: [
+      {
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.WASABEE}/swap`,
+        title: "Swap",
+        routePath: "/swap"
+      },
+      // {
+      //   path: "/pool",
+      //   title: "Add Liquidity",
+      // },
+      {
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.WASABEE}/pools`,
+        title: "LP Pool List",
+        routePath: "/pools"
+      },
+    ],
   },
-
   {
-    path: `/leaderboard`,
+    path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/leaderboard`,
     title: "Leaderboard",
-    routePath: "/leaderboard",
+    routePath: "/leaderboard"
   },
   {
     title: "Faucet",
-    path: `/faucet`,
-    routePath: "/faucet",
+    path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/faucet`,
+    routePath: "/faucet"
   },
+  // {
+  //   title: "DreamPad",
+  //   path: [
+  //     {
+  //       path: "/dreampad/launchpad-projects",
+  //       title: "Projects",
+  //     },
+  //   ],
+  // },
+  // {
+  //   path: "/profile",
+  //   title: "Profile",
+  // },
 ];
 
 const getFlatPaths = (paths: Menu[]): flatMenu[] => {
