@@ -43,19 +43,19 @@ export const TokenSelector = observer(
       filterLoading: false,
       filterTokensBySearch: async function () {
         if (!state.search) {
-          state.tokens = liquidity.tokens;
+          state.filteredTokens = state.tokens;
           return;
         }
         state.filterLoading = true;
         const isEthAddr = isEthAddress(state.search);
         if (isEthAddr) {
-          const filterToken = liquidity.tokens?.find((token) => {
+          const filterToken = state.tokens?.find((token) => {
             return (
               token.address.toLowerCase() === state.search.toLocaleLowerCase()
             );
           });
           if (filterToken) {
-            state.tokens = [filterToken];
+            state.filteredTokens = [filterToken];
             state.filterLoading = false;
             return;
           }
@@ -63,9 +63,9 @@ export const TokenSelector = observer(
             address: state.search,
           });
           await token.init();
-          state.tokens = [token];
+          state.filteredTokens = [token];
         } else {
-          state.tokens = liquidity.tokens?.filter((token) => {
+          state.filteredTokens = state.tokens?.filter((token) => {
             return (
               token.name?.toLowerCase().includes(state.search.toLowerCase()) ||
               token.symbol?.toLowerCase().includes(state.search.toLowerCase())
@@ -75,17 +75,12 @@ export const TokenSelector = observer(
         state.filterLoading = false;
       },
       tokens: [] as Token[],
-      currentAnimationVariant: "initial",
+      filteredTokens: [] as Token[],
     }));
-    const animationVariants = {
-      dropDownIcon: {
-        initial: { y: 0 },
-        hover: {
-          y: [0, 5, 0],
-        },
-      },
-    };
 
+    useOnce(() => {
+      isConnected && state.tokens.forEach((t) => t.getBalance());
+    }, [isConnected]);
     useEffect(() => {
       state.filterTokensBySearch();
     }, [state.search]);
@@ -178,71 +173,28 @@ export const TokenSelector = observer(
                     <Divider className="my-4" />
                     <div>
                       <div className="max-h-[300px] overflow-auto">
-                        <div>
-                          <h2 className=" opacity-50 font-normal font-sans">
-                            Most Popular
-                          </h2>
-                          <div className="flex *:grow w-full flex-wrap gap-2">
-                            {state.tokens.length ? (
-                              state.tokens
-                                .slice()
-                                .filter((token) => token.isPopular)
-                                .sort((a, b) => b.priority - a.priority)
-                                .map((token, idx) => {
-                                  return (
-                                    <Button
-                                      key={idx}
-                                      onClick={() => {
-                                        onSelect(token);
-                                        onClose();
-                                      }}
-                                      className="min-w-[2rem] hover:bg-amber-600 flex  justify-center items-center"
-                                    >
-                                      <TokenLogo
-                                        addtionalClasses="w-[15px] h-[15px]"
-                                        token={token}
-                                        disableLink
-                                        disableTooltip
-                                      ></TokenLogo>
-                                      <p className="text-[rgba(255,255,255)] [font-kerning:none] [font-feature-settings:'calt'_off] [font-family:Inter] text-xs font-normal leading-[14px]">
-                                        {token.symbol}
-                                      </p>
-                                    </Button>
-                                  );
-                                })
-                            ) : (
-                              <NoData></NoData>
-                            )}
-                          </div>
-                        </div>
-                        <h2 className=" opacity-50 font-normal font-sans">
-                          Validated
-                        </h2>
-                        {state.tokens.length ? (
-                          state.tokens
-                            .slice()
-                            .sort((a, b) => b.priority - a.priority)
-                            .map((token, idx) => {
-                              return (
-                                <div
-                                  key={idx}
-                                  onClick={() => {
-                                    onSelect(token);
-                                    onClose();
-                                  }}
-                                  className="py-[8px] px-[8px] rounded-[8px] flex justify-between items-center cursor-pointer hover:[background:rgba(255,255,255,0.04)]"
-                                >
-                                  <TokenLogo token={token}></TokenLogo>
-                                  <div className="flex-grow-[1] px-2">
-                                    <div>{token.name}</div>
-                                    <div className="text-[rgba(255,255,255,0.50)] [font-kerning:none] [font-feature-settings:'calt'_off] [font-family:Inter] text-xs font-normal leading-[14px]">
-                                      {token.symbol}
-                                    </div>
+                        {state.filteredTokens.length ? (
+                          state.filteredTokens.map((token) => {
+                            return (
+                              <div
+                                key={token.address}
+                                onClick={() => {
+                                  onSelect(token);
+                                  onClose();
+                                }}
+                                className="py-[8px] px-[8px] rounded-[8px] flex justify-between items-center cursor-pointer hover:[background:rgba(255,255,255,0.04)]"
+                              >
+                                <TokenLogo token={token}></TokenLogo>
+                                <div className="flex-grow-[1] px-2">
+                                  <div>{token.name}</div>
+                                  <div className="text-[rgba(255,255,255,0.50)] [font-kerning:none] [font-feature-settings:'calt'_off] [font-family:Inter] text-xs font-normal leading-[14px]">
+                                    {token.symbol}
                                   </div>
-                                  <div>{token.balanceFormatted}</div>
                                 </div>
-                              );
-                            })
+                                <div>{token.balanceFormatted}</div>
+                              </div>
+                            );
+                          })
                         ) : (
                           <NoData></NoData>
                         )}

@@ -112,7 +112,7 @@ const LeaderboardPage = () => {
           </div>
 
           {/* Top Traders/Deployers/Participants */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+          {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
             {topStats.map((stat, index) => (
               <div key={index} className="bg-[#202020] rounded-2xl p-5">
                 <div>
@@ -136,7 +136,7 @@ const LeaderboardPage = () => {
                 <div className="text-[#FFCD4D] text-base">{stat.value}</div>
               </div>
             ))}
-          </div>
+          </div> */}
 
           {/* 搜索栏 */}
           <div className="flex justify-between items-center mb-4">
@@ -196,12 +196,12 @@ const LeaderboardPage = () => {
                       {/* <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
                           Holding Pools
                         </th> */}
-                      <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
+                      {/* <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
                         Meme Tokens
                       </th>
                       <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
                         P2P Participations
-                      </th>
+                      </th> */}
                     </tr>
                   </thead>
                   <tbody className="text-white divide-y divide-[#5C5C5C]">
@@ -243,12 +243,12 @@ const LeaderboardPage = () => {
                           {/* <td className="py-4 px-6 text-center text-base">
                               {item.poolHoldingCount}
                             </td> */}
-                          <td className="py-4 px-6 text-center text-base">
+                          {/* <td className="py-4 px-6 text-center text-base">
                             {item.memeTokenCount}
                           </td>
                           <td className="py-4 px-6 text-center text-base">
                             {item.participateCount}
-                          </td>
+                          </td> */}
                         </tr>
                       ))
                     )}

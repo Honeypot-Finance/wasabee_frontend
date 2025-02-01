@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import Image from "next/image";
 
 const DOMAIN_MAP = {
-  MAIN: "https://app.honeypotfinance.xyz",
+  MAIN: "https://beta4.honeypotfinance.xyz",
   POT2PUMP: "https://pot2pump.honeypotfinance.xyz",
   DREAMPAD: "https://dreampad.honeypotfinance.xyz",
   WASABEE: "https://wasabee.honeypotfinance.xyz",
@@ -58,77 +58,26 @@ export const appPathsList: Menu[] = [
   //   title: "Navigation",
   // },
   {
-    path: [
-      {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/`,
-        title: "Overview",
-        routePath: "/"
-      },
-      {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/potting`,
-        title: "Potting",
-        routePath: "/potting"
-      },
-      {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.POT2PUMP}/pumping`,
-        title: "Pumping",
-        routePath: "/pumping"
-      },
-      // {
-      //   path: "/derbydashboard",
-      //   title: "Derby Dashboard 🐎",
-      // },
-      // {
-      //   path: "/memewar",
-      //   title: "Meme War ⚔️",
-      // },
-    ],
-    title: "Pot2pump",
-    routePath: "/pot2pump"
+    path: `/swap`,
+    title: "Swap",
+    routePath: "/swap",
   },
   {
-    title: "DEX",
-    routePath: "/dex",
-    path: [
-      {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.WASABEE}/swap`,
-        title: "Swap",
-        routePath: "/swap"
-      },
-      // {
-      //   path: "/pool",
-      //   title: "Add Liquidity",
-      // },
-      {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.WASABEE}/pools`,
-        title: "LP Pool List",
-        routePath: "/pools"
-      },
-    ],
+    path: `pools`,
+    title: "LP Pool List",
+    routePath: "/pools",
   },
+
   {
-    path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/leaderboard`,
+    path: `/leaderboard`,
     title: "Leaderboard",
-    routePath: "/leaderboard"
+    routePath: "/leaderboard",
   },
   {
     title: "Faucet",
-    path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/faucet`,
-    routePath: "/faucet"
+    path: `/faucet`,
+    routePath: "/faucet",
   },
-  // {
-  //   title: "DreamPad",
-  //   path: [
-  //     {
-  //       path: "/dreampad/launchpad-projects",
-  //       title: "Projects",
-  //     },
-  //   ],
-  // },
-  // {
-  //   path: "/profile",
-  //   title: "Profile",
-  // },
 ];
 
 const getFlatPaths = (paths: Menu[]): flatMenu[] => {
