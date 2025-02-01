@@ -27,6 +27,7 @@ import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import pot2pumpIcon from "@/public/images/bera/smoking_bera.png";
+import { DOMAIN_MAP } from "@/config/allAppPath";
 
 type TokenSelectorProps = {
   onSelect: (token: Token) => void;
@@ -269,7 +270,10 @@ export const TokenSelector = observer(
             <Copy value={value.address} className="size-4 text-[#140E06]" />
             {value.pot2pumpAddress && (
               <Tooltip content="This token is launched on Pot2Pump">
-                <Link href={`/launch-detail/${value.pot2pumpAddress}`}>
+                <Link
+                  href={`${DOMAIN_MAP.POT2PUMP}/launch-detail/${value.pot2pumpAddress}`}
+                  target="_blank"
+                >
                   <Image
                     width={16}
                     height={16}

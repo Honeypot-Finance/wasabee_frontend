@@ -2,7 +2,7 @@ import { StaticImageData } from "next/image";
 import { ReactNode } from "react";
 import Image from "next/image";
 
-const DOMAIN_MAP = {
+export const DOMAIN_MAP = {
   MAIN: "https://app.honeypotfinance.xyz",
   POT2PUMP: "https://pot2pump.honeypotfinance.xyz",
   DREAMPAD: "https://dreampad.honeypotfinance.xyz",
