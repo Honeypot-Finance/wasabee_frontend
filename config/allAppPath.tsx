@@ -91,7 +91,7 @@ export const appPathsList: Menu[] = [
     routePath: "/dex",
     path: [
       {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/swap`,
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.WASABEE}/swap`,
         title: "Swap",
         routePath: "/swap"
       },
@@ -100,7 +100,7 @@ export const appPathsList: Menu[] = [
       //   title: "Add Liquidity",
       // },
       {
-        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.MAIN}/pools`,
+        path: `${process.env.NODE_ENV === "development" ? "" : DOMAIN_MAP.WASABEE}/pools`,
         title: "LP Pool List",
         routePath: "/pools"
       },
