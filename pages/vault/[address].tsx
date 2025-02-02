@@ -93,17 +93,16 @@ export const VaultDetail = observer(() => {
   const refreshVaultData = useCallback(async () => {
     if (!vault || !wallet.account) return;
 
-    // Get total supply
-    vault.getTotalSupply();
-
-    // Get user shares
-    vault.getBalanceOf(wallet.account);
-
-    vault.getTotalAmounts();
-
     // Refresh subgraph data
     const vaultDetails = await getSingleVaultDetails(vault.address);
     setVault(vaultDetails);
+    // Get total supply
+    vaultDetails?.getTotalSupply();
+
+    // Get user shares
+    vaultDetails?.getBalanceOf(wallet.account);
+
+    vaultDetails?.getTotalAmounts();
   }, [vault, wallet.isInit]);
 
   // Format number with 18 decimals
