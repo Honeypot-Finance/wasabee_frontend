@@ -13,6 +13,7 @@ import {
   getCapsuleWallet,
   OAuthMethod,
 } from "@usecapsule/rainbowkit-wallet";
+import { createConfig, http, cookieStorage, createStorage } from "wagmi";
 // import { holdstationWallet } from "./holdstationWallet";
 // import { capsuleWallet } from "./capsualWallet";
 // import { berasigWallet } from "./berasigWallet";
@@ -81,5 +82,8 @@ export const config = getDefaultConfig({
   projectId: "1d1c8b5204bfbd57502685fc0934a57d",
   // @ts-ignore
   chains: networks.map((network) => network.chain),
-  ssr: true, // If your dApp uses server side rendering (SSR)
+  ssr: true, // If your dApp uses server side rendering (SSR
+  storage: createStorage({
+    storage: cookieStorage,
+  }),
 });

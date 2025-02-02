@@ -24,12 +24,15 @@ import { Analytics } from "@vercel/analytics/react";
 import { ApolloProvider } from "@apollo/client";
 import { infoClient } from "@/lib/algebra/graphql/clients";
 import Image from "next/image";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 import {
   DynamicContextProvider,
   DynamicWidget,
 } from "@dynamic-labs/sdk-react-core";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { deserialize, serialize } from "wagmi";
 
 // enableStaticRendering(true)
 const queryClient = new QueryClient({
@@ -38,6 +41,7 @@ const queryClient = new QueryClient({
       retryDelay: 1000,
       retry: 12,
       gcTime: 1000 * 60,
+      staleTime: 60 * 1000,
     },
   },
 });
@@ -80,11 +84,20 @@ export default function App({
 }) {
   const ComponentLayout = Component.Layout || Layout;
 
+  const persister = createSyncStoragePersister({
+    serialize,
+    storage: undefined,
+    deserialize,
+  });
+
   return (
     <trpc.Provider client={trpcQueryClient} queryClient={queryClient}>
       <Analytics />
       <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister }}
+        >
           <ApolloProvider client={infoClient}>
             <RainbowKitProvider
               avatar={CustomAvatar}
@@ -114,7 +127,7 @@ export default function App({
               </NextUIProvider>
             </RainbowKitProvider>
           </ApolloProvider>
-        </QueryClientProvider>
+        </PersistQueryClientProvider>
       </WagmiProvider>
     </trpc.Provider>
   );

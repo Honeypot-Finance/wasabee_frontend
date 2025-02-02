@@ -4,7 +4,7 @@ import {
   computePoolAddress,
 } from "@cryptoalgebra/sdk";
 import { useMemo } from "react";
-import { useAccount, useContractReads } from "wagmi";
+import { useAccount, useContractReads, useReadContracts } from "wagmi";
 import { Address } from "viem";
 import { ALGEBRA_POSITION_MANAGER } from "@/config/algebra/addresses";
 import { DEFAULT_CHAIN_ID } from "@/config/algebra/default-chain-id";
@@ -28,7 +28,7 @@ export interface PositionFromTokenId {
   pool: Address;
 }
 
-function usePositionsFromTokenIds (tokenIds: any[] | undefined): {
+function usePositionsFromTokenIds(tokenIds: any[] | undefined): {
   isLoading: boolean;
   positions: PositionFromTokenId[] | undefined;
   refetch: () => void;
@@ -44,7 +44,7 @@ function usePositionsFromTokenIds (tokenIds: any[] | undefined): {
     isError,
     error,
     refetch,
-  } = useContractReads({
+  } = useReadContracts({
     contracts: inputs.map((x) => ({
       address: ALGEBRA_POSITION_MANAGER,
       abi: algebraPositionManagerABI,
@@ -100,7 +100,7 @@ function usePositionsFromTokenIds (tokenIds: any[] | undefined): {
   }, [isLoading, positions, refetch]);
 }
 
-export function usePositions () {
+export function usePositions() {
   const { address: account } = useAccount();
 
   const { data: balanceResult, isLoading: balanceLoading } =
@@ -122,14 +122,17 @@ export function usePositions () {
   }, [account, balanceResult]);
 
   const { data: tokenIdResults, isLoading: someTokenIdsLoading } =
-    useContractReads({
+    useReadContracts({
       contracts: tokenIdsArgs.map((args) => ({
         address: ALGEBRA_POSITION_MANAGER,
         abi: algebraPositionManagerABI,
         functionName: "tokenOfOwnerByIndex",
         args,
       })),
-      //cacheTime: 10_000,
+      query: {
+        gcTime: 5 * 60 * 1000,
+      },
+      // cacheTime: 10_000,
     });
 
   const tokenIds = useMemo(() => {
@@ -155,7 +158,7 @@ export function usePositions () {
   };
 }
 
-export function usePosition (tokenId: string | number | undefined): {
+export function usePosition(tokenId: string | number | undefined): {
   loading: boolean;
   position: PositionFromTokenId | undefined;
   refetch: () => void;
@@ -177,7 +180,7 @@ export function usePosition (tokenId: string | number | undefined): {
   }, [isLoading, positions, refetch]);
 }
 
-export function usePositionInFarming (tokenId: string | number | undefined) {
+export function usePositionInFarming(tokenId: string | number | undefined) {
   const { position } = usePosition(tokenId);
 
   const { address: account } = useAccount();
