@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/algebra/ui/dialog";
+import { HoneyContainer } from "@/components/CardContianer";
 import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
 import { ManageLiquidity } from "@/types/algebra/types/manage-liquidity";
 import { Currency } from "@cryptoalgebra/sdk";
@@ -42,22 +43,24 @@ export function IncreaseLiquidityModal({
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="max-w-[500px] rounded-3xl bg-[#322111] border-none"
+        className="max-w-[500px] p-0"
         style={{ borderRadius: "32px" }}
       >
-        <DialogHeader>
-          <DialogTitle className="font-bold select-none mt-2 max-md:mx-auto">
-            Enter Amounts
-          </DialogTitle>
-        </DialogHeader>
-        <AmountsSection
-          handleCloseModal={handleCloseModal}
-          tokenId={tokenId}
-          currencyA={currencyA}
-          currencyB={currencyB}
-          mintInfo={mintInfo}
-          manageLiquidity={ManageLiquidity.INCREASE}
-        />
+        <HoneyContainer>
+          <DialogHeader>
+            <DialogTitle className="font-bold select-none mt-2 max-md:mx-auto">
+              Enter Amounts
+            </DialogTitle>
+          </DialogHeader>
+          <AmountsSection
+            handleCloseModal={handleCloseModal}
+            tokenId={tokenId}
+            currencyA={currencyA}
+            currencyB={currencyB}
+            mintInfo={mintInfo}
+            manageLiquidity={ManageLiquidity.INCREASE}
+          />
+        </HoneyContainer>
       </DialogContent>
     </Dialog>
   );

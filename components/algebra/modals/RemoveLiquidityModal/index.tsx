@@ -27,6 +27,7 @@ import { Address } from "viem";
 import { useEffect, useMemo, useState } from "react";
 import { useAccount, useContractWrite } from "wagmi";
 import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
+import { HoneyContainer } from "@/components/CardContianer";
 
 interface RemoveLiquidityModalProps {
   positionId: number;
@@ -173,56 +174,58 @@ const RemoveLiquidityModal = ({ positionId }: RemoveLiquidityModalProps) => {
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="min-w-[500px] rounded-3xl bg-[#322111] border-none"
+        className="min-w-[500px] rounded-3xl p-0 bg-[#322111] border-none"
         style={{ borderRadius: "32px" }}
       >
-        <DialogHeader>
-          <DialogTitle className="font-bold select-none">
-            Remove Liquidity
-          </DialogTitle>
-        </DialogHeader>
+        <HoneyContainer>
+          <DialogHeader>
+            <DialogTitle className="font-bold select-none">
+              Remove Liquidity
+            </DialogTitle>
+          </DialogHeader>
 
-        <div className="flex flex-col gap-6">
-          <h2 className="text-3xl font-bold select-none">{`${sliderValue}%`}</h2>
+          <div className="flex flex-col gap-6">
+            <h2 className="text-3xl font-bold select-none">{`${sliderValue}%`}</h2>
 
-          <div className="flex gap-2">
-            {[25, 50, 75, 100].map((v) => (
-              <Button
-                key={`liquidity-percent-${v}`}
-                disabled={isRemoveLoading}
-                variant={"icon"}
-                className="border border-card-border"
-                size={"sm"}
-                onClick={() => setSliderValue([v])}
-              >
-                {v}%
-              </Button>
-            ))}
+            <div className="flex gap-2">
+              {[25, 50, 75, 100].map((v) => (
+                <Button
+                  key={`liquidity-percent-${v}`}
+                  disabled={isRemoveLoading}
+                  variant={"icon"}
+                  className="border border-card-border"
+                  size={"sm"}
+                  onClick={() => setSliderValue([v])}
+                >
+                  {v}%
+                </Button>
+              ))}
+            </div>
+
+            <Slider
+              value={sliderValue}
+              id="liquidity-percent"
+              max={100}
+              defaultValue={sliderValue}
+              step={1}
+              onValueChange={(v: SliderValue) => setSliderValue(v)}
+              className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4 bg-[#9D5E28]/20 rounded-lg"
+              aria-label="Liquidity Percent"
+              disabled={isRemoveLoading}
+            />
+
+            <Button
+              className="w-full rounded-md border-2 border-[rgba(225,138,32,0.40)] bg-[rgba(225,138,32,0.40)] backdrop-blur-sm"
+              disabled={isDisabled}
+              onClick={() =>
+                removeLiquidityConfig &&
+                removeLiquidity(removeLiquidityConfig.request)
+              }
+            >
+              {isRemoveLoading ? <Loader /> : "Remove Liquidity"}
+            </Button>
           </div>
-
-          <Slider
-            value={sliderValue}
-            id="liquidity-percent"
-            max={100}
-            defaultValue={sliderValue}
-            step={1}
-            onValueChange={(v: SliderValue) => setSliderValue(v)}
-            className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4 bg-[#9D5E28]/20 rounded-lg"
-            aria-label="Liquidity Percent"
-            disabled={isRemoveLoading}
-          />
-
-          <Button
-            className="w-full rounded-md border-2 border-[rgba(225,138,32,0.40)] bg-[rgba(225,138,32,0.40)] backdrop-blur-sm"
-            disabled={isDisabled}
-            onClick={() =>
-              removeLiquidityConfig &&
-              removeLiquidity(removeLiquidityConfig.request)
-            }
-          >
-            {isRemoveLoading ? <Loader /> : "Remove Liquidity"}
-          </Button>
-        </div>
+        </HoneyContainer>
       </DialogContent>
     </Dialog>
   );
