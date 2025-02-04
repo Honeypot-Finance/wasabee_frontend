@@ -1,10 +1,13 @@
 import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { useEffect, useState } from "react";
-import { Skeleton } from "@nextui-org/react";
+import { Link, Skeleton } from "@nextui-org/react";
 import { portfolio } from "@/services/portfolio";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { TokenBalanceCard } from "@/components/TokenBalanceCard/TokenBalanceCard";
+import { Button } from "@/components/button/button-next";
+import Image from "next/image";
+import rhinoLogo from "@/public/images/partners/rhino-finance-logo.svg";
 
 type SortField = "name" | "price" | "balance" | "value";
 type SortDirection = "asc" | "desc";
@@ -86,6 +89,18 @@ export const PortfolioTab = observer(() => {
 
   return (
     <div className="custom-dashed-3xl w-full p-6 bg-white">
+      <Link
+        href="https://app.rhino.fi/bridge"
+        target="_blank"
+        className="mb-4 w-full justify-end"
+      >
+        <Button className="bg-white">
+          <div className="flex items-center gap-2">
+            <Image src={rhinoLogo} alt="rhino" width={24} height={24} />
+            <span>Bridge your assets with Rhino finance</span>
+          </div>
+        </Button>
+      </Link>
       <table className="w-full">
         <thead className="text-[#4D4D4D]">
           <tr>
