@@ -63,7 +63,7 @@ export const appPathsList: Menu[] = [
     routePath: "/swap",
   },
   {
-    path: `pools`,
+    path: `/pools`,
     title: "LP Pool List",
     routePath: "/pools",
   },

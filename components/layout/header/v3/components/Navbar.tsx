@@ -66,17 +66,10 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 <DropdownMenu
                   aria-label={menu.title}
                   className="bg-[#FFCD4D] rounded-lg p-2"
-                  onAction={(key: Key) => {
-                    const subMenu = (menu.path as SubMenu[]).find(
-                      (item: SubMenu) => item.routePath === key
-                    );
-                    if (subMenu) {
-                      router.push(subMenu.path);
-                    }
-                  }}
                 >
                   {(menu.path as SubMenu[]).map((subMenu: SubMenu) => (
                     <DropdownItem
+                      href={subMenu.path}
                       key={subMenu.routePath}
                       className={cn(
                         "font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white p-2",
@@ -102,22 +95,16 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 </DropdownMenu>
               </Dropdown>
             ) : (
-              <Button
-                key={menu.title}
-                className={cn(
-                  "min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white",
-                  menu.routePath === router.pathname
-                    ? "bg-[#202020] text-white"
-                    : ""
-                )}
-                onPress={() => {
-                  if (typeof menu.path === "string") {
-                    router.push(menu.path);
-                  }
-                }}
-              >
-                {menu.title}
-              </Button>
+              <Link href={menu.path}>
+                <Button
+                  key={menu.title}
+                  className={cn(
+                    "min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white"
+                  )}
+                >
+                  {menu.title}
+                </Button>
+              </Link>
             )
           )}
 
