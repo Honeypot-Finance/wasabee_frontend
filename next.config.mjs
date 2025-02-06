@@ -81,6 +81,13 @@ const nextConfig = {
     "@usecapsule/react-common",
     "styled-components",
   ],
+  redirects: async () => [
+    {
+      source: "/",
+      destination: "/swap",
+      permanent: true,
+    },
+  ],
 };
 
 export default nextConfig;
