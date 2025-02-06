@@ -28,6 +28,7 @@ import { chart } from "@/services/chart";
 import { V3SwapCard } from "../algebra/swap/V3SwapCard";
 import { HoneyContainer } from "../CardContianer";
 import { getSingleVaultDetails } from "@/lib/algebra/graphql/clients/vaults";
+import { DOMAIN_MAP } from "@/config/allAppPath";
 
 export const LaunchDetailSwapCard = observer(
   ({
@@ -220,7 +221,7 @@ export const LaunchDetailSwapCard = observer(
                   </Button>
                   <Link
                     className="w-full"
-                    href={`/pool-detail/${vaultContract?.pool?.address}`}
+                    href={`${DOMAIN_MAP.WASABEE}/pool-detail/${vaultContract?.pool?.address}`}
                   >
                     <Button className="w-full">Customize Position</Button>
                   </Link>
