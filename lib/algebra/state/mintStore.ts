@@ -654,23 +654,23 @@ export function useDerivedMintInfo(
     errorCode = errorCode ?? 0;
   }
 
-  if (poolState === PoolState.INVALID) {
-    errorMessage = errorMessage ?? `Invalid pair`;
-    errorCode = errorCode ?? 1;
-  }
+  // if (poolState === PoolState.INVALID) {
+  //   errorMessage = errorMessage ?? `Invalid pair`;
+  //   errorCode = errorCode ?? 1;
+  // }
 
-  if (invalidPrice) {
-    errorMessage = errorMessage ?? `Invalid price input`;
-    errorCode = errorCode ?? 2;
-  }
+  // if (invalidPrice) {
+  //   errorMessage = errorMessage ?? `Invalid price input`;
+  //   errorCode = errorCode ?? 2;
+  // }
 
-  if (
-    (!parsedAmounts[Field.CURRENCY_A] && !depositADisabled) ||
-    (!parsedAmounts[Field.CURRENCY_B] && !depositBDisabled)
-  ) {
-    errorMessage = errorMessage ?? `Enter an amount`;
-    errorCode = errorCode ?? 3;
-  }
+  // if (
+  //   (!parsedAmounts[Field.CURRENCY_A] && !depositADisabled) ||
+  //   (!parsedAmounts[Field.CURRENCY_B] && !depositBDisabled)
+  // ) {
+  //   errorMessage = errorMessage ?? `Enter an amount`;
+  //   errorCode = errorCode ?? 3;
+  // }
 
   const {
     [Field.CURRENCY_A]: currencyAAmount,

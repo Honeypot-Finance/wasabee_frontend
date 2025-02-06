@@ -7,7 +7,7 @@ import {
   computePoolAddress,
 } from "@cryptoalgebra/sdk";
 import { useTransactionAwait } from "@/lib/algebra/hooks/common/useTransactionAwait";
-import { useContractWrite } from "wagmi";
+import { useContractWrite, useWriteContract } from "wagmi";
 import { Address } from "viem";
 import Loader from "@/components/algebra/common/Loader";
 import { PoolState, usePool } from "@/lib/algebra/hooks/pools/usePool";
@@ -106,9 +106,8 @@ const CreatePoolForm = () => {
 
   console.log("config", { createPoolConfig, calldata, value, mintInfo });
 
-  const { data: createPoolData, writeContract: createPool } = useContractWrite(
-    {}
-  );
+  const { data: createPoolData, writeContract: createPool } =
+    useWriteContract();
 
   const { isLoading, isError, isSuccess } = useTransactionAwait(
     createPoolData,
@@ -136,7 +135,7 @@ const CreatePoolForm = () => {
 
     return () => {
       selectCurrency(SwapField.INPUT, ADDRESS_ZERO);
-      selectCurrency(SwapField.OUTPUT, STABLECOINS.USDT.address);
+      selectCurrency(SwapField.OUTPUT, STABLECOINS.HONEY.address);
       typeStartPriceInput("");
     };
   }, []);

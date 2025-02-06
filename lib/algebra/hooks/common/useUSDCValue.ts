@@ -29,11 +29,11 @@ export function useUSDCPrice(currency: Currency | undefined) {
       };
 
     if (
-      STABLECOINS.USDT.address.toLowerCase() ===
+      STABLECOINS.HONEY.address.toLowerCase() ===
       currency.wrapped.address.toLowerCase()
     )
       return {
-        price: new Price(STABLECOINS.USDT, STABLECOINS.USDT, "1", "1"),
+        price: new Price(STABLECOINS.HONEY, STABLECOINS.HONEY, "1", "1"),
         formatted: 1,
       };
 
@@ -47,7 +47,7 @@ export function useUSDCPrice(currency: Currency | undefined) {
       return {
         price: new Price(
           currency,
-          STABLECOINS.USDT,
+          STABLECOINS.HONEY,
           usdAmount.denominator,
           usdAmount.numerator
         ),
