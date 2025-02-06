@@ -67,15 +67,7 @@ const nextConfig = {
     ],
     domains: ["cdn.alphakek.ai"],
   },
-  async redirects() {
-    return [
-      {
-        source: "/",
-        destination: "/swap",
-        permanent: false,
-      },
-    ];
-  },
+
   transpilePackages: [
     "@usecapsule/rainbowkit-wallet",
     "@usecapsule/rainbowkit",
