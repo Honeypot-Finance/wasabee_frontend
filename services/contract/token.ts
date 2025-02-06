@@ -179,7 +179,6 @@ export class Token implements BaseContract {
 
     await this.getPot2PumpAddress();
 
-    console.log("this.pot2pumpAddress", this.pot2pumpAddress);
     if (!this.pot2pumpAddress) {
       return;
     }
@@ -188,7 +187,7 @@ export class Token implements BaseContract {
     console.log("this. pot2pumpAddress", this.pot2pumpAddress);
     const launch = await trpcClient.projects.getProjectInfo.query({
       chain_id: wallet.currentChainId,
-      pair: this.pot2pumpAddress,
+      pair: this.pot2pumpAddress.toLowerCase(),
     });
 
     console.log("launch", launch);
