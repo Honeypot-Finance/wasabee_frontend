@@ -14,12 +14,15 @@ import {
   Field,
   ZERO,
   ADDRESS_ZERO,
+  algebraPositionManagerABI,
 } from "@cryptoalgebra/sdk";
-import { Address } from "viem";
+import { Address, getContract } from "viem";
 import JSBI from "jsbi";
 import { useMemo } from "react";
 import { useAccount, useContractWrite } from "wagmi";
 import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
+import { wallet } from "@/services/wallet";
+import { ContractWrite } from "@/services/utils";
 
 interface AddLiquidityButtonProps {
   baseCurrency: Currency | undefined | null;
@@ -100,18 +103,6 @@ export const AddLiquidityButton = ({
     );
   }, [mintInfo, approvalStateA, approvalStateB]);
 
-  const { data: addLiquidityConfig, error } =
-    useSimulateAlgebraPositionManagerMulticall({
-      args: calldata && [calldata as `0x${string}`[]],
-      query: {
-        enabled: Boolean(calldata && isReady),
-      },
-      value: BigInt(value || 0),
-    });
-
-  console.log("addLiquidityConfig", addLiquidityConfig);
-  console.log("error", error);
-
   const { data: addLiquidityData, writeContract: addLiquidity } =
     useContractWrite();
 
@@ -170,9 +161,25 @@ export const AddLiquidityButton = ({
   return (
     <Button
       disabled={!isReady}
-      onClick={() => {
-        console.log("addLiquidityConfig", addLiquidityConfig);
-        addLiquidityConfig && addLiquidity(addLiquidityConfig.request);
+      onClick={async () => {
+        const positionManagerContract = getContract({
+          address: ALGEBRA_POSITION_MANAGER as Address,
+          abi: algebraPositionManagerABI,
+          client: { public: wallet.publicClient, wallet: wallet.walletClient },
+        });
+
+        const multicall = await new ContractWrite(
+          positionManagerContract.write.multicall,
+          {
+            action: "CreatePool",
+          }
+        ).call(
+          Array.isArray(calldata)
+            ? [calldata as Address[]]
+            : [[calldata] as unknown as Address[]]
+        );
+
+        console.log("multicall", multicall);
       }}
       className="whitespace-nowrap w-full text-black rounded-md border-6 border-[rgba(225,138,32,0.40)] bg-gradient-to-b from-[rgba(232,211,124,0.13)] to-[#FCD729] bg-[#F7931A]"
     >

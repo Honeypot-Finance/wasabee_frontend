@@ -114,18 +114,10 @@ export const berachain: Chain = {
     defaultPriorityFee: parseGwei("50"),
   },
 };
-// export const sepolia:Chain = {
-//   ...viewSepolia,
-//   rpcUrls: {
-//     default: {
-//       http: [" https://ethereum-sepolia.blockpi.network/v1/rpc/public"],
-//     },
-//   },
-
-// }
 
 export const chains = [
   //sepolia,
+  berachain,
   berachainTestnet,
   berachainBartioTestnet,
   polygonMumbaiChain,

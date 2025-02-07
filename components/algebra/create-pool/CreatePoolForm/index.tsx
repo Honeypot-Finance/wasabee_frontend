@@ -4,11 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ADDRESS_ZERO,
   NonfungiblePositionManager,
+  algebraPositionManagerABI,
   computePoolAddress,
 } from "@cryptoalgebra/sdk";
 import { useTransactionAwait } from "@/lib/algebra/hooks/common/useTransactionAwait";
 import { useContractWrite, useWriteContract } from "wagmi";
-import { Address } from "viem";
+import { Address, getContract, maxInt256 } from "viem";
 import Loader from "@/components/algebra/common/Loader";
 import { PoolState, usePool } from "@/lib/algebra/hooks/pools/usePool";
 import SelectPair from "../SelectPair";
@@ -23,10 +24,17 @@ import {
   useSwapState,
 } from "@/lib/algebra/state/swapStore";
 import { SwapField } from "@/types/algebra/types/swap-field";
-import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
+import {
+  simulateAlgebraPositionManagerMulticall,
+  useSimulateAlgebraPositionManagerMulticall,
+} from "@/wagmi-generated";
 import { useToastify } from "@/lib/hooks/useContractToastify";
 import { Input } from "@/components/algebra/ui/input";
 import HoneyContainer from "@/components/CardContianer/HoneyContainer";
+import { ContractWrite } from "@/services/utils";
+import { Contract } from "ethers";
+import { ALGEBRA_POSITION_MANAGER } from "@/config/algebra/addresses";
+import { wallet } from "@/services/wallet";
 
 const FEE_TIERS = [
   { value: 100, label: "0.01%", description: "Best for stable pairs" },
@@ -92,19 +100,7 @@ const CreatePoolForm = () => {
     );
   }, [mintInfo?.pool]);
 
-  const { data: createPoolConfig } = useSimulateAlgebraPositionManagerMulticall(
-    {
-      args: Array.isArray(calldata)
-        ? [calldata as Address[]]
-        : [[calldata] as Address[]],
-      value: BigInt(value || 0),
-      query: {
-        enabled: Boolean({ calldata }),
-      },
-    }
-  );
-
-  console.log("config", { createPoolConfig, calldata, value, mintInfo });
+  console.log("config", { calldata, value, mintInfo });
 
   const { data: createPoolData, writeContract: createPool } =
     useWriteContract();
@@ -140,15 +136,44 @@ const CreatePoolForm = () => {
     };
   }, []);
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     if (isPoolExists && poolAddress) {
       router.push(`/pool-detail/${poolAddress}`);
       return;
     }
 
-    if (createPoolConfig) {
-      createPool(createPoolConfig?.request);
-    }
+    // const { data: createPoolConfig, error } =
+    // simulateAlgebraPositionManagerMulticall(,{
+    //   args: Array.isArray(calldata){}
+    //     ? [calldata as Address[]]
+    //     : [[calldata] as Address[]],
+    //   value: BigInt(value || 0),
+    //   query: {
+    //     enabled: Boolean({ calldata }),
+    //   },
+    // })
+
+    const positionManagerContract = getContract({
+      address: ALGEBRA_POSITION_MANAGER as Address,
+      abi: algebraPositionManagerABI,
+      client: { public: wallet.publicClient, wallet: wallet.walletClient },
+    });
+
+    const multicall = await new ContractWrite(
+      positionManagerContract.write.multicall,
+      {
+        action: "CreatePool",
+      }
+    ).call(
+      Array.isArray(calldata)
+        ? [calldata as Address[]]
+        : [[calldata] as Address[]]
+    );
+
+    console.log("multicall", multicall);
+    // if (createPoolConfig) {
+    //   createPool(createPoolConfig?.request);
+    // }
   };
 
   return (

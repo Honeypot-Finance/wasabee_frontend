@@ -53,13 +53,26 @@ function computeAllRoutes(
 
     const { liquidity, price, tick, fee } = pool.pool;
 
-    const newPool = new Pool(
+    console.log("pool", pool);
+
+    console.log("newPool args", {
       tokenA,
       tokenB,
-      +fee as unknown as 100,
+      fee,
       price,
       ADDRESS_ZERO,
       liquidity,
+      tick,
+      DEFAULT_TICK_SPACING,
+    });
+
+    const newPool = new Pool(
+      tokenA,
+      tokenB,
+      Number(fee),
+      Number(price),
+      ADDRESS_ZERO,
+      Number(liquidity),
       Number(tick),
       DEFAULT_TICK_SPACING
     );
