@@ -1,8 +1,31 @@
 import dotenv from "dotenv";
 dotenv.config();
-import { pg } from "../lib/db";
 import path from "path";
 import fs from 'fs-extra';
+
+import postgres from "postgres";
+export const pg = postgres(process.env.DB, {
+  max: process.env.NODE_ENV === "development" ? 10 : 50,
+  idle_timeout: 10,
+  connect_timeout: 30,
+  ssl: true,
+  connection: {
+    application_name: "honey_frontend",
+  },
+  debug: process.env.DEBUG === "true" ?
+  function (connection, query, params, types) {
+    // console.log(chalk.blue(JSON.stringify(params)))
+    const newQuery = query.replace(/\$(\d+)/g, (match, p1) => {
+      const replace = params[p1 - 1]
+      if (typeof replace === "string") {
+        return `'${replace}'`
+      }
+      return replace
+    })
+    console.log(newQuery)
+  }: false
+});
+
 
 async function syncConfigFromDB() {
   try {
@@ -30,7 +53,7 @@ async function syncConfigFromDB() {
     const result = await pg`SELECT key, value, chain_id FROM config`;
     
     // 处理配置数据，生成新的数据结构
-    const config: { [key: string]: string | { [chainId: number]: string } } = {};
+    const config = {};
     
     // 处理每个配置项
     result.forEach(row => {
@@ -42,14 +65,14 @@ async function syncConfigFromDB() {
         if (!config[row.key] || typeof config[row.key] === 'string') {
           config[row.key] = {};
         }
-        (config[row.key] as { [chainId: number]: string })[row.chain_id] = row.value;
+        (config[row.key])[row.chain_id] = row.value;
       }
     });
     
     console.log('数据库中的配置:', config);
     
     // 读取现有的配置文件
-    const configPath = path.resolve(__dirname, '../generate/config.json');
+    const configPath = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../generate/config.json');
     let existingConfig = {};
     try {
       const existingContent = await fs.readFile(configPath, 'utf8');
