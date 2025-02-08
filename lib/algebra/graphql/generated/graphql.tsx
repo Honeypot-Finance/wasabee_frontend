@@ -3837,11 +3837,7 @@ export enum Plugin_OrderBy {
 
 export type Pool = {
   __typename?: 'Pool';
-  aprDayData: Array<PoolDayData>;
-  aprHourData: Array<PoolHourData>;
-  aprMonthData: Array<PoolMonthData>;
   aprPercentage: Scalars['BigDecimal']['output'];
-  aprWeekData: Array<PoolWeekData>;
   burns: Array<Burn>;
   collectedFeesToken0: Scalars['BigDecimal']['output'];
   collectedFeesToken1: Scalars['BigDecimal']['output'];
@@ -3890,42 +3886,6 @@ export type Pool = {
   volumeToken0: Scalars['BigDecimal']['output'];
   volumeToken1: Scalars['BigDecimal']['output'];
   volumeUSD: Scalars['BigDecimal']['output'];
-};
-
-
-export type PoolAprDayDataArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<PoolDayData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  where?: InputMaybe<PoolDayData_Filter>;
-};
-
-
-export type PoolAprHourDataArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<PoolHourData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  where?: InputMaybe<PoolHourData_Filter>;
-};
-
-
-export type PoolAprMonthDataArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<PoolMonthData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  where?: InputMaybe<PoolMonthData_Filter>;
-};
-
-
-export type PoolAprWeekDataArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<PoolWeekData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  where?: InputMaybe<PoolWeekData_Filter>;
 };
 
 
@@ -5497,9 +5457,6 @@ export type Pool_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Pool_Filter>>>;
-  aprDayData_?: InputMaybe<PoolDayData_Filter>;
-  aprHourData_?: InputMaybe<PoolHourData_Filter>;
-  aprMonthData_?: InputMaybe<PoolMonthData_Filter>;
   aprPercentage?: InputMaybe<Scalars['BigDecimal']['input']>;
   aprPercentage_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   aprPercentage_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -5508,7 +5465,6 @@ export type Pool_Filter = {
   aprPercentage_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
   aprPercentage_not?: InputMaybe<Scalars['BigDecimal']['input']>;
   aprPercentage_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
-  aprWeekData_?: InputMaybe<PoolWeekData_Filter>;
   burns_?: InputMaybe<Burn_Filter>;
   collectedFeesToken0?: InputMaybe<Scalars['BigDecimal']['input']>;
   collectedFeesToken0_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -5869,11 +5825,7 @@ export type Pool_Filter = {
 };
 
 export enum Pool_OrderBy {
-  AprDayData = 'aprDayData',
-  AprHourData = 'aprHourData',
-  AprMonthData = 'aprMonthData',
   AprPercentage = 'aprPercentage',
-  AprWeekData = 'aprWeekData',
   Burns = 'burns',
   CollectedFeesToken0 = 'collectedFeesToken0',
   CollectedFeesToken1 = 'collectedFeesToken1',

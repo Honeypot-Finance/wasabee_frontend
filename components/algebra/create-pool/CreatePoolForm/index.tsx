@@ -102,8 +102,9 @@ const CreatePoolForm = () => {
 
   console.log("config", { calldata, value, mintInfo });
 
-  const { data: createPoolData, writeContract: createPool } =
-    useWriteContract();
+  const { data: createPoolData, writeContract: createPool } = useWriteContract(
+    {}
+  );
 
   const { isLoading, isError, isSuccess } = useTransactionAwait(
     createPoolData,

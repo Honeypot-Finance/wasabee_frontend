@@ -653,10 +653,10 @@
     bech32 "^1.1.4"
     readonly-date "^1.0.0"
 
-"@cryptoalgebra/sdk@npm:@cryptoalgebra/wasabee-sdk@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@cryptoalgebra/wasabee-sdk/-/wasabee-sdk-1.0.0.tgz#1d6eed8cf99d2b2913479221eed3eb1cbe7e9d35"
-  integrity sha512-GSMUAgNKmlXBUhhYP/fYiUQ6Xdj/cYBJxSiUXwUO8gtuflgJPhpzyWi2I5+6Mb/dckc5ossPwtCkQ/QRQgniaA==
+"@cryptoalgebra/sdk@npm:@rabbitblood/intergral-sdk-hpot@^1.0.10":
+  version "1.0.13"
+  resolved "https://registry.yarnpkg.com/@rabbitblood/intergral-sdk-hpot/-/intergral-sdk-hpot-1.0.13.tgz#900f6ae5cbd34254bacbbfa246bedfc30c1874d1"
+  integrity sha512-sr3d20gvhd/Qt0j84GFGY2e5C8afkJHhpahHLTwbsG5PoMSnAlaf2RoKxjAVLRRj8polmONWB4TxqC7une3VMA==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/address" "^5.7.0"

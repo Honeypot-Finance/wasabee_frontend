@@ -7,12 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "codegen": "graphql-codegen --config algebra_codegen.ts ",
+    "codegen": "graphql-codegen --config algebra_codegen.ts",
     "wagmi-generate": "wagmi generate"
   },
   "dependencies": {
     "@apollo/client": "^3.11.9",
-    "@cryptoalgebra/sdk": "npm:@cryptoalgebra/wasabee-sdk@^1.0.0",
+    "@cryptoalgebra/sdk": "npm:@rabbitblood/intergral-sdk-hpot@^1.0.10",
     "@dynamic-labs/sdk-react-core": "^4.0.1",
     "@dynamic-labs/wagmi-connector": "^4.0.1",
     "@ethersproject/bytes": "^5.7.0",
