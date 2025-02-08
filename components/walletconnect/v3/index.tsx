@@ -114,7 +114,7 @@ export const WalletConnect = () => {
                         type="button"
                       >
                         <BiWallet size={20} />
-                        {account.displayName}
+                        <span className="w-24">{account.displayName}</span>
                       </ConnectButtonCustom>{" "}
                       <div className="flex items-center gap-x-2 justify-center  h-full">
                         <Link
