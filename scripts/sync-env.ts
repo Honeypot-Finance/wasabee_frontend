@@ -17,20 +17,35 @@ async function syncConfigFromDB() {
     if (!tableExists[0].exists) {
       await pg`
         CREATE TABLE config (
-          key VARCHAR(255) PRIMARY KEY,
-          value TEXT NOT NULL
+          id SERIAL PRIMARY KEY,
+          key VARCHAR(255) NOT NULL,
+          value TEXT NOT NULL,
+          chain_id INT
         );
       `;
       console.log('config表创建成功！');
-    }
+    } 
     
     // 从config表中查询所有配置
-    const result = await pg`SELECT key, value FROM config`   
-    // 将结果转换为对象
-    const config = result.reduce((acc, row) => {
-      acc[row.key] = row.value;
-      return acc;
-    }, {});
+    const result = await pg`SELECT key, value, chain_id FROM config`;
+    
+    // 处理配置数据，生成新的数据结构
+    const config: { [key: string]: string | { [chainId: number]: string } } = {};
+    
+    // 处理每个配置项
+    result.forEach(row => {
+      if (row.chain_id === null) {
+        // 如果没有 chain_id，直接使用值
+        config[row.key] = row.value;
+      } else {
+        // 如果有 chain_id，创建或更新嵌套对象
+        if (!config[row.key] || typeof config[row.key] === 'string') {
+          config[row.key] = {};
+        }
+        (config[row.key] as { [chainId: number]: string })[row.chain_id] = row.value;
+      }
+    });
+    
     console.log('数据库中的配置:', config);
     
     // 读取现有的配置文件
