@@ -511,7 +511,7 @@ export const berachainNetwork = new Network({
     },
   ],
   nativeToken: {
-    address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
+    address: "0x6969696969696969696969696969696969696969",
     name: "Bera",
     symbol: "BERA",
     decimals: 18,
@@ -552,39 +552,7 @@ export const berachainNetwork = new Network({
     memeFactory: "0xC38eF79A6cA9b3EfBe20F3dD3b99B3e25d09F52B",
     memeFacade: "0x80051Ca8C6E2e04E12de5d5Cb1313C086C867737",
     vaultFactory: "0x1bf5e51eCacdfEA65ae9276fd228bB8719ffcA7E",
-    ftoTokens: [
-      {
-        address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E".toLowerCase(),
-        name: "T-HPOT",
-        symbol: "T-HPOT",
-        decimals: 18,
-      },
-      {
-        address: "0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D".toLowerCase(),
-        name: "USDT",
-        symbol: "USDT",
-        decimals: 18,
-      },
-      {
-        address: "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8".toLowerCase(),
-        name: "Wrapped Bera",
-        symbol: "WBERA",
-        decimals: 18,
-        logoURI: "/images/icons/wbera-token-icon.png",
-      },
-      {
-        address: "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03".toLowerCase(),
-        name: "Honey",
-        symbol: "HONEY",
-        decimals: 18,
-      },
-      {
-        address: "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d".toLowerCase(),
-        name: "Bera the Pooh",
-        symbol: "BERA THE POOH",
-        decimals: 18,
-      },
-    ],
+    ftoTokens: [],
   },
   faucetTokens: [
     {
