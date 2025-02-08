@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 import { pg } from "../lib/db";
-import fs from "fs/promises";
 import path from "path";
+import fs from 'fs-extra';
 
 async function syncConfigFromDB() {
   try {
@@ -66,6 +66,9 @@ async function syncConfigFromDB() {
       return;
     }
 
+    // 确保目录存在
+    await fs.ensureDir(path.dirname(configPath));
+    
     // 配置有变化，写入新的配置
     await fs.writeFile(configPath, JSON.stringify(config, null, 2), 'utf8');
     console.log('配置已更新！');
