@@ -100,11 +100,23 @@ const CreatePoolForm = () => {
     );
   }, [mintInfo?.pool]);
 
-  console.log("config", { calldata, value, mintInfo });
-
   const { data: createPoolData, writeContract: createPool } = useWriteContract(
     {}
   );
+
+  const { data: createPoolConfig } = useSimulateAlgebraPositionManagerMulticall(
+    {
+      args: Array.isArray(calldata)
+        ? [calldata as Address[]]
+        : [[calldata] as Address[]],
+      value: BigInt(value || 0),
+      query: {
+        enabled: Boolean({ calldata }),
+      },
+    }
+  );
+
+  console.log("config", { createPoolConfig, calldata, value, mintInfo });
 
   const { isLoading, isError, isSuccess } = useTransactionAwait(
     createPoolData,
@@ -143,38 +155,9 @@ const CreatePoolForm = () => {
       return;
     }
 
-    // const { data: createPoolConfig, error } =
-    // simulateAlgebraPositionManagerMulticall(,{
-    //   args: Array.isArray(calldata){}
-    //     ? [calldata as Address[]]
-    //     : [[calldata] as Address[]],
-    //   value: BigInt(value || 0),
-    //   query: {
-    //     enabled: Boolean({ calldata }),
-    //   },
-    // })
-
-    const positionManagerContract = getContract({
-      address: ALGEBRA_POSITION_MANAGER as Address,
-      abi: algebraPositionManagerABI,
-      client: { public: wallet.publicClient, wallet: wallet.walletClient },
-    });
-
-    const multicall = await new ContractWrite(
-      positionManagerContract.write.multicall,
-      {
-        action: "CreatePool",
-      }
-    ).call(
-      Array.isArray(calldata)
-        ? [calldata as Address[]]
-        : [[calldata] as Address[]]
-    );
-
-    console.log("multicall", multicall);
-    // if (createPoolConfig) {
-    //   createPool(createPoolConfig?.request);
-    // }
+    if (createPoolConfig) {
+      createPool(createPoolConfig?.request);
+    }
   };
 
   return (

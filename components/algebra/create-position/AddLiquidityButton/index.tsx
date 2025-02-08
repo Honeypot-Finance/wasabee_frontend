@@ -106,6 +106,15 @@ export const AddLiquidityButton = ({
   const { data: addLiquidityData, writeContract: addLiquidity } =
     useContractWrite();
 
+  const { data: addLiquidityConfig, error } =
+    useSimulateAlgebraPositionManagerMulticall({
+      args: calldata && [calldata as `0x${string}`[]],
+      query: {
+        enabled: Boolean(calldata && isReady),
+      },
+      value: BigInt(value || 0),
+    });
+
   const { isLoading: isAddingLiquidityLoading, data } = useTransactionAwait(
     addLiquidityData,
     {
@@ -162,24 +171,8 @@ export const AddLiquidityButton = ({
     <Button
       disabled={!isReady}
       onClick={async () => {
-        const positionManagerContract = getContract({
-          address: ALGEBRA_POSITION_MANAGER as Address,
-          abi: algebraPositionManagerABI,
-          client: { public: wallet.publicClient, wallet: wallet.walletClient },
-        });
-
-        const multicall = await new ContractWrite(
-          positionManagerContract.write.multicall,
-          {
-            action: "CreatePool",
-          }
-        ).call(
-          Array.isArray(calldata)
-            ? [calldata as Address[]]
-            : [[calldata] as unknown as Address[]]
-        );
-
-        console.log("multicall", multicall);
+        console.log("addLiquidityConfig", addLiquidityConfig);
+        addLiquidityConfig && addLiquidity(addLiquidityConfig.request);
       }}
       className="whitespace-nowrap w-full text-black rounded-md border-6 border-[rgba(225,138,32,0.40)] bg-gradient-to-b from-[rgba(232,211,124,0.13)] to-[#FCD729] bg-[#F7931A]"
     >
