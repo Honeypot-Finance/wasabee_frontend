@@ -686,9 +686,9 @@ export const sprotoNetWork = new Network({
 
 export const networks = [
   berachainNetwork,
-  berachainBartioTestnetNetwork,
-  movementNetWork,
-  sprotoNetWork,
+  // berachainBartioTestnetNetwork,
+  // movementNetWork,
+  // sprotoNetWork,
 ];
 export const networksMap = networks.reduce(
   (acc, network) => {
