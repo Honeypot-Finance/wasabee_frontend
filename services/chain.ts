@@ -500,6 +500,7 @@ export const berachainBartioTestnetNetwork = new Network({
   ],
   validatedMemeAddresses: [],
 });
+
 export const berachainNetwork = new Network({
   chain: berachain,
   officialFaucets: [
@@ -512,8 +513,8 @@ export const berachainNetwork = new Network({
   ],
   nativeToken: {
     address: "0x6969696969696969696969696969696969696969",
-    name: "Wrapped Bera",
-    symbol: "WBERA",
+    name: "Bera",
+    symbol: "BERA",
     decimals: 18,
     isNative: true,
     logoURI: "/images/icons/tokens/wbera-token-icon.png",

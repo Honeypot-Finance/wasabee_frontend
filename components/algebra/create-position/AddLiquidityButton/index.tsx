@@ -170,7 +170,7 @@ export const AddLiquidityButton = ({
   return (
     <Button
       disabled={!isReady}
-      onClick={async () => {
+      onPress={async () => {
         console.log("addLiquidityConfig", addLiquidityConfig);
         addLiquidityConfig && addLiquidity(addLiquidityConfig.request);
       }}

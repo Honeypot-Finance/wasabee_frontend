@@ -11,6 +11,7 @@ import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import CreatePoolForm from "../../create-pool/CreatePoolForm";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { LoadingDisplay } from "@/components/LoadingDisplay/LoadingDisplay";
+import { formatExtremelyLargeNumber } from "@/lib/format";
 
 interface PoolsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -282,15 +283,15 @@ const PoolsTable = <TData, TValue>({
                     </td>
                     <td className="py-4 px-6 text-right">
                       <div className="flex flex-col">
-                        <span className="text-black">
-                          ${Number(pool.tvlUSD).toLocaleString()}
+                        <span className="text-black font-mono">
+                          {formatExtremelyLargeNumber(pool.tvlUSD)}
                         </span>
                       </div>
                     </td>
                     <td className="py-4 px-6 text-right">
                       <div className="flex flex-col">
-                        <span className="text-black">
-                          ${Number(pool.volume24USD).toLocaleString()}
+                        <span className="text-black font-mono">
+                          {formatExtremelyLargeNumber(pool.volume24USD)}
                         </span>
                         <span
                           className={`text-xs ${
