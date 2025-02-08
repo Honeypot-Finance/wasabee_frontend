@@ -95,9 +95,8 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 </DropdownMenu>
               </Dropdown>
             ) : (
-              <Link href={menu.path}>
+              <Link key={menu.title} href={menu.path}>
                 <Button
-                  key={menu.title}
                   className={cn(
                     "min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white"
                   )}
