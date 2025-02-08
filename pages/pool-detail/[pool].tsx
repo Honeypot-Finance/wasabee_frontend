@@ -31,8 +31,10 @@ import { cn } from "@/lib/tailwindcss";
 import { Token } from "@/services/contract/token";
 import CardContainer from "@/components/CardContianer/v3";
 import { useRouter } from "next/router";
+import { wallet } from "@/services/wallet";
+import { observer } from "mobx-react-lite";
 
-const PoolPage = () => {
+const PoolPage = observer(() => {
   const { address: account } = useAccount();
   const [token0, setToken0] = useState<Token | null>(null);
   const [token1, setToken1] = useState<Token | null>(null);
@@ -46,13 +48,13 @@ const PoolPage = () => {
 
   const { data: poolInfo } = useSinglePoolQuery({
     variables: {
-      poolId,
+      poolId: poolId.toLowerCase(),
     },
   });
 
   const { data: poolFeeData } = usePoolFeeDataQuery({
     variables: {
-      poolId,
+      poolId: poolId.toLowerCase(),
     },
   });
 
@@ -60,29 +62,31 @@ const PoolPage = () => {
   const nativePrice = bundles?.bundles[0].maticPriceUSD;
 
   useEffect(() => {
+    if (!wallet.isInit) return;
     if (poolInfo?.pool?.token0.id) {
       setToken0(
         Token.getToken({ address: poolInfo.pool.token0.id, force: true })
       );
     }
-  }, [poolInfo?.pool?.token0.id]);
+  }, [poolInfo?.pool?.token0.id, wallet.isInit]);
 
   useEffect(() => {
+    if (!wallet.isInit) return;
     if (poolInfo?.pool?.token1.id) {
       setToken1(
         Token.getToken({ address: poolInfo.pool.token1.id, force: true })
       );
     }
-  }, [poolInfo?.pool?.token1.id]);
+  }, [poolInfo?.pool?.token1.id, wallet.isInit]);
 
   const { farmingInfo, deposits, isFarmingLoading, areDepositsLoading } =
     useActiveFarming({
-      poolId: poolId,
+      poolId: poolId?.toLowerCase() as Address,
       poolInfo: poolInfo,
     });
 
   const { closedFarmings } = useClosedFarmings({
-    poolId: poolId,
+    poolId: poolId?.toLowerCase() as Address,
     poolInfo: poolInfo,
   });
 
@@ -125,7 +129,7 @@ const PoolPage = () => {
       const aprs = await Promise.all(
         filteredPositions.map(({ position }) =>
           getPositionAPR(
-            poolId,
+            poolId.toLowerCase() as Address,
             position,
             poolInfo?.pool,
             poolFeeData?.poolDayDatas,
@@ -141,7 +145,7 @@ const PoolPage = () => {
       poolInfo?.pool &&
       poolFeeData?.poolDayDatas &&
       bundles?.bundles &&
-      poolId
+      poolId.toLowerCase()
     )
       getPositionsAPRs();
   }, [filteredPositions, poolInfo, poolId, poolFeeData, bundles]);
@@ -232,16 +236,16 @@ const PoolPage = () => {
             ) : positionsLoading || isFarmingLoading || areDepositsLoading ? (
               <LoadingState />
             ) : noPositions ? (
-              <NoPositions poolId={poolId} />
+              <NoPositions poolId={poolId.toLowerCase() as Address} />
             ) : (
               <>
                 <MyPositionsToolbar
                   positionsData={positionsData}
-                  poolId={poolId}
+                  poolId={poolId.toLowerCase() as Address}
                 />
                 <MyPositions
                   positions={positionsData}
-                  poolId={poolId}
+                  poolId={poolId.toLowerCase() as Address}
                   selectedPosition={selectedPosition?.id}
                   selectPosition={(positionId) =>
                     selectPosition((prev) =>
@@ -279,7 +283,7 @@ const PoolPage = () => {
       </CardContainer>
     </PageContainer>
   );
-};
+});
 
 const NoPositions = ({ poolId }: { poolId: Address }) => (
   <div className="flex flex-col items-start animate-fade-in font-bold p-8 rounded-[24px] border border-black bg-white shadow-[4px_4px_0px_0px_#D29A0D]">
@@ -292,7 +296,7 @@ const NoPositions = ({ poolId }: { poolId: Address }) => (
         className={cn(
           "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#2D2D2D] bg-[#FFCD4D] rounded-2xl shadow-[2px_2px_0px_0px_#000] hover:bg-[#FFD666]"
         )}
-        href={`/new-position/${poolId}`}
+        href={`/new-position/${poolId.toLowerCase()}`}
       >
         <Plus className="text-black" />
         <span className="text-black">Create Position</span>
