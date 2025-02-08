@@ -92,7 +92,7 @@ export const WalletConnect = () => {
                       <button
                         onClick={openChainModal}
                         type="button"
-                        className="flex min-w-[126px] cursor-pointer bg-[#202020] text-white px-4 py-2 rounded-2xl gap-2 items-center"
+                        className="flex cursor-pointer bg-[#202020] text-white px-4 py-2 rounded-2xl gap-2 items-center"
                       >
                         <Image
                           src={"/images/empty-logo.png"}
@@ -101,9 +101,9 @@ export const WalletConnect = () => {
                           height={20}
                         />
 
-                        <div className="text-nowrap text-white">
-                          {account.displayBalance ? (
-                            `${account.displayBalance}`
+                        <div className="text-nowrap text-white w-24">
+                          {account.balanceFormatted ? (
+                            <span>{`${Number(account.balanceFormatted).toFixed(2)} BERA     `}</span>
                           ) : (
                             <div className="h-4 w-20 bg-gray-700 animate-pulse rounded"></div>
                           )}

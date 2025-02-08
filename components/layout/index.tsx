@@ -80,13 +80,13 @@ export const Layout = ({
   }, []);
 
   const slogans = [
+    // <>
+    //   <Link href="/derbydashboard" className="flex items-center ">
+    //     <span> Back your horse in the Berachain Derby 🏇</span>
+    //   </Link>
+    // </>,
     <>
-      <Link href="/derbydashboard" className="flex items-center ">
-        <span> Back your horse in the Berachain Derby 🏇</span>
-      </Link>
-    </>,
-    <>
-      <Link href="/launch-token?launchType=meme" className="flex items-center">
+      <Link href="https://pot2pump.honeypotfinance.xyz/launch-token?launchType=meme" className="flex items-center">
         <span className="flex items-center justify-center gap-2">
           Launch a new meme token within 5 seconds 🚀
         </span>
