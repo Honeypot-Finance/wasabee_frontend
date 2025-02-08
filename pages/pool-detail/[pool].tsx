@@ -40,7 +40,7 @@ const PoolPage = observer(() => {
   const [token1, setToken1] = useState<Token | null>(null);
 
   const router = useRouter();
-  const { pool: poolId } = router.query as { pool: Address };
+  const { pool: poolId } = router.query as { pool: Address | undefined };
 
   const [selectedPositionId, selectPosition] = useState<number | null>();
 
@@ -48,13 +48,13 @@ const PoolPage = observer(() => {
 
   const { data: poolInfo } = useSinglePoolQuery({
     variables: {
-      poolId: poolId.toLowerCase(),
+      poolId: poolId?.toLowerCase() ?? "",
     },
   });
 
   const { data: poolFeeData } = usePoolFeeDataQuery({
     variables: {
-      poolId: poolId.toLowerCase(),
+      poolId: poolId?.toLowerCase() ?? "",
     },
   });
 
@@ -96,10 +96,10 @@ const PoolPage = observer(() => {
   const { positions, loading: positionsLoading } = usePositions();
 
   const filteredPositions = useMemo(() => {
-    if (!positions || !poolEntity) return [];
+    if (!positions || !poolEntity || !poolId) return [];
 
     return positions
-      .filter(({ pool }) => pool.toLowerCase() === poolId.toLowerCase())
+      .filter(({ pool }) => pool.toLowerCase() === poolId?.toLowerCase())
       .map((position) => ({
         positionId: position.tokenId,
         position: new Position({
@@ -125,11 +125,12 @@ const PoolPage = observer(() => {
   }, [filteredPositions]);
 
   useEffect(() => {
+    if (!poolId) return;
     async function getPositionsAPRs() {
       const aprs = await Promise.all(
         filteredPositions.map(({ position }) =>
           getPositionAPR(
-            poolId.toLowerCase() as Address,
+            poolId?.toLowerCase() as Address,
             position,
             poolInfo?.pool,
             poolFeeData?.poolDayDatas,
@@ -145,7 +146,7 @@ const PoolPage = observer(() => {
       poolInfo?.pool &&
       poolFeeData?.poolDayDatas &&
       bundles?.bundles &&
-      poolId.toLowerCase()
+      poolId?.toLowerCase()
     )
       getPositionsAPRs();
   }, [filteredPositions, poolInfo, poolId, poolFeeData, bundles]);
@@ -236,16 +237,16 @@ const PoolPage = observer(() => {
             ) : positionsLoading || isFarmingLoading || areDepositsLoading ? (
               <LoadingState />
             ) : noPositions ? (
-              <NoPositions poolId={poolId.toLowerCase() as Address} />
+              <NoPositions poolId={poolId?.toLowerCase() as Address} />
             ) : (
               <>
                 <MyPositionsToolbar
                   positionsData={positionsData}
-                  poolId={poolId.toLowerCase() as Address}
+                  poolId={poolId?.toLowerCase() as Address}
                 />
                 <MyPositions
                   positions={positionsData}
-                  poolId={poolId.toLowerCase() as Address}
+                  poolId={poolId?.toLowerCase() as Address}
                   selectedPosition={selectedPosition?.id}
                   selectPosition={(positionId) =>
                     selectPosition((prev) =>
