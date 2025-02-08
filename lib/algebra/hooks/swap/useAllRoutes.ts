@@ -52,6 +52,7 @@ function computeAllRoutes(
     const [tokenA, tokenB] = pool.tokens;
 
     const { liquidity, price, tick, fee } = pool.pool;
+    if (price === "0" || liquidity === "0") continue;
 
     console.log("pool", pool);
 
