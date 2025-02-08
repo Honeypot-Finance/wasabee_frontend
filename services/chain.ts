@@ -628,6 +628,12 @@ export const berachainNetwork = new Network({
       logoURI: "/images/icons/tokens/weth-token-icon.png",
       isRouterToken: true,
     },
+    "0x5c43a5fef2b056934478373a53d1cb08030fd382": {
+      name: "Berally Token",
+      symbol: "BRLY",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/berally.png",
+    },
   },
   validatedFtoAddresses: [],
   validatedMemeAddresses: [],
