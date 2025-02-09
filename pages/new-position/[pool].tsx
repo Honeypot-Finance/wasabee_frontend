@@ -20,6 +20,7 @@ import {
   useReadAlgebraPoolToken0,
   useReadAlgebraPoolToken1,
 } from "@/wagmi-generated";
+import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
 
 type NewPositionPageParams = Record<"pool", Address>;
 
@@ -57,16 +58,15 @@ const NewPositionPage = () => {
       ? mintInfo.price.invert().toSignificant(5)
       : mintInfo.price.toSignificant(5);
   }, [mintInfo]);
-  const a = 1
+  const a = 1;
 
   const currentPrice = useMemo(() => {
     if (!mintInfo.price) return;
-
-    if (Number(price) <= 0.0001) {
-      return `< 0.0001 ${currencyB?.symbol}`;
-    } else {
-      return `${price} ${currencyB?.symbol}`;
-    }
+    return DynamicFormatAmount({
+      amount: price ?? "",
+      decimals: 5,
+      endWith: currencyB?.symbol,
+    });
   }, [mintInfo.price, price]);
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = useMemo(() => {
@@ -143,7 +143,9 @@ const NewPositionPage = () => {
                       <div className="font-medium text-sm mb-3 text-black/70">
                         CURRENT PRICE
                       </div>
-                      <div className="font-bold text-xl text-black">{`${currentPrice}`}</div>
+                      <div className="font-bold text-xl text-black">
+                        {currentPrice}
+                      </div>
                     </div>
                   </div>
 
