@@ -289,6 +289,7 @@ interface TokenSwapCardProps {
   label?: string;
   disableSelection?: boolean;
   showInput?: boolean;
+  showSettings?: boolean;
 }
 
 const TokenCardV3 = ({
@@ -305,6 +306,7 @@ const TokenCardV3 = ({
   disabled,
   label,
   showInput = true,
+  showSettings = true,
   disableSelection,
 }: TokenSwapCardProps) => {
   const { address: account } = useAccount();
@@ -370,7 +372,7 @@ const TokenCardV3 = ({
               )}
             </div>
           )}
-          {showInput && <Settings />}
+          {showInput && showSettings && <Settings />}
         </div>
       </div>
 

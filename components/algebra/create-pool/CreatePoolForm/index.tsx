@@ -4,11 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ADDRESS_ZERO,
   NonfungiblePositionManager,
+  algebraPositionManagerABI,
   computePoolAddress,
 } from "@cryptoalgebra/sdk";
 import { useTransactionAwait } from "@/lib/algebra/hooks/common/useTransactionAwait";
-import { useContractWrite } from "wagmi";
-import { Address } from "viem";
+import { useContractWrite, useWriteContract } from "wagmi";
+import { Address, getContract, maxInt256 } from "viem";
 import Loader from "@/components/algebra/common/Loader";
 import { PoolState, usePool } from "@/lib/algebra/hooks/pools/usePool";
 import SelectPair from "../SelectPair";
@@ -23,10 +24,17 @@ import {
   useSwapState,
 } from "@/lib/algebra/state/swapStore";
 import { SwapField } from "@/types/algebra/types/swap-field";
-import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
+import {
+  simulateAlgebraPositionManagerMulticall,
+  useSimulateAlgebraPositionManagerMulticall,
+} from "@/wagmi-generated";
 import { useToastify } from "@/lib/hooks/useContractToastify";
 import { Input } from "@/components/algebra/ui/input";
 import HoneyContainer from "@/components/CardContianer/HoneyContainer";
+import { ContractWrite } from "@/services/utils";
+import { Contract } from "ethers";
+import { ALGEBRA_POSITION_MANAGER } from "@/config/algebra/addresses";
+import { wallet } from "@/services/wallet";
 
 const FEE_TIERS = [
   { value: 100, label: "0.01%", description: "Best for stable pairs" },
@@ -92,6 +100,10 @@ const CreatePoolForm = () => {
     );
   }, [mintInfo?.pool]);
 
+  const { data: createPoolData, writeContract: createPool } = useWriteContract(
+    {}
+  );
+
   const { data: createPoolConfig } = useSimulateAlgebraPositionManagerMulticall(
     {
       args: Array.isArray(calldata)
@@ -105,10 +117,6 @@ const CreatePoolForm = () => {
   );
 
   console.log("config", { createPoolConfig, calldata, value, mintInfo });
-
-  const { data: createPoolData, writeContract: createPool } = useContractWrite(
-    {}
-  );
 
   const { isLoading, isError, isSuccess } = useTransactionAwait(
     createPoolData,
@@ -136,12 +144,12 @@ const CreatePoolForm = () => {
 
     return () => {
       selectCurrency(SwapField.INPUT, ADDRESS_ZERO);
-      selectCurrency(SwapField.OUTPUT, STABLECOINS.USDT.address);
+      selectCurrency(SwapField.OUTPUT, STABLECOINS.HONEY.address);
       typeStartPriceInput("");
     };
   }, []);
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     if (isPoolExists && poolAddress) {
       router.push(`/pool-detail/${poolAddress}`);
       return;

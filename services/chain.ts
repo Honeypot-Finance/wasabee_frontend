@@ -1,6 +1,7 @@
 import { Token } from "./contract/token";
 import { Chain } from "viem/chains";
 import {
+  berachain,
   berachainBartioTestnet,
   berachainTestnet,
   movementTestnet,
@@ -338,6 +339,12 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/lore-token-icon.jpg",
     },
+    "0x1ce0a25d13ce4d52071ae7e02cf1f6606f4c79d3": {
+      name: "NECT",
+      symbol: "NECT",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/nect-token.jpg",
+    },
     // "0xfad73c80d67d3cb4a929d1c0faf33a820620ae41": {
     //   name: "POT The Bera",
     //   symbol: "POT",
@@ -500,6 +507,152 @@ export const berachainBartioTestnetNetwork = new Network({
   validatedMemeAddresses: [],
 });
 
+export const berachainNetwork = new Network({
+  chain: berachain,
+  officialFaucets: [
+    {
+      url: "https://bartio.faucet.berachain.com",
+      name: "Official Faucet",
+      logoURI:
+        "https://res.cloudinary.com/duv0g402y/raw/upload/src/assets/bera.png",
+    },
+  ],
+  nativeToken: {
+    address: "0x6969696969696969696969696969696969696969",
+    name: "Bera",
+    symbol: "BERA",
+    decimals: 18,
+    isNative: true,
+    logoURI: "/images/icons/tokens/wbera-token-icon.png",
+  },
+  raisedTokenData: [
+    {
+      symbol: "HPOT",
+      address: "0x9b37d542114070518a44e200fdcd8e4be737297f".toLowerCase(),
+      amount: BigInt("2000000000000000000000000"),
+    },
+    {
+      symbol: "WBERA",
+      address: "0x6969696969696969696969696969696969696969".toLowerCase(),
+      amount: BigInt("4000000000000000000"),
+    },
+    {
+      symbol: "HONEY",
+      address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce".toLowerCase(),
+      amount: BigInt("30000000000000000000"),
+    },
+  ],
+  nativeFaucet: {
+    address: "0x1bd43f7f55b700236c92256a0fd90266363119f7",
+    name: "Daily Faucet",
+    requirements: "You can claim 100 BERA tokens every 24 hours.",
+  },
+  platformTokenAddress: {
+    HPOT: "0x9b37d542114070518a44e200fdcd8e4be737297f".toLowerCase(),
+  },
+  contracts: {
+    routerV3: ALGEBRA_POSITION_MANAGER,
+    routerV2: "0x8aBc3a7bAC442Ae449B07fd0C2152364C230DA9A",
+    factory: "0x7d53327D78EFD0b463bd8d7dc938C52402323b95",
+    ftoFactory: "0x7E0CCe2C9Ff537f8301dd40c652A03479B18dAef",
+    ftoFacade: "0x0264D933F13eE993270591668CfF87b8D35Dd3b4",
+    memeFactory: "0xC38eF79A6cA9b3EfBe20F3dD3b99B3e25d09F52B",
+    memeFacade: "0x80051Ca8C6E2e04E12de5d5Cb1313C086C867737",
+    vaultFactory: "0x1bf5e51eCacdfEA65ae9276fd228bB8719ffcA7E",
+    ftoTokens: [],
+  },
+  faucetTokens: [
+    {
+      address: "0xfc5e3743E9FAC8BB60408797607352E24Db7d65E".toLowerCase(),
+      name: "T-HPOT",
+      symbol: "tHPOT",
+      decimals: 18,
+    },
+    {
+      address: "0x2C2fc71339aCdD913734a4CAe9dD95D9d2b1438d".toLowerCase(),
+      name: "Bera the Pooh",
+      symbol: "BTP",
+      decimals: 18,
+    },
+  ],
+  blacklist: {
+    poolBlacklist: [],
+    memeBlacklist: [],
+  },
+  validatedTokensInfo: {
+    "0x1cE0a25D13CE4d52071aE7e02Cf1F6606F4C79d3": {
+      name: "Nectar",
+      symbol: "NECT",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/nect-token-icon.png",
+    },
+    //when adding a new token, make sure to add the address as lowercase
+    "0x0000000000000000000000000000000000000000": {
+      name: "Bera",
+      symbol: "BERA",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/wbera-token-icon.png",
+      isRouterToken: true,
+      isPopular: true,
+    },
+    "0x6969696969696969696969696969696969696969": {
+      name: "Wrapped Bera",
+      symbol: "WBERA",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/wbera-token-icon.png",
+      isRouterToken: true,
+      isPopular: true,
+    },
+    "0xfcbd14dc51f0a4d49d5e53c2e0950e0bc26d0dce": {
+      name: "Honey",
+      symbol: "HONEY",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/honey-token-icon.png",
+      isRouterToken: true,
+      isPopular: true,
+    },
+    "0x9b37d542114070518a44e200fdcd8e4be737297f": {
+      name: "Honeypot Finance",
+      symbol: "HPOT",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/thpot-token-icon.jpg",
+      isRouterToken: true,
+      isPopular: true,
+    },
+    "0x549943e04f40284185054145c6e4e9568c1d3241": {
+      name: "USDC",
+      symbol: "USDC",
+      decimals: 6,
+      logoURI: "/images/icons/tokens/usdc-token-icon.png",
+      isRouterToken: true,
+    },
+    "0x0555e30da8f98308edb960aa94c0db47230d2b9c": {
+      name: "WBTC",
+      symbol: "WBTC",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/wbtc-token-icon.png",
+      isRouterToken: true,
+    },
+    "0x2f6f07cdcf3588944bf4c42ac74ff24bf56e7590": {
+      name: "WETH",
+      symbol: "WETH",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/weth-token-icon.png",
+      isRouterToken: true,
+    },
+    "0x5c43a5fef2b056934478373a53d1cb08030fd382": {
+      name: "Berally Token",
+      symbol: "BRLY",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/berally.png",
+    },
+    // "0x20913b0dfadc5cfcd2ce927d9da2fb32a9224427": {
+    //   logoURI: "/images/icons/tokens/3bc.png",
+    // },
+  },
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
 export const movementNetWork = new Network({
   isActive: false,
   chain: movementTestnet,
@@ -547,9 +700,10 @@ export const sprotoNetWork = new Network({
 });
 
 export const networks = [
-  berachainBartioTestnetNetwork,
-  movementNetWork,
-  sprotoNetWork,
+  berachainNetwork,
+  // berachainBartioTestnetNetwork,
+  // movementNetWork,
+  // sprotoNetWork,
 ];
 export const networksMap = networks.reduce(
   (acc, network) => {

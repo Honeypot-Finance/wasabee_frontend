@@ -92,7 +92,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
           </NavbarContent>
 
           <NavbarContent
-            className="flex gap-4 !flex-grow-0 min-w-[370px]"
+            className="flex gap-4 !flex-grow-0 min-w-[400px]"
             justify="end"
           >
             {!isMenuOpen && <WalletConnect />}

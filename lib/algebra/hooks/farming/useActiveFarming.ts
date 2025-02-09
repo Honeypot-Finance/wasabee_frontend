@@ -26,7 +26,7 @@ export function useActiveFarming({
   const { data: farmings, loading: isFarmingLoading } = useEternalFarmingsQuery(
     {
       variables: {
-        pool: poolId,
+        pool: poolId.toLowerCase(),
       },
       client: farmingClient,
       skip: !poolInfo,
@@ -53,8 +53,8 @@ export function useActiveFarming({
 
   const { data: deposits, loading: areDepositsLoading } = useDepositsQuery({
     variables: {
-      owner: account,
-      pool: poolId,
+      owner: account?.toLowerCase(),
+      pool: poolId.toLowerCase(),
     },
     client: farmingClient,
     skip: !poolInfo,

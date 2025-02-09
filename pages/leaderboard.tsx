@@ -5,12 +5,14 @@ import { useTotalUsers } from "@/lib/hooks/useTotalUsers";
 import CardContainer from "@/components/CardContianer/v3";
 import { useLeaderboard } from "@/lib/hooks/useLeaderboard";
 import { shortenAddressString, formatVolume } from "@/lib/utils";
+import { wallet } from "@/services/wallet";
 import {
   useAccounts,
   useTopSwapAccounts,
   useTopPot2PumpDeployer,
   useTopParticipateAccounts,
 } from "@/lib/hooks/useAccounts";
+import { formatExtremelyLargeNumber } from "@/lib/format";
 
 interface LeaderboardItem {
   rank: number;
@@ -26,6 +28,7 @@ interface StatsCard {
   title: string;
   value: string | number;
   subValue?: string;
+  decimals?: number;
 }
 
 const LeaderboardPage = () => {
@@ -53,17 +56,19 @@ const LeaderboardPage = () => {
   } = useTopParticipateAccounts();
 
   const statsCards: StatsCard[] = [
-    { title: "Users", value: usersLoading ? "Loading..." : totalUsers },
+    { title: "Users", value: usersLoading ? "Loading..." : totalUsers, decimals: 0 },
     stats
       ? {
           title: stats.totalTrades.title,
           value: stats.totalTrades.value,
+          decimals: 0,
         }
       : { title: "Total Trades", value: "-" },
     stats
       ? {
           title: stats.totalVolume.title,
           value: stats.totalVolume.value,
+          decimals: 2,
           subValue: "USD",
         }
       : { title: "Total Volume", value: "-" },
@@ -71,6 +76,7 @@ const LeaderboardPage = () => {
       ? {
           title: stats.tvl.title,
           value: stats.tvl.value,
+          decimals: 2,
           subValue: "USD",
         }
       : { title: "TVL", value: "-" },
@@ -105,7 +111,22 @@ const LeaderboardPage = () => {
               <div key={index} className="bg-[#202020] rounded-2xl p-5">
                 <div className="text-gray-400 text-sm mb-2">{stat.title}</div>
                 <div className="text-white text-xl font-medium">
-                  {statsLoading ? "Loading..." : stat.value}
+                  {statsLoading
+                    ? "Loading..."
+                    : typeof stat.value === "string" &&
+                        stat.value.startsWith("$")
+                      ? formatExtremelyLargeNumber(
+                          stat.value.slice(1).replace(/,/g, ''),
+                          stat.decimals,
+                          { addPrefix: true }
+                        )
+                      : stat.subValue === "USD"
+                        ? formatExtremelyLargeNumber(stat.value, 0, {
+                            addPrefix: true,
+                          })
+                        : formatExtremelyLargeNumber(stat.value, 0, {
+                            addPrefix: false,
+                          })}
                 </div>
               </div>
             ))}
@@ -225,7 +246,7 @@ const LeaderboardPage = () => {
                                 placement="top"
                               >
                                 <Link
-                                  href={`https://bartio.beratrail.io/address/${item.walletAddress}`}
+                                  href={`https://berascan.com/address/${item.walletAddress}`}
                                   target="_blank"
                                   className="text-blue-400"
                                 >

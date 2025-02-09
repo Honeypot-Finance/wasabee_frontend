@@ -22,7 +22,7 @@ export function useClosedFarmings({
 
   const { data: initialData, loading: isLoading } = useEternalFarmingsQuery({
     variables: {
-      pool: poolId,
+      pool: poolId.toLowerCase(),
     },
     client: farmingClient,
     skip: !poolInfo,

@@ -14,12 +14,15 @@ import {
   Field,
   ZERO,
   ADDRESS_ZERO,
+  algebraPositionManagerABI,
 } from "@cryptoalgebra/sdk";
-import { Address } from "viem";
+import { Address, getContract } from "viem";
 import JSBI from "jsbi";
 import { useMemo } from "react";
 import { useAccount, useContractWrite } from "wagmi";
 import { useSimulateAlgebraPositionManagerMulticall } from "@/wagmi-generated";
+import { wallet } from "@/services/wallet";
+import { ContractWrite } from "@/services/utils";
 
 interface AddLiquidityButtonProps {
   baseCurrency: Currency | undefined | null;
@@ -100,6 +103,9 @@ export const AddLiquidityButton = ({
     );
   }, [mintInfo, approvalStateA, approvalStateB]);
 
+  const { data: addLiquidityData, writeContract: addLiquidity } =
+    useContractWrite();
+
   const { data: addLiquidityConfig, error } =
     useSimulateAlgebraPositionManagerMulticall({
       args: calldata && [calldata as `0x${string}`[]],
@@ -108,12 +114,6 @@ export const AddLiquidityButton = ({
       },
       value: BigInt(value || 0),
     });
-
-  console.log("addLiquidityConfig", addLiquidityConfig);
-  console.log("error", error);
-
-  const { data: addLiquidityData, writeContract: addLiquidity } =
-    useContractWrite();
 
   const { isLoading: isAddingLiquidityLoading, data } = useTransactionAwait(
     addLiquidityData,
@@ -170,7 +170,7 @@ export const AddLiquidityButton = ({
   return (
     <Button
       disabled={!isReady}
-      onClick={() => {
+      onPress={async () => {
         console.log("addLiquidityConfig", addLiquidityConfig);
         addLiquidityConfig && addLiquidity(addLiquidityConfig.request);
       }}

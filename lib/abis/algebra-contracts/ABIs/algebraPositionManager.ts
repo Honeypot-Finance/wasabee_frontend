@@ -1,35 +1,15 @@
 export const algebraPositionManagerABI = [
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "_factory",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_WNativeToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_tokenDescriptor_",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_poolDeployer",
-        type: "address",
-      },
+      { internalType: "address", name: "_factory", type: "address" },
+      { internalType: "address", name: "_WNativeToken", type: "address" },
+      { internalType: "address", name: "_tokenDescriptor_", type: "address" },
+      { internalType: "address", name: "_poolDeployer", type: "address" },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
   },
-  {
-    inputs: [],
-    name: "tickOutOfRange",
-    type: "error",
-  },
+  { inputs: [], name: "tickOutOfRange", type: "error" },
   {
     anonymous: false,
     inputs: [
@@ -70,12 +50,7 @@ export const algebraPositionManagerABI = [
         name: "operator",
         type: "address",
       },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "approved",
-        type: "bool",
-      },
+      { indexed: false, internalType: "bool", name: "approved", type: "bool" },
     ],
     name: "ApprovalForAll",
     type: "event",
@@ -201,18 +176,8 @@ export const algebraPositionManagerABI = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
+      { indexed: true, internalType: "address", name: "from", type: "address" },
+      { indexed: true, internalType: "address", name: "to", type: "address" },
       {
         indexed: true,
         internalType: "uint256",
@@ -226,72 +191,36 @@ export const algebraPositionManagerABI = [
   {
     inputs: [],
     name: "DOMAIN_SEPARATOR",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "NONFUNGIBLE_POSITION_MANAGER_ADMINISTRATOR_ROLE",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "PERMIT_TYPEHASH",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "WNativeToken",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "amount0Owed",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amount1Owed",
-        type: "uint256",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
+      { internalType: "uint256", name: "amount0Owed", type: "uint256" },
+      { internalType: "uint256", name: "amount1Owed", type: "uint256" },
+      { internalType: "bytes", name: "data", type: "bytes" },
     ],
     name: "algebraMintCallback",
     outputs: [],
@@ -300,16 +229,8 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
     ],
     name: "approve",
     outputs: [],
@@ -318,21 +239,9 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "approve",
-        type: "bool",
-      },
-      {
-        internalType: "address",
-        name: "farmingAddress",
-        type: "address",
-      },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+      { internalType: "bool", name: "approve", type: "bool" },
+      { internalType: "address", name: "farmingAddress", type: "address" },
     ],
     name: "approveForFarming",
     outputs: [],
@@ -340,32 +249,14 @@ export const algebraPositionManagerABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "owner", type: "address" }],
     name: "balanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "burn",
     outputs: [],
     stateMutability: "payable",
@@ -375,26 +266,10 @@ export const algebraPositionManagerABI = [
     inputs: [
       {
         components: [
-          {
-            internalType: "uint256",
-            name: "tokenId",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "recipient",
-            type: "address",
-          },
-          {
-            internalType: "uint128",
-            name: "amount0Max",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "amount1Max",
-            type: "uint128",
-          },
+          { internalType: "uint256", name: "tokenId", type: "uint256" },
+          { internalType: "address", name: "recipient", type: "address" },
+          { internalType: "uint128", name: "amount0Max", type: "uint128" },
+          { internalType: "uint128", name: "amount1Max", type: "uint128" },
         ],
         internalType: "struct INonfungiblePositionManager.CollectParams",
         name: "params",
@@ -403,56 +278,22 @@ export const algebraPositionManagerABI = [
     ],
     name: "collect",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amount0",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amount1",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "amount0", type: "uint256" },
+      { internalType: "uint256", name: "amount1", type: "uint256" },
     ],
     stateMutability: "payable",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "token0",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "token1",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "deployer",
-        type: "address",
-      },
-      {
-        internalType: "uint160",
-        name: "sqrtPriceX96",
-        type: "uint160",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
+      { internalType: "address", name: "token0", type: "address" },
+      { internalType: "address", name: "token1", type: "address" },
+      { internalType: "address", name: "deployer", type: "address" },
+      { internalType: "uint160", name: "sqrtPriceX96", type: "uint160" },
+      { internalType: "bytes", name: "data", type: "bytes" },
     ],
     name: "createAndInitializePoolIfNecessary",
-    outputs: [
-      {
-        internalType: "address",
-        name: "pool",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "pool", type: "address" }],
     stateMutability: "payable",
     type: "function",
   },
@@ -460,31 +301,11 @@ export const algebraPositionManagerABI = [
     inputs: [
       {
         components: [
-          {
-            internalType: "uint256",
-            name: "tokenId",
-            type: "uint256",
-          },
-          {
-            internalType: "uint128",
-            name: "liquidity",
-            type: "uint128",
-          },
-          {
-            internalType: "uint256",
-            name: "amount0Min",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "amount1Min",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "deadline",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "tokenId", type: "uint256" },
+          { internalType: "uint128", name: "liquidity", type: "uint128" },
+          { internalType: "uint256", name: "amount0Min", type: "uint256" },
+          { internalType: "uint256", name: "amount1Min", type: "uint256" },
+          { internalType: "uint256", name: "deadline", type: "uint256" },
         ],
         internalType:
           "struct INonfungiblePositionManager.DecreaseLiquidityParams",
@@ -494,16 +315,8 @@ export const algebraPositionManagerABI = [
     ],
     name: "decreaseLiquidity",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amount0",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amount1",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "amount0", type: "uint256" },
+      { internalType: "uint256", name: "amount1", type: "uint256" },
     ],
     stateMutability: "payable",
     type: "function",
@@ -511,24 +324,12 @@ export const algebraPositionManagerABI = [
   {
     inputs: [],
     name: "factory",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "farmingApprovals",
     outputs: [
       {
@@ -543,32 +344,14 @@ export const algebraPositionManagerABI = [
   {
     inputs: [],
     name: "farmingCenter",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "getApproved",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
@@ -576,36 +359,12 @@ export const algebraPositionManagerABI = [
     inputs: [
       {
         components: [
-          {
-            internalType: "uint256",
-            name: "tokenId",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "amount0Desired",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "amount1Desired",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "amount0Min",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "amount1Min",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "deadline",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "tokenId", type: "uint256" },
+          { internalType: "uint256", name: "amount0Desired", type: "uint256" },
+          { internalType: "uint256", name: "amount1Desired", type: "uint256" },
+          { internalType: "uint256", name: "amount0Min", type: "uint256" },
+          { internalType: "uint256", name: "amount1Min", type: "uint256" },
+          { internalType: "uint256", name: "deadline", type: "uint256" },
         ],
         internalType:
           "struct INonfungiblePositionManager.IncreaseLiquidityParams",
@@ -615,70 +374,30 @@ export const algebraPositionManagerABI = [
     ],
     name: "increaseLiquidity",
     outputs: [
-      {
-        internalType: "uint128",
-        name: "liquidity",
-        type: "uint128",
-      },
-      {
-        internalType: "uint256",
-        name: "amount0",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amount1",
-        type: "uint256",
-      },
+      { internalType: "uint128", name: "liquidity", type: "uint128" },
+      { internalType: "uint256", name: "amount0", type: "uint256" },
+      { internalType: "uint256", name: "amount1", type: "uint256" },
     ],
     stateMutability: "payable",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
+      { internalType: "address", name: "owner", type: "address" },
+      { internalType: "address", name: "operator", type: "address" },
     ],
     name: "isApprovedForAll",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
+      { internalType: "address", name: "spender", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
     ],
     name: "isApprovedOrOwner",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
@@ -686,61 +405,17 @@ export const algebraPositionManagerABI = [
     inputs: [
       {
         components: [
-          {
-            internalType: "address",
-            name: "token0",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "token1",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "deployer",
-            type: "address",
-          },
-          {
-            internalType: "int24",
-            name: "tickLower",
-            type: "int24",
-          },
-          {
-            internalType: "int24",
-            name: "tickUpper",
-            type: "int24",
-          },
-          {
-            internalType: "uint256",
-            name: "amount0Desired",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "amount1Desired",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "amount0Min",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "amount1Min",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "recipient",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "deadline",
-            type: "uint256",
-          },
+          { internalType: "address", name: "token0", type: "address" },
+          { internalType: "address", name: "token1", type: "address" },
+          { internalType: "address", name: "deployer", type: "address" },
+          { internalType: "int24", name: "tickLower", type: "int24" },
+          { internalType: "int24", name: "tickUpper", type: "int24" },
+          { internalType: "uint256", name: "amount0Desired", type: "uint256" },
+          { internalType: "uint256", name: "amount1Desired", type: "uint256" },
+          { internalType: "uint256", name: "amount0Min", type: "uint256" },
+          { internalType: "uint256", name: "amount1Min", type: "uint256" },
+          { internalType: "address", name: "recipient", type: "address" },
+          { internalType: "uint256", name: "deadline", type: "uint256" },
         ],
         internalType: "struct INonfungiblePositionManager.MintParams",
         name: "params",
@@ -749,113 +424,43 @@ export const algebraPositionManagerABI = [
     ],
     name: "mint",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint128",
-        name: "liquidity",
-        type: "uint128",
-      },
-      {
-        internalType: "uint256",
-        name: "amount0",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amount1",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+      { internalType: "uint128", name: "liquidity", type: "uint128" },
+      { internalType: "uint256", name: "amount0", type: "uint256" },
+      { internalType: "uint256", name: "amount1", type: "uint256" },
     ],
     stateMutability: "payable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes[]",
-        name: "data",
-        type: "bytes[]",
-      },
-    ],
+    inputs: [{ internalType: "bytes[]", name: "data", type: "bytes[]" }],
     name: "multicall",
-    outputs: [
-      {
-        internalType: "bytes[]",
-        name: "results",
-        type: "bytes[]",
-      },
-    ],
+    outputs: [{ internalType: "bytes[]", name: "results", type: "bytes[]" }],
     stateMutability: "payable",
     type: "function",
   },
   {
     inputs: [],
     name: "name",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "ownerOf",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "deadline",
-        type: "uint256",
-      },
-      {
-        internalType: "uint8",
-        name: "v",
-        type: "uint8",
-      },
-      {
-        internalType: "bytes32",
-        name: "r",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "s",
-        type: "bytes32",
-      },
+      { internalType: "address", name: "spender", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+      { internalType: "uint256", name: "deadline", type: "uint256" },
+      { internalType: "uint8", name: "v", type: "uint8" },
+      { internalType: "bytes32", name: "r", type: "bytes32" },
+      { internalType: "bytes32", name: "s", type: "bytes32" },
     ],
     name: "permit",
     outputs: [],
@@ -865,66 +470,22 @@ export const algebraPositionManagerABI = [
   {
     inputs: [],
     name: "poolDeployer",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "positions",
     outputs: [
-      {
-        internalType: "uint88",
-        name: "nonce",
-        type: "uint88",
-      },
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "token0",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "token1",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "deployer",
-        type: "address",
-      },
-      {
-        internalType: "int24",
-        name: "tickLower",
-        type: "int24",
-      },
-      {
-        internalType: "int24",
-        name: "tickUpper",
-        type: "int24",
-      },
-      {
-        internalType: "uint128",
-        name: "liquidity",
-        type: "uint128",
-      },
+      { internalType: "uint88", name: "nonce", type: "uint88" },
+      { internalType: "address", name: "operator", type: "address" },
+      { internalType: "address", name: "token0", type: "address" },
+      { internalType: "address", name: "token1", type: "address" },
+      { internalType: "address", name: "deployer", type: "address" },
+      { internalType: "int24", name: "tickLower", type: "int24" },
+      { internalType: "int24", name: "tickUpper", type: "int24" },
+      { internalType: "uint128", name: "liquidity", type: "uint128" },
       {
         internalType: "uint256",
         name: "feeGrowthInside0LastX128",
@@ -935,16 +496,8 @@ export const algebraPositionManagerABI = [
         name: "feeGrowthInside1LastX128",
         type: "uint256",
       },
-      {
-        internalType: "uint128",
-        name: "tokensOwed0",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "tokensOwed1",
-        type: "uint128",
-      },
+      { internalType: "uint128", name: "tokensOwed0", type: "uint128" },
+      { internalType: "uint128", name: "tokensOwed1", type: "uint128" },
     ],
     stateMutability: "view",
     type: "function",
@@ -958,21 +511,9 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
     ],
     name: "safeTransferFrom",
     outputs: [],
@@ -981,26 +522,10 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+      { internalType: "bytes", name: "data", type: "bytes" },
     ],
     name: "safeTransferFrom",
     outputs: [],
@@ -1009,36 +534,12 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "deadline",
-        type: "uint256",
-      },
-      {
-        internalType: "uint8",
-        name: "v",
-        type: "uint8",
-      },
-      {
-        internalType: "bytes32",
-        name: "r",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "s",
-        type: "bytes32",
-      },
+      { internalType: "address", name: "token", type: "address" },
+      { internalType: "uint256", name: "value", type: "uint256" },
+      { internalType: "uint256", name: "deadline", type: "uint256" },
+      { internalType: "uint8", name: "v", type: "uint8" },
+      { internalType: "bytes32", name: "r", type: "bytes32" },
+      { internalType: "bytes32", name: "s", type: "bytes32" },
     ],
     name: "selfPermit",
     outputs: [],
@@ -1047,36 +548,12 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "nonce",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "expiry",
-        type: "uint256",
-      },
-      {
-        internalType: "uint8",
-        name: "v",
-        type: "uint8",
-      },
-      {
-        internalType: "bytes32",
-        name: "r",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "s",
-        type: "bytes32",
-      },
+      { internalType: "address", name: "token", type: "address" },
+      { internalType: "uint256", name: "nonce", type: "uint256" },
+      { internalType: "uint256", name: "expiry", type: "uint256" },
+      { internalType: "uint8", name: "v", type: "uint8" },
+      { internalType: "bytes32", name: "r", type: "bytes32" },
+      { internalType: "bytes32", name: "s", type: "bytes32" },
     ],
     name: "selfPermitAllowed",
     outputs: [],
@@ -1085,36 +562,12 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "nonce",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "expiry",
-        type: "uint256",
-      },
-      {
-        internalType: "uint8",
-        name: "v",
-        type: "uint8",
-      },
-      {
-        internalType: "bytes32",
-        name: "r",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "s",
-        type: "bytes32",
-      },
+      { internalType: "address", name: "token", type: "address" },
+      { internalType: "uint256", name: "nonce", type: "uint256" },
+      { internalType: "uint256", name: "expiry", type: "uint256" },
+      { internalType: "uint8", name: "v", type: "uint8" },
+      { internalType: "bytes32", name: "r", type: "bytes32" },
+      { internalType: "bytes32", name: "s", type: "bytes32" },
     ],
     name: "selfPermitAllowedIfNecessary",
     outputs: [],
@@ -1123,36 +576,12 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "deadline",
-        type: "uint256",
-      },
-      {
-        internalType: "uint8",
-        name: "v",
-        type: "uint8",
-      },
-      {
-        internalType: "bytes32",
-        name: "r",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "s",
-        type: "bytes32",
-      },
+      { internalType: "address", name: "token", type: "address" },
+      { internalType: "uint256", name: "value", type: "uint256" },
+      { internalType: "uint256", name: "deadline", type: "uint256" },
+      { internalType: "uint8", name: "v", type: "uint8" },
+      { internalType: "bytes32", name: "r", type: "bytes32" },
+      { internalType: "bytes32", name: "s", type: "bytes32" },
     ],
     name: "selfPermitIfNecessary",
     outputs: [],
@@ -1161,16 +590,8 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
-      {
-        internalType: "bool",
-        name: "approved",
-        type: "bool",
-      },
+      { internalType: "address", name: "operator", type: "address" },
+      { internalType: "bool", name: "approved", type: "bool" },
     ],
     name: "setApprovalForAll",
     outputs: [],
@@ -1179,11 +600,7 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "newFarmingCenter",
-        type: "address",
-      },
+      { internalType: "address", name: "newFarmingCenter", type: "address" },
     ],
     name: "setFarmingCenter",
     outputs: [],
@@ -1191,41 +608,17 @@ export const algebraPositionManagerABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes4",
-        name: "interfaceId",
-        type: "bytes4",
-      },
-    ],
+    inputs: [{ internalType: "bytes4", name: "interfaceId", type: "bytes4" }],
     name: "supportsInterface",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountMinimum",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "recipient",
-        type: "address",
-      },
+      { internalType: "address", name: "token", type: "address" },
+      { internalType: "uint256", name: "amountMinimum", type: "uint256" },
+      { internalType: "address", name: "recipient", type: "address" },
     ],
     name: "sweepToken",
     outputs: [],
@@ -1234,16 +627,8 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "toActive",
-        type: "bool",
-      },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+      { internalType: "bool", name: "toActive", type: "bool" },
     ],
     name: "switchFarmingStatus",
     outputs: [],
@@ -1253,43 +638,19 @@ export const algebraPositionManagerABI = [
   {
     inputs: [],
     name: "symbol",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "index", type: "uint256" }],
     name: "tokenByIndex",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "tokenFarmedIn",
     outputs: [
       {
@@ -1303,77 +664,33 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
+      { internalType: "address", name: "owner", type: "address" },
+      { internalType: "uint256", name: "index", type: "uint256" },
     ],
     name: "tokenOfOwnerByIndex",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "tokenURI",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
     ],
     name: "transferFrom",
     outputs: [],
@@ -1382,190 +699,13 @@ export const algebraPositionManagerABI = [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "amountMinimum",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "recipient",
-        type: "address",
-      },
+      { internalType: "uint256", name: "amountMinimum", type: "uint256" },
+      { internalType: "address", name: "recipient", type: "address" },
     ],
     name: "unwrapWNativeToken",
     outputs: [],
     stateMutability: "payable",
     type: "function",
   },
-  {
-    stateMutability: "payable",
-    type: "receive",
-  },
-  {
-    inputs: [],
-    name: "alreadyInitialized",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "arithmeticError",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "bottomTickLowerThanMIN",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "dynamicFeeActive",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "dynamicFeeDisabled",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "flashInsufficientPaid0",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "flashInsufficientPaid1",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "incorrectPluginFee",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "insufficientInputAmount",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "invalidAmountRequired",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes4",
-        name: "expectedSelector",
-        type: "bytes4",
-      },
-    ],
-    name: "invalidHookResponse",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "invalidLimitSqrtPrice",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "invalidNewCommunityFee",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "invalidNewTickSpacing",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "liquidityAdd",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "liquidityOverflow",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "liquiditySub",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "locked",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "notAllowed",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "notInitialized",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "pluginIsNotConnected",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "priceOutOfRange",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "tickInvalidLinks",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "tickIsNotInitialized",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "tickIsNotSpaced",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "tickOutOfRange",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "topTickAboveMAX",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "topTickLowerOrEqBottomTick",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "transferFailed",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "zeroAmountRequired",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "zeroLiquidityActual",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "zeroLiquidityDesired",
-    type: "error",
-  },
+  { stateMutability: "payable", type: "receive" },
 ] as const;

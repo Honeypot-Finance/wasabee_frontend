@@ -80,18 +80,56 @@ export const formatAmount = (amount?: number | string, p0?: number) => {
 
 export function formatLargeNumber(
   number: number | string | BigNumber,
-  decimals = 0
+  decimals = 2
 ) {
   const units = ["", "K", "M", "B", "T"];
   let unitIndex = 0;
-  let num = new BigNumber(number).div(10 ** decimals);
+  let num = new BigNumber(number);
 
   while (num.isGreaterThanOrEqualTo(1000) && unitIndex < units.length - 1) {
     num = num.dividedBy(1000);
     unitIndex++;
   }
 
-  return `${num.toFixed(0)}${units[unitIndex]}`;
+  return `${num.toFixed(decimals)}${units[unitIndex]}`;
+}
+
+export function formatExtremelyLargeNumber(
+  number: number | string | BigNumber,
+  decimals = 2,
+  options = { addPrefix: true }
+) {
+  const rawNumber = typeof number === 'string' && number.startsWith('$') 
+    ? number.slice(1) 
+    : number;
+
+  const num = new BigNumber(rawNumber);
+  if (num.isZero()) {
+    return options.addPrefix ? `$${num.toFixed(decimals)}` : num.toFixed(decimals);
+  }
+
+  if (num.isLessThan(1000)) {
+    return options.addPrefix ? `$${num.toFixed(decimals)}` : num.toFixed(decimals);
+  }
+  console.log("num", num.toFixed());
+  const units = ["", "K", "M", "B", "T"];
+  let unitIndex = 0;
+  let value = num;
+
+  while (value.isGreaterThanOrEqualTo(1000) && unitIndex < units.length - 1) {
+    value = value.dividedBy(1000);
+    unitIndex++;
+  }
+
+  while (value.isGreaterThanOrEqualTo(1000)) {
+    value = value.dividedBy(1000);
+    unitIndex++;
+  }
+
+  const unit = units[Math.min(unitIndex, units.length - 1)];
+  return options.addPrefix 
+    ? `$${value.toFixed(decimals)}${unit}` 
+    : `${value.toFixed(decimals)}${unit}`;
 }
 
 export function shortenAddress(address: Address) {

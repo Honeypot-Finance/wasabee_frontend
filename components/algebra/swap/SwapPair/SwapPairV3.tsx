@@ -293,6 +293,7 @@ const SwapPairV3 = ({
         showBalance={true}
         label="To"
         disableSelection={disableSelection}
+        showSettings={false}
       />
     </div>
   );

@@ -103,6 +103,7 @@ function usePositionsFromTokenIds(tokenIds: any[] | undefined): {
 export function usePositions() {
   const { address: account } = useAccount();
 
+
   const { data: balanceResult, isLoading: balanceLoading } =
     useReadAlgebraPositionManagerBalanceOf({
       args: account ? [account] : undefined,

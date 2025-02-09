@@ -73,11 +73,6 @@ export const appPathsList: Menu[] = [
     title: "Leaderboard",
     routePath: "/leaderboard",
   },
-  {
-    title: "Faucet",
-    path: `/faucet`,
-    routePath: "/faucet",
-  },
 ];
 
 const getFlatPaths = (paths: Menu[]): flatMenu[] => {

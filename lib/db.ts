@@ -5,7 +5,7 @@ export const pg = postgres(process.env.DB!, {
   connect_timeout: 30,
   ssl: true,
   connection: {
-    application_name: "iotexscan",
+    application_name: "honey_frontend",
   },
   debug: process.env.DEBUG === "true" ?
   function (connection, query, params, types) {

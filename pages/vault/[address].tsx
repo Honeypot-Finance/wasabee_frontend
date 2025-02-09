@@ -395,7 +395,7 @@ export const VaultDetail = observer(() => {
                     <div className="text-[#202020] flex-grow">
                       <Link
                         target="_blank"
-                        href={`https://bartio.beratrail.io/tx/${tx.id.split("-")[0]}`}
+                        href={`https://berascan.com/tx/${tx.id.split("-")[0]}`}
                         className="text-[#202020] underline hover:text-[#202020]/80"
                       >
                         {tx.id.split("-")[0]}

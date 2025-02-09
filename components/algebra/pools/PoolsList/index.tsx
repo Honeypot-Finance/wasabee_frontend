@@ -67,7 +67,6 @@ const PoolsList = ({
     loading: isUserPoolsLoading,
     refetch: refetchUserPools,
   } = useUserPools(wallet.account);
-  console.log("userPools", userPools);
 
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
@@ -82,7 +81,7 @@ const PoolsList = ({
   // ||isFarmingsAPRLoading;
 
   const formattedPools = useMemo(() => {
-    if (isLoading || !pools) return [];
+    if (isLoading || !pools || !wallet.isInit) return [];
 
     return pools?.pools.map(
       ({
@@ -254,10 +253,10 @@ const PoolsList = ({
         };
       }
     );
-  }, [isLoading, pools, activeFarmings?.eternalFarmings]);
+  }, [isLoading, pools, activeFarmings?.eternalFarmings, wallet.isInit]);
 
   const formattedUserPools = useMemo(() => {
-    if (isLoading || !userPools) return [];
+    if (isLoading || !userPools || !wallet.isInit) return [];
 
     return userPools.pools.map(
       ({
@@ -433,7 +432,7 @@ const PoolsList = ({
         };
       }
     );
-  }, [isLoading, userPools, activeFarmings]);
+  }, [isLoading, userPools, activeFarmings, wallet.isInit]);
 
   console.log(pools?.pools[0]);
 

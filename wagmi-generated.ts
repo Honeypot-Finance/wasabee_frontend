@@ -1187,7 +1187,7 @@ export const algebraEternalFarmingAbi = [
 ] as const
 
 export const algebraEternalFarmingAddress =
-  '0xceBcf56cCdFB7cC05fE9368953784065fc3fe73e' as const
+  '0x8554797BaE76Afe81dD5375111A2f3b0414D3B02' as const
 
 export const algebraEternalFarmingConfig = {
   address: algebraEternalFarmingAddress,
@@ -1820,7 +1820,7 @@ export const algebraFactoryAbi = [
 ] as const
 
 export const algebraFactoryAddress =
-  '0xB21b59d368e04b6a55ca7Fb78DEaF0c82fD289cC' as const
+  '0x7d53327D78EFD0b463bd8d7dc938C52402323b95' as const
 
 export const algebraFactoryConfig = {
   address: algebraFactoryAddress,
@@ -3189,48 +3189,10 @@ export const algebraPositionManagerAbi = [
     stateMutability: 'payable',
   },
   { type: 'receive', stateMutability: 'payable' },
-  { type: 'error', inputs: [], name: 'alreadyInitialized' },
-  { type: 'error', inputs: [], name: 'arithmeticError' },
-  { type: 'error', inputs: [], name: 'bottomTickLowerThanMIN' },
-  { type: 'error', inputs: [], name: 'dynamicFeeActive' },
-  { type: 'error', inputs: [], name: 'dynamicFeeDisabled' },
-  { type: 'error', inputs: [], name: 'flashInsufficientPaid0' },
-  { type: 'error', inputs: [], name: 'flashInsufficientPaid1' },
-  { type: 'error', inputs: [], name: 'incorrectPluginFee' },
-  { type: 'error', inputs: [], name: 'insufficientInputAmount' },
-  { type: 'error', inputs: [], name: 'invalidAmountRequired' },
-  {
-    type: 'error',
-    inputs: [
-      { name: 'expectedSelector', internalType: 'bytes4', type: 'bytes4' },
-    ],
-    name: 'invalidHookResponse',
-  },
-  { type: 'error', inputs: [], name: 'invalidLimitSqrtPrice' },
-  { type: 'error', inputs: [], name: 'invalidNewCommunityFee' },
-  { type: 'error', inputs: [], name: 'invalidNewTickSpacing' },
-  { type: 'error', inputs: [], name: 'liquidityAdd' },
-  { type: 'error', inputs: [], name: 'liquidityOverflow' },
-  { type: 'error', inputs: [], name: 'liquiditySub' },
-  { type: 'error', inputs: [], name: 'locked' },
-  { type: 'error', inputs: [], name: 'notAllowed' },
-  { type: 'error', inputs: [], name: 'notInitialized' },
-  { type: 'error', inputs: [], name: 'pluginIsNotConnected' },
-  { type: 'error', inputs: [], name: 'priceOutOfRange' },
-  { type: 'error', inputs: [], name: 'tickInvalidLinks' },
-  { type: 'error', inputs: [], name: 'tickIsNotInitialized' },
-  { type: 'error', inputs: [], name: 'tickIsNotSpaced' },
-  { type: 'error', inputs: [], name: 'tickOutOfRange' },
-  { type: 'error', inputs: [], name: 'topTickAboveMAX' },
-  { type: 'error', inputs: [], name: 'topTickLowerOrEqBottomTick' },
-  { type: 'error', inputs: [], name: 'transferFailed' },
-  { type: 'error', inputs: [], name: 'zeroAmountRequired' },
-  { type: 'error', inputs: [], name: 'zeroLiquidityActual' },
-  { type: 'error', inputs: [], name: 'zeroLiquidityDesired' },
 ] as const
 
 export const algebraPositionManagerAddress =
-  '0x29a738deAFdd2c6806e2f66891D812A311799828' as const
+  '0xBB203aADbE36C125028a54584f5d48C1764317D0' as const
 
 export const algebraPositionManagerConfig = {
   address: algebraPositionManagerAddress,
@@ -3344,7 +3306,7 @@ export const algebraQuoterAbi = [
 ] as const
 
 export const algebraQuoterAddress =
-  '0xF9C80f3675D7fd8E97cb5DA17970D291ff6c63D0' as const
+  '0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73' as const
 
 export const algebraQuoterConfig = {
   address: algebraQuoterAddress,
@@ -3676,7 +3638,7 @@ export const algebraRouterAbi = [
 ] as const
 
 export const algebraRouterAddress =
-  '0xb920d17DF1D14Fde86052CC571729a18Da7D72ED' as const
+  '0xFff605964840a5511f595EB970011EcBffa46b39' as const
 
 export const algebraRouterConfig = {
   address: algebraRouterAddress,
@@ -4115,7 +4077,7 @@ export const algerbaQuoterV2Abi = [
 ] as const
 
 export const algerbaQuoterV2Address =
-  '0x57f60FaFce4C6E4326814137fB3dE52567C2527C' as const
+  '0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2' as const
 
 export const algerbaQuoterV2Config = {
   address: algerbaQuoterV2Address,
@@ -4514,7 +4476,7 @@ export const farmingCenterAbi = [
 ] as const
 
 export const farmingCenterAddress =
-  '0x4798623CcE373b33E7263f88fE133ad34bcD864F' as const
+  '0xD8399d82eb577F223f55e81EfB96942Ce560f51f' as const
 
 export const farmingCenterConfig = {
   address: farmingCenterAddress,
