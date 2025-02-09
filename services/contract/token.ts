@@ -414,6 +414,9 @@ export class Token implements BaseContract {
   }
 
   async getBalance() {
+    if (!wallet.isInit) {
+      return new BigNumber(0);
+    }
     if (this.isNative || this.address === zeroAddress) {
       return wallet.balance;
     }

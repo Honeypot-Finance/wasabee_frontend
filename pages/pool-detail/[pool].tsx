@@ -13,7 +13,7 @@ import { usePositions } from "@/lib/algebra/hooks/positions/usePositions";
 import { getPositionAPR } from "@/lib/algebra/utils/positions/getPositionAPR";
 import { getPositionFees } from "@/lib/algebra/utils/positions/getPositionFees";
 import { formatAmountWithAlphabetSymbol } from "@/lib/algebra/utils/common/formatAmount";
-import { Position, ZERO } from "@cryptoalgebra/sdk";
+import { ADDRESS_ZERO, Position, ZERO } from "@cryptoalgebra/sdk";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { Plus } from "lucide-react";
 import Link from "next/link";
@@ -26,13 +26,14 @@ import {
   useNativePriceQuery,
 } from "@/lib/algebra/graphql/generated/graphql";
 import { FormattedPosition } from "@/types/algebra/types/formatted-position";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 import { cn } from "@/lib/tailwindcss";
 import { Token } from "@/services/contract/token";
 import CardContainer from "@/components/CardContianer/v3";
 import { useRouter } from "next/router";
 import { wallet } from "@/services/wallet";
 import { observer } from "mobx-react-lite";
+import { LoadingContainer } from "@/components/LoadingDisplay/LoadingDisplay";
 
 const PoolPage = observer(() => {
   const { address: account } = useAccount();
@@ -44,7 +45,7 @@ const PoolPage = observer(() => {
 
   const [selectedPositionId, selectPosition] = useState<number | null>();
 
-  const [, poolEntity] = usePool(poolId);
+  const [, poolEntity] = usePool(poolId ?? zeroAddress);
 
   const { data: poolInfo } = useSinglePoolQuery({
     variables: {
@@ -81,12 +82,12 @@ const PoolPage = observer(() => {
 
   const { farmingInfo, deposits, isFarmingLoading, areDepositsLoading } =
     useActiveFarming({
-      poolId: poolId?.toLowerCase() as Address,
+      poolId: poolId ? (poolId.toLowerCase() as Address) : zeroAddress,
       poolInfo: poolInfo,
     });
 
   const { closedFarmings } = useClosedFarmings({
-    poolId: poolId?.toLowerCase() as Address,
+    poolId: poolId ? (poolId.toLowerCase() as Address) : zeroAddress,
     poolInfo: poolInfo,
   });
 
@@ -146,7 +147,7 @@ const PoolPage = observer(() => {
       poolInfo?.pool &&
       poolFeeData?.poolDayDatas &&
       bundles?.bundles &&
-      poolId?.toLowerCase()
+      poolId.toLowerCase()
     )
       getPositionsAPRs();
   }, [filteredPositions, poolInfo, poolId, poolFeeData, bundles]);
@@ -229,58 +230,60 @@ const PoolPage = observer(() => {
   return (
     <PageContainer>
       <CardContainer className="gap-y-6">
-        <PoolHeader pool={poolEntity} token0={token0} token1={token1} />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8">
-          <div className="col-span-2">
-            {!account ? (
-              <NoAccount />
-            ) : positionsLoading || isFarmingLoading || areDepositsLoading ? (
-              <LoadingState />
-            ) : noPositions ? (
-              <NoPositions poolId={poolId?.toLowerCase() as Address} />
-            ) : (
-              <>
-                <MyPositionsToolbar
-                  positionsData={positionsData}
-                  poolId={poolId?.toLowerCase() as Address}
-                />
-                <MyPositions
-                  positions={positionsData}
-                  poolId={poolId?.toLowerCase() as Address}
-                  selectedPosition={selectedPosition?.id}
-                  selectPosition={(positionId) =>
-                    selectPosition((prev) =>
-                      prev === positionId ? null : positionId
-                    )
-                  }
-                />
-                {farmingInfo &&
-                  deposits &&
-                  !isFarmingLoading &&
-                  !areDepositsLoading && (
-                    <div>
-                      <h2 className="font-semibold text-xl text-left mt-12">
-                        Farming
-                      </h2>
-                      <ActiveFarming
-                        deposits={deposits && deposits.deposits}
-                        farming={farmingInfo}
-                        positionsData={positionsData}
-                      />
-                    </div>
-                  )}
-              </>
-            )}
-          </div>
+        <LoadingContainer isLoading={!poolEntity}>
+          <PoolHeader pool={poolEntity} token0={token0} token1={token1} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8">
+            <div className="col-span-2">
+              {!account ? (
+                <NoAccount />
+              ) : positionsLoading || isFarmingLoading || areDepositsLoading ? (
+                <LoadingState />
+              ) : noPositions ? (
+                <NoPositions poolId={poolId ? poolId : zeroAddress} />
+              ) : (
+                <>
+                  <MyPositionsToolbar
+                    positionsData={positionsData}
+                    poolId={poolId ? poolId : zeroAddress}
+                  />
+                  <MyPositions
+                    positions={positionsData}
+                    poolId={poolId ? poolId : zeroAddress}
+                    selectedPosition={selectedPosition?.id}
+                    selectPosition={(positionId) =>
+                      selectPosition((prev) =>
+                        prev === positionId ? null : positionId
+                      )
+                    }
+                  />
+                  {farmingInfo &&
+                    deposits &&
+                    !isFarmingLoading &&
+                    !areDepositsLoading && (
+                      <div>
+                        <h2 className="font-semibold text-xl text-left mt-12">
+                          Farming
+                        </h2>
+                        <ActiveFarming
+                          deposits={deposits && deposits.deposits}
+                          farming={farmingInfo}
+                          positionsData={positionsData}
+                        />
+                      </div>
+                    )}
+                </>
+              )}
+            </div>
 
-          <div className="flex flex-col gap-8 w-full h-full">
-            <PositionCard
-              farming={farmingInfo}
-              closedFarmings={closedFarmings}
-              selectedPosition={selectedPosition}
-            />
+            <div className="flex flex-col gap-8 w-full h-full">
+              <PositionCard
+                farming={farmingInfo}
+                closedFarmings={closedFarmings}
+                selectedPosition={selectedPosition}
+              />
+            </div>
           </div>
-        </div>
+        </LoadingContainer>
       </CardContainer>
     </PageContainer>
   );
