@@ -40,7 +40,7 @@ type SortField =
   | "volume"
   | "apr"
   | "unclaimedFees"
-  | "fees24USD";
+  | "feesUSD";
 type SortDirection = "asc" | "desc";
 
 const PoolsTable = observer(
@@ -119,7 +119,7 @@ const PoolsTable = observer(
             return (
               multiplier * (Number(a.unclaimedFees) - Number(b.unclaimedFees))
             );
-          case "fees24USD":
+          case "feesUSD":
             return multiplier * (Number(a.fees24USD) - Number(b.fees24USD));
           default:
             return 0;
@@ -237,7 +237,7 @@ const PoolsTable = observer(
                   <SortHeader field="pool" label="Pool" align="left" />
                   <SortHeader field="tvl" label="TVL" />
                   <SortHeader field="volume" label="Volume 24H" />
-                  <SortHeader field="fees24USD" label="Fees 24H" />
+                  <SortHeader field="feesUSD" label="Total Fees" />
                   <SortHeader field="apr" label="APR" />
                   {defaultFilter === "myPools" && (
                     <SortHeader

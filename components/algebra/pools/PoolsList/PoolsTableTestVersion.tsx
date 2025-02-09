@@ -95,6 +95,7 @@ const PoolsList = observer(
           createdAtTimestamp,
           liquidity,
           aprPercentage,
+          feesUSD,
         }) => {
           const currentPool = poolDayData[0];
           const lastDate = currentPool ? currentPool.date * 1000 : 0;
@@ -164,6 +165,7 @@ const PoolsList = observer(
             changeWeek,
             changeMonth,
             txCount,
+            feesUSD,
             volumeUSD,
             marktetcap: token0.marketCap,
             apr24h: avgApr,
@@ -187,6 +189,7 @@ const PoolsList = observer(
           poolWeekData,
           poolMonthData,
           txCount,
+          feesUSD,
           volumeUSD,
           token0Price,
           createdAtTimestamp,
@@ -255,6 +258,7 @@ const PoolsList = observer(
             poolAvgApr,
             farmApr,
             avgApr,
+            feesUSD,
             hasActiveFarming: Boolean(activeFarming),
             createdAtTimestamp,
             liquidity,
