@@ -116,13 +116,8 @@ const LeaderboardPage = () => {
                     : typeof stat.value === "string" &&
                         stat.value.startsWith("$")
                       ? formatExtremelyLargeNumber(
-<<<<<<< Updated upstream
-                          stat.value.slice(1).replace(/,/g, ""),
-                          0,
-=======
                           stat.value.slice(1).replace(/,/g, ''),
                           stat.decimals,
->>>>>>> Stashed changes
                           { addPrefix: true }
                         )
                       : stat.subValue === "USD"
