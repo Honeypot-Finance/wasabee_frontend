@@ -1,9 +1,16 @@
-import { SetStateAction, useCallback, useEffect, useState } from "react";
+import {
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Price, Token } from "@cryptoalgebra/sdk";
 import { useMintState } from "@/lib/algebra/state/mintStore";
 import { Button } from "@/components/algebra/ui/button";
 import { Input } from "@/components/algebra/ui/input";
 import { cn } from "@/lib/utils";
+import { debounce } from "lodash";
 
 export interface RangeSelectorPartProps {
   value: string;
@@ -33,6 +40,10 @@ const RangeSelectorPart = ({
 }: RangeSelectorPartProps) => {
   const [localUSDValue, setLocalUSDValue] = useState("");
   const [localTokenValue, setLocalTokenValue] = useState("");
+  const handleUserInputDebounce = useMemo(
+    () => debounce(onUserInput, 500),
+    [onUserInput]
+  );
 
   const {
     initialTokenPrice,
@@ -50,6 +61,10 @@ const RangeSelectorPart = ({
   const handleIncrement = useCallback(() => {
     onUserInput(increment());
   }, [increment, onUserInput]);
+
+  useEffect(() => {
+    handleUserInputDebounce(localTokenValue);
+  }, [localTokenValue]);
 
   useEffect(() => {
     if (value) {
