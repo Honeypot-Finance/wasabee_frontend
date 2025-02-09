@@ -44,3 +44,5 @@ certificates
 # IDE - VSCode
 .vscode
 #generate/
+# Sentry Config File
+.env.sentry-build-plugin

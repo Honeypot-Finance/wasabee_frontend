@@ -13,7 +13,7 @@ import { WrappedToastify } from "@/lib/wrappedToastify";
 import { trpcClient } from "@/lib/trpc";
 import NetworkManager from "../network";
 import { getSingleTokenData } from "@/lib/algebra/graphql/clients/token";
-
+import { when } from "mobx";
 export class Token implements BaseContract {
   static tokensMap: Record<string, Token> = {};
   static getToken({
@@ -239,6 +239,7 @@ export class Token implements BaseContract {
     const loadClaimed = options?.loadClaimed ?? false;
     const loadLogoURI = options?.loadLogoURI ?? true;
     const loadIndexerTokenData = options?.loadIndexerTokenData ?? false;
+    // await when(() => wallet.isInit);
 
     await Promise.all([
       loadName && !this.name ? this.loadName(force) : Promise.resolve(),

@@ -25,6 +25,8 @@ import { ApolloProvider } from "@apollo/client";
 import { infoClient } from "@/lib/algebra/graphql/clients";
 import Image from "next/image";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import ErrorBoundary from '@/components/ErrorBoundary';
+import * as Sentry from "@sentry/nextjs";
 
 import {
   DynamicContextProvider,
@@ -76,6 +78,14 @@ const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
   );
 };
 
+// 在文件顶部初始化 Sentry
+Sentry.init({
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  tracesSampleRate: 1.0,
+  // 建议在生产环境调低采样率
+  // tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1.0,
+});
+
 export default function App({
   Component,
   pageProps,
@@ -91,44 +101,46 @@ export default function App({
   });
 
   return (
-    <trpc.Provider client={trpcQueryClient} queryClient={queryClient}>
-      <Analytics />
-      <WagmiProvider config={config}>
-        <PersistQueryClientProvider
-          client={queryClient}
-          persistOptions={{ persister }}
-        >
-          <ApolloProvider client={infoClient}>
-            <RainbowKitProvider
-              avatar={CustomAvatar}
-              // capsule={capsuleClient}
-              // capsuleIntegratedProps={capsuleModalProps}
-            >
-              <NextUIProvider>
-                <Provider>
-                  <Inspector
-                    keys={["Ctrl", "Shift", "Z"]}
-                    onClickElement={({ codeInfo }: InspectParams) => {
-                      if (!codeInfo) {
-                        return;
-                      }
+    <ErrorBoundary>
+      <trpc.Provider client={trpcQueryClient} queryClient={queryClient}>
+        <Analytics />
+        <WagmiProvider config={config}>
+          <PersistQueryClientProvider
+            client={queryClient}
+            persistOptions={{ persister }}
+          >
+            <ApolloProvider client={infoClient}>
+              <RainbowKitProvider
+                avatar={CustomAvatar}
+                // capsule={capsuleClient}
+                // capsuleIntegratedProps={capsuleModalProps}
+              >
+                <NextUIProvider>
+                  <Provider>
+                    <Inspector
+                      keys={["Ctrl", "Shift", "Z"]}
+                      onClickElement={({ codeInfo }: InspectParams) => {
+                        if (!codeInfo) {
+                          return;
+                        }
 
-                      window.open(
-                        `cursor://file/${codeInfo.absolutePath}:${codeInfo.lineNumber}:${codeInfo.columnNumber}`,
-                        "_blank"
-                      );
-                    }}
-                  ></Inspector>
-                  <ComponentLayout className={`${dmSans.className}`}>
-                    <Component {...pageProps} />
-                  </ComponentLayout>
-                </Provider>
-                <ToastContainer></ToastContainer>
-              </NextUIProvider>
-            </RainbowKitProvider>
-          </ApolloProvider>
-        </PersistQueryClientProvider>
-      </WagmiProvider>
-    </trpc.Provider>
+                        window.open(
+                          `cursor://file/${codeInfo.absolutePath}:${codeInfo.lineNumber}:${codeInfo.columnNumber}`,
+                          "_blank"
+                        );
+                      }}
+                    ></Inspector>
+                    <ComponentLayout className={`${dmSans.className}`}>
+                      <Component {...pageProps} />
+                    </ComponentLayout>
+                  </Provider>
+                  <ToastContainer></ToastContainer>
+                </NextUIProvider>
+              </RainbowKitProvider>
+            </ApolloProvider>
+          </PersistQueryClientProvider>
+        </WagmiProvider>
+      </trpc.Provider>
+    </ErrorBoundary>
   );
 }
