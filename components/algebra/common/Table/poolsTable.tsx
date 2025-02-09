@@ -14,6 +14,7 @@ import { LoadingDisplay } from "@/components/LoadingDisplay/LoadingDisplay";
 import { formatExtremelyLargeNumber } from "@/lib/format";
 import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
+import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 
 interface PoolsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -33,7 +34,13 @@ interface PoolsTableProps<TData, TValue> {
   handleSearch: (data: string) => void;
 }
 
-type SortField = "pool" | "tvl" | "volume" | "apr" | "unclaimedFees";
+type SortField =
+  | "pool"
+  | "tvl"
+  | "volume"
+  | "apr"
+  | "unclaimedFees"
+  | "fees24USD";
 type SortDirection = "asc" | "desc";
 
 const PoolsTable = observer(
@@ -112,6 +119,8 @@ const PoolsTable = observer(
             return (
               multiplier * (Number(a.unclaimedFees) - Number(b.unclaimedFees))
             );
+          case "fees24USD":
+            return multiplier * (Number(a.fees24USD) - Number(b.fees24USD));
           default:
             return 0;
         }
@@ -180,7 +189,11 @@ const PoolsTable = observer(
                 }
               >
                 <Tab key="all" title="All Pools" />
-                <Tab key="myPools" title="My Pools" />
+                <Tab
+                  href="/profile?tab=my-pools"
+                  key="myPools"
+                  title="My Pools"
+                />
               </Tabs>
               <div className="relative">
                 <input
@@ -224,6 +237,7 @@ const PoolsTable = observer(
                   <SortHeader field="pool" label="Pool" align="left" />
                   <SortHeader field="tvl" label="TVL" />
                   <SortHeader field="volume" label="Volume 24H" />
+                  <SortHeader field="fees24USD" label="Fees 24H" />
                   <SortHeader field="apr" label="APR" />
                   {defaultFilter === "myPools" && (
                     <SortHeader
@@ -232,9 +246,9 @@ const PoolsTable = observer(
                       align="center"
                     />
                   )}
-                  <th className="py-4 px-6 text-center text-[#4D4D4D]">
+                  {/* <th className="py-4 px-6 text-center text-[#4D4D4D]">
                     Actions
-                  </th>
+                  </th> */}
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#4D4D4D]">
@@ -313,6 +327,13 @@ const PoolsTable = observer(
                       <td className="py-4 px-6 text-right">
                         <div className="flex flex-col">
                           <span className="text-black">
+                            {formatUSD.format(pool.fees24USD)}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <div className="flex flex-col">
+                          <span className="text-black">
                             {Number(pool.apr24h).toFixed(2)}%
                           </span>
                         </div>
@@ -324,7 +345,7 @@ const PoolsTable = observer(
                           </span>
                         </td>
                       )}
-                      <td className="py-4 px-6 text-center">
+                      {/* <td className="py-4 px-6 text-center">
                         <Button
                           className="bg-transparent"
                           variant="outline"
@@ -340,7 +361,7 @@ const PoolsTable = observer(
                         >
                           View
                         </Button>
-                      </td>
+                      </td> */}
                     </tr>
                   ))
                 )}

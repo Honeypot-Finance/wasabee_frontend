@@ -33,10 +33,12 @@ export interface Pool {
   fee: number;
   tvlUSD: number;
   volume24USD: number;
+  fees24USD: number;
   poolMaxApr: number;
   poolAvgApr: number;
   avgApr: number;
   farmApr: number;
+  feesUSD: number;
   hasActiveFarming: boolean;
   createdAtTimestamp: number;
   liquidity: any;

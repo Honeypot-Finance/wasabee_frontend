@@ -18,6 +18,7 @@ import CardContainer from "@/components/CardContianer/v3";
 import Image from "next/image";
 import Copy from "@/components/Copy/v3";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/router";
 
 export const Profile = observer(() => {
   const { chainId } = useAccount();
@@ -25,6 +26,8 @@ export const Profile = observer(() => {
   const [chartWidth, setChartWidth] = useState(0);
   const [timeRange, setTimeRange] = useState<"1D" | "1W" | "1M">("1D");
   const [userPoolsProfit, setUserPoolsProfit] = useState<UserPoolProfit[]>([]);
+  const router = useRouter();
+  const urlParams = router.query as { tab: string };
 
   useEffect(() => {
     if (wallet.account) {
@@ -137,7 +140,7 @@ export const Profile = observer(() => {
 
             <Tabs
               aria-label="Options"
-              defaultSelectedKey={"portfolio"}
+              defaultSelectedKey={urlParams.tab || "portfolio"}
               classNames={{
                 base: "relative w-full",
                 tabList:
