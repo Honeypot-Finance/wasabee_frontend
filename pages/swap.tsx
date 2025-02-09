@@ -13,6 +13,8 @@ import V3SwapCard from "@/components/algebra/swap/V3SwapCard";
 import KlineChart from "./launch-detail/components/KlineChart";
 import { LoadingDisplay } from "@/components/LoadingDisplay/LoadingDisplay";
 import SwapTransactionHistory from "@/components/SwapTransactionHistory";
+import { WNATIVE } from "@cryptoalgebra/sdk";
+import { STABLECOINS } from "@/config/algebra/tokens";
 
 const SwapPage = observer(() => {
   useEffect(() => {
@@ -55,7 +57,8 @@ const SwapPage = observer(() => {
           <V3SwapCard
             fromTokenAddress={inputCurrency ?? undefined}
             toTokenAddress={
-              outputCurrency ?? wallet.currentChain.platformTokenAddress.HPOT
+              // outputCurrency ?? wallet.currentChain.platformTokenAddress.HPOT
+              STABLECOINS.HONEY.address.toLowerCase()
             }
             isUpdatingPriceChart={true}
           />
