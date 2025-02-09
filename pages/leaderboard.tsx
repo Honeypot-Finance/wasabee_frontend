@@ -107,18 +107,22 @@ const LeaderboardPage = () => {
               <div key={index} className="bg-[#202020] rounded-2xl p-5">
                 <div className="text-gray-400 text-sm mb-2">{stat.title}</div>
                 <div className="text-white text-xl font-medium">
-                  {statsLoading 
-                    ? "Loading..." 
-                    : typeof stat.value === 'string' && stat.value.startsWith('$')
+                  {statsLoading
+                    ? "Loading..."
+                    : typeof stat.value === "string" &&
+                        stat.value.startsWith("$")
                       ? formatExtremelyLargeNumber(
-                          stat.value.slice(1).replace(/,/g, ''),
+                          stat.value.slice(1).replace(/,/g, ""),
                           0,
                           { addPrefix: true }
                         )
                       : stat.subValue === "USD"
-                        ? formatExtremelyLargeNumber(stat.value, 0, { addPrefix: true })
-                        : formatExtremelyLargeNumber(stat.value, 0, { addPrefix: false })
-                  }
+                        ? formatExtremelyLargeNumber(stat.value, 0, {
+                            addPrefix: true,
+                          })
+                        : formatExtremelyLargeNumber(stat.value, 0, {
+                            addPrefix: false,
+                          })}
                 </div>
               </div>
             ))}
@@ -238,7 +242,7 @@ const LeaderboardPage = () => {
                                 placement="top"
                               >
                                 <Link
-                                  href={`${wallet.currentChainId === 80094 ? 'https://berascan.com' : 'https://bartio.beratrail.io'}/address/${item.walletAddress}`}
+                                  href={`https://berascan.com/address/${item.walletAddress}`}
                                   target="_blank"
                                   className="text-blue-400"
                                 >
