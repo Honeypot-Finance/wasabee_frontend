@@ -640,7 +640,7 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/nect-token.jpg",
     },
-    "0x20913b0dfadc5cfcd2ce927d9da2fb32a9224427": {
+    "0x467aa1bfa3dcc714f7c16b3d779200431f6a833b": {
       name: "3BC",
       symbol: "3BC",
       decimals: 18,
