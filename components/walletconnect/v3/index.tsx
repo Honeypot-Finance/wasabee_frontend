@@ -5,6 +5,7 @@ import { useConnect, useConnectors } from "wagmi";
 import { BiWallet } from "react-icons/bi";
 import { BsPerson } from "react-icons/bs";
 import Link from "next/link";
+import { formatNumberWithUnit } from '@/lib/utils';
 
 const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   return (
@@ -103,7 +104,7 @@ export const WalletConnect = () => {
 
                         <div className="text-nowrap text-white w-24">
                           {account.balanceFormatted ? (
-                            <span>{`${Number(account.balanceFormatted).toFixed(2)} BERA     `}</span>
+                            <span>{`${formatNumberWithUnit(Number(account.balanceFormatted))} BERA`}</span>
                           ) : (
                             <div className="h-4 w-20 bg-gray-700 animate-pulse rounded"></div>
                           )}

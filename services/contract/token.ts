@@ -239,7 +239,7 @@ export class Token implements BaseContract {
     const loadClaimed = options?.loadClaimed ?? false;
     const loadLogoURI = options?.loadLogoURI ?? true;
     const loadIndexerTokenData = options?.loadIndexerTokenData ?? false;
-    // await when(() => wallet.isInit);
+    await when(() => wallet.isInit);
 
     await Promise.all([
       loadName && !this.name ? this.loadName(force) : Promise.resolve(),

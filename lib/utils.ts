@@ -97,3 +97,22 @@ export function getTextSizeClass(text: string | undefined | null): string {
   if (text.length > 5) return "text-xl md:text-2xl text-stroke-[1.5px] text-shadow-[1.5px_3px_0px_#AF7F3D]";
   return "text-2xl md:text-[34px] text-stroke-2 text-shadow-[2px_4px_0px_#AF7F3D]";
 }
+
+export const formatNumberWithUnit = (num: number, decimals = 2): string => {
+  const minValue = Math.pow(10, -decimals); // Calculate minimum value based on decimals
+  if (num > 0 && num < minValue) {
+    return `<${minValue}`;
+  }
+
+  const units = ['', 'k', 'M', 'B', 'T'];
+  let unitIndex = 0;
+  let value = num;
+
+  while (value >= 1000 && unitIndex < units.length - 1) {
+    value /= 1000;
+    unitIndex++;
+  }
+
+  // 使用 Number 将结果转换为数字以去除末尾的 0，然后限制最大小数位数
+  return `${Number(value.toFixed(decimals))}${units[unitIndex]}`;
+};

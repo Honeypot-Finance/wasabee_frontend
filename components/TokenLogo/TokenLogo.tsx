@@ -24,9 +24,11 @@ export const TokenLogo = observer(
     ...props
   }: TokenLogoProps) => {
     useEffect(() => {
-      token.loadLogoURI();
-      token.loadName();
-      token.loadSymbol();
+       token.init(true, {
+        loadLogoURI: true,
+        loadName: true,
+        loadSymbol: true
+       })
     }, [token]);
     return (
       <Tooltip
