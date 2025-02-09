@@ -28,6 +28,7 @@ interface StatsCard {
   title: string;
   value: string | number;
   subValue?: string;
+  decimals?: number;
 }
 
 const LeaderboardPage = () => {
@@ -55,17 +56,19 @@ const LeaderboardPage = () => {
   } = useTopParticipateAccounts();
 
   const statsCards: StatsCard[] = [
-    { title: "Users", value: usersLoading ? "Loading..." : totalUsers },
+    { title: "Users", value: usersLoading ? "Loading..." : totalUsers, decimals: 0 },
     stats
       ? {
           title: stats.totalTrades.title,
           value: stats.totalTrades.value,
+          decimals: 0,
         }
       : { title: "Total Trades", value: "-" },
     stats
       ? {
           title: stats.totalVolume.title,
           value: stats.totalVolume.value,
+          decimals: 2,
           subValue: "USD",
         }
       : { title: "Total Volume", value: "-" },
@@ -73,6 +76,7 @@ const LeaderboardPage = () => {
       ? {
           title: stats.tvl.title,
           value: stats.tvl.value,
+          decimals: 2,
           subValue: "USD",
         }
       : { title: "TVL", value: "-" },
@@ -112,8 +116,8 @@ const LeaderboardPage = () => {
                     : typeof stat.value === "string" &&
                         stat.value.startsWith("$")
                       ? formatExtremelyLargeNumber(
-                          stat.value.slice(1).replace(/,/g, ""),
-                          0,
+                          stat.value.slice(1).replace(/,/g, ''),
+                          stat.decimals,
                           { addPrefix: true }
                         )
                       : stat.subValue === "USD"

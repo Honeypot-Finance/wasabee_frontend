@@ -51,7 +51,7 @@ export function DynamicFormatAmount({
     <span>
       {beginWith ? `${beginWith} ` : ""}
       {output}
-      {endWith ? ` ${endWith}` : ""}`
+      {endWith ? ` ${endWith}` : ""}
     </span>
   );
 }

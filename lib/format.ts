@@ -80,40 +80,38 @@ export const formatAmount = (amount?: number | string, p0?: number) => {
 
 export function formatLargeNumber(
   number: number | string | BigNumber,
-  decimals = 0
+  decimals = 2
 ) {
   const units = ["", "K", "M", "B", "T"];
   let unitIndex = 0;
-  let num = new BigNumber(number).div(10 ** decimals);
+  let num = new BigNumber(number);
 
   while (num.isGreaterThanOrEqualTo(1000) && unitIndex < units.length - 1) {
     num = num.dividedBy(1000);
     unitIndex++;
   }
 
-  return `${num.toFixed(0)}${units[unitIndex]}`;
+  return `${num.toFixed(decimals)}${units[unitIndex]}`;
 }
 
 export function formatExtremelyLargeNumber(
   number: number | string | BigNumber,
-  decimals = 0,
+  decimals = 2,
   options = { addPrefix: true }
 ) {
-  // 如果输入是字符串且以$开头，去掉$符号
   const rawNumber = typeof number === 'string' && number.startsWith('$') 
     ? number.slice(1) 
     : number;
 
   const num = new BigNumber(rawNumber);
   if (num.isZero()) {
-    return options.addPrefix ? "$0.00" : "0.00";
+    return options.addPrefix ? `$${num.toFixed(decimals)}` : num.toFixed(decimals);
   }
 
-  // 如果数字小于 1000，正常显示
   if (num.isLessThan(1000)) {
-    return options.addPrefix ? `$${num.toFixed(2)}` : num.toFixed(2);
+    return options.addPrefix ? `$${num.toFixed(decimals)}` : num.toFixed(decimals);
   }
-
+  console.log("num", num.toFixed());
   const units = ["", "K", "M", "B", "T"];
   let unitIndex = 0;
   let value = num;
@@ -123,17 +121,15 @@ export function formatExtremelyLargeNumber(
     unitIndex++;
   }
 
-  // 如果数字超过了最大单位，继续除以 1000 直到合适的范围
   while (value.isGreaterThanOrEqualTo(1000)) {
     value = value.dividedBy(1000);
     unitIndex++;
   }
 
-  // 对于超大数字，使用最后一个单位 (T)
   const unit = units[Math.min(unitIndex, units.length - 1)];
   return options.addPrefix 
-    ? `$${value.toFixed(2)}${unit}` 
-    : `${value.toFixed(2)}${unit}`;
+    ? `$${value.toFixed(decimals)}${unit}` 
+    : `${value.toFixed(decimals)}${unit}`;
 }
 
 export function shortenAddress(address: Address) {
