@@ -339,6 +339,12 @@ export const berachainBartioTestnetNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/lore-token-icon.jpg",
     },
+    "0x1ce0a25d13ce4d52071ae7e02cf1f6606f4c79d3": {
+      name: "NECT",
+      symbol: "NECT",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/nect-token.jpg",
+    },
     // "0xfad73c80d67d3cb4a929d1c0faf33a820620ae41": {
     //   name: "POT The Bera",
     //   symbol: "POT",
