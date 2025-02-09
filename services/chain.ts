@@ -574,6 +574,12 @@ export const berachainNetwork = new Network({
     memeBlacklist: [],
   },
   validatedTokensInfo: {
+    "0x1cE0a25D13CE4d52071aE7e02Cf1F6606F4C79d3": {
+      name: "Nectar",
+      symbol: "NECT",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/nect-token-icon.png",
+    },
     //when adding a new token, make sure to add the address as lowercase
     "0x0000000000000000000000000000000000000000": {
       name: "Bera",
@@ -634,6 +640,9 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/berally.png",
     },
+    // "0x20913b0dfadc5cfcd2ce927d9da2fb32a9224427": {
+    //   logoURI: "/images/icons/tokens/3bc.png",
+    // },
   },
   validatedFtoAddresses: [],
   validatedMemeAddresses: [],
