@@ -6,7 +6,7 @@ import { BiWallet } from "react-icons/bi";
 import { BsPerson } from "react-icons/bs";
 import Link from "next/link";
 import { formatNumberWithUnit } from '@/lib/utils';
-
+import { mock } from "wagmi/connectors";
 const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   return (
     <button
@@ -20,7 +20,6 @@ export const WalletConnect = () => {
   const { connect } = useConnect();
   const connectors = useConnectors();
 
-  const mockConnector = connectors.find((connector) => connector.id === "mock");
   return (
     <div className="flex flex-col items-center">
       <Image
@@ -68,8 +67,10 @@ export const WalletConnect = () => {
                         {/* <NetworkSelect /> */}
                         <ConnectButtonCustom
                           onClick={() => {
-                            if (process.env.NEXT_PUBLIC_MOCK === "true") {
-                              connect({ connector: mockConnector! });
+                            if ( window.localStorage.getItem("mockAccount")) {
+                              connect({ connector: mock({
+                                accounts: [window.localStorage.getItem("mockAccount") as `0x${string}`]
+                              })});
                             } else {
                               openConnectModal();
                             }
@@ -104,7 +105,7 @@ export const WalletConnect = () => {
 
                         <div className="text-nowrap text-white w-24">
                           {account.balanceFormatted ? (
-                            <span>{`${formatNumberWithUnit(Number(account.balanceFormatted))} BERA`}</span>
+                            <span>{`${formatNumberWithUnit(Number(account.balanceFormatted), 3)} BERA`}</span>
                           ) : (
                             <div className="h-4 w-20 bg-gray-700 animate-pulse rounded"></div>
                           )}
