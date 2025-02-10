@@ -124,7 +124,7 @@ const SwapPairV3 = ({
     maxInputAmount && onUserInput(SwapField.INPUT, maxInputAmount.toExact());
   }, [maxInputAmount, onUserInput]);
 
-  const { formatted: fiatValueInputFormatted } = useUSDCValue(
+  const fiatValueInputFormatted = useUSDCValue(
     tryParseAmount(
       parsedAmounts[SwapField.INPUT]?.toSignificant(
         (parsedAmounts[SwapField.INPUT]?.currency.decimals || 6) / 2
@@ -132,7 +132,8 @@ const SwapPairV3 = ({
       baseCurrency
     )
   );
-  const { formatted: fiatValueOutputFormatted } = useUSDCValue(
+
+  const fiatValueOutputFormatted = useUSDCValue(
     tryParseAmount(
       parsedAmounts[SwapField.OUTPUT]?.toSignificant(
         (parsedAmounts[SwapField.OUTPUT]?.currency.decimals || 6) / 2
@@ -265,7 +266,7 @@ const SwapPairV3 = ({
         handleTokenSelection={handleInputSelect}
         handleValueChange={handleTypeInput}
         handleMaxValue={handleMaxInput}
-        fiatValue={fiatValueInputFormatted ?? undefined}
+        fiatValue={fiatValueInputFormatted}
         showMaxButton={showMaxButton}
         showBalance={true}
         label="From"

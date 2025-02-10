@@ -2,7 +2,7 @@ import { Input } from "@/components/algebra/ui/input";
 import { formatBalance } from "@/lib/algebra/utils/common/formatBalance";
 import { formatUSD } from "@/lib//algebra/utils/common/formatUSD";
 import { Currency, Percent } from "@cryptoalgebra/sdk";
-import { useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useAccount, useBalance, useWatchBlockNumber } from "wagmi";
 import { Address, zeroAddress } from "viem";
 import { TokenSelector } from "@/components/TokenSelector/v3";
@@ -280,7 +280,7 @@ interface TokenSwapCardProps {
   value: string;
   currency: Currency | null | undefined;
   otherCurrency: Currency | null | undefined;
-  fiatValue?: number;
+  fiatValue?: ReactNode;
   priceImpact?: Percent;
   showMaxButton?: boolean;
   showBalance?: boolean;
@@ -459,7 +459,7 @@ const TokenCardV3 = ({
                 maxDecimals={currency?.decimals ?? 0 + 2}
               />
               {showBalance && fiatValue && (
-                <div className="text-sm">{formatUSD.format(fiatValue)}</div>
+                <div className="text-sm">{fiatValue}</div>
               )}
             </div>
           )}
