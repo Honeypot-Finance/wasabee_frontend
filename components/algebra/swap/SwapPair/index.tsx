@@ -103,7 +103,7 @@ const SwapPair = () => {
     maxInputAmount && onUserInput(SwapField.INPUT, maxInputAmount.toExact());
   }, [maxInputAmount, onUserInput]);
 
-  const { formatted: fiatValueInputFormatted } = useUSDCValue(
+  const fiatValueInputFormatted = useUSDCValue(
     tryParseAmount(
       parsedAmounts[SwapField.INPUT]?.toSignificant(
         (parsedAmounts[SwapField.INPUT]?.currency.decimals || 6) / 2
@@ -111,7 +111,7 @@ const SwapPair = () => {
       baseCurrency
     )
   );
-  const { formatted: fiatValueOutputFormatted } = useUSDCValue(
+  const fiatValueOutputFormatted = useUSDCValue(
     tryParseAmount(
       parsedAmounts[SwapField.OUTPUT]?.toSignificant(
         (parsedAmounts[SwapField.OUTPUT]?.currency.decimals || 6) / 2
@@ -123,9 +123,12 @@ const SwapPair = () => {
   const formattedAmounts = {
     [independentField]: typedValue,
     [dependentField]: showWrap
-      ? (parsedAmounts[independentField as keyof typeof parsedAmounts]?.toExact() ?? "")
+      ? (parsedAmounts[
+          independentField as keyof typeof parsedAmounts
+        ]?.toExact() ?? "")
       : (parsedAmounts[dependentField as keyof typeof parsedAmounts]?.toFixed(
-          (parsedAmounts[dependentField as keyof typeof parsedAmounts]?.currency.decimals || 6) / 2
+          (parsedAmounts[dependentField as keyof typeof parsedAmounts]?.currency
+            .decimals || 6) / 2
         ) ?? ""),
   };
 
@@ -138,7 +141,7 @@ const SwapPair = () => {
         handleTokenSelection={handleInputSelect}
         handleValueChange={handleTypeInput}
         handleMaxValue={handleMaxInput}
-        fiatValue={fiatValueInputFormatted ?? undefined}
+        fiatValue={fiatValueInputFormatted}
         showMaxButton={showMaxButton}
         showBalance={true}
       />
@@ -154,7 +157,7 @@ const SwapPair = () => {
         otherCurrency={baseCurrency}
         handleTokenSelection={handleOutputSelect}
         handleValueChange={handleTypeOutput}
-        fiatValue={fiatValueOutputFormatted ?? undefined}
+        fiatValue={fiatValueOutputFormatted}
         showBalance={true}
       />
     </div>
