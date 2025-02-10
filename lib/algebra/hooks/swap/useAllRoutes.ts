@@ -54,8 +54,6 @@ function computeAllRoutes(
     const { liquidity, price, tick, fee } = pool.pool;
     if (price === "0" || liquidity === "0") continue;
 
-    console.log("pool", pool);
-
     console.log("newPool args", {
       tokenA,
       tokenB,
@@ -77,6 +75,8 @@ function computeAllRoutes(
       Number(tick),
       DEFAULT_TICK_SPACING
     );
+
+    console.log("newPool", newPool);
 
     if (
       !newPool.involvesToken(tokenIn) ||
