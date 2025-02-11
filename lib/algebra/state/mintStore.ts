@@ -392,8 +392,12 @@ export function useDerivedMintInfo(
       [Bound.LOWER]:
         typeof existingPosition?.tickLower === "number"
           ? existingPosition.tickLower
-          : (invertPrice && typeof rightRangeTypedValue === "boolean") ||
-              (!invertPrice && typeof leftRangeTypedValue === "boolean")
+          : (invertPrice &&
+                (typeof rightRangeTypedValue === "boolean" ||
+                  rightRangeTypedValue !== "∞")) ||
+              (!invertPrice &&
+                (typeof leftRangeTypedValue === "boolean" ||
+                  leftRangeTypedValue !== "∞"))
             ? tickSpaceLimits[Bound.LOWER]
             : invertPrice
               ? tryParseTick(
@@ -411,8 +415,12 @@ export function useDerivedMintInfo(
       [Bound.UPPER]:
         typeof existingPosition?.tickUpper === "number"
           ? existingPosition.tickUpper
-          : (!invertPrice && typeof rightRangeTypedValue === "boolean") ||
-              (invertPrice && typeof leftRangeTypedValue === "boolean")
+          : (!invertPrice &&
+                (typeof rightRangeTypedValue === "boolean" ||
+                  rightRangeTypedValue !== "∞")) ||
+              (invertPrice &&
+                (typeof leftRangeTypedValue === "boolean" ||
+                  leftRangeTypedValue !== "∞"))
             ? tickSpaceLimits[Bound.UPPER]
             : invertPrice
               ? tryParseTick(
