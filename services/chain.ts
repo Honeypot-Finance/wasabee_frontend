@@ -104,7 +104,7 @@ export const berachainBartioTestnetNetwork = new Network({
     },
   ],
   nativeToken: {
-    address: "0x7507c1dc16935b82698e4c63f2746a2fcf994df8",
+    address: "0x6969696969696969696969696969696969696969",
     name: "Bera",
     symbol: "BERA",
     decimals: 18,
@@ -164,7 +164,7 @@ export const berachainBartioTestnetNetwork = new Network({
         decimals: 18,
       },
       {
-        address: "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8".toLowerCase(),
+        address: "0x6969696969696969696969696969696969696969".toLowerCase(),
         name: "Wrapped Bera",
         symbol: "WBERA",
         decimals: 18,
