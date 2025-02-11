@@ -394,10 +394,10 @@ export function useDerivedMintInfo(
           ? existingPosition.tickLower
           : (invertPrice &&
                 (typeof rightRangeTypedValue === "boolean" ||
-                  rightRangeTypedValue !== "∞")) ||
+                  rightRangeTypedValue == "∞")) ||
               (!invertPrice &&
                 (typeof leftRangeTypedValue === "boolean" ||
-                  leftRangeTypedValue !== "∞"))
+                  leftRangeTypedValue == "∞"))
             ? tickSpaceLimits[Bound.LOWER]
             : invertPrice
               ? tryParseTick(
@@ -417,10 +417,10 @@ export function useDerivedMintInfo(
           ? existingPosition.tickUpper
           : (!invertPrice &&
                 (typeof rightRangeTypedValue === "boolean" ||
-                  rightRangeTypedValue !== "∞")) ||
+                  rightRangeTypedValue == "∞")) ||
               (invertPrice &&
                 (typeof leftRangeTypedValue === "boolean" ||
-                  leftRangeTypedValue !== "∞"))
+                  leftRangeTypedValue == "∞"))
             ? tickSpaceLimits[Bound.UPPER]
             : invertPrice
               ? tryParseTick(
