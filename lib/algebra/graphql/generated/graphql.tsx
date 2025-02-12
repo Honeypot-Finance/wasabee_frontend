@@ -13990,7 +13990,7 @@ export type AllRacersQueryResult = Apollo.QueryResult<AllRacersQuery, AllRacersQ
 export const PoolsListDocument = gql`
     query PoolsList($search: String) {
   pools(
-    where: {searchString_contains: $search}
+    where: {searchString_contains: $search, liquidity_gt: 0}
     orderBy: totalValueLockedUSD
     orderDirection: desc
     first: 100

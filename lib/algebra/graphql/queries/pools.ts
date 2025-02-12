@@ -99,7 +99,7 @@ export const POOL_MONTH_DATA_FRAGMENT = gql`
 export const POOLS_LIST = gql`
   query PoolsList($search: String) {
     pools(
-      where: { searchString_contains: $search }
+      where: { searchString_contains: $search, liquidity_gt: 0 }
       orderBy: totalValueLockedUSD
       orderDirection: desc
       first: 100
