@@ -90,7 +90,7 @@ export const PortfolioTab = observer(() => {
   return (
     <div className="custom-dashed-3xl w-full p-6 bg-white">
       <Link
-        href="https://app.rhino.fi/bridge"
+        href="https://app.rhino.fi/bridge/?refId=DeFi_HPOT&token=USDC&chainOut=BERACHAIN&chainIn=ETHEREUM"
         target="_blank"
         className="mb-4 w-full justify-end"
       >
