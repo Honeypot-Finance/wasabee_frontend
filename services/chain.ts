@@ -657,12 +657,6 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/wgbera.png",
     },
-    "0xd77552d3849ab4d8c3b189a9582d0ba4c1f4f912": {
-      name: "WGBERA",
-      symbol: "WGBERA",
-      decimals: 18,
-      logoURI: "/images/icons/tokens/wgbera-token-icon.png",
-    },
   },
   validatedFtoAddresses: [],
   validatedMemeAddresses: [],
