@@ -40,16 +40,14 @@ function CardContainer({
       }
       // TODO: Add style adaptation of different sizes
       className={cn(
-        "flex flex-col h-full w-full gap-y-4 justify-center items-center rounded-2xl text-[#202020]",
-        bordered
-          ? "border-3 border-[#F2C34A] bg-transparent"
-          : "bg-transparent",
+        "flex flex-col h-full w-full gap-y-4 justify-center items-center bg-[#FFCD4D] rounded-2xl text-[#202020] repeat",
         bordered &&
           [
             "px-4",
             "bg-repeat-x",
             showTopBorder && "pt-[80px]",
             showBottomBorder && "pb-[80px]",
+            "bg-[position:-65px_top,_left_bottom]",
             "bg-[size:auto_70px,_auto_70px]",
             `bg-[position:top,_left_bottom]`,
           ]
