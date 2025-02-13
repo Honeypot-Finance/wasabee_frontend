@@ -38,6 +38,8 @@ function CardContainer({
             .join(", ")}`,
         } as React.CSSProperties
       }
+
+      // TODO: Add style adaptation of different sizes
       className={cn(
         "flex flex-col h-full w-full gap-y-4 justify-center items-center bg-[#FFCD4D] rounded-2xl text-[#202020]",
         bordered &&
@@ -47,7 +49,7 @@ function CardContainer({
             showBottomBorder && "pb-[80px]",
             "bg-[position:-65px_top,_left_bottom]",
             "bg-[size:auto_70px,_auto_70px]",
-            "bg-repeat-x",
+            `bg-[position:top,_left_bottom]`,
           ]
             .filter(Boolean)
             .join(" "),
