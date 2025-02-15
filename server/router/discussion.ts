@@ -1,12 +1,13 @@
 import { authProcedure, publicProcedure, rateLimitMiddleware, router } from "../trpc";
 import z from "zod";
 import { discussionService } from "../service/discussion";
+import { cacheProvider, getCacheKey } from "@/lib/server/cache";
 
 export const discussionRouter = router({
   createComment: publicProcedure
-  // .use(rateLimitMiddleware({
-  //   limit: 10,
-  // }))
+    // .use(rateLimitMiddleware({
+    //   limit: 10,
+    // }))
     .input(
       z.object({
         project_id: z.number(),
@@ -35,8 +36,10 @@ export const discussionRouter = router({
       })
     )
     .query(async ({ input }) => {
-      return (await discussionService.getCommentsByProjectId(input)).flatMap(
-        (comment) => comment
-      );
+      return cacheProvider.getOrSet(getCacheKey("getCommentsByProjectId", input),
+        async () => (await discussionService.getCommentsByProjectId(input)).flatMap(
+          (comment) => comment
+        )
+      )
     }),
 });

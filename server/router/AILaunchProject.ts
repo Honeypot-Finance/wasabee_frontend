@@ -24,7 +24,7 @@ export const aiLaunchProjectRouter = router({
         prompt_input: z.string().min(1),
       })
     )
-    .query(async ({ input }) => {
+    .mutation(async ({ input }) => {
       if (!alphakek_api_key) {
         throw new Error("AlphaKek API key is not set");
       }

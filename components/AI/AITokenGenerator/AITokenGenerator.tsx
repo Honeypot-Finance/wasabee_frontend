@@ -48,7 +48,7 @@ export default function AITokenGenerator({
     setTip("Generating token... This may take up to a minute");
     try {
       const res: string =
-        await trpcClient.aiLaunchProject.generateAiProject.query({
+        await trpcClient.aiLaunchProject.generateAiProject.mutate({
           wallet_address: wallet.account as `0x${string}`,
           prompt_input: prompt,
         });

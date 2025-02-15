@@ -67,7 +67,7 @@ export const trpcClient = createTRPCClient<AppRouter>({
       async headers () {
         const headers = {} as Record<string, string>;
         if (
-          localStorage &&
+          typeof window !== "undefined" &&
           localStorage.getItem("message") &&
           localStorage.getItem("signature")
         ) {
