@@ -663,6 +663,12 @@ export const berachainNetwork = new Network({
       decimals: 6,
       logoURI: "/images/icons/tokens/usdt-token-icon.png",
     },
+    "0xbc665a196220043b738de189aef05250e2acc700": {
+      name: "Boyz",
+      symbol: "Boyz",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/boyz-token-icon.png",
+    },
   },
   validatedFtoAddresses: [],
   validatedMemeAddresses: [],
