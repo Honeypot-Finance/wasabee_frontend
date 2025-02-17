@@ -657,6 +657,12 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/wgbera.png",
     },
+    "0x779ded0c9e1022225f8e0630b35a9b54be713736": {
+      name: "USD₮0",
+      symbol: "USD₮0",
+      decimals: 6,
+      logoURI: "/images/icons/tokens/usdt-token-icon.png",
+    },
   },
   validatedFtoAddresses: [],
   validatedMemeAddresses: [],
