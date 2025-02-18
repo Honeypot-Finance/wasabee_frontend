@@ -80,12 +80,12 @@ export const Layout = ({
     });
   }, []);
 
-  useEffect(() => {
-    const inviteCode = localStorage.getItem("inviteCode");
-    if (!inviteCode) {
-      setShowInviteModal(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const inviteCode = localStorage.getItem("inviteCode");
+  //   if (!inviteCode) {
+  //     setShowInviteModal(true);
+  //   }
+  // }, []);
 
   const handleInviteCodeSubmit = async (code: string) => {
     try {
@@ -135,9 +135,9 @@ export const Layout = ({
         className
       )}
     >
-      {showInviteModal && (
+      {/* {showInviteModal && (
         <InvitationCodeModal onSubmit={handleInviteCodeSubmit} />
-      )}
+      )} */}
 
       <Script
         src="/charting_library/charting_library.standalone.js"
@@ -148,7 +148,10 @@ export const Layout = ({
         strategy="beforeInteractive"
       />
 
-      <AnnouncementBar slogans={slogans} interval={5000} />
+      <AnnouncementBar
+        slogans={slogans}
+        interval={5000}
+      />
       {/* <GuideModal /> */}
       <ChatWidget />
 
