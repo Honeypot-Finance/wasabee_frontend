@@ -232,9 +232,8 @@ const PoolsList = ({
           },
           fee: Number(fee) / 10_000,
           tvlUSD: Number(totalValueLockedUSD),
-          volume24USD:
-            timeDifference <= msIn24Hours ? currentPool.volumeUSD : 0,
-          fees24USD: timeDifference <= msIn24Hours ? currentPool.feesUSD : 0,
+          volume24USD: currentPool.volumeUSD,
+          fees24USD: currentPool.feesUSD,
           poolMaxApr,
           poolAvgApr,
           farmApr,
@@ -412,9 +411,8 @@ const PoolsList = ({
           },
           fee: Number(fee) / 10_000,
           tvlUSD: Number(totalValueLockedUSD),
-          volume24USD:
-            timeDifference <= msIn24Hours ? currentPool.volumeUSD : 0,
-          fees24USD: timeDifference <= msIn24Hours ? currentPool.feesUSD : 0,
+          volume24USD: currentPool.volumeUSD,
+          fees24USD: currentPool.feesUSD,
           poolMaxApr,
           poolAvgApr,
           farmApr,
