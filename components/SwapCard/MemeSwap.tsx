@@ -40,6 +40,8 @@ export const LaunchDetailSwapCard = observer(
     onSwapSuccess,
     isInputNative,
     isOutputNative,
+    disableFromSelection = false,
+    disableToSelection = false,
   }: {
     inputAddress?: string;
     outputAddress?: string;
@@ -49,6 +51,8 @@ export const LaunchDetailSwapCard = observer(
     onSwapSuccess?: () => void;
     isInputNative?: boolean;
     isOutputNative?: boolean;
+    disableFromSelection?: boolean;
+    disableToSelection?: boolean;
   }) => {
     const [values, setValues] = useState<{ amount0: string; amount1: string }>({
       amount0: "0",
@@ -173,29 +177,35 @@ export const LaunchDetailSwapCard = observer(
     }, [swap.fromToken, swap.toToken]);
 
     return (
-      <SpinnerContainer
-        className={cn(
-          "flex flex-1 justify-around items-center flex-col gap-2 w-full"
-        )}
-        isLoading={false}
-      >
-        <div
-          className={cn(
-            " w-full flex flex-1 flex-col justify-center items-start gap-[23px] bg-[#FFCD4D] rounded-3xl border-3 border-solid border-[#F7931A10] hover:border-[#F7931A] transition-all relative",
-            noBoarder && "border-0"
-          )}
+      <div>
+        <Tabs
+          aria-label="Swap Options"
+          classNames={{
+            base: "relative w-full",
+            tabList: cn(
+              "flex rounded-2xl border border-[#202020] bg-white shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020]",
+              "absolute left-1/2 -translate-x-1/2 z-10 -top-5",
+              "overflow-x-auto max-w-[90vw] sm:max-w-none"
+            ),
+            tab: "px-5 py-1 rounded-lg whitespace-nowrap text-xs sm:text-sm sm:text-base",
+            tabContent: "group-data-[selected=true]:text-white",
+            cursor:
+              "bg-[#020202] border border-black shadow-[0.5px_0.5px_0px_0px_#000000] sm:shadow-[2px_2px_0px_0px_#000000]",
+            panel: cn(
+              "flex flex-col h-full w-full gap-y-4 justify-center items-center",
+              "!mt-0 !py-0"
+            ),
+          }}
         >
-          <Trigger
-            tab={operate}
-            capitalize={true}
-            setTab={setOperate}
-            options={["Swap", "LP"]}
-            callback={(tab) => setCurrentTab(tab as "Swap" | "LP")}
-            className="w-[308px] z-10 absolute top-0 transform -translate-y-1/2 left-1/2 -translate-x-1/2"
-            notification={memePairContract.canClaimLP ? ["LP"] : []}
-          />
-
-          {currentTab === "Swap" && (
+          <Tab
+            key="swap"
+            title="Swap"
+            className={cn(
+              "relative",
+              memePairContract.canClaimLP &&
+                "after:absolute after:content-[''] after:w-2 after:h-2 after:bg-red-500 after:rounded-full after:-top-1 after:-right-1"
+            )}
+          >
             <LoadingContainer isLoading={!isInit}>
               <V3SwapCard
                 fromTokenAddress={inputAddress}
@@ -204,7 +214,8 @@ export const LaunchDetailSwapCard = observer(
                 isInputNative={isInputNative}
                 isOutputNative={isOutputNative}
                 onSwapSuccess={onSwapSuccess}
-                disableToSelection={true}
+                disableFromSelection={disableFromSelection}
+                disableToSelection={disableToSelection}
               />
             </LoadingContainer>
           )}
