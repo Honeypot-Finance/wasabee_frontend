@@ -13,7 +13,6 @@ import Image from "next/image";
 import { Key } from "react";
 import { FaPlusCircle } from "react-icons/fa";
 import Link from "next/link";
-
 interface NavbarProps {
   menuList: Menu[];
 }
@@ -39,8 +38,8 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
         className="mb-[-20px]"
         src="/images/header/hanging-rope.svg"
       />
-      <div className="bg-[#FFCD4D] rounded-xl flex flex-col py-2 px-1.5 lg:py-4 lg:px-3 border-[1.5px] border-[#010101] shadow-[2px_4px_0px_0px_#FFF]">
-        <div className="flex gap-1 lg:gap-2 lg:py-1 flex-wrap lg:flex-nowrap">
+      <div className="bg-[#FFCD4D] rounded-xl flex flex-col py-4 px-3 border-[1.5px] border-[#010101] shadow-[2px_4px_0px_0px_#FFF]">
+        <div className="flex gap-2 py-1">
           {menuList.map((menu) =>
             Array.isArray(menu.path) ? (
               <Dropdown
@@ -102,11 +101,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
               >
                 <Button
                   className={cn(
-                    "h-8 py-0 font-bold bg-transparent text-sm lg:text-base text-black hover:bg-[#202020]/80 hover:text-white",
-                    menu.title === "Pot2Pump" && "hidden",
-                    menu.routePath === router.pathname
-                      ? "bg-[#202020] text-white"
-                      : ""
+                    "min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white"
                   )}
                 >
                   {menu.title}
@@ -131,10 +126,10 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
             </DropdownTrigger>
             <DropdownMenu>
               <DropdownItem
-                href={DOMAIN_MAP.WASABEE}
+                href={DOMAIN_MAP.POT2PUMP}
                 startContent={
                   <Image
-                    src="/images/wasabee_pot.webp"
+                    src="/images/blueAstro.8533943d.svg"
                     alt="pot2pump"
                     width={16}
                     height={16}
@@ -143,7 +138,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 }
                 key="pot2pump"
               >
-                Wasabee DEX
+                Pot2Pump
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
