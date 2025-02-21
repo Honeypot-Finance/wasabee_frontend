@@ -277,7 +277,7 @@ const PoolsTable = observer(
                 {!getSortedPools().length ? (
                   <tr className="hover:bg-white border-white h-full w-full">
                     <td
-                      colSpan={6}
+                      colSpan={columns.length}
                       className="h-24 text-center text-black"
                     >
                       No results.
