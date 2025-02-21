@@ -73,11 +73,11 @@ export const appPathsList: Menu[] = [
     title: "Leaderboard",
     routePath: "/leaderboard",
   },
-  {
-    path: `https://pot2pump.honeypotfinance.xyz/`,
-    title: "Pot2Pump",
-    routePath: "https://pot2pump.honeypotfinance.xyz/",
-  },
+  // {
+  //   path: `https://pot2pump.honeypotfinance.xyz/`,
+  //   title: "Pot2Pump",
+  //   routePath: "https://pot2pump.honeypotfinance.xyz/",
+  // },
 ];
 
 const getFlatPaths = (paths: Menu[]): flatMenu[] => {
