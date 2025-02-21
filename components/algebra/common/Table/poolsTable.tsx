@@ -188,7 +188,10 @@ const PoolsTable = observer(
                   selectedFilter === "trending" ? "all" : "myPools"
                 }
               >
-                <Tab key="all" title="All Pools" />
+                <Tab
+                  key="all"
+                  title="All Pools"
+                />
                 <Tab
                   href="/profile?tab=my-pools"
                   key="myPools"
@@ -229,16 +232,32 @@ const PoolsTable = observer(
           </div>
         )}
 
-        <div className="custom-dashed-3xl w-full p-6 bg-white">
+        <div className="custom-dashed-3xl w-full p-6 bg-white overflow-x-auto">
           {!loading ? (
             <table className="w-full">
               <thead>
                 <tr>
-                  <SortHeader field="pool" label="Pool" align="left" />
-                  <SortHeader field="tvl" label="TVL" />
-                  <SortHeader field="volume" label="Volume 24H" />
-                  <SortHeader field="feesUSD" label="Fee 24H" />
-                  <SortHeader field="apr" label="APR" />
+                  <SortHeader
+                    field="pool"
+                    label="Pool"
+                    align="left"
+                  />
+                  <SortHeader
+                    field="tvl"
+                    label="TVL"
+                  />
+                  <SortHeader
+                    field="volume"
+                    label="Volume 24H"
+                  />
+                  <SortHeader
+                    field="feesUSD"
+                    label="Fee 24H"
+                  />
+                  <SortHeader
+                    field="apr"
+                    label="APR"
+                  />
                   {defaultFilter === "myPools" && (
                     <SortHeader
                       field="unclaimedFees"
@@ -253,8 +272,11 @@ const PoolsTable = observer(
               </thead>
               <tbody className="divide-y divide-[#4D4D4D]">
                 {!getSortedPools().length ? (
-                  <tr className="hover:bg-white border-white h-full">
-                    <td colSpan={5} className="h-24 text-center text-black">
+                  <tr className="hover:bg-white border-white h-full w-full">
+                    <td
+                      colSpan={6}
+                      className="h-24 text-center text-black"
+                    >
                       No results.
                     </td>
                   </tr>

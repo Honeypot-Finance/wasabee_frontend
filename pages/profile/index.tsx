@@ -71,7 +71,10 @@ export const Profile = observer(() => {
                         >
                           {truncate(wallet.account, 10)}
                         </Link>
-                        <Copy value={wallet.account} copyTip="Copy address" />
+                        <Copy
+                          value={wallet.account}
+                          copyTip="Copy address"
+                        />
                       </div>
                     </div>
                   </div>
@@ -123,7 +126,7 @@ export const Profile = observer(() => {
                   </div>
                 </div>
 
-                <div className="w-[511px] flex flex-col gap-2">
+                <div className="hidden md:block w-[511px] flex-col gap-2">
                   <div
                     className="h-30 w-full rounded-lg overflow-hidden"
                     ref={chartContainerRef}
@@ -161,10 +164,16 @@ export const Profile = observer(() => {
                 }
               }}
             >
-              <Tab key="portfolio" title="Portfolio">
+              <Tab
+                key="portfolio"
+                title="Portfolio"
+              >
                 <PortfolioTab />
               </Tab>
-              <Tab key="my-pools" title="My Pools">
+              <Tab
+                key="my-pools"
+                title="My Pools"
+              >
                 <MyPools />
               </Tab>
             </Tabs>

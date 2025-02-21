@@ -451,7 +451,7 @@ const PoolsList = ({
 
   return (
     <div className="w-full">
-      <div className="hidden xl:block w-full">
+      <div className="w-full">
         <PoolsTable
           columnsMy={poolsColumnsMy}
           columns={poolsColumns}
@@ -466,9 +466,6 @@ const PoolsList = ({
           showOptions={showOptions}
           handleSearch={(data: string) => setSearch(data)}
         />
-      </div>
-      <div className="block xl:hidden ">
-        <PoolCardList data={formattedPools} />
       </div>
     </div>
   );

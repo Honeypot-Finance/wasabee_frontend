@@ -88,7 +88,7 @@ export const PortfolioTab = observer(() => {
   );
 
   return (
-    <div className="custom-dashed-3xl w-full p-6 bg-white">
+    <div className="custom-dashed-3xl w-full p-6 bg-white ">
       <Link
         href="https://app.rhino.fi/bridge/?refId=DeFi_HPOT&token=USDC&chainOut=BERACHAIN&chainIn=ETHEREUM"
         target="_blank"
@@ -96,72 +96,91 @@ export const PortfolioTab = observer(() => {
       >
         <Button className="bg-white">
           <div className="flex items-center gap-2">
-            <Image src={rhinoLogo} alt="rhino" width={24} height={24} />
+            <Image
+              src={rhinoLogo}
+              alt="rhino"
+              width={24}
+              height={24}
+            />
             <span>Bridge your assets with Rhino finance</span>
           </div>
         </Button>
       </Link>
-      <table className="w-full">
-        <thead className="text-[#4D4D4D]">
-          <tr>
-            <th
-              className="py-4 px-6 text-left cursor-pointer transition-colors"
-              onClick={() => handleSort("name")}
-            >
-              <div className="flex items-center gap-2">
-                <span>Asset</span>
-                <div className="flex flex-col">
-                  <ChevronUpIcon
-                    className={`h-3 w-3 ${
-                      sortField === "name" && sortDirection === "asc"
-                        ? "text-black"
-                        : "text-[#4D4D4D]"
-                    }`}
-                  />
-                  <ChevronDownIcon
-                    className={`h-3 w-3 ${
-                      sortField === "name" && sortDirection === "desc"
-                        ? "text-black"
-                        : "text-[#4D4D4D]"
-                    }`}
-                  />
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="text-[#4D4D4D]">
+            <tr>
+              <th
+                className="py-4 px-6 text-left cursor-pointer transition-colors"
+                onClick={() => handleSort("name")}
+              >
+                <div className="flex items-center gap-2">
+                  <span>Asset</span>
+                  <div className="flex flex-col">
+                    <ChevronUpIcon
+                      className={`h-3 w-3 ${
+                        sortField === "name" && sortDirection === "asc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                    <ChevronDownIcon
+                      className={`h-3 w-3 ${
+                        sortField === "name" && sortDirection === "desc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                  </div>
                 </div>
-              </div>
-            </th>
-            <SortHeader field="price" label="Price" />
-            <SortHeader field="balance" label="Balance" />
-            <SortHeader field="value" label="Value" />
-            <th className="py-4 px-6 text-center">Action</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-[#4D4D4D]">
-          {portfolio.isLoading
-            ? Array(3)
-                .fill(0)
-                .map((_, index) => (
-                  <tr key={index}>
-                    <td className="py-4 px-6">
-                      <Skeleton className="h-12 w-32 rounded-lg" />
-                    </td>
-                    <td className="py-4 px-6">
-                      <Skeleton className="h-12 w-24 rounded-lg ml-auto" />
-                    </td>
-                    <td className="py-4 px-6">
-                      <Skeleton className="h-12 w-24 rounded-lg ml-auto" />
-                    </td>
-                    <td className="py-4 px-6">
-                      <Skeleton className="h-12 w-24 rounded-lg ml-auto" />
-                    </td>
-                    <td className="py-4 px-6">
-                      <Skeleton className="h-12 w-24 rounded-lg mx-auto" />
-                    </td>
-                  </tr>
-                ))
-            : getSortedTokens().map((token) => (
-                <TokenBalanceCard key={token.address} token={token} />
-              ))}
-        </tbody>
-      </table>
+              </th>
+              <SortHeader
+                field="price"
+                label="Price"
+              />
+              <SortHeader
+                field="balance"
+                label="Balance"
+              />
+              <SortHeader
+                field="value"
+                label="Value"
+              />
+              <th className="py-4 px-6 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#4D4D4D]">
+            {portfolio.isLoading
+              ? Array(3)
+                  .fill(0)
+                  .map((_, index) => (
+                    <tr key={index}>
+                      <td className="py-4 px-6">
+                        <Skeleton className="h-12 w-32 rounded-lg" />
+                      </td>
+                      <td className="py-4 px-6">
+                        <Skeleton className="h-12 w-24 rounded-lg ml-auto" />
+                      </td>
+                      <td className="py-4 px-6">
+                        <Skeleton className="h-12 w-24 rounded-lg ml-auto" />
+                      </td>
+                      <td className="py-4 px-6">
+                        <Skeleton className="h-12 w-24 rounded-lg ml-auto" />
+                      </td>
+                      <td className="py-4 px-6">
+                        <Skeleton className="h-12 w-24 rounded-lg mx-auto" />
+                      </td>
+                    </tr>
+                  ))
+              : getSortedTokens().map((token) => (
+                  <TokenBalanceCard
+                    key={token.address}
+                    token={token}
+                  />
+                ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* FIXME: Add pagination */}
       <div className="p-4 border-t border-[#2D2D2D]">
