@@ -436,8 +436,6 @@ const PoolsList = ({
     );
   }, [isLoading, userPools, activeFarmings, wallet.isInit]);
 
-  console.log(pools?.pools[0]);
-
   const handleSort = (callback: any) => {
     const sort = callback();
     if (sort.length > 0) {

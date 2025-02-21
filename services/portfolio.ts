@@ -31,6 +31,7 @@ class Portfolio {
       const tokenIds = validatedTokens.map((token) =>
         token.address.toLowerCase()
       );
+
       //also add any account holding tokens
       console.log("wallet.account", wallet.account);
       const account = await getSingleAccountDetails(wallet.account);

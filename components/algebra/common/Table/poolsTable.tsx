@@ -15,6 +15,9 @@ import { formatExtremelyLargeNumber } from "@/lib/format";
 import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
+import { optionsPresets } from "@/components/OptionsDropdown/OptionsDropdown";
+import { OptionsDropdown } from "@/components/OptionsDropdown/OptionsDropdown";
+import { TbSwitch, TbSwitchHorizontal } from "react-icons/tb";
 
 interface PoolsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -265,9 +268,9 @@ const PoolsTable = observer(
                       align="center"
                     />
                   )}
-                  {/* <th className="py-4 px-6 text-center text-[#4D4D4D]">
+                  <th className="py-4 px-6 text-center text-[#4D4D4D]">
                     Actions
-                  </th> */}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#4D4D4D]">
@@ -367,23 +370,28 @@ const PoolsTable = observer(
                           </span>
                         </td>
                       )}
-                      {/* <td className="py-4 px-6 text-center">
-                        <Button
-                          className="bg-transparent"
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (action) {
-                              action(pool.id);
-                            } else if (link) {
-                              window.location.href = `/${link}/${pool.id}`;
-                            }
-                          }}
-                        >
-                          View
-                        </Button>
-                      </td> */}
+                      <td className="py-4 px-6 text-center">
+                        <OptionsDropdown
+                          className="min-h-0 h-[unset] bg-white text-black"
+                          options={[
+                            optionsPresets.copy({
+                              copyText: pool.id,
+                              displayText: "Copy Pool address",
+                              copysSuccessText: "Pool address copied",
+                            }),
+                            optionsPresets.viewOnExplorer({
+                              address: pool.id,
+                            }),
+                            {
+                              icon: <TbSwitchHorizontal />,
+                              display: "Swap",
+                              onClick: () => {
+                                window.location.href = `/swap?inputCurrency=${pool.pair.token0.id}&outputCurrency=${pool.pair.token1.id}`;
+                              },
+                            },
+                          ]}
+                        />
+                      </td>
                     </tr>
                   ))
                 )}
