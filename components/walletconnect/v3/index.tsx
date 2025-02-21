@@ -5,7 +5,7 @@ import { useConnect, useConnectors } from "wagmi";
 import { BiWallet } from "react-icons/bi";
 import { BsPerson } from "react-icons/bs";
 import Link from "next/link";
-import { formatNumberWithUnit } from '@/lib/utils';
+import { formatNumberWithUnit } from "@/lib/utils";
 import { mock } from "wagmi/connectors";
 
 const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
@@ -20,7 +20,6 @@ const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
 
 export const WalletConnect = () => {
   const { connect } = useConnect();
-  const connectors = useConnectors();
 
   return (
     <div className="flex flex-col items-center">
@@ -78,9 +77,15 @@ export const WalletConnect = () => {
                           <ConnectButtonCustom
                             onClick={() => {
                               if (window.localStorage.getItem("mockAccount")) {
-                                connect({ connector: mock({
-                                  accounts: [window.localStorage.getItem("mockAccount") as `0x${string}`]
-                                })});
+                                connect({
+                                  connector: mock({
+                                    accounts: [
+                                      window.localStorage.getItem(
+                                        "mockAccount"
+                                      ) as `0x${string}`,
+                                    ],
+                                  }),
+                                });
                               } else {
                                 openConnectModal();
                               }
@@ -135,10 +140,7 @@ export const WalletConnect = () => {
                           type="button"
                           className="flex cursor-pointer bg-[#202020] text-white px-3 lg:px-4 py-1.5 lg:py-2 rounded-2xl gap-1.5 lg:gap-2 items-center shrink-0 text-xs sm:text-sm lg:text-base"
                         >
-                          <BiWallet
-                            size={18}
-                            className="lg:w-5 lg:h-5"
-                          />
+                          <BiWallet size={18} className="lg:w-5 lg:h-5" />
                           <span className="whitespace-nowrap">
                             {account.displayName}
                           </span>
