@@ -56,8 +56,7 @@ const SwapPage = observer(() => {
           <V3SwapCard
             fromTokenAddress={inputCurrency ?? undefined}
             toTokenAddress={
-              // outputCurrency ?? wallet.currentChain.platformTokenAddress.HPOT
-              STABLECOINS.HONEY.address.toLowerCase()
+              outputCurrency ?? STABLECOINS.HONEY.address.toLowerCase()
             }
             isUpdatingPriceChart={true}
           />

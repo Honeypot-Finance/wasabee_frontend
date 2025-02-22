@@ -287,7 +287,7 @@ const PoolsTable = observer(
                   getSortedPools().map((pool) => (
                     <tr
                       key={pool.id}
-                      className="transition-colors bg-white text-black hover:bg-gray-50 cursor-pointer"
+                      className="transition-colors bg-white text-black  hover:bg-gray-50 cursor-pointer"
                       onClick={() => {
                         if (action) {
                           action(pool.id);
