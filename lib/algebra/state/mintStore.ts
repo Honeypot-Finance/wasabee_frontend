@@ -393,48 +393,48 @@ export function useDerivedMintInfo(
         typeof existingPosition?.tickLower === "number"
           ? existingPosition.tickLower
           : (invertPrice &&
-                (typeof rightRangeTypedValue === "boolean" ||
-                  rightRangeTypedValue == "∞")) ||
-              (!invertPrice &&
-                (typeof leftRangeTypedValue === "boolean" ||
-                  leftRangeTypedValue == "∞"))
-            ? tickSpaceLimits[Bound.LOWER]
-            : invertPrice
-              ? tryParseTick(
-                  token1,
-                  token0,
-                  rightRangeTypedValue.toString(),
-                  tickSpacing
-                )
-              : tryParseTick(
-                  token0,
-                  token1,
-                  leftRangeTypedValue.toString(),
-                  tickSpacing
-                ),
+              (typeof rightRangeTypedValue === "boolean" ||
+                rightRangeTypedValue == "∞")) ||
+            (!invertPrice &&
+              (typeof leftRangeTypedValue === "boolean" ||
+                leftRangeTypedValue == "∞"))
+          ? tickSpaceLimits[Bound.LOWER]
+          : invertPrice
+          ? tryParseTick(
+              token1,
+              token0,
+              rightRangeTypedValue.toString(),
+              tickSpacing
+            )
+          : tryParseTick(
+              token0,
+              token1,
+              leftRangeTypedValue.toString(),
+              tickSpacing
+            ),
       [Bound.UPPER]:
         typeof existingPosition?.tickUpper === "number"
           ? existingPosition.tickUpper
           : (!invertPrice &&
-                (typeof rightRangeTypedValue === "boolean" ||
-                  rightRangeTypedValue == "∞")) ||
-              (invertPrice &&
-                (typeof leftRangeTypedValue === "boolean" ||
-                  leftRangeTypedValue == "∞"))
-            ? tickSpaceLimits[Bound.UPPER]
-            : invertPrice
-              ? tryParseTick(
-                  token1,
-                  token0,
-                  leftRangeTypedValue.toString(),
-                  tickSpacing
-                )
-              : tryParseTick(
-                  token0,
-                  token1,
-                  rightRangeTypedValue.toString(),
-                  tickSpacing
-                ),
+              (typeof rightRangeTypedValue === "boolean" ||
+                rightRangeTypedValue == "∞")) ||
+            (invertPrice &&
+              (typeof leftRangeTypedValue === "boolean" ||
+                leftRangeTypedValue == "∞"))
+          ? tickSpaceLimits[Bound.UPPER]
+          : invertPrice
+          ? tryParseTick(
+              token1,
+              token0,
+              leftRangeTypedValue.toString(),
+              tickSpacing
+            )
+          : tryParseTick(
+              token0,
+              token1,
+              rightRangeTypedValue.toString(),
+              tickSpacing
+            ),
     };
   }, [
     existingPosition,

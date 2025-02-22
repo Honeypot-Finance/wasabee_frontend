@@ -104,15 +104,18 @@ const NewPositionPage = () => {
     <PageContainer>
       <div className="max-w-[1200px] w-full mx-auto bg-[#FFCD4D] rounded-3xl relative overflow-hidden">
         {/* 顶部装饰边框 */}
-        <div className="bg-[url('/images/pumping/outline-border.png')] bg-contain bg-repeat-x bg-left-top h-[90px] absolute -top-1 left-0 w-full"></div>
+        <div className="bg-[url('/images/pumping/outline-border.png')] bg-contain bg-repeat-x bg-left-top h-[60px] absolute -top-1 left-0 w-full"></div>
 
-        <div className="max-w-[1200px] w-full mx-auto px-6 pt-[90px] pb-[70px]">
-          <PageTitle title={"Create Position"} />
+        <div className="max-w-[1200px] w-full mx-auto px-6 pt-[60px] pb-[70px]">
+          {/* <PageTitle title={"Create Position"} /> */}
+          <div className="font-gliker text-[rgba(32,32,32,1)] text-2xl">
+            Create Position
+          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8 text-left">
-            <div className="col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-8 gap-x-0 gap-y-8 w-full lg:gap-8 text-left mt-6">
+            <div className="col-span-5">
               <div className="flex max-md:flex-col md:items-center justify-between w-full mb-6 gap-4">
-                <h2 className="font-semibold text-2xl text-[#202020]">
+                <h2 className="text-base text-[#202020] font-gliker">
                   1. Select Range
                 </h2>
                 <PresetTabs
@@ -123,27 +126,30 @@ const NewPositionPage = () => {
               </div>
 
               <div className="flex flex-col w-full">
-                <div className="w-full rounded-[32px] bg-white space-y-4 px-6 py-8 custom-dashed">
-                  <div className="flex w-full flex-col md:flex-row gap-4">
-                    <RangeSelector
-                      priceLower={priceLower}
-                      priceUpper={priceUpper}
-                      getDecrementLower={getDecrementLower}
-                      getIncrementLower={getIncrementLower}
-                      getDecrementUpper={getDecrementUpper}
-                      getIncrementUpper={getIncrementUpper}
-                      onLeftRangeInput={onLeftRangeInput}
-                      onRightRangeInput={onRightRangeInput}
-                      currencyA={currencyA}
-                      currencyB={currencyB}
-                      mintInfo={mintInfo}
-                      disabled={!startPriceTypedValue && !mintInfo.price}
-                    />
-                    <div className="md:ml-auto md:text-right">
-                      <div className="font-medium text-sm mb-3 text-black/70">
+                <div className="w-full rounded-[32px] bg-white space-y-4 px-6 py-8 border-[1px] border-[#000000] shadow-[4px_4px_0px_0px_rgba(210,154,13,1)]">
+                  <div className="flex w-full flex-col md:flex-row gap-4 flex-wrap">
+                    <div className="range-selector-container">
+                      <RangeSelector
+                        priceLower={priceLower}
+                        priceUpper={priceUpper}
+                        getDecrementLower={getDecrementLower}
+                        getIncrementLower={getIncrementLower}
+                        getDecrementUpper={getDecrementUpper}
+                        getIncrementUpper={getIncrementUpper}
+                        onLeftRangeInput={onLeftRangeInput}
+                        onRightRangeInput={onRightRangeInput}
+                        currencyA={currencyA}
+                        currencyB={currencyB}
+                        mintInfo={mintInfo}
+                        disabled={!startPriceTypedValue && !mintInfo.price}
+                      />
+                    </div>
+
+                    <div className="md:ml-auto flex-1 flex flex-col gap-y-3 flex-shrink-0 min-w-[235px]">
+                      <div className="text-[rgba(32,32,32,1)] font-gliker text-base">
                         CURRENT PRICE
                       </div>
-                      <div className="font-bold text-xl text-black">
+                      <div className="font-bold text-xl text-black border-[1px] border-[#000000] shadow-[1px_2px_0px_0px_rgba(32,32,32,1),1px_1px_0px_0px_rgba(32,32,32,1)] rounded-[16px] px-4 h-[64px] line-[64px] leading-[64px]">
                         {currentPrice}
                       </div>
                     </div>
@@ -162,11 +168,11 @@ const NewPositionPage = () => {
               </div>
             </div>
 
-            <div className="flex flex-col">
-              <h2 className="font-semibold text-2xl text-[#202020] mb-6 leading-[44px]">
+            <div className="flex flex-col col-span-3">
+              <div className="text-[rgba(32,32,32,1)] mb-6 leading-[44px] font-gliker text-base mt-[-10px]">
                 2. Enter Amounts
-              </h2>
-              <div className="w-full rounded-[32px] bg-white space-y-4 px-6 py-8 custom-dashed">
+              </div>
+              <div className="w-full rounded-[32px] bg-white space-y-4 px-6 py-8 border-[1px] border-[#000000] shadow-[4px_4px_0px_0px_rgba(210,154,13,1)]">
                 <AmountsSection
                   currencyA={currencyA}
                   currencyB={currencyB}

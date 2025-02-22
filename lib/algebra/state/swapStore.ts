@@ -123,8 +123,8 @@ export function useSwapActionHandlers(): {
         currency.isToken
           ? currency.address
           : currency.isNative
-            ? ADDRESS_ZERO
-            : ""
+          ? ADDRESS_ZERO
+          : ""
       ),
     [selectCurrency]
   );

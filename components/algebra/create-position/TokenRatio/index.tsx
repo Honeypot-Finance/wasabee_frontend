@@ -60,35 +60,40 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
   }, [mintInfo, tickLowerAtLimit, tickUpperAtLimit]);
 
   return (
-    <div className="relative flex h-[30px] bg-card-dark rounded-xl px-2">
+    <div className="relative flex h-[40px] bg-white rounded-xl">
       {/* FIXME： remove honeypot-button */}
-      <div className="flex w-full h-full font-semibold">
+      <div className="flex w-full h-full font-semibold gap-x-2">
         {Number(token0Ratio) > 0 && (
           <div
-            className={`flex items-center justify-end pl-1 pr-2 h-full bg-[#ffd666] border border-[#ffd666]/30 duration-300 ${Number(token0Ratio) === 100 ? "rounded-2xl" : "rounded-l-2xl"}`}
+            className={`flex items-center justify-between pl-1 pr-2 h-full bg-[#ffd666] border border-[#000] rounded-[8px] duration-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}
             style={{ width: `${token0Ratio}%` }}
           >
             <TokenLogo
-              addtionalClasses="w-8 absolute left-2 top-0"
+              size={24}
               token={Token.getToken({
                 address: currencyA ? currencyA.wrapped.address : zeroAddress,
               })}
             />
-            {`${parseFloat(token0Ratio).toFixed()}%`}
+            <span className="text-sm text-[rgba(32,32,32,1)] font-gliker">{`${parseFloat(
+              token0Ratio
+            ).toFixed()}%`}</span>
           </div>
         )}
         {Number(token1Ratio) > 0 && (
           <div
-            className={`flex items-center pr-1 pl-2 h-full honeypot-button border duration-300 relative ${Number(token1Ratio) === 100 ? "rounded-2xl" : "rounded-r-2xl"}`}
+            className={`flex items-center justify-between  pr-1 pl-2 h-full bg-[rgba(243,208,166,1)] duration-300 relative rounded-[8px] border border-[#000] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}
             style={{ width: `${token1Ratio}%` }}
           >
-            {`${parseFloat(token1Ratio).toFixed()}%`}
             <TokenLogo
-              addtionalClasses="w-8 absolute right-0 top-0"
+              size={24}
               token={Token.getToken({
                 address: currencyB ? currencyB.wrapped.address : zeroAddress,
               })}
             />
+
+            <span className="text-sm text-[rgba(32,32,32,1)] font-gliker">{`${parseFloat(
+              token1Ratio
+            ).toFixed()}%`}</span>
           </div>
         )}
       </div>
