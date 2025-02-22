@@ -693,6 +693,12 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/moola.jpeg",
     },
+    "0xa452810a4215fccc834ed241e6667f519b9856ec": {
+      name: "Berabot",
+      symbol: "BBOT",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/berabot.png",
+    },
   },
   validatedFtoAddresses: [],
   validatedMemeAddresses: [],
