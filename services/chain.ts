@@ -687,6 +687,12 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/beramonium.png",
     },
+    "0x331865bf2ea19e94bbf438cf4ee590cb6392e5a9": {
+      name: "Moola",
+      symbol: "MOOLA",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/moola.jpeg",
+    },
   },
   validatedFtoAddresses: [],
   validatedMemeAddresses: [],
