@@ -48,7 +48,10 @@ const EnterAmountCard = ({
   }
 
   return (
-    <div className="w-full rounded-2xl border bg-white shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] p-4">
+    <div
+      className="w-full rounded-2xl border bg-white  py-2 h-[80px] px-4
+     border-[rgba(0,0,0,1)]"
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {currency && (
@@ -59,7 +62,7 @@ const EnterAmountCard = ({
               })}
             />
           )}
-          <span className="font-medium text-black">
+          <span className="font-medium text-black font-gliker text-xl">
             {currency ? currency.symbol : "Select a token"}
           </span>
         </div>
@@ -80,7 +83,9 @@ const EnterAmountCard = ({
               "text-black",
               "text-xl",
               "font-medium",
-              "w-[160px]"
+              "w-[160px]",
+              "font-gliker",
+              "h-[28px]"
             )}
             classNames={{
               inputWrapper: cn(
@@ -106,9 +111,11 @@ const EnterAmountCard = ({
             }}
           />
           {currency && account && (
-            <div className="flex items-center gap-2 text-sm text-[#202020]">
-              <span>Balance: {balanceString}</span>
-              <button 
+            <div className="flex items-center gap-2 text-sm text-[#202020] font-gliker">
+              <span className="text-[rgba(77,77,77,1)]">
+                Balance: {balanceString}
+              </span>
+              <button
                 onClick={setMax}
                 className="text-[#FFCD4D] hover:text-[#ffd666] font-medium transition-colors"
               >

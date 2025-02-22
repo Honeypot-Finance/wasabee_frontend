@@ -58,8 +58,8 @@ export const IncreaseLiquidityButton = ({
   const useNative = baseCurrency?.isNative
     ? baseCurrency
     : quoteCurrency?.isNative
-      ? quoteCurrency
-      : undefined;
+    ? quoteCurrency
+    : undefined;
 
   const { calldata, value } = useMemo(() => {
     if (
@@ -139,8 +139,16 @@ export const IncreaseLiquidityButton = ({
     );
   }, [isSuccess]);
 
-  if (mintInfo.errorMessage)
-    return <Button disabled>{mintInfo.errorMessage}</Button>;
+  if (mintInfo.errorMessage) {
+    return (
+      <Button
+        disabled
+        className="w-full border-[0] h-[56px] rounded-[12px] !text-[18px]"
+      >
+        {mintInfo.errorMessage}
+      </Button>
+    );
+  }
 
   if (showApproveA || showApproveB)
     return (
@@ -148,7 +156,7 @@ export const IncreaseLiquidityButton = ({
         {showApproveA && (
           <Button
             disabled={approvalStateA === ApprovalState.PENDING}
-            className="w-full"
+            className="w-full border-[0] h-[56px] rounded-[12px] !text-[18px]"
             onClick={() => approvalCallbackA && approvalCallbackA()}
           >
             {approvalStateA === ApprovalState.PENDING ? (
@@ -161,7 +169,7 @@ export const IncreaseLiquidityButton = ({
         {showApproveB && (
           <Button
             disabled={approvalStateB === ApprovalState.PENDING}
-            className="w-full"
+            className="w-full border-[0] h-[56px] rounded-[12px] !text-[18px]"
             onClick={() => approvalCallbackB && approvalCallbackB()}
           >
             {approvalStateB === ApprovalState.PENDING ? (
@@ -181,7 +189,7 @@ export const IncreaseLiquidityButton = ({
         increaseLiquidityConfig &&
         increaseLiquidity(increaseLiquidityConfig.request)
       }
-      className="whitespace-nowrap w-full text-black rounded-md border-6 border-[rgba(225,138,32,0.40)] bg-gradient-to-b from-[rgba(232,211,124,0.13)] to-[#FCD729] bg-[#F7931A]"
+      className="whitespace-nowrap w-full border-[0] h-[56px] rounded-[12px] !text-[18px]"
     >
       {isIncreaseLiquidityLoading ? <Loader /> : "Add Liquidity"}
     </Button>

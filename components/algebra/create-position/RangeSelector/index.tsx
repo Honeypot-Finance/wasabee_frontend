@@ -49,12 +49,12 @@ const RangeSelector = ({
 
   return (
     <>
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-col md:flex-row">
         <RangeSelectorPart
           value={
             mintInfo.ticksAtLimit[Bound.LOWER]
               ? "0"
-              : (leftPrice?.toSignificant(5) ?? "")
+              : leftPrice?.toSignificant(5) ?? ""
           }
           onUserInput={onLeftRangeInput}
           width="100%"
@@ -71,7 +71,7 @@ const RangeSelector = ({
           value={
             mintInfo.ticksAtLimit[Bound.UPPER]
               ? "∞"
-              : (rightPrice?.toSignificant(5) ?? "")
+              : rightPrice?.toSignificant(5) ?? ""
           }
           onUserInput={onRightRangeInput}
           decrement={isSorted ? getDecrementUpper : getIncrementLower}

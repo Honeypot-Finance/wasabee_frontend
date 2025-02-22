@@ -195,7 +195,7 @@ const LiquidityChart = ({
   // const handleZoomOut = () => setZoom((zoom) => zoom - ZOOM_STEP)
 
   return (
-    <div className="w-full rounded-2xl border bg-card-dark shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] p-4">
+    <div className="w-full rounded-2xl border border-[rgba(90,74,74,1)] bg-card-dark shadow-[1px_2px_0px_0px_rgba(32,32,32,1),1px_1px_0px_0px_rgba(32,32,32,1)]  p-4">
       <div className="flex w-full h-full">
         {formattedData ? (
           <Chart
