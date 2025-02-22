@@ -681,6 +681,12 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/yeet-token-icon.jpg",
     },
+    "0x1f7210257fa157227d09449229a9266b0d581337": {
+      name: "Beramonium Coin",
+      symbol: "BERAMO",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/beramonium.png",
+    },
   },
   validatedFtoAddresses: [],
   validatedMemeAddresses: [],
