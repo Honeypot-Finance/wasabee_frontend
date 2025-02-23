@@ -10,6 +10,7 @@ import { SwapField } from "@/types/algebra/types/swap-field";
 import { useDerivedSwapInfo } from "@/lib/algebra/state/swapStore";
 import { zeroAddress } from "viem";
 import CardContainer from "@/components/CardContianer/v3";
+import { cn } from "@/lib/utils";
 
 const SwapTransactionHistory = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -61,10 +62,10 @@ const SwapTransactionHistory = () => {
                   User
                 </th>
                 <th className="py-1 px-1.5 sm:py-2 sm:px-4 text-right font-medium">
-                  Amount In
+                  {transactions[0].token0.symbol}
                 </th>
                 <th className="py-1 px-1.5 sm:py-2 sm:px-4 text-right font-medium">
-                  Amount Out
+                  {transactions[0].token1.symbol}
                 </th>
                 <th className="py-1 px-1.5 sm:py-2 sm:px-4 text-right font-medium hidden sm:table-cell">
                   Value
@@ -77,13 +78,19 @@ const SwapTransactionHistory = () => {
             <tbody className="text-white divide-y divide-[#5C5C5C]">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="py-1 px-2 sm:py-2 sm:px-4 text-center">
+                  <td
+                    colSpan={7}
+                    className="py-1 px-2 sm:py-2 sm:px-4 text-center"
+                  >
                     Loading...
                   </td>
                 </tr>
               ) : transactions.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-1 px-2 sm:py-2 sm:px-4 text-center">
+                  <td
+                    colSpan={7}
+                    className="py-1 px-2 sm:py-2 sm:px-4 text-center"
+                  >
                     No transactions found
                   </td>
                 </tr>
@@ -115,13 +122,14 @@ const SwapTransactionHistory = () => {
                     </td>
                     <td className="py-1 px-1.5 sm:py-2 sm:px-4 font-mono whitespace-nowrap hidden md:table-cell">
                       <div className="flex items-center gap-1 sm:gap-2">
+                        {console.log(tx) === undefined && <></>}
                         <a
-                          href={`https://berascan.com/address/${tx.recipient}`}
+                          href={`https://berascan.com/address/${tx.origin}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:text-[#FFCD4D] flex items-center gap-0.5 sm:gap-1"
                         >
-                          {truncate(tx.recipient, 8)}
+                          {truncate(tx.origin, 8)}
                           <ExternalLink className="size-2.5 sm:size-3" />
                         </a>
                         <Copy
@@ -135,7 +143,13 @@ const SwapTransactionHistory = () => {
                     </td>
                     <td className="py-1 px-1.5 sm:py-2 sm:px-4 text-right whitespace-nowrap">
                       <div className="flex flex-col sm:flex-row justify-end items-end gap-0.5 sm:gap-1">
-                        <span className="text-[#ef4444]">{formatAmount(tx.amount0)}</span>
+                        <span
+                          className={cn(
+                            tx.amount0 < 0 ? "text-[#ef4444]" : "text-[#22c55e]"
+                          )}
+                        >
+                          {formatAmount(tx.amount0)}
+                        </span>
                         <span className="text-gray-400">
                           {tx.token0.symbol}
                         </span>
@@ -143,7 +157,13 @@ const SwapTransactionHistory = () => {
                     </td>
                     <td className="py-1 px-1.5 sm:py-2 sm:px-4 text-right whitespace-nowrap">
                       <div className="flex flex-col sm:flex-row justify-end items-end gap-0.5 sm:gap-1">
-                        <span className="text-[#22c55e]">{formatAmount(tx.amount1)}</span>
+                        <span
+                          className={cn(
+                            tx.amount1 < 0 ? "text-[#ef4444]" : "text-[#22c55e]"
+                          )}
+                        >
+                          {formatAmount(tx.amount1)}
+                        </span>
                         <span className="text-gray-400">
                           {tx.token1.symbol}
                         </span>

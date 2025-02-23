@@ -68,6 +68,7 @@ export async function fetchSwapTransactions(
         }
         sender
         recipient
+        origin
         token0 {
           symbol
         }
