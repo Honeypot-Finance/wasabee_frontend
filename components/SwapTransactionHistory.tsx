@@ -62,10 +62,10 @@ const SwapTransactionHistory = () => {
                   User
                 </th>
                 <th className="py-1 px-1.5 sm:py-2 sm:px-4 text-right font-medium">
-                  {transactions[0].token0.symbol}
+                  {transactions[0]?.token0?.symbol}
                 </th>
                 <th className="py-1 px-1.5 sm:py-2 sm:px-4 text-right font-medium">
-                  {transactions[0].token1.symbol}
+                  {transactions[0]?.token1?.symbol}
                 </th>
                 <th className="py-1 px-1.5 sm:py-2 sm:px-4 text-right font-medium hidden sm:table-cell">
                   Value
