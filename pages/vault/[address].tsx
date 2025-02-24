@@ -17,6 +17,7 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import CardContainer from "@/components/CardContianer/v3";
 import Copy from "@/components/Copy/v3";
+import { HiExternalLink } from "react-icons/hi";
 
 export const VaultDetail = observer(() => {
   const router = useRouter();
@@ -288,24 +289,51 @@ export const VaultDetail = observer(() => {
               <div>
                 <p className="text-sm text-[#202020] mb-2">Vault Address</p>
                 <div className="flex items-center justify-between rounded-[16px] border-2 border-[#5A4A4A] bg-white px-4 py-2 shadow-[2px_2px_0px_0px_#202020,2px_4px_0px_0px_#202020]">
-                  <p className="font-mono text-[#202020] break-all">
-                    {address}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-mono text-[#202020] break-all">
+                      {address}
+                    </p>
+                    <Link
+                      href={`https://berascan.com/address/${address}`}
+                      target="_blank"
+                      className="text-[#202020] hover:text-[#202020]/80"
+                    >
+                      <HiExternalLink size={20} />
+                    </Link>
+                  </div>
                   <Copy value={address as string} />
                 </div>
               </div>
               <div>
                 <p className="text-sm text-[#202020] mb-2">Token Addresses</p>
                 <div className="flex items-center justify-between rounded-[16px] border-2 border-[#5A4A4A] bg-white px-4 py-2 shadow-[2px_2px_0px_0px_#202020,2px_4px_0px_0px_#202020] mb-2">
-                  <p className="font-mono text-[#202020] break-all">
-                    {vault?.token0?.address}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-mono text-[#202020] break-all">
+                      {vault?.token0?.address}
+                    </p>
+                    <Link
+                      href={`https://berascan.com/address/${vault?.token0?.address}`}
+                      target="_blank"
+                      className="text-[#202020] hover:text-[#202020]/80"
+                    >
+                      <HiExternalLink size={20} />
+                    </Link>
+                  </div>
                   <Copy value={vault?.token0?.address as string} />
                 </div>
                 <div className="flex items-center justify-between rounded-[16px] border-2 border-[#5A4A4A] bg-white px-4 py-2 shadow-[2px_2px_0px_0px_#202020,2px_4px_0px_0px_#202020]">
-                  <p className="font-mono text-[#202020] break-all">
-                    {vault?.token1?.address}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-mono text-[#202020] break-all">
+                      {vault?.token1?.address}
+                    </p>
+                    <Link
+                      href={`https://berascan.com/address/${vault?.token1?.address}`}
+                      target="_blank"
+                      className="text-[#202020] hover:text-[#202020]/80"
+                    >
+                      <HiExternalLink size={20} />
+                    </Link>
+                  </div>
                   <Copy value={vault?.token1?.address as string} />
                 </div>
               </div>
