@@ -74,6 +74,16 @@ class Portfolio {
       this.tokens =
         tokens?.filter((token) => token.balance.toNumber() > 0) ?? [];
 
+      if (wallet.currentChain?.nativeToken) {
+        const nativeTokenPrice = validatedTokens.find(
+          (token) => token.address === wallet.currentChain.nativeToken.address
+        )?.derivedUSD;
+        if (nativeTokenPrice) {
+          wallet.currentChain.nativeToken.derivedUSD = nativeTokenPrice;
+          this.tokens.push(wallet.currentChain.nativeToken);
+        }
+      }
+
       // Calculate total balance in USD`
       this.calculateTotalBalance();
     } catch (error) {
