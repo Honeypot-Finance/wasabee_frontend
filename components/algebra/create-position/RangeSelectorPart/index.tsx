@@ -84,17 +84,17 @@ const RangeSelectorPart = ({
   }, []);
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-y-3">
-      <div className="text-black flex items-center justify-between px-2">
-        <span className="font-medium text-sm">{title.toUpperCase()}</span>
+    <div className="flex-1 w-full flex flex-col gap-y-3  ">
+      <div className="text-[rgba(32,32,32,1)] flex items-center justify-between px-2 font-gliker">
+        <span className="text-base">{title.toUpperCase()}</span>
       </div>
 
-      <div className="w-full rounded-2xl border bg-card-dark shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] flex items-center justify-between px-4 py-2.5 gap-x-2">
+      <div className="w-full  h-[64px] rounded-2xl border bg-card-dark border-[rgba(90,74,74,1)] shadow-[1px_2px_0px_0px_rgba(32,32,32,1),1px_1px_0px_0px_rgba(32,32,32,1)]  flex items-center justify-between px-4 py-2.5 gap-x-2">
         <Button
           variant={"ghost"}
           onClick={handleDecrement}
           disabled={decrementDisabled || disabled}
-          className="min-w-[40px] h-[40px] rounded-xl bg-[#FFCD4D] hover:bg-[#ffd666] text-black border-none font-bold text-xl disabled:opacity-50"
+          className="min-w-[40px] h-[40px] rounded-xl bg-[rgba(255,230,163,1)] hover:bg-[#ffd666] text-black border-none font-bold text-xl disabled:opacity-50"
         >
           -
         </Button>
@@ -148,7 +148,7 @@ const RangeSelectorPart = ({
           variant={"ghost"}
           onClick={handleIncrement}
           disabled={incrementDisabled || disabled}
-          className="min-w-[40px] h-[40px] rounded-xl bg-[#FFCD4D] hover:bg-[#ffd666] text-black border-none font-bold text-xl disabled:opacity-50"
+          className="min-w-[40px] h-[40px] rounded-xl bg-[rgba(255,230,163,1)] hover:bg-[#ffd666] text-black border-none font-bold text-xl disabled:opacity-50"
         >
           +
         </Button>
