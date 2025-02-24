@@ -121,16 +121,18 @@ const PresetTabs = ({ currencyA, currencyB, mintInfo }: RangeSidebarProps) => {
   }, []);
 
   return (
-    <div className="flex rounded-2xl border border-[#202020] bg-white p-4 shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] py-2 px-3.5">
+    <div className="flex rounded-2xl border border-[#202020] bg-white p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] py-2 px-3.5 gap-x-1">
       {presets.map((range) => (
         <button
           key={`preset-range-${range.title}`}
-          onClick={() => onPresetSelect({ ...range, type: range.type.toString() })}
+          onClick={() =>
+            onPresetSelect({ ...range, type: range.type.toString() })
+          }
           className={cn(
-            "flex-1 px-3 py-1.5 text-sm font-medium transition-all rounded-lg text-center",
+            "flex-1 px-4 py-1.5 transition-all rounded-lg text-center text-sm font-gliker w-[90px]",
             preset === range.type.toString()
-              ? "bg-[#202020] text-white"
-              : "text-[#202020] hover:bg-[#20202010]"
+              ? "bg-[rgba(255,205,77,1)] text-[rgba(32,32,32,1)] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              : "text-[rgba(77,77,77,1)] hover:bg-[rgba(255,205,77,0.5)]"
           )}
         >
           {range.title}
