@@ -64,6 +64,11 @@ const nextConfig = {
         protocol: "https",
         port: "",
         hostname: "cdn.alphakek.ai",
+      }
+      ,{
+        protocol: "https",
+        port: "",
+        hostname: "pump.mypinata.cloud",
       },
     ],
     domains: ["cdn.alphakek.ai"],

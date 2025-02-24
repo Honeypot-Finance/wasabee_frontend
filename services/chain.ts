@@ -699,6 +699,12 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/berabot.png",
     },
+    "0xac03caba51e17c86c921e1f6cbfbdc91f8bb2e6b": {
+      name: "Infrared BGT",
+      symbol: "iBGT",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/ibgt-token-icon.png",
+    },
   },
   validatedFtoAddresses: [],
   validatedMemeAddresses: [],
