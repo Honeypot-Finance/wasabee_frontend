@@ -9,15 +9,19 @@ import { getSingleAccountDetails } from "@/lib/algebra/graphql/clients/account";
 class Portfolio {
   tokens: Token[] = [];
   isInit = false;
-  totalBalance = new BigNumber(0);
   isLoading = true;
 
   constructor() {
     makeAutoObservable(this);
   }
 
+  get totalBalance() {
+    return this.tokens.reduce((total, token) => {
+      return total.plus(token.balance.times(token.derivedUSD));
+    }, new BigNumber(0));
+  }
+
   async initPortfolio() {
-    console.log("initPortfolio", { isInit: this.isInit });
     if (this.isInit || !wallet.isInit) return;
 
     this.isLoading = true;
@@ -62,9 +66,9 @@ class Portfolio {
       // Filter tokens with balance
 
       await Promise.all(
-        tokens?.map((token) => {
+        tokens?.map(async (token) => {
           try {
-            token.getBalance();
+            await token.getBalance();
           } catch (error) {
             console.error("Error getting balance for token", token.address);
           }
@@ -83,24 +87,12 @@ class Portfolio {
           this.tokens.push(wallet.currentChain.nativeToken);
         }
       }
-
-      // Calculate total balance in USD`
-      this.calculateTotalBalance();
     } catch (error) {
       console.error("Portfolio initialization error:", error);
     } finally {
       this.isLoading = false;
       this.isInit = true;
     }
-  }
-
-  calculateTotalBalance() {
-    this.totalBalance = this.tokens.reduce((total, token) => {
-      const tokenUSDValue = new BigNumber(token.derivedUSD || 0).multipliedBy(
-        token.balance
-      );
-      return total.plus(tokenUSDValue);
-    }, new BigNumber(0));
   }
 
   // Refresh token balances
@@ -114,8 +106,6 @@ class Portfolio {
           await token.getIndexerTokenData({ force: true });
         })
       );
-
-      this.calculateTotalBalance();
     } finally {
       this.isLoading = false;
     }

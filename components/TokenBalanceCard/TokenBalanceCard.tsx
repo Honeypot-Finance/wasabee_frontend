@@ -10,6 +10,7 @@ import { itemSlideVariants } from "@/lib/animation";
 import { useEffect } from "react";
 import BigNumber from "bignumber.js";
 import { portfolio } from "@/services/portfolio";
+import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
 
 interface TokenBalanceCardProps {
   token: Token;
@@ -40,9 +41,11 @@ export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
     .toFixed(2);
 
   // Format USD price with "<0.00" for very small values
-  const formattedUSDPrice = new BigNumber(token.derivedUSD || 0).lt(0.01)
-    ? "<0.01"
-    : `$${Number(token.derivedUSD).toFixed(2)}`;
+  const formattedUSDPrice = DynamicFormatAmount({
+    amount: token.derivedUSD,
+    decimals: 2,
+    endWith: "$",
+  });
 
   return (
     <tr className="transition-colors bg-white text-black">

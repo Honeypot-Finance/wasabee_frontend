@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link, Skeleton } from "@nextui-org/react";
 import { portfolio } from "@/services/portfolio";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
@@ -31,7 +31,7 @@ export const PortfolioTab = observer(() => {
     }
   };
 
-  const getSortedTokens = () => {
+  const getSortedTokens = useMemo(() => {
     return [...portfolio.tokens].sort((a, b) => {
       const multiplier = sortDirection === "asc" ? 1 : -1;
 
@@ -52,7 +52,7 @@ export const PortfolioTab = observer(() => {
           return 0;
       }
     });
-  };
+  }, [portfolio.tokens, sortField, sortDirection]);
 
   const SortHeader = ({
     field,
@@ -172,9 +172,9 @@ export const PortfolioTab = observer(() => {
                       </td>
                     </tr>
                   ))
-              : getSortedTokens().map((token) => (
+              : getSortedTokens.map((token, index) => (
                   <TokenBalanceCard
-                    key={token.address}
+                    key={index}
                     token={token}
                   />
                 ))}

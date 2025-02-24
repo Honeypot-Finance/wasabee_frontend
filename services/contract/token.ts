@@ -422,6 +422,7 @@ export class Token implements BaseContract {
 
   async getBalance() {
     if (!wallet.isInit) {
+      console.log("wallet not init");
       return new BigNumber(0);
     }
     try {
