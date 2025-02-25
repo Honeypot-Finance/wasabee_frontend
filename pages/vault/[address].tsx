@@ -25,9 +25,9 @@ export const VaultDetail = observer(() => {
   const [vault, setVault] = useState<ICHIVaultContract | null>(null);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const [tvl, setTvl] = useState<string>("$0");
-  const [volume24h, setVolume24h] = useState<string>("$0");
-  const [fees24h, setFees24h] = useState<string>("$0");
+  const [poolTvl, setPoolTvl] = useState<string>("0");
+  const [poolVolume24h, setPoolVolume24h] = useState<string>("0");
+  const [poolFees24h, setPoolFees24h] = useState<string>("0");
 
   useEffect(() => {
     if (
@@ -53,14 +53,9 @@ export const VaultDetail = observer(() => {
           vaultContract?.getBalanceOf(wallet.account),
         ]);
 
-        setTvl(
-          Number(vaultContract?.pool?.TVL_USD || 0).toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-          })
-        );
+        setPoolTvl(Number(vaultContract?.pool?.TVL_USD || 0).toString());
         if (vaultContract.pool) {
-          setVolume24h(
+          setPoolVolume24h(
             Number(vaultContract.pool.volume_24h_USD || 0).toLocaleString(
               "en-US",
               {
@@ -70,7 +65,7 @@ export const VaultDetail = observer(() => {
             )
           );
 
-          setFees24h(
+          setPoolFees24h(
             Number(vaultContract.pool.fees_24h_USD || 0).toLocaleString(
               "en-US",
               {
@@ -83,6 +78,12 @@ export const VaultDetail = observer(() => {
       }
 
       setVault(vaultContract);
+      vaultContract?.token0?.init(true, {
+        loadIndexerTokenData: true,
+      });
+      vaultContract?.token1?.init(true, {
+        loadIndexerTokenData: true,
+      });
     };
 
     loadVaultData();
@@ -160,8 +161,14 @@ export const VaultDetail = observer(() => {
               {vault?.token0 && vault?.token1 && (
                 <>
                   <div className="flex -space-x-2">
-                    <TokenLogo token={vault?.token0} size={48} />
-                    <TokenLogo token={vault?.token1} size={48} />
+                    <TokenLogo
+                      token={vault?.token0}
+                      size={48}
+                    />
+                    <TokenLogo
+                      token={vault?.token1}
+                      size={48}
+                    />
                   </div>
                   <span className="text-2xl font-bold text-honey">
                     {vault?.token0?.symbol}/{vault?.token1?.symbol}
@@ -203,22 +210,15 @@ export const VaultDetail = observer(() => {
               <div className="space-y-1">
                 <p className="text-2xl font-bold text-[#202020]">
                   {DynamicFormatAmount({
-                    amount: BigNumber(
-                      vault?.totalAmountsWithoutDecimal.total0.toString() ?? 0
-                    )
-                      .div(10 ** (vault?.token0?.decimals ?? 18))
-                      .toString(),
+                    amount: vault?.totalSupply.total0.toString() ?? 0,
+
                     decimals: 3,
                     endWith: vault?.token0?.symbol,
                   })}
                 </p>
                 <p className="text-2xl font-bold text-[#202020]">
                   {DynamicFormatAmount({
-                    amount: BigNumber(
-                      vault?.totalAmountsWithoutDecimal.total1.toString() ?? 0
-                    )
-                      .div(10 ** (vault?.token1?.decimals ?? 18))
-                      .toString(),
+                    amount: vault?.totalSupply.total1.toString() ?? 0,
                     decimals: 3,
                     endWith: vault?.token1?.symbol,
                   })}
@@ -266,17 +266,39 @@ export const VaultDetail = observer(() => {
             </div>
             <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
               <h3 className="text-base text-[#202020] mb-2">
-                Total Value Locked
+                Total Value Locked(vault)
               </h3>
-              <p className="text-2xl font-bold text-[#202020]">{tvl}</p>
+              <p className="text-2xl font-bold text-[#202020]">
+                {DynamicFormatAmount({
+                  amount: vault?.tvlUSD ?? 0,
+                  decimals: 3,
+                  endWith: "USD",
+                })}
+              </p>
             </div>
             <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
-              <h3 className="text-base text-[#202020] mb-2">24h Volume</h3>
-              <p className="text-2xl font-bold text-[#202020]">{volume24h}</p>
+              <h3 className="text-base text-[#202020] mb-2">
+                Total Value Locked(pool)
+              </h3>
+              <p className="text-2xl font-bold text-[#202020]">
+                {DynamicFormatAmount({
+                  amount: poolTvl,
+                  decimals: 3,
+                  endWith: "USD",
+                })}
+              </p>
             </div>
             <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
-              <h3 className="text-base text-[#202020] mb-2">24h Fees</h3>
-              <p className="text-2xl font-bold text-[#202020]">{fees24h}</p>
+              <h3 className="text-base text-[#202020] mb-2">
+                24h Volume(pool)
+              </h3>
+              <p className="text-2xl font-bold text-[#202020]">
+                {poolVolume24h}
+              </p>
+            </div>
+            <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
+              <h3 className="text-base text-[#202020] mb-2">24h Fees(pool)</h3>
+              <p className="text-2xl font-bold text-[#202020]">{poolFees24h}</p>
             </div>
           </div>
 

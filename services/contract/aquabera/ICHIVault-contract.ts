@@ -36,6 +36,27 @@ export class ICHIVaultContract implements BaseContract {
 
   recentTransactions: (VaultDeposit | VaultWithdraw | VaultCollectFee)[] = [];
 
+  get tvlUSD() {
+    return (
+      Number(this.totalSupply.total0) * Number(this.token0?.derivedUSD ?? 0) +
+      Number(this.totalSupply.total1) * Number(this.token1?.derivedUSD ?? 0)
+    );
+  }
+
+  get totalSupply() {
+    if (!this.totalAmountsWithoutDecimal) return { total0: 0, total1: 0 };
+    return {
+      total0: (
+        Number(this.totalAmountsWithoutDecimal.total0) /
+        10 ** (this.token0?.decimals ?? 18)
+      ).toString(),
+      total1: (
+        Number(this.totalAmountsWithoutDecimal.total1) /
+        10 ** (this.token1?.decimals ?? 18)
+      ).toString(),
+    };
+  }
+
   get userTokenAmountsWithoutDecimal() {
     if (
       !this.totalsupplyShares ||
