@@ -1,9 +1,10 @@
-import { Tab, Tabs } from "@nextui-org/react";
+import { Link, Tab, Tabs } from "@nextui-org/react";
 import MyAquaberaVaults from "./MyVaults";
 import AllAquaberaVaults from "./AllVaults";
 import { Search } from "lucide-react";
 import { useState } from "react";
-
+import aquabera from "@/public/images/partners/aquabera.svg";
+import Image from "next/image";
 export function AquaberaList() {
   const [search, setSearch] = useState("");
   const [selectedTab, setSelectedTab] = useState("all");
@@ -29,8 +30,14 @@ export function AquaberaList() {
               tabContent: "!text-[#202020]",
             }}
           >
-            <Tab key="all" title="Vaults" />
-            <Tab key="my" title="My Vaults" />
+            <Tab
+              key="all"
+              title="Vaults"
+            />
+            <Tab
+              key="my"
+              title="My Vaults"
+            />
           </Tabs>
         </div>
         <div className="relative">
@@ -54,6 +61,20 @@ export function AquaberaList() {
           <MyAquaberaVaults searchString={search} />
         )}
       </div>
+      <p className="flex text-center text-sm text-[#4D4D4D]/70">
+        Powered by{" "}
+        <Link
+          href="https://aquabera.com/"
+          target="_blank"
+        >
+          <Image
+            src={aquabera}
+            alt="Aquabera"
+            width={100}
+            height={100}
+          />
+        </Link>
+      </p>
     </div>
   );
 }
