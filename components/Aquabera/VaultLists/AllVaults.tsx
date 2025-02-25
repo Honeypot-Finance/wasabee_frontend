@@ -11,7 +11,6 @@ import { getVaultPageData } from "@/lib/algebra/graphql/clients/vaults";
 import { VaultsSortedByHoldersQuery } from "@/lib/algebra/graphql/generated/graphql";
 import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
 
-
 type SortField = "pair" | "address" | "tvl" | "volume" | "fees";
 type SortDirection = "asc" | "desc";
 
@@ -104,7 +103,7 @@ export function AllAquaberaVaults({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-x-auto">
       <table className="w-full">
         <thead>
           <tr>
@@ -193,7 +192,10 @@ export function AllAquaberaVaults({
         <tbody className="divide-y divide-[#4D4D4D]">
           {!getSortedVaults().length ? (
             <tr className="hover:bg-white border-white h-full">
-              <td colSpan={5} className="h-24 text-center text-black">
+              <td
+                colSpan={5}
+                className="h-24 text-center text-black"
+              >
                 No results.
               </td>
             </tr>
@@ -230,7 +232,7 @@ export function AllAquaberaVaults({
                 <tr
                   key={vault.id}
                   className="transition-colors bg-white text-black hover:bg-gray-50 cursor-pointer"
-                  onClick={() => window.location.href = `/vault/${vault.id}`}
+                  onClick={() => (window.location.href = `/vault/${vault.id}`)}
                 >
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-3">
@@ -253,18 +255,10 @@ export function AllAquaberaVaults({
                       </div>
                     </div>
                   </td>
-                  <td className="py-4 px-6 text-black">
-                    {vault.id}
-                  </td>
-                  <td className="py-4 px-6 text-right text-black">
-                    {tvl}
-                  </td>
-                  <td className="py-4 px-6 text-right text-black">
-                    {volume}
-                  </td>
-                  <td className="py-4 px-6 text-right text-black">
-                    {fees}
-                  </td>
+                  <td className="py-4 px-6 text-black">{vault.id}</td>
+                  <td className="py-4 px-6 text-right text-black">{tvl}</td>
+                  <td className="py-4 px-6 text-right text-black">{volume}</td>
+                  <td className="py-4 px-6 text-right text-black">{fees}</td>
                 </tr>
               );
             })
