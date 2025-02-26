@@ -145,10 +145,12 @@ const SwapTransactionHistory = () => {
                       <div className="flex flex-col sm:flex-row justify-end items-end gap-0.5 sm:gap-1">
                         <span
                           className={cn(
-                            tx.amount0 < 0 ? "text-[#ef4444]" : "text-[#22c55e]"
+                            tx.amount0 * -1 < 0
+                              ? "text-[#ef4444]"
+                              : "text-[#22c55e]"
                           )}
                         >
-                          {formatAmount(tx.amount0)}
+                          {formatAmount((tx.amount0 * -1).toString())}
                         </span>
                         <span className="text-gray-400">
                           {tx.token0.symbol}
@@ -159,10 +161,12 @@ const SwapTransactionHistory = () => {
                       <div className="flex flex-col sm:flex-row justify-end items-end gap-0.5 sm:gap-1">
                         <span
                           className={cn(
-                            tx.amount1 < 0 ? "text-[#ef4444]" : "text-[#22c55e]"
+                            tx.amount1 * -1 < 0
+                              ? "text-[#ef4444]"
+                              : "text-[#22c55e]"
                           )}
                         >
-                          {formatAmount(tx.amount1)}
+                          {formatAmount((tx.amount1 * -1).toString())}
                         </span>
                         <span className="text-gray-400">
                           {tx.token1.symbol}
