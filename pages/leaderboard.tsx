@@ -56,7 +56,11 @@ const LeaderboardPage = () => {
   } = useTopParticipateAccounts();
 
   const statsCards: StatsCard[] = [
-    { title: "Users", value: usersLoading ? "Loading..." : totalUsers, decimals: 0 },
+    {
+      title: "Users",
+      value: usersLoading ? "Loading..." : totalUsers,
+      decimals: 2,
+    },
     stats
       ? {
           title: stats.totalTrades.title,
@@ -108,7 +112,10 @@ const LeaderboardPage = () => {
           {/* 顶部统计卡片 */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
             {statsCards.map((stat, index) => (
-              <div key={index} className="bg-[#202020] rounded-2xl p-5">
+              <div
+                key={index}
+                className="bg-[#202020] rounded-2xl p-5"
+              >
                 <div className="text-gray-400 text-sm mb-2">{stat.title}</div>
                 <div className="text-white text-xl font-medium">
                   {statsLoading
@@ -116,17 +123,25 @@ const LeaderboardPage = () => {
                     : typeof stat.value === "string" &&
                         stat.value.startsWith("$")
                       ? formatExtremelyLargeNumber(
-                          stat.value.slice(1).replace(/,/g, ''),
+                          stat.value.slice(1).replace(/,/g, ""),
                           stat.decimals,
                           { addPrefix: true }
                         )
                       : stat.subValue === "USD"
-                        ? formatExtremelyLargeNumber(stat.value, 0, {
-                            addPrefix: true,
-                          })
-                        : formatExtremelyLargeNumber(stat.value, 0, {
-                            addPrefix: false,
-                          })}
+                        ? formatExtremelyLargeNumber(
+                            stat.value,
+                            stat.decimals,
+                            {
+                              addPrefix: true,
+                            }
+                          )
+                        : formatExtremelyLargeNumber(
+                            stat.value,
+                            stat.decimals,
+                            {
+                              addPrefix: false,
+                            }
+                          )}
                 </div>
               </div>
             ))}
@@ -228,7 +243,10 @@ const LeaderboardPage = () => {
                   <tbody className="text-white divide-y divide-[#5C5C5C]">
                     {accountsLoading ? (
                       <tr>
-                        <td colSpan={9} className="py-4 px-6 text-center">
+                        <td
+                          colSpan={9}
+                          className="py-4 px-6 text-center"
+                        >
                           Loading...
                         </td>
                       </tr>
