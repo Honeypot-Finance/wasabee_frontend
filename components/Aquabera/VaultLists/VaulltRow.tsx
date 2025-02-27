@@ -97,8 +97,18 @@ export default function VaultRow({
       <td className="py-4 px-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
-            {isTokenAAllowed.data && <TokenLogo token={tokenA} size={24} />}
-            {isTokenBAllowed.data && <TokenLogo token={tokenB} size={24} />}
+            {isTokenAAllowed.data && (
+              <TokenLogo
+                token={tokenA}
+                size={24}
+              />
+            )}
+            {isTokenBAllowed.data && (
+              <TokenLogo
+                token={tokenB}
+                size={24}
+              />
+            )}
           </div>
           <div className="flex">
             <p className="text-black font-medium">
@@ -109,7 +119,7 @@ export default function VaultRow({
         </div>
       </td>
       {/* vault address */}
-      <td className="py-4 px-6 text-black">{vault.id}</td>
+      {/* <td className="py-4 px-6 text-black">{vault.id}</td> */}
       {/* tvl */}
       <td className="py-4 px-6 text-right text-black">{tvl}</td>
       {/* volume */}

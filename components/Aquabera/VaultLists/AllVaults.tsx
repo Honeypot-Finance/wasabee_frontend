@@ -182,7 +182,7 @@ export function AllAquaberaVaults({
                   </div>
                 </div>
               </th>
-              <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
+              {/* <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
                 <div
                   className="flex items-center gap-2"
                   onClick={() => handleSort("address")}
@@ -205,7 +205,7 @@ export function AllAquaberaVaults({
                     />
                   </div>
                 </div>
-              </th>
+              </th> */}
               <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
                 <div
                   className="flex items-center gap-2 justify-end"
@@ -283,7 +283,10 @@ export function AllAquaberaVaults({
           <tbody className="divide-y divide-[#4D4D4D]">
             {!sortedVaults.length ? (
               <tr className="hover:bg-white border-white h-full">
-                <td colSpan={5} className="h-24 text-center text-black">
+                <td
+                  colSpan={5}
+                  className="h-24 text-center text-black"
+                >
                   No results.
                 </td>
               </tr>
