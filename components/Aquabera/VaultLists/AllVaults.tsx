@@ -1,17 +1,16 @@
-import { Link } from "@nextui-org/react";
 import { wallet } from "@/services/wallet";
 import { Currency } from "@cryptoalgebra/sdk";
 import { Token } from "@/services/contract/token";
 import { useEffect, useState, useMemo } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/algebra/ui/button";
-import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { DepositToVaultModal } from "../modals/DepositToVaultModal";
 import { getVaultPageData } from "@/lib/algebra/graphql/clients/vaults";
 import { VaultsSortedByHoldersQuery } from "@/lib/algebra/graphql/generated/graphql";
 import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
+import VaultRow from "./VaulltRow";
 
-type SortField = "pair" | "address" | "tvl" | "volume" | "fees";
+type SortField = "pair" | "allow_token" | "address" | "tvl" | "volume" | "fees";
 type SortDirection = "asc" | "desc";
 
 interface AllAquaberaVaultsProps {
@@ -37,9 +36,8 @@ export function AllAquaberaVaults({
     if (!wallet.isInit) {
       return;
     }
-
     loadMyVaults(searchString);
-  }, [wallet.isInit, searchString]);
+  }, [searchString]);
 
   const loadMyVaults = async (search?: string) => {
     const vaultsQuery = getVaultPageData(search).then((res) => {
@@ -61,210 +59,248 @@ export function AllAquaberaVaults({
     return Math.ceil(vaults.ichiVaults.length / rowsPerPage);
   }, [vaults?.ichiVaults]);
 
-  const getSortedVaults = () => {
-    if (!vaults?.ichiVaults) return [];
+  const [sortedVaults, setSortedVaults] = useState<
+    VaultsSortedByHoldersQuery["ichiVaults"]
+  >([]);
 
-    const sortedVaults = [...vaults.ichiVaults].sort((a, b) => {
-      const multiplier = sortDirection === "asc" ? 1 : -1;
-
-      switch (sortField) {
-        case "pair":
-          const aSymbol = Token.getToken({ address: a.tokenA }).symbol;
-          const bSymbol = Token.getToken({ address: b.tokenA }).symbol;
-          return multiplier * aSymbol.localeCompare(bSymbol);
-        case "address":
-          return multiplier * a.id.localeCompare(b.id);
-        case "tvl":
-          return (
-            multiplier *
-            (Number(a.pool?.totalValueLockedUSD || 0) -
-              Number(b.pool?.totalValueLockedUSD || 0))
-          );
-        case "volume":
-          return (
-            multiplier *
-            (Number(a.pool?.poolDayData?.[0]?.volumeUSD || 0) -
-              Number(b.pool?.poolDayData?.[0]?.volumeUSD || 0))
-          );
-        case "fees":
-          return (
-            multiplier *
-            (Number(a.pool?.poolDayData?.[0]?.feesUSD || 0) -
-              Number(b.pool?.poolDayData?.[0]?.feesUSD || 0))
-          );
-        default:
-          return 0;
-      }
-    });
-
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    return sortedVaults.slice(start, end);
+  const setAllowToken = (vault: any, token: any) => {
+    vault.allowToken = token;
   };
 
+  const getAllowToken = (vault: any) => {
+    return vault.allowToken;
+  };
+
+  useEffect(() => {
+    const getSortedVaults = () => {
+      if (!vaults?.ichiVaults) return [];
+
+      const sortedVaults = [...vaults.ichiVaults].sort((a, b) => {
+        const multiplier = sortDirection === "asc" ? 1 : -1;
+
+        switch (sortField) {
+          case "pair":
+            const aSymbol = Token.getToken({ address: a.tokenA }).symbol;
+            const bSymbol = Token.getToken({ address: b.tokenA }).symbol;
+            return multiplier * aSymbol.localeCompare(bSymbol);
+          case "allow_token":
+            return (
+              multiplier *
+              getAllowToken(a)?.symbol.localeCompare(getAllowToken(b)?.symbol)
+            );
+          case "address":
+            return multiplier * a.id.localeCompare(b.id);
+          case "tvl":
+            return (
+              multiplier *
+              (Number(a.pool?.totalValueLockedUSD || 0) -
+                Number(b.pool?.totalValueLockedUSD || 0))
+            );
+          case "volume":
+            return (
+              multiplier *
+              (Number(a.pool?.poolDayData?.[0]?.volumeUSD || 0) -
+                Number(b.pool?.poolDayData?.[0]?.volumeUSD || 0))
+            );
+          case "fees":
+            return (
+              multiplier *
+              (Number(a.pool?.poolDayData?.[0]?.feesUSD || 0) -
+                Number(b.pool?.poolDayData?.[0]?.feesUSD || 0))
+            );
+          default:
+            return 0;
+        }
+      });
+
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      const list = sortedVaults.slice(start, end);
+
+      return list.map((vault) => {
+        return {
+          ...vault,
+        };
+      });
+    };
+
+    const sortedVaults = getSortedVaults();
+    setSortedVaults(sortedVaults);
+  }, [vaults, sortField, sortDirection, page]);
+
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr>
-            <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
-              <div
-                className="flex items-center gap-2"
-                onClick={() => handleSort("pair")}
-              >
-                <span>Token Pair</span>
-                <div className="flex flex-col">
-                  <ChevronUp
-                    className={`h-3 w-3 ${sortField === "pair" && sortDirection === "asc" ? "text-black" : "text-[#4D4D4D]"}`}
-                  />
-                  <ChevronDown
-                    className={`h-3 w-3 ${sortField === "pair" && sortDirection === "desc" ? "text-black" : "text-[#4D4D4D]"}`}
-                  />
-                </div>
-              </div>
-            </th>
-            <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
-              <div
-                className="flex items-center gap-2"
-                onClick={() => handleSort("address")}
-              >
-                <span>Vault Address</span>
-                <div className="flex flex-col">
-                  <ChevronUp
-                    className={`h-3 w-3 ${sortField === "address" && sortDirection === "asc" ? "text-black" : "text-[#4D4D4D]"}`}
-                  />
-                  <ChevronDown
-                    className={`h-3 w-3 ${sortField === "address" && sortDirection === "desc" ? "text-black" : "text-[#4D4D4D]"}`}
-                  />
-                </div>
-              </div>
-            </th>
-            <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
-              <div
-                className="flex items-center gap-2 justify-end"
-                onClick={() => handleSort("tvl")}
-              >
-                <span>TVL</span>
-                <div className="flex flex-col">
-                  <ChevronUp
-                    className={`h-3 w-3 ${sortField === "tvl" && sortDirection === "asc" ? "text-black" : "text-[#4D4D4D]"}`}
-                  />
-                  <ChevronDown
-                    className={`h-3 w-3 ${sortField === "tvl" && sortDirection === "desc" ? "text-black" : "text-[#4D4D4D]"}`}
-                  />
-                </div>
-              </div>
-            </th>
-            <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
-              <div
-                className="flex items-center gap-2 justify-end"
-                onClick={() => handleSort("volume")}
-              >
-                <span>24h Volume</span>
-                <div className="flex flex-col">
-                  <ChevronUp
-                    className={`h-3 w-3 ${sortField === "volume" && sortDirection === "asc" ? "text-black" : "text-[#4D4D4D]"}`}
-                  />
-                  <ChevronDown
-                    className={`h-3 w-3 ${sortField === "volume" && sortDirection === "desc" ? "text-black" : "text-[#4D4D4D]"}`}
-                  />
-                </div>
-              </div>
-            </th>
-            <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
-              <div
-                className="flex items-center gap-2 justify-end"
-                onClick={() => handleSort("fees")}
-              >
-                <span>24h Fees</span>
-                <div className="flex flex-col">
-                  <ChevronUp
-                    className={`h-3 w-3 ${sortField === "fees" && sortDirection === "asc" ? "text-black" : "text-[#4D4D4D]"}`}
-                  />
-                  <ChevronDown
-                    className={`h-3 w-3 ${sortField === "fees" && sortDirection === "desc" ? "text-black" : "text-[#4D4D4D]"}`}
-                  />
-                </div>
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-[#4D4D4D]">
-          {!getSortedVaults().length ? (
-            <tr className="hover:bg-white border-white h-full">
-              <td
-                colSpan={5}
-                className="h-24 text-center text-black"
-              >
-                No results.
-              </td>
-            </tr>
-          ) : (
-            getSortedVaults().map((vault) => {
-              const tokenA = Token.getToken({ address: vault.tokenA });
-              const tokenB = Token.getToken({ address: vault.tokenB });
-
-              tokenA.init();
-              tokenB.init();
-
-              const tvl = Number(
-                vault.pool?.totalValueLockedUSD || 0
-              ).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              });
-
-              const volume = Number(
-                vault.pool?.poolDayData?.[0]?.volumeUSD || 0
-              ).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              });
-
-              const fees = Number(
-                vault.pool?.poolDayData?.[0]?.feesUSD || 0
-              ).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              });
-
-              return (
-                <tr
-                  key={vault.id}
-                  className="transition-colors bg-white text-black hover:bg-gray-50 cursor-pointer"
-                  onClick={() => (window.location.href = `/vault/${vault.id}`)}
+    <div className="w-full">
+      <div className="w-full overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
+                <div
+                  className="flex items-center gap-2"
+                  onClick={() => handleSort("pair")}
                 >
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1">
-                        <TokenLogo
-                          token={tokenA}
-                          addtionalClasses="translate-x-[25%]"
-                          size={24}
-                        />
-                        <TokenLogo
-                          token={tokenB}
-                          addtionalClasses="translate-x-[-25%]"
-                          size={24}
-                        />
-                      </div>
-                      <div className="flex flex-col">
-                        <p className="text-black font-medium">
-                          {tokenA.symbol}/{tokenB.symbol}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 text-black">{vault.id}</td>
-                  <td className="py-4 px-6 text-right text-black">{tvl}</td>
-                  <td className="py-4 px-6 text-right text-black">{volume}</td>
-                  <td className="py-4 px-6 text-right text-black">{fees}</td>
-                </tr>
-              );
-            })
-          )}
-        </tbody>
-      </table>
+                  <span>Token Pair</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`h-3 w-3 ${
+                        sortField === "pair" && sortDirection === "asc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                    <ChevronDown
+                      className={`h-3 w-3 ${
+                        sortField === "pair" && sortDirection === "desc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+              <th className="py-4 px-6 cursor-pointer text-[#4D4D4D] min-w-[180px]">
+                <div
+                  className="flex items-center gap-2"
+                  onClick={() => handleSort("pair")}
+                >
+                  <span>Allow Token</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`h-3 w-3 ${
+                        sortField === "pair" && sortDirection === "asc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                    <ChevronDown
+                      className={`h-3 w-3 ${
+                        sortField === "pair" && sortDirection === "desc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+              <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
+                <div
+                  className="flex items-center gap-2"
+                  onClick={() => handleSort("address")}
+                >
+                  <span>Vault Address</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`h-3 w-3 ${
+                        sortField === "address" && sortDirection === "asc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                    <ChevronDown
+                      className={`h-3 w-3 ${
+                        sortField === "address" && sortDirection === "desc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+                <div
+                  className="flex items-center gap-2 justify-end"
+                  onClick={() => handleSort("tvl")}
+                >
+                  <span>TVL</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`h-3 w-3 ${
+                        sortField === "tvl" && sortDirection === "asc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                    <ChevronDown
+                      className={`h-3 w-3 ${
+                        sortField === "tvl" && sortDirection === "desc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+                <div
+                  className="flex items-center gap-2 justify-end"
+                  onClick={() => handleSort("volume")}
+                >
+                  <span>24h Volume</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`h-3 w-3 ${
+                        sortField === "volume" && sortDirection === "asc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                    <ChevronDown
+                      className={`h-3 w-3 ${
+                        sortField === "volume" && sortDirection === "desc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+                <div
+                  className="flex items-center gap-2 justify-end"
+                  onClick={() => handleSort("fees")}
+                >
+                  <span>24h Fees</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`h-3 w-3 ${
+                        sortField === "fees" && sortDirection === "asc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                    <ChevronDown
+                      className={`h-3 w-3 ${
+                        sortField === "fees" && sortDirection === "desc"
+                          ? "text-black"
+                          : "text-[#4D4D4D]"
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#4D4D4D]">
+            {!sortedVaults.length ? (
+              <tr className="hover:bg-white border-white h-full">
+                <td colSpan={5} className="h-24 text-center text-black">
+                  No results.
+                </td>
+              </tr>
+            ) : (
+              sortedVaults.map((vault) => {
+                return (
+                  <VaultRow
+                    key={vault.id}
+                    vault={vault}
+                    setAllowToken={setAllowToken}
+                  />
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
 
       <div className="p-4 border-t border-[#2D2D2D]">
         <div className="flex justify-between items-center">
