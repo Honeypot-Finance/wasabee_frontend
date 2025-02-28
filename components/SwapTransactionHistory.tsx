@@ -150,7 +150,9 @@ const SwapTransactionHistory = () => {
                               : "text-[#22c55e]"
                           )}
                         >
-                          {formatAmount((tx.amount0 * -1).toString())}
+                          {tx.amount0 * -1 < 0 && "Sell "}
+                          {tx.amount0 * -1 > 0 && "Buy "}
+                          {formatAmount(Math.abs(tx.amount0).toString())}
                         </span>
                         <span className="text-gray-400">
                           {tx.token0.symbol}
@@ -166,7 +168,9 @@ const SwapTransactionHistory = () => {
                               : "text-[#22c55e]"
                           )}
                         >
-                          {formatAmount((tx.amount1 * -1).toString())}
+                          {tx.amount1 * -1 < 0 && "Sell "}
+                          {tx.amount1 * -1 > 0 && "Buy "}
+                          {formatAmount(Math.abs(tx.amount1).toString())}
                         </span>
                         <span className="text-gray-400">
                           {tx.token1.symbol}
