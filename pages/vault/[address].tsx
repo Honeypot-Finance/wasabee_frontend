@@ -56,23 +56,11 @@ export const VaultDetail = observer(() => {
         setPoolTvl(Number(vaultContract?.pool?.TVL_USD || 0).toString());
         if (vaultContract.pool) {
           setPoolVolume24h(
-            Number(vaultContract.pool.volume_24h_USD || 0).toLocaleString(
-              "en-US",
-              {
-                style: "currency",
-                currency: "USD",
-              }
-            )
+            Number(vaultContract.pool.volume_24h_USD || 0).toString()
           );
 
           setPoolFees24h(
-            Number(vaultContract.pool.fees_24h_USD || 0).toLocaleString(
-              "en-US",
-              {
-                style: "currency",
-                currency: "USD",
-              }
-            )
+            Number(vaultContract.pool.fees_24h_USD || 0).toString()
           );
         }
       }
@@ -228,14 +216,25 @@ export const VaultDetail = observer(() => {
             <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
               <h3 className="text-base text-[#202020] mb-2">Your Asset</h3>
               <div className="space-y-1">
-                <p className="text-2xl font-bold text-[#202020]">
-                  {DynamicFormatAmount({
-                    amount: BigNumber(
-                      vault?.userTokenAmounts.total0.toString() ?? 0
-                    ).toString(),
-                    decimals: 3,
-                    endWith: vault?.token0?.symbol,
-                  })}
+                <p className="text-2xl font-bold text-[#202020] flex justify-between gap-2">
+                  <span>
+                    {DynamicFormatAmount({
+                      amount: BigNumber(
+                        vault?.userTokenAmounts.total0.toString() ?? 0
+                      ).toString(),
+                      decimals: 3,
+                      endWith: vault?.token0?.symbol,
+                    })}
+                  </span>
+                  <span>
+                    (
+                    {DynamicFormatAmount({
+                      amount: vault?.userTVLUSD ?? 0,
+                      decimals: 3,
+                      endWith: "$",
+                    })}
+                    )
+                  </span>
                 </p>
                 <p className="text-2xl font-bold text-[#202020]">
                   {DynamicFormatAmount({
@@ -250,7 +249,7 @@ export const VaultDetail = observer(() => {
             </div>
             <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
               <h3 className="text-base text-[#202020] mb-2">
-                Share Percentage
+                Your Share Percentage
               </h3>
               <p className="text-2xl font-bold text-[#202020]">
                 {vault?.totalsupplyShares &&
@@ -265,26 +264,22 @@ export const VaultDetail = observer(() => {
               </p>
             </div>
             <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
-              <h3 className="text-base text-[#202020] mb-2">
-                Total Value Locked(vault)
-              </h3>
+              <h3 className="text-base text-[#202020] mb-2">Vault TVL</h3>
               <p className="text-2xl font-bold text-[#202020]">
                 {DynamicFormatAmount({
                   amount: vault?.tvlUSD ?? 0,
                   decimals: 3,
-                  endWith: "USD",
+                  endWith: "$",
                 })}
               </p>
             </div>
             <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
-              <h3 className="text-base text-[#202020] mb-2">
-                Total Value Locked(pool)
-              </h3>
+              <h3 className="text-base text-[#202020] mb-2">Pool TVL</h3>
               <p className="text-2xl font-bold text-[#202020]">
                 {DynamicFormatAmount({
                   amount: poolTvl,
                   decimals: 3,
-                  endWith: "USD",
+                  endWith: "$",
                 })}
               </p>
             </div>
@@ -293,7 +288,11 @@ export const VaultDetail = observer(() => {
                 24h Volume(pool)
               </h3>
               <p className="text-2xl font-bold text-[#202020]">
-                {poolVolume24h}
+                {DynamicFormatAmount({
+                  amount: poolVolume24h,
+                  decimals: 3,
+                  endWith: "$",
+                })}
               </p>
             </div>
             <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">

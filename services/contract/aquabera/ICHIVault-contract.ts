@@ -13,6 +13,29 @@ import { VaultWithdraw } from "@/lib/algebra/graphql/generated/graphql";
 import { VaultCollectFee } from "@/lib/algebra/graphql/generated/graphql";
 
 export class ICHIVaultContract implements BaseContract {
+  static vaultsMap: Map<string, ICHIVaultContract> = new Map();
+  static getVault({
+    address,
+    ...args
+  }: { address: `0x${string}` } & Partial<ICHIVaultContract>) {
+    if (!address) {
+      return;
+    }
+    const vault = this.vaultsMap.get(address.toLowerCase());
+    if (!vault) {
+      const vault = new ICHIVaultContract({
+        address: address as `0x${string}`,
+        ...args,
+      });
+      this.vaultsMap.set(address.toLowerCase(), vault);
+      return vault;
+    }
+    return vault;
+  }
+  static setVault(address: `0x${string}`, vault: ICHIVaultContract) {
+    this.vaultsMap.set(address.toLowerCase(), vault);
+  }
+
   address: Address = zeroAddress;
   name: string = "ICHIVault";
   abi = ICHIVaultABI;
@@ -74,7 +97,14 @@ export class ICHIVaultContract implements BaseContract {
         this.totalsupplyShares,
     };
   }
-
+  get userTVLUSD() {
+    return (
+      Number(this.userTokenAmounts.total0) *
+        Number(this.token0?.derivedUSD ?? 0) +
+      Number(this.userTokenAmounts.total1) *
+        Number(this.token1?.derivedUSD ?? 0)
+    );
+  }
   get userTokenAmounts() {
     if (!this.token0 || !this.token1) return { total0: 0, total1: 0 };
     return {

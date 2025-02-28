@@ -1,75 +1,77 @@
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
+import { getSingleVaultDetails } from "@/lib/algebra/graphql/clients/vaults";
+import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
+import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
 import { Token } from "@/services/contract/token";
+import { wallet } from "@/services/wallet";
 import {
   useReadIchiVaultAllowToken0,
   useReadIchiVaultAllowToken1,
 } from "@/wagmi-generated";
-import { useEffect } from "react";
+import { observer } from "mobx-react-lite";
+import { useEffect, useState } from "react";
 
-export default function VaultRow({
-  vault,
-  setAllowToken,
-}: {
-  vault: any;
-  setAllowToken: (vault: any, token: any) => void;
-}) {
-  const tokenA = Token.getToken({ address: vault.tokenA });
-  const tokenB = Token.getToken({ address: vault.tokenB });
+export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
+  const [vaultContract, setVaultContract] = useState<
+    ICHIVaultContract | undefined
+  >(undefined);
+  const tokenA = Token.getToken({ address: vault.token0?.address ?? "" });
+  const tokenB = Token.getToken({ address: vault.token1?.address ?? "" });
 
   const isTokenAAllowed = useReadIchiVaultAllowToken0({
-    address: vault.id as `0x${string}`,
+    address: vault.address,
   });
 
   const isTokenBAllowed = useReadIchiVaultAllowToken1({
-    address: vault.id as `0x${string}`,
+    address: vault.address,
   });
-
-  tokenA.init();
-  tokenB.init();
 
   useEffect(() => {
-    if (isTokenAAllowed.data) {
-      setAllowToken(vault, tokenA);
+    if (!vault) return;
+
+    async function getVaultsContracts() {
+      if (!vault) return;
+      const vaultContract = await getSingleVaultDetails(vault.address);
+
+      if (vaultContract) {
+        Promise.all([
+          vaultContract?.getTotalAmounts(),
+          vaultContract?.getTotalSupply(),
+          vaultContract?.getBalanceOf(wallet.account),
+        ]);
+
+        vaultContract?.token0?.init(true, {
+          loadIndexerTokenData: true,
+        });
+        vaultContract?.token1?.init(true, {
+          loadIndexerTokenData: true,
+        });
+
+        return vaultContract;
+      }
     }
 
-    if (isTokenBAllowed.data) {
-      setAllowToken(vault, tokenB);
-    }
-  }, [
-    isTokenAAllowed.data,
-    isTokenBAllowed.data,
-    tokenA,
-    tokenB,
-    vault,
-    setAllowToken,
-  ]);
+    tokenA.init();
+    tokenB.init();
 
-  const tvl = Number(vault.pool?.totalValueLockedUSD || 0).toLocaleString(
-    "en-US",
-    {
-      style: "currency",
-      currency: "USD",
-    }
-  );
+    getVaultsContracts().then((vaultContract) => {
+      setVaultContract(vaultContract);
+    });
+  }, [vault]);
 
-  const volume = Number(
-    vault.pool?.poolDayData?.[0]?.volumeUSD || 0
-  ).toLocaleString("en-US", {
+  const tvl = Number(vault.tvlUSD || 0).toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
   });
 
-  const fees = Number(
-    vault.pool?.poolDayData?.[0]?.feesUSD || 0
-  ).toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-  });
+  const volume = Number(vault.pool?.volume_24h_USD || 0);
+
+  const fees = Number(vault.pool?.fees_24h_USD || 0);
 
   return (
     <tr
       className="transition-colors bg-white text-black hover:bg-gray-50 cursor-pointer"
-      onClick={() => (window.location.href = `/vault/${vault.id}`)}
+      onClick={() => (window.location.href = `/vault/${vault.address}`)}
     >
       {/* Token pair */}
       <td className="py-4 px-6">
@@ -121,11 +123,31 @@ export default function VaultRow({
       {/* vault address */}
       {/* <td className="py-4 px-6 text-black">{vault.id}</td> */}
       {/* tvl */}
-      <td className="py-4 px-6 text-right text-black">{tvl}</td>
+      <td className="py-4 px-6 text-right text-black">
+        {DynamicFormatAmount({
+          amount: vaultContract?.tvlUSD ?? 0,
+          decimals: 3,
+          endWith: " $",
+        })}
+      </td>
       {/* volume */}
-      <td className="py-4 px-6 text-right text-black">{volume}</td>
+      <td className="py-4 px-6 text-right text-black">
+        {DynamicFormatAmount({
+          amount: volume ?? 0,
+          decimals: 3,
+          endWith: " $",
+        })}
+      </td>
       {/* fees */}
-      <td className="py-4 px-6 text-right text-black">{fees}</td>
+      <td className="py-4 px-6 text-right text-black">
+        {DynamicFormatAmount({
+          amount: fees ?? 0,
+          decimals: 3,
+          endWith: " $",
+        })}
+      </td>
     </tr>
   );
-}
+});
+
+export default VaultRow;

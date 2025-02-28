@@ -24,13 +24,17 @@ import BigNumber from "bignumber.js";
 export const vaultQueryResToVaultContract = (
   vault: IchiVault
 ): ICHIVaultContract => {
-  const vaultContract = new ICHIVaultContract({
+  const vaultContract = ICHIVaultContract.getVault({
     address: vault.id as Address,
     allowToken0: vault.allowTokenA,
     allowToken1: vault.allowTokenB,
     holderCount: BigInt(vault.holdersCount),
     isInitialized: true,
   });
+
+  if (!vaultContract) {
+    throw new Error("Vault contract not found");
+  }
 
   vaultContract.token0 = new Token({
     address: vault.tokenA as Address,

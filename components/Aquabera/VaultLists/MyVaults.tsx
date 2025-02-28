@@ -10,8 +10,15 @@ import { Currency } from "@cryptoalgebra/sdk";
 import { DepositToVaultModal } from "../modals/DepositToVaultModal";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { observer } from "mobx-react-lite";
-
-type SortField = "pair" | "tvl" | "volume" | "fees" | "shares";
+import MyVaultRow from "./MyVaultRow";
+type SortField =
+  | "pair"
+  | "allow_token"
+  | "tvl"
+  | "volume"
+  | "fees"
+  | "shares"
+  | "user_tvl";
 type SortDirection = "asc" | "desc";
 
 interface MyAquaberaVaultsProps {
@@ -20,15 +27,33 @@ interface MyAquaberaVaultsProps {
 
 export const MyAquaberaVaults = observer(
   ({ searchString = "" }: MyAquaberaVaultsProps) => {
-    const router = useRouter();
+    const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>(
+      []
+    );
     const [myVaults, setMyVaults] = useState<AccountVaultSharesQuery>();
-    const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
-    const [selectedVault, setSelectedVault] =
-      useState<ICHIVaultContract | null>(null);
-    const [selectedTokenA, setSelectedTokenA] = useState<Currency | null>(null);
-    const [selectedTokenB, setSelectedTokenB] = useState<Currency | null>(null);
     const [sortField, setSortField] = useState<SortField>("tvl");
     const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+    const getAllowToken = (vault: any) => {
+      return vault.allowToken;
+    };
+
+    useEffect(() => {
+      if (!wallet.isInit || !myVaults) {
+        return;
+      }
+
+      myVaults.vaultShares.forEach((vault) => {
+        const vaultContract = ICHIVaultContract.getVault({
+          token0: vault.vault.tokenA,
+          token1: vault.vault.tokenB,
+          address: vault.vault.id as `0x${string}`,
+        });
+        if (vaultContract) {
+          setVaultsContracts((prev) => [...prev, vaultContract]);
+        }
+      });
+    }, [wallet.isInit, myVaults]);
 
     useEffect(() => {
       if (!wallet.isInit) return;
@@ -50,17 +75,17 @@ export const MyAquaberaVaults = observer(
     };
 
     const getSortedVaults = () => {
-      if (!myVaults?.vaultShares) return [];
+      if (!vaultsContracts.length) return [];
 
-      const filteredVaults = myVaults.vaultShares.filter((vaultShare) => {
+      const filteredVaults = vaultsContracts.filter((vault) => {
         if (!searchString) return true;
 
-        const tokenA = Token.getToken({ address: vaultShare.vault.tokenA });
-        const tokenB = Token.getToken({ address: vaultShare.vault.tokenB });
+        const tokenA = Token.getToken({ address: vault.token0?.address ?? "" });
+        const tokenB = Token.getToken({ address: vault.token1?.address ?? "" });
 
         const searchLower = searchString.toLowerCase();
         return (
-          vaultShare.vault.id.toLowerCase().includes(searchLower) ||
+          vault.address.toLowerCase().includes(searchLower) ||
           tokenA.symbol.toLowerCase().includes(searchLower) ||
           tokenB.symbol.toLowerCase().includes(searchLower)
         );
@@ -73,33 +98,31 @@ export const MyAquaberaVaults = observer(
           case "pair":
             return (
               multiplier *
-              (a.vault.tokenA + a.vault.tokenB).localeCompare(
-                b.vault.tokenA + b.vault.tokenB
-              )
+              (a.token0?.symbol?.localeCompare(b.token0?.symbol ?? "") ?? 0)
             );
-          case "tvl":
+          case "allow_token":
             return (
               multiplier *
-              (Number(a.vault.pool?.totalValueLockedUSD || 0) -
-                Number(b.vault.pool?.totalValueLockedUSD || 0))
+              getAllowToken(a)?.symbol.localeCompare(getAllowToken(b)?.symbol)
             );
+          case "tvl":
+            return multiplier * (Number(a.tvlUSD || 0) - Number(b.tvlUSD || 0));
           case "volume":
             return (
               multiplier *
-              (Number(a.vault.pool?.poolDayData?.[0]?.volumeUSD || 0) -
-                Number(b.vault.pool?.poolDayData?.[0]?.volumeUSD || 0))
+              (Number(a.pool?.volume_24h_USD || 0) -
+                Number(b.pool?.volume_24h_USD || 0))
             );
           case "fees":
             return (
               multiplier *
-              (Number(a.vault.pool?.poolDayData?.[0]?.feesUSD || 0) -
-                Number(b.vault.pool?.poolDayData?.[0]?.feesUSD || 0))
+              (Number(a.pool?.fees_24h_USD || 0) -
+                Number(b.pool?.fees_24h_USD || 0))
             );
           case "shares":
-            return (
-              multiplier *
-              (Number(a.vaultShareBalance) - Number(b.vaultShareBalance))
-            );
+            return multiplier * (Number(a.userShares) - Number(b.userShares));
+          case "user_tvl":
+            return multiplier * (Number(a.userTVLUSD) - Number(b.userTVLUSD));
           default:
             return 0;
         }
@@ -155,15 +178,14 @@ export const MyAquaberaVaults = observer(
                 label="Token Pair"
                 align="left"
               />
-              <th className="py-2 px-4 text-[#4D4D4D] max-w-[300px] truncate">
-                Vault Address
-              </th>
-              {/* <SortHeader field="tvl" label="TVL" />
-            <SortHeader field="volume" label="24h Volume" />
-            <SortHeader field="fees" label="24h Fees" /> */}
               <SortHeader
-                field="shares"
-                label="My Vault Shares"
+                field="allow_token"
+                label="Allow Token"
+                align="left"
+              />
+              <SortHeader
+                field="user_tvl"
+                label="Your TVL"
               />
             </tr>
           </thead>
@@ -178,98 +200,17 @@ export const MyAquaberaVaults = observer(
                 </td>
               </tr>
             ) : (
-              getSortedVaults().map((vaultShare) => {
-                const tokenA = Token.getToken({
-                  address: vaultShare.vault.tokenA,
-                });
-
-                const tokenB = Token.getToken({
-                  address: vaultShare.vault.tokenB,
-                });
-
-                tokenA.init();
-                tokenB.init();
-
-                const tvl = Number(
-                  vaultShare.vault.pool?.totalValueLockedUSD || 0
-                ).toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                });
-
-                const volume = Number(
-                  vaultShare.vault.pool?.poolDayData?.[0]?.volumeUSD || 0
-                ).toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                });
-
-                const fees = Number(
-                  vaultShare.vault.pool?.poolDayData?.[0]?.feesUSD || 0
-                ).toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                });
-
+              getSortedVaults().map((vault) => {
                 return (
-                  <tr
-                    key={vaultShare.vault.id}
-                    className="transition-colors bg-white text-black hover:bg-gray-50 cursor-pointer"
-                    onClick={() => router.push(`/vault/${vaultShare.vault.id}`)}
-                  >
-                    <td className="py-2 px-4">
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center">
-                          {vaultShare.vault.tokenA && (
-                            <TokenLogo token={tokenA} />
-                          )}
-                          <div className="-ml-2">
-                            {vaultShare.vault.tokenB && (
-                              <TokenLogo token={tokenB} />
-                            )}
-                          </div>
-                        </div>
-                        <span className="text-black font-medium">
-                          {tokenA.symbol}/{tokenB.symbol}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-2 px-4 text-black max-w-[300px] truncate">
-                      {vaultShare.vault.id}
-                    </td>
-                    {/* <td className="py-2 px-4 text-right text-black">{tvl}</td>
-                  <td className="py-2 px-4 text-right text-black">{volume}</td>
-                  <td className="py-2 px-4 text-right text-black">{fees}</td> */}
-                    <td className="py-2 px-4 text-right text-black">
-                      {vaultShare.vaultShareBalance}
-                    </td>
-                  </tr>
+                  <MyVaultRow
+                    key={vault.address}
+                    vault={vault}
+                  />
                 );
               })
             )}
           </tbody>
         </table>
-
-        {selectedVault && selectedTokenA && selectedTokenB && (
-          <DepositToVaultModal
-            isOpen={isDepositModalOpen}
-            onClose={() => {
-              setIsDepositModalOpen(false);
-              setSelectedVault(null);
-              setSelectedTokenA(null);
-              setSelectedTokenB(null);
-            }}
-            vault={selectedVault}
-            tokenA={selectedTokenA}
-            tokenB={selectedTokenB}
-          />
-        )}
       </div>
     );
   }

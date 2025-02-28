@@ -5,7 +5,10 @@ import { useEffect, useState, useMemo } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/algebra/ui/button";
 import { DepositToVaultModal } from "../modals/DepositToVaultModal";
-import { getVaultPageData } from "@/lib/algebra/graphql/clients/vaults";
+import {
+  getSingleVaultDetails,
+  getVaultPageData,
+} from "@/lib/algebra/graphql/clients/vaults";
 import { VaultsSortedByHoldersQuery } from "@/lib/algebra/graphql/generated/graphql";
 import { ICHIVaultContract } from "@/services/contract/aquabera/ICHIVault-contract";
 import VaultRow from "./VaulltRow";
@@ -20,17 +23,31 @@ interface AllAquaberaVaultsProps {
 export function AllAquaberaVaults({
   searchString = "",
 }: AllAquaberaVaultsProps) {
+  const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>(
+    []
+  );
   const [vaults, setVaults] = useState<VaultsSortedByHoldersQuery>();
   const [sortField, setSortField] = useState<SortField>("tvl");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
-  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
-  const [selectedVault, setSelectedVault] = useState<ICHIVaultContract | null>(
-    null
-  );
-  const [selectedTokenA, setSelectedTokenA] = useState<Currency | null>(null);
-  const [selectedTokenB, setSelectedTokenB] = useState<Currency | null>(null);
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
+
+  useEffect(() => {
+    if (!wallet.isInit || !vaults) {
+      return;
+    }
+
+    vaults.ichiVaults.forEach((vault) => {
+      const vaultContract = ICHIVaultContract.getVault({
+        token0: vault.tokenA,
+        token1: vault.tokenB,
+        address: vault.id as `0x${string}`,
+      });
+      if (vaultContract) {
+        setVaultsContracts((prev) => [...prev, vaultContract]);
+      }
+    });
+  }, [wallet.isInit, vaults]);
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -59,13 +76,7 @@ export function AllAquaberaVaults({
     return Math.ceil(vaults.ichiVaults.length / rowsPerPage);
   }, [vaults?.ichiVaults]);
 
-  const [sortedVaults, setSortedVaults] = useState<
-    VaultsSortedByHoldersQuery["ichiVaults"]
-  >([]);
-
-  const setAllowToken = (vault: any, token: any) => {
-    vault.allowToken = token;
-  };
+  const [sortedVaults, setSortedVaults] = useState<ICHIVaultContract[]>([]);
 
   const getAllowToken = (vault: any) => {
     return vault.allowToken;
@@ -73,15 +84,19 @@ export function AllAquaberaVaults({
 
   useEffect(() => {
     const getSortedVaults = () => {
-      if (!vaults?.ichiVaults) return [];
+      if (!vaultsContracts.length) return [];
 
-      const sortedVaults = [...vaults.ichiVaults].sort((a, b) => {
+      const sortedVaults = [...vaultsContracts].sort((a, b) => {
         const multiplier = sortDirection === "asc" ? 1 : -1;
 
         switch (sortField) {
           case "pair":
-            const aSymbol = Token.getToken({ address: a.tokenA }).symbol;
-            const bSymbol = Token.getToken({ address: b.tokenA }).symbol;
+            const aSymbol = Token.getToken({
+              address: a.token0?.address ?? "",
+            }).symbol;
+            const bSymbol = Token.getToken({
+              address: b.token0?.address ?? "",
+            }).symbol;
             return multiplier * aSymbol.localeCompare(bSymbol);
           case "allow_token":
             return (
@@ -89,24 +104,20 @@ export function AllAquaberaVaults({
               getAllowToken(a)?.symbol.localeCompare(getAllowToken(b)?.symbol)
             );
           case "address":
-            return multiplier * a.id.localeCompare(b.id);
+            return multiplier * a.address.localeCompare(b.address);
           case "tvl":
-            return (
-              multiplier *
-              (Number(a.pool?.totalValueLockedUSD || 0) -
-                Number(b.pool?.totalValueLockedUSD || 0))
-            );
+            return multiplier * (Number(a.tvlUSD || 0) - Number(b.tvlUSD || 0));
           case "volume":
             return (
               multiplier *
-              (Number(a.pool?.poolDayData?.[0]?.volumeUSD || 0) -
-                Number(b.pool?.poolDayData?.[0]?.volumeUSD || 0))
+              (Number(a.pool?.volume_24h_USD || 0) -
+                Number(b.pool?.volume_24h_USD || 0))
             );
           case "fees":
             return (
               multiplier *
-              (Number(a.pool?.poolDayData?.[0]?.feesUSD || 0) -
-                Number(b.pool?.poolDayData?.[0]?.feesUSD || 0))
+              (Number(a.pool?.fees_24h_USD || 0) -
+                Number(b.pool?.fees_24h_USD || 0))
             );
           default:
             return 0;
@@ -117,16 +128,12 @@ export function AllAquaberaVaults({
       const end = start + rowsPerPage;
       const list = sortedVaults.slice(start, end);
 
-      return list.map((vault) => {
-        return {
-          ...vault,
-        };
-      });
+      return list;
     };
 
     const sortedVaults = getSortedVaults();
     setSortedVaults(sortedVaults);
-  }, [vaults, sortField, sortDirection, page]);
+  }, [vaultsContracts, sortField, sortDirection, page]);
 
   return (
     <div className="w-full">
@@ -182,36 +189,12 @@ export function AllAquaberaVaults({
                   </div>
                 </div>
               </th>
-              {/* <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
-                <div
-                  className="flex items-center gap-2"
-                  onClick={() => handleSort("address")}
-                >
-                  <span>Vault Address</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === "address" && sortDirection === "asc"
-                          ? "text-black"
-                          : "text-[#4D4D4D]"
-                      }`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === "address" && sortDirection === "desc"
-                          ? "text-black"
-                          : "text-[#4D4D4D]"
-                      }`}
-                    />
-                  </div>
-                </div>
-              </th> */}
               <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
                 <div
                   className="flex items-center gap-2 justify-end"
                   onClick={() => handleSort("tvl")}
                 >
-                  <span>TVL</span>
+                  <span>Vault TVL</span>
                   <div className="flex flex-col">
                     <ChevronUp
                       className={`h-3 w-3 ${
@@ -235,7 +218,7 @@ export function AllAquaberaVaults({
                   className="flex items-center gap-2 justify-end"
                   onClick={() => handleSort("volume")}
                 >
-                  <span>24h Volume</span>
+                  <span>Pool 24h Volume</span>
                   <div className="flex flex-col">
                     <ChevronUp
                       className={`h-3 w-3 ${
@@ -259,7 +242,7 @@ export function AllAquaberaVaults({
                   className="flex items-center gap-2 justify-end"
                   onClick={() => handleSort("fees")}
                 >
-                  <span>24h Fees</span>
+                  <span>Pool 24h Fees</span>
                   <div className="flex flex-col">
                     <ChevronUp
                       className={`h-3 w-3 ${
@@ -294,9 +277,8 @@ export function AllAquaberaVaults({
               sortedVaults.map((vault) => {
                 return (
                   <VaultRow
-                    key={vault.id}
+                    key={vault.address}
                     vault={vault}
-                    setAllowToken={setAllowToken}
                   />
                 );
               })
@@ -328,21 +310,6 @@ export function AllAquaberaVaults({
           </div>
         </div>
       </div>
-
-      {selectedVault && selectedTokenA && selectedTokenB && (
-        <DepositToVaultModal
-          isOpen={isDepositModalOpen}
-          onClose={() => {
-            setIsDepositModalOpen(false);
-            setSelectedVault(null);
-            setSelectedTokenA(null);
-            setSelectedTokenB(null);
-          }}
-          vault={selectedVault}
-          tokenA={selectedTokenA}
-          tokenB={selectedTokenB}
-        />
-      )}
     </div>
   );
 }
