@@ -219,10 +219,30 @@ const PoolsList = ({
           (farming) => farming.pool === id
         );
 
-        const poolMaxApr = aprPercentage;
-        const poolAvgApr = aprPercentage;
+        let total24hFees = 0;
+        let total24hDataCount = 0;
+        let total24hVolume = 0;
+
+        poolHourData
+          .filter((hour) => {
+            return hour.periodStartUnix > currentDate / 1000 - msIn24Hours;
+          })
+          .map((hour) => {
+            total24hFees += Number(hour.feesUSD);
+            total24hDataCount++;
+            total24hVolume += Number(hour.volumeUSD);
+          });
+
+        const avgFees24h = total24hFees / total24hDataCount;
+        const avgVolume24h = total24hVolume / total24hDataCount;
+
+        const avgAPR24h =
+          (avgFees24h / Number(totalValueLockedUSD)) * 365 * 100 * 24;
+
+        const poolMaxApr = avgAPR24h;
+        const poolAvgApr = avgAPR24h;
         const farmApr = 0;
-        const avgApr = aprPercentage;
+        const avgApr = avgAPR24h;
 
         return {
           id: id as Address,
@@ -232,8 +252,8 @@ const PoolsList = ({
           },
           fee: Number(fee) / 10_000,
           tvlUSD: Number(totalValueLockedUSD),
-          volume24USD: currentPool.volumeUSD,
-          fees24USD: currentPool.feesUSD,
+          volume24USD: avgVolume24h * 24,
+          fees24USD: avgFees24h * 24,
           poolMaxApr,
           poolAvgApr,
           farmApr,
@@ -396,6 +416,26 @@ const PoolsList = ({
           (farming) => farming.pool === id
         );
 
+        let total24hFees = 0;
+        let total24hDataCount = 0;
+        let total24hVolume = 0;
+
+        poolHourData
+          .filter((hour) => {
+            return hour.periodStartUnix > currentDate / 1000 - msIn24Hours;
+          })
+          .map((hour) => {
+            total24hFees += Number(hour.feesUSD);
+            total24hDataCount++;
+            total24hVolume += Number(hour.volumeUSD);
+          });
+
+        const avgFees24h = total24hFees / total24hDataCount;
+        const avgVolume24h = total24hVolume / total24hDataCount;
+
+        const avgAPR24h =
+          (avgFees24h / Number(totalValueLockedUSD)) * 365 * 100 * 24;
+
         const poolMaxApr = aprPercentage;
         const poolAvgApr = aprPercentage;
         const farmApr = 0;
@@ -411,8 +451,8 @@ const PoolsList = ({
           },
           fee: Number(fee) / 10_000,
           tvlUSD: Number(totalValueLockedUSD),
-          volume24USD: currentPool.volumeUSD,
-          fees24USD: currentPool.feesUSD,
+          volume24USD: avgVolume24h * 24,
+          fees24USD: avgFees24h * 24,
           poolMaxApr,
           poolAvgApr,
           farmApr,
