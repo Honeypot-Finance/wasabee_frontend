@@ -17,6 +17,7 @@ import { SortingState } from "@tanstack/react-table";
 import { useUserPools } from "@/lib/algebra/graphql/clients/pool";
 import { wallet } from "@/services/wallet";
 import BigNumber from "bignumber.js";
+import { calculatePercentageChange } from "@/lib/utils";
 
 const mappingSortKeys: Record<any, Pool_OrderBy> = {
   tvlUSD: Pool_OrderBy.TotalValueLockedUsd,
@@ -139,20 +140,7 @@ const PoolsList = ({
           return filledData?.sort((a, b) => b[field] - a[field]);
         }
 
-        function calculatePercentageChange(current: number, previous: number) {
-          if (previous === 0) {
-            return current === 0 ? 0 : 100; // Assume 100% change for a significant increase
-          }
-
-          // Calculate percentage change
-          const change = ((current - previous) / previous) * 100;
-
-          // Ensure the result is a valid number
-          return isNaN(change) || !isFinite(change) ? 0 : change;
-        }
-
         //periodStartUnix
-
         const handleGapHour = (data: any[], end: number) => {
           return handleGap(data, 3600, "periodStartUnix", end);
         };
@@ -214,7 +202,7 @@ const PoolsList = ({
         /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
         const timeDifference = currentDate - lastDate;
         const msIn24Hours = 24 * 60 * 60 * 1000;
-
+        const msIn48Hours = 48 * 60 * 60 * 1000;
         const activeFarming = activeFarmings?.eternalFarmings.find(
           (farming) => farming.pool === id
         );
@@ -222,10 +210,14 @@ const PoolsList = ({
         let total24hFees = 0;
         let total24hDataCount = 0;
         let total24hVolume = 0;
+        let total24to48hVolume = 0;
+        let total24to48hDataCount = 0;
 
         poolHourData
           .filter((hour) => {
-            return hour.periodStartUnix > currentDate / 1000 - msIn24Hours;
+            return (
+              hour.periodStartUnix > currentDate / 1000 - msIn24Hours / 1000
+            );
           })
           .map((hour) => {
             total24hFees += Number(hour.feesUSD);
@@ -233,8 +225,26 @@ const PoolsList = ({
             total24hVolume += Number(hour.volumeUSD);
           });
 
-        const avgFees24h = total24hFees / total24hDataCount;
-        const avgVolume24h = total24hVolume / total24hDataCount;
+        poolHourData
+          .filter((hour) => {
+            return (
+              hour.periodStartUnix > currentDate / 1000 - msIn48Hours / 1000 &&
+              hour.periodStartUnix < currentDate / 1000 - msIn24Hours / 1000
+            );
+          })
+          .map((hour) => {
+            total24to48hVolume += Number(hour.volumeUSD);
+            total24to48hDataCount++;
+          });
+
+        const avgFees24h =
+          total24hDataCount > 0 ? total24hFees / total24hDataCount : 0;
+        const avgVolume24h =
+          total24hDataCount > 0 ? total24hVolume / total24hDataCount : 0;
+        const avgVolume24to48h =
+          total24to48hDataCount > 0
+            ? total24to48hVolume / total24to48hDataCount
+            : 0;
 
         const avgAPR24h =
           (avgFees24h / Number(totalValueLockedUSD)) * 365 * 100;
@@ -243,6 +253,21 @@ const PoolsList = ({
         const poolAvgApr = avgAPR24h;
         const farmApr = 0;
         const avgApr = avgAPR24h;
+
+        const volumeChange24to48h = calculatePercentageChange(
+          avgVolume24h,
+          avgVolume24to48h
+        );
+
+        console.log("volumeChange24to48h", {
+          poolHourData,
+          token0: token0.symbol,
+          token1: token1.symbol,
+          total24to48hVolume,
+          avgVolume24h,
+          avgVolume24to48h,
+          volumeChange24to48h,
+        });
 
         return {
           id: id as Address,
@@ -264,7 +289,7 @@ const PoolsList = ({
           liquidity,
           token0Price,
           changeHour,
-          change24h,
+          change24h: volumeChange24to48h,
           changeWeek,
           changeMonth,
           txCount,
@@ -337,18 +362,6 @@ const PoolsList = ({
           return filledData?.sort((a, b) => b[field] - a[field]);
         }
 
-        function calculatePercentageChange(current: number, previous: number) {
-          if (previous === 0) {
-            return current === 0 ? 0 : 100; // Assume 100% change for a significant increase
-          }
-
-          // Calculate percentage change
-          const change = ((current - previous) / previous) * 100;
-
-          // Ensure the result is a valid number
-          return isNaN(change) || !isFinite(change) ? 0 : change;
-        }
-
         //periodStartUnix
 
         const handleGapHour = (data: any[], end: number) => {
@@ -423,7 +436,9 @@ const PoolsList = ({
 
         poolHourData
           .filter((hour) => {
-            return hour.periodStartUnix > currentDate / 1000 - msIn24Hours;
+            return (
+              hour.periodStartUnix > currentDate / 1000 - msIn24Hours / 1000
+            );
           })
           .map((hour) => {
             total24hFees += Number(hour.feesUSD);

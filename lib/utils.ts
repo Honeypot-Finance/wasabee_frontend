@@ -2,6 +2,25 @@ import BigNumber from "bignumber.js";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+export function calculatePercentageChange(current: number, previous: number) {
+  // Ensure the result is a valid number
+
+  if (previous === 0 && current === 0) {
+    return 0;
+  } else if (previous === 0) {
+    return current === 0 ? 0 : 100; // Assume 100% change for a significant increase
+  } else if (current === 0) {
+    return -100;
+  }
+
+  // Calculate percentage change
+  if (current > previous) {
+    return ((current - previous) / previous) * 100;
+  } else {
+    return (current / previous) * 100 - 100;
+  }
+}
+
 export function toCompactLocaleString(
   value: number | string | BigNumber,
   options?: Intl.NumberFormatOptions
@@ -91,10 +110,13 @@ export function removeEmptyFields(obj: FilterObject): FilterObject {
 }
 
 export function getTextSizeClass(text: string | undefined | null): string {
-  if (!text) return "text-2xl md:text-[34px] text-stroke-2 text-shadow-[2px_4px_0px_#AF7F3D]";
-  
-  if (text.length > 10) return "text-base md:text-xl text-stroke-1 text-shadow-[1px_2px_0px_#AF7F3D]";
-  if (text.length > 5) return "text-xl md:text-2xl text-stroke-[1.5px] text-shadow-[1.5px_3px_0px_#AF7F3D]";
+  if (!text)
+    return "text-2xl md:text-[34px] text-stroke-2 text-shadow-[2px_4px_0px_#AF7F3D]";
+
+  if (text.length > 10)
+    return "text-base md:text-xl text-stroke-1 text-shadow-[1px_2px_0px_#AF7F3D]";
+  if (text.length > 5)
+    return "text-xl md:text-2xl text-stroke-[1.5px] text-shadow-[1.5px_3px_0px_#AF7F3D]";
   return "text-2xl md:text-[34px] text-stroke-2 text-shadow-[2px_4px_0px_#AF7F3D]";
 }
 
@@ -104,7 +126,7 @@ export const formatNumberWithUnit = (num: number, decimals = 2): string => {
     return `<${minValue}`;
   }
 
-  const units = ['', 'k', 'M', 'B', 'T'];
+  const units = ["", "k", "M", "B", "T"];
   let unitIndex = 0;
   let value = num;
 

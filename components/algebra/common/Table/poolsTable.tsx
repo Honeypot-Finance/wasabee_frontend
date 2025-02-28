@@ -357,12 +357,14 @@ const PoolsTable = observer(
                                 </span>
                                 <span
                                   className={`text-xs ${
-                                    Number(pool.change24h) >= 0
-                                      ? "text-[#4ADE80]"
-                                      : "text-[#FF5555]"
+                                    Number(pool.change24h) > 0 &&
+                                    "text-[#4ADE80]"
+                                  } ${
+                                    Number(pool.change24h) < 0 &&
+                                    "text-[#FF5555]"
                                   }`}
                                 >
-                                  {Number(pool.change24h) >= 0 ? "+" : ""}
+                                  {Number(pool.change24h) > 0 ? "+" : ""}
                                   {Number(pool.change24h).toFixed(2)}%
                                 </span>
                               </div>

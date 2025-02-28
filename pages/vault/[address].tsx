@@ -69,6 +69,7 @@ export const VaultDetail = observer(() => {
       vaultContract?.token0?.init(true, {
         loadIndexerTokenData: true,
       });
+
       vaultContract?.token1?.init(true, {
         loadIndexerTokenData: true,
       });

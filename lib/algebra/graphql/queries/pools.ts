@@ -10,7 +10,7 @@ export const POOL_FRAGMENT = gql`
     token1 {
       ...TokenFields
     }
-    poolHourData(first: 48, orderBy: periodStartUnix, orderDirection: desc) {
+    poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
       ...PoolHourDataFields
     }
     poolDayData(first: 30, orderBy: date, orderDirection: desc) {
