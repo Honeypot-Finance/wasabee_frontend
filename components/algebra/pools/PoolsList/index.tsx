@@ -270,7 +270,7 @@ const PoolsList = ({
           txCount,
           volumeUSD,
           marktetcap: token0.marketCap,
-          apr24h: avgApr,
+          apr24h: avgApr.toString(),
         };
       }
     );
@@ -469,7 +469,7 @@ const PoolsList = ({
           txCount,
           volumeUSD,
           marktetcap: token0.marketCap,
-          apr24h: avgApr,
+          apr24h: avgApr.toString(),
           unclaimedFees,
         };
       }
