@@ -237,7 +237,7 @@ const PoolsList = ({
         const avgVolume24h = total24hVolume / total24hDataCount;
 
         const avgAPR24h =
-          (avgFees24h / Number(totalValueLockedUSD)) * 365 * 100 * 24;
+          (avgFees24h / Number(totalValueLockedUSD)) * 365 * 100;
 
         const poolMaxApr = avgAPR24h;
         const poolAvgApr = avgAPR24h;
@@ -270,7 +270,7 @@ const PoolsList = ({
           txCount,
           volumeUSD,
           marktetcap: token0.marketCap,
-          apr24h: avgApr.toString(),
+          apr24h: (avgApr * 24).toString(),
         };
       }
     );
@@ -298,6 +298,7 @@ const PoolsList = ({
         liquidity,
         aprPercentage,
         fees,
+        userTVLUSD,
       }) => {
         const currentPool = poolDayData[0];
         const lastDate = currentPool ? currentPool.date * 1000 : 0;
@@ -434,12 +435,12 @@ const PoolsList = ({
         const avgVolume24h = total24hVolume / total24hDataCount;
 
         const avgAPR24h =
-          (avgFees24h / Number(totalValueLockedUSD)) * 365 * 100 * 24;
+          (avgFees24h / Number(totalValueLockedUSD)) * 365 * 100;
 
-        const poolMaxApr = aprPercentage;
-        const poolAvgApr = aprPercentage;
+        const poolMaxApr = avgAPR24h;
+        const poolAvgApr = avgAPR24h;
         const farmApr = 0;
-        const avgApr = aprPercentage;
+        const avgApr = avgAPR24h;
 
         const unclaimedFees = BigNumber(fees.toString());
 
@@ -469,8 +470,9 @@ const PoolsList = ({
           txCount,
           volumeUSD,
           marktetcap: token0.marketCap,
-          apr24h: avgApr.toString(),
+          apr24h: (avgApr * 24).toString(),
           unclaimedFees,
+          userTVLUSD,
         };
       }
     );

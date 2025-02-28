@@ -43,7 +43,8 @@ type SortField =
   | "volume"
   | "apr"
   | "unclaimedFees"
-  | "feesUSD";
+  | "feesUSD"
+  | "user_tvl";
 type SortDirection = "asc" | "desc";
 
 const PoolsTable = observer(
@@ -71,14 +72,16 @@ const PoolsTable = observer(
       { key: "myPools", label: "My Pools" },
     ];
 
-    const [tableData, setTableData] = useState<Pool[]>([]);
+    const [tableData, setTableData] = useState<
+      (Pool & { userTVLUSD: number })[]
+    >([]);
 
     useEffect(() => {
       if (!wallet.isInit) return;
       if (selectedFilter === "myPools") {
-        setTableData(userPools as Pool[]);
+        setTableData(userPools as (Pool & { userTVLUSD: number })[]);
       } else {
-        setTableData(data as Pool[]);
+        setTableData(data as (Pool & { userTVLUSD: number })[]);
       }
     }, [data, selectedFilter, userPools, wallet.isInit]);
 
@@ -114,6 +117,8 @@ const PoolsTable = observer(
             );
           case "tvl":
             return multiplier * (Number(a.tvlUSD) - Number(b.tvlUSD));
+          case "user_tvl":
+            return multiplier * (Number(a.userTVLUSD) - Number(b.userTVLUSD));
           case "volume":
             return multiplier * (Number(a.volume24USD) - Number(b.volume24USD));
           case "apr":
@@ -245,28 +250,38 @@ const PoolsTable = observer(
                     label="Pool"
                     align="left"
                   />
-                  <SortHeader
-                    field="tvl"
-                    label="TVL"
-                  />
-                  <SortHeader
-                    field="volume"
-                    label="Volume 24H"
-                  />
-                  <SortHeader
-                    field="feesUSD"
-                    label="Fee 24H"
-                  />
+                  {defaultFilter === "trending" && (
+                    <>
+                      <SortHeader
+                        field="tvl"
+                        label="TVL"
+                      />
+                      <SortHeader
+                        field="volume"
+                        label="Volume 24H"
+                      />
+                      <SortHeader
+                        field="feesUSD"
+                        label="Fee 24H"
+                      />
+                    </>
+                  )}
                   <SortHeader
                     field="apr"
                     label="APR"
                   />
                   {defaultFilter === "myPools" && (
-                    <SortHeader
-                      field="unclaimedFees"
-                      label="Unclaimed Fees"
-                      align="center"
-                    />
+                    <>
+                      <SortHeader
+                        field="user_tvl"
+                        label="My TVL"
+                      />
+                      <SortHeader
+                        field="unclaimedFees"
+                        label="Unclaimed Fees"
+                        align="center"
+                      />
+                    </>
                   )}
                   <th className="py-4 px-6 text-center text-[#4D4D4D]">
                     Actions
@@ -325,37 +340,41 @@ const PoolsTable = observer(
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 px-6 text-right">
-                        <div className="flex flex-col">
-                          <span className="text-black font-mono">
-                            {formatExtremelyLargeNumber(pool.tvlUSD)}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <div className="flex flex-col">
-                          <span className="text-black font-mono">
-                            {formatExtremelyLargeNumber(pool.volume24USD)}
-                          </span>
-                          <span
-                            className={`text-xs ${
-                              Number(pool.change24h) >= 0
-                                ? "text-[#4ADE80]"
-                                : "text-[#FF5555]"
-                            }`}
-                          >
-                            {Number(pool.change24h) >= 0 ? "+" : ""}
-                            {Number(pool.change24h).toFixed(2)}%
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <div className="flex flex-col">
-                          <span className="text-black">
-                            {formatUSD.format(pool.fees24USD)}
-                          </span>
-                        </div>
-                      </td>
+                      {defaultFilter === "trending" && (
+                        <>
+                          <td className="py-4 px-6 text-right">
+                            <div className="flex flex-col">
+                              <span className="text-black font-mono">
+                                {formatExtremelyLargeNumber(pool.tvlUSD)}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 text-right">
+                            <div className="flex flex-col">
+                              <span className="text-black font-mono">
+                                {formatExtremelyLargeNumber(pool.volume24USD)}
+                              </span>
+                              <span
+                                className={`text-xs ${
+                                  Number(pool.change24h) >= 0
+                                    ? "text-[#4ADE80]"
+                                    : "text-[#FF5555]"
+                                }`}
+                              >
+                                {Number(pool.change24h) >= 0 ? "+" : ""}
+                                {Number(pool.change24h).toFixed(2)}%
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 text-right">
+                            <div className="flex flex-col">
+                              <span className="text-black">
+                                {formatUSD.format(pool.fees24USD)}
+                              </span>
+                            </div>
+                          </td>
+                        </>
+                      )}
                       <td className="py-4 px-6 text-right">
                         <div className="flex flex-col">
                           <span className="text-black">
@@ -364,11 +383,20 @@ const PoolsTable = observer(
                         </div>
                       </td>
                       {defaultFilter === "myPools" && (
-                        <td className="py-4 px-6 text-center">
-                          <span className="text-black">
-                            ${Number(pool.unclaimedFees).toLocaleString()}
-                          </span>
-                        </td>
+                        <>
+                          <td className="py-4 px-6 text-right">
+                            <div className="flex flex-col">
+                              <span className="text-black">
+                                {formatExtremelyLargeNumber(pool.userTVLUSD)}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 text-center">
+                            <span className="text-black">
+                              ${Number(pool.unclaimedFees).toLocaleString()}
+                            </span>
+                          </td>
+                        </>
                       )}
                       <td className="py-4 px-6 text-center">
                         <OptionsDropdown

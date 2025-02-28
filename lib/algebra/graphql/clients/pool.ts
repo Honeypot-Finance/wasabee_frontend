@@ -96,7 +96,7 @@ export const useUserPools = (userAddress: string) => {
   });
 
   const [pools, setPools] = useState<
-    Record<string, Pool & { fees: BigNumber }>
+    Record<string, Pool & { fees: BigNumber; userTVLUSD: BigNumber }>
   >({});
 
   const algebraPositionManager = getContract({
@@ -122,6 +122,12 @@ export const useUserPools = (userAddress: string) => {
             amount1Max: MAX_UINT128,
           },
         ]);
+
+        const userTVLUSD =
+          Number(position.depositedToken0 - position.withdrawnToken0) *
+            Number(pool.token0.derivedUSD) +
+          Number(position.depositedToken1 - position.withdrawnToken1) *
+            Number(pool.token1.derivedUSD);
 
         const fees0USD = CurrencyAmount.fromRawAmount(
           unwrappedToken(
@@ -170,6 +176,9 @@ export const useUserPools = (userAddress: string) => {
                 fees: prev[pool.id].fees.plus(
                   BigNumber(fees0USDformatted + fees1USDformatted)
                 ),
+                userTVLUSD: prev[pool.id].userTVLUSD.plus(
+                  BigNumber(userTVLUSD)
+                ),
               },
             };
           } else {
@@ -178,6 +187,7 @@ export const useUserPools = (userAddress: string) => {
               [pool.id]: {
                 ...(pool as Pool),
                 fees: BigNumber(fees0USDformatted + fees1USDformatted),
+                userTVLUSD: BigNumber(userTVLUSD),
               },
             };
           }
