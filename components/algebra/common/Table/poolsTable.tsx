@@ -299,129 +299,131 @@ const PoolsTable = observer(
                     </td>
                   </tr>
                 ) : (
-                  getSortedPools().map((pool) => (
-                    <tr
-                      key={pool.id}
-                      className="transition-colors bg-white text-black  hover:bg-gray-50 cursor-pointer"
-                      onClick={() => {
-                        if (action) {
-                          action(pool.id);
-                        } else if (link) {
-                          window.location.href = `/${link}/${pool.id}`;
-                        }
-                      }}
-                    >
-                      <td className="py-4 px-6">
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-1">
-                            <TokenLogo
-                              token={Token.getToken({
-                                address: pool.pair.token0.id,
-                              })}
-                              addtionalClasses="translate-x-[25%]"
-                              size={24}
-                            />
-                            <TokenLogo
-                              token={Token.getToken({
-                                address: pool.pair.token1.id,
-                              })}
-                              addtionalClasses="translate-x-[-25%]"
-                              size={24}
-                            />
+                  getSortedPools().map(
+                    (pool: Pool & { userTVLUSD: number }) => (
+                      <tr
+                        key={pool.id}
+                        className="transition-colors bg-white text-black  hover:bg-gray-50 cursor-pointer"
+                        onClick={() => {
+                          if (action) {
+                            action(pool.id);
+                          } else if (link) {
+                            window.location.href = `/${link}/${pool.id}`;
+                          }
+                        }}
+                      >
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1">
+                              <TokenLogo
+                                token={Token.getToken({
+                                  address: pool.pair.token0.id,
+                                })}
+                                addtionalClasses="translate-x-[25%]"
+                                size={24}
+                              />
+                              <TokenLogo
+                                token={Token.getToken({
+                                  address: pool.pair.token1.id,
+                                })}
+                                addtionalClasses="translate-x-[-25%]"
+                                size={24}
+                              />
+                            </div>
+                            <div className="flex flex-col">
+                              <p className="text-black font-medium">
+                                {pool.pair.token0.symbol}/
+                                {pool.pair.token1.symbol}
+                              </p>
+                              <p className="text-black/60 text-sm">
+                                base fee {pool.fee}%
+                              </p>
+                            </div>
                           </div>
+                        </td>
+                        {defaultFilter === "trending" && (
+                          <>
+                            <td className="py-4 px-6 text-right">
+                              <div className="flex flex-col">
+                                <span className="text-black font-mono">
+                                  {formatExtremelyLargeNumber(pool.tvlUSD)}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="py-4 px-6 text-right">
+                              <div className="flex flex-col">
+                                <span className="text-black font-mono">
+                                  {formatExtremelyLargeNumber(pool.volume24USD)}
+                                </span>
+                                <span
+                                  className={`text-xs ${
+                                    Number(pool.change24h) >= 0
+                                      ? "text-[#4ADE80]"
+                                      : "text-[#FF5555]"
+                                  }`}
+                                >
+                                  {Number(pool.change24h) >= 0 ? "+" : ""}
+                                  {Number(pool.change24h).toFixed(2)}%
+                                </span>
+                              </div>
+                            </td>
+                            <td className="py-4 px-6 text-right">
+                              <div className="flex flex-col">
+                                <span className="text-black">
+                                  {formatUSD.format(pool.fees24USD)}
+                                </span>
+                              </div>
+                            </td>
+                          </>
+                        )}
+                        <td className="py-4 px-6 text-right">
                           <div className="flex flex-col">
-                            <p className="text-black font-medium">
-                              {pool.pair.token0.symbol}/
-                              {pool.pair.token1.symbol}
-                            </p>
-                            <p className="text-black/60 text-sm">
-                              base fee {pool.fee}%
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      {defaultFilter === "trending" && (
-                        <>
-                          <td className="py-4 px-6 text-right">
-                            <div className="flex flex-col">
-                              <span className="text-black font-mono">
-                                {formatExtremelyLargeNumber(pool.tvlUSD)}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="py-4 px-6 text-right">
-                            <div className="flex flex-col">
-                              <span className="text-black font-mono">
-                                {formatExtremelyLargeNumber(pool.volume24USD)}
-                              </span>
-                              <span
-                                className={`text-xs ${
-                                  Number(pool.change24h) >= 0
-                                    ? "text-[#4ADE80]"
-                                    : "text-[#FF5555]"
-                                }`}
-                              >
-                                {Number(pool.change24h) >= 0 ? "+" : ""}
-                                {Number(pool.change24h).toFixed(2)}%
-                              </span>
-                            </div>
-                          </td>
-                          <td className="py-4 px-6 text-right">
-                            <div className="flex flex-col">
-                              <span className="text-black">
-                                {formatUSD.format(pool.fees24USD)}
-                              </span>
-                            </div>
-                          </td>
-                        </>
-                      )}
-                      <td className="py-4 px-6 text-right">
-                        <div className="flex flex-col">
-                          <span className="text-black">
-                            {Number(pool.apr24h).toFixed(2)}%
-                          </span>
-                        </div>
-                      </td>
-                      {defaultFilter === "myPools" && (
-                        <>
-                          <td className="py-4 px-6 text-right">
-                            <div className="flex flex-col">
-                              <span className="text-black">
-                                {formatExtremelyLargeNumber(pool.userTVLUSD)}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="py-4 px-6 text-center">
                             <span className="text-black">
-                              ${Number(pool.unclaimedFees).toLocaleString()}
+                              {Number(pool.apr24h).toFixed(2)}%
                             </span>
-                          </td>
-                        </>
-                      )}
-                      <td className="py-4 px-6 text-center">
-                        <OptionsDropdown
-                          className="min-h-0 h-[unset] bg-white text-black"
-                          options={[
-                            optionsPresets.copy({
-                              copyText: pool.id,
-                              displayText: "Copy Pool address",
-                              copysSuccessText: "Pool address copied",
-                            }),
-                            optionsPresets.viewOnExplorer({
-                              address: pool.id,
-                            }),
-                            {
-                              icon: <TbSwitchHorizontal />,
-                              display: "Swap",
-                              onClick: () => {
-                                window.location.href = `/swap?inputCurrency=${pool.pair.token0.id}&outputCurrency=${pool.pair.token1.id}`;
+                          </div>
+                        </td>
+                        {defaultFilter === "myPools" && (
+                          <>
+                            <td className="py-4 px-6 text-right">
+                              <div className="flex flex-col">
+                                <span className="text-black">
+                                  {formatExtremelyLargeNumber(pool.userTVLUSD)}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="py-4 px-6 text-center">
+                              <span className="text-black">
+                                ${Number(pool.unclaimedFees).toLocaleString()}
+                              </span>
+                            </td>
+                          </>
+                        )}
+                        <td className="py-4 px-6 text-center">
+                          <OptionsDropdown
+                            className="min-h-0 h-[unset] bg-white text-black"
+                            options={[
+                              optionsPresets.copy({
+                                copyText: pool.id,
+                                displayText: "Copy Pool address",
+                                copysSuccessText: "Pool address copied",
+                              }),
+                              optionsPresets.viewOnExplorer({
+                                address: pool.id,
+                              }),
+                              {
+                                icon: <TbSwitchHorizontal />,
+                                display: "Swap",
+                                onClick: () => {
+                                  window.location.href = `/swap?inputCurrency=${pool.pair.token0.id}&outputCurrency=${pool.pair.token1.id}`;
+                                },
                               },
-                            },
-                          ]}
-                        />
-                      </td>
-                    </tr>
-                  ))
+                            ]}
+                          />
+                        </td>
+                      </tr>
+                    )
+                  )
                 )}
               </tbody>
             </table>
