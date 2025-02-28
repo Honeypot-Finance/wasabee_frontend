@@ -1,3 +1,4 @@
+import { LoadingDisplay } from "@/components/LoadingDisplay/LoadingDisplay";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { getSingleVaultDetails } from "@/lib/algebra/graphql/clients/vaults";
 import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
@@ -8,8 +9,9 @@ import {
   useReadIchiVaultAllowToken0,
   useReadIchiVaultAllowToken1,
 } from "@/wagmi-generated";
+import { Skeleton } from "@nextui-org/react";
 import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
   const [vaultContract, setVaultContract] = useState<
@@ -17,6 +19,24 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
   >(undefined);
   const tokenA = Token.getToken({ address: vault.token0?.address ?? "" });
   const tokenB = Token.getToken({ address: vault.token1?.address ?? "" });
+  const loading = useMemo(() => {
+    return (
+      !vaultContract ||
+      !tokenA ||
+      !tokenB ||
+      !vaultContract?.tvlUSD ||
+      !vaultContract?.pool?.volume_24h_USD ||
+      !vaultContract?.pool?.fees_24h_USD
+    );
+  }, [
+    vaultContract,
+    tokenA,
+    tokenB,
+    vaultContract?.pool,
+    vaultContract?.tvlUSD,
+    vaultContract?.pool?.volume_24h_USD,
+    vaultContract?.pool?.fees_24h_USD,
+  ]);
 
   const isTokenAAllowed = useReadIchiVaultAllowToken0({
     address: vault.address,
@@ -67,6 +87,16 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
   const volume = Number(vault.pool?.volume_24h_USD || 0);
 
   const fees = Number(vault.pool?.fees_24h_USD || 0);
+
+  if (loading) {
+    return (
+      <tr>
+        <td colSpan={6}>
+          <Skeleton className="h-12 bg-yellow-500" />
+        </td>
+      </tr>
+    );
+  }
 
   return (
     <tr

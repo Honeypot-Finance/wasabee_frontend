@@ -8,8 +8,9 @@ import {
   useReadIchiVaultAllowToken0,
   useReadIchiVaultAllowToken1,
 } from "@/wagmi-generated";
+import { Skeleton } from "@nextui-org/react";
 import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const MyVaultRow = observer(
   ({ vault }: { vault: ICHIVaultContract }) => {
@@ -18,6 +19,9 @@ export const MyVaultRow = observer(
     >(undefined);
     const tokenA = Token.getToken({ address: vault.token0?.address ?? "" });
     const tokenB = Token.getToken({ address: vault.token1?.address ?? "" });
+    const loading = useMemo(() => {
+      return !vaultContract || !tokenA || !tokenB || !vaultContract?.userTVLUSD;
+    }, [vaultContract, tokenA, tokenB, vaultContract?.userTVLUSD]);
 
     const isTokenAAllowed = useReadIchiVaultAllowToken0({
       address: vault.address,
@@ -60,14 +64,15 @@ export const MyVaultRow = observer(
       });
     }, [vault]);
 
-    const tvl = Number(vault.tvlUSD || 0).toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
-
-    const volume = Number(vault.pool?.volume_24h_USD || 0);
-
-    const fees = Number(vault.pool?.fees_24h_USD || 0);
+    if (loading) {
+      return (
+        <tr>
+          <td colSpan={6}>
+            <Skeleton className="h-12 bg-yellow-500" />
+          </td>
+        </tr>
+      );
+    }
 
     return (
       <tr
