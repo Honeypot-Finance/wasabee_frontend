@@ -310,7 +310,7 @@ export const TokenSelector = observer(
             {value.pot2pumpAddress && (
               <Tooltip content="This token is launched on Pot2Pump">
                 <Link
-                  href={`${DOMAIN_MAP.POT2PUMP}/launch-detail/${value.pot2pumpAddress}`}
+                  href={`${DOMAIN_MAP.POT2PUMP}/launch-detail/${value.address}`}
                   target="_blank"
                 >
                   <Image
