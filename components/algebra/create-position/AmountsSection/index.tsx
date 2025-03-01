@@ -23,6 +23,8 @@ interface AmountsSectionProps {
   mintInfo: IDerivedMintInfo;
   manageLiquidity: ManageLiquidity;
   handleCloseModal?: () => void;
+  useNative: boolean;
+  setUseNative: (useNative: boolean) => void;
 }
 
 type NewPositionPageParams = Record<"pool", Address>;
@@ -34,6 +36,8 @@ const AmountsSection = ({
   mintInfo,
   manageLiquidity,
   handleCloseModal,
+  useNative,
+  setUseNative,
 }: AmountsSectionProps) => {
   const router = useRouter();
   const { pool: poolAddress } = router.query as { pool: Address };
@@ -49,6 +53,8 @@ const AmountsSection = ({
   return (
     <div className="flex flex-col gap-4">
       <EnterAmounts
+        useNative={useNative}
+        setUseNative={setUseNative}
         currencyA={currencyA}
         currencyB={currencyB}
         mintInfo={mintInfo}

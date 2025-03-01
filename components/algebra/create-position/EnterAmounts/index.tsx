@@ -13,12 +13,16 @@ interface EnterAmountsProps {
   currencyA: Currency | undefined;
   currencyB: Currency | undefined;
   mintInfo: IDerivedMintInfo;
+  useNative: boolean;
+  setUseNative: (useNative: boolean) => void;
 }
 
 const EnterAmounts = ({
   currencyA,
   currencyB,
   mintInfo,
+  useNative,
+  setUseNative,
 }: EnterAmountsProps) => {
   const { independentField, typedValue } = useMintState();
 
@@ -88,6 +92,8 @@ const EnterAmounts = ({
     <div className="flex flex-col lg:flex-col gap-2">
       <div className="flex w-full relative flex-col">
         <EnterAmountCard
+          useNative={useNative}
+          setUseNative={setUseNative}
           currency={currencyA}
           value={formattedAmounts[Field.CURRENCY_A]}
           valueForApprove={mintInfo.parsedAmounts[Field.CURRENCY_A]}
@@ -103,6 +109,8 @@ const EnterAmounts = ({
       </div>
       <div className="flex w-full relative flex-col">
         <EnterAmountCard
+          useNative={useNative}
+          setUseNative={setUseNative}
           currency={currencyB}
           value={formattedAmounts[Field.CURRENCY_B]}
           needApprove={allowanceB}

@@ -4,7 +4,7 @@ import LiquidityChart from "@/components/algebra/create-position/LiquidityChart"
 import RangeSelector from "@/components/algebra/create-position/RangeSelector";
 import PresetTabs from "@/components/algebra/create-position/PresetTabs";
 import { Bound } from "@cryptoalgebra/sdk";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { Address } from "viem";
 import AmountsSection from "@/components/algebra/create-position/AmountsSection";
@@ -27,6 +27,7 @@ type NewPositionPageParams = Record<"pool", Address>;
 const NewPositionPage = () => {
   const router = useRouter();
   const { pool: poolAddress } = router.query as { pool: Address };
+  const [useNative, setUseNative] = useState(true);
 
   const { data: token0 } = useReadAlgebraPoolToken0({
     address: poolAddress,
@@ -36,8 +37,8 @@ const NewPositionPage = () => {
     address: poolAddress,
   });
 
-  const currencyA = useCurrency(token0, true);
-  const currencyB = useCurrency(token1, true);
+  const currencyA = useCurrency(token0, useNative);
+  const currencyB = useCurrency(token1, useNative);
 
   const mintInfo = useDerivedMintInfo(
     currencyA ?? undefined,
@@ -177,6 +178,8 @@ const NewPositionPage = () => {
                   currencyA={currencyA}
                   currencyB={currencyB}
                   mintInfo={mintInfo}
+                  useNative={useNative}
+                  setUseNative={setUseNative}
                   manageLiquidity={ManageLiquidity.ADD}
                 />
               </div>

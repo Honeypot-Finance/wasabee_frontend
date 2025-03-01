@@ -18,6 +18,8 @@ interface IncreaseLiquidityModalProps {
   currencyA: Currency | undefined;
   currencyB: Currency | undefined;
   mintInfo: IDerivedMintInfo;
+  useNative: boolean;
+  setUseNative: (useNative: boolean) => void;
 }
 
 export function IncreaseLiquidityModal({
@@ -25,6 +27,8 @@ export function IncreaseLiquidityModal({
   currencyA,
   currencyB,
   mintInfo,
+  useNative,
+  setUseNative,
 }: IncreaseLiquidityModalProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -33,7 +37,10 @@ export function IncreaseLiquidityModal({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
       <DialogTrigger asChild>
         <Button
           disabled={false}
@@ -59,6 +66,8 @@ export function IncreaseLiquidityModal({
             currencyB={currencyB}
             mintInfo={mintInfo}
             manageLiquidity={ManageLiquidity.INCREASE}
+            useNative={useNative}
+            setUseNative={setUseNative}
           />
         </HoneyContainer>
       </DialogContent>

@@ -20,7 +20,7 @@ import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { Farming } from "@/types/algebra/types/farming-info";
 import { FormattedPosition } from "@/types/algebra/types/formatted-position";
 import { DynamicFormatAmount } from "@/lib/algebra/utils/common/formatAmount";
-
+import { useState } from "react";
 interface PositionCardProps {
   selectedPosition: FormattedPosition | undefined;
   farming?: Farming | null;
@@ -33,7 +33,7 @@ const PositionCard = ({
   closedFarmings,
 }: PositionCardProps) => {
   const { loading, position } = usePosition(selectedPosition?.id);
-
+  const [useNative, setUseNative] = useState(true);
   const positionInFarming = usePositionInFarming(selectedPosition?.id);
 
   const positionInEndedFarming = closedFarmings?.filter(
@@ -43,8 +43,8 @@ const PositionCard = ({
   const token0 = position?.token0;
   const token1 = position?.token1;
 
-  const currencyA = useCurrency(token0, true);
-  const currencyB = useCurrency(token1, true);
+  const currencyA = useCurrency(token0, useNative);
+  const currencyB = useCurrency(token1, useNative);
 
   const [, pool] = usePool(position?.pool);
   const positionEntity =
@@ -136,7 +136,10 @@ const PositionCard = ({
       )}
       <div className="w-full px-4">
         {pool && positionEntity && (
-          <PositionRangeChart pool={pool} position={positionEntity} />
+          <PositionRangeChart
+            pool={pool}
+            position={positionEntity}
+          />
         )}
       </div>
       {positionEntity && (
@@ -146,6 +149,8 @@ const PositionCard = ({
             currencyA={currencyA}
             currencyB={currencyB}
             mintInfo={mintInfo}
+            useNative={useNative}
+            setUseNative={setUseNative}
           />
         </div>
       )}

@@ -7,6 +7,8 @@ import { formatCurrency } from "@/lib/algebra/utils/common/formatCurrency";
 import { Token } from "@/services/contract/token";
 import TokenLogo from "@/components/TokenLogo/TokenLogo";
 import { cn } from "@/lib/utils";
+import { NATIVE_TOKEN_WRAPPED } from "@/config/algebra/addresses";
+import { HiOutlineSwitchHorizontal, HiSwitchVertical } from "react-icons/hi";
 
 interface EnterAmountsCardProps {
   currency: Currency | undefined;
@@ -15,12 +17,16 @@ interface EnterAmountsCardProps {
   error: string | undefined;
   valueForApprove: CurrencyAmount<Currency> | undefined;
   handleChange: (value: string) => void;
+  useNative: boolean;
+  setUseNative: (useNative: boolean) => void;
 }
 
 const EnterAmountCard = ({
   currency,
   value,
   handleChange,
+  useNative,
+  setUseNative,
 }: EnterAmountsCardProps) => {
   const { address: account } = useAccount();
 
@@ -65,6 +71,12 @@ const EnterAmountCard = ({
           <span className="font-medium text-black font-gliker text-xl">
             {currency ? currency.symbol : "Select a token"}
           </span>
+          {currency?.wrapped.address === NATIVE_TOKEN_WRAPPED && (
+            <HiOutlineSwitchHorizontal
+              className="w-5 h-5 text-black cursor-pointer"
+              onClick={() => setUseNative(!useNative)}
+            />
+          )}
         </div>
 
         <div className="flex flex-col items-end gap-1">
