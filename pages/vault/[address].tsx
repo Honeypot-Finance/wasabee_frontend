@@ -167,6 +167,7 @@ export const VaultDetail = observer(() => {
             </div>
             <div className="inline-flex rounded-[16px] border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] gap-x-3 p-2">
               <Link
+                className={`${!wallet.walletClient ? "pointer-events-none" : ""}`}
                 href={`/swap?inputCurrency=${vault?.token0?.address}&outputCurrency=${vault?.token1?.address}`}
               >
                 <Button className="rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none">
@@ -175,7 +176,7 @@ export const VaultDetail = observer(() => {
               </Link>
               <Button
                 onClick={() => setIsDepositModalOpen(true)}
-                disabled={!wallet.account}
+                disabled={!wallet.account || !wallet.walletClient}
                 className="ml-[-1px] rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Deposit
