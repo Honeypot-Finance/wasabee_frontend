@@ -19,6 +19,7 @@ import { Footer } from "./footer";
 import { chatService, presetQuestions, questionTitles } from "@/services/chat";
 import _ from "lodash";
 import { InvitationCodeModal } from "../InvitationCodeModal/InvitationCodeModal";
+import { wallet } from "@/services/wallet";
 
 export const Layout = ({
   children,
@@ -28,8 +29,7 @@ export const Layout = ({
   className?: string;
 }) => {
   const router = useRouter();
-  const { chainId, address } = useAccount();
-  const currentChain = chainId ? networksMap[chainId] : null;
+  const currentChain = wallet.currentChain;
   const [showInviteModal, setShowInviteModal] = useState(false);
 
   useEffect(() => {

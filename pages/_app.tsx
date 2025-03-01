@@ -25,7 +25,7 @@ import { ApolloProvider } from "@apollo/client";
 import { infoClient } from "@/lib/algebra/graphql/clients";
 import Image from "next/image";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import ErrorBoundary from '@/components/ErrorBoundary';
+import ErrorBoundary from "@/components/ErrorBoundary";
 import * as Sentry from "@sentry/nextjs";
 
 import {
@@ -59,10 +59,12 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     config,
   });
   useEffect(() => {
-    if (walletClient?.account) {
-      wallet.initWallet(walletClient);
-    }
+    wallet.initWallet(walletClient);
   }, [walletClient]);
+
+  useEffect(() => {
+    wallet.initWallet();
+  }, []);
   return children;
 };
 
@@ -102,7 +104,10 @@ export default function App({
 
   return (
     <ErrorBoundary>
-      <trpc.Provider client={trpcQueryClient} queryClient={queryClient}>
+      <trpc.Provider
+        client={trpcQueryClient}
+        queryClient={queryClient}
+      >
         <Analytics />
         <WagmiProvider config={config}>
           <PersistQueryClientProvider
