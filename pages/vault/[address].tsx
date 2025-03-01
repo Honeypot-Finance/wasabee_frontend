@@ -18,6 +18,8 @@ import Link from "next/link";
 import CardContainer from "@/components/CardContianer/v3";
 import Copy from "@/components/Copy/v3";
 import { HiExternalLink } from "react-icons/hi";
+import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import { cn, Tooltip } from "@nextui-org/react";
 
 export const VaultDetail = observer(() => {
   const router = useRouter();
@@ -28,6 +30,17 @@ export const VaultDetail = observer(() => {
   const [poolTvl, setPoolTvl] = useState<string>("0");
   const [poolVolume24h, setPoolVolume24h] = useState<string>("0");
   const [poolFees24h, setPoolFees24h] = useState<string>("0");
+  const [volatility, setVolatility] = useState<string>("0");
+
+  useEffect(() => {
+    if (!wallet.isInit || !wallet.account || !wallet.walletClient) return;
+
+    wallet.contracts.vaultVolatilityCheck
+      .currentVolatility(address as string)
+      .then((volatility) => {
+        setVolatility(volatility?.toString() ?? "0");
+      });
+  }, [wallet.isInit, wallet.account, wallet.walletClient, address]);
 
   useEffect(() => {
     if (
@@ -305,6 +318,25 @@ export const VaultDetail = observer(() => {
                   decimals: 5,
                   endWith: "$",
                 })}
+              </p>
+            </div>
+            <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D] relative">
+              <h3 className="text-base text-[#202020] mb-2">
+                Volatility{" "}
+                <span>
+                  <Tooltip content="higher the volatility, higher the slippage">
+                    <QuestionMarkCircleIcon className="w-4 h-4 inline-block" />
+                  </Tooltip>
+                </span>
+              </h3>
+              <p
+                className={cn(
+                  "text-2xl font-bold text-[#202020]",
+                  volatility > "500" && "text-orange-500",
+                  volatility > "1000" && "text-red-500"
+                )}
+              >
+                {volatility}%
               </p>
             </div>
           </div>

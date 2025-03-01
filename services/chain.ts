@@ -29,6 +29,7 @@ export class Network {
     memeFactory: string;
     memeFacade: string;
     vaultFactory: string;
+    vaultVolatilityCheck: string;
     ftoTokens: Partial<Token>[];
   };
   nativeToken!: Token;
@@ -147,6 +148,7 @@ export const berachainBartioTestnetNetwork = new Network({
     HPOT: "0xfc5e3743e9fac8bb60408797607352e24db7d65e".toLowerCase(),
   },
   contracts: {
+    vaultVolatilityCheck: "0x0000000000000000000000000000000000000000",
     routerV3: ALGEBRA_POSITION_MANAGER,
     routerV2: "0x8aBc3a7bAC442Ae449B07fd0C2152364C230DA9A",
     factory: "0x7A962f6E45100b8cC560C7d2c248ec704623fb53",
@@ -558,6 +560,7 @@ export const berachainNetwork = new Network({
     memeFactory: "0xC38eF79A6cA9b3EfBe20F3dD3b99B3e25d09F52B",
     memeFacade: "0x80051Ca8C6E2e04E12de5d5Cb1313C086C867737",
     vaultFactory: "0x1bf5e51eCacdfEA65ae9276fd228bB8719ffcA7E",
+    vaultVolatilityCheck: "0x97BF8CB6Be6757ab46D44853eAbEFD0D4C153037",
     ftoTokens: [],
   },
   faucetTokens: [
@@ -723,6 +726,7 @@ export const movementNetWork = new Network({
     memeFactory: zeroAddress,
     memeFacade: zeroAddress,
     vaultFactory: zeroAddress,
+    vaultVolatilityCheck: zeroAddress,
     ftoTokens: [],
   },
   faucetTokens: [],
@@ -746,6 +750,7 @@ export const sprotoNetWork = new Network({
     memeFactory: zeroAddress,
     memeFacade: zeroAddress,
     vaultFactory: zeroAddress,
+    vaultVolatilityCheck: zeroAddress,
     ftoTokens: [],
   },
   faucetTokens: [],

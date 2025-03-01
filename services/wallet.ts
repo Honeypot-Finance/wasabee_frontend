@@ -12,6 +12,7 @@ import { MemeFactoryContract } from "@/services/contract/launches/pot2pump/memef
 import { MEMEFacadeContract } from "@/services/contract/launches/pot2pump/memefacade-contract";
 import { ICHIVaultFactoryContract } from "@/services/contract/aquabera/ICHIVaultFactory-contract";
 import { DEFAULT_CHAIN_ID } from "@/config/algebra/default-chain-id";
+import { ICHIVaultVolatilityCheckContract } from "./contract/aquabera/ICHIVaultVolatilityCheckContract";
 
 export class Wallet {
   account: string = "";
@@ -28,6 +29,7 @@ export class Wallet {
     memeFactory: MemeFactoryContract;
     memeFacade: MEMEFacadeContract;
     vaultFactory: ICHIVaultFactoryContract;
+    vaultVolatilityCheck: ICHIVaultVolatilityCheckContract;
   } = {} as any;
   publicClient!: PublicClient;
   isInit = false;
@@ -88,6 +90,9 @@ export class Wallet {
       }),
       vaultFactory: new ICHIVaultFactoryContract({
         address: this.currentChain.contracts.vaultFactory as Address,
+      }),
+      vaultVolatilityCheck: new ICHIVaultVolatilityCheckContract({
+        address: this.currentChain.contracts.vaultVolatilityCheck as Address,
       }),
     };
     this.publicClient = createPublicClientByChain(this.currentChain.chain);
