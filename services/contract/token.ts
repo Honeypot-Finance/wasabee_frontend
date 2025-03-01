@@ -422,7 +422,7 @@ export class Token implements BaseContract {
   }
 
   async getBalance() {
-    if (!wallet.isInit) {
+    if (!wallet.isInit || !wallet.walletClient) {
       console.log("wallet not init");
       return new BigNumber(0);
     }
@@ -468,6 +468,9 @@ export class Token implements BaseContract {
   }
 
   get balance() {
+    if (!wallet.isInit || !wallet.walletClient) {
+      return new BigNumber(0);
+    }
     // console.log('this.balanceWithoutDecimals', this.balanceWithoutDecimals)
     return this.balanceWithoutDecimals.div(
       new BigNumber(10).pow(this.decimals)

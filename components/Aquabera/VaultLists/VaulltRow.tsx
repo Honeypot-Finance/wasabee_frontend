@@ -79,11 +79,6 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
     });
   }, [vault]);
 
-  const tvl = Number(vault.tvlUSD || 0).toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-  });
-
   const volume = Number(vault.pool?.volume_24h_USD || 0);
 
   const fees = Number(vault.pool?.fees_24h_USD || 0);

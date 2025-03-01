@@ -127,9 +127,6 @@ export class ICHIVaultContract implements BaseContract {
   }
 
   get contract() {
-    if (!wallet.walletClient) {
-      return;
-    }
     return getContract({
       address: this.address as `0x${string}`,
       abi: this.abi,
@@ -138,9 +135,6 @@ export class ICHIVaultContract implements BaseContract {
   }
 
   async getTotalAmounts() {
-    if (!this.contract) {
-      return;
-    }
     const totalAmounts = await this.contract.read.getTotalAmounts();
     this.totalAmountsWithoutDecimal = {
       total0: BigInt(totalAmounts[0]),

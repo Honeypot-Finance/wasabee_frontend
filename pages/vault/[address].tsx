@@ -298,7 +298,13 @@ export const VaultDetail = observer(() => {
             </div>
             <div className="rounded-[24px] border border-black bg-white px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
               <h3 className="text-base text-[#202020] mb-2">24h Fees(pool)</h3>
-              <p className="text-2xl font-bold text-[#202020]">{poolFees24h}</p>
+              <p className="text-2xl font-bold text-[#202020]">
+                {DynamicFormatAmount({
+                  amount: poolFees24h,
+                  decimals: 5,
+                  endWith: "$",
+                })}
+              </p>
             </div>
           </div>
 
