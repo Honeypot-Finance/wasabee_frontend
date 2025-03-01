@@ -93,6 +93,10 @@ export function WithdrawFromVaultModal({
     }
 
     try {
+      if (!vault.contract) {
+        return;
+      }
+
       await new ContractWrite(vault.contract.write.withdraw, {
         action: "Withdraw",
         isSuccessEffect: true,

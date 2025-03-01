@@ -264,6 +264,7 @@ export class MemePairContract implements BaseLaunchContract {
       this.launchedToken.address as `0x${string}`,
       BigInt(amount),
     ]);
+
     await Promise.all([
       this.getDepositedRaisedToken(),
       this.raiseToken.getBalance(),
@@ -695,6 +696,10 @@ export class MemePairContract implements BaseLaunchContract {
       address: lpTokenAddress,
     });
 
+    if (!aquaberaVaultContract.contract) {
+      return;
+    }
+
     const vaultBalance = await aquaberaVaultContract.contract.read.balanceOf([
       wallet.account as `0x${string}`,
     ]);
@@ -714,6 +719,10 @@ export class MemePairContract implements BaseLaunchContract {
       address: lpTokenAddress,
     });
 
+    if (!aquaberaVaultContract.contract) {
+      return;
+    }
+
     const vaultBalance = await aquaberaVaultContract.contract.read.balanceOf([
       wallet.account as `0x${string}`,
     ]);
@@ -721,7 +730,7 @@ export class MemePairContract implements BaseLaunchContract {
     await new ContractWrite(aquaberaVaultContract.contract.write.withdraw, {
       action: "Claim Tokens",
       isSuccessEffect: true,
-    }).call([this.vaultBalance, wallet.account as `0x${string}`]);
+    }).call([vaultBalance, wallet.account as `0x${string}`]);
 
     this.getVaultBalance();
   }

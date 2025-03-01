@@ -18,7 +18,7 @@ export class Wallet {
   accountShort = "";
   networks: Network[] = [];
   balance: BigNumber = new BigNumber(0);
-  walletClient: WalletClient | undefined;
+  walletClient!: WalletClient;
   currentChainId: number = -1;
   contracts: {
     routerV2: RouterV2Contract;
@@ -62,6 +62,7 @@ export class Wallet {
   }
 
   async initWallet(walletClient?: WalletClient) {
+    console.log("initWallet");
     this.networks = networks;
     this.currentChainId = walletClient?.chain?.id || DEFAULT_CHAIN_ID;
     const mockAccount = localStorage.getItem("mockAccount");
@@ -90,7 +91,9 @@ export class Wallet {
       }),
     };
     this.publicClient = createPublicClientByChain(this.currentChain.chain);
-    this.walletClient = walletClient;
+    if (walletClient) {
+      this.walletClient = walletClient;
+    }
     this.currentChain.init();
     await StorageState.sync();
     this.isInit = true;

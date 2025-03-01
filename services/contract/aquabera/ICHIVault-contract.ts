@@ -127,6 +127,9 @@ export class ICHIVaultContract implements BaseContract {
   }
 
   get contract() {
+    if (!wallet.walletClient) {
+      return;
+    }
     return getContract({
       address: this.address as `0x${string}`,
       abi: this.abi,
@@ -135,6 +138,9 @@ export class ICHIVaultContract implements BaseContract {
   }
 
   async getTotalAmounts() {
+    if (!this.contract) {
+      return;
+    }
     const totalAmounts = await this.contract.read.getTotalAmounts();
     this.totalAmountsWithoutDecimal = {
       total0: BigInt(totalAmounts[0]),
@@ -144,18 +150,27 @@ export class ICHIVaultContract implements BaseContract {
   }
 
   async getToken0() {
+    if (!this.contract) {
+      return;
+    }
     const token0 = await this.contract.read.token0();
     this.token0 = Token.getToken({ address: token0 });
     return this.token0;
   }
 
   async getToken1() {
+    if (!this.contract) {
+      return;
+    }
     const token1 = await this.contract.read.token1();
     this.token1 = Token.getToken({ address: token1 });
     return this.token1;
   }
 
   async getTotalSupply() {
+    if (!this.contract) {
+      return;
+    }
     const totalSupply = await this.contract.read.totalSupply();
     this.totalsupplyShares = BigInt(totalSupply);
     return totalSupply;
@@ -163,6 +178,9 @@ export class ICHIVaultContract implements BaseContract {
 
   // Example function using ABI
   async getBalanceOf(account: string) {
+    if (!this.contract) {
+      return;
+    }
     const balance = await this.contract.read.balanceOf([
       account as `0x${string}`,
     ]);
@@ -171,6 +189,9 @@ export class ICHIVaultContract implements BaseContract {
   }
 
   async deposit(deposit0: bigint, deposit1: bigint, to: string) {
+    if (!this.contract) {
+      return;
+    }
     this.transactionPending = true;
     if (!wallet.walletClient?.account) {
       return;
@@ -185,6 +206,9 @@ export class ICHIVaultContract implements BaseContract {
   }
 
   async withdraw(shares: bigint, to: string) {
+    if (!this.contract) {
+      return;
+    }
     this.transactionPending = true;
     if (!wallet.walletClient?.account) {
       return;

@@ -144,6 +144,9 @@ export const DepositToVaultModal = observer(
       );
       // Perform deposit
       try {
+        if (!vault.contract) {
+          return;
+        }
         await new ContractWrite(vault.contract.write.deposit, {
           action: "Deposit",
           isSuccessEffect: true,
