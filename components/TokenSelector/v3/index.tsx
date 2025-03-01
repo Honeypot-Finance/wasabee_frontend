@@ -122,7 +122,7 @@ export const TokenSelector = observer(
           placement="bottom"
           classNames={{
             base: [
-              // arrow color
+              // arrow color default
               "before:bg-default-200",
             ],
             content: [
