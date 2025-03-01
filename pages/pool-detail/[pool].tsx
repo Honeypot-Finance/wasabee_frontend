@@ -14,7 +14,6 @@ import { getPositionAPR } from "@/lib/algebra/utils/positions/getPositionAPR";
 import { getPositionFees } from "@/lib/algebra/utils/positions/getPositionFees";
 import { formatAmountWithAlphabetSymbol } from "@/lib/algebra/utils/common/formatAmount";
 import { ADDRESS_ZERO, Position, ZERO } from "@cryptoalgebra/sdk";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -231,7 +230,11 @@ const PoolPage = observer(() => {
     <PageContainer>
       <CardContainer className="gap-y-6">
         <LoadingContainer isLoading={!poolEntity}>
-          <PoolHeader pool={poolEntity} token0={token0} token1={token1} />
+          <PoolHeader
+            pool={poolEntity}
+            token0={token0}
+            token1={token1}
+          />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8">
             <div className="col-span-2">
               {!account ? (
@@ -295,7 +298,10 @@ const NoPositions = ({ poolId }: { poolId: Address }) => (
       {`You don't have positions for this pool`}
     </h2>
     <p className="text-md font-semibold my-4">{`Let's create one!`}</p>
-    <Button className="gap-2" asChild>
+    <Button
+      className="gap-2"
+      asChild
+    >
       <Link
         className={cn(
           "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#2D2D2D] bg-[#FFCD4D] rounded-2xl shadow-[2px_2px_0px_0px_#000] hover:bg-[#FFD666]"
@@ -310,15 +316,12 @@ const NoPositions = ({ poolId }: { poolId: Address }) => (
 );
 
 const NoAccount = () => {
-  const { open } = useWeb3Modal();
-
   return (
-    <div className="flex flex-col items-start p-8 bg-card border border-card-border rounded-3xl animate-fade-in">
+    <div className="flex flex-col items-start p-8 bg-card border border-card-border rounded-3xl animate-fade-in text-white">
       <h2 className="text-2xl font-bold">Connect Wallet</h2>
       <p className="text-md font-semibold my-4">
         Connect your account to view or create positions
       </p>
-      <Button onClick={() => open()}>Connect Wallet</Button>
     </div>
   );
 };
