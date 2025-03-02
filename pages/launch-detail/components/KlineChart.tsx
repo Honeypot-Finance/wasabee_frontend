@@ -9,6 +9,8 @@ import { strParams } from "@/lib/advancedChart.util";
 import { wallet } from "@/services/wallet";
 import { TbChartArea, TbChartHistogram } from "react-icons/tb";
 import Link from "next/link";
+import Image from "next/image";
+import codexIcon from "@/public/images/partners/codex_white.png";
 // 为 Window 对象添加 TradingView 相关的类型定义
 declare global {
   interface Window {
@@ -611,7 +613,12 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
                 return <></>;
               }
 
-              return <TokenLogo key={token.address} token={token} />;
+              return (
+                <TokenLogo
+                  key={token.address}
+                  token={token}
+                />
+              );
             })}
           </div>
           <span className="text-white text-base sm:text-lg font-bold">
@@ -811,7 +818,10 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
         </button>
       </div>
 
-      <div ref={chartWrapRef} className="relative my-4">
+      <div
+        ref={chartWrapRef}
+        className="relative my-4"
+      >
         <div
           id="tv_chart_container"
           style={{
@@ -842,8 +852,18 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                  <line
+                    x1="18"
+                    y1="6"
+                    x2="6"
+                    y2="18"
+                  ></line>
+                  <line
+                    x1="6"
+                    y1="6"
+                    x2="18"
+                    y2="18"
+                  ></line>
                 </svg>
               </button>
             </div>
@@ -867,9 +887,15 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
       <Link
         href="https://www.codex.io/"
         target="_blank"
-        className="text-center text-sm text-[#808080] hover:text-[#FFCD4D] transition-colors"
+        className="text-center text-sm text-[#808080] hover:text-[#FFCD4D] transition-colors flex items-center  gap-1"
       >
-        price feed powered by Codex
+        price feed powered by{" "}
+        <Image
+          src={codexIcon}
+          alt="Codex"
+          width={50}
+          height={50}
+        />
       </Link>
     </div>
   );
