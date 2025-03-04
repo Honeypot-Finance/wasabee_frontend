@@ -714,6 +714,12 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/henlo.png",
     },
+    "0xbaadcc2962417c01af99fb2b7c75706b9bd6babe": {
+      name: "Liquid BGT",
+      symbol: "LBGT",
+      decimals: 18,
+      logoURI: "https://www.berapaw.com/static/images/tokens/lbgt.svg",
+    },
   },
   validatedFtoAddresses: [],
   validatedMemeAddresses: [],
