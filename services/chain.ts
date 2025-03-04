@@ -708,6 +708,12 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/ibgt-token-icon.png",
     },
+    "0xb2f776e9c1c926c4b2e54182fac058da9af0b6a5": {
+      name: "henlo",
+      symbol: "HENLO",
+      decimals: 18,
+      logoURI: "/images/icons/tokens/henlo.png",
+    },
   },
   validatedFtoAddresses: [],
   validatedMemeAddresses: [],
