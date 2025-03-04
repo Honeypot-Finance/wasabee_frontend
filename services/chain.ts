@@ -525,6 +525,7 @@ export const berachainNetwork = new Network({
     decimals: 18,
     isNative: true,
     logoURI: "/images/icons/tokens/wbera-token-icon.png",
+    isPopular: true,
   },
   raisedTokenData: [
     {
@@ -597,7 +598,6 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/wbera-token-icon.png",
       isRouterToken: true,
-      isPopular: true,
     },
     "0xfcbd14dc51f0a4d49d5e53c2e0950e0bc26d0dce": {
       name: "Honey",
@@ -613,7 +613,6 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: "/images/icons/tokens/thpot-token-icon.jpg",
       isRouterToken: true,
-      isPopular: true,
     },
     "0x549943e04f40284185054145c6e4e9568c1d3241": {
       name: "USDC",
@@ -647,6 +646,7 @@ export const berachainNetwork = new Network({
       symbol: "NECT",
       decimals: 18,
       logoURI: "/images/icons/tokens/nect-token.jpg",
+      isPopular: true,
     },
     "0x467aa1bfa3dcc714f7c16b3d779200431f6a833b": {
       name: "3BC",
@@ -659,6 +659,7 @@ export const berachainNetwork = new Network({
       symbol: "wgBERA",
       decimals: 18,
       logoURI: "/images/icons/tokens/wgbera.png",
+      isPopular: true,
     },
     "0x779ded0c9e1022225f8e0630b35a9b54be713736": {
       name: "USD₮0",
@@ -713,6 +714,7 @@ export const berachainNetwork = new Network({
       symbol: "HENLO",
       decimals: 18,
       logoURI: "/images/icons/tokens/henlo.png",
+      isPopular: true,
     },
     "0xbaadcc2962417c01af99fb2b7c75706b9bd6babe": {
       name: "Liquid BGT",
