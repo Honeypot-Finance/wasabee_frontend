@@ -12,7 +12,7 @@ import CreatePoolForm from "../../create-pool/CreatePoolForm";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { LoadingDisplay } from "@/components/LoadingDisplay/LoadingDisplay";
 import { formatExtremelyLargeNumber } from "@/lib/format";
-import { observer } from "mobx-react-lite";
+import { observer, useObserver } from "mobx-react-lite";
 import { wallet } from "@/services/wallet";
 import { formatUSD } from "@/lib/algebra/utils/common/formatUSD";
 import { optionsPresets } from "@/components/OptionsDropdown/OptionsDropdown";
@@ -61,6 +61,9 @@ const PoolsTable = observer(
     showOptions = true,
     handleSearch,
   }: PoolsTableProps<TData, TValue>) => {
+    const walletClient = useObserver(() => {
+      return wallet.walletClient;
+    });
     const [selectedFilter, setSelectedFilter] = useState<string>(defaultFilter);
     const [search, setSearch] = useState("");
     const [sortField, setSortField] = useState<SortField>("tvl");
@@ -232,6 +235,7 @@ const PoolsTable = observer(
                     shouldCloseOnInteractOutside: false,
                   })
                 }
+                disabled={!walletClient}
               >
                 <Plus className="text-black" />
                 <span className="text-black">Create Pool</span>

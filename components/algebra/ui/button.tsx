@@ -50,13 +50,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button";
     return (
       <Comp
-        disabled={!wallet.walletClient}
-        aria-disabled={!wallet.walletClient}
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
       >
-        {wallet.walletClient ? props.children : "Connect Wallet"}
+        {props.children}
       </Comp>
     );
   }

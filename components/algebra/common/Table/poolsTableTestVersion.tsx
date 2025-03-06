@@ -25,6 +25,8 @@ import { HoneyContainer } from "@/components/CardContianer/HoneyContainer";
 import { popmodal } from "@/services/popmodal";
 import { Pool } from "./poolsColumns";
 import { LoadingDisplay } from "@/components/LoadingDisplay/LoadingDisplay";
+import { wallet } from "@/services/wallet";
+import { useObserver } from "mobx-react-lite";
 
 interface PoolsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -58,6 +60,9 @@ const PoolsTable = <TData, TValue>({
   showOptions = true,
 }: PoolsTableProps<TData, TValue>) => {
   const [selectedFilter, setSelectedFilter] = useState<string>(defaultFilter);
+  const walletClient = useObserver(() => {
+    return wallet.walletClient;
+  });
 
   const filters = [
     { key: "trending", label: "All Pools" },
@@ -183,12 +188,14 @@ const PoolsTable = <TData, TValue>({
                 "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
               )}
               onClick={() =>
+                walletClient &&
                 popmodal.openModal({
                   content: <CreatePoolForm />,
                   boarderLess: true,
                   shouldCloseOnInteractOutside: false,
                 })
               }
+              disabled={!walletClient}
             >
               <Plus />
               <span>Create Pool</span>
