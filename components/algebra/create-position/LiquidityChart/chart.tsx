@@ -50,9 +50,21 @@ const CustomBar = ({
   return (
     <g>
       <defs>
-        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="100%">
-          <stop offset="0" stopColor="#2797ff" />
-          <stop offset="1" stopColor="rgba(35, 133, 222, 0.05)" />
+        <linearGradient
+          id="colorUv"
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="100%"
+        >
+          <stop
+            offset="0"
+            stopColor="#2797ff"
+          />
+          <stop
+            offset="1"
+            stopColor="rgba(35, 133, 222, 0.05)"
+          />
         </linearGradient>
       </defs>
       {percent && (
@@ -81,7 +93,7 @@ const CustomBar = ({
         x={x}
         y={y}
         fill={fill}
-        width={width > 0 ? width : 0}
+        width={width > 2 ? width : 2}
         height={height}
         rx="4"
       />
@@ -152,7 +164,10 @@ export function Chart({
   return (
     <>
       {hasValidRange ? (
-        <ResponsiveContainer width={"100%"} height={250}>
+        <ResponsiveContainer
+          width={"100%"}
+          height={250}
+        >
           <BarChart
             data={formattedData}
             margin={{
@@ -256,11 +271,13 @@ export function Chart({
                 const baseY = 60; // Base Y position for the bars
                 const y = hasOtherPositions ? props.y : baseY;
 
+                const x = props.x;
+
                 return (
                   <CustomBar
                     height={height}
                     width={props.width}
-                    x={props.x}
+                    x={x}
                     y={y}
                     fill={props.fill}
                     percent={percent}
@@ -287,7 +304,12 @@ export function Chart({
                   }
                 }
 
-                return <Cell key={`cell-${index}`} fill={fill} />;
+                return (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={fill}
+                  />
+                );
               })}
             </Bar>
           </BarChart>
