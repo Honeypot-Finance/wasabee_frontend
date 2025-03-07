@@ -86,9 +86,6 @@ const KlineChart = observer(({ height = 400, onReady }: KlineChartProps) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
 
   const intervals = [
-    { text: "1s", resolution: "1S" },
-    { text: "15s", resolution: "15S" },
-    { text: "30s", resolution: "30S" },
     { text: "1m", resolution: "1" },
     { text: "5m", resolution: "5" },
     { text: "1H", resolution: "60" },
