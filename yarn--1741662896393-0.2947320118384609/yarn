@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec "/Users/hongming/.nvm/versions/node/v22.14.0/bin/node" "/Users/hongming/.yarn/bin/yarn.js" "$@"
