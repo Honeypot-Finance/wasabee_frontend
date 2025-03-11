@@ -19,6 +19,18 @@ export const SINGLE_ACCOUNT_DETAILS = gql`
   }
 `;
 
+export const ACCOUNT_SWAPS_WITH_POOLS = gql`
+  query AccountSwapsWithPools($accountId: ID!, $pools: [String!]!) {
+    account(id: $accountId) {
+      transaction(where: { swaps_: { pool_in: $pools } }) {
+        swaps {
+          ...SwapFields
+        }
+      }
+    }
+  }
+`;
+
 export const ACCOUNT_FRAGMENT = gql`
   fragment AccountField on Account {
     id

@@ -12842,6 +12842,14 @@ export type SingleAccountDetailsQueryVariables = Exact<{
 
 export type SingleAccountDetailsQuery = { __typename?: 'Query', account?: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> } | null };
 
+export type AccountSwapsWithPoolsQueryVariables = Exact<{
+  accountId: Scalars['ID']['input'];
+  pools: Array<Scalars['String']['input']> | Scalars['String']['input'];
+}>;
+
+
+export type AccountSwapsWithPoolsQuery = { __typename?: 'Query', account?: { __typename?: 'Account', transaction: Array<{ __typename?: 'Transaction', swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', symbol: string, id: string }, token1: { __typename?: 'Token', symbol: string, id: string } }> }> } | null };
+
 export type AccountFieldFragment = { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> };
 
 export type HoldingTokenFieldFragment = { __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } };
@@ -13084,9 +13092,9 @@ export type AllTokensQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type AllTokensQuery = { __typename?: 'Query', tokens: Array<{ __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }> };
 
-export type TransactionFieldsFragment = { __typename?: 'Transaction', id: string, timestamp: any, type: TransactionType, gasLimit: any, gasPrice: any, blockNumber: any, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, mints: Array<{ __typename?: 'Mint', id: string }>, burns: Array<{ __typename?: 'Burn', id: string }>, swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', id: string }, token1: { __typename?: 'Token', id: string } }>, flashed: Array<{ __typename?: 'Flash', id: string }>, collects: Array<{ __typename?: 'Collect', id: string }>, depositRaisedTokens: Array<{ __typename?: 'DepositRaisedToken', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress?: any | null, transaction: { __typename?: 'Transaction', id: string } }>, refunds: Array<{ __typename?: 'Refund', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }>, claimLps: Array<{ __typename?: 'ClaimLp', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }> };
+export type TransactionFieldsFragment = { __typename?: 'Transaction', id: string, timestamp: any, type: TransactionType, gasLimit: any, gasPrice: any, blockNumber: any, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, mints: Array<{ __typename?: 'Mint', id: string }>, burns: Array<{ __typename?: 'Burn', id: string }>, swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', symbol: string, id: string }, token1: { __typename?: 'Token', symbol: string, id: string } }>, flashed: Array<{ __typename?: 'Flash', id: string }>, collects: Array<{ __typename?: 'Collect', id: string }>, depositRaisedTokens: Array<{ __typename?: 'DepositRaisedToken', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress?: any | null, transaction: { __typename?: 'Transaction', id: string } }>, refunds: Array<{ __typename?: 'Refund', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }>, claimLps: Array<{ __typename?: 'ClaimLp', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }> };
 
-export type SwapFieldsFragment = { __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', id: string }, token1: { __typename?: 'Token', id: string } };
+export type SwapFieldsFragment = { __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', symbol: string, id: string }, token1: { __typename?: 'Token', symbol: string, id: string } };
 
 export type DepositRaisedTokenFieldsFragment = { __typename?: 'DepositRaisedToken', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress?: any | null, transaction: { __typename?: 'Transaction', id: string } };
 
@@ -13109,7 +13117,7 @@ export type TransactionsQueryVariables = Exact<{
 }>;
 
 
-export type TransactionsQuery = { __typename?: 'Query', transactions: Array<{ __typename?: 'Transaction', id: string, timestamp: any, type: TransactionType, gasLimit: any, gasPrice: any, blockNumber: any, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, mints: Array<{ __typename?: 'Mint', id: string }>, burns: Array<{ __typename?: 'Burn', id: string }>, swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', id: string }, token1: { __typename?: 'Token', id: string } }>, flashed: Array<{ __typename?: 'Flash', id: string }>, collects: Array<{ __typename?: 'Collect', id: string }>, depositRaisedTokens: Array<{ __typename?: 'DepositRaisedToken', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress?: any | null, transaction: { __typename?: 'Transaction', id: string } }>, refunds: Array<{ __typename?: 'Refund', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }>, claimLps: Array<{ __typename?: 'ClaimLp', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }> }> };
+export type TransactionsQuery = { __typename?: 'Query', transactions: Array<{ __typename?: 'Transaction', id: string, timestamp: any, type: TransactionType, gasLimit: any, gasPrice: any, blockNumber: any, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, mints: Array<{ __typename?: 'Mint', id: string }>, burns: Array<{ __typename?: 'Burn', id: string }>, swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', symbol: string, id: string }, token1: { __typename?: 'Token', symbol: string, id: string } }>, flashed: Array<{ __typename?: 'Flash', id: string }>, collects: Array<{ __typename?: 'Collect', id: string }>, depositRaisedTokens: Array<{ __typename?: 'DepositRaisedToken', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress?: any | null, transaction: { __typename?: 'Transaction', id: string } }>, refunds: Array<{ __typename?: 'Refund', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }>, claimLps: Array<{ __typename?: 'ClaimLp', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }> }> };
 
 export type SwapsQueryVariables = Exact<{
   where?: InputMaybe<Swap_Filter>;
@@ -13118,7 +13126,7 @@ export type SwapsQueryVariables = Exact<{
 }>;
 
 
-export type SwapsQuery = { __typename?: 'Query', swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', id: string }, token1: { __typename?: 'Token', id: string } }> };
+export type SwapsQuery = { __typename?: 'Query', swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', symbol: string, id: string }, token1: { __typename?: 'Token', symbol: string, id: string } }> };
 
 export type DepositRaisedTokenQueryVariables = Exact<{
   where?: InputMaybe<DepositRaisedToken_Filter>;
@@ -13519,9 +13527,11 @@ export const SwapFieldsFragmentDoc = gql`
     id
   }
   token0 {
+    symbol
     id
   }
   token1 {
+    symbol
     id
   }
   sender
@@ -13766,6 +13776,51 @@ export type SingleAccountDetailsQueryHookResult = ReturnType<typeof useSingleAcc
 export type SingleAccountDetailsLazyQueryHookResult = ReturnType<typeof useSingleAccountDetailsLazyQuery>;
 export type SingleAccountDetailsSuspenseQueryHookResult = ReturnType<typeof useSingleAccountDetailsSuspenseQuery>;
 export type SingleAccountDetailsQueryResult = Apollo.QueryResult<SingleAccountDetailsQuery, SingleAccountDetailsQueryVariables>;
+export const AccountSwapsWithPoolsDocument = gql`
+    query AccountSwapsWithPools($accountId: ID!, $pools: [String!]!) {
+  account(id: $accountId) {
+    transaction(where: {swaps_: {pool_in: $pools}}) {
+      swaps {
+        ...SwapFields
+      }
+    }
+  }
+}
+    ${SwapFieldsFragmentDoc}`;
+
+/**
+ * __useAccountSwapsWithPoolsQuery__
+ *
+ * To run a query within a React component, call `useAccountSwapsWithPoolsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAccountSwapsWithPoolsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAccountSwapsWithPoolsQuery({
+ *   variables: {
+ *      accountId: // value for 'accountId'
+ *      pools: // value for 'pools'
+ *   },
+ * });
+ */
+export function useAccountSwapsWithPoolsQuery(baseOptions: Apollo.QueryHookOptions<AccountSwapsWithPoolsQuery, AccountSwapsWithPoolsQueryVariables> & ({ variables: AccountSwapsWithPoolsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AccountSwapsWithPoolsQuery, AccountSwapsWithPoolsQueryVariables>(AccountSwapsWithPoolsDocument, options);
+      }
+export function useAccountSwapsWithPoolsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AccountSwapsWithPoolsQuery, AccountSwapsWithPoolsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AccountSwapsWithPoolsQuery, AccountSwapsWithPoolsQueryVariables>(AccountSwapsWithPoolsDocument, options);
+        }
+export function useAccountSwapsWithPoolsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AccountSwapsWithPoolsQuery, AccountSwapsWithPoolsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<AccountSwapsWithPoolsQuery, AccountSwapsWithPoolsQueryVariables>(AccountSwapsWithPoolsDocument, options);
+        }
+export type AccountSwapsWithPoolsQueryHookResult = ReturnType<typeof useAccountSwapsWithPoolsQuery>;
+export type AccountSwapsWithPoolsLazyQueryHookResult = ReturnType<typeof useAccountSwapsWithPoolsLazyQuery>;
+export type AccountSwapsWithPoolsSuspenseQueryHookResult = ReturnType<typeof useAccountSwapsWithPoolsSuspenseQuery>;
+export type AccountSwapsWithPoolsQueryResult = Apollo.QueryResult<AccountSwapsWithPoolsQuery, AccountSwapsWithPoolsQueryVariables>;
 export const EternalFarmingsDocument = gql`
     query EternalFarmings($pool: Bytes) {
   eternalFarmings(where: {pool: $pool}) {

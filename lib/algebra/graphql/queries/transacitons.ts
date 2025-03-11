@@ -49,9 +49,11 @@ export const SWAP_FRAGMENT = gql`
       id
     }
     token0 {
+      symbol
       id
     }
     token1 {
+      symbol
       id
     }
     sender
