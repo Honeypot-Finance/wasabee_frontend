@@ -9,22 +9,26 @@ export default async function handler(
   const accountId = request.query.accountid as string;
   const amountUsdTradedForEachPool: Record<
     string,
-    { pair: string; amountUsd: number }
+    { pair: string; amountUsd: number; swaps: number }
   > = {
     "0xa61d8220f35947cce2f6bfc0405dbfca167336da": {
       pair: "XI / HONEY",
+      swaps: 0,
       amountUsd: 0,
     },
     "0xb228eefe1c9fecd615a242fd3ea99a4e129e5a78": {
       pair: "BERACHAIN / WBERA",
+      swaps: 0,
       amountUsd: 0,
     },
     "0xe86c89a85e9d1b2d514477fee05d61603681f53a": {
       pair: "Q5 / WBERA",
+      swaps: 0,
       amountUsd: 0,
     },
     "0x96890cf58bc607cfad45b61d607e5d9f4f247502": {
       pair: "BM / WBERA",
+      swaps: 0,
       amountUsd: 0,
     },
   };
@@ -50,6 +54,7 @@ export default async function handler(
       const swapPool = amountUsdTradedForEachPool[swap.pool.id.toLowerCase()];
       if (swapPool) {
         swapPool.amountUsd += Number(swap.amountUSD);
+        swapPool.swaps += 1;
       }
     });
   });
