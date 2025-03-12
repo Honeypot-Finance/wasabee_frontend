@@ -95,10 +95,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 </DropdownMenu>
               </Dropdown>
             ) : (
-              <Link
-                key={menu.title}
-                href={menu.path}
-              >
+              <Link key={menu.title} href={menu.path}>
                 <Button
                   className={cn(
                     "min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white"
@@ -116,17 +113,15 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 "min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white rounded-full"
               )}
             >
-              <Button
-                isIconOnly
-                variant="light"
-                className="p-0 w-8 h-8"
-              >
+              <Button isIconOnly variant="light" className="p-0 w-8 h-8">
                 <FaPlusCircle className="w-6 h-6" />
               </Button>
             </DropdownTrigger>
             <DropdownMenu>
               <DropdownItem
-                href={DOMAIN_MAP.POT2PUMP}
+                onPress={() => {
+                  window.open(DOMAIN_MAP.POT2PUMP, "_blank");
+                }}
                 startContent={
                   <Image
                     src="/images/blueAstro.8533943d.svg"
