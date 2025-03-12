@@ -119,9 +119,9 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
             </DropdownTrigger>
             <DropdownMenu>
               <DropdownItem
-                onPress={() => {
-                  window.open(DOMAIN_MAP.POT2PUMP, "_blank");
-                }}
+                href={DOMAIN_MAP.POT2PUMP}
+                onPress={() => window.open(DOMAIN_MAP.POT2PUMP, "_self")}
+                className="font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white p-2"
                 startContent={
                   <Image
                     src="/images/blueAstro.8533943d.svg"
