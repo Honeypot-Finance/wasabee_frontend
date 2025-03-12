@@ -3,10 +3,30 @@ import { LEADERBOARD_QUERY } from "../algebra/graphql/clients/leaderboard";
 import BigNumber from "bignumber.js";
 import type { FactoryData } from "../algebra/graphql/clients/leaderboard";
 import { wallet } from "@/services/wallet";
+import { usePoolsListQuery } from "@/lib/algebra/graphql/generated/graphql";
 
 export function useLeaderboard() {
   const { data, loading, error, refetch } =
     useQuery<FactoryData>(LEADERBOARD_QUERY);
+
+  const { data: poolsData } = usePoolsListQuery({
+    fetchPolicy: "cache-and-network",
+    nextFetchPolicy: "cache-and-network",
+    initialFetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
+    pollInterval: 10000, // Refetch every 10 seconds,
+    variables: {
+      search: "",
+    },
+  });
+  console.log("poolsData", poolsData);
+
+  const poolsTVL = poolsData?.pools.reduce((acc, pool) => {
+    console.log("pool", pool);
+    return acc.plus(pool.totalValueLockedUSD);
+  }, new BigNumber(0));
+
+  console.log("poolsTVL", poolsTVL);
 
   const formatValue = (value: string) => {
     const bn = new BigNumber(value || "0");
@@ -28,7 +48,7 @@ export function useLeaderboard() {
         },
         tvl: {
           title: "TVL",
-          value: formatValue(data.factories[0].totalValueLockedUSD).usd,
+          value: formatValue(poolsTVL?.toString() || "0").usd,
         },
       }
     : null;
